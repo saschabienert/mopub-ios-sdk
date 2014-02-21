@@ -3,7 +3,7 @@ Heyzap iOS SDK
 
 Integrating the SDK
 ----
-Heyzap is still hosting its SDK at https://developers.heyzap.com/docs. If you're looking to integrate ads, we suggest downloading our SDK rather than building from source.
+Heyzap is still hosting its SDK and documentation at https://developers.heyzap.com/docs. If you're looking to integrate ads, we suggest downloading our SDK rather than building from source.
 
 
 Building from Source
