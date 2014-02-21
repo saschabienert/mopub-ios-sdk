@@ -14,22 +14,9 @@
 			);
 			dependencies = (
 				86B09B9F175988900045AA54 /* PBXTargetDependency */,
-				86B09B9D1759888B0045AA54 /* PBXTargetDependency */,
 			);
 			name = SDK;
 			productName = SDK;
-		};
-		86B943A31758201200B8EACE /* Heyzap */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 86B943A41758201200B8EACE /* Build configuration list for PBXAggregateTarget "Heyzap" */;
-			buildPhases = (
-				86B943AB1758203700B8EACE /* Build Framework */,
-			);
-			dependencies = (
-				86B943A81758201D00B8EACE /* PBXTargetDependency */,
-			);
-			name = Heyzap;
-			productName = HeyzapSDK;
 		};
 		86B943AC1758220700B8EACE /* HeyzapAds */ = {
 			isa = PBXAggregateTarget;
@@ -261,13 +248,6 @@
 			remoteGlobalIDString = 86B943291758108700B8EACE;
 			remoteInfo = Ads;
 		};
-		86B09B9C1759888B0045AA54 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 86B943A31758201200B8EACE;
-			remoteInfo = Heyzap;
-		};
 		86B09B9E175988900045AA54 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
@@ -281,13 +261,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 86B943291758108700B8EACE;
 			remoteInfo = Ads;
-		};
-		86B943A71758201D00B8EACE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 86B9419A1757FD6300B8EACE;
-			remoteInfo = Heyzap;
 		};
 		86B943B11758223500B8EACE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1191,7 +1164,6 @@
 				86B941DB1758056B00B8EACE /* HeyzapSDKTest */,
 				86B943291758108700B8EACE /* Ads */,
 				86B943371758108800B8EACE /* AdsTests */,
-				86B943A31758201200B8EACE /* Heyzap */,
 				86B943AC1758220700B8EACE /* HeyzapAds */,
 				86B09B98175988850045AA54 /* SDK */,
 				501839D01778ED43008DE90E /* HeyzapSDKTest AdsOnly */,
@@ -1275,20 +1247,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/Versions/A/Headers\"\n\n# Link the \"Current\" version to \"A\"\n/bin/ln -sfh A \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/Versions/Current\"\n/bin/ln -sfh Versions/Current/Headers \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/Headers\"\n/bin/ln -sfh \"Versions/Current/${PRODUCT_NAME}\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/${PRODUCT_NAME}\"\n\n# The -a ensures that the headers maintain the source modification date so that we don't constantly\n# cause propagating rebuilds of files that import these headers.\n/bin/cp -a \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}/\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework/Versions/A/Headers\"";
-		};
-		86B943AB1758203700B8EACE /* Build Framework */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Build Framework";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nset +u\n# Avoid recursively calling this script.\nif [[ $SF_MASTER_SCRIPT_RUNNING ]]\nthen\nexit 0\nfi\nset -u\nexport SF_MASTER_SCRIPT_RUNNING=1\n\nSF_TARGET_NAME=${PROJECT_NAME}\nSF_EXECUTABLE_PATH=\"lib${SF_TARGET_NAME}.a\"\nSF_WRAPPER_NAME=\"${SF_TARGET_NAME}.framework\"\n\n# The following conditionals come from\n# https://github.com/kstenerud/iOS-Universal-Framework\n\nif [[ \"$SDK_NAME\" =~ ([A-Za-z]+) ]]\nthen\nSF_SDK_PLATFORM=${BASH_REMATCH[1]}\nelse\necho \"Could not find platform name from SDK_NAME: $SDK_NAME\"\nexit 1\nfi\n\nif [[ \"$SDK_NAME\" =~ ([0-9]+.*$) ]]\nthen\nSF_SDK_VERSION=${BASH_REMATCH[1]}\nelse\necho \"Could not find sdk version from SDK_NAME: $SDK_NAME\"\nexit 1\nfi\n\nif [[ \"$SF_SDK_PLATFORM\" = \"iphoneos\" ]]\nthen\nSF_OTHER_PLATFORM=iphonesimulator\nelse\nSF_OTHER_PLATFORM=iphoneos\nfi\n\nif [[ \"$BUILT_PRODUCTS_DIR\" =~ (.*)$SF_SDK_PLATFORM$ ]]\nthen\nSF_OTHER_BUILT_PRODUCTS_DIR=\"${BASH_REMATCH[1]}${SF_OTHER_PLATFORM}\"\nelse\necho \"Could not find platform name from build products directory: $BUILT_PRODUCTS_DIR\"\nexit 1\nfi\n\n# Build the other platform.\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration \"${CONFIGURATION}\" -sdk ${SF_OTHER_PLATFORM}${SF_SDK_VERSION} BUILD_DIR=\"${BUILD_DIR}\" OBJROOT=\"${OBJROOT}\" BUILD_ROOT=\"${BUILD_ROOT}\" SYMROOT=\"${SYMROOT}\" $ACTION\n\n# Smash the two static libraries into one fat binary and store it in the .framework\nlipo -create \"${BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}\" \"${SF_OTHER_BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}\" -output \"${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\"\n\n#cp -a \"${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\" \"${BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}\"\n\n# Copy the binary to the other architecture folder to have a complete framework in both.\ncp -a \"${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\" \"${SF_OTHER_BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\"\n";
 		};
 		86B943B01758220C00B8EACE /* Build Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1438,11 +1396,6 @@
 			target = 86B943291758108700B8EACE /* Ads */;
 			targetProxy = 86B09B90175975550045AA54 /* PBXContainerItemProxy */;
 		};
-		86B09B9D1759888B0045AA54 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 86B943A31758201200B8EACE /* Heyzap */;
-			targetProxy = 86B09B9C1759888B0045AA54 /* PBXContainerItemProxy */;
-		};
 		86B09B9F175988900045AA54 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 86B943AC1758220700B8EACE /* HeyzapAds */;
@@ -1452,11 +1405,6 @@
 			isa = PBXTargetDependency;
 			target = 86B943291758108700B8EACE /* Ads */;
 			targetProxy = 86B9433C1758108800B8EACE /* PBXContainerItemProxy */;
-		};
-		86B943A81758201D00B8EACE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 86B9419A1757FD6300B8EACE /* Social */;
-			targetProxy = 86B943A71758201D00B8EACE /* PBXContainerItemProxy */;
 		};
 		86B943B21758223500B8EACE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1763,20 +1711,6 @@
 			};
 			name = Release;
 		};
-		86B943A51758201200B8EACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		86B943A61758201200B8EACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		86B943AE1758220700B8EACE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1855,15 +1789,6 @@
 			buildConfigurations = (
 				86B9434C1758108800B8EACE /* Debug */,
 				86B9434D1758108800B8EACE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		86B943A41758201200B8EACE /* Build configuration list for PBXAggregateTarget "Heyzap" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				86B943A51758201200B8EACE /* Debug */,
-				86B943A61758201200B8EACE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
