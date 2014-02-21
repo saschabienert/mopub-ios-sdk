@@ -19,6 +19,8 @@ If you spot a bug, or have trouble integrating the SDK, [open an Issue on Github
 Making a Release
 ----------------
 
+The SDK should be built with the latest version of XCode and the Command Line tools installed.
+
 Making a release is unnecessary for development purposes, but you may want to build the SDK nonetheless. To do so, first install dependencies:
 
 ```
@@ -27,7 +29,8 @@ brew install ant
 ```
 Then build the SDK:
 ```
-./build.sh
+./build.sh <marketing-version>
+# Example: ./build.sh 6.4.0
 ```
 This will generate 3 build products:
 
