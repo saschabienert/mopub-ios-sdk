@@ -198,9 +198,6 @@ const CGFloat kLeftMargin = 10;
 {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestNotification:) name:kHZAPIClientDidSendRequestNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(responseNotification:) name:kHZAPIClientDidReceiveResponseNotification object:nil];
