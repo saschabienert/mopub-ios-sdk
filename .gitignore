@@ -19,3 +19,8 @@ DerivedData
 
 #CocoaPods
 Pods
+
+# Build Directories
+ads-sdk-build
+sdk-build
+sdk-products-build
