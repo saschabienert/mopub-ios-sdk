@@ -253,12 +253,12 @@
 			remoteGlobalIDString = 86B943291758108700B8EACE;
 			remoteInfo = Ads;
 		};
-		862D537C176D163F00C4221F /* PBXContainerItemProxy */ = {
+		50BDCFF618B813C100265212 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 86B9419A1757FD6300B8EACE;
-			remoteInfo = Social;
+			remoteGlobalIDString = 86B943291758108700B8EACE;
+			remoteInfo = Ads;
 		};
 		86B09B90175975550045AA54 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1189,7 +1189,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				862D537D176D163F00C4221F /* PBXTargetDependency */,
+				50BDCFF718B813C100265212 /* PBXTargetDependency */,
 			);
 			name = HeyzapSDKTest;
 			productName = HeyzapSDKTest;
@@ -1536,10 +1536,10 @@
 			target = 86B943291758108700B8EACE /* Ads */;
 			targetProxy = 501839EC1778ED56008DE90E /* PBXContainerItemProxy */;
 		};
-		862D537D176D163F00C4221F /* PBXTargetDependency */ = {
+		50BDCFF718B813C100265212 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 86B9419A1757FD6300B8EACE /* Social */;
-			targetProxy = 862D537C176D163F00C4221F /* PBXContainerItemProxy */;
+			target = 86B943291758108700B8EACE /* Ads */;
+			targetProxy = 50BDCFF618B813C100265212 /* PBXContainerItemProxy */;
 		};
 		86B09B91175975550045AA54 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
