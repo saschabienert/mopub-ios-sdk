@@ -1,0 +1,14 @@
+PODS:
+  - Subliminal (1.0.1)
+
+DEPENDENCIES:
+  - Subliminal (from `https://github.com/MaxGabriel/Subliminal.git`)
+
+EXTERNAL SOURCES:
+  Subliminal:
+    :git: https://github.com/MaxGabriel/Subliminal.git
+
+SPEC CHECKSUMS:
+  Subliminal: 141147664ad2deb9de1f15869b69bbf7a42e391e
+
+COCOAPODS: 0.24.0

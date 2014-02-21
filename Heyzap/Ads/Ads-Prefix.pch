@@ -1,0 +1,8 @@
+//
+// Prefix header for all source files of the 'Ads' target in the 'Ads' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+    #import "HZLogProject.h"
+#endif
