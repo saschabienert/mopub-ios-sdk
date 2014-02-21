@@ -10,7 +10,7 @@ Building from Source
 --------------------
 You may want to contribute features, fix bugs, or just poke around the source code of our SDK. To build, open the `Heyzap/Heyzap.xcworkspace` file, choose the HeyzapSDKTest target, and click run.
 
-<img src="/ios-sdk/Screenshots/chooseTarget.png" alt="Choose Target">
+<img src="/Screenshots/chooseTarget.png" alt="Choose Target">
 
 Support
 ------
