@@ -259,7 +259,6 @@
 		86B09B931759796B0045AA54 /* AdDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdDelegate.h; sourceTree = "<group>"; };
 		86B09B941759796B0045AA54 /* AdDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdDelegate.m; sourceTree = "<group>"; };
 		86B9419E1757FD6300B8EACE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		86B941A21757FD6300B8EACE /* Heyzap-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Heyzap-Prefix.pch"; sourceTree = "<group>"; };
 		86B941AD1757FD6400B8EACE /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		86B941AF1757FD6400B8EACE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		86B941DC1758056B00B8EACE /* HeyzapSDKTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HeyzapSDKTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -459,7 +458,6 @@
 			children = (
 				86B9435C17581C4700B8EACE /* Common */,
 				86B942891758087E00B8EACE /* Vendor */,
-				86B941A01757FD6300B8EACE /* Social */,
 				86B941E11758056B00B8EACE /* SDK Test App */,
 				86B9432C1758108700B8EACE /* Ads */,
 				86B9419D1757FD6300B8EACE /* Frameworks */,
@@ -495,23 +493,6 @@
 				86B941DF1758056B00B8EACE /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		86B941A01757FD6300B8EACE /* Social */ = {
-			isa = PBXGroup;
-			children = (
-				86B941A11757FD6300B8EACE /* Supporting Files */,
-			);
-			name = Social;
-			path = Heyzap;
-			sourceTree = "<group>";
-		};
-		86B941A11757FD6300B8EACE /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				86B941A21757FD6300B8EACE /* Heyzap-Prefix.pch */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		86B941E11758056B00B8EACE /* SDK Test App */ = {
