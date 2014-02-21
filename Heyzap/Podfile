@@ -1,6 +1,0 @@
-platform :ios, '5.0'
-link_with 'Integration Tests'
-
-target :'Integration Tests' do
-  pod 'Subliminal', :git => 'https://github.com/MaxGabriel/Subliminal.git'
-end
