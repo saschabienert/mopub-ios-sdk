@@ -117,12 +117,6 @@
 		86B09B92175975C80045AA54 /* HZLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B942331758086300B8EACE /* HZLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		86B09B97175979B50045AA54 /* AdDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B09B941759796B0045AA54 /* AdDelegate.m */; };
 		86B9419F1757FD6300B8EACE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9419E1757FD6300B8EACE /* Foundation.framework */; };
-		86B941AE1757FD6400B8EACE /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B941AD1757FD6400B8EACE /* SenTestingKit.framework */; };
-		86B941B01757FD6400B8EACE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B941AF1757FD6400B8EACE /* UIKit.framework */; };
-		86B941B11757FD6400B8EACE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9419E1757FD6300B8EACE /* Foundation.framework */; };
-		86B941B41757FD6400B8EACE /* libHeyzap.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9419B1757FD6300B8EACE /* libHeyzap.a */; };
-		86B941BA1757FD6400B8EACE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 86B941B81757FD6400B8EACE /* InfoPlist.strings */; };
-		86B941BD1757FD6400B8EACE /* HeyzapTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B941BC1757FD6400B8EACE /* HeyzapTests.m */; };
 		86B941DE1758056B00B8EACE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9419E1757FD6300B8EACE /* Foundation.framework */; };
 		86B941E01758056B00B8EACE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B941DF1758056B00B8EACE /* CoreGraphics.framework */; };
 		86B941E61758056B00B8EACE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 86B941E41758056B00B8EACE /* InfoPlist.strings */; };
@@ -281,13 +275,6 @@
 			remoteGlobalIDString = 86B943AC1758220700B8EACE;
 			remoteInfo = HeyzapAds;
 		};
-		86B941B21757FD6400B8EACE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 86B9419A1757FD6300B8EACE;
-			remoteInfo = Heyzap;
-		};
 		86B9433C1758108800B8EACE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
@@ -396,13 +383,8 @@
 		86B9419B1757FD6300B8EACE /* libHeyzap.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHeyzap.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		86B9419E1757FD6300B8EACE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		86B941A21757FD6300B8EACE /* Heyzap-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Heyzap-Prefix.pch"; sourceTree = "<group>"; };
-		86B941AC1757FD6400B8EACE /* SocialTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SocialTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		86B941AD1757FD6400B8EACE /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		86B941AF1757FD6400B8EACE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		86B941B71757FD6400B8EACE /* HeyzapTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HeyzapTests-Info.plist"; sourceTree = "<group>"; };
-		86B941B91757FD6400B8EACE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		86B941BB1757FD6400B8EACE /* HeyzapTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeyzapTests.h; sourceTree = "<group>"; };
-		86B941BC1757FD6400B8EACE /* HeyzapTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeyzapTests.m; sourceTree = "<group>"; };
 		86B941DC1758056B00B8EACE /* HeyzapSDKTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HeyzapSDKTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		86B941DF1758056B00B8EACE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		86B941E31758056B00B8EACE /* HeyzapSDKTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HeyzapSDKTest-Info.plist"; sourceTree = "<group>"; };
@@ -549,17 +531,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		86B941A81757FD6400B8EACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				86B941AE1757FD6400B8EACE /* SenTestingKit.framework in Frameworks */,
-				86B941B01757FD6400B8EACE /* UIKit.framework in Frameworks */,
-				86B941B11757FD6400B8EACE /* Foundation.framework in Frameworks */,
-				86B941B41757FD6400B8EACE /* libHeyzap.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		86B941D91758056B00B8EACE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -685,7 +656,6 @@
 			isa = PBXGroup;
 			children = (
 				86B9419B1757FD6300B8EACE /* libHeyzap.a */,
-				86B941AC1757FD6400B8EACE /* SocialTests.octest */,
 				86B941DC1758056B00B8EACE /* HeyzapSDKTest.app */,
 				86B9432A1758108700B8EACE /* libHeyzapAds.a */,
 				86B943381758108800B8EACE /* AdsTests.octest */,
@@ -719,7 +689,6 @@
 				86B9435B17581C1600B8EACE /* Data */,
 				86B9435A17581AFC00B8EACE /* User Interface */,
 				86B9435817581AAC00B8EACE /* Models */,
-				86B941B51757FD6400B8EACE /* Tests */,
 				86B942151758086300B8EACE /* Heyzap.h */,
 				86B942161758086300B8EACE /* HeyzapSDK.h */,
 				86B942171758086300B8EACE /* HeyzapSDK.m */,
@@ -734,26 +703,6 @@
 			isa = PBXGroup;
 			children = (
 				86B941A21757FD6300B8EACE /* Heyzap-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		86B941B51757FD6400B8EACE /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				86B941BB1757FD6400B8EACE /* HeyzapTests.h */,
-				86B941BC1757FD6400B8EACE /* HeyzapTests.m */,
-				86B941B61757FD6400B8EACE /* Supporting Files */,
-			);
-			name = Tests;
-			path = HeyzapTests;
-			sourceTree = SOURCE_ROOT;
-		};
-		86B941B61757FD6400B8EACE /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				86B941B71757FD6400B8EACE /* HeyzapTests-Info.plist */,
-				86B941B81757FD6400B8EACE /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1028,13 +977,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		86B941C61757FE8300B8EACE /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		86B941CF1758026D00B8EACE /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1158,26 +1100,6 @@
 			productReference = 86B9419B1757FD6300B8EACE /* libHeyzap.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		86B941AB1757FD6400B8EACE /* SocialTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 86B941C31757FD6400B8EACE /* Build configuration list for PBXNativeTarget "SocialTests" */;
-			buildPhases = (
-				86B941A71757FD6400B8EACE /* Sources */,
-				86B941A81757FD6400B8EACE /* Frameworks */,
-				86B941A91757FD6400B8EACE /* Resources */,
-				86B941AA1757FD6400B8EACE /* ShellScript */,
-				86B941C61757FE8300B8EACE /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				86B941B31757FD6400B8EACE /* PBXTargetDependency */,
-			);
-			name = SocialTests;
-			productName = HeyzapTests;
-			productReference = 86B941AC1757FD6400B8EACE /* SocialTests.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
 		86B941DB1758056B00B8EACE /* HeyzapSDKTest */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 86B942071758056B00B8EACE /* Build configuration list for PBXNativeTarget "HeyzapSDKTest" */;
@@ -1266,7 +1188,6 @@
 			projectRoot = "";
 			targets = (
 				86B9419A1757FD6300B8EACE /* Social */,
-				86B941AB1757FD6400B8EACE /* SocialTests */,
 				86B941DB1758056B00B8EACE /* HeyzapSDKTest */,
 				86B943291758108700B8EACE /* Ads */,
 				86B943371758108800B8EACE /* AdsTests */,
@@ -1288,14 +1209,6 @@
 				501839E31778ED43008DE90E /* Default@2x.png in Resources */,
 				501839E41778ED43008DE90E /* Default-568h@2x.png in Resources */,
 				501839E51778ED43008DE90E /* Heyzap.bundle in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		86B941A91757FD6400B8EACE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				86B941BA1757FD6400B8EACE /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1322,19 +1235,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		86B941AA1757FD6400B8EACE /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
 		86B941C91757FF6D00B8EACE /* Prepare Framework */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1448,14 +1348,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		86B941A71757FD6400B8EACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				86B941BD1757FD6400B8EACE /* HeyzapTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		86B941D81758056B00B8EACE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1556,11 +1448,6 @@
 			target = 86B943AC1758220700B8EACE /* HeyzapAds */;
 			targetProxy = 86B09B9E175988900045AA54 /* PBXContainerItemProxy */;
 		};
-		86B941B31757FD6400B8EACE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 86B9419A1757FD6300B8EACE /* Social */;
-			targetProxy = 86B941B21757FD6400B8EACE /* PBXContainerItemProxy */;
-		};
 		86B9433D1758108800B8EACE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 86B943291758108700B8EACE /* Ads */;
@@ -1579,14 +1466,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		86B941B81757FD6400B8EACE /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				86B941B91757FD6400B8EACE /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
 		86B941E41758056B00B8EACE /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1779,38 +1658,6 @@
 			};
 			name = Release;
 		};
-		86B941C41757FD6400B8EACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Heyzap/Heyzap-Prefix.pch";
-				INFOPLIST_FILE = "HeyzapTests/HeyzapTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = "armv7 armv7s";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		86B941C51757FD6400B8EACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Heyzap/Heyzap-Prefix.pch";
-				INFOPLIST_FILE = "HeyzapTests/HeyzapTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = "armv7 armv7s";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
 		86B942081758056B00B8EACE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1981,15 +1828,6 @@
 			buildConfigurations = (
 				86B941C11757FD6400B8EACE /* Debug */,
 				86B941C21757FD6400B8EACE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		86B941C31757FD6400B8EACE /* Build configuration list for PBXNativeTarget "SocialTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				86B941C41757FD6400B8EACE /* Debug */,
-				86B941C51757FD6400B8EACE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
