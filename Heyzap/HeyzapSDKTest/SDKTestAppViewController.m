@@ -9,12 +9,6 @@
 
 #import "SDKTestAppViewController.h"
 
-
-#ifndef ADS_ONLY_SDK
-#import "HZScore.h"
-#import "HeyzapSDKPrivate.h"
-#endif
-
 #import <AdSupport/ASIdentifierManager.h>
 #import "HZDevice.h"
 #import "HZDictionaryUtils.h"

@@ -46,7 +46,6 @@
 		501839E21778ED43008DE90E /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941ED1758056B00B8EACE /* Default.png */; };
 		501839E31778ED43008DE90E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941EF1758056B00B8EACE /* Default@2x.png */; };
 		501839E41778ED43008DE90E /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941F11758056B00B8EACE /* Default-568h@2x.png */; };
-		501839E51778ED43008DE90E /* Heyzap.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 862D5379176D14F400C4221F /* Heyzap.bundle */; };
 		501839EE1778ED59008DE90E /* libHeyzapAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9432A1758108700B8EACE /* libHeyzapAds.a */; };
 		501F9D7418989B8A00127E49 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
 		5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */; };
@@ -69,7 +68,6 @@
 		86234AB018581B800071957B /* HZVideoControlView.h in Headers */ = {isa = PBXBuildFile; fileRef = 86234AAE18581B800071957B /* HZVideoControlView.h */; };
 		86234AB118581B800071957B /* HZVideoControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86234AAF18581B800071957B /* HZVideoControlView.m */; };
 		862D5342176D12E900C4221F /* SDKTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 862D5341176D12E900C4221F /* SDKTestAppViewController.m */; };
-		862D537A176D14F400C4221F /* Heyzap.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 862D5379176D14F400C4221F /* Heyzap.bundle */; };
 		86309F8418873D960000B6E3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86309F8318873D960000B6E3 /* StoreKit.framework */; };
 		86408C4D17E123B800A66633 /* HZOpenUDID.m in Sources */ = {isa = PBXBuildFile; fileRef = 86408C4A17E1239500A66633 /* HZOpenUDID.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		86408C5017E1263900A66633 /* HeyzapUDID.h in Headers */ = {isa = PBXBuildFile; fileRef = 86408C4E17E1263900A66633 /* HeyzapUDID.h */; };
@@ -227,7 +225,6 @@
 		86234AAF18581B800071957B /* HZVideoControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVideoControlView.m; sourceTree = "<group>"; };
 		862D5340176D12E900C4221F /* SDKTestAppViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKTestAppViewController.h; sourceTree = "<group>"; };
 		862D5341176D12E900C4221F /* SDKTestAppViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKTestAppViewController.m; sourceTree = "<group>"; };
-		862D5379176D14F400C4221F /* Heyzap.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Heyzap.bundle; sourceTree = "<group>"; };
 		86309F8318873D960000B6E3 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		86408C4917E1239500A66633 /* HZOpenUDID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZOpenUDID.h; sourceTree = "<group>"; };
 		86408C4A17E1239500A66633 /* HZOpenUDID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZOpenUDID.m; sourceTree = "<group>"; };
@@ -276,44 +273,14 @@
 		86B941ED1758056B00B8EACE /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		86B941EF1758056B00B8EACE /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		86B941F11758056B00B8EACE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		86B942151758086300B8EACE /* Heyzap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Heyzap.h; sourceTree = "<group>"; };
-		86B942161758086300B8EACE /* HeyzapSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeyzapSDK.h; sourceTree = "<group>"; };
-		86B942171758086300B8EACE /* HeyzapSDK.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeyzapSDK.m; sourceTree = "<group>"; };
-		86B942181758086300B8EACE /* HeyzapSDKPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeyzapSDKPrivate.h; sourceTree = "<group>"; };
 		86B9421F1758086300B8EACE /* HZAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAnalytics.h; sourceTree = "<group>"; };
 		86B942201758086300B8EACE /* HZAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAnalytics.m; sourceTree = "<group>"; };
 		86B942211758086300B8EACE /* HZAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAPIClient.h; sourceTree = "<group>"; };
 		86B942221758086300B8EACE /* HZAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAPIClient.m; sourceTree = "<group>"; };
-		86B942231758086300B8EACE /* HZCheckinButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZCheckinButton.h; sourceTree = "<group>"; };
-		86B942241758086300B8EACE /* HZCheckinButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZCheckinButton.m; sourceTree = "<group>"; };
-		86B942251758086300B8EACE /* HZLeaderboardCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZLeaderboardCell.h; sourceTree = "<group>"; };
-		86B942261758086300B8EACE /* HZLeaderboardCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZLeaderboardCell.m; sourceTree = "<group>"; };
-		86B942271758086300B8EACE /* HZLeaderboardLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZLeaderboardLevel.h; sourceTree = "<group>"; };
-		86B942281758086300B8EACE /* HZLeaderboardLevel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZLeaderboardLevel.m; sourceTree = "<group>"; };
-		86B942291758086300B8EACE /* HZLeaderboardLevelCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZLeaderboardLevelCell.h; sourceTree = "<group>"; };
-		86B9422A1758086300B8EACE /* HZLeaderboardLevelCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZLeaderboardLevelCell.m; sourceTree = "<group>"; };
-		86B9422B1758086300B8EACE /* HZLeaderboardLevelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZLeaderboardLevelViewController.h; sourceTree = "<group>"; };
-		86B9422C1758086300B8EACE /* HZLeaderboardLevelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZLeaderboardLevelViewController.m; sourceTree = "<group>"; };
-		86B9422D1758086300B8EACE /* HZLeaderboardPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZLeaderboardPopup.h; sourceTree = "<group>"; };
-		86B9422E1758086300B8EACE /* HZLeaderboardPopup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZLeaderboardPopup.m; sourceTree = "<group>"; };
-		86B9422F1758086300B8EACE /* HZLeaderboardRank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZLeaderboardRank.h; sourceTree = "<group>"; };
-		86B942301758086300B8EACE /* HZLeaderboardRank.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZLeaderboardRank.m; sourceTree = "<group>"; };
-		86B942311758086300B8EACE /* HZLeaderboardsNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZLeaderboardsNetworking.h; sourceTree = "<group>"; };
-		86B942321758086300B8EACE /* HZLeaderboardsNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZLeaderboardsNetworking.m; sourceTree = "<group>"; };
 		86B942331758086300B8EACE /* HZLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZLog.h; sourceTree = "<group>"; };
 		86B942341758086300B8EACE /* HZLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZLog.m; sourceTree = "<group>"; };
-		86B942351758086300B8EACE /* HZPersonalBestPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZPersonalBestPopup.h; sourceTree = "<group>"; };
-		86B942361758086300B8EACE /* HZPersonalBestPopup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZPersonalBestPopup.m; sourceTree = "<group>"; };
-		86B942371758086300B8EACE /* HZPlaySharedPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZPlaySharedPopup.h; sourceTree = "<group>"; };
-		86B942381758086300B8EACE /* HZPlaySharedPopup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZPlaySharedPopup.m; sourceTree = "<group>"; };
-		86B942391758086300B8EACE /* HZPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZPopup.h; sourceTree = "<group>"; };
-		86B9423A1758086300B8EACE /* HZPopup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZPopup.m; sourceTree = "<group>"; };
 		86B9423B1758086300B8EACE /* HZRotatingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZRotatingView.h; path = Heyzap/HZRotatingView.h; sourceTree = "<group>"; };
 		86B9423C1758086300B8EACE /* HZRotatingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZRotatingView.m; path = Heyzap/HZRotatingView.m; sourceTree = "<group>"; };
-		86B9423D1758086300B8EACE /* HZScore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZScore.h; sourceTree = "<group>"; };
-		86B9423E1758086300B8EACE /* HZScore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZScore.m; sourceTree = "<group>"; };
-		86B9423F1758086300B8EACE /* HZScorePopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZScorePopup.h; sourceTree = "<group>"; };
-		86B942401758086300B8EACE /* HZScorePopup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZScorePopup.m; sourceTree = "<group>"; };
 		86B942411758086300B8EACE /* HZSelectorReplacer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSelectorReplacer.h; sourceTree = "<group>"; };
 		86B942421758086300B8EACE /* HZSelectorReplacer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSelectorReplacer.m; sourceTree = "<group>"; };
 		86B942431758086300B8EACE /* HZUDID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZUDID.h; sourceTree = "<group>"; };
@@ -324,26 +291,8 @@
 		86B942481758086300B8EACE /* HZUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZUtils.m; sourceTree = "<group>"; };
 		86B942491758086300B8EACE /* HZDictionaryUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZDictionaryUtils.h; sourceTree = "<group>"; };
 		86B9424A1758086300B8EACE /* HZDictionaryUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZDictionaryUtils.m; sourceTree = "<group>"; };
-		86B9428C175808F800B8EACE /* HZAchievement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAchievement.h; sourceTree = "<group>"; };
-		86B9428D175808F800B8EACE /* HZAchievement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAchievement.m; sourceTree = "<group>"; };
-		86B9428E175808F800B8EACE /* HZAchievementsNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAchievementsNetworking.h; sourceTree = "<group>"; };
-		86B9428F175808F800B8EACE /* HZAchievementsNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAchievementsNetworking.m; sourceTree = "<group>"; };
-		86B94290175808F800B8EACE /* HZAchievementsTableViewPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAchievementsTableViewPopup.h; sourceTree = "<group>"; };
-		86B94291175808F800B8EACE /* HZAchievementsTableViewPopup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAchievementsTableViewPopup.m; sourceTree = "<group>"; };
-		86B94292175808F800B8EACE /* HZAchievementTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAchievementTableViewCell.h; sourceTree = "<group>"; };
-		86B94293175808F800B8EACE /* HZAchievementTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAchievementTableViewCell.m; sourceTree = "<group>"; };
 		86B94295175808F800B8EACE /* HZAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAvailability.h; sourceTree = "<group>"; };
 		86B94296175808F800B8EACE /* HZAvailability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAvailability.m; sourceTree = "<group>"; };
-		86B94297175808F800B8EACE /* HZGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZGame.h; sourceTree = "<group>"; };
-		86B94298175808F800B8EACE /* HZGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZGame.m; sourceTree = "<group>"; };
-		86B94299175808F800B8EACE /* HZGenericPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZGenericPopup.h; sourceTree = "<group>"; };
-		86B9429A175808F800B8EACE /* HZGenericPopup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZGenericPopup.m; sourceTree = "<group>"; };
-		86B9429D175808F800B8EACE /* HZShadowGradientLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZShadowGradientLayer.h; sourceTree = "<group>"; };
-		86B9429E175808F800B8EACE /* HZShadowGradientLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZShadowGradientLayer.m; sourceTree = "<group>"; };
-		86B9429F175808F800B8EACE /* HZTableViewPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZTableViewPopup.h; sourceTree = "<group>"; };
-		86B942A0175808F800B8EACE /* HZTableViewPopup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTableViewPopup.m; sourceTree = "<group>"; };
-		86B942A1175808F800B8EACE /* HZUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZUser.h; sourceTree = "<group>"; };
-		86B942A2175808F800B8EACE /* HZUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZUser.m; sourceTree = "<group>"; };
 		86B942CD1758098300B8EACE /* HZAFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAFHTTPClient.h; sourceTree = "<group>"; };
 		86B942CE1758098300B8EACE /* HZAFHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAFHTTPClient.m; sourceTree = "<group>"; };
 		86B942CF1758098300B8EACE /* HZAFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -551,14 +500,6 @@
 		86B941A01757FD6300B8EACE /* Social */ = {
 			isa = PBXGroup;
 			children = (
-				86B9436E17581EE300B8EACE /* Resources */,
-				86B9435B17581C1600B8EACE /* Data */,
-				86B9435A17581AFC00B8EACE /* User Interface */,
-				86B9435817581AAC00B8EACE /* Models */,
-				86B942151758086300B8EACE /* Heyzap.h */,
-				86B942161758086300B8EACE /* HeyzapSDK.h */,
-				86B942171758086300B8EACE /* HeyzapSDK.m */,
-				86B942181758086300B8EACE /* HeyzapSDKPrivate.h */,
 				86B941A11757FD6300B8EACE /* Supporting Files */,
 			);
 			name = Social;
@@ -695,25 +636,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		86B9435817581AAC00B8EACE /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				86B942271758086300B8EACE /* HZLeaderboardLevel.h */,
-				86B942281758086300B8EACE /* HZLeaderboardLevel.m */,
-				86B9428C175808F800B8EACE /* HZAchievement.h */,
-				86B9428D175808F800B8EACE /* HZAchievement.m */,
-				86B9422F1758086300B8EACE /* HZLeaderboardRank.h */,
-				86B942301758086300B8EACE /* HZLeaderboardRank.m */,
-				86B9423D1758086300B8EACE /* HZScore.h */,
-				86B9423E1758086300B8EACE /* HZScore.m */,
-				86B94297175808F800B8EACE /* HZGame.h */,
-				86B94298175808F800B8EACE /* HZGame.m */,
-				86B942A1175808F800B8EACE /* HZUser.h */,
-				86B942A2175808F800B8EACE /* HZUser.m */,
-			);
-			name = Models;
-			sourceTree = "<group>";
-		};
 		86B9435917581AC600B8EACE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -751,52 +673,6 @@
 			path = Heyzap;
 			sourceTree = "<group>";
 		};
-		86B9435A17581AFC00B8EACE /* User Interface */ = {
-			isa = PBXGroup;
-			children = (
-				86B94299175808F800B8EACE /* HZGenericPopup.h */,
-				86B9429A175808F800B8EACE /* HZGenericPopup.m */,
-				86B942251758086300B8EACE /* HZLeaderboardCell.h */,
-				86B942261758086300B8EACE /* HZLeaderboardCell.m */,
-				86B942291758086300B8EACE /* HZLeaderboardLevelCell.h */,
-				86B9422A1758086300B8EACE /* HZLeaderboardLevelCell.m */,
-				86B9422B1758086300B8EACE /* HZLeaderboardLevelViewController.h */,
-				86B9422C1758086300B8EACE /* HZLeaderboardLevelViewController.m */,
-				86B9422D1758086300B8EACE /* HZLeaderboardPopup.h */,
-				86B9422E1758086300B8EACE /* HZLeaderboardPopup.m */,
-				86B94290175808F800B8EACE /* HZAchievementsTableViewPopup.h */,
-				86B94291175808F800B8EACE /* HZAchievementsTableViewPopup.m */,
-				86B94292175808F800B8EACE /* HZAchievementTableViewCell.h */,
-				86B94293175808F800B8EACE /* HZAchievementTableViewCell.m */,
-				86B9429D175808F800B8EACE /* HZShadowGradientLayer.h */,
-				86B9429E175808F800B8EACE /* HZShadowGradientLayer.m */,
-				86B9429F175808F800B8EACE /* HZTableViewPopup.h */,
-				86B942A0175808F800B8EACE /* HZTableViewPopup.m */,
-				86B942231758086300B8EACE /* HZCheckinButton.h */,
-				86B942241758086300B8EACE /* HZCheckinButton.m */,
-				86B942351758086300B8EACE /* HZPersonalBestPopup.h */,
-				86B942361758086300B8EACE /* HZPersonalBestPopup.m */,
-				86B942371758086300B8EACE /* HZPlaySharedPopup.h */,
-				86B942381758086300B8EACE /* HZPlaySharedPopup.m */,
-				86B942391758086300B8EACE /* HZPopup.h */,
-				86B9423A1758086300B8EACE /* HZPopup.m */,
-				86B9423F1758086300B8EACE /* HZScorePopup.h */,
-				86B942401758086300B8EACE /* HZScorePopup.m */,
-			);
-			name = "User Interface";
-			sourceTree = "<group>";
-		};
-		86B9435B17581C1600B8EACE /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				86B9428E175808F800B8EACE /* HZAchievementsNetworking.h */,
-				86B9428F175808F800B8EACE /* HZAchievementsNetworking.m */,
-				86B942311758086300B8EACE /* HZLeaderboardsNetworking.h */,
-				86B942321758086300B8EACE /* HZLeaderboardsNetworking.m */,
-			);
-			name = Data;
-			sourceTree = "<group>";
-		};
 		86B9435C17581C4700B8EACE /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -830,14 +706,6 @@
 				86234AAF18581B800071957B /* HZVideoControlView.m */,
 			);
 			name = "User Interface";
-			sourceTree = "<group>";
-		};
-		86B9436E17581EE300B8EACE /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				862D5379176D14F400C4221F /* Heyzap.bundle */,
-			);
-			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1000,7 +868,6 @@
 				501839E21778ED43008DE90E /* Default.png in Resources */,
 				501839E31778ED43008DE90E /* Default@2x.png in Resources */,
 				501839E41778ED43008DE90E /* Default-568h@2x.png in Resources */,
-				501839E51778ED43008DE90E /* Heyzap.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1012,7 +879,6 @@
 				86B941EE1758056B00B8EACE /* Default.png in Resources */,
 				86B941F01758056B00B8EACE /* Default@2x.png in Resources */,
 				86B941F21758056B00B8EACE /* Default-568h@2x.png in Resources */,
-				862D537A176D14F400C4221F /* Heyzap.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
