@@ -15,3 +15,22 @@ You may want to contribute features, fix bugs, or just poke around the source co
 Support
 ------
 If you spot a bug, or have trouble integrating the SDK, [open an Issue on Github](https://github.com/Heyzap/ios-sdk/issues).
+
+Making a Release
+----------------
+
+Making a release is unnecessary for development purposes, but you may want to build the SDK nonetheless. To do so, first install dependencies:
+
+```
+brew update
+brew install ant
+```
+Then build the SDK:
+```
+./build.sh
+```
+This will generate 3 build products:
+
+* `HeyzapAds.framework`, which is recommended for iOS projects showing ads
+* `libHeyzap.a` (and associated headers), which is equivalent to `HeyzapAds.framework`, but is easier to integrate into 3rd party build processes (like Unity).
+* `Heyzap.bundle` and `Heyzap.framework`, which includes Ads as well as Heyzap's leaderboards and achievements products
