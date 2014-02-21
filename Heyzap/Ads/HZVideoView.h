@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Heyzap. All rights reserved.
 //
 
-#import <Heyzap/Heyzap.h>
 #import "HZRotatingView.h"
 #import "HZAdViewController.h"
 
