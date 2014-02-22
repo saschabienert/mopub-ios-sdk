@@ -10,6 +10,7 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import "HZVideoControlView.h"
 #import "HZDevice.h"
+#import "HZLog.h"
 
 @interface HZVideoView()
 @property (nonatomic) MPMoviePlayerController *player;

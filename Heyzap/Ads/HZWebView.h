@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Heyzap/Heyzap.h>
 #import "HZRotatingView.h"
 #import "HZAdViewController.h"
 

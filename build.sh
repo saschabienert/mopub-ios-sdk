@@ -7,7 +7,7 @@ SDK_BUILD_PATH="$PROJ_PATH/build"
 ADS_BUILD_PATH="$EXEC_PATH/ads-sdk-build"
 
 if [ $# -gt 0 ]; then
-    sed -i "" "s/^#define\ SDK_VERSION.*/#define\ SDK_VERSION\ @\"$1\"/" Heyzap/Heyzap/HeyzapSDKPrivate.h
+    sed -i "" "s/^#define\ SDK_VERSION.*/#define\ SDK_VERSION\ @\"$1\"/" Heyzap/Ads/HeyzapAds.h
 fi
 
 ant -buildfile build.xml all

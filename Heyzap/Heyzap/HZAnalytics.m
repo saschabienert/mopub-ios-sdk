@@ -7,10 +7,10 @@
 //
 
 #import "HZAnalytics.h"
-#import "HeyzapSDKPrivate.h"
 #import "HZUtils.h"
 #import "HZLog.h"
 #import "HZAPIClient.h"
+#import "HeyzapAds.h"
 
 #define ANALYTIC_URL @"/mobile/track_sdk_event"
 

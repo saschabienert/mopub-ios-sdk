@@ -16,9 +16,8 @@
 #import "HZAvailability.h"
 #import "HZUtils.h"
 
-#import "HeyzapSDKPrivate.h"
-
 #import "HZDictionaryUtils.h"
+#import "HeyzapAds.h"
 
 static NSString * const kHZAPIBaseURLString = @"http://sdk.heyzap.com";
 

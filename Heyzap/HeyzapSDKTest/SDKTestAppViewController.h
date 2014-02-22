@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Heyzap/Heyzap.h>
 #import "BaseTestAppViewController.h"
+#import "HeyzapAds.h"
 
 @interface SDKTestAppViewController : BaseTestAppViewController <HZAdsDelegate,UITextFieldDelegate, HZIncentivizedAdDelegate>
 

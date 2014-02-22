@@ -2,14 +2,12 @@
 <project name="iOS Build Scripts" default="all">
 
   <property name="ads.product.dir" value="ads-sdk-build" />
-  <property name="heyzap.product.dir" value="sdk-build" />
   <property name="build.product.dir" value="sdk-products-build" />
 
   <property name="build.dir" value="Heyzap/build" />
 
   <target name="clean">
     <delete dir="${build.dir}" />
-    <delete dir="${heyzap.product.dir}" />
     <delete dir="${ads.product.dir}" />
     <delete dir="${build.product.dir}" />
   </target>
@@ -23,30 +21,12 @@
         <arg line="-configuration Release"/>
     </exec>
 
-    <mkdir dir="${heyzap.product.dir}" />
     <mkdir dir="${build.product.dir}" />
-
-    <!-- Copy over Heyzap.framework -->
-    <copy todir="${heyzap.product.dir}/Heyzap.framework">
-      <fileset dir="${build.dir}/Release-iphoneos/Heyzap.framework" followsymlinks="false" />
-    </copy>
-
-    <!-- Recreate symlink structure for Heyzap.framework :-( (Ant does not copy symlinks) -->
-    <symlink link="${heyzap.product.dir}/Heyzap.framework" resource="Versions/A/Heyzap" />
-    <symlink link="${heyzap.product.dir}/Heyzap.framework/Versions/Current" resource="A" />
-    <symlink link="${heyzap.product.dir}/Heyzap.framework/Headers" resource="Versions/A/Headers" />
-
-    <!-- Bundle copy -->
-    <copy todir="${heyzap.product.dir}/Heyzap.bundle">
-      <fileset dir="${build.dir}/Release-iphoneos/Heyzap.bundle" followsymlinks="false" />
-    </copy>
 
     <!-- Put headers in the products dir -->
     <copy todir="${build.product.dir}/Headers">
       <fileset dir="${build.dir}/Release-iphoneos/HeyzapHeaders" />
     </copy>
-
-    <copy file="${build.dir}/Release-iphoneos/Heyzap.framework/Versions/Current/Heyzap" tofile="${build.product.dir}/libHeyzap.a" />
     
     <!-- Ads -->
     <mkdir dir="${ads.product.dir}" />
