@@ -12,9 +12,9 @@ You may want to contribute features, fix bugs, or just poke around the source co
 
 <img src="/Screenshots/chooseTarget.png" alt="Choose Target">
 
-Support
+Support & Contributions
 ------
-If you spot a bug, or have trouble integrating the SDK, [open an Issue on Github](https://github.com/Heyzap/ios-sdk/issues).
+If you spot a bug, or have trouble integrating the SDK, [open an Issue on Github](https://github.com/Heyzap/ios-sdk/issues) or contact support@heyzap.com. We welcome any contributions via pull requests.
 
 Making a Release
 ----------------
