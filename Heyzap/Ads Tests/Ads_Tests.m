@@ -27,11 +27,6 @@
     [super tearDown];
 }
 
-- (void)testExample
-{
-    XCTAssert(1 == 1, @"One should equal 1");
-}
-
 - (void)testCreativeTypes
 {
     XCTAssert([HZVideoAdModel isValidForCreativeType:@"video"], @"Should be valid for video");

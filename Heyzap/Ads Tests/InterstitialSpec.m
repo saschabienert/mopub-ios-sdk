@@ -13,13 +13,21 @@
 SPEC_BEGIN(InterstitialSpec)
 
 describe(@"HZInterstitialAdModel", ^{
-    context(@"Class methods", ^{
-        it(@"Shouldn't be valid for video", ^{
-            NSUInteger a = 16;
-            NSUInteger b = 26;
-            [[theValue(a + b) should] equal:theValue(42)];
+    
+    context(@"Initialization", ^{
+        it(@"Should initialize with portrait interstitial JSON", ^{
+            HZInterstitialAdModel *ad = [[HZInterstitialAdModel alloc] initWithDictionary:[TestJSON portraitInterstitialJSON]];
+            [[ad shouldNot] beNil];
         });
+        
+//        it(@"should fail without ad_html", ^{
+//            NSMutableDictionary *json = [TestJSON portraitInterstitialJSON];
+//            [json removeObjectForKey:@"ad_html"];
+//            HZInterstitialAdModel *ad = [[HZInterstitialAdModel alloc] initWithDictionary:json];
+//            [[ad should] beNil];
+//        });
     });
+    
 });
 
 SPEC_END
