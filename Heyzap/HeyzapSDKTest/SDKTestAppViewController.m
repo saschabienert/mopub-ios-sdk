@@ -177,6 +177,8 @@ typedef enum {
 
 NSString * const kCreativeIDTextFieldAccessibilityLabel = @"creative ID";
 NSString * const kShowAdButtonAccessibilityLabel = @"show ad";
+NSString * const kFetchAdButtonAccessibilityLabel = @"fetchAd";
+NSString * const kViewAccessibilityLabel = @"testAppView";
 
 //these are the same as declred in HZAPIClient.m - included here because we don't want to make them public but need it to work when testing new SDK packages
 NSString * const kHZAPIClientDidReceiveResponseNotification = @"HZAPIClientDidReceiveResponse";
@@ -191,6 +193,8 @@ const CGFloat kLeftMargin = 10;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.view.accessibilityLabel = kViewAccessibilityLabel;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestNotification:) name:kHZAPIClientDidSendRequestNotification object:nil];
     
@@ -213,6 +217,7 @@ const CGFloat kLeftMargin = 10;
     [self changeColorOfShowButton];
     
     UIButton *fetchButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
+    fetchButton.accessibilityLabel = kFetchAdButtonAccessibilityLabel;
     fetchButton.frame = CGRectMake(CGRectGetMaxX(self.showButton.frame) + 10.0, 10.0, 89.0, 25.0);
     fetchButton.backgroundColor = [UIColor lightTextColor];
     fetchButton.layer.cornerRadius = 4.0;
