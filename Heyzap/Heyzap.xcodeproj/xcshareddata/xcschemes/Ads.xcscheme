@@ -28,7 +28,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7F79DEB258724695A5152C69"
+               BlueprintIdentifier = "A5F84FBDA1924EAEA3539C8A"
                BuildableName = "libPods-Ads Tests.a"
                BlueprintName = "Pods-Ads Tests"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
@@ -42,16 +42,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "86B943371758108800B8EACE"
-               BuildableName = "AdsTests.octest"
-               BlueprintName = "AdsTests"
-               ReferencedContainer = "container:Heyzap.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
          <TestableReference
             skipped = "NO">
             <BuildableReference

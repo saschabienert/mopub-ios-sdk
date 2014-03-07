@@ -234,6 +234,7 @@
     return output;
 }
 
+// Warning: iOS will fail to give an advertising identifier when running tests from the command line. Stub this method as a workaround.
 - (NSString *)HZadvertisingIdentifier {
     if(NSClassFromString(@"ASIdentifierManager")) {
         return [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
