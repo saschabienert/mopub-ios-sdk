@@ -156,14 +156,14 @@
         storeController.delegate = self; // productViewControllerDidFinish
         
         NSDictionary *productParameters = @{ SKStoreProductParameterITunesItemIdentifier :  appID};
-        
+        NSLog(@"About to show SK STore product");
         // WWDC 2012 Session 302: Selling Products with Store Kit does the `presentViewController` step inside the `completionBlock` after checking for the `result`. The downside to this is that we have to wait for that load to finish. As an alternative, I present immediately and if we run into an error, dismiss the ad and fallback to the regular app store.
         
         // Even in the regular Heyzap app, if I open SKStoreProductViewController a bunch of times I get an error about not being able to load StoreKit. There's nothing on the internet to solve this, so I presume there's some kind of rate limiting or XPC (Interprocess Communication; Remote View Controllers) is just generally unreliable.
         // You can check how often we run into this w/ this Kibana query @message="Error showing SKStoreProductViewController(modal app store)"
-        
         [storeController loadProductWithParameters:productParameters completionBlock:^(BOOL result, NSError *error) {
             if (!result || error) {
+                
                 [[HZAdsAPIClient sharedClient] logMessageToHeyzap:@"Error showing SKStoreProductViewController(modal app store)"
                                                             error:error
                                                          userInfo:@{@"Explanation": @"This means someone clicked on the ad but we couldn't show them the modal app store. We fallback to the regular app store if this is the case."}];

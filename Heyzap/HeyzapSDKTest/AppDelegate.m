@@ -63,6 +63,10 @@
     [self.window setRootViewController: self.navController];
     [self.window makeKeyAndVisible];
     
+#if INTEGRATION_TESTING
+    [[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
+#endif
+    
     return YES;
 }
 

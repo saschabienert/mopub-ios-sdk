@@ -1,0 +1,9 @@
+platform :ios, '5.0'
+
+target :"Ads Tests", :exclusive => true do
+   pod 'Kiwi/XCTest'
+end
+
+target :'Integration Tests', :exclusive => true do
+  pod 'Subliminal', :git => 'https://github.com/MaxGabriel/Subliminal.git'
+end
