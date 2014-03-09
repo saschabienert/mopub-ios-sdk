@@ -32,7 +32,7 @@ Then build the SDK:
 ./build.sh <marketing-version>
 # Example: ./build.sh 6.4.0
 ```
-This will generate 3 build products:
+This will generate 2 build products:
 
 * `HeyzapAds.framework`, which is recommended for iOS projects showing ads
 * `libHeyzap.a` (and associated headers), which is equivalent to `HeyzapAds.framework`, but is easier to integrate into 3rd party build processes (like Unity).
