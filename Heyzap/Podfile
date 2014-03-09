@@ -2,6 +2,7 @@ platform :ios, '5.0'
 
 target :"Ads Tests", :exclusive => true do
    pod 'Kiwi/XCTest', :git => 'https://github.com/allending/Kiwi.git'
+   pod 'OHHTTPStubs'
 end
 
 target :'Integration Tests', :exclusive => true do
