@@ -14,6 +14,7 @@
 #import "HZAdsFetchManager.h"
 #import "HZUtils.h"
 #import "HZAdsManager.h"
+#import "HZDevice.h"
 
 @interface HZInterstitialAd(Testing)
 
@@ -29,6 +30,7 @@ describe(@"InterstitialFetch", ^{
         // Bundle Identifier is coming back nil because [NSBundle mainBundle] returns nil (bundleForClass works)
         [HZUtils stub:@selector(bundleIdentifier) andReturn:@"Heyzap.Ads-Tests"];
         [HZAdsManager stub:@selector(runInitialTasks)]; // ProcessInfo, install reporting, etc. causes problems
+        [[HZDevice currentDevice] stub:@selector(HZadvertisingIdentifier) andReturn:@"1234-5432-5653-4543"];
     });
     
     context(@"When doing a fetch", ^{
