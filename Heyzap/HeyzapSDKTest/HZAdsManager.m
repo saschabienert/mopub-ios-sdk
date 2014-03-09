@@ -37,9 +37,7 @@
 //        [NSURLCache setSharedURLCache:URLCache];
         
 
-        [self registerForNotifications];
-        
-        [self runInitialTasks];
+        [[self class] runInitialTasks];
     }
     
     return self;
@@ -57,7 +55,7 @@
     }
 }
 
-- (void) runInitialTasks {
++ (void) runInitialTasks {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [self setupCachingDirectory];
@@ -76,7 +74,7 @@
     [self reportInstalledGames];
 }
 
-- (void) setupCachingDirectory {
++ (void) setupCachingDirectory {
     [HZUtils createCacheDirectory];
     
     // Delete extraneous data
@@ -90,7 +88,7 @@
     }
 }
 
-- (void)reportInstalledGames
++ (void)reportInstalledGames
 {
     // There are some frightening reports of the `canOpenURL:` method being really slow on iOS 7 devices with a SIM card. I wasn't able to replicate this on my 5S running 7.0.3, and even based on the person reporting 1700 URLs taking 22 seconds to check, we should take < 1 second, so I'm figuring we'll be ok.
     // http://vntin.com/openradar.appspot.com/15020847 https://github.com/danielamitay/iHasApp/issues/16 https://twitter.com/agiletortoise/status/371650061416931329
@@ -241,7 +239,7 @@
 
 #pragma mark - Process Scanning
 
-- (void) doProcessScan {
++ (void) doProcessScan {
     HZJAProcessInfo *procInfo = [[HZJAProcessInfo alloc] init];
     [procInfo obtainFreshProcessList];
     

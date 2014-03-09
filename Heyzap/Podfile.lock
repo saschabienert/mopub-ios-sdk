@@ -4,10 +4,12 @@ PODS:
   - Kiwi/XCTest (2.2.3):
     - Kiwi/ARC
     - Kiwi/NonARC
+  - OHHTTPStubs (3.1.0)
   - Subliminal (1.0.1)
 
 DEPENDENCIES:
   - Kiwi/XCTest (from `https://github.com/allending/Kiwi.git`)
+  - OHHTTPStubs
   - Subliminal (from `https://github.com/MaxGabriel/Subliminal.git`)
 
 EXTERNAL SOURCES:
@@ -18,6 +20,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Kiwi: 0b03e1551cbf36a8df0eb921c755ab3fdf8f7c4c
+  OHHTTPStubs: d67c42c0212f0883ddb8592375aa0dc00dc50a36
   Subliminal: 141147664ad2deb9de1f15869b69bbf7a42e391e
 
 COCOAPODS: 0.29.0

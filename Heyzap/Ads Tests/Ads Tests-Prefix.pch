@@ -8,4 +8,7 @@
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
     #import "TestJSON.h"
+    #import "NSString+Tests.h"
+    #import "OHHTTPStubs+Heyzap.h"
+    #import "HeyzapAds.h"
 #endif
