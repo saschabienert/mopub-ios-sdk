@@ -33,6 +33,10 @@ describe(@"InterstitialFetch", ^{
         [[HZDevice currentDevice] stub:@selector(HZadvertisingIdentifier) andReturn:@"1234-5432-5653-4543"];
     });
     
+    afterAll(^{
+        [OHHTTPStubs removeAllStubs];
+    });
+    
     context(@"When doing a fetch", ^{
         it(@"should succeed with known good data", ^{
             
