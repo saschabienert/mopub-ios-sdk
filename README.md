@@ -12,6 +12,18 @@ You may want to contribute features, fix bugs, or just poke around the source co
 
 <img src="/DocumentationImages/chooseTarget.png" alt="Choose Target">
 
+Testing
+-------
+While you can run the test app from a fresh clone of the repo, Cocoapods is required to install the dependencies for testing:
+
+```
+gem install cocoapods
+cd Heyzap && pod install
+open Heyzap.xcworkspace
+```
+
+For information on running the tests, see the [wiki](https://github.com/heyzap/ios-sdk/wiki#wiki-testing).
+
 Support & Contributions
 -----------------------
 If you spot a bug, or have trouble integrating the SDK, [open an Issue on Github](https://github.com/Heyzap/ios-sdk/issues) or contact support@heyzap.com. We welcome any contributions via pull requests.
