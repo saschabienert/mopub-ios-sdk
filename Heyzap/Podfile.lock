@@ -7,15 +7,17 @@ PODS:
   - Subliminal (1.0.1)
 
 DEPENDENCIES:
-  - Kiwi/XCTest
+  - Kiwi/XCTest (from `https://github.com/allending/Kiwi.git`)
   - Subliminal (from `https://github.com/MaxGabriel/Subliminal.git`)
 
 EXTERNAL SOURCES:
+  Kiwi:
+    :git: https://github.com/allending/Kiwi.git
   Subliminal:
     :git: https://github.com/MaxGabriel/Subliminal.git
 
 SPEC CHECKSUMS:
-  Kiwi: 04c51e880831d291748ec702d42c4101f7eb95c9
+  Kiwi: 0b03e1551cbf36a8df0eb921c755ab3fdf8f7c4c
   Subliminal: 141147664ad2deb9de1f15869b69bbf7a42e391e
 
 COCOAPODS: 0.29.0

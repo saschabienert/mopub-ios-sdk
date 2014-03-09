@@ -1,8 +1,8 @@
 Heyzap iOS SDK
-=======
+==============
 
 Integrating the SDK
-----
+-------------------
 Heyzap is still hosting its SDK and documentation at https://developers.heyzap.com/docs. If you're looking to integrate ads, we suggest downloading our SDK rather than building from source.
 
 
@@ -13,7 +13,7 @@ You may want to contribute features, fix bugs, or just poke around the source co
 <img src="/DocumentationImages/chooseTarget.png" alt="Choose Target">
 
 Support & Contributions
-------
+-----------------------
 If you spot a bug, or have trouble integrating the SDK, [open an Issue on Github](https://github.com/Heyzap/ios-sdk/issues) or contact support@heyzap.com. We welcome any contributions via pull requests.
 
 Making a Release
