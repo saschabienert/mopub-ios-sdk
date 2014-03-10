@@ -34,6 +34,7 @@
 
 /* Begin PBXBuildFile section */
 		501F9D7418989B8A00127E49 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
+		502BE84F18CD530D00EB6415 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 502BE84E18CD530D00EB6415 /* TestUtilities.m */; };
 		5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */; };
 		504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C518B592CE00E00E6C /* ServerSelectionViewController.m */; };
 		504514C918B5A59100E00E6C /* BaseTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C818B5A59100E00E6C /* BaseTestAppViewController.m */; };
@@ -224,6 +225,8 @@
 /* Begin PBXFileReference section */
 		090B07CD6F614B1286E88909 /* Pods-Integration Tests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integration Tests.xcconfig"; path = "Pods/Pods-Integration Tests.xcconfig"; sourceTree = "<group>"; };
 		501F9D7318989B8A00127E49 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		502BE84D18CD530D00EB6415 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
+		502BE84E18CD530D00EB6415 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
 		5045147D18B58C5A00E00E6C /* SDCSegmentedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCSegmentedViewController.h; sourceTree = "<group>"; };
 		5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCSegmentedViewController.m; sourceTree = "<group>"; };
 		504514C418B592CE00E00E6C /* ServerSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerSelectionViewController.h; sourceTree = "<group>"; };
@@ -476,6 +479,8 @@
 				509B5BE318C943B8003A7CB9 /* TestInterstitials.m */,
 				509B5BE518C94490003A7CB9 /* UIViewController+IntegrationTests.h */,
 				509B5BE618C94490003A7CB9 /* UIViewController+IntegrationTests.m */,
+				502BE84D18CD530D00EB6415 /* TestUtilities.h */,
+				502BE84E18CD530D00EB6415 /* TestUtilities.m */,
 			);
 			path = "Integration Tests";
 			sourceTree = "<group>";
@@ -1079,6 +1084,7 @@
 				50A36AD418C9405A00FA84F0 /* main.m in Sources */,
 				509B5BE718C94490003A7CB9 /* UIViewController+IntegrationTests.m in Sources */,
 				50A36AD518C9405A00FA84F0 /* ServerSelectionViewController.m in Sources */,
+				502BE84F18CD530D00EB6415 /* TestUtilities.m in Sources */,
 				50A36AD618C9405A00FA84F0 /* AppDelegate.m in Sources */,
 				509B5BE418C943B8003A7CB9 /* TestInterstitials.m in Sources */,
 				50A36AD718C9405A00FA84F0 /* SDCSegmentedViewController.m in Sources */,

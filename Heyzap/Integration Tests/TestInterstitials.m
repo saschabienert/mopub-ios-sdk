@@ -10,6 +10,7 @@
 #import "SDKTestAppViewController.h"
 #import "SLTerminal.h"
 #import "UIViewController+IntegrationTests.h"
+#import "TestUtilities.h"
 
 @interface MGASimpleTest : SLTest
 
@@ -20,12 +21,10 @@
 - (void)setUpTest {
 	// Navigate to the part of the app being exercised by the test cases,
 	// initialize SLElements common to the test cases, etc.
-    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait];
 }
 
 - (void)tearDownTest {
 	// Navigate back to "home", if applicable.
-    [self wait:2];
 }
 
 - (void)resetTextField
@@ -47,18 +46,55 @@ NSString * const kVideoAdCreativeID = @"1246917"; // ?
 
 - (void)testClosingPortraitFullScreen
 {
+    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait];
     [self resetTextField];
     [self showAdForCreativeID:kPortraitFullScreenInterstitialCreativeID];
     [self closeAd];
 }
 
-//- (void)testClosingVideo
-//{
-//    [self resetTextField];
-//    [self showAdForCreativeID:kVideoAdCreativeID];
-//    [self wait:15];
+- (void)testLandscape
+{
+    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationLandscapeLeft];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [HZInterstitialAd setCreativeID:512999];
+        [HZInterstitialAd fetch];
+    });
+    
+    waitUntil(^BOOL{
+        return [HZInterstitialAd isAvailable];
+    }, 10);
+    
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        
+    });
+}
+
+- (void)focus_testVideo
+{
+    static const int videoCreativeID = 1246917;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [HZVideoAd setCreativeID:videoCreativeID];
+        [HZVideoAd fetch];
+    });
+    
+    waitUntil(^BOOL{
+        return [HZVideoAd isAvailable];
+    }, 15);
+    
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [HZVideoAd show];
+    });
+    
+    
+    // Wait for skip button to show up.
+    [self wait:6];
+    
+    [[SLDevice currentDevice] captureScreenshotWithFilename:[NSString stringWithFormat:@"Creative%i",videoCreativeID]];
+    SLElement *skipButton = [SLElement elementWithAccessibilityLabel:@"skip"]; // Need to give this a label.
+    [UIAElement(skipButton) tap];
+    
 //    [self closeAd];
-//}
+}
 
 - (void)showAdForCreativeID:(NSString *)creativeID
 {
@@ -71,6 +107,11 @@ NSString * const kVideoAdCreativeID = @"1246917"; // ?
     });
     
     SLButton *fetchAdButton = [SLButton elementWithAccessibilityLabel:kFetchAdButtonAccessibilityLabel];
+    
+    SLAssertTrue([fetchAdButton isValid], @"Button is valid");
+    SLLog(@"isValid = %i",[fetchAdButton isValid]);
+    SLAssertTrue([fetchAdButton isVisible], @"is also visible");
+    
     SLAssertTrue([UIAElement(fetchAdButton) isValidAndVisible], @"fetchAdButton should be valid and visible");
     
     [UIAElement(fetchAdButton) tap];
