@@ -7,4 +7,5 @@ end
 
 target :'Integration Tests', :exclusive => true do
   pod 'Subliminal', :git => 'https://github.com/MaxGabriel/Subliminal.git'
+  pod 'OCMockito'
 end

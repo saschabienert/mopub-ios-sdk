@@ -12,6 +12,9 @@
 #import "UIViewController+IntegrationTests.h"
 #import "TestUtilities.h"
 
+#define MOCKITO_SHORTHAND
+#import <OCMockito/OCMockito.h>
+
 @interface MGASimpleTest : SLTest
 
 @end
@@ -27,50 +30,88 @@
 	// Navigate back to "home", if applicable.
 }
 
-- (void)resetTextField
+#pragma mark - Portrait Tests
+
+- (void)testPortraitFullscreenCandyCrush
 {
+    [self testInterstitialWithCreativeID:231237 deviceOrientation:UIDeviceOrientationPortrait];
+}
+
+- (void)testPortraitScreenshotsFarmHeroes
+{
+    [self testInterstitialWithCreativeID:1079355 deviceOrientation:UIDeviceOrientationPortrait];
+}
+
+- (void)testPortraitSocialStream
+{
+    [self testInterstitialWithCreativeID:512037 deviceOrientation:UIDeviceOrientationPortrait];
+}
+
+#pragma mark - Landscape Tests
+
+- (void)testLandscapeFullscreenGameOfWar
+{
+    [self testInterstitialWithCreativeID:495013 deviceOrientation:UIDeviceOrientationLandscapeRight];
+}
+
+- (void)testLandscapeScreenshotsGameOfWar
+{
+    [self testInterstitialWithCreativeID:495021 deviceOrientation:UIDeviceOrientationLandscapeRight];
+}
+
+- (void)testLandscapeFullscreenCleanDragonVale
+{
+    [self testInterstitialWithCreativeID:554113 deviceOrientation:UIDeviceOrientationLandscapeRight];
+}
+
+- (void)testInterstitialWithCreativeID:(const int)creativeID deviceOrientation:(const UIDeviceOrientation)orientation
+{
+    [[SLDevice currentDevice] setOrientation:orientation];
+    [self wait:0.5];
+    
+    
+    id <HZAdsDelegate> delegate = mockProtocol(@protocol(HZAdsDelegate));
+    [HeyzapAds setDelegate:delegate];
+    
+    
     dispatch_sync(dispatch_get_main_queue(), ^{
-        SDKTestAppViewController *adViewController = [[self class] testViewController];
-        adViewController.adsTextField.text = @"";
-    });
-}
-
-+ (SDKTestAppViewController *)testViewController
-{
-    UIViewController *rootVC = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-    return (id) [rootVC recursiveChildViewController];
-}
-
-NSString * const kPortraitFullScreenInterstitialCreativeID = @"231237"; // Candy crush saga
-NSString * const kVideoAdCreativeID = @"1246917"; // ?
-
-- (void)testClosingPortraitFullScreen
-{
-    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait];
-    [self resetTextField];
-    [self showAdForCreativeID:kPortraitFullScreenInterstitialCreativeID];
-    [self closeAd];
-}
-
-- (void)testLandscape
-{
-    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationLandscapeLeft];
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        [HZInterstitialAd setCreativeID:512999];
+        [HZInterstitialAd setCreativeID:creativeID];
         [HZInterstitialAd fetch];
     });
+    
     
     waitUntil(^BOOL{
         return [HZInterstitialAd isAvailable];
     }, 10);
     
+    SLAssertNoThrow([verify(delegate) didReceiveAdWithTag:@"default"], @"Delegate should get didReceiveAdWithTag callback");
+    
     dispatch_sync(dispatch_get_main_queue(), ^{
-        
+        [HZInterstitialAd show];
     });
+    
+    [self wait:1]; // wait for screenshot
+    
+    [[SLDevice currentDevice] captureScreenshotWithFilename:[NSString stringWithFormat:@"Creative%i",creativeID]];
+    
+    SLAssertNoThrow([verify(delegate) didShowAdWithTag:@"default"], @"Delegate should get didShowAdWithTag callback");
+    
+    // I think Subliminal is failing on finding elements in landscape, so just close manually.
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [HZInterstitialAd hide];
+    });
+    [self wait:1]; // Wait for hide animation to complete.
+    SLAssertNoThrow([verify(delegate) didHideAdWithTag:@"default"], @"Delegate should get didHideAd callback");
 }
 
-- (void)focus_testVideo
+// This test is different b/c it needs to check for audio callbacks, skip the video, etc.
+- (void)testVideo
 {
+    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationLandscapeRight];
+    [self wait:0.5];
+    id <HZAdsDelegate> delegate = mockProtocol(@protocol(HZAdsDelegate));
+    [HeyzapAds setDelegate:delegate];
+    
     static const int videoCreativeID = 1246917;
     dispatch_sync(dispatch_get_main_queue(), ^{
         [HZVideoAd setCreativeID:videoCreativeID];
@@ -81,10 +122,16 @@ NSString * const kVideoAdCreativeID = @"1246917"; // ?
         return [HZVideoAd isAvailable];
     }, 15);
     
+    SLAssertNoThrow([verify(delegate) didReceiveAdWithTag:@"default"], @"Delegate should get didReceiveAdWithTag callback");
+    
     dispatch_sync(dispatch_get_main_queue(), ^{
         [HZVideoAd show];
     });
     
+    [self wait:1];
+    
+    SLAssertNoThrow([verify(delegate) willStartAudio], @"Delegate should get willStartAudio callback");
+    SLAssertNoThrow([verify(delegate) didShowAdWithTag:@"default"], @"Delegate should get didShowAdWithTag callback");
     
     // Wait for skip button to show up.
     [self wait:6];
@@ -93,68 +140,13 @@ NSString * const kVideoAdCreativeID = @"1246917"; // ?
     SLElement *skipButton = [SLElement elementWithAccessibilityLabel:@"skip"]; // Need to give this a label.
     [UIAElement(skipButton) tap];
     
-//    [self closeAd];
-}
-
-- (void)showAdForCreativeID:(NSString *)creativeID
-{
-    [self resetTextField];
-    SLTextField *textField = [SLTextField elementWithAccessibilityLabel:kCreativeIDTextFieldAccessibilityLabel];
-    [textField setText:creativeID ?: @""];
-    
+    // I think Subliminal is failing on finding elements in landscape, so just close manually.
     dispatch_sync(dispatch_get_main_queue(), ^{
-        [[[[self class] testViewController] view] endEditing:YES];
+        [HZVideoAd hide];
     });
-    
-    SLButton *fetchAdButton = [SLButton elementWithAccessibilityLabel:kFetchAdButtonAccessibilityLabel];
-    
-    SLAssertTrue([fetchAdButton isValid], @"Button is valid");
-    SLLog(@"isValid = %i",[fetchAdButton isValid]);
-    SLAssertTrue([fetchAdButton isVisible], @"is also visible");
-    
-    SLAssertTrue([UIAElement(fetchAdButton) isValidAndVisible], @"fetchAdButton should be valid and visible");
-    
-    [UIAElement(fetchAdButton) tap];
-    
-    // Wait for the fetch.
-    [self wait:1.5];
-    
-    SLButton *showAdButton = [SLButton elementWithAccessibilityLabel:kShowAdButtonAccessibilityLabel];
-    SLAssertTrue([UIAElement(showAdButton) isValidAndVisible], @"showAdButton should be valid and visible");
-    
-    
-    [showAdButton tap];
-    [self wait:1]; // Manually wait for the screenshot.
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().captureScreenWithName(\"Creative%@\")",creativeID];
-}
-
-- (void)clickAd
-{
-    [self wait:2];
-    SLLog(@"Clicking Ad");
-    SLElement *installButton = [SLElement elementWithAccessibilityLabel:@"Install for Free"];
-    SLLog(@"Install button = %@",installButton);
-    SLAssertTrue([UIAElement(installButton) isValidAndVisible], @"install button should be visible");
-    [installButton logElement];
-    [installButton tap];
-    
-    SLLog(@"Canceling");
-    SLStaticElement *cancel = [[SLStaticElement alloc] initWithUIARepresentation:@"UIATarget.localTarget().frontMostApp().navigationBar().leftButton()"];
-    SLAssertTrueWithTimeout([UIAElement(cancel) isValidAndVisible], 2, @"After clicking the ad, we should see the cancel button of the SKStoreProductViewController");
-    
-    [cancel tap];
-    
-    SLAssertTrue([installButton isInvalidOrInvisible], @"We should no longer see the install button.");
-}
-
-- (void)closeAd
-{
-    SLElement *closeButton = [SLElement elementWithAccessibilityLabel:@"Close Ad"];
-    SLAssertTrueWithTimeout(UIAElement([closeButton isValidAndVisible]), 4, @"We should see close button after showing ad");
-    
-    [closeButton tap];
-    
-    SLAssertTrueWithTimeout([closeButton isInvalidOrInvisible], 4, @"After clicking close, we shouldn't see close button");
+    [self wait:1]; // Wait for hide animation to complete.
+    SLAssertNoThrow([verify(delegate) didHideAdWithTag:@"default"], @"Delegate should get didHideAd callback");
+    SLAssertNoThrow([verify(delegate) didFinishAudio], @"Delegate should get didFinishAudio callback");
 }
 
 

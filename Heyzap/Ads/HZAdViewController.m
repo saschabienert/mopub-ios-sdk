@@ -87,7 +87,9 @@
         // Revert back to old status bar state
         [[UIApplication sharedApplication] setStatusBarHidden: self.statusBarHidden];
         
-        [[HZAdsManager sharedManager] fireCallbackOnStatusDelegate: @selector(didHideAdWithTag:) forTag: self.ad.tag];
+        if ([[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(didHideAdWithTag:)]) {
+            [[HZAdsManager sharedManager].statusDelegate didHideAdWithTag:self.ad.tag];
+        }
         
         if ([self.ad.adUnit isEqualToString: @"interstitial"]) {
             if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
@@ -107,14 +109,18 @@
 
 - (void) didImpression {
     if ([self.ad onImpression]) {
-        [[HZAdsManager sharedManager] fireCallbackOnStatusDelegate: @selector(didShowAdWithTag:) forTag: self.ad.tag];
+        if ([[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(didShowAdWithTag:)]) {
+            [[HZAdsManager sharedManager].statusDelegate didShowAdWithTag:self.ad.tag];
+        }
     }
 }
 
 - (void) didClickWithURL: (NSURL *) url {
     
     if ([self.ad onClick]) {
-        [[HZAdsManager sharedManager] fireCallbackOnStatusDelegate: @selector(didClickAdWithTag:) forTag: self.ad.tag];
+        if ([[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(didClickAdWithTag:)]) {
+            [[HZAdsManager sharedManager].statusDelegate didClickAdWithTag:self.ad.tag];
+        }
     }
 
     NSDictionary *queryDictionary = [HZUtils hzQueryDictionaryFromURL: url];

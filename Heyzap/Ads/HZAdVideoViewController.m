@@ -63,7 +63,9 @@
 }
 
 - (void) show {
-    [[HZAdsManager sharedManager] fireCallbackOnStatusDelegate: @selector(willStartAudio) forTag: nil];
+    if ([[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(willStartAudio)]) {
+        [[HZAdsManager sharedManager].statusDelegate willStartAudio];
+    }
     
     [super show];
 }
@@ -77,8 +79,15 @@
             [self.ad onIncentiveComplete];
         }
         
-        SEL selectorToFire = self.didFinishVideo ? @selector(didCompleteAd) : @selector(didFailToCompleteAd);
-        [[HZAdsManager sharedManager] fireCallbackOnIncentivizedDelegate: selectorToFire];
+        if (self.didFinishVideo) {
+            if ([[HZAdsManager sharedManager].incentivizedDelegate respondsToSelector:@selector(didCompleteAd)]) {
+                [[HZAdsManager sharedManager].incentivizedDelegate didCompleteAd];
+            }
+        } else {
+            if ([[HZAdsManager sharedManager].incentivizedDelegate respondsToSelector:@selector(didFailToCompleteAd)]) {
+                [[HZAdsManager sharedManager].incentivizedDelegate didFailToCompleteAd];
+            }
+        }
         
     }
     
@@ -89,11 +98,15 @@
     switch(tag) {
         case kHZWebViewTag:
             [self.view bringSubviewToFront: self.webView];
-            [[HZAdsManager sharedManager] fireCallbackOnStatusDelegate: @selector(didFinishAudio) forTag: nil];
+            if ([[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(didFinishAudio)]) {
+                [[HZAdsManager sharedManager].statusDelegate didFinishAudio];
+            }
             break;
         case kHZVideoViewTag:
         default:
-            [[HZAdsManager sharedManager] fireCallbackOnStatusDelegate: @selector(willStartAudio) forTag: nil];
+            if ([[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(willStartAudio)]) {
+                [[HZAdsManager sharedManager].statusDelegate willStartAudio];
+            }
             [self.view bringSubviewToFront: self.videoView];
             break;
     }

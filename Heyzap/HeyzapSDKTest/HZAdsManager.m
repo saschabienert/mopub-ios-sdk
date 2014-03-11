@@ -136,26 +136,6 @@
     return NO;
 }
 
-#pragma mark - Status Delegates
-
-- (void) fireCallbackOnStatusDelegate: (SEL)selector forTag: (NSString *) tag {
-    if (self.statusDelegate != nil && [self.statusDelegate respondsToSelector: selector]) {
-        // This gets around issues with leaks that occur without a known selector.
-        IMP imp = [(NSObject *)self.statusDelegate methodForSelector:selector];
-        void (*func)(id, SEL, __attribute((ns_consumed)) NSString  *x) = (void *)imp;
-        func(self.statusDelegate, selector, tag);
-    }
-}
-
-- (void) fireCallbackOnIncentivizedDelegate: (SEL)selector {
-    if (self.incentivizedDelegate != nil && [self.incentivizedDelegate respondsToSelector: selector]) {
-        // This gets around issues with leaks that occur without a known selector.
-        IMP imp = [(NSObject *)self.incentivizedDelegate methodForSelector:selector];
-        void (*func)(id, SEL) = (void *)imp;
-        func(self.incentivizedDelegate, selector);
-    }
-}
-
 #pragma mark - Show
 
 - (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag withCompletion: (void (^)(BOOL result, NSError *error))completion  {
