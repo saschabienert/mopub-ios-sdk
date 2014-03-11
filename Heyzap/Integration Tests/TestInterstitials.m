@@ -130,7 +130,8 @@
     
     [self wait:1];
     
-    SLAssertNoThrow([verify(delegate) willStartAudio], @"Delegate should get willStartAudio callback");
+    SLAssertNoThrow([verifyCount(delegate, atLeastOnce()) willStartAudio], @"Delegate should get willStartAudio callback");
+    
     SLAssertNoThrow([verify(delegate) didShowAdWithTag:@"default"], @"Delegate should get didShowAdWithTag callback");
     
     // Wait for skip button to show up.
