@@ -3,6 +3,13 @@ xcode_workspace: Heyzap/Heyzap.xcworkspace
 xcode_scheme: Ads
 xcode_sdk: iphonesimulator7.0
 
+env:
+    global:
+        # Necessary to work around some Travis-only bugs
+        # (This should be set by Travis but is not currently:
+        # https://github.com/travis-ci/travis-ci/issues/1769)
+        - TRAVIS=true
+
 before_install:
     - xctool -version # Travis has xctool 0.1.13 installed, but xctool only supports Kiwi on 0.1.14. Eventually we can remove this step, as its quite slow.
     - brew update && brew upgrade xctool
