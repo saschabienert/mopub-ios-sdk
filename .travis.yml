@@ -11,7 +11,7 @@ env:
         - TRAVIS=true
         - SubliminalPassword=j4K7CK4oM49ZA27y532b
     matrix:
-        - TEST_SCRIPT=runUnitTests.sh
+        - TEST_SCRIPT='runUnitTests.sh 7.0'
         - TEST_SCRIPT=runIntegrationTests.sh
 
 before_install:
