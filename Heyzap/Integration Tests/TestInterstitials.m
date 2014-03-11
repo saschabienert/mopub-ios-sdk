@@ -21,6 +21,8 @@
 
 @implementation MGASimpleTest
 
+#pragma mark - Setup
+
 - (void)setUpTest {
 	// Navigate to the part of the app being exercised by the test cases,
 	// initialize SLElements common to the test cases, etc.
@@ -103,6 +105,8 @@
     [self wait:1]; // Wait for hide animation to complete.
     SLAssertNoThrow([verify(delegate) didHideAdWithTag:@"default"], @"Delegate should get didHideAd callback");
 }
+
+#pragma mark - Video
 
 // This test is different b/c it needs to check for audio callbacks, skip the video, etc.
 - (void)testVideo
