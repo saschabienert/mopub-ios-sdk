@@ -1,7 +1,7 @@
 PODS:
-  - Kiwi/ARC (2.2.3)
-  - Kiwi/NonARC (2.2.3)
-  - Kiwi/XCTest (2.2.3):
+  - Kiwi/ARC (HEAD based on 2.2.3)
+  - Kiwi/NonARC (HEAD based on 2.2.3)
+  - Kiwi/XCTest (HEAD based on 2.2.3):
     - Kiwi/ARC
     - Kiwi/NonARC
   - OCHamcrest (3.0.1)
@@ -11,19 +11,17 @@ PODS:
   - Subliminal (1.0.1)
 
 DEPENDENCIES:
-  - Kiwi/XCTest (from `https://github.com/allending/Kiwi.git`)
+  - Kiwi/XCTest (HEAD)
   - OCMockito
   - OHHTTPStubs
   - Subliminal (from `https://github.com/MaxGabriel/Subliminal.git`)
 
 EXTERNAL SOURCES:
-  Kiwi:
-    :git: https://github.com/allending/Kiwi.git
   Subliminal:
     :git: https://github.com/MaxGabriel/Subliminal.git
 
 SPEC CHECKSUMS:
-  Kiwi: 0b03e1551cbf36a8df0eb921c755ab3fdf8f7c4c
+  Kiwi: 04c51e880831d291748ec702d42c4101f7eb95c9
   OCHamcrest: 782c52ae8c673e5d6060a65005cfd26d20d519ba
   OCMockito: 317fa0cf75c9b0d73d2be335789c556537be7fd2
   OHHTTPStubs: d67c42c0212f0883ddb8592375aa0dc00dc50a36
