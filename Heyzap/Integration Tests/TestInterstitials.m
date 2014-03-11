@@ -27,7 +27,7 @@
 }
 
 - (void)tearDownTest {
-    [self wait:2];
+//    [self wait:2];
 }
 
 #pragma mark - Portrait Tests
@@ -107,20 +107,10 @@
 // This test is different b/c it needs to check for audio callbacks, skip the video, etc.
 - (void)testVideo
 {
-    BOOL isTravis = [[NSProcessInfo processInfo] environment][@"TRAVIS"] != nil;
-    if (isTravis) {
-        SLLog(@"Was Travis; skipping the video test.");
+    if ([[NSProcessInfo processInfo] environment][@"TRAVIS"] != nil) {
+        SLLog(@"Travis CI has trouble with the video ad; skipping this test.");
         return;
     }
-    
-    char *travis = getenv("TRAVIS");
-    if (travis) {
-        SLLog(@"Was travis via C func; skipping the video test");
-        return;
-    }
-    
-    SLLog(@"Testing video");
-    
     
     [[SLDevice currentDevice] setOrientation:UIDeviceOrientationLandscapeRight];
     [self wait:0.5];
@@ -145,7 +135,7 @@
     
     [self wait:1];
     
-    SLAssertNoThrow([verifyCount(delegate, atLeastOnce()) willStartAudio], @"Delegate should get willStartAudio callback");
+    SLAssertNoThrow([verify(delegate) willStartAudio], @"Delegate should get willStartAudio callback");
     
     SLAssertNoThrow([verify(delegate) didShowAdWithTag:@"default"], @"Delegate should get didShowAdWithTag callback");
     
