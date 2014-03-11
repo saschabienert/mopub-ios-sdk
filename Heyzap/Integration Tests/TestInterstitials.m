@@ -27,7 +27,7 @@
 }
 
 - (void)tearDownTest {
-	// Navigate back to "home", if applicable.
+    [self wait:2];
 }
 
 #pragma mark - Portrait Tests
