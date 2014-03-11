@@ -1,7 +1,8 @@
 if [ $TRAVIS ]; then
-   passwordCommand="-login_password j4K7CK4oM49ZA27y532b"
+    echo "Using travis password"
+    passwordCommand="-login_password j4K7CK4oM49ZA27y532b"
 else
-   passwordCommand="--live"
+    passwordCommand="--live"
 fi
 
 # Clear out the integrationTestResults folder
