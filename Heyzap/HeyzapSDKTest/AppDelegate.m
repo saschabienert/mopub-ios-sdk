@@ -64,6 +64,7 @@
     [self.window makeKeyAndVisible];
     
 #if INTEGRATION_TESTING
+//    [SLTestController sharedTestController].shouldWaitToStartTesting = YES;
     [[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
 #endif
     

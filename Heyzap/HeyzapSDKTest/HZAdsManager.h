@@ -35,8 +35,6 @@
 
 + (HZAdsManager *)sharedManager;
 - (void) onStart;
-- (void) fireCallbackOnStatusDelegate: (SEL)selector forTag: (NSString *) tag;
-- (void) fireCallbackOnIncentivizedDelegate:(SEL)selector;
 + (BOOL) isEnabled;
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
 - (void) runInitialTasks;

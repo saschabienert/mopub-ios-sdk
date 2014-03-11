@@ -37,6 +37,7 @@
         
         _skipButton = [UIButton buttonWithType: UIButtonTypeCustom];
         _skipButton.frame = CGRectMake(0.0, 0.0, 80.0, 40.0);
+        _skipButton.accessibilityLabel = @"skip";
         [_skipButton setTitle: @"" forState: UIControlStateNormal];
         [_skipButton setTitle: @"" forState: UIControlStateDisabled];
         [_skipButton.titleLabel setFont: [UIFont boldSystemFontOfSize: 20.0]];

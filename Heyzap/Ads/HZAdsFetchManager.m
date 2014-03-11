@@ -34,7 +34,9 @@
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", aRequest.lastError]];
             
-            [[HZAdsManager sharedManager] fireCallbackOnStatusDelegate: @selector(didFailToReceiveAdWithTag:) forTag: request.tag];
+            if ([[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(didFailToReceiveAdWithTag:)]) {
+                [[HZAdsManager sharedManager].statusDelegate didFailToReceiveAdWithTag:request.tag];
+            }
             
             if (completion) {
                 completion(nil, aRequest.tag, aRequest.lastError);
@@ -62,7 +64,9 @@
     
     if (!validAd) {
         
-        [[HZAdsManager sharedManager] fireCallbackOnStatusDelegate: @selector(didFailToReceiveAdWithTag:) forTag: request.tag];
+        if ([[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(didFailToReceiveAdWithTag:)]) {
+            [[HZAdsManager sharedManager].statusDelegate didFailToReceiveAdWithTag:request.tag];
+        }
         
         if (completion) {
             NSError *error;
@@ -112,14 +116,18 @@
             
             [[HZAdLibrary sharedLibrary] pushAd: ad forAdUnit: bRequest.adUnit andTag: bRequest.tag];
             
-            [[HZAdsManager sharedManager] fireCallbackOnStatusDelegate: @selector(didReceiveAdWithTag:) forTag: bRequest.tag];
+            if ([[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(didReceiveAdWithTag:)]) {
+                [[HZAdsManager sharedManager].statusDelegate didReceiveAdWithTag:bRequest.tag];
+            }
             
             if (completion) {
                 completion(ad, bRequest.tag, nil);
             }
             
         } else {
-            [[HZAdsManager sharedManager] fireCallbackOnStatusDelegate: @selector(didFailToReceiveAdWithTag:) forTag: bRequest.tag];
+            if ([[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(didFailToReceiveAdWithTag:)]) {
+                [[HZAdsManager sharedManager].statusDelegate didFailToReceiveAdWithTag:bRequest.tag];
+            }
             
             if (completion) {
                 NSError *error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.fetch" code: 8 userInfo: @{NSLocalizedDescriptionKey: @"Failed to download assets."}];
