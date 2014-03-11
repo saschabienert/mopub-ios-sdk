@@ -17,7 +17,7 @@ Testing
 While you can run the test app from a fresh clone of the repo, Cocoapods is required to install the dependencies for testing:
 
 ```
-gem install cocoapods
+gem install cocoapods # Requires sudo if using default ruby
 cd Heyzap && pod install
 open Heyzap.xcworkspace
 ```
