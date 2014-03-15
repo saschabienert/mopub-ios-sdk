@@ -33,10 +33,15 @@
 @property (nonatomic, assign) BOOL allowClick;
 @property (nonatomic, assign) BOOL postRollInterstitial;
 
+@property (nonatomic, assign) BOOL allowFallbacktoStreaming;
+@property (nonatomic, assign) BOOL forceStreaming;
+
 // Download Ops
+@property (nonatomic, assign) BOOL fileCached;
 @property (nonatomic) HZAFHTTPRequestOperation *downloadOperation;
 
 - (BOOL) onCompleteWithViewDuration: (NSTimeInterval)time andTotalDuration: (NSTimeInterval)duration andFinished: (BOOL) finished;
 - (NSURL *) URLForVideo;
+- (void) onInterstitialFallback;
 
 @end

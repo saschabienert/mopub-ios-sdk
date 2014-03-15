@@ -59,6 +59,8 @@
         _allowSkip = [[HZDictionaryUtils hzObjectForKey: @"allow_skip" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         _lockoutTime = [HZDictionaryUtils hzObjectForKey: @"lockout_time" ofClass: [NSNumber class] default: @(0) withDict: video];
         _postRollInterstitial = [[HZDictionaryUtils hzObjectForKey: @"post_roll_interstitial" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
+        _allowFallbacktoStreaming = [[HZDictionaryUtils hzObjectForKey: @"allow_streaming_fallback" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
+        _forceStreaming = [[HZDictionaryUtils hzObjectForKey: @"force_streaming" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         
         NSDictionary *meta = [HZDictionaryUtils hzObjectForKey: @"meta"  ofClass: [NSDictionary class] default: @{} withDict: video];
         
@@ -67,6 +69,9 @@
         _videoHeight = [HZDictionaryUtils hzObjectForKey: @"height" ofClass: [NSNumber class] default: @(0) withDict: meta];
         _videoSizeBytes = [HZDictionaryUtils hzObjectForKey: @"bytes" ofClass: [NSNumber class] default: @(0) withDict: meta];
         _videoDuration = [HZDictionaryUtils hzObjectForKey: @"length" ofClass: [NSNumber class] default: @(0) withDict: meta];
+        
+        // Other
+        _fileCached = NO;
     }
     
     return self;
@@ -83,21 +88,32 @@
 #pragma mark - Post Fetch
 
 - (void) doPostFetchActionsWithCompletion:(void (^)(BOOL))completion {
-    // Cache video
-    NSURL *URLToDownload;
-    
-    if ([self.staticURLs count] > 0) {
-        URLToDownload = [self.staticURLs firstObject];
-    } else if ([self.streamingURLs count] > 0) {
-        URLToDownload = [self.streamingURLs firstObject];
-    } else {
-        return;
+    if (!self.forceStreaming) {
+        // Just in case it got deleted in meantime
+        [HZUtils createCacheDirectory];
+        
+        // Cache video
+        NSURL *URLToDownload;
+        if ([self.staticURLs count] > 0) {
+            URLToDownload = [self.staticURLs firstObject];
+        } else if ([self.streamingURLs count] > 0) {
+            URLToDownload = [self.streamingURLs firstObject];
+        }
+        
+        __block HZVideoAdModel *modelSelf = self;
+        self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload toFilePath: [self filePathForCachedVideo] withCompletion:^(BOOL result) {
+            modelSelf.fileCached = result;
+            if (![modelSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
+                completion(YES);
+            }
+        }];
     }
     
-    // Just in case it got deleted in meantime
-    [HZUtils createCacheDirectory];
-    
-    self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload toFilePath: [self filePathForCachedVideo] withCompletion: completion];
+    if (self.forceStreaming || [self.adUnit isEqualToString: @"interstitial"]) {
+        if (completion != nil) {
+            completion(YES);
+        }
+    }
 }
 
 #pragma mark - Events
@@ -109,10 +125,8 @@
             time = duration;
         }
         
-        NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-        [params setObject: self.impressionID forKey: @"impression_id"];
-        [params setObject: self.promotedGamePackage forKey: @"promoted_game_package"];
-        [params setObject: self.tag forKey: @"tag"];
+        NSMutableDictionary *params = [self paramsForEventCallback];
+        
         [params setObject: [NSString stringWithFormat: @"%f", duration] forKey: @"video_duration_seconds"];
         [params setObject: [NSString stringWithFormat: @"%f", time] forKey: @"watched_duration_seconds"];
         
@@ -139,13 +153,21 @@
     return YES;
 }
 
+- (void) onInterstitialFallback {
+    [self cancelDownload];
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    [dict setObject: @"1" forKey: @"interstitial_fallback"];
+    [self setEventCallbackParams: dict];
+}
+
 #pragma mark - Video Caching/Files
 
 - (NSURL *) URLForVideo {
     if ([[NSFileManager defaultManager] fileExistsAtPath: [self filePathForCachedVideo]]) {
         return [NSURL fileURLWithPath: [self filePathForCachedVideo]];
     } else {
-        if ([self.streamingURLs count] > 0) {
+        if ([self.streamingURLs count] > 0 && (self.allowFallbacktoStreaming || self.forceStreaming)) {
             return [self.streamingURLs objectAtIndex: 0];
         }
     }
@@ -162,16 +184,20 @@
     [super cleanup];
     
     // Kill any currently running ops
-    if (self.downloadOperation && ![self.downloadOperation isFinished]) {
-        [self.downloadOperation cancel];
-    }
-    
-    self.downloadOperation = nil;
+    [self cancelDownload];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath: [self filePathForCachedVideo]]) {
         NSError *error;
         [[NSFileManager defaultManager] removeItemAtPath: [self filePathForCachedVideo] error: &error];
     }
+}
+
+- (void) cancelDownload {
+    if (self.downloadOperation != nil && ![self.downloadOperation isFinished]) {
+        [self.downloadOperation cancel];
+    }
+    
+    self.downloadOperation = nil;
 }
 
 + (BOOL) isValidForCreativeType: (NSString *) creativeType {

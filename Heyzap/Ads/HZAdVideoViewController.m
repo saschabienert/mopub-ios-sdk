@@ -31,7 +31,14 @@
         
         _videoView = [[HZVideoView alloc] initWithFrame: CGRectZero];
         _videoView.tag = kHZVideoViewTag;
-        [_videoView setVideoURL: [self.ad URLForVideo]];
+        
+        if (ad.fileCached || ad.allowFallbacktoStreaming || ad.forceStreaming) {
+            [_videoView setVideoURL: [self.ad URLForVideo]];
+        } else {
+            [ad onInterstitialFallback];
+            [self didImpression];
+        }
+        
         _videoView.actionDelegate = self;
         
         [_videoView setSkipButton: self.ad.allowSkip];
@@ -74,11 +81,6 @@
     [self.ad onCompleteWithViewDuration: self.videoView.playbackTime andTotalDuration: self.videoView.videoDuration andFinished: self.didFinishVideo];
     
     if (self.ad.adUnit != nil && [self.ad.adUnit isEqualToString: @"incentivized"]) {
-
-        if (self.didFinishVideo) {
-            [self.ad onIncentiveComplete];
-        }
-        
         if (self.didFinishVideo) {
             if ([[HZAdsManager sharedManager].incentivizedDelegate respondsToSelector:@selector(didCompleteAd)]) {
                 [[HZAdsManager sharedManager].incentivizedDelegate didCompleteAd];
@@ -133,6 +135,7 @@
     self.webView.frame = self.view.bounds;
     self.webView.hidden = YES;
     self.webView.layer.opacity = 0.0f;
+    
     self.videoView.frame = self.view.bounds;
     self.videoView.hidden = YES;
     self.videoView.layer.opacity = 0.0f;
@@ -143,7 +146,9 @@
     }
     
     [self.view addSubview: self.webView];
-    [self.view addSubview: self.videoView];
+    if (self.ad.fileCached || self.ad.allowFallbacktoStreaming || self.ad.forceStreaming) {
+        [self.view addSubview: self.videoView];
+    }
 
     [UIView animateWithDuration: 0.3 delay: 0.0 options: UIViewAnimationOptionCurveEaseIn animations:^{
         self.webView.hidden = NO;
@@ -198,15 +203,6 @@
 - (BOOL)shouldAutorotate {
     return YES;
 }
-
-//- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
-//    if ([self applicationSupportsLandscape]) {
-//        return UIInterfaceOrientationMaskLandscapeLeft | UIInterfaceOrientationMaskLandscapeRight;
-//    } else {
-//        
-//        return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: self.window];
-//    }
-//}
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
     return UIStatusBarAnimationNone;
