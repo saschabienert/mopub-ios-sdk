@@ -32,17 +32,18 @@
         
         if ([video objectForKey: @"static_url"] != nil) {
             NSArray *staticURLs = [HZDictionaryUtils hzObjectForKey: @"static_url" ofClass: [NSArray class] default: @[] withDict: video];
-            NSArray *streamingURLs = [HZDictionaryUtils hzObjectForKey: @"streaming_url" ofClass: [NSArray class] default: @[] withDict: video];
-            
-            if ([staticURLs count] == 0 && [streamingURLs count] == 0) {
-                return nil;
-            }
             
             _staticURLs = [[NSMutableArray alloc] init];
             
             for (NSString *staticURL in staticURLs) {
                 [_staticURLs addObject: [NSURL URLWithString: staticURL]];
             }
+        } else {
+            _staticURLs = [[NSMutableArray alloc] initWithCapacity: 0];
+        }
+        
+        if ([video objectForKey: @"streaming_url"] != nil) {
+            NSArray *streamingURLs = [HZDictionaryUtils hzObjectForKey: @"streaming_url" ofClass: [NSArray class] default: @[] withDict: video];
             
             _streamingURLs = [[NSMutableArray alloc] init];
             
@@ -50,15 +51,20 @@
                 [_streamingURLs addObject: [NSURL URLWithString: streamingURL]];
             }
         } else {
-            return nil;
+            _streamingURLs = [[NSMutableArray alloc] initWithCapacity: 0];
         }
         
+        if ([_staticURLs count] == 0 && [_streamingURLs count] == 0) {
+            return nil;
+        }
+    
         // On-Screen Video Behaviors
         _allowClick = [[HZDictionaryUtils hzObjectForKey: @"allow_click" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         _allowHide = [[HZDictionaryUtils hzObjectForKey: @"allow_hide" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         _allowSkip = [[HZDictionaryUtils hzObjectForKey: @"allow_skip" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         _lockoutTime = [HZDictionaryUtils hzObjectForKey: @"lockout_time" ofClass: [NSNumber class] default: @(0) withDict: video];
         _postRollInterstitial = [[HZDictionaryUtils hzObjectForKey: @"post_roll_interstitial" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
+        
         _allowFallbacktoStreaming = [[HZDictionaryUtils hzObjectForKey: @"allow_streaming_fallback" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         _forceStreaming = [[HZDictionaryUtils hzObjectForKey: @"force_streaming" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         
@@ -104,7 +110,11 @@
         self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload toFilePath: [self filePathForCachedVideo] withCompletion:^(BOOL result) {
             modelSelf.fileCached = result;
             if (![modelSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
-                completion(YES);
+                if (modelSelf.allowFallbacktoStreaming) {
+                    completion(YES);
+                } else {
+                    completion(result);
+                }
             }
         }];
     }

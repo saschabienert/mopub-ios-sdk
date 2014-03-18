@@ -99,14 +99,15 @@
     }
 }
 
-- (void) setVideoURL: (NSURL *) url {
-    NSError *error;
-    if (![url checkResourceIsReachableAndReturnError: &error]) {
-        
+- (BOOL) setVideoURL: (NSURL *) url {
+    if (!url) {
+        return NO;
     }
     
     [self.player setContentURL: url];
     [self.player prepareToPlay];
+    
+    return YES;
 }
 
 - (void) pause {
@@ -186,6 +187,7 @@
 - (void) mediaPlayerNowPlayingMovieDidChange: (id) notification {}
 
 - (void) mediaPlayerLoadStateDidChange: (id) notification {
+    
     switch (self.player.loadState) {
         case MPMovieLoadStateUnknown:
             [HZLog debug: @"Media Playback: Load State Unknown"];
