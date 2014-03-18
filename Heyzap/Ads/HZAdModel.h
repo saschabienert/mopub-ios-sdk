@@ -44,7 +44,6 @@
 - (BOOL) isInstalled;
 - (BOOL) onImpression;
 - (BOOL) onClick;
-- (BOOL) onIncentiveComplete;
 
 #pragma mark - Controller
 - (Class) controller;
@@ -57,6 +56,10 @@
 
 #pragma mark - Cleanup
 - (void) cleanup;
+
+#pragma mark - Other
+- (NSMutableDictionary *) paramsForEventCallback;
+- (void) setEventCallbackParams: (NSMutableDictionary *) dict;
 
 + (NSString *) normalizeTag: (NSString *) tag;
 

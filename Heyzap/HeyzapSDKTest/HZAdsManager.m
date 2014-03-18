@@ -172,18 +172,24 @@
             if (controllerClass == [HZAdVideoViewController class]) {
                 
                 HZAdVideoViewController *controller = [[HZAdVideoViewController alloc] initWithAd: (HZVideoAdModel *) ad];
-                [controller show];
-                self.activeController = controller;
-                result = YES;
+                if (!controller) {
+                    result = NO;
+                } else {
+                    [controller show];
+                    self.activeController = controller;
+                    result = YES;
+                }
                 
             } else if (controllerClass == [HZAdInterstitialViewController class]) {
                 HZAdInterstitialViewController *controller = [[HZAdInterstitialViewController alloc] initWithAd: (HZInterstitialAdModel *) ad];
-                [controller show];
-                self.activeController = controller;
-                result = YES;
+                if (!controller) {
+                    result = NO;
+                } else {
+                    [controller show];
+                    self.activeController = controller;
+                    result = YES;
+                }
             }
-            
-
         }
         
         if (!result) {
@@ -193,10 +199,9 @@
     
     if (!result || error) {
         // Not using the standard method here.
-        if (self.statusDelegate != nil) {
-            if ([self.statusDelegate respondsToSelector: @selector(didFailToShowAdWithTag:andError:)]) {
-                [self.statusDelegate performSelector: @selector(didFailToShowAdWithTag:andError:) withObject: tag withObject: error];
-            }
+        if (self.statusDelegate != nil
+            && [self.statusDelegate respondsToSelector: @selector(didFailToShowAdWithTag:andError:)]) {
+            [self.statusDelegate performSelector: @selector(didFailToShowAdWithTag:andError:) withObject: tag withObject: error];
         }
     }
     

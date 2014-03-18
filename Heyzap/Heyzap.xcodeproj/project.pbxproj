@@ -249,7 +249,7 @@
 		509B5BEA18C96CE2003A7CB9 /* TestJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestJSON.h; sourceTree = "<group>"; };
 		509B5BEB18C96CE2003A7CB9 /* TestJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestJSON.m; sourceTree = "<group>"; };
 		50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialSpec.m; sourceTree = "<group>"; };
-		50A36AED18C9405A00FA84F0 /* Heyzap (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Heyzap (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		50A36AED18C9405A00FA84F0 /* .app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = .app; sourceTree = BUILT_PRODUCTS_DIR; };
 		50A36AEE18C9405A00FA84F0 /* Integration Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Integration Tests-Info.plist"; path = "/Users/Max/Documents/iOS/ios-sdk/Heyzap/Integration Tests/Integration Tests-Info.plist"; sourceTree = "<absolute>"; };
 		50AA624418CBF4DC0018A0B6 /* InterstitialFetchSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialFetchSpec.m; sourceTree = "<group>"; };
 		50AA624718CBF58A0018A0B6 /* NSString+Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Tests.h"; sourceTree = "<group>"; };
@@ -581,7 +581,7 @@
 				86B941DC1758056B00B8EACE /* HeyzapSDKTest.app */,
 				86B9432A1758108700B8EACE /* libHeyzapAds.a */,
 				504E9C9218C9322100402BC3 /* Ads Tests.xctest */,
-				50A36AED18C9405A00FA84F0 /* Heyzap (Integration Tests).app */,
+				50A36AED18C9405A00FA84F0 /* .app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -852,7 +852,7 @@
 			);
 			name = "Integration Tests";
 			productName = HeyzapSDKTest;
-			productReference = 50A36AED18C9405A00FA84F0 /* Heyzap (Integration Tests).app */;
+			productReference = 50A36AED18C9405A00FA84F0 /* .app */;
 			productType = "com.apple.product-type.application";
 		};
 		86B941DB1758056B00B8EACE /* HeyzapSDKTest */ = {

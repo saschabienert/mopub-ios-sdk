@@ -19,7 +19,7 @@
 @property (nonatomic, assign) NSTimeInterval playbackTime;
 @property (nonatomic, assign) NSTimeInterval videoDuration;
 
-- (void) setVideoURL: (NSURL *) url;
+- (BOOL) setVideoURL: (NSURL *) url;
 - (void) pause;
 - (void) play;
 

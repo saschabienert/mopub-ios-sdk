@@ -65,6 +65,17 @@
                                                                            @"ad_unit": _adUnit,
                                                                            @"tag": _tag}];
         
+        if ([NSLocale preferredLanguages] != nil && [[NSLocale preferredLanguages] count] > 0) {
+            NSString * language = [[NSLocale preferredLanguages] objectAtIndex:0];
+            [_generatedParams setObject: language forKey: @"locale_lang"];
+        }
+        
+        NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];  // get the current locale.
+        NSString *countryCode = [currentLocale objectForKey:NSLocaleCountryCode];
+        if (countryCode != nil) {
+            [_generatedParams setObject: countryCode forKey: @"locale_country"];
+        }
+        
         if ([[HZAdsManager sharedManager] framework] != nil) {
             [_generatedParams setObject: [[HZAdsManager sharedManager] framework] forKey: @"sdk_framework"];
         }

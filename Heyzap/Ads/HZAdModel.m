@@ -18,6 +18,10 @@
 
 #import "HZAdsAPIClient.h"
 
+@interface HZAdModel()
+@property (nonatomic) NSMutableDictionary *additionalEventParams;
+@end
+
 @implementation HZAdModel
 
 #pragma mark - Validity
@@ -112,9 +116,7 @@
 - (BOOL) onClick {
     if (self.sentClick) return false;
     
-    NSDictionary *params = @{@"impression_id": self.impressionID,
-                             @"promoted_game_package": self.promotedGamePackage,
-                             @"tag": self.tag};
+    NSMutableDictionary *params = [self paramsForEventCallback];
     
     [[HZAdsAPIClient sharedClient] post: @"register_click" withParams: params success:^(id JSON) {
         if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @(0) withDict: JSON] intValue] == 200) {
@@ -131,9 +133,7 @@
 - (BOOL) onImpression {
     if (self.sentImpression) return false;
 
-    NSDictionary *params = @{@"impression_id": self.impressionID,
-                             @"promoted_game_pacakge": self.promotedGamePackage,
-                             @"tag": self.tag};
+    NSMutableDictionary *params = [self paramsForEventCallback];
     
     [[HZAdsAPIClient sharedClient] post: @"register_impression" withParams: params success:^(id JSON) {
         if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @(0) withDict: JSON] intValue] == 200) {
@@ -143,25 +143,6 @@
     } failure:^(NSError *error) {
         [HZLog debug: [NSString stringWithFormat: @"(IMPRESSION ERROR) %@, Error: %@", self, error]];
     }];
-    
-    return YES;
-}
-
-- (BOOL) onIncentiveComplete {
-    if (self.sentIncentiveComplete) {
-        NSDictionary *params = @{@"impression_id": self.impressionID,
-                                 @"promoted_game_pacakge": self.promotedGamePackage,
-                                 @"tag": self.tag};
-        
-        [[HZAdsAPIClient sharedClient] post: @"register_incentive_complete" withParams: params success:^(id JSON) {
-            if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @(0) withDict: JSON] intValue] == 200) {
-                self.sentIncentiveComplete = YES;
-                [HZLog debug: [NSString stringWithFormat: @"(INCENTIVE COMPLETE) %@", self]];
-            }
-        } failure:^(NSError *error) {
-            [HZLog debug: [NSString stringWithFormat: @"(INCENTIVE COMPLETE ERROR) %@, Error: %@", self, error]];
-        }];
-    }
     
     return YES;
 }
@@ -192,6 +173,24 @@
     if (completion) {
         completion(YES);
     }
+}
+
+- (NSMutableDictionary *) paramsForEventCallback {
+    
+    NSDictionary *standardParams = @{@"impression_id": self.impressionID,
+                                     @"promoted_game_package": self.promotedGamePackage,
+                                     @"tag": [HZAdModel normalizeTag: self.tag]};
+    
+    if (self.additionalEventParams != nil) {
+        [self.additionalEventParams addEntriesFromDictionary: standardParams];
+        return self.additionalEventParams;
+    }
+    
+    return [[NSMutableDictionary alloc] initWithDictionary: standardParams];
+}
+
+- (void) setEventCallbackParams: (NSMutableDictionary *) dict {
+    self.additionalEventParams = dict;
 }
 
 - (NSString *)substituteGetParams:(NSString *)url {
