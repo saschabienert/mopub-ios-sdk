@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-               BuildableName = "Heyzap (Integration Tests).app"
+               BuildableName = ".app"
                BlueprintName = "Integration Tests"
                ReferencedContainer = "container:Heyzap.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Heyzap (Integration Tests).app"
+            BuildableName = ".app"
             BlueprintName = "Integration Tests"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
@@ -52,7 +52,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Heyzap (Integration Tests).app"
+            BuildableName = ".app"
             BlueprintName = "Integration Tests"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
@@ -70,7 +70,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Heyzap (Integration Tests).app"
+            BuildableName = ".app"
             BlueprintName = "Integration Tests"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
