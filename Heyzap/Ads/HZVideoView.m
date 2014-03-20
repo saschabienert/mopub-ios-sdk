@@ -239,6 +239,8 @@
             [self.player play];
         }
     }
+    
+    self.videoDuration = self.player.duration;
 
     if (self.player.playbackState == MPMoviePlaybackStatePlaying) {
         if (self.timer == nil) {
