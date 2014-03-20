@@ -1,7 +1,7 @@
 PODS:
-  - Kiwi/ARC (HEAD based on 2.2.3)
-  - Kiwi/NonARC (HEAD based on 2.2.3)
-  - Kiwi/XCTest (HEAD based on 2.2.3):
+  - Kiwi/ARC (2.2.4)
+  - Kiwi/NonARC (2.2.4)
+  - Kiwi/XCTest (2.2.4):
     - Kiwi/ARC
     - Kiwi/NonARC
   - OCHamcrest (3.0.1)
@@ -11,7 +11,7 @@ PODS:
   - Subliminal (1.0.1)
 
 DEPENDENCIES:
-  - Kiwi/XCTest (HEAD)
+  - Kiwi/XCTest
   - OCMockito
   - OHHTTPStubs
   - Subliminal (from `https://github.com/MaxGabriel/Subliminal.git`, branch `cleanCocoapod`)
@@ -22,7 +22,7 @@ EXTERNAL SOURCES:
     :git: https://github.com/MaxGabriel/Subliminal.git
 
 SPEC CHECKSUMS:
-  Kiwi: 04c51e880831d291748ec702d42c4101f7eb95c9
+  Kiwi: d60d7498b640a16f58b01925fc3c8d7c4d809f66
   OCHamcrest: 782c52ae8c673e5d6060a65005cfd26d20d519ba
   OCMockito: 317fa0cf75c9b0d73d2be335789c556537be7fd2
   OHHTTPStubs: d67c42c0212f0883ddb8592375aa0dc00dc50a36
