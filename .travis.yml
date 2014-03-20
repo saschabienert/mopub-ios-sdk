@@ -17,7 +17,7 @@ env:
 before_install:
     - gem install xcpretty
     - gem install cocoapods --no-rdoc --no-ri --no-document --quiet
-    - cd Heyzap && pod install && cd $TRAVIS_BUILD_DIR
+    - cd Heyzap && pod install && rake install --rakefile Pods/Subliminal/Rakefile DOCS=no && cd $TRAVIS_BUILD_DIR
 
 script: sh $TEST_SCRIPT
 
