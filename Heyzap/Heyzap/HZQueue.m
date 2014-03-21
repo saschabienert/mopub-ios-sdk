@@ -49,7 +49,7 @@
 }
 
 // Takes a look at an object at a given location
--(id) peek: (int) index {
+-(id) peek: (NSUInteger) index {
     // Set aside a reference to the peeked at object
     id peekObject = nil;
     // Do we have any items at all?

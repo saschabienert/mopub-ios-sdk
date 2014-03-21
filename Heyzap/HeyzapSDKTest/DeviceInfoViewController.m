@@ -60,7 +60,7 @@
 
 - (UILabel *)deviceInformationLabelWithFrameY:(CGFloat)y
                                       keyText:(NSString *)keyText
-                                    valueText:(NSString *)valueText;
+                                    valueText:(NSString *)valueText
 {
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(5, y, CGRectGetWidth(self.view.bounds)-5, 25)];
     label.font = [UIFont boldSystemFontOfSize: 13.0];;

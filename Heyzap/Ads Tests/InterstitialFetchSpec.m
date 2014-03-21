@@ -22,6 +22,12 @@
 
 @end
 
+@interface HZAdsManager(Testing)
+
++ (void)runInitialTasks;
+
+@end
+
 SPEC_BEGIN(InterstitialFetchSpec)
 
 describe(@"InterstitialFetch", ^{

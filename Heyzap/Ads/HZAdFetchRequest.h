@@ -22,7 +22,7 @@
 
 @property (nonatomic) NSDictionary *lastResponse;
 @property (nonatomic) NSError *lastError;
-@property (nonatomic, getter = createParams) NSDictionary *params;
+@property (nonatomic, getter = createParams, readonly) NSDictionary *params;
 
 // Properties used for the test app
 @property (nonatomic, readonly, getter = shouldSkipCache) BOOL skipCache;

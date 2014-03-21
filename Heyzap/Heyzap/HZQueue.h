@@ -12,7 +12,7 @@
 - (id) init;
 -(id) dequeue;
 -(void) enqueue:(id)obj;
--(id) peek:(int)index;
+-(id) peek:(NSUInteger)index;
 -(id) peekHead;
 -(id) peekTail;
 -(BOOL) empty;
