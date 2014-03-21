@@ -48,7 +48,7 @@
 #import <UIKit/UIKit.h>
 
 static NSString * kHZOpenUDIDSessionCache = nil;
-static NSString * const kHZOpenUDIDDescription = @"OpenUDID_with_iOS6_Support";
+//static NSString * const kHZOpenUDIDDescription = @"OpenUDID_with_iOS6_Support";
 static NSString * const kHZOpenUDIDKey = @"OpenUDID";
 static NSString * const kHZOpenUDIDSlotKey = @"OpenUDID_slot";
 static NSString * const kHZOpenUDIDAppUIDKey = @"OpenUDID_appUID";

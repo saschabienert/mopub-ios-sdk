@@ -147,11 +147,11 @@
 		86BDB4A6175853E100D85F29 /* HZDictionaryUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B9424A1758086300B8EACE /* HZDictionaryUtils.m */; };
 		86BDB4A9175853E100D85F29 /* HZLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942341758086300B8EACE /* HZLog.m */; };
 		86BDB4AB175853E100D85F29 /* HZJAProcessInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942ED1758098D00B8EACE /* HZJAProcessInfo.m */; };
-		86BDB4AC175853E100D85F29 /* HZAFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942CE1758098300B8EACE /* HZAFHTTPClient.m */; };
-		86BDB4AD175853E100D85F29 /* HZAFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942D01758098300B8EACE /* HZAFHTTPRequestOperation.m */; };
-		86BDB4AE175853E100D85F29 /* HZAFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942D21758098300B8EACE /* HZAFImageRequestOperation.m */; };
+		86BDB4AC175853E100D85F29 /* HZAFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942CE1758098300B8EACE /* HZAFHTTPClient.m */; settings = {COMPILER_FLAGS = "-w"; }; };
+		86BDB4AD175853E100D85F29 /* HZAFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942D01758098300B8EACE /* HZAFHTTPRequestOperation.m */; settings = {COMPILER_FLAGS = "-w"; }; };
+		86BDB4AE175853E100D85F29 /* HZAFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942D21758098300B8EACE /* HZAFImageRequestOperation.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		86BDB4AF175853E100D85F29 /* HZAFJSONRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942D41758098300B8EACE /* HZAFJSONRequestOperation.m */; };
-		86BDB4B0175853E100D85F29 /* HZAFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942D61758098300B8EACE /* HZAFNetworkActivityIndicatorManager.m */; };
+		86BDB4B0175853E100D85F29 /* HZAFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942D61758098300B8EACE /* HZAFNetworkActivityIndicatorManager.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		86BDB4B1175853E100D85F29 /* HZAFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942D91758098300B8EACE /* HZAFURLConnectionOperation.m */; };
 		86BDB4E7175859F400D85F29 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B7175830A600B8EACE /* AdSupport.framework */; };
 		86BDB4E917585A0100D85F29 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B941DF1758056B00B8EACE /* CoreGraphics.framework */; };
@@ -898,7 +898,7 @@
 		86B941931757FD6300B8EACE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = Heyzap;
 				TargetAttributes = {
 					504E9C9118C9322100402BC3 = {
@@ -1211,7 +1211,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C9E09E3CF972477FA4ED9657 /* Pods-Ads Tests.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -1240,7 +1239,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C9E09E3CF972477FA4ED9657 /* Pods-Ads Tests.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -1326,7 +1324,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1369,7 +1366,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1451,7 +1447,6 @@
 		86B943491758108800B8EACE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				DSTROOT = /tmp/Ads.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Ads/Ads-Prefix.pch";
@@ -1465,7 +1460,6 @@
 		86B9434A1758108800B8EACE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				DSTROOT = /tmp/Ads.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Ads/Ads-Prefix.pch";
