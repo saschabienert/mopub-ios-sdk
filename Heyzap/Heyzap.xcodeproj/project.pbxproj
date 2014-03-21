@@ -95,9 +95,6 @@
 		86234AB118581B800071957B /* HZVideoControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86234AAF18581B800071957B /* HZVideoControlView.m */; };
 		862D5342176D12E900C4221F /* SDKTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 862D5341176D12E900C4221F /* SDKTestAppViewController.m */; };
 		86309F8418873D960000B6E3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86309F8318873D960000B6E3 /* StoreKit.framework */; };
-		86408C4D17E123B800A66633 /* HZOpenUDID.m in Sources */ = {isa = PBXBuildFile; fileRef = 86408C4A17E1239500A66633 /* HZOpenUDID.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		86408C5017E1263900A66633 /* HeyzapUDID.h in Headers */ = {isa = PBXBuildFile; fileRef = 86408C4E17E1263900A66633 /* HeyzapUDID.h */; };
-		86408C5117E1263900A66633 /* HeyzapUDID.m in Sources */ = {isa = PBXBuildFile; fileRef = 86408C4F17E1263900A66633 /* HeyzapUDID.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		8641E1F018ADE0FE00CAAEE0 /* HZDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 8641E1E118AD997800CAAEE0 /* HZDevice.m */; };
 		8641E1F118ADE0FE00CAAEE0 /* HZArrayUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8641E1E918ADC9AD00CAAEE0 /* HZArrayUtils.m */; };
 		8641E1F218ADE0FE00CAAEE0 /* HZImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8641E1ED18ADCB7B00CAAEE0 /* HZImageView.m */; };
@@ -140,8 +137,6 @@
 		86BDB49B175853E100D85F29 /* HZAvailability.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B94296175808F800B8EACE /* HZAvailability.m */; };
 		86BDB49C175853E100D85F29 /* HZAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942201758086300B8EACE /* HZAnalytics.m */; };
 		86BDB4A1175853E100D85F29 /* HZAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942221758086300B8EACE /* HZAPIClient.m */; };
-		86BDB4A2175853E100D85F29 /* HZSelectorReplacer.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942421758086300B8EACE /* HZSelectorReplacer.m */; };
-		86BDB4A3175853E100D85F29 /* HZUDID.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942441758086300B8EACE /* HZUDID.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		86BDB4A4175853E100D85F29 /* HZUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942461758086300B8EACE /* HZUserDefaults.m */; };
 		86BDB4A5175853E100D85F29 /* HZUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942481758086300B8EACE /* HZUtils.m */; };
 		86BDB4A6175853E100D85F29 /* HZDictionaryUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B9424A1758086300B8EACE /* HZDictionaryUtils.m */; };
@@ -269,10 +264,6 @@
 		862D5340176D12E900C4221F /* SDKTestAppViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKTestAppViewController.h; sourceTree = "<group>"; };
 		862D5341176D12E900C4221F /* SDKTestAppViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKTestAppViewController.m; sourceTree = "<group>"; };
 		86309F8318873D960000B6E3 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		86408C4917E1239500A66633 /* HZOpenUDID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZOpenUDID.h; sourceTree = "<group>"; };
-		86408C4A17E1239500A66633 /* HZOpenUDID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZOpenUDID.m; sourceTree = "<group>"; };
-		86408C4E17E1263900A66633 /* HeyzapUDID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeyzapUDID.h; sourceTree = "<group>"; };
-		86408C4F17E1263900A66633 /* HeyzapUDID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeyzapUDID.m; sourceTree = "<group>"; };
 		8641E1E018AD997800CAAEE0 /* HZDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZDevice.h; sourceTree = "<group>"; };
 		8641E1E118AD997800CAAEE0 /* HZDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZDevice.m; sourceTree = "<group>"; };
 		8641E1E818ADC9AD00CAAEE0 /* HZArrayUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZArrayUtils.h; sourceTree = "<group>"; };
@@ -322,10 +313,6 @@
 		86B942341758086300B8EACE /* HZLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZLog.m; sourceTree = "<group>"; };
 		86B9423B1758086300B8EACE /* HZRotatingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZRotatingView.h; path = Heyzap/HZRotatingView.h; sourceTree = "<group>"; };
 		86B9423C1758086300B8EACE /* HZRotatingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZRotatingView.m; path = Heyzap/HZRotatingView.m; sourceTree = "<group>"; };
-		86B942411758086300B8EACE /* HZSelectorReplacer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSelectorReplacer.h; sourceTree = "<group>"; };
-		86B942421758086300B8EACE /* HZSelectorReplacer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSelectorReplacer.m; sourceTree = "<group>"; };
-		86B942431758086300B8EACE /* HZUDID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZUDID.h; sourceTree = "<group>"; };
-		86B942441758086300B8EACE /* HZUDID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZUDID.m; sourceTree = "<group>"; };
 		86B942451758086300B8EACE /* HZUserDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZUserDefaults.h; sourceTree = "<group>"; };
 		86B942461758086300B8EACE /* HZUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZUserDefaults.m; sourceTree = "<group>"; };
 		86B942471758086300B8EACE /* HZUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZUtils.h; sourceTree = "<group>"; };
@@ -716,10 +703,6 @@
 				86B942201758086300B8EACE /* HZAnalytics.m */,
 				86B942211758086300B8EACE /* HZAPIClient.h */,
 				86B942221758086300B8EACE /* HZAPIClient.m */,
-				86B942411758086300B8EACE /* HZSelectorReplacer.h */,
-				86B942421758086300B8EACE /* HZSelectorReplacer.m */,
-				86B942431758086300B8EACE /* HZUDID.h */,
-				86B942441758086300B8EACE /* HZUDID.m */,
 				86B942451758086300B8EACE /* HZUserDefaults.h */,
 				86B942461758086300B8EACE /* HZUserDefaults.m */,
 				86B942471758086300B8EACE /* HZUtils.h */,
@@ -729,10 +712,6 @@
 				86B942331758086300B8EACE /* HZLog.h */,
 				5094BFFD17B963D400A25E53 /* HZLogProject.h */,
 				86B942341758086300B8EACE /* HZLog.m */,
-				86408C4917E1239500A66633 /* HZOpenUDID.h */,
-				86408C4A17E1239500A66633 /* HZOpenUDID.m */,
-				86408C4E17E1263900A66633 /* HeyzapUDID.h */,
-				86408C4F17E1263900A66633 /* HeyzapUDID.m */,
 				86FF907B185842D900BC48BF /* HZQueue.h */,
 				86FF907C185842D900BC48BF /* HZQueue.m */,
 				8641E1E018AD997800CAAEE0 /* HZDevice.h */,
@@ -808,7 +787,6 @@
 				86234AA918568EEA0071957B /* HZVideoView.h in Headers */,
 				866E39F718500DBE00B6E431 /* HZAdModel.h in Headers */,
 				86FF907D185842D900BC48BF /* HZQueue.h in Headers */,
-				86408C5017E1263900A66633 /* HeyzapUDID.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1117,7 +1095,6 @@
 				8641E1F218ADE0FE00CAAEE0 /* HZImageView.m in Sources */,
 				866E39F01850087B00B6E431 /* HZVideoAd.m in Sources */,
 				86D0A99D1851897200B3D870 /* HZDownloadHelper.m in Sources */,
-				86408C4D17E123B800A66633 /* HZOpenUDID.m in Sources */,
 				86CD0ECC17C3F7B00005BD3D /* HZAdsAPIClient.m in Sources */,
 				86CD0E8B17BB0B940005BD3D /* HZAdsManager.m in Sources */,
 				86B09B8A1759743F0045AA54 /* HZRotatingView.m in Sources */,
@@ -1130,8 +1107,6 @@
 				86234AB118581B800071957B /* HZVideoControlView.m in Sources */,
 				860FD47B187BB144008A35FD /* HZAdsFetchManager.m in Sources */,
 				86BDB4A1175853E100D85F29 /* HZAPIClient.m in Sources */,
-				86BDB4A2175853E100D85F29 /* HZSelectorReplacer.m in Sources */,
-				86BDB4A3175853E100D85F29 /* HZUDID.m in Sources */,
 				86BDB4A4175853E100D85F29 /* HZUserDefaults.m in Sources */,
 				86BDB4A5175853E100D85F29 /* HZUtils.m in Sources */,
 				86BDB4A6175853E100D85F29 /* HZDictionaryUtils.m in Sources */,
@@ -1152,7 +1127,6 @@
 				866E39F818500DBE00B6E431 /* HZAdModel.m in Sources */,
 				866E3A191851329500B6E431 /* HZWebView.m in Sources */,
 				86B09B85175958A50045AA54 /* HZInterstitialAd.m in Sources */,
-				86408C5117E1263900A66633 /* HeyzapUDID.m in Sources */,
 				866E39FC1850161900B6E431 /* HZVideoAdModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1354,7 +1328,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				"GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]" = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -1410,7 +1384,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

@@ -14,7 +14,6 @@
 
 -(uint64_t) hzGetFreeDiskspace;
 - (NSDictionary *) HZIdentifierDictionary;
-- (NSString *) HZOpenUDID;
 - (BOOL) hzHasInternetConnection;
 - (NSString *) HZConnectivityType;
 - (NSString *) HZuniqueDeviceIdentifier;
@@ -24,7 +23,6 @@
 - (NSString *) HZvendorDeviceIdentity;
 - (NSString *) HZmd5MacAddress;
 - (NSString *) HZmacaddress;
-- (NSString *) HZODIN1;
 
 
 + (BOOL) hzSystemVersionIsLessThan: (NSString *) version;
