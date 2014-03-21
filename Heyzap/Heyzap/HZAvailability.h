@@ -10,11 +10,6 @@
 
 @interface HZAvailability : NSObject
 
-BOOL isRetina(void);
-
-BOOL iPhone4Minus(void);
-
 + (NSString *)platform;
-+ (BOOL)iPad;
 
 @end

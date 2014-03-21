@@ -14,12 +14,9 @@
 
 -(uint64_t) hzGetFreeDiskspace;
 - (NSDictionary *) HZIdentifierDictionary;
-- (BOOL) hzHasInternetConnection;
 - (NSString *) HZConnectivityType;
-- (NSString *) HZuniqueDeviceIdentifier;
 - (NSString *) HZuniqueGlobalDeviceIdentifier;
 - (NSString *) HZadvertisingIdentifier;
-- (NSString *) HZtrackingEnabled;
 - (NSString *) HZvendorDeviceIdentity;
 - (NSString *) HZmd5MacAddress;
 - (NSString *) HZmacaddress;

@@ -20,6 +20,11 @@
 
 @interface HZAdModel()
 @property (nonatomic) NSMutableDictionary *additionalEventParams;
+@property (nonatomic) NSNumber *refreshTime;
+@property (nonatomic) NSString *adStrategy;
+@property (nonatomic) NSNumber *creativeID;
+@property (nonatomic) NSDate *fetchDate;
+@property (nonatomic) BOOL hideOnOrientationChange;
 @end
 
 @implementation HZAdModel

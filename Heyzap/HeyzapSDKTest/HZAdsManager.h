@@ -17,7 +17,6 @@
 
 #pragma mark - Debugging
 @property (nonatomic, assign) BOOL isDebuggable;
-@property (nonatomic, assign) int campaignIDPin;
 
 #pragma mark - Active Controller
 @property (nonatomic, assign) HZAdViewController *activeController;

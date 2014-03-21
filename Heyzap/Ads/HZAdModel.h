@@ -11,24 +11,20 @@
 
 @interface HZAdModel : NSObject
 
-@property (nonatomic) NSString *impressionID;
-@property (nonatomic) NSNumber *promotedGamePackage;
-@property (nonatomic) NSString *creativeType;
-@property (nonatomic) NSURL *clickURL;
-@property (nonatomic) NSNumber *refreshTime;
-@property (nonatomic) NSString *adStrategy;
-@property (nonatomic) NSNumber *creativeID;
-@property (nonatomic) NSURL *launchURI;
-@property (nonatomic, assign) BOOL useModalAppStore;
+@property (nonatomic, readonly) NSString *impressionID;
+@property (nonatomic, readonly) NSNumber *promotedGamePackage;
+@property (nonatomic, readonly) NSString *creativeType;
+@property (nonatomic, readonly) NSURL *clickURL;
+
+@property (nonatomic, readonly) NSURL *launchURI;
+@property (nonatomic, assign, readonly) BOOL useModalAppStore;
 @property (nonatomic) NSString *tag;
 @property (nonatomic) NSString *adUnit;
-@property (nonatomic, readonly) BOOL hideOnOrientationChange;
 @property (nonatomic, readonly) int requiredAdOrientation;
-@property (nonatomic) NSDate *fetchDate;
 
-@property (nonatomic, assign) BOOL sentClick;
-@property (nonatomic, assign) BOOL sentImpression;
-@property (nonatomic, assign) BOOL sentIncentiveComplete;
+@property (nonatomic) BOOL sentClick;
+@property (nonatomic) BOOL sentImpression;
+@property (nonatomic) BOOL sentIncentiveComplete;
 
 #pragma mark - Initializers
 - (id) initWithDictionary: (NSDictionary *) dict;

@@ -31,44 +31,28 @@
 
 // Grab the next item in the queue, if there is one
 -(id) dequeue {
-    // Set aside a reference to the object to pass back
-    id queueObject = nil;
-    
-    // Do we have any items?
-    if ([self.queue lastObject]) {
-        // Pick out the first one
-
-        queueObject = [self.queue objectAtIndex: 0];
-
-        // Remove it from the queue
+    if ([self.queue firstObject]) {
+        id first = self.queue.firstObject;
         [self.queue removeObjectAtIndex: 0];
+        return first;
+    } else {
+        return nil;
     }
-    
-    // Pass back the dequeued object, if any
-    return queueObject;
 }
 
 // Takes a look at an object at a given location
 -(id) peek: (NSUInteger) index {
-    // Set aside a reference to the peeked at object
-    id peekObject = nil;
-    // Do we have any items at all?
-    if ([self.queue lastObject]) {
-        // Is this within range?
-        if (index < [self.queue count]) {
-            // Get the object at this index
-            peekObject = [self.queue objectAtIndex: index];
-        }
+    if (index < [self.queue count]) {
+        return [self.queue objectAtIndex: index];
+    } else {
+        return nil;
     }
-    
-    // Pass back the peeked at object, if any
-    return peekObject;
 }
 
 // Let's take a look at the next item to be dequeued
 -(id) peekHead {
     // Peek at the next item
-    return [self peek: 0];
+    return [self.queue firstObject];
 }
 
 // Let's take a look at the last item to have been added to the queue

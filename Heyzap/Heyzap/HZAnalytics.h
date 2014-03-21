@@ -16,10 +16,6 @@
 + (void) logAnalyticsEvent: (NSString *) eventName withValuesFromDictionary: (NSDictionary *)dictionary;
 + (void) logAnalyticsEvent: (NSString *) eventName andParams: (NSDictionary*)params;
 + (void) logAnalyticsEvent: (NSString *) eventName andValue: (NSString *)value forKey: (NSString *)key;
-+ (NSString*) generateAnalyticsFilename;
-
-
-- (id) init;
 
 - (void) sendAnalytic: (NSDictionary *) analytic;
 

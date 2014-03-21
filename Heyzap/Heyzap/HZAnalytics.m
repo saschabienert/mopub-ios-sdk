@@ -67,10 +67,6 @@ static HZAnalytics *HZAnalyticsSharedInstance = nil;
             [UIDevice currentDevice].systemVersion, @"analytics_os_version",
             nil];
     
-    if ([HZUtils appID] != nil) {
-        [dict setObject: [HZUtils appID] forKey: @"analytics_for_game_store_id"];
-    }
-    
     return dict;
 }
 
@@ -95,10 +91,7 @@ static HZAnalytics *HZAnalyticsSharedInstance = nil;
 }
 
 + (void) logAnalyticsEvent: (NSString *) eventName andParams: (NSDictionary*)params {
-    if ([HZUtils appID] == nil) {
-        return;
-    }
-
+    
     [[[HZAnalytics sharedInstance] outstandingAnalytics] addObject:params];
     [[[HZAnalytics sharedInstance] outstandingAnalytics] writeToFile:[HZAnalytics generateAnalyticsFilename] atomically:YES];
     

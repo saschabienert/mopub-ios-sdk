@@ -53,7 +53,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
     versionString = versionString ?: @"";
     
     NSMutableDictionary *params = [@{@"device_id": [HZUtils deviceID],
-                                     @"app_bundle_id": [HZUtils bundleIdentifier],
+                                     @"app_bundle_id": [[NSBundle mainBundle] bundleIdentifier],
                                      @"app_version": versionString,
                                      @"device_form_factor": deviceFormFactor,
                                      @"platform": @"iphone",
@@ -177,10 +177,6 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
     
     if (error) {
         [params setObject:[NSString stringWithFormat:@"%@",error] forKey:@"NSError"];
-    }
-    
-    if ([HZUtils appID]) {
-        [params setObject:[HZUtils appID] forKey:@"app_id"];
     }
     
     [self post:@"in_game_api/ads/log_message"

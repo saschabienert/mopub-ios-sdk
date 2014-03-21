@@ -8,6 +8,12 @@
 
 #import "HZRotatingView.h"
 
+@interface HZRotatingView()
+
+@property (nonatomic) UIInterfaceOrientation orientation;
+
+@end
+
 @implementation HZRotatingView
 
 - (id)initWithFrame:(CGRect)frame {
