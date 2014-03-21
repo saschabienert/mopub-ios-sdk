@@ -24,6 +24,8 @@
 #import "ServerSelectionViewController.h"
 #import "DeviceInfoViewController.h"
 
+#import "HeyzapMediation.h"
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -37,15 +39,28 @@
         }];
         
     }
-    [HZLog setDebugLevel: HZDebugLevelVerbose];
+    [HZLog setDebugLevel: HZDebugLevelError];
+    
+    [[HeyzapMediation sharedInstance] setupHeyzap];
+    
+    [[HeyzapMediation sharedInstance] setupChartboostWithAppID:@"532b36fd2d42da26bbd4cfed"
+                                                  appSignature:@"d2a575bbe9a3359b6ab2d5b807c878b7bfd38668"];
+    
+    [[HeyzapMediation sharedInstance] setupAdColonyWithAppID:@"appb7ecc27334414230a4" zoneID:@"vzdb7f030bf789408894"];
+    
+    [[HeyzapMediation sharedInstance] setupVungleWithAppID:@"532b7d9d91755d2f640000a7"];
+    
+    [[HeyzapMediation sharedInstance] setupAdMob];
+    
+    [[HeyzapMediation sharedInstance] finishedSettingUpMediators];
     
     
     self.controller = [[SDKTestAppViewController alloc] init];
     
     
-    [HeyzapAds startWithOptions: HZAdOptionsDisableAutoPrefetching];
-    [HeyzapAds setDelegate: self.controller];
-    [HeyzapAds setIncentiveDelegate: self.controller];
+//    [HeyzapAds startWithOptions: HZAdOptionsDisableAutoPrefetching];
+//    [HeyzapAds setDelegate: self.controller];
+//    [HeyzapAds setIncentiveDelegate: self.controller];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
@@ -70,6 +85,11 @@
 //    [SLTestController sharedTestController].shouldWaitToStartTesting = YES;
     [[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
 #endif
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+        [[HeyzapMediation sharedInstance] showAd];
+    });
     
     return YES;
 }
