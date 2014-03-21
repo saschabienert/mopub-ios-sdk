@@ -7,7 +7,6 @@
 //
 
 #import "HZAdsManager.h"
-#import "HZJAProcessInfo.h"
 #import "HZAPIClient.h"
 #import "HZUserDefaults.h"
 #import "HZUtils.h"
@@ -59,8 +58,6 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [self setupCachingDirectory];
-        
-        [self doProcessScan];
         
         //register this game as installed, if we haven't done so already
         if ([[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY withDefault:(id)kCFBooleanFalse]) {
@@ -220,20 +217,6 @@
 
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption {
     return ((int)self.options & adOption);
-}
-
-#pragma mark - Process Scanning
-
-+ (void) doProcessScan {
-    HZJAProcessInfo *procInfo = [[HZJAProcessInfo alloc] init];
-    [procInfo obtainFreshProcessList];
-    
-    if (procInfo.processList) {
-        [[HZAdsAPIClient sharedClient] post:@"add_initial_packages"
-                                 withParams:@{@"process_list": procInfo.processList}
-                                    success:nil
-                                    failure:nil];
-    }
 }
 
 #pragma mark - Models

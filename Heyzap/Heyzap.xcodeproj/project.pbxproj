@@ -141,7 +141,6 @@
 		86BDB4A5175853E100D85F29 /* HZUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942481758086300B8EACE /* HZUtils.m */; };
 		86BDB4A6175853E100D85F29 /* HZDictionaryUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B9424A1758086300B8EACE /* HZDictionaryUtils.m */; };
 		86BDB4A9175853E100D85F29 /* HZLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942341758086300B8EACE /* HZLog.m */; };
-		86BDB4AB175853E100D85F29 /* HZJAProcessInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942ED1758098D00B8EACE /* HZJAProcessInfo.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		86BDB4AC175853E100D85F29 /* HZAFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942CE1758098300B8EACE /* HZAFHTTPClient.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		86BDB4AD175853E100D85F29 /* HZAFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942D01758098300B8EACE /* HZAFHTTPRequestOperation.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		86BDB4AE175853E100D85F29 /* HZAFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942D21758098300B8EACE /* HZAFImageRequestOperation.m */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -334,8 +333,6 @@
 		86B942D71758098300B8EACE /* HZAFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAFNetworking.h; sourceTree = "<group>"; };
 		86B942D81758098300B8EACE /* HZAFURLConnectionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAFURLConnectionOperation.h; sourceTree = "<group>"; };
 		86B942D91758098300B8EACE /* HZAFURLConnectionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAFURLConnectionOperation.m; sourceTree = "<group>"; };
-		86B942EC1758098D00B8EACE /* HZJAProcessInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZJAProcessInfo.h; sourceTree = "<group>"; };
-		86B942ED1758098D00B8EACE /* HZJAProcessInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZJAProcessInfo.m; sourceTree = "<group>"; };
 		86B9432A1758108700B8EACE /* libHeyzapAds.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHeyzapAds.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		86B9432E1758108700B8EACE /* Ads-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ads-Prefix.pch"; sourceTree = "<group>"; };
 		86B9434E1758181100B8EACE /* HeyzapAds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeyzapAds.h; sourceTree = "<group>"; };
@@ -633,7 +630,6 @@
 		86B942891758087E00B8EACE /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				86B942EB1758098D00B8EACE /* ProcessList */,
 				86B942CC1758098300B8EACE /* AFNetworking */,
 			);
 			name = Vendor;
@@ -660,16 +656,6 @@
 			);
 			name = AFNetworking;
 			path = Heyzap/Vendor/AFNetworking;
-			sourceTree = "<group>";
-		};
-		86B942EB1758098D00B8EACE /* ProcessList */ = {
-			isa = PBXGroup;
-			children = (
-				86B942EC1758098D00B8EACE /* HZJAProcessInfo.h */,
-				86B942ED1758098D00B8EACE /* HZJAProcessInfo.m */,
-			);
-			name = ProcessList;
-			path = Heyzap/Vendor/ProcessList;
 			sourceTree = "<group>";
 		};
 		86B9432C1758108700B8EACE /* Ads */ = {
@@ -1111,7 +1097,6 @@
 				86BDB4A5175853E100D85F29 /* HZUtils.m in Sources */,
 				86BDB4A6175853E100D85F29 /* HZDictionaryUtils.m in Sources */,
 				86BDB4A9175853E100D85F29 /* HZLog.m in Sources */,
-				86BDB4AB175853E100D85F29 /* HZJAProcessInfo.m in Sources */,
 				86BDB4AC175853E100D85F29 /* HZAFHTTPClient.m in Sources */,
 				86D0A9991851808200B3D870 /* HZAdVideoViewController.m in Sources */,
 				86BDB4AD175853E100D85F29 /* HZAFHTTPRequestOperation.m in Sources */,
