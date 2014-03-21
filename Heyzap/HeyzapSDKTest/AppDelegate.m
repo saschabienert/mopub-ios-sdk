@@ -53,7 +53,10 @@
     DeviceInfoViewController *deviceController = [[DeviceInfoViewController alloc] init];
     SDCSegmentedViewController *segmentedController = [[SDCSegmentedViewController alloc] initWithViewControllers:@[self.controller, serverController,deviceController]];
 
-    segmentedController.edgesForExtendedLayout = UIRectEdgeNone;
+    if ([segmentedController respondsToSelector:@selector(edgesForExtendedLayout)]) {
+        segmentedController.edgesForExtendedLayout = UIRectEdgeNone;
+    }
+    
     
     self.navController = [[UINavigationController alloc] initWithRootViewController: segmentedController];
     

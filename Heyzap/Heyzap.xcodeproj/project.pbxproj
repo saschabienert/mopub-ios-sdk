@@ -1238,7 +1238,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 090B07CD6F614B1286E88909 /* Pods-Integration Tests.xcconfig */;
 			buildSettings = {
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1260,7 +1260,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 090B07CD6F614B1286E88909 /* Pods-Integration Tests.xcconfig */;
 			buildSettings = {
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
