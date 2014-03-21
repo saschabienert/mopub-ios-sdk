@@ -79,8 +79,8 @@ NSInteger const DefaultSegmentIndex = 0;
 			if ([obj isKindOfClass:[UIViewController class]] && index < [titles count]) {
 				UIViewController *viewController = obj;
 
-				[_viewControllers addObject:viewController];
-				[_titles addObject:titles[index]];
+				[self->_viewControllers addObject:viewController];
+				[self->_titles addObject:titles[index]];
 				[self addChildViewController:viewController];
 			}
 		}];

@@ -28,7 +28,6 @@ enum {
 
 +(NSString *)urlEncodeString: (NSString *) string usingEncoding:(NSStringEncoding)encoding;
 + (NSString *)base64EncodedStringFromString: (NSString *) string;
-+ (NSString *) MD5FromString: (NSString *) string;
 + (BOOL) statusBarShowing;
 + (DeviceResolution) currentResolution;
 + (id) objectFromArchivedData: (NSData *) data;

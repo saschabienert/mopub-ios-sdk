@@ -21,7 +21,7 @@
 //#define HeyzapUDIDLog(fmt, ...) NSLog((@"[Line %d] " fmt), __LINE__, ##__VA_ARGS__);
 
 static NSString * kHeyzapUDIDSessionCache = nil;
-static NSString * const kHeyzapUDIDDescription = @"HZUDID_with_iOS6_Support";
+//static NSString * const kHeyzapUDIDDescription = @"HZUDID_with_iOS6_Support";
 static NSString * const kHeyzapUDIDKey = @"HZUDID";
 static NSString * const kHeyzapUDIDSlotKey = @"HZUDID_slot";
 static NSString * const kHeyzapUDIDAppUIDKey = @"HZUDID_appUID";

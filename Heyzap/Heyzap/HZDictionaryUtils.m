@@ -8,6 +8,13 @@
 
 #import "HZDictionaryUtils.h"
 
+@interface HZDictionaryUtils()
+
+static NSString *hzToString(id object);
+static NSString *hzUrlEncode(id object);
+
+@end
+
 @implementation HZDictionaryUtils
 
 + (id) hzObjectForKey:(id)key ofClass:(Class)class withDict: (NSDictionary *) dict {
