@@ -9,7 +9,6 @@
 #import "HZUtils.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "HZDevice.h"
-#import "HeyzapUDID.h"
 
 
 static NSString *HZUtilsAppID;
@@ -198,21 +197,12 @@ char *HZNewBase64Encode(
 }
 
 + (NSString *) deviceID {
-    NSString *deviceIdentifier;
-    if (HZUtilsDeviceID != nil) {
-        deviceIdentifier = HZUtilsDeviceID;
-    } else if ([HZDevice hzSystemVersionIsLessThan: @"7.0"]) {
-        deviceIdentifier = [[HZDevice currentDevice] HZuniqueGlobalDeviceIdentifier];
-        HZUtilsDeviceID = [deviceIdentifier copy];
-        NSString *filename = [HZUtils pathWithFilename: @"device.id"];
-        [NSKeyedArchiver archiveRootObject: deviceIdentifier toFile: filename];
+    NSString *advertisingIdentifier = [[HZDevice currentDevice] HZadvertisingIdentifier];
+    if ([advertisingIdentifier isEqualToString:@""]) {
+        return [[HZDevice currentDevice] HZuniqueGlobalDeviceIdentifier];
     } else {
-        BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath: [HZUtils pathWithFilename: @"device.id"]];
-        deviceIdentifier = fileExists ? (NSString *)[NSKeyedUnarchiver unarchiveObjectWithFile: [HZUtils pathWithFilename: @"device.id"]] : [HeyzapUDID value];
-        HZUtilsDeviceID = [deviceIdentifier copy];
+        return advertisingIdentifier;
     }
-    
-    return deviceIdentifier;
 }
 
 + (NSString *) pathWithFilename: (NSString *) filenameShort {

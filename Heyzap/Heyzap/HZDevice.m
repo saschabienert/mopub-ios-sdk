@@ -12,8 +12,6 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <AdSupport/ASIdentifierManager.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
-#import "HZOpenUDID.h"
-#import "HeyzapUDID.h"
 
 #include <sys/socket.h> // Per msqr
 #include <sys/sysctl.h>
@@ -223,7 +221,7 @@
     NSString *macaddress = [self HZmacaddress];
     const char *cStr = [macaddress UTF8String];
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
-    CC_MD5(cStr, strlen(cStr), digest);
+    CC_MD5(cStr, (CC_LONG)strlen(cStr), digest); // Casting to silence warning
     
     NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH *2];
     
@@ -249,71 +247,6 @@
     return @"";
 }
 
-- (NSString *)HZODIN1 {
-    int                 mib[6];
-    size_t              len;
-    char                *buf;
-    unsigned char       *ptr;
-    struct if_msghdr    *ifm;
-    struct sockaddr_dl  *sdl;
-    
-    mib[0] = CTL_NET;
-    mib[1] = AF_ROUTE;
-    mib[2] = 0;
-    mib[3] = AF_LINK;
-    mib[4] = NET_RT_IFLIST;
-    
-    if ((mib[5] = if_nametoindex("en0")) == 0) {
-        //NSLog(@"ODIN-1.1: if_nametoindex error");
-        return nil;
-    }
-    
-    if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0) {
-        //NSLog(@"ODIN-1.1: sysctl 1 error");
-        return nil;
-    }
-    
-    if ((buf = malloc(len)) == NULL) {
-        //NSLog(@"ODIN-1.1: malloc error");
-        return nil;
-    }
-    
-    if (sysctl(mib, 6, buf, &len, NULL, 0) < 0) {
-        //NSLog(@"ODIN-1.1: sysctl 2 error");
-        return nil;
-    }
-    
-    ifm = (struct if_msghdr *)buf;
-    sdl = (struct sockaddr_dl *)(ifm + 1);
-    ptr = (unsigned char *)LLADDR(sdl);
-    
-    CFDataRef data = CFDataCreate(NULL, (uint8_t*)ptr, 6);
-    
-    unsigned char messageDigest[CC_SHA1_DIGEST_LENGTH];
-    
-    CC_SHA1(CFDataGetBytePtr((CFDataRef)data),
-            CFDataGetLength((CFDataRef)data),
-            messageDigest);
-    
-    CFMutableStringRef string = CFStringCreateMutable(NULL, 40);
-    for(int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++) {
-        CFStringAppendFormat(string,
-                             NULL,
-                             (CFStringRef)@"%02X",
-                             messageDigest[i]);
-    }
-    
-    CFStringLowercase(string, CFLocaleGetSystem());
-    
-    free(buf);
-    
-    NSString *odinstring = [[NSString alloc] initWithString:(__bridge NSString*)string];
-    CFRelease(data);
-    CFRelease(string);
-    
-    return odinstring;
-}
-
 - (NSString *) HZvendorDeviceIdentity {
     if ([HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
         return  @"";
@@ -327,10 +260,6 @@
     return @"";
 }
 
-- (NSString *) HZOpenUDID {
-    return  [HZOpenUDID value] ? [HZOpenUDID value] : @"";
-}
-
 - (NSDictionary *)HZIdentifierDictionary
 {
     NSString *uniqueDeviceIdentifier = [self HZuniqueDeviceIdentifier] ?: @"";
@@ -338,23 +267,17 @@
     NSString *uniqueGlobalDeviceIdentifier = [self HZuniqueGlobalDeviceIdentifier] ?: @"";
     NSString *md5MacAddress = [self HZmd5MacAddress] ?: @"";
     NSString *advertisingIdentifier = [self HZadvertisingIdentifier] ?: @"";
-    NSString *ODIN1 = [self HZODIN1] ?: @"";
     NSString *connectivityType = [self HZConnectivityType] ?:@"";
     NSString *trackingEnabled = [self HZtrackingEnabled];
-    NSString *openUDID = [HZOpenUDID value] ? [HZOpenUDID value] : @"";
-    NSString *heyzapID = [HeyzapUDID value] ? [HeyzapUDID value] : @"";
     NSString *vendorDeviceID = [self HZvendorDeviceIdentity];
     
     return @{
              @"vendor_device_id": vendorDeviceID,
-             @"heyzap_udid": heyzapID,
-             @"open_udid": openUDID,
              @"uniqueDeviceIdentifier": uniqueDeviceIdentifier,
              @"macAddress": macAddress,
              @"uniqueGlobalDeviceIdentifier":uniqueGlobalDeviceIdentifier,
              @"md5MacAddress":md5MacAddress,
              @"advertisingIdentifier":advertisingIdentifier,
-             @"ODIN1":ODIN1,
              @"connection_type":connectivityType,
              @"tracking_enabled":trackingEnabled
              };

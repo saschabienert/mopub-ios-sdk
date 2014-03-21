@@ -525,7 +525,7 @@ const CGFloat kLeftMargin = 10;
         [self.creativeSegmentedControl2 setSelectedSegmentIndex:UISegmentedControlNoSegment];
     }
     
-    NSLog(@"Sender selected index: %d, title: %@", [sender selectedSegmentIndex], [sender titleForSegmentAtIndex:[sender selectedSegmentIndex]]);
+    NSLog(@"Sender selected index: %ld, title: %@", (long)[sender selectedSegmentIndex], [sender titleForSegmentAtIndex:[sender selectedSegmentIndex]]);
     [self setForcedCreativeType:[sender titleForSegmentAtIndex:[sender selectedSegmentIndex]]];
     
 //    [self adsButton:nil];

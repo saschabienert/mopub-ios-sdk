@@ -198,9 +198,9 @@
     result = [result stringByReplacingOccurrencesOfString:@"{MAC_ADDRESS}" withString:[[HZDevice currentDevice] HZmacaddress]];
     result = [result stringByReplacingOccurrencesOfString:@"{IDFA}" withString:[[HZDevice currentDevice] HZadvertisingIdentifier]];
     result = [result stringByReplacingOccurrencesOfString:@"{IMPRESSION_ID}" withString:self.impressionID];
-    result = [result stringByReplacingOccurrencesOfString:@"{ODIN}" withString:[[HZDevice currentDevice] HZODIN1]];
-    result = [result stringByReplacingOccurrencesOfString: @"{UDID}" withString: @""]; //Deprecated
-    result = [result stringByReplacingOccurrencesOfString: @"{OPEN_UDID}" withString: [[HZDevice currentDevice] HZOpenUDID]];
+    result = [result stringByReplacingOccurrencesOfString:@"{ODIN}" withString:@""]; // Deprecated
+    result = [result stringByReplacingOccurrencesOfString: @"{UDID}" withString: @""]; // Deprecated
+    result = [result stringByReplacingOccurrencesOfString: @"{OPEN_UDID}" withString: @""]; // Deprecated
     result = [result stringByReplacingOccurrencesOfString: @"{IDFV}" withString: [[HZDevice currentDevice] HZvendorDeviceIdentity]];
     
     return result;
