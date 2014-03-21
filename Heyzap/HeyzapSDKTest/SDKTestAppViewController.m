@@ -418,53 +418,6 @@ const CGFloat kLeftMargin = 10;
     
 }
 
-- (void)addDeviceDescriptionLabelsWithInitialX:(CGFloat)initialX
-{
-    const CGFloat labelOffset = 2;
-    
-    UILabel *macLabel = [self deviceInformationLabelWithFrameY:initialX
-                                                       keyText:@"MAC"
-                                                     valueText:[[HZDevice currentDevice] HZmacaddress]];
-    [self.scrollView addSubview:macLabel];
-    
-    UILabel *idfaLabel = [self deviceInformationLabelWithFrameY:CGRectGetMaxY(macLabel.frame)+labelOffset
-                                                        keyText:@"IDFA"
-                                                      valueText:[[HZDevice currentDevice] HZadvertisingIdentifier]];
-    [self.scrollView addSubview:idfaLabel];
-    
-    UILabel *udidLabel = [self deviceInformationLabelWithFrameY:CGRectGetMaxY(idfaLabel.frame)+labelOffset
-                                                        keyText:@"UDID"
-                                                      valueText:[[HZDevice currentDevice] HZuniqueGlobalDeviceIdentifier]];
-    [self.scrollView addSubview:udidLabel];
-    
-    self.serverLabel = [self deviceInformationLabelWithFrameY:CGRectGetMaxY(udidLabel.frame)+labelOffset
-                                                          keyText:@"Server"
-                                                        valueText:[[[HZAPIClient sharedClient] baseURL] description]];
-    
-    [self.scrollView addSubview:self.serverLabel];
-    
-    UILabel *appBundleID = [self deviceInformationLabelWithFrameY: CGRectGetMaxY(self.serverLabel.frame)
-                                                          keyText: @"Bundle ID"
-                                                        valueText: [[NSBundle mainBundle] bundleIdentifier]];
-    [self.scrollView addSubview: appBundleID];
-}
-
-// Change from frame to only taking Y value
-- (UILabel *)deviceInformationLabelWithFrameY:(CGFloat)y
-                                     keyText:(NSString *)keyText
-                                   valueText:(NSString *)valueText;
-{
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(kLeftMargin, y, 375, 25)];
-    label.font = [UIFont boldSystemFontOfSize: 13.0];;
-    label.textColor = [UIColor colorWithRed: 54.0/255.0 green: 68.0/255.0 blue: 88.0/255.0 alpha: 1.0];
-    label.backgroundColor = [UIColor clearColor];
-    label.text = [[keyText stringByAppendingString:@": "] stringByAppendingString:valueText];
-    label.userInteractionEnabled = YES;
-    [label addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(deviceInformationLabelTapped:)]];
-    return label;
-    [self updateScrollViewContentSize];
-}
-
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{
     UILabel * label = [[UILabel alloc] initWithFrame: CGRectMake(x,y, 80.0, 40.0)];
     label.text = text;
