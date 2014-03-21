@@ -7,6 +7,7 @@ target :"Ads Tests", :exclusive => true do
 end
 
 target :'Integration Tests', :exclusive => true do
-  pod 'Subliminal', :git => 'https://github.com/MaxGabriel/Subliminal.git', :branch => 'cleanCocoapod'
+  pod 'Subliminal', :path => '/Users/Max/Documents/Clones/Subliminal'
+  # pod 'Subliminal', :git => 'https://github.com/MaxGabriel/Subliminal.git', :branch => 'cleanCocoapod'
   pod 'OCMockito'
 end

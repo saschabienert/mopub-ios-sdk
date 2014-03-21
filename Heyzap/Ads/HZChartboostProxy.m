@@ -9,11 +9,42 @@
 #import "HZChartboostProxy.h"
 #import "Chartboost.h"
 
+//@interface ChartboostSingletonProxy : NSProxy
+//
+//- (id)proxy;
+//
+//@end
+//
+//@implementation ChartboostSingletonProxy
+//
+//- (id)proxy
+//{
+//    static ChartboostSingletonProxy *proxy;
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken, ^{
+//        proxy = [[ChartboostSingletonProxy alloc] init];
+//    });
+//    return proxy;
+//}
+//
+//- (id)forwardingTargetForSelector:(SEL)sel {
+//    id chartboostClass = NSClassFromString(@"Chartboost");
+//    return [chartboostClass sharedChartboost];
+//}
+//
+//@end
+
 @interface HZChartboostProxy() <ChartboostDelegate>
+
+id chartboostClassProxy(void);
 
 @end
 
 @implementation HZChartboostProxy
+
+id chartboostClassProxy(void) {
+    return NSClassFromString(@"Chartboost");
+}
 
 + (instancetype)sharedInstance
 {
@@ -29,7 +60,8 @@
 {
     self = [super init];
     if (self) {
-        [Chartboost sharedChartboost].delegate = self;
+        NSLog(@"Chartboost class proxy used");
+        [chartboostClassProxy() sharedChartboost].delegate = self;
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive:)
                                                      name:UIApplicationDidBecomeActiveNotification

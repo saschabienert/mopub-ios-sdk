@@ -192,7 +192,6 @@ const CGFloat kLeftMargin = 10;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    return;
     
     self.view.accessibilityLabel = kViewAccessibilityLabel;
     

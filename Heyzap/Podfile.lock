@@ -14,12 +14,11 @@ DEPENDENCIES:
   - Kiwi/XCTest
   - OCMockito
   - OHHTTPStubs
-  - Subliminal (from `https://github.com/MaxGabriel/Subliminal.git`, branch `cleanCocoapod`)
+  - Subliminal (from `/Users/Max/Documents/Clones/Subliminal`)
 
 EXTERNAL SOURCES:
   Subliminal:
-    :branch: cleanCocoapod
-    :git: https://github.com/MaxGabriel/Subliminal.git
+    :path: /Users/Max/Documents/Clones/Subliminal
 
 SPEC CHECKSUMS:
   Kiwi: d60d7498b640a16f58b01925fc3c8d7c4d809f66

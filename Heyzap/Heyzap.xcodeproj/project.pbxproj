@@ -73,6 +73,15 @@
 		5011CE8918DBBBF700604B53 /* HZAdMobProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5011CE8718DBBBF700604B53 /* HZAdMobProxy.h */; };
 		5011CE8A18DBBBF700604B53 /* HZAdMobProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5011CE8818DBBBF700604B53 /* HZAdMobProxy.m */; };
 		5011CE9618DBCC1B00604B53 /* libChartboost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C018DB616B006284AB /* libChartboost.a */; };
+		5011CE9718DBF00F00604B53 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4118DB915500604B53 /* AVFoundation.framework */; };
+		5011CE9818DBF01700604B53 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4518DB916B00604B53 /* AudioToolbox.framework */; };
+		5011CE9918DBF05B00604B53 /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE5118DB9A1E00604B53 /* AdColony.framework */; };
+		5011CE9A18DBF08300604B53 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE6818DBAEDD00604B53 /* Social.framework */; };
+		5011CE9B18DBF08700604B53 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE6118DBAEAE00604B53 /* EventKit.framework */; };
+		5011CE9C18DBF08700604B53 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE6218DBAEAE00604B53 /* EventKitUI.framework */; };
+		5011CE9D18DBF09000604B53 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4718DB917200604B53 /* CoreMedia.framework */; };
+		5011CE9E18DBF09A00604B53 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE7018DBB4B700604B53 /* CoreLocation.framework */; };
+		5011CE9F18DBF0AC00604B53 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE3F18DB914200604B53 /* libz.dylib */; };
 		501F9D7418989B8A00127E49 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
 		502BE84F18CD530D00EB6415 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 502BE84E18CD530D00EB6415 /* TestUtilities.m */; };
 		5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */; };
@@ -466,6 +475,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5011CE9F18DBF0AC00604B53 /* libz.dylib in Frameworks */,
+				5011CE9E18DBF09A00604B53 /* CoreLocation.framework in Frameworks */,
+				5011CE9D18DBF09000604B53 /* CoreMedia.framework in Frameworks */,
+				5011CE9B18DBF08700604B53 /* EventKit.framework in Frameworks */,
+				5011CE9C18DBF08700604B53 /* EventKitUI.framework in Frameworks */,
+				5011CE9A18DBF08300604B53 /* Social.framework in Frameworks */,
+				5011CE9818DBF01700604B53 /* AudioToolbox.framework in Frameworks */,
+				5011CE9718DBF00F00604B53 /* AVFoundation.framework in Frameworks */,
 				50ECA1C918DB623A006284AB /* SystemConfiguration.framework in Frameworks */,
 				50A36ADB18C9405A00FA84F0 /* libHeyzapAds.a in Frameworks */,
 				50A36ADC18C9405A00FA84F0 /* CoreTelephony.framework in Frameworks */,
@@ -478,6 +495,7 @@
 				50A36AE318C9405A00FA84F0 /* QuartzCore.framework in Frameworks */,
 				50A36AE418C9405A00FA84F0 /* Foundation.framework in Frameworks */,
 				996D9AA5BB144F82A96FC8B0 /* libPods-Integration Tests.a in Frameworks */,
+				5011CE9918DBF05B00604B53 /* AdColony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1439,11 +1457,16 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-force_load",
+					"$(SRCROOT)/vunglepub.embeddedframework/vunglepub.framework/Versions/Current/vunglepub",
+				);
 				PROVISIONING_PROFILE = "65BB83E8-C41C-44AC-A496-91716DB0813D";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1461,12 +1484,17 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-force_load",
+					"$(SRCROOT)/vunglepub.embeddedframework/vunglepub.framework/Versions/Current/vunglepub",
+				);
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";
 				TARGETED_DEVICE_FAMILY = "1,2";
