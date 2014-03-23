@@ -1,6 +1,8 @@
 Heyzap iOS SDK
 ==============
 
+[![Build Status](https://travis-ci.org/Heyzap/ios-sdk.png?branch=master)](https://travis-ci.org/Heyzap/ios-sdk)
+
 Integrating the SDK
 -------------------
 Heyzap is still hosting its SDK and documentation at https://developers.heyzap.com/docs. If you're looking to integrate ads, we suggest downloading our SDK rather than building from source.
