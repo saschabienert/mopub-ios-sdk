@@ -1,7 +1,7 @@
 Heyzap iOS SDK
 ==============
 
-[![Build Status](https://travis-ci.org/Heyzap/ios-sdk.png?branch=master)](https://travis-ci.org/Heyzap/ios-sdk)
+[![Build Status](https://travis-ci.org/Heyzap/ios-sdk.svg?branch=master)](https://travis-ci.org/Heyzap/ios-sdk)
 
 Integrating the SDK
 -------------------
