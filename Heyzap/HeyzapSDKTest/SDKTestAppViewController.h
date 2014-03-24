@@ -17,7 +17,6 @@ extern NSString * const kShowAdButtonAccessibilityLabel;
 extern NSString * const kFetchAdButtonAccessibilityLabel;
 extern NSString * const kViewAccessibilityLabel;
 
-@property (nonatomic) float score;
 @property (nonatomic) UITextField * adsTextField ;
 
 @end

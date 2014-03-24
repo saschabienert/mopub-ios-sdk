@@ -11,7 +11,6 @@
 #import "HZDevice.h"
 
 
-static NSString *HZUtilsAppID;
 static NSString *HZUtilsDeviceID;
 
 static unsigned char HZbase64EncodeLookup[65] =
@@ -163,28 +162,6 @@ char *HZNewBase64Encode(
     return encodedString;
 }
 
-+ (BOOL) statusBarShowing {
-    if ([[UIApplication sharedApplication] statusBarFrame].size.height > 0.0) {
-        return YES;
-    }
-    
-    return NO;
-}
-
-+ (DeviceResolution) currentResolution {
-    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone){
-        if ([[UIScreen mainScreen] respondsToSelector: @selector(scale)]) {
-            CGSize result = [[UIScreen mainScreen] bounds].size;
-            result = CGSizeMake(result.width * [UIScreen mainScreen].scale, result.height * [UIScreen mainScreen].scale);
-            if (result.height <= 480.0f)
-                return Device_iPhoneStandardRes;
-            return (result.height > 960 ? Device_iPhoneTallerHiRes : Device_iPhoneHiRes);
-        } else
-            return Device_iPhoneStandardRes;
-    } else
-        return (([[UIScreen mainScreen] respondsToSelector: @selector(scale)]) ? Device_iPadHiRes : Device_iPadStandardRes);
-}
-
 + (id) objectFromArchivedData: (NSData *) data {
     if (!data) return nil;
     
@@ -225,18 +202,6 @@ char *HZNewBase64Encode(
     }
 }
 
-+ (void) setAppID: (NSString *) appID {
-    HZUtilsAppID = appID;
-}
-
-+ (NSString *) appID {
-    return HZUtilsAppID;
-}
-
-+ (NSString *) bundleIdentifier {
-    return [[NSBundle mainBundle] bundleIdentifier];
-}
-
 + (NSString *) cacheDirectoryPath {
     NSArray *pathList = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *cachePath    = [[pathList objectAtIndex: 0] stringByAppendingPathComponent: @"com.heyzap.sdk.ads"];
@@ -249,17 +214,11 @@ char *HZNewBase64Encode(
 
 + (void) createCacheDirectory {
     NSString *cachePath = [self cacheDirectoryPath];
-    NSError *error;
     
-    if (![[NSFileManager defaultManager] createDirectoryAtPath:cachePath
+    [[NSFileManager defaultManager] createDirectoryAtPath:cachePath
                                    withIntermediateDirectories:NO
                                                     attributes:nil
-                                                         error:&error])
-    {}
-}
-
-+ (UIImage *)heyzapBundleImageNamed:(NSString *)name {
-    return [UIImage imageNamed:[@"Heyzap.bundle/" stringByAppendingString:name]];
+                                                    error:nil];
 }
 
 + (NSString *)hzDecode:(NSString *)s {
@@ -284,38 +243,6 @@ char *HZNewBase64Encode(
 
 + (NSMutableDictionary *)hzQueryDictionaryFromURL: (NSURL *) url {
 	return [HZUtils hzQueryStringToDictionary:[url query]];
-}
-
-+ (UIWindow *) windowOrNil {
-    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-    if (keyWindow) {
-        return keyWindow;
-    } else {
-        NSArray *windows = [[UIApplication sharedApplication] windows];
-        if ([windows count] >= 1) {
-            return [windows objectAtIndex:0];
-        } else {
-            return nil;
-        }
-    }
-}
-
-+(CGSize) currentScreenSize {
-    return [HZUtils sizeInOrientation:[UIApplication sharedApplication].statusBarOrientation];
-}
-
-+(CGSize) sizeInOrientation:(UIInterfaceOrientation)orientation {
-    CGSize size = [UIScreen mainScreen].bounds.size;
-    UIApplication *application = [UIApplication sharedApplication];
-    if (UIInterfaceOrientationIsLandscape(orientation))
-    {
-        size = CGSizeMake(size.height, size.width);
-    }
-    if (application.statusBarHidden == NO)
-    {
-        size.height -= MIN(application.statusBarFrame.size.width, application.statusBarFrame.size.height);
-    }
-    return size;
 }
 
 @end

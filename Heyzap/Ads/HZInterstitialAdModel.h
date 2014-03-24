@@ -12,12 +12,12 @@
 
 @interface HZInterstitialAdModel : HZAdModel
 
-@property (nonatomic) NSString *HTMLContent;
-@property (nonatomic, assign) BOOL fillParentWidth;
-@property (nonatomic, assign) BOOL fillParentHeight;
-@property (nonatomic, assign) BOOL isFullScreen;
-@property (nonatomic) CGSize dimensions;
+@property (nonatomic, readonly) NSString *HTMLContent;
+@property (nonatomic, readonly) BOOL fillParentWidth;
+@property (nonatomic, readonly) BOOL fillParentHeight;
+@property (nonatomic, readonly) BOOL isFullScreen;
+@property (nonatomic, readonly) CGSize dimensions;
 
-@property (nonatomic) UIWebView *preloadWebview;
+@property (nonatomic, readonly) UIWebView *preloadWebview;
 
 @end

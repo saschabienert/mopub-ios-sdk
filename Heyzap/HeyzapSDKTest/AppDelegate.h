@@ -7,14 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "AdDelegate.h"
 
 @class SDKTestAppViewController;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-@property (strong, nonatomic) AdDelegate *adDelegate;
 @property (strong, nonatomic) SDKTestAppViewController *controller;
 @property (strong, nonatomic) UINavigationController *navController;
 

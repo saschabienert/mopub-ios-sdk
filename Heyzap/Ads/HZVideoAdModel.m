@@ -16,6 +16,7 @@
 
 @interface HZVideoAdModel()
 @property (nonatomic, assign) BOOL sentComplete;
+@property (nonatomic) HZAFHTTPRequestOperation *downloadOperation;
 @end
 
 @implementation HZVideoAdModel

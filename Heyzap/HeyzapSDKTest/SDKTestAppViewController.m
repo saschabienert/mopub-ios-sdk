@@ -165,7 +165,6 @@ typedef enum {
             title = @"RESPONSE";
             NSMutableDictionary * dict = [[notification userInfo] mutableCopy];
             if(!self.logHTMLSwitch.isOn && dict[@"ad_html"]) dict[@"ad_html"] = @"(removed...)";
-//            if(!self.logHTMLSwitch.isOn && dict[@"interstitial"]) dict[@"interstitial"][@"html_data"] = @"(removed...)";
             
             logText = [dict description];
         }
@@ -201,8 +200,7 @@ const CGFloat kLeftMargin = 10;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(responseNotification:) name:kHZAPIClientDidReceiveResponseNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(downloadNotification:) name: kHZDownloadHelperSuccessNotification object: nil];
-    
-    self.score = 5;
+
     
     self.showButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
     self.showButton.frame = CGRectMake(10.0, 10.0, 79.0, 25.0);
@@ -232,7 +230,6 @@ const CGFloat kLeftMargin = 10;
     self.adsTextField.placeholder = @"Creative ID";
     self.adsTextField.textAlignment = NSTextAlignmentLeft;
     self.adsTextField.accessibilityLabel = kCreativeIDTextFieldAccessibilityLabel;
-//    self.adsTextField.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
     self.adsTextField.tag = kTagCreativeIDField;
     [self.adsTextField addTarget:self
                           action:@selector(creativeIDEditingChanged:)
@@ -408,13 +405,6 @@ const CGFloat kLeftMargin = 10;
         subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
     }
     self.scrollView.contentSize = (CGSize) { CGRectGetWidth(self.view.frame), subviewContainingRect.size.height + 80 };
-    
-//    HZScore *score = [[HZScore alloc] initWithLevelID: @"LQi"];
-//    score.displayScore = @"5999";
-//    score.relativeScore = 5999;
-//    [[HeyzapSDK sharedSDK] submitScore: score withCompletion:^(HZLeaderboardRank *rank, NSError *error) {
-//        
-//    }];
     
 }
 

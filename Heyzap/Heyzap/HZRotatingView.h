@@ -13,9 +13,7 @@
 - (void)adjustForOrientation:(UIInterfaceOrientation)orientation;
 @end
 
-@interface HZRotatingView : UIView <HZRotatingViewProtocol> {
-    UIInterfaceOrientation _orientation;
-}
+@interface HZRotatingView : UIView <HZRotatingViewProtocol>
 
 - (void) addChangeObservers;
 - (void) removeChangeObservers;

@@ -102,11 +102,6 @@
 #define HZConnectivityTypeWifi @"WiFi"
 #define HZConnectivityTypeWWAN @"WWAN"
 
-- (BOOL)hzHasInternetConnection
-{
-    return [self HZConnectivityType] != nil;
-}
-
 - (NSString *) connectivityTypeForRadioAccessString: (NSString *) str {
     if (str == nil) {
         return nil;

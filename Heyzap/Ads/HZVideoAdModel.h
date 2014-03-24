@@ -12,33 +12,32 @@
 @interface HZVideoAdModel : HZAdModel
 
 // Interstitial
-@property (nonatomic) NSString *HTMLContent;
-@property (nonatomic) NSNumber *interstitialHeight;
-@property (nonatomic) NSNumber *interstitialWidth;
+@property (nonatomic, readonly) NSString *HTMLContent;
+@property (nonatomic, readonly) NSNumber *interstitialHeight;
+@property (nonatomic, readonly) NSNumber *interstitialWidth;
 
 // Video Meta
-@property (nonatomic) NSNumber *videoWidth;
-@property (nonatomic) NSNumber *videoHeight;
-@property (nonatomic) NSNumber *videoDuration;
-@property (nonatomic) NSNumber *videoSizeBytes;
+@property (nonatomic, readonly) NSNumber *videoWidth;
+@property (nonatomic, readonly) NSNumber *videoHeight;
+@property (nonatomic, readonly) NSNumber *videoDuration;
+@property (nonatomic, readonly) NSNumber *videoSizeBytes;
 
 // Video Sources
-@property (nonatomic) NSMutableArray *staticURLs;
-@property (nonatomic) NSMutableArray *streamingURLs;
+@property (nonatomic, readonly) NSMutableArray *staticURLs;
+@property (nonatomic, readonly) NSMutableArray *streamingURLs;
 
 // On-screen Video Behaviors
-@property (nonatomic) NSNumber *lockoutTime;
-@property (nonatomic, assign) BOOL allowSkip;
-@property (nonatomic, assign) BOOL allowHide;
-@property (nonatomic, assign) BOOL allowClick;
-@property (nonatomic, assign) BOOL postRollInterstitial;
+@property (nonatomic, readonly) NSNumber *lockoutTime;
+@property (nonatomic, readonly) BOOL allowSkip;
+@property (nonatomic, readonly) BOOL allowHide;
+@property (nonatomic, readonly) BOOL allowClick;
+@property (nonatomic, readonly) BOOL postRollInterstitial;
 
-@property (nonatomic, assign) BOOL allowFallbacktoStreaming;
-@property (nonatomic, assign) BOOL forceStreaming;
+@property (nonatomic, readonly) BOOL allowFallbacktoStreaming;
+@property (nonatomic, readonly) BOOL forceStreaming;
 
 // Download Ops
-@property (nonatomic, assign) BOOL fileCached;
-@property (nonatomic) HZAFHTTPRequestOperation *downloadOperation;
+@property (nonatomic) BOOL fileCached;
 
 - (BOOL) onCompleteWithViewDuration: (NSTimeInterval)time andTotalDuration: (NSTimeInterval)duration andFinished: (BOOL) finished;
 - (NSURL *) URLForVideo;

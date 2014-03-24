@@ -12,6 +12,9 @@
 @interface HZWebView()
 @property (nonatomic) UIInterfaceOrientation currOrientation;
 @property (nonatomic) NSString *HTMLContent;
+@property (nonatomic) UIWebView *webview;
+@property (nonatomic) BOOL ready;
+@property (nonatomic) BOOL isFullscreen;
 @end
 
 @implementation HZWebView

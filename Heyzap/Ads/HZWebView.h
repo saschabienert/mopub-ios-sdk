@@ -12,10 +12,7 @@
 
 @interface HZWebView : UIView<UIWebViewDelegate>
 
-@property (nonatomic) UIWebView *webview;
 @property (nonatomic, weak) id<HZAdPopupActionDelegate> actionDelegate;
-@property (nonatomic) BOOL isFullscreen;
-@property (nonatomic, assign) BOOL ready;
 
 - (void) setHTML: (NSString *) html;
 

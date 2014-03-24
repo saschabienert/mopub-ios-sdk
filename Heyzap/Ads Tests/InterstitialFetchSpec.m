@@ -34,7 +34,7 @@ describe(@"InterstitialFetch", ^{
     
     beforeAll(^{
         // Bundle Identifier is coming back nil because [NSBundle mainBundle] returns nil (bundleForClass works)
-        [HZUtils stub:@selector(bundleIdentifier) andReturn:@"Heyzap.Ads-Tests"];
+        [[NSBundle mainBundle] stub:@selector(bundleIdentifier) andReturn:@"Heyzap.Ads-Tests"];
         [HZAdsManager stub:@selector(runInitialTasks)]; // ProcessInfo, install reporting, etc. causes problems
         [[HZDevice currentDevice] stub:@selector(HZadvertisingIdentifier) andReturn:@"1234-5432-5653-4543"];
     });

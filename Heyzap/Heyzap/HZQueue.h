@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface HZQueue : NSObject
-- (id) init;
+
 -(id) dequeue;
 -(void) enqueue:(id)obj;
 -(id) peek:(NSUInteger)index;
