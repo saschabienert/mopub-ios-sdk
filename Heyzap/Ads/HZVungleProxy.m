@@ -7,7 +7,7 @@
 //
 
 #import "HZVungleProxy.h"
-#import <vunglepub/vunglepub.h>
+#import "HZVGVunglePub.h"
 #import <UIKit/UIKit.h>
 
 @implementation HZVungleProxy
@@ -29,13 +29,13 @@
 
 - (BOOL)hasAd
 {
-    return [VGVunglePub adIsAvailable];
+    return [HZVGVunglePub adIsAvailable];
 }
 
 - (void)showAd
 {
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-    [VGVunglePub playModalAd:vc animated:YES];
+    [HZVGVunglePub playModalAd:vc animated:YES];
 }
 
 @end

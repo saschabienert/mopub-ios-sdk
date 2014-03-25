@@ -38,4 +38,7 @@ typedef NS_ENUM(NSUInteger, HZMediator) {
 
 - (void)showAd;
 
+// Need Delegate API for getting the current view controller.
+// We can handle the common scenarios by recursively finding the right view controller. 
+
 @end

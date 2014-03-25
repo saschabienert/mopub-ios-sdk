@@ -7,43 +7,18 @@
 //
 
 #import "HZChartboostProxy.h"
-#import "Chartboost.h"
+#import <UIKit/UIKit.h>
+#import "HZChartboost.h"
 
-//@interface ChartboostSingletonProxy : NSProxy
-//
-//- (id)proxy;
-//
-//@end
-//
-//@implementation ChartboostSingletonProxy
-//
-//- (id)proxy
-//{
-//    static ChartboostSingletonProxy *proxy;
-//    static dispatch_once_t onceToken;
-//    dispatch_once(&onceToken, ^{
-//        proxy = [[ChartboostSingletonProxy alloc] init];
-//    });
-//    return proxy;
-//}
-//
-//- (id)forwardingTargetForSelector:(SEL)sel {
-//    id chartboostClass = NSClassFromString(@"Chartboost");
-//    return [chartboostClass sharedChartboost];
-//}
-//
-//@end
-
-@interface HZChartboostProxy() <ChartboostDelegate>
-
-id chartboostClassProxy(void);
+@interface HZChartboostProxy()
 
 @end
 
 @implementation HZChartboostProxy
 
-id chartboostClassProxy(void) {
-    return NSClassFromString(@"Chartboost");
++ (BOOL)isSDKLoaded
+{
+    return [HZChartboost hzProxiedClassIsAvailable];
 }
 
 + (instancetype)sharedInstance
@@ -61,7 +36,7 @@ id chartboostClassProxy(void) {
     self = [super init];
     if (self) {
         NSLog(@"Chartboost class proxy used");
-        [chartboostClassProxy() sharedChartboost].delegate = self;
+        [HZChartboost sharedChartboost].delegate = self;
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive:)
                                                      name:UIApplicationDidBecomeActiveNotification
@@ -70,28 +45,46 @@ id chartboostClassProxy(void) {
     return self;
 }
 
+- (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature
+{
+    [[HZChartboost sharedChartboost] setAppId:appID];
+    [[HZChartboost sharedChartboost] setAppSignature:appSignature];
+    
+    [[HZChartboost sharedChartboost] startSession];
+}
+
 - (void)applicationDidBecomeActive:(NSNotification *)notification
 {
     // Chartboost requires this to be called each time the app becomes active.
-    [[Chartboost sharedChartboost] startSession];
+    [[HZChartboost sharedChartboost] startSession];
 }
 
 #pragma mark - Protocol Implementation
 
+- (BOOL)conformsToProtocol:(Protocol *)aProtocol
+{
+    if ([NSStringFromProtocol(aProtocol) isEqualToString:@"ChartboostDelegate"]) {
+        NSLog(@"Conforms to protocol called on chartboost delegate");
+        return YES;
+    } else {
+        return [super conformsToProtocol:aProtocol];
+    }
+}
+
 - (void)prefetch
 {
-    [[Chartboost sharedChartboost] cacheInterstitial];
+    [[HZChartboost sharedChartboost] cacheInterstitial];
 }
 
 - (BOOL)hasAd
 {
-    return [[Chartboost sharedChartboost] hasCachedInterstitial];
+    return [[HZChartboost sharedChartboost] hasCachedInterstitial];
 }
 
 - (void)showAd
 {
     NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-    [[Chartboost sharedChartboost] showInterstitial];
+    [[HZChartboost sharedChartboost] showInterstitial];
 }
 
 #pragma mark - Chartboost Delegate callbacks
@@ -133,37 +126,37 @@ id chartboostClassProxy(void) {
  * the reason of the failure
  */
 
-- (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
-    switch(error){
-        case CBLoadErrorInternetUnavailable: {
-            NSLog(@"Failed to load Interstitial, no Internet connection !");
-        } break;
-        case CBLoadErrorInternal: {
-            NSLog(@"Failed to load Interstitial, internal error !");
-        } break;
-        case CBLoadErrorNetworkFailure: {
-            NSLog(@"Failed to load Interstitial, network error !");
-        } break;
-        case CBLoadErrorWrongOrientation: {
-            NSLog(@"Failed to load Interstitial, wrong orientation !");
-        } break;
-        case CBLoadErrorTooManyConnections: {
-            NSLog(@"Failed to load Interstitial, too many connections !");
-        } break;
-        case CBLoadErrorFirstSessionInterstitialsDisabled: {
-            NSLog(@"Failed to load Interstitial, first session !");
-        } break;
-        case CBLoadErrorNoAdFound : {
-            NSLog(@"Failed to load Interstitial, no ad found !");
-        } break;
-        case CBLoadErrorSessionNotStarted : {
-            NSLog(@"Failed to load Interstitial, session not started !");
-        } break;
-        default: {
-            NSLog(@"Failed to load Interstitial, unknown error !");
-        }
-    }
-}
+//- (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
+//    switch(error){
+//        case CBLoadErrorInternetUnavailable: {
+//            NSLog(@"Failed to load Interstitial, no Internet connection !");
+//        } break;
+//        case CBLoadErrorInternal: {
+//            NSLog(@"Failed to load Interstitial, internal error !");
+//        } break;
+//        case CBLoadErrorNetworkFailure: {
+//            NSLog(@"Failed to load Interstitial, network error !");
+//        } break;
+//        case CBLoadErrorWrongOrientation: {
+//            NSLog(@"Failed to load Interstitial, wrong orientation !");
+//        } break;
+//        case CBLoadErrorTooManyConnections: {
+//            NSLog(@"Failed to load Interstitial, too many connections !");
+//        } break;
+//        case CBLoadErrorFirstSessionInterstitialsDisabled: {
+//            NSLog(@"Failed to load Interstitial, first session !");
+//        } break;
+//        case CBLoadErrorNoAdFound : {
+//            NSLog(@"Failed to load Interstitial, no ad found !");
+//        } break;
+//        case CBLoadErrorSessionNotStarted : {
+//            NSLog(@"Failed to load Interstitial, session not started !");
+//        } break;
+//        default: {
+//            NSLog(@"Failed to load Interstitial, unknown error !");
+//        }
+//    }
+//}
 
 /*
  * didCacheInterstitial
@@ -184,50 +177,6 @@ id chartboostClassProxy(void) {
 }
 
 /*
- * didFailToLoadMoreApps
- *
- * This is called when the more apps page has failed to load for any reason
- *
- * Is fired on:
- * - No network connection
- * - No more apps page has been created (add a more apps page in the dashboard)
- * - No publishing campaign matches for that user (add more campaigns to your more apps page)
- *  -Find this inside the App > Edit page in the Chartboost dashboard
- */
-
-- (void)didFailToLoadMoreApps:(CBLoadError)error {
-    switch(error){
-        case CBLoadErrorInternetUnavailable: {
-            NSLog(@"Failed to load More Apps, no Internet connection !");
-        } break;
-        case CBLoadErrorInternal: {
-            NSLog(@"Failed to load More Apps, internal error !");
-        } break;
-        case CBLoadErrorNetworkFailure: {
-            NSLog(@"Failed to load More Apps, network error !");
-        } break;
-        case CBLoadErrorWrongOrientation: {
-            NSLog(@"Failed to load More Apps, wrong orientation !");
-        } break;
-        case CBLoadErrorTooManyConnections: {
-            NSLog(@"Failed to load More Apps, too many connections !");
-        } break;
-        case CBLoadErrorFirstSessionInterstitialsDisabled: {
-            NSLog(@"Failed to load More Apps, first session !");
-        } break;
-        case CBLoadErrorNoAdFound: {
-            NSLog(@"Failed to load More Apps, Apps not found !");
-        } break;
-        case CBLoadErrorSessionNotStarted : {
-            NSLog(@"Failed to load Interstitial, session not started !");
-        } break;
-        default: {
-            NSLog(@"Failed to load More Apps, unknown error !");
-        }
-    }
-}
-
-/*
  * didDismissInterstitial
  *
  * This is called when an interstitial is dismissed
@@ -241,24 +190,7 @@ id chartboostClassProxy(void) {
 
 - (void)didDismissInterstitial:(NSString *)location {
     NSLog(@"dismissed interstitial at location %@", location);
-    [[Chartboost sharedChartboost] cacheInterstitial:location];
-}
-
-/*
- * didDismissMoreApps
- *
- * This is called when the more apps page is dismissed
- *
- * Is fired on:
- * - More Apps click
- * - More Apps close
- *
- * #Pro Tip: Use the delegate method below to immediately re-cache the more apps page
- */
-
-- (void)didDismissMoreApps {
-    NSLog(@"dismissed more apps page, re-caching now");
-    [[Chartboost sharedChartboost] cacheMoreApps];
+//    [[Chartboost sharedChartboost] cacheInterstitial:location];
 }
 
 /*
@@ -273,5 +205,6 @@ id chartboostClassProxy(void) {
 - (BOOL)shouldRequestInterstitialsInFirstSession {
     return YES;
 }
+
 
 @end

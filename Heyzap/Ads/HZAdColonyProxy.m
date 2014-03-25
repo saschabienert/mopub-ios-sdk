@@ -7,7 +7,7 @@
 //
 
 #import "HZAdColonyProxy.h"
-#import <AdColony/AdColony.h>
+#import "HZAdColony.h"
 
 @interface HZAdColonyProxy()
 
@@ -32,7 +32,7 @@
     NSParameterAssert(appID);
     NSParameterAssert(zoneID);
     self.zoneID = zoneID;
-    [AdColony configureWithAppID:appID zoneIDs:@[zoneID] delegate:nil logging:NO];
+    [HZAdColony configureWithAppID:appID zoneIDs:@[zoneID] delegate:nil logging:NO];
 }
 
 - (NSString *)zoneID
@@ -43,7 +43,7 @@
 
 - (BOOL)hasAd
 {
-    BOOL hasAd = [AdColony zoneStatusForZone:self.zoneID] == ADCOLONY_ZONE_STATUS_ACTIVE;
+    BOOL hasAd = [HZAdColony zoneStatusForZone:self.zoneID] == HZ_ADCOLONY_ZONE_STATUS_ACTIVE;
     NSLog(@"Adcolony has ad = %i",hasAd);
     return hasAd;
 }
@@ -55,7 +55,7 @@
 
 - (void)showAd
 {
-    [AdColony playVideoAdForZone:self.zoneID withDelegate:nil];
+    [HZAdColony playVideoAdForZone:self.zoneID withDelegate:nil];
 }
 
 @end

@@ -7,9 +7,6 @@
 //
 
 #import "HeyzapMediation.h"
-#import "Chartboost.h"
-#import <AdColony/AdColony.h>
-#import <vunglepub/vunglepub.h>
 #import "HZMediatorProxy.h"
 
 // Proxies
@@ -18,6 +15,7 @@
 #import "HZAdColonyProxy.h"
 #import "HZVungleProxy.h"
 #import "HZAdMobProxy.h"
+#import "HZVGVunglePub.h"
 
 
 @interface HeyzapMediation()
@@ -29,6 +27,7 @@
 NSValue * HZNSValueFromMediator(HZMediator mediator);
 HZMediator HZMediatorFromNSValue(NSValue *value);
 id <HZMediatorProxy> HZProxyFromHZMediator(HZMediator mediator);
+BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout);
 
 @end
 
@@ -117,24 +116,21 @@ id <HZMediatorProxy> HZProxyFromHZMediator(HZMediator mediator) {
 
 - (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature
 {
-    if ([Chartboost class]) {
-        NSLog(@"Chartboost exists based on class");
-    } else {
+    if (![HZChartboostProxy isSDKLoaded]) {
+        NSLog(@"Tried to load chartboost, but we couldn't load their SDK. Has Chartboost been added to your project?");
         return;
     }
     BOOL chartboostExists = NSClassFromString(@"Chartboost") != NULL;
     NSLog(@"Chartboost exists = %i",chartboostExists);
     
-    [Chartboost sharedChartboost].appId = appID;
-    [Chartboost sharedChartboost].appSignature = appSignature;
-    [[Chartboost sharedChartboost] startSession];
+    [[HZChartboostProxy sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
     
     [self didSetupMediator:HZMediatorChartboost];
 }
 
 - (void)setupVungleWithAppID:(NSString *)appID
 {
-    [VGVunglePub startWithPubAppID:appID];
+    [HZVGVunglePub startWithPubAppID:appID];
 }
 
 - (void)finishedSettingUpMediators
@@ -155,10 +151,10 @@ id <HZMediatorProxy> HZProxyFromHZMediator(HZMediator mediator) {
 {
     return @[
              HZNSValueFromMediator(HZMediatorAdMob),
-             HZNSValueFromMediator(HZMediatorVungle),
-             HZNSValueFromMediator(HZMediatorAdColony),
-             HZNSValueFromMediator(HZMediatorHeyzap),
-             HZNSValueFromMediator(HZMediatorChartboost),
+//             HZNSValueFromMediator(HZMediatorVungle),
+//             HZNSValueFromMediator(HZMediatorAdColony),
+//             HZNSValueFromMediator(HZMediatorHeyzap),
+//             HZNSValueFromMediator(HZMediatorChartboost),
              ];
 }
 
@@ -175,6 +171,121 @@ id <HZMediatorProxy> HZProxyFromHZMediator(HZMediator mediator) {
             NSLog(@"Didn't have ad");
         }
     }
+}
+
+- (void)showAd:(NSArray *)preferredMediatorList
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        for (NSValue *value in preferredMediatorList) {
+            const HZMediator mediator = HZMediatorFromNSValue(value);
+
+            __block id<HZMediatorProxy> proxy;
+            __block BOOL isReady = NO;
+            __block BOOL shouldBreak = NO;
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                proxy = HZProxyFromHZMediator(mediator);
+                isReady = [proxy hasAd];
+            });
+            
+            if (isReady) {
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    shouldBreak = YES;
+                    [proxy showAd];
+                });
+            } else {
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    [proxy prefetch];
+                });
+                const BOOL fetchedWithinTimeout = hzWaitUntil(^BOOL{
+                    return [proxy hasAd];
+                }, 2);
+                if (fetchedWithinTimeout) {
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        [proxy showAd];
+                    });
+                }
+            }
+        }
+    });
+}
+
+- (void)showAd2:(NSArray *)preferredMediatorList tag:(NSString *)tag
+{
+    __block BOOL didShowAd = NO;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        for (NSValue *value in preferredMediatorList) {
+            const HZMediator mediator = HZMediatorFromNSValue(value);
+            
+            __block id<HZMediatorProxy> proxy;
+            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                proxy = HZProxyFromHZMediator(mediator);
+            });
+            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [proxy prefetch];
+            });
+            
+            const BOOL fetchedWithinTimeout = hzWaitUntil(^BOOL{
+                return [proxy hasAd];
+            }, 2);
+            
+            if (fetchedWithinTimeout) {
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    [proxy showAd];
+                    didShowAd = YES;
+                });
+                
+                // Send delegate notification about showing an ad.
+                // Send
+            }
+        }
+    });
+    
+    if (didShowAd) {
+        // did show ad with tag.
+    } else {
+        // did Fail to show ad with tag.
+    }
+}
+
+// Did receive ad with tag -> Tag always nil (no consistent way to say what tag a fetch is for).
+// Did fail to receieve ad with tag -> Tag always nil (no consistent way to say what tag a fetch is for).
+
+// Did hide ad -> Receive callback from individual SDKs about whether
+
+// Must not be called from the main thread—this will sleep.
+BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
+{
+    NSCParameterAssert(waitBlock);
+    NSCParameterAssert(timeout > 0);
+    
+    NSTimeInterval timeWaited = 0;
+    while (true) {
+        
+        __block BOOL waitCondition = NO;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            waitCondition = waitBlock();
+        });
+        
+        if (waitCondition) {
+            return YES;
+        } else if (timeWaited >= timeout) {
+            return NO;
+        } else {
+            static const NSTimeInterval sleepInterval = 0.2;
+            [NSThread sleepForTimeInterval:sleepInterval];
+            timeWaited += sleepInterval;
+        }
+    }
+}
+
+- (void)start
+{
+    // Get a list of available mediators
+    // Send list to the server.
+    // Get back list of enabled mediators
+    // Set property of enabled mediators
 }
 
 @end
