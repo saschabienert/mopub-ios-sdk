@@ -11,4 +11,6 @@
 
 @interface HZAdMobProxy : NSObject <HZMediatorProxy>
 
+@property (nonatomic, strong) NSError *lastError;
+
 @end

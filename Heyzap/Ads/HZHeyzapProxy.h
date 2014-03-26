@@ -11,4 +11,6 @@
 
 @interface HZHeyzapProxy : NSObject <HZMediatorProxy>
 
+@property (nonatomic, strong) NSError *lastError;
+
 @end

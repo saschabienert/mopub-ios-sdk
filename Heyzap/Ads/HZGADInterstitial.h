@@ -15,6 +15,9 @@
 
 @property(nonatomic, copy) NSString *adUnitID;
 @property(nonatomic, readonly, assign) BOOL isReady;
+@property(nonatomic, readonly, assign) BOOL hasBeenUsed;
+
+@property(nonatomic, assign) NSObject<HZGADInterstitialDelegate> *delegate;
 
 - (id)init;
 

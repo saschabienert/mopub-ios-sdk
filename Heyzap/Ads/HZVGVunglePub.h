@@ -10,12 +10,23 @@
 #import <UIKit/UIKit.h>
 #import "HZClassProxy.h"
 
+@class HZVGStatusData;
+
+@protocol HZVGVunglePubDelegate <NSObject>
+@optional
+
+- (void)vungleStatusUpdate:(HZVGStatusData *)statusData;
+
+@end
+
 @interface HZVGVunglePub : HZClassProxy
 
 + (BOOL)adIsAvailable;
 
 + (void)playModalAd:(UIViewController *)controller animated:(BOOL)animated;
 
-+ (void)startWithPubAppID:(NSString*)pubAppID;
++ (void)startWithPubAppID:(NSString *)pubAppID;
+
++ (void)setDelegate:(id<HZVGVunglePubDelegate>)delegate;
 
 @end

@@ -12,6 +12,7 @@
 
 @dynamic adUnitID;
 @dynamic isReady;
+@dynamic delegate;
 
 + (id)alloc
 {

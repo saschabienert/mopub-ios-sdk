@@ -28,6 +28,7 @@ NSValue * HZNSValueFromMediator(HZMediator mediator);
 HZMediator HZMediatorFromNSValue(NSValue *value);
 id <HZMediatorProxy> HZProxyFromHZMediator(HZMediator mediator);
 BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout);
+NSString * NSStringFromHZMediator(HZMediator mediator);
 
 @end
 
@@ -90,6 +91,31 @@ id <HZMediatorProxy> HZProxyFromHZMediator(HZMediator mediator) {
     }
 }
 
+NSString * NSStringFromHZMediator(HZMediator mediator) {
+    switch (mediator) {
+        case HZMediatorAdColony: {
+            return @"Ad Colony";
+            break;
+        }
+        case HZMediatorAdMob: {
+            return @"Ad Mob";
+            break;
+        }
+        case HZMediatorChartboost: {
+            return @"Chartboost";
+            break;
+        }
+        case HZMediatorHeyzap: {
+            return @"Heyzap";
+            break;
+        }
+        case HZMediatorVungle: {
+            return @"Vungle";
+            break;
+        }
+    }
+}
+
 
 #pragma mark - Mediator Setup
 
@@ -137,12 +163,10 @@ id <HZMediatorProxy> HZProxyFromHZMediator(HZMediator mediator) {
 {
     self.mediatorsAreSetup = YES;
     
-    for (NSValue *value in self.setupMediators) {
-        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-        const HZMediator mediator = HZMediatorFromNSValue(value);
-        const id<HZMediatorProxy> proxy = HZProxyFromHZMediator(mediator);
-        [proxy prefetch];
-    }
+    [self fetch:[self preferredMediatorList]
+            tag:nil
+showImmediately:NO
+   fetchTimeout:6]; // Give a longer timeout for the initial fetch
 }
 
 #pragma mark - Ads
@@ -150,68 +174,88 @@ id <HZMediatorProxy> HZProxyFromHZMediator(HZMediator mediator) {
 - (NSArray *)preferredMediatorList
 {
     return @[
+             HZNSValueFromMediator(HZMediatorVungle),
+             HZNSValueFromMediator(HZMediatorAdColony),
+             HZNSValueFromMediator(HZMediatorChartboost),
              HZNSValueFromMediator(HZMediatorAdMob),
-//             HZNSValueFromMediator(HZMediatorVungle),
-//             HZNSValueFromMediator(HZMediatorAdColony),
-//             HZNSValueFromMediator(HZMediatorHeyzap),
-//             HZNSValueFromMediator(HZMediatorChartboost),
              ];
 }
 
 - (void)showAd
 {
     NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-    for (NSValue *value in self.preferredMediatorList) {
-        const HZMediator mediator = HZMediatorFromNSValue(value);
-        const id<HZMediatorProxy> proxy = HZProxyFromHZMediator(mediator);
-        if ([proxy hasAd]) {
-            [proxy showAd];
-            break;
-        } else {
-            NSLog(@"Didn't have ad");
-        }
+    [self fetch:[self preferredMediatorList] tag:nil showImmediately:YES fetchTimeout:2];
+//    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+//    for (NSValue *value in self.preferredMediatorList) {
+//        const HZMediator mediator = HZMediatorFromNSValue(value);
+//        const id<HZMediatorProxy> proxy = HZProxyFromHZMediator(mediator);
+//        if ([proxy hasAd]) {
+//            [proxy showAd];
+//            break;
+//        } else {
+//            NSLog(@"Didn't have ad");
+//        }
+//    }
+}
+
+//- (void)showAd:(NSArray *)preferredMediatorList
+//{
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//        
+//        for (NSValue *value in preferredMediatorList) {
+//            const HZMediator mediator = HZMediatorFromNSValue(value);
+//
+//            __block id<HZMediatorProxy> proxy;
+//            __block BOOL isReady = NO;
+//            __block BOOL shouldBreak = NO;
+//            dispatch_sync(dispatch_get_main_queue(), ^{
+//                proxy = HZProxyFromHZMediator(mediator);
+//                isReady = [proxy hasAd];
+//            });
+//            
+//            if (isReady) {
+//                dispatch_sync(dispatch_get_main_queue(), ^{
+//                    shouldBreak = YES;
+//                    [proxy showAd];
+//                });
+//            } else {
+//                dispatch_sync(dispatch_get_main_queue(), ^{
+//                    [proxy prefetch];
+//                });
+//                const BOOL fetchedWithinTimeout = hzWaitUntil(^BOOL{
+//                    return [proxy hasAd];
+//                }, 2);
+//                if (fetchedWithinTimeout) {
+//                    dispatch_sync(dispatch_get_main_queue(), ^{
+//                        [proxy showAd];
+//                    });
+//                }
+//            }
+//        }
+//    });
+//}
+
+- (void)fetch:(NSArray *)preferredMediatorList tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout
+{
+    // Find the first SDK that has an ad, and use it
+    // This means if e.g. the first 2 networks aren't working, we don't have to wait for a timeout to get to the third.
+    const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(NSValue *mediatorValue, NSUInteger idx, BOOL *stop) {
+        const HZMediator mediator = HZMediatorFromNSValue(mediatorValue);
+        id <HZMediatorProxy> proxy = HZProxyFromHZMediator(mediator);
+        return [proxy hasAd];
+    }];
+    
+    if (idx != NSNotFound) {
+        NSLog(@"Using fast path by skipping to first network with an ad.");
+        NSValue *mediatorValue = preferredMediatorList[idx];
+        const HZMediator mediator = HZMediatorFromNSValue(mediatorValue);
+        id <HZMediatorProxy> proxy = HZProxyFromHZMediator(mediator);
+        [proxy showAd];
+        return;
     }
-}
-
-- (void)showAd:(NSArray *)preferredMediatorList
-{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        for (NSValue *value in preferredMediatorList) {
-            const HZMediator mediator = HZMediatorFromNSValue(value);
-
-            __block id<HZMediatorProxy> proxy;
-            __block BOOL isReady = NO;
-            __block BOOL shouldBreak = NO;
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                proxy = HZProxyFromHZMediator(mediator);
-                isReady = [proxy hasAd];
-            });
-            
-            if (isReady) {
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    shouldBreak = YES;
-                    [proxy showAd];
-                });
-            } else {
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    [proxy prefetch];
-                });
-                const BOOL fetchedWithinTimeout = hzWaitUntil(^BOOL{
-                    return [proxy hasAd];
-                }, 2);
-                if (fetchedWithinTimeout) {
-                    dispatch_sync(dispatch_get_main_queue(), ^{
-                        [proxy showAd];
-                    });
-                }
-            }
-        }
-    });
-}
-
-- (void)showAd2:(NSArray *)preferredMediatorList tag:(NSString *)tag
-{
-    __block BOOL didShowAd = NO;
+    
+    
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         for (NSValue *value in preferredMediatorList) {
             const HZMediator mediator = HZMediatorFromNSValue(value);
@@ -226,27 +270,43 @@ id <HZMediatorProxy> HZProxyFromHZMediator(HZMediator mediator) {
                 [proxy prefetch];
             });
             
-            const BOOL fetchedWithinTimeout = hzWaitUntil(^BOOL{
-                return [proxy hasAd];
+            __block BOOL fetchedWithinTimeout = NO;
+            hzWaitUntil(^BOOL{
+                fetchedWithinTimeout = [proxy hasAd];
+                return [proxy hasAd] || proxy.lastError != nil; // If it errored, exit early.
             }, 2);
             
             if (fetchedWithinTimeout) {
+                NSLog(@"We fetched within the timeout! Network = %@",NSStringFromHZMediator(mediator));
+                // For just a fetch we can break now.
+                if (!showImmediately) {
+                    break;
+                }
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     [proxy showAd];
-                    didShowAd = YES;
                 });
+                NSLog(@"Mediator %@ is showing an ad",NSStringFromHZMediator(mediator));
+                break;
                 
                 // Send delegate notification about showing an ad.
-                // Send
+            } else {
+                NSLog(@"The mediator with name = %@ didn't have an ad",NSStringFromHZMediator(mediator));
+                // If the mediated SDK errored, reset it and try again.
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    if (proxy.lastError) {
+                        proxy.lastError = nil;
+                        [proxy prefetch];
+                    }
+                });
             }
         }
     });
     
-    if (didShowAd) {
-        // did show ad with tag.
-    } else {
-        // did Fail to show ad with tag.
-    }
+//    if (didShowAd) {
+//        // did show ad with tag.
+//    } else {
+//        // did Fail to show ad with tag.
+//    }
 }
 
 // Did receive ad with tag -> Tag always nil (no consistent way to say what tag a fetch is for).
@@ -264,7 +324,7 @@ BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
     while (true) {
         
         __block BOOL waitCondition = NO;
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_sync(dispatch_get_main_queue(), ^{
             waitCondition = waitBlock();
         });
         
@@ -286,6 +346,8 @@ BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
     // Send list to the server.
     // Get back list of enabled mediators
     // Set property of enabled mediators
+    // Initialize all those mediators with credentials
+        // -- need a way of validating our credentials are good. Have a class for each credential thing?
 }
 
 @end

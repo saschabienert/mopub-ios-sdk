@@ -11,4 +11,6 @@
 
 @interface HZVungleProxy : NSObject <HZMediatorProxy>
 
+@property (nonatomic, strong) NSError *lastError;
+
 @end

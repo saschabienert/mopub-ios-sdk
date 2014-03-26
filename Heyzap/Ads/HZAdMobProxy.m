@@ -10,8 +10,9 @@
 #import "HZGADInterstitial.h"
 #import "HZGADRequest.h"
 #import <UIKit/UIKit.h>
+#import "MediationConstants.h"
 
-@interface HZAdMobProxy()
+@interface HZAdMobProxy() <HZGADInterstitialDelegate>
 
 @property (nonatomic, strong) HZGADInterstitial *currentInterstitial;
 
@@ -31,10 +32,17 @@
 
 - (void)prefetch
 {
+    if (self.currentInterstitial
+        && !self.currentInterstitial.hasBeenUsed
+        && !self.lastError) {
+        // If we have an interstitial already out fetching, don't start up a re-fetch.
+        return;
+    }
     NSLog(@"Prefetch called for admob");
     
     self.currentInterstitial = [[HZGADInterstitial alloc] init];
     self.currentInterstitial.adUnitID = @"ca-app-pub-3919373204654131/8414896602";
+    self.currentInterstitial.delegate = self;
     
     HZGADRequest *request = [HZGADRequest request];
     
@@ -54,6 +62,30 @@
 {
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     [self.currentInterstitial presentFromRootViewController:vc];
+}
+
+#pragma mark - Delegate callbacks
+
+- (BOOL)conformsToProtocol:(Protocol *)aProtocol
+{
+    if ([NSStringFromProtocol(aProtocol) isEqualToString:@"GADInterstitialDelegate"]) {
+        return YES;
+    } else {
+        return [super conformsToProtocol:aProtocol];
+    }
+}
+
+- (void)interstitial:(HZGADInterstitial *)ad didFailToReceiveAdWithError:(HZGADRequestError *)error
+{
+    self.lastError = [NSError errorWithDomain:kHZMediationDomain
+                                         code:1
+                                     userInfo:@{kHZMediatorNameKey: @"AdMob",
+                                                NSUnderlyingErrorKey: error}];
+}
+
+- (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
+{
+    self.lastError = nil;
 }
 
 @end

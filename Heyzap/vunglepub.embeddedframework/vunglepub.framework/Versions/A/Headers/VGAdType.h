@@ -84,7 +84,7 @@ NS_INLINE BOOL VGAdTypeForceValid(VGAdType type, BOOL fake)
     {
         return type;
     }
-    else
+    else‚
     {
         return VGAdTypeFakeFirst;
     }

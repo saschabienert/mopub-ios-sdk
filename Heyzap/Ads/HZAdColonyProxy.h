@@ -11,6 +11,8 @@
 
 @interface HZAdColonyProxy : NSObject <HZMediatorProxy>
 
+@property (nonatomic, strong) NSError *lastError;
+
 - (void)setupAdColonyWithAppID:(NSString *)appID zoneID:(NSString *)zoneID;
 
 @end

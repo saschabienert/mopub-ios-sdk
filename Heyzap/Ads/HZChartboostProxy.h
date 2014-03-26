@@ -11,6 +11,8 @@
 
 @interface HZChartboostProxy : NSObject <HZMediatorProxy>
 
+@property (nonatomic, strong) NSError *lastError;
+
 - (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature;
 
 + (BOOL)isSDKLoaded;

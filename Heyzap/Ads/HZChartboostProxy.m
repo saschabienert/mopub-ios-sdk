@@ -9,6 +9,7 @@
 #import "HZChartboostProxy.h"
 #import <UIKit/UIKit.h>
 #import "HZChartboost.h"
+#import "MediationConstants.h"
 
 @interface HZChartboostProxy()
 
@@ -94,31 +95,6 @@
  *
  */
 
-
-/*
- * shouldDisplayInterstitial
- *
- * This is used to control when an interstitial should or should not be displayed
- * The default is YES, and that will let an interstitial display as normal
- * If it's not okay to display an interstitial, return NO
- *
- * For example: during gameplay, return NO.
- *
- * Is fired on:
- * -Interstitial is loaded & ready to display
- */
-
-- (BOOL)shouldDisplayInterstitial:(NSString *)location {
-    NSLog(@"about to display interstitial at location %@", location);
-    
-    // For example:
-    // if the user has left the main menu and is currently playing your game, return NO;
-    
-    // Otherwise return YES to display the interstitial
-    return YES;
-}
-
-
 /*
  * didFailToLoadInterstitial
  *
@@ -126,7 +102,8 @@
  * the reason of the failure
  */
 
-//- (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
+- (void)didFailToLoadInterstitial:(NSString *)location withError:(HZCBLoadError)error {
+    self.lastError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Charboost"}];
 //    switch(error){
 //        case CBLoadErrorInternetUnavailable: {
 //            NSLog(@"Failed to load Interstitial, no Internet connection !");
@@ -156,7 +133,7 @@
 //            NSLog(@"Failed to load Interstitial, unknown error !");
 //        }
 //    }
-//}
+}
 
 /*
  * didCacheInterstitial
@@ -173,7 +150,8 @@
  */
 
 - (void)didCacheInterstitial:(NSString *)location {
-    NSLog(@"interstitial cached at location %@", location);
+    self.lastError = nil;
+    NSLog(@"Chartboost interstitial cached at location %@", location);
 }
 
 /*
