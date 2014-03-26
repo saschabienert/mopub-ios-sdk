@@ -15,7 +15,7 @@
 @dynamic appSignature;
 @dynamic delegate;
 
-+ (NSString *)hzClassName
++ (NSString *)hzProxiedClassName
 {
     return @"Chartboost";
 }

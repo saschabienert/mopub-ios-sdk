@@ -33,6 +33,6 @@
  *
  *  @return The name of the class to be proxied.
  */
-+ (NSString *)hzClassName;
++ (NSString *)hzProxiedClassName;
 
 @end

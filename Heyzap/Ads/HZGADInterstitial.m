@@ -15,10 +15,10 @@
 
 + (id)alloc
 {
-    return [NSClassFromString([self hzClassName]) alloc];
+    return [NSClassFromString([self hzProxiedClassName]) alloc];
 }
 
-+ (NSString *)hzClassName
++ (NSString *)hzProxiedClassName
 {
     return @"GADInterstitial";
 }

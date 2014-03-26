@@ -11,7 +11,7 @@
 #pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation HZAdColony
 
-+ (NSString *)hzClassName
++ (NSString *)hzProxiedClassName
 {
     return @"AdColony";
 }

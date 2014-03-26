@@ -12,10 +12,10 @@
 
 + (BOOL)hzProxiedClassIsAvailable
 {
-    return NSClassFromString([self hzClassName]) != nil;
+    return NSClassFromString([self hzProxiedClassName]) != nil;
 }
 
-+ (NSString *)hzClassName
++ (NSString *)hzProxiedClassName
 {
     [[NSException exceptionWithName:@"AbstractMethodException" reason:@"Subclasses should override this method" userInfo:nil] raise];
     abort();
@@ -23,7 +23,7 @@
 
 + (id)forwardingTargetForSelector:(SEL)aSelector
 {
-    return NSClassFromString([self hzClassName]);
+    return NSClassFromString([self hzProxiedClassName]);
 }
 
 @end

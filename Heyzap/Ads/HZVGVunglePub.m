@@ -11,7 +11,7 @@
 #pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation HZVGVunglePub
 
-+ (NSString *)hzClassName
++ (NSString *)hzProxiedClassName
 {
     return @"VGVunglePub";
 }

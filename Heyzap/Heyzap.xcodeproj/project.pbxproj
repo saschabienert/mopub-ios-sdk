@@ -42,12 +42,12 @@
 		500F88E518E203A500E5D6F8 /* HZClassProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 500F88E318E203A500E5D6F8 /* HZClassProxy.m */; };
 		500F88EA18E210D400E5D6F8 /* HZAdColony.h in Headers */ = {isa = PBXBuildFile; fileRef = 500F88E818E210D400E5D6F8 /* HZAdColony.h */; };
 		500F88EB18E210D400E5D6F8 /* HZAdColony.m in Sources */ = {isa = PBXBuildFile; fileRef = 500F88E918E210D400E5D6F8 /* HZAdColony.m */; };
-		500F88ED18E212A900E5D6F8 /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 500F88EC18E212A900E5D6F8 /* AdColony.framework */; };
 		500F88F218E215D000E5D6F8 /* HZGADInterstitial.h in Headers */ = {isa = PBXBuildFile; fileRef = 500F88F018E215D000E5D6F8 /* HZGADInterstitial.h */; };
 		500F88F318E215D000E5D6F8 /* HZGADInterstitial.m in Sources */ = {isa = PBXBuildFile; fileRef = 500F88F118E215D000E5D6F8 /* HZGADInterstitial.m */; };
 		500F88F618E215DD00E5D6F8 /* HZGADRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 500F88F418E215DD00E5D6F8 /* HZGADRequest.h */; };
 		500F88F718E215DD00E5D6F8 /* HZGADRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 500F88F518E215DD00E5D6F8 /* HZGADRequest.m */; };
 		500F890318E21AE300E5D6F8 /* libGoogleAdMobAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 500F890218E21AE300E5D6F8 /* libGoogleAdMobAds.a */; };
+		500F890718E25EDB00E5D6F8 /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 500F890618E25EDB00E5D6F8 /* AdColony.framework */; };
 		5011CE3B18DB8F1500604B53 /* HZVungleProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5011CE3918DB8F1500604B53 /* HZVungleProxy.h */; };
 		5011CE3C18DB8F1500604B53 /* HZVungleProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5011CE3A18DB8F1500604B53 /* HZVungleProxy.m */; };
 		5011CE4018DB914200604B53 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE3F18DB914200604B53 /* libz.dylib */; };
@@ -55,7 +55,6 @@
 		5011CE4418DB915A00604B53 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4318DB915A00604B53 /* CFNetwork.framework */; };
 		5011CE4618DB916B00604B53 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4518DB916B00604B53 /* AudioToolbox.framework */; };
 		5011CE4818DB917200604B53 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4718DB917200604B53 /* CoreMedia.framework */; };
-		5011CE4918DB91BF00604B53 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE3F18DB914200604B53 /* libz.dylib */; };
 		5011CE5518DB9B7F00604B53 /* HZAdColonyProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5011CE5318DB9B7F00604B53 /* HZAdColonyProxy.h */; };
 		5011CE5618DB9B7F00604B53 /* HZAdColonyProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5011CE5418DB9B7F00604B53 /* HZAdColonyProxy.m */; };
 		5011CE5E18DBAE4E00604B53 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
@@ -278,7 +277,6 @@
 		500F88E318E203A500E5D6F8 /* HZClassProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZClassProxy.m; sourceTree = "<group>"; };
 		500F88E818E210D400E5D6F8 /* HZAdColony.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdColony.h; sourceTree = "<group>"; };
 		500F88E918E210D400E5D6F8 /* HZAdColony.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdColony.m; sourceTree = "<group>"; };
-		500F88EC18E212A900E5D6F8 /* AdColony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdColony.framework; sourceTree = "<group>"; };
 		500F88F018E215D000E5D6F8 /* HZGADInterstitial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZGADInterstitial.h; sourceTree = "<group>"; };
 		500F88F118E215D000E5D6F8 /* HZGADInterstitial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZGADInterstitial.m; sourceTree = "<group>"; };
 		500F88F418E215DD00E5D6F8 /* HZGADRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZGADRequest.h; sourceTree = "<group>"; };
@@ -294,6 +292,7 @@
 		500F890118E21AE300E5D6F8 /* GADRequestError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADRequestError.h; sourceTree = "<group>"; };
 		500F890218E21AE300E5D6F8 /* libGoogleAdMobAds.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAdMobAds.a; sourceTree = "<group>"; };
 		500F890518E2206300E5D6F8 /* HZGADInterstitialDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZGADInterstitialDelegate.h; sourceTree = "<group>"; };
+		500F890618E25EDB00E5D6F8 /* AdColony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdColony.framework; sourceTree = "<group>"; };
 		5011CE3918DB8F1500604B53 /* HZVungleProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVungleProxy.h; sourceTree = "<group>"; };
 		5011CE3A18DB8F1500604B53 /* HZVungleProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVungleProxy.m; sourceTree = "<group>"; };
 		5011CE3F18DB914200604B53 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -515,7 +514,6 @@
 			files = (
 				5011CE7118DBB4B700604B53 /* CoreLocation.framework in Frameworks */,
 				500F890318E21AE300E5D6F8 /* libGoogleAdMobAds.a in Frameworks */,
-				500F88ED18E212A900E5D6F8 /* AdColony.framework in Frameworks */,
 				5011CE6F18DBAF1F00604B53 /* Social.framework in Frameworks */,
 				5011CE6D18DBAF1300604B53 /* EventKit.framework in Frameworks */,
 				5011CE6E18DBAF1300604B53 /* EventKitUI.framework in Frameworks */,
@@ -524,6 +522,7 @@
 				5011CE4818DB917200604B53 /* CoreMedia.framework in Frameworks */,
 				5011CE4618DB916B00604B53 /* AudioToolbox.framework in Frameworks */,
 				86B941E01758056B00B8EACE /* CoreGraphics.framework in Frameworks */,
+				500F890718E25EDB00E5D6F8 /* AdColony.framework in Frameworks */,
 				5011CE4418DB915A00604B53 /* CFNetwork.framework in Frameworks */,
 				5011CE4218DB915500604B53 /* AVFoundation.framework in Frameworks */,
 				5011CE4018DB914200604B53 /* libz.dylib in Frameworks */,
@@ -543,7 +542,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5011CE4918DB91BF00604B53 /* libz.dylib in Frameworks */,
 				86234AAC185690410071957B /* MediaPlayer.framework in Frameworks */,
 				86BDB4EA17585A0500D85F29 /* QuartzCore.framework in Frameworks */,
 				86BDB4E917585A0100D85F29 /* CoreGraphics.framework in Frameworks */,
@@ -724,8 +722,8 @@
 		50ECA1BE18DB6157006284AB /* Mediation Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				500F890618E25EDB00E5D6F8 /* AdColony.framework */,
 				500F890418E21AF900E5D6F8 /* Chartboost */,
-				500F88EC18E212A900E5D6F8 /* AdColony.framework */,
 				5011CE7218DBBBC100604B53 /* AdMob */,
 				5011CE5718DBA70B00604B53 /* vunglepub.embeddedframework */,
 			);

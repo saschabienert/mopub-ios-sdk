@@ -12,7 +12,7 @@
 
 @dynamic testDevices;
 
-+ (NSString *)hzClassName
++ (NSString *)hzProxiedClassName
 {
     return @"GADRequest";
 }
