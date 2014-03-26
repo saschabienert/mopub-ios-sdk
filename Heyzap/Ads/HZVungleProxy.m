@@ -28,6 +28,11 @@
     return proxy;
 }
 
+- (HZAdType)supportedAdFormats
+{
+    return HZAdTypeIncentivized | HZAdTypeVideo;
+}
+
 - (id)init
 {
     self = [super init];

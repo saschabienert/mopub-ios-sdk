@@ -26,6 +26,11 @@
     return proxy;
 }
 
+- (HZAdType)supportedAdFormats
+{
+    return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;
+}
+
 - (void)prefetch
 {
     // Heyzap auto-prefetches--no implementation

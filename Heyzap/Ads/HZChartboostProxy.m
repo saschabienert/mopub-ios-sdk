@@ -88,6 +88,11 @@
     [[HZChartboost sharedChartboost] showInterstitial];
 }
 
+- (HZAdType)supportedAdFormats
+{
+    return HZAdTypeInterstitial;
+}
+
 #pragma mark - Chartboost Delegate callbacks
 
 /*

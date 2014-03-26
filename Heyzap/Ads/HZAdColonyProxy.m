@@ -28,6 +28,11 @@
     return proxy;
 }
 
+- (HZAdType)supportedAdFormats
+{
+    return HZAdTypeVideo;
+}
+
 - (void)setupAdColonyWithAppID:(NSString *)appID zoneID:(NSString *)zoneID
 {
     NSParameterAssert(appID);

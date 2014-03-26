@@ -30,6 +30,11 @@
     return proxy;
 }
 
+- (HZAdType)supportedAdFormats
+{
+    return HZAdTypeInterstitial;
+}
+
 - (void)prefetch
 {
     if (self.currentInterstitial
