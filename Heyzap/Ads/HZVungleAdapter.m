@@ -6,24 +6,24 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZVungleProxy.h"
+#import "HZVungleAdapter.h"
 #import "HZVGVunglePub.h"
 #import <UIKit/UIKit.h>
 #import "HZVGStatusData.h"
 #import "MediationConstants.h"
 
-@interface HZVungleProxy() <HZVGVunglePubDelegate>
+@interface HZVungleAdapter() <HZVGVunglePubDelegate>
 
 @end
 
-@implementation HZVungleProxy
+@implementation HZVungleAdapter
 
 + (instancetype)sharedInstance
 {
-    static HZVungleProxy *proxy;
+    static HZVungleAdapter *proxy;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        proxy = [[HZVungleProxy alloc] init];
+        proxy = [[HZVungleAdapter alloc] init];
     });
     return proxy;
 }

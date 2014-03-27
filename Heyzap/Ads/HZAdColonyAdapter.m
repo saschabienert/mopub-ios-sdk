@@ -6,24 +6,24 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZAdColonyProxy.h"
+#import "HZAdColonyAdapter.h"
 #import "HZAdColony.h"
 #import "MediationConstants.h"
 
-@interface HZAdColonyProxy() <HZAdColonyDelegate>
+@interface HZAdColonyAdapter() <HZAdColonyDelegate>
 
 @property (nonatomic, strong) NSString *zoneID;
 
 @end
 
-@implementation HZAdColonyProxy
+@implementation HZAdColonyAdapter
 
 + (instancetype)sharedInstance
 {
-    static HZAdColonyProxy *proxy;
+    static HZAdColonyAdapter *proxy;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        proxy = [[HZAdColonyProxy alloc] init];
+        proxy = [[HZAdColonyAdapter alloc] init];
     });
     return proxy;
 }

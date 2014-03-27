@@ -6,21 +6,21 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZHeyzapProxy.h"
+#import "HZHeyzapAdapter.h"
 #import "HeyzapAds.h"
 
-@interface HZHeyzapProxy()
+@interface HZHeyzapAdapter()
 
 @end
 
-@implementation HZHeyzapProxy
+@implementation HZHeyzapAdapter
 
 + (instancetype)sharedInstance
 {
-    static HZHeyzapProxy *proxy;
+    static HZHeyzapAdapter *proxy;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        proxy = [[HZHeyzapProxy alloc] init];
+        proxy = [[HZHeyzapAdapter alloc] init];
         [HeyzapAds start];
     });
     return proxy;

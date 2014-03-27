@@ -6,16 +6,16 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZChartboostProxy.h"
+#import "HZChartboostAdapter.h"
 #import <UIKit/UIKit.h>
 #import "HZChartboost.h"
 #import "MediationConstants.h"
 
-@interface HZChartboostProxy()
+@interface HZChartboostAdapter()
 
 @end
 
-@implementation HZChartboostProxy
+@implementation HZChartboostAdapter
 
 + (BOOL)isSDKLoaded
 {
@@ -24,10 +24,10 @@
 
 + (instancetype)sharedInstance
 {
-    static HZChartboostProxy *proxy;
+    static HZChartboostAdapter *proxy;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        proxy = [[HZChartboostProxy alloc] init];
+        proxy = [[HZChartboostAdapter alloc] init];
     });
     return proxy;
 }

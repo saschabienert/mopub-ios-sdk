@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZMediatorProxy.h"
+#import "HZMediationAdapter.h"
 
-@interface HZChartboostProxy : NSObject <HZMediatorProxy>
+@interface HZChartboostAdapter : NSObject <HZMediationAdapter>
 
 @property (nonatomic, strong) NSError *lastError;
 

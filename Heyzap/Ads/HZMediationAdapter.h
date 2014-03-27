@@ -14,7 +14,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
     HZAdTypeIncentivized = 1 << 2,
 };
 
-@protocol HZMediatorProxy <NSObject>
+@protocol HZMediationAdapter <NSObject>
+
 
 + (instancetype)sharedInstance;
 
@@ -30,7 +31,7 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 // Or just store geo on chartboost class. That's easier.
 
 /**
- *  Proxies should record their lastError, from e.g. delegate callbacks.
+ *  Adapters should record their lastError, from e.g. delegate callbacks.
  */
 @property (nonatomic, strong) NSError *lastError;
 

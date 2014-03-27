@@ -6,26 +6,26 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZAdMobProxy.h"
+#import "HZAdMobAdapter.h"
 #import "HZGADInterstitial.h"
 #import "HZGADRequest.h"
 #import <UIKit/UIKit.h>
 #import "MediationConstants.h"
 
-@interface HZAdMobProxy() <HZGADInterstitialDelegate>
+@interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
 @property (nonatomic, strong) HZGADInterstitial *currentInterstitial;
 
 @end
 
-@implementation HZAdMobProxy
+@implementation HZAdMobAdapter
 
 + (instancetype)sharedInstance
 {
-    static HZAdMobProxy *proxy;
+    static HZAdMobAdapter *proxy;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        proxy = [[HZAdMobProxy alloc] init];
+        proxy = [[HZAdMobAdapter alloc] init];
     });
     return proxy;
 }

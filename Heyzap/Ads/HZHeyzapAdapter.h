@@ -1,5 +1,5 @@
 //
-//  HZVungleProxy.h
+//  HZHeyzapProxy.h
 //  Heyzap
 //
 //  Created by Maximilian Tagher on 3/20/14.
@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZMediatorProxy.h"
+#import "HZMediationAdapter.h"
 
-@interface HZVungleProxy : NSObject <HZMediatorProxy>
+@interface HZHeyzapAdapter : NSObject <HZMediationAdapter>
 
 @property (nonatomic, strong) NSError *lastError;
 

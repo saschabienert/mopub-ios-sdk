@@ -7,14 +7,14 @@
 //
 
 #import "HeyzapMediation.h"
-#import "HZMediatorProxy.h"
+#import "HZMediationAdapter.h"
 
 // Proxies
-#import "HZChartboostProxy.h"
-#import "HZHeyzapProxy.h"
-#import "HZAdColonyProxy.h"
-#import "HZVungleProxy.h"
-#import "HZAdMobProxy.h"
+#import "HZChartboostAdapter.h"
+#import "HZHeyzapAdapter.h"
+#import "HZAdColonyAdapter.h"
+#import "HZVungleAdapter.h"
+#import "HZAdMobAdapter.h"
 #import "HZVGVunglePub.h"
 
 
@@ -26,7 +26,7 @@
 
 NSValue * HZNSValueFromMediator(HZMediator mediator);
 HZMediator HZMediatorFromNSValue(NSValue *value);
-id <HZMediatorProxy> HZProxyFromHZMediator(HZMediator mediator);
+id <HZMediationAdapter> HZProxyFromHZMediator(HZMediator mediator);
 BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout);
 NSString * NSStringFromHZMediator(HZMediator mediator);
 
@@ -63,26 +63,26 @@ HZMediator HZMediatorFromNSValue(NSValue *value) {
     return mediator;
 }
 
-id <HZMediatorProxy> HZProxyFromHZMediator(HZMediator mediator) {
+id <HZMediationAdapter> HZProxyFromHZMediator(HZMediator mediator) {
     switch (mediator) {
         case HZMediatorHeyzap: {
-            return [HZHeyzapProxy sharedInstance];
+            return [HZHeyzapAdapter sharedInstance];
             break;
         }
         case HZMediatorChartboost: {
-            return [HZChartboostProxy sharedInstance];
+            return [HZChartboostAdapter sharedInstance];
             break;
         }
         case HZMediatorAdColony: {
-            return [HZAdColonyProxy sharedInstance];
+            return [HZAdColonyAdapter sharedInstance];
             break;
         }
         case HZMediatorVungle: {
-            return [HZVungleProxy sharedInstance];
+            return [HZVungleAdapter sharedInstance];
             break;
         }
         case HZMediatorAdMob: {
-            return [HZAdMobProxy sharedInstance];
+            return [HZAdMobAdapter sharedInstance];
             break;
         }
         default: {
@@ -116,6 +116,16 @@ NSString * NSStringFromHZMediator(HZMediator mediator) {
     }
 }
 
++ (id<HZMediationAdapter>)mediatorFromString:(NSString *)mediator
+{
+    if ([mediator isEqualToString:@""]) {
+        
+    } else {
+        
+    }
+    return nil;
+}
+
 
 #pragma mark - Mediator Setup
 
@@ -136,20 +146,20 @@ NSString * NSStringFromHZMediator(HZMediator mediator) {
 
 - (void)setupAdColonyWithAppID:(NSString *)appID zoneID:(NSString *)zoneID
 {
-    [[HZAdColonyProxy sharedInstance] setupAdColonyWithAppID:appID zoneID:zoneID];
+    [[HZAdColonyAdapter sharedInstance] setupAdColonyWithAppID:appID zoneID:zoneID];
     [self didSetupMediator:HZMediatorAdColony];
 }
 
 - (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature
 {
-    if (![HZChartboostProxy isSDKLoaded]) {
+    if (![HZChartboostAdapter isSDKLoaded]) {
         NSLog(@"Tried to load chartboost, but we couldn't load their SDK. Has Chartboost been added to your project?");
         return;
     }
     BOOL chartboostExists = NSClassFromString(@"Chartboost") != NULL;
     NSLog(@"Chartboost exists = %i",chartboostExists);
     
-    [[HZChartboostProxy sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
+    [[HZChartboostAdapter sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
     
     [self didSetupMediator:HZMediatorChartboost];
 }
@@ -188,7 +198,7 @@ showImmediately:NO
 //    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
 //    for (NSValue *value in self.preferredMediatorList) {
 //        const HZMediator mediator = HZMediatorFromNSValue(value);
-//        const id<HZMediatorProxy> proxy = HZProxyFromHZMediator(mediator);
+//        const idHZMediationAdapter proxy = HZProxyFromHZMediator(mediator);
 //        if ([proxy hasAd]) {
 //            [proxy showAd];
 //            break;
@@ -198,50 +208,13 @@ showImmediately:NO
 //    }
 }
 
-//- (void)showAd:(NSArray *)preferredMediatorList
-//{
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//        
-//        for (NSValue *value in preferredMediatorList) {
-//            const HZMediator mediator = HZMediatorFromNSValue(value);
-//
-//            __block id<HZMediatorProxy> proxy;
-//            __block BOOL isReady = NO;
-//            __block BOOL shouldBreak = NO;
-//            dispatch_sync(dispatch_get_main_queue(), ^{
-//                proxy = HZProxyFromHZMediator(mediator);
-//                isReady = [proxy hasAd];
-//            });
-//            
-//            if (isReady) {
-//                dispatch_sync(dispatch_get_main_queue(), ^{
-//                    shouldBreak = YES;
-//                    [proxy showAd];
-//                });
-//            } else {
-//                dispatch_sync(dispatch_get_main_queue(), ^{
-//                    [proxy prefetch];
-//                });
-//                const BOOL fetchedWithinTimeout = hzWaitUntil(^BOOL{
-//                    return [proxy hasAd];
-//                }, 2);
-//                if (fetchedWithinTimeout) {
-//                    dispatch_sync(dispatch_get_main_queue(), ^{
-//                        [proxy showAd];
-//                    });
-//                }
-//            }
-//        }
-//    });
-//}
-
 - (void)fetch:(NSArray *)preferredMediatorList tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout
 {
     // Find the first SDK that has an ad, and use it
     // This means if e.g. the first 2 networks aren't working, we don't have to wait for a timeout to get to the third.
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(NSValue *mediatorValue, NSUInteger idx, BOOL *stop) {
         const HZMediator mediator = HZMediatorFromNSValue(mediatorValue);
-        id <HZMediatorProxy> proxy = HZProxyFromHZMediator(mediator);
+        id <HZMediationAdapter> proxy = HZProxyFromHZMediator(mediator);
         return [proxy hasAd];
     }];
     
@@ -249,7 +222,7 @@ showImmediately:NO
         NSLog(@"Using fast path by skipping to first network with an ad.");
         NSValue *mediatorValue = preferredMediatorList[idx];
         const HZMediator mediator = HZMediatorFromNSValue(mediatorValue);
-        id <HZMediatorProxy> proxy = HZProxyFromHZMediator(mediator);
+        id <HZMediationAdapter> proxy = HZProxyFromHZMediator(mediator);
         [proxy showAd];
         return;
     }
@@ -260,7 +233,7 @@ showImmediately:NO
         for (NSValue *value in preferredMediatorList) {
             const HZMediator mediator = HZMediatorFromNSValue(value);
             
-            __block id<HZMediatorProxy> proxy;
+            __block id<HZMediationAdapter> proxy;
             
             dispatch_sync(dispatch_get_main_queue(), ^{
                 proxy = HZProxyFromHZMediator(mediator);
