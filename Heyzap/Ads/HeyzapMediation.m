@@ -22,11 +22,11 @@
 
 @property (nonatomic) BOOL mediatorsAreSetup;
 
-@property (nonatomic, strong) NSMutableSet *setupMediators;
+@property (nonatomic, strong) NSMutableSet *setupMediators; // Make this an NSSet when we get data from the server
 
 NSValue * HZNSValueFromMediator(HZMediator mediator);
 HZMediator HZMediatorFromNSValue(NSValue *value);
-id <HZMediationAdapter> HZProxyFromHZMediator(HZMediator mediator);
+id <HZMediationAdapter> HZAdapterFromHZMediator(HZMediator mediator);
 BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout);
 NSString * NSStringFromHZMediator(HZMediator mediator);
 
@@ -63,7 +63,7 @@ HZMediator HZMediatorFromNSValue(NSValue *value) {
     return mediator;
 }
 
-id <HZMediationAdapter> HZProxyFromHZMediator(HZMediator mediator) {
+id <HZMediationAdapter> HZAdapterFromHZMediator(HZMediator mediator) {
     switch (mediator) {
         case HZMediatorHeyzap: {
             return [HZHeyzapAdapter sharedInstance];
@@ -214,16 +214,16 @@ showImmediately:NO
     // This means if e.g. the first 2 networks aren't working, we don't have to wait for a timeout to get to the third.
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(NSValue *mediatorValue, NSUInteger idx, BOOL *stop) {
         const HZMediator mediator = HZMediatorFromNSValue(mediatorValue);
-        id <HZMediationAdapter> proxy = HZProxyFromHZMediator(mediator);
-        return [proxy hasAd];
+        id <HZMediationAdapter> adapter = HZAdapterFromHZMediator(mediator);
+        return [adapter hasAd];
     }];
     
     if (idx != NSNotFound) {
         NSLog(@"Using fast path by skipping to first network with an ad.");
         NSValue *mediatorValue = preferredMediatorList[idx];
         const HZMediator mediator = HZMediatorFromNSValue(mediatorValue);
-        id <HZMediationAdapter> proxy = HZProxyFromHZMediator(mediator);
-        [proxy showAd];
+        id <HZMediationAdapter> adapter = HZAdapterFromHZMediator(mediator);
+        [adapter showAd];
         return;
     }
     
@@ -233,20 +233,20 @@ showImmediately:NO
         for (NSValue *value in preferredMediatorList) {
             const HZMediator mediator = HZMediatorFromNSValue(value);
             
-            __block id<HZMediationAdapter> proxy;
+            __block id<HZMediationAdapter> adapter;
             
             dispatch_sync(dispatch_get_main_queue(), ^{
-                proxy = HZProxyFromHZMediator(mediator);
+                adapter = HZAdapterFromHZMediator(mediator);
             });
             
             dispatch_sync(dispatch_get_main_queue(), ^{
-                [proxy prefetch];
+                [adapter prefetch];
             });
             
             __block BOOL fetchedWithinTimeout = NO;
             hzWaitUntil(^BOOL{
-                fetchedWithinTimeout = [proxy hasAd];
-                return [proxy hasAd] || proxy.lastError != nil; // If it errored, exit early.
+                fetchedWithinTimeout = [adapter hasAd];
+                return [adapter hasAd] || adapter.lastError != nil; // If it errored, exit early.
             }, 2);
             
             if (fetchedWithinTimeout) {
@@ -256,7 +256,7 @@ showImmediately:NO
                     break;
                 }
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    [proxy showAd];
+                    [adapter showAd];
                 });
                 NSLog(@"Mediator %@ is showing an ad",NSStringFromHZMediator(mediator));
                 break;
@@ -266,9 +266,9 @@ showImmediately:NO
                 NSLog(@"The mediator with name = %@ didn't have an ad",NSStringFromHZMediator(mediator));
                 // If the mediated SDK errored, reset it and try again.
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    if (proxy.lastError) {
-                        proxy.lastError = nil;
-                        [proxy prefetch];
+                    if (adapter.lastError) {
+                        adapter.lastError = nil;
+                        [adapter prefetch];
                     }
                 });
             }
@@ -321,6 +321,31 @@ BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
     // Set property of enabled mediators
     // Initialize all those mediators with credentials
         // -- need a way of validating our credentials are good. Have a class for each credential thing?
+}
+
++ (Class<HZMediationAdapter>)adapterClassForName:(NSString *)adapterName
+{
+    if ([adapterName isEqualToString:@"Chartboost"]) {
+        return [HZChartboostAdapter class];
+    } else {
+        return nil;
+    }
+}
+
+- (void)setupMediators:(NSArray *)mediatorJSON
+{
+    for (NSDictionary *mediator in mediatorJSON) {
+//        find class for mediator
+        Class<HZMediationAdapter> mediatorClass = mediator[@"adapter"];
+        if (mediatorClass) {
+            
+        }
+//
+//          + Enable with credentials
+//          Adapter returns YES for success, by checking the credentials
+//          If successful, add the adapter to the set.
+//          Becomes an NSSet when assigned to the property
+    }
 }
 
 @end
