@@ -27,6 +27,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 - (HZAdType)supportedAdFormats;
 
++ (BOOL)isSDKAvailable;
+
 //+ (NSError *)enableWithCredentials:(NSDictionary *)credentials;
 
 // Prefetch method needs the tag and geo (geo for chartboost).

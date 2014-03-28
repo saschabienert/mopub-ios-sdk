@@ -28,6 +28,12 @@
     return proxy;
 }
 
++ (BOOL)isSDKAvailable
+{
+    return [HZVGVunglePub hzProxiedClassIsAvailable]
+    && [HZVGStatusData hzProxiedClassIsAvailable];
+}
+
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeIncentivized | HZAdTypeVideo;

@@ -26,6 +26,11 @@
     return proxy;
 }
 
++ (BOOL)isSDKAvailable
+{
+    return YES;
+}
+
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;

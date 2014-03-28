@@ -30,6 +30,11 @@
     return proxy;
 }
 
++ (BOOL)isSDKAvailable
+{
+    return [HZGADInterstitial hzProxiedClassIsAvailable] && [HZGADRequest hzProxiedClassIsAvailable];
+}
+
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeInterstitial;

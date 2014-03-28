@@ -15,6 +15,4 @@
 
 - (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature;
 
-+ (BOOL)isSDKLoaded;
-
 @end

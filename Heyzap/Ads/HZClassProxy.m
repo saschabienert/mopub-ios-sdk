@@ -17,7 +17,9 @@
 
 + (NSString *)hzProxiedClassName
 {
-    [[NSException exceptionWithName:@"AbstractMethodException" reason:@"Subclasses should override this method" userInfo:nil] raise];
+    [[NSException exceptionWithName:@"AbstractMethodException"
+                             reason:@"Subclasses should override this method"
+                           userInfo:nil] raise];
     abort();
 }
 

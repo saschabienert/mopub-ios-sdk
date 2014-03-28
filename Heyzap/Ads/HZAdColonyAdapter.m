@@ -28,6 +28,11 @@
     return proxy;
 }
 
++ (BOOL)isSDKAvailable
+{
+    return [HZAdColony hzProxiedClassIsAvailable];
+}
+
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeVideo;

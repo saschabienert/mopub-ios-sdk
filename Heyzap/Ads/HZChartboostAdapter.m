@@ -17,7 +17,7 @@
 
 @implementation HZChartboostAdapter
 
-+ (BOOL)isSDKLoaded
++ (BOOL)isSDKAvailable
 {
     return [HZChartboost hzProxiedClassIsAvailable];
 }

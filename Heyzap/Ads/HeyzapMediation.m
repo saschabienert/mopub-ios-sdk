@@ -17,7 +17,6 @@
 #import "HZAdMobAdapter.h"
 #import "HZVGVunglePub.h"
 
-
 @interface HeyzapMediation()
 
 @property (nonatomic) BOOL mediatorsAreSetup;
@@ -152,7 +151,7 @@ NSString * NSStringFromHZMediator(HZMediator mediator) {
 
 - (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature
 {
-    if (![HZChartboostAdapter isSDKLoaded]) {
+    if (![HZChartboostAdapter isSDKAvailable]) {
         NSLog(@"Tried to load chartboost, but we couldn't load their SDK. Has Chartboost been added to your project?");
         return;
     }
@@ -176,7 +175,7 @@ NSString * NSStringFromHZMediator(HZMediator mediator) {
     [self fetch:[self preferredMediatorList]
             tag:nil
 showImmediately:NO
-   fetchTimeout:6]; // Give a longer timeout for the initial fetch
+   fetchTimeout:8]; // Give a longer timeout for the initial fetch
 }
 
 #pragma mark - Ads
@@ -210,6 +209,8 @@ showImmediately:NO
 
 - (void)fetch:(NSArray *)preferredMediatorList tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout
 {
+    // Should take an ad unit, and filter out SDKs that don't support that ad unit.
+    
     // Find the first SDK that has an ad, and use it
     // This means if e.g. the first 2 networks aren't working, we don't have to wait for a timeout to get to the third.
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(NSValue *mediatorValue, NSUInteger idx, BOOL *stop) {
@@ -246,11 +247,15 @@ showImmediately:NO
             __block BOOL fetchedWithinTimeout = NO;
             hzWaitUntil(^BOOL{
                 fetchedWithinTimeout = [adapter hasAd];
+                if (adapter.lastError) {
+                    NSLog(@"There was an error w/ the fetch = %@",adapter.lastError);
+                }
                 return [adapter hasAd] || adapter.lastError != nil; // If it errored, exit early.
             }, 2);
             
             if (fetchedWithinTimeout) {
                 NSLog(@"We fetched within the timeout! Network = %@",NSStringFromHZMediator(mediator));
+                // Send a fetch successful message
                 // For just a fetch we can break now.
                 if (!showImmediately) {
                     break;
@@ -261,7 +266,7 @@ showImmediately:NO
                 NSLog(@"Mediator %@ is showing an ad",NSStringFromHZMediator(mediator));
                 break;
                 
-                // Send delegate notification about showing an ad.
+                // Send delega)te notification about showing an ad.
             } else {
                 NSLog(@"The mediator with name = %@ didn't have an ad",NSStringFromHZMediator(mediator));
                 // If the mediated SDK errored, reset it and try again.
@@ -273,6 +278,8 @@ showImmediately:NO
                 });
             }
         }
+        // Send a fetch failed notification, if appropriate
+        // Send a show failed notification, if appropriate.
     });
     
 //    if (didShowAd) {
@@ -323,21 +330,49 @@ BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
         // -- need a way of validating our credentials are good. Have a class for each credential thing?
 }
 
+// Known mediators
+NSString * const kHZAdapterVungle = @"Vungle";
+NSString * const kHZAdapterChartboost = @"Chartboost";
+NSString * const kHZAdapterAdColony = @"AdColony";
+NSString * const kHZAdapterAdMob = @"AdMob";
+NSString * const kHZAdapterHeyzap = @"Heyzap";
+
+// Dictionary keys
+NSString * const kHZAdapterKey = @"name";
+
 + (Class<HZMediationAdapter>)adapterClassForName:(NSString *)adapterName
 {
-    if ([adapterName isEqualToString:@"Chartboost"]) {
+    if ([adapterName isEqualToString:kHZAdapterVungle]) {
+        return [HZVungleAdapter class];
+    } else if ([adapterName isEqualToString:kHZAdapterChartboost]) {
         return [HZChartboostAdapter class];
+    } else if ([adapterName isEqualToString:kHZAdapterAdColony]) {
+        return [HZAdColonyAdapter class];
+    } else if ([adapterName isEqualToString:kHZAdapterAdMob]) {
+        return [HZAdMobAdapter class];
+    } else if ([adapterName isEqualToString:kHZAdapterHeyzap]) {
+        return [HZHeyzapAdapter class];
     } else {
         return nil;
     }
 }
 
++ (NSArray *)mediatorJSON
+{
+    return @[
+             @{kHZAdapterKey: kHZAdapterVungle},
+             @{kHZAdapterKey: kHZAdapterChartboost},
+             ];
+}
+
+
 - (void)setupMediators:(NSArray *)mediatorJSON
 {
     for (NSDictionary *mediator in mediatorJSON) {
 //        find class for mediator
-        Class<HZMediationAdapter> mediatorClass = mediator[@"adapter"];
-        if (mediatorClass) {
+        Class<HZMediationAdapter> mediatorClass = mediator[kHZAdapterKey];
+        if (mediatorClass && [mediatorClass isSDKAvailable]) {
+            // setup with credentials, check error returned.
             
         }
 //
