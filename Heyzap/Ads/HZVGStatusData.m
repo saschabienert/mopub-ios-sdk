@@ -11,6 +11,11 @@
 #pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation HZVGStatusData
 
++ (NSString *)hzProxiedClassName
+{
+    return @"VGStatusData";
+}
+
 @dynamic status;
 
 @end

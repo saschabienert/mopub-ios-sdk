@@ -48,4 +48,21 @@ static NSString *hzUrlEncode(id object) {
     return [parts componentsJoinedByString: @"&"];
 }
 
+NSString * const kHZMissingPropertyKey = @"missingProperty";
+
++ (id)objectForKey:(id)key ofClass:(Class)class dict:(NSDictionary *)dict error:(NSError **)error
+{
+    NSParameterAssert(key);
+    NSParameterAssert(class);
+    NSParameterAssert(dict);
+    NSParameterAssert(error != NULL);
+    id value = [self hzObjectForKey:key ofClass:class withDict:dict];
+    if (value) {
+        return value;
+    } else {
+        *error = [NSError errorWithDomain:@"heyzap" code:1 userInfo:@{kHZMissingPropertyKey: key}];
+        return nil;
+    }
+}
+
 @end

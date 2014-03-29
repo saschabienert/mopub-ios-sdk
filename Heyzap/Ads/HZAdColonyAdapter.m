@@ -8,7 +8,8 @@
 
 #import "HZAdColonyAdapter.h"
 #import "HZAdColony.h"
-#import "MediationConstants.h"
+#import "HZMediationConstants.h"
+#import "HZDictionaryUtils.h"
 
 @interface HZAdColonyAdapter() <HZAdColonyDelegate>
 
@@ -36,6 +37,32 @@
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeVideo;
+}
+
++ (NSString *)name
+{
+    return kHZAdapterAdColony;
+}
+
++ (NSError *)enableWithCredentials:(NSDictionary *)credentials
+{
+    NSParameterAssert(credentials);
+    NSError *error;
+    NSString *appID = [HZDictionaryUtils objectForKey:@"app_id"
+                                              ofClass:[NSString class]
+                                                 dict:credentials
+                                                error:&error];
+    CHECK_CREDENTIALS_ERROR(error);
+    
+    NSString *const zoneID = [HZDictionaryUtils objectForKey:@"zone_id"
+                                                     ofClass:[NSString class]
+                                                        dict:credentials
+                                                       error:&error];
+    CHECK_CREDENTIALS_ERROR(error);
+    
+    [[self sharedInstance] setupAdColonyWithAppID:appID zoneID:zoneID];
+    
+    return nil;
 }
 
 - (void)setupAdColonyWithAppID:(NSString *)appID zoneID:(NSString *)zoneID

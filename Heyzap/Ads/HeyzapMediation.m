@@ -16,6 +16,9 @@
 #import "HZVungleAdapter.h"
 #import "HZAdMobAdapter.h"
 #import "HZVGVunglePub.h"
+#import "MediationAPIClient.h"
+#import "HZDictionaryUtils.h"
+#import "HZMediationConstants.h"
 
 @interface HeyzapMediation()
 
@@ -266,7 +269,7 @@ showImmediately:NO
                 NSLog(@"Mediator %@ is showing an ad",NSStringFromHZMediator(mediator));
                 break;
                 
-                // Send delega)te notification about showing an ad.
+                // Send delegate notification about showing an ad.
             } else {
                 NSLog(@"The mediator with name = %@ didn't have an ad",NSStringFromHZMediator(mediator));
                 // If the mediated SDK errored, reset it and try again.
@@ -322,6 +325,18 @@ BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
 
 - (void)start
 {
+    [[MediationAPIClient sharedClient] get:@"start" withParams:nil success:^(NSDictionary *json) {
+        
+        NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
+        if (networks) {
+            [self setupMediators:networks];
+        } else {
+            NSLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
+        }
+    } failure:^(NSError *error) {
+        
+        NSLog(@"Error! Failed to get networks from Heyzap. Mediation won't be possible. Error = %@,",error);
+    }];
     // Get a list of available mediators
     // Send list to the server.
     // Get back list of enabled mediators
@@ -330,15 +345,10 @@ BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
         // -- need a way of validating our credentials are good. Have a class for each credential thing?
 }
 
-// Known mediators
-NSString * const kHZAdapterVungle = @"Vungle";
-NSString * const kHZAdapterChartboost = @"Chartboost";
-NSString * const kHZAdapterAdColony = @"AdColony";
-NSString * const kHZAdapterAdMob = @"AdMob";
-NSString * const kHZAdapterHeyzap = @"Heyzap";
-
 // Dictionary keys
 NSString * const kHZAdapterKey = @"name";
+NSString * const kHZDataKey = @"data";
+
 
 + (Class<HZMediationAdapter>)adapterClassForName:(NSString *)adapterName
 {
@@ -368,19 +378,19 @@ NSString * const kHZAdapterKey = @"name";
 
 - (void)setupMediators:(NSArray *)mediatorJSON
 {
+    NSMutableSet *setupMediators = [NSMutableSet set];
     for (NSDictionary *mediator in mediatorJSON) {
-//        find class for mediator
-        Class<HZMediationAdapter> mediatorClass = mediator[kHZAdapterKey];
-        if (mediatorClass && [mediatorClass isSDKAvailable]) {
-            // setup with credentials, check error returned.
-            
+        NSString *mediatorName = mediator[kHZAdapterKey];
+        Class<HZMediationAdapter> mediatorClass = [[self class] adapterClassForName:mediatorName];
+        NSDictionary *mediatorInfo = mediator[kHZDataKey];
+        if (mediatorClass && mediatorInfo && [mediatorClass isSDKAvailable]) {
+            NSError *credentialError = [mediatorClass enableWithCredentials:mediatorInfo];
+            if (!credentialError) {
+                [setupMediators addObject:[mediatorClass sharedInstance]];
+            }
         }
-//
-//          + Enable with credentials
-//          Adapter returns YES for success, by checking the credentials
-//          If successful, add the adapter to the set.
-//          Becomes an NSSet when assigned to the property
     }
+//    self.setupMediators = setupMediators;
 }
 
 @end

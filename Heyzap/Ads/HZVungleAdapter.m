@@ -10,7 +10,8 @@
 #import "HZVGVunglePub.h"
 #import <UIKit/UIKit.h>
 #import "HZVGStatusData.h"
-#import "MediationConstants.h"
+#import "HZMediationConstants.h"
+#import "HZDictionaryUtils.h"
 
 @interface HZVungleAdapter() <HZVGVunglePubDelegate>
 
@@ -28,6 +29,23 @@
     return proxy;
 }
 
++ (NSError *)enableWithCredentials:(NSDictionary *)credentials
+{
+    NSParameterAssert(credentials);
+    NSError *error;
+    NSString *const appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:credentials error:&error];
+    CHECK_CREDENTIALS_ERROR(error);
+    
+    [[self sharedInstance] startWithPubAppID:appID];
+    
+    return nil;
+}
+
+- (void)startWithPubAppID:(NSString *)appID
+{
+    [HZVGVunglePub startWithPubAppID:appID];
+}
+
 + (BOOL)isSDKAvailable
 {
     return [HZVGVunglePub hzProxiedClassIsAvailable]
@@ -37,6 +55,11 @@
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeIncentivized | HZAdTypeVideo;
+}
+
++ (NSString *)name
+{
+    return kHZAdapterVungle;
 }
 
 - (id)init

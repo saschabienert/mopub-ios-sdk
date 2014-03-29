@@ -10,11 +10,14 @@
 #import "HZGADInterstitial.h"
 #import "HZGADRequest.h"
 #import <UIKit/UIKit.h>
-#import "MediationConstants.h"
+#import "HZMediationConstants.h"
+#import "HZDictionaryUtils.h"
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
 @property (nonatomic, strong) HZGADInterstitial *currentInterstitial;
+
+@property (nonatomic, strong) NSString *adUnitID;
 
 @end
 
@@ -28,6 +31,19 @@
         proxy = [[HZAdMobAdapter alloc] init];
     });
     return proxy;
+}
+
++ (NSError *)enableWithCredentials:(NSDictionary *)credentials
+{
+    NSParameterAssert(credentials);
+    
+    NSError *error;
+    NSString *const adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:credentials error:&error];
+    CHECK_CREDENTIALS_ERROR(error);
+    
+    [[self sharedInstance] setAdUnitID:adUnitID];
+    
+    return nil;
 }
 
 + (BOOL)isSDKAvailable
@@ -59,6 +75,11 @@
     request.testDevices = @[ GAD_SIMULATOR_ID ];
     
     [self.currentInterstitial loadRequest:[HZGADRequest request]];
+}
+
++ (NSString *)name
+{
+    return kHZAdapterAdMob;
 }
 
 - (BOOL)hasAd

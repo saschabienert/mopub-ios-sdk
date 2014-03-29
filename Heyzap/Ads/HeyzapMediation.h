@@ -34,6 +34,8 @@ typedef NS_ENUM(NSUInteger, HZMediator) {
 
 - (void)finishedSettingUpMediators;
 
+- (void)start;
+
 #pragma mark - Showing Ads
 
 - (void)showAd;

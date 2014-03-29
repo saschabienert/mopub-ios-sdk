@@ -9,7 +9,8 @@
 #import "HZChartboostAdapter.h"
 #import <UIKit/UIKit.h>
 #import "HZChartboost.h"
-#import "MediationConstants.h"
+#import "HZMediationConstants.h"
+#import "HZDictionaryUtils.h"
 
 @interface HZChartboostAdapter()
 
@@ -20,6 +21,27 @@
 + (BOOL)isSDKAvailable
 {
     return [HZChartboost hzProxiedClassIsAvailable];
+}
+
++ (NSError *)enableWithCredentials:(NSDictionary *)credentials
+{
+    NSParameterAssert(credentials);
+    
+    NSError *error;
+    NSString *const appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:credentials error:&error];
+    CHECK_CREDENTIALS_ERROR(error);
+    
+    NSString *const appSignature = [HZDictionaryUtils objectForKey:@"app_signature" ofClass:[NSString class] dict:credentials error:&error];
+    CHECK_CREDENTIALS_ERROR(error);
+    
+    [[self sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
+    
+    return nil;
+}
+
++ (NSString *)name
+{
+    return kHZAdapterChartboost;
 }
 
 + (instancetype)sharedInstance

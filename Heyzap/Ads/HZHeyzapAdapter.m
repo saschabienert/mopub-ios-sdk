@@ -8,6 +8,7 @@
 
 #import "HZHeyzapAdapter.h"
 #import "HeyzapAds.h"
+#import "HZMediationConstants.h"
 
 @interface HZHeyzapAdapter()
 
@@ -26,6 +27,11 @@
     return proxy;
 }
 
++ (NSError *)enableWithCredentials:(NSDictionary *)credentials
+{
+    return nil;
+}
+
 + (BOOL)isSDKAvailable
 {
     return YES;
@@ -34,6 +40,11 @@
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;
+}
+
++ (NSString *)name
+{
+    return kHZAdapterHeyzap;
 }
 
 - (void)prefetch

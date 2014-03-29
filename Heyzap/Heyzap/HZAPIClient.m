@@ -90,7 +90,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
 
 - (void) get:(NSString *)endpoint withParams:(NSDictionary *)params success:(HZRequestSuccessBlock)success failure:(HZRequestFailureBlock)failure {
     
-    NSMutableDictionary *requestParams = [HZAPIClient defaultParamsWithDictionary: params];
+    NSMutableDictionary *requestParams = [[self class] defaultParamsWithDictionary: params];
     
     [HZLog debug: [NSString stringWithFormat: @"Client: GET : %@ %@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], requestParams]];
     
@@ -129,7 +129,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
 
 - (void) post:(NSString *)endpoint withParams:(NSDictionary *)params success:(HZRequestSuccessBlock)success failure:(HZRequestFailureBlock)failure {
     
-    NSMutableDictionary *requestParams = [HZAPIClient defaultParamsWithDictionary: params];
+    NSMutableDictionary *requestParams = [[self class] defaultParamsWithDictionary: params];
     
     ;
     

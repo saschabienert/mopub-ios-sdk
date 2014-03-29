@@ -183,6 +183,7 @@ static void HZAFSwizzleClassMethodWithClassAndSelectorUsingBlock(Class klass, SE
 }
 
 - (BOOL)hasAcceptableContentType {
+    return YES;
     if (!self.response) {
 		return NO;
 	}
