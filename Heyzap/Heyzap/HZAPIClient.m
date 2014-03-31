@@ -63,6 +63,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
                                      @"ios_version": [UIDevice currentDevice].systemVersion,
                                      @"device_type": [HZAvailability platform],
                                      @"installed": heyzapInstalled,
+                                     @"advertising_id" : [HZUtils deviceID],
                                    } mutableCopy];
     
     if (dictionary) {

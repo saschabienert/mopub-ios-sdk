@@ -19,18 +19,14 @@
 #import "MediationAPIClient.h"
 #import "HZDictionaryUtils.h"
 #import "HZMediationConstants.h"
+#import "HZAdFetchRequest.h"
+#import "HeyzapAds.h"
 
 @interface HeyzapMediation()
 
-@property (nonatomic) BOOL mediatorsAreSetup;
-
 @property (nonatomic, strong) NSMutableSet *setupMediators; // Make this an NSSet when we get data from the server
 
-NSValue * HZNSValueFromMediator(HZMediator mediator);
-HZMediator HZMediatorFromNSValue(NSValue *value);
-id <HZMediationAdapter> HZAdapterFromHZMediator(HZMediator mediator);
 BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout);
-NSString * NSStringFromHZMediator(HZMediator mediator);
 
 @end
 
@@ -52,162 +48,48 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     return mediator;
 }
 
-#pragma mark - Enum Support
-
-NSValue * HZNSValueFromMediator(HZMediator mediator) {
-    return [NSValue valueWithBytes:&mediator objCType:@encode(HZMediator)];
-}
-
-HZMediator HZMediatorFromNSValue(NSValue *value) {
-    NSCParameterAssert(value);
-    HZMediator mediator;
-    [value getValue:&mediator];
-    return mediator;
-}
-
-id <HZMediationAdapter> HZAdapterFromHZMediator(HZMediator mediator) {
-    switch (mediator) {
-        case HZMediatorHeyzap: {
-            return [HZHeyzapAdapter sharedInstance];
-            break;
-        }
-        case HZMediatorChartboost: {
-            return [HZChartboostAdapter sharedInstance];
-            break;
-        }
-        case HZMediatorAdColony: {
-            return [HZAdColonyAdapter sharedInstance];
-            break;
-        }
-        case HZMediatorVungle: {
-            return [HZVungleAdapter sharedInstance];
-            break;
-        }
-        case HZMediatorAdMob: {
-            return [HZAdMobAdapter sharedInstance];
-            break;
-        }
-        default: {
-            [[NSException exceptionWithName:kHZUnknownMediatiorException reason:@"Uknown HZMediator passed." userInfo:nil] raise];
-        }
-    }
-}
-
-NSString * NSStringFromHZMediator(HZMediator mediator) {
-    switch (mediator) {
-        case HZMediatorAdColony: {
-            return @"Ad Colony";
-            break;
-        }
-        case HZMediatorAdMob: {
-            return @"Ad Mob";
-            break;
-        }
-        case HZMediatorChartboost: {
-            return @"Chartboost";
-            break;
-        }
-        case HZMediatorHeyzap: {
-            return @"Heyzap";
-            break;
-        }
-        case HZMediatorVungle: {
-            return @"Vungle";
-            break;
-        }
-    }
-}
-
-+ (id<HZMediationAdapter>)mediatorFromString:(NSString *)mediator
-{
-    if ([mediator isEqualToString:@""]) {
-        
-    } else {
-        
-    }
-    return nil;
-}
-
-
-#pragma mark - Mediator Setup
-
-- (void)didSetupMediator:(HZMediator)mediator
-{
-    [self.setupMediators addObject:HZNSValueFromMediator(mediator)];
-}
-
-- (void)setupHeyzap
-{
-    [self.setupMediators addObject:HZNSValueFromMediator(HZMediatorHeyzap)];
-}
-
-- (void)setupAdMob
-{
-    [self.setupMediators addObject:HZNSValueFromMediator(HZMediatorAdMob)];
-}
-
-- (void)setupAdColonyWithAppID:(NSString *)appID zoneID:(NSString *)zoneID
-{
-    [[HZAdColonyAdapter sharedInstance] setupAdColonyWithAppID:appID zoneID:zoneID];
-    [self didSetupMediator:HZMediatorAdColony];
-}
-
-- (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature
-{
-    if (![HZChartboostAdapter isSDKAvailable]) {
-        NSLog(@"Tried to load chartboost, but we couldn't load their SDK. Has Chartboost been added to your project?");
-        return;
-    }
-    BOOL chartboostExists = NSClassFromString(@"Chartboost") != NULL;
-    NSLog(@"Chartboost exists = %i",chartboostExists);
-    
-    [[HZChartboostAdapter sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
-    
-    [self didSetupMediator:HZMediatorChartboost];
-}
-
-- (void)setupVungleWithAppID:(NSString *)appID
-{
-    [HZVGVunglePub startWithPubAppID:appID];
-}
-
-- (void)finishedSettingUpMediators
-{
-    self.mediatorsAreSetup = YES;
-    
-    [self fetch:[self preferredMediatorList]
-            tag:nil
-showImmediately:NO
-   fetchTimeout:8]; // Give a longer timeout for the initial fetch
-}
-
 #pragma mark - Ads
-
-- (NSArray *)preferredMediatorList
-{
-    return @[
-             HZNSValueFromMediator(HZMediatorVungle),
-             HZNSValueFromMediator(HZMediatorAdColony),
-             HZNSValueFromMediator(HZMediatorChartboost),
-             HZNSValueFromMediator(HZMediatorAdMob),
-             ];
-}
 
 - (void)showAd
 {
     NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-    [self fetch:[self preferredMediatorList] tag:nil showImmediately:YES fetchTimeout:2];
-//    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-//    for (NSValue *value in self.preferredMediatorList) {
-//        const HZMediator mediator = HZMediatorFromNSValue(value);
-//        const idHZMediationAdapter proxy = HZProxyFromHZMediator(mediator);
-//        if ([proxy hasAd]) {
-//            [proxy showAd];
-//            break;
-//        } else {
-//            NSLog(@"Didn't have ad");
-//        }
-//    }
+    
+    [self mediateForTag:nil showImmediately:YES fetchTimeout:2];
+}
+
+#define HZVideoAdUnit @"video"
+#define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
+
+- (void)mediateForTag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout
+{
+    
+    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:HZVideoAdCreativeTypes
+                                                                         adUnit:HZVideoAdUnit
+                                                                            tag:[HeyzapAds defaultTagName]
+                                                            andAdditionalParams:nil];
+    
+    [[MediationAPIClient sharedClient] get:@"mediate"
+                                withParams:request.createParams
+                                   success:^(NSDictionary *json) {
+        // Need better error checking here.
+//        NSString *fetchID = json[@"id"];
+        NSArray *networks = json[@"networks"];
+        
+        NSMutableArray *adapters = [NSMutableArray array];
+        for (NSDictionary *network in networks) {
+            NSString *networkName = network[@"network"];
+            Class<HZMediationAdapter> adapter = [[self class] adapterClassForName:networkName];
+            if (adapter && [adapter isSDKAvailable]) {
+                [adapters addObject:[adapter sharedInstance]];
+            }
+        }
+        
+        NSLog(@"Asked to mediate; showImmediately = %i, chosen adapters = %@",showImmediately, adapters);
+        [self fetch:adapters tag:tag showImmediately:showImmediately fetchTimeout:timeout];
+    } failure:^(NSError *error) {
+        
+        NSLog(@"Error! Failed to get the list of list of networks to mediate from Heyzap. Mediation won't be possible. Error = %@,",error);
+    }];
 }
 
 - (void)fetch:(NSArray *)preferredMediatorList tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout
@@ -216,32 +98,21 @@ showImmediately:NO
     
     // Find the first SDK that has an ad, and use it
     // This means if e.g. the first 2 networks aren't working, we don't have to wait for a timeout to get to the third.
-    const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(NSValue *mediatorValue, NSUInteger idx, BOOL *stop) {
-        const HZMediator mediator = HZMediatorFromNSValue(mediatorValue);
-        id <HZMediationAdapter> adapter = HZAdapterFromHZMediator(mediator);
-        return [adapter hasAd];
-    }];
-    
-    if (idx != NSNotFound) {
-        NSLog(@"Using fast path by skipping to first network with an ad.");
-        NSValue *mediatorValue = preferredMediatorList[idx];
-        const HZMediator mediator = HZMediatorFromNSValue(mediatorValue);
-        id <HZMediationAdapter> adapter = HZAdapterFromHZMediator(mediator);
-        [adapter showAd];
-        return;
+    if (showImmediately) {
+        const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(id<HZMediationAdapter> adapter, NSUInteger idx, BOOL *stop) {
+            return [adapter hasAd];
+        }];
+        
+        if (idx != NSNotFound) {
+            NSLog(@"Using fast path by skipping to first network with an ad.");
+            id <HZMediationAdapter> adapter = preferredMediatorList[idx];
+            [adapter showAd];
+            return;
+        }
     }
     
-    
-    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        for (NSValue *value in preferredMediatorList) {
-            const HZMediator mediator = HZMediatorFromNSValue(value);
-            
-            __block id<HZMediationAdapter> adapter;
-            
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                adapter = HZAdapterFromHZMediator(mediator);
-            });
+        for (id<HZMediationAdapter> adapter in preferredMediatorList) {
             
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [adapter prefetch];
@@ -257,7 +128,7 @@ showImmediately:NO
             }, 2);
             
             if (fetchedWithinTimeout) {
-                NSLog(@"We fetched within the timeout! Network = %@",NSStringFromHZMediator(mediator));
+                NSLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
                 // Send a fetch successful message
                 // For just a fetch we can break now.
                 if (!showImmediately) {
@@ -266,12 +137,12 @@ showImmediately:NO
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     [adapter showAd];
                 });
-                NSLog(@"Mediator %@ is showing an ad",NSStringFromHZMediator(mediator));
+                NSLog(@"Mediator %@ is showing an ad",[[adapter class] name]);
                 break;
                 
                 // Send delegate notification about showing an ad.
             } else {
-                NSLog(@"The mediator with name = %@ didn't have an ad",NSStringFromHZMediator(mediator));
+                NSLog(@"The mediator with name = %@ didn't have an ad",[[adapter class] name]);
                 // If the mediated SDK errored, reset it and try again.
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if (adapter.lastError) {
@@ -367,14 +238,6 @@ NSString * const kHZDataKey = @"data";
     }
 }
 
-+ (NSArray *)mediatorJSON
-{
-    return @[
-             @{kHZAdapterKey: kHZAdapterVungle},
-             @{kHZAdapterKey: kHZAdapterChartboost},
-             ];
-}
-
 
 - (void)setupMediators:(NSArray *)mediatorJSON
 {
@@ -390,7 +253,12 @@ NSString * const kHZDataKey = @"data";
             }
         }
     }
-//    self.setupMediators = setupMediators;
+    self.setupMediators = setupMediators;
+    NSLog(@"Setup mediators = %@",setupMediators);
+    
+    [self mediateForTag:nil
+        showImmediately:NO
+           fetchTimeout:10];
 }
 
 @end
