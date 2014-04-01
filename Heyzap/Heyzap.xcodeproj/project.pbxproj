@@ -108,6 +108,7 @@
 		509B5BE718C94490003A7CB9 /* UIViewController+IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE618C94490003A7CB9 /* UIViewController+IntegrationTests.m */; };
 		509B5BE918C968FA003A7CB9 /* portraitInterstitialRequest.json in Resources */ = {isa = PBXBuildFile; fileRef = 509B5BE818C968FA003A7CB9 /* portraitInterstitialRequest.json */; };
 		509B5BEC18C96CE2003A7CB9 /* TestJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BEB18C96CE2003A7CB9 /* TestJSON.m */; };
+		509F000718EA17970011EAB3 /* NSArrayUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F000618EA17970011EAB3 /* NSArrayUtils.m */; };
 		50A36ACC18C93B9C00FA84F0 /* InterstitialSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */; };
 		50A36AD218C9405A00FA84F0 /* DeviceInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514CB18B68EF600E00E6C /* DeviceInfoViewController.m */; };
 		50A36AD418C9405A00FA84F0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B941E71758056B00B8EACE /* main.m */; };
@@ -352,6 +353,8 @@
 		509B5BE818C968FA003A7CB9 /* portraitInterstitialRequest.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = portraitInterstitialRequest.json; sourceTree = "<group>"; };
 		509B5BEA18C96CE2003A7CB9 /* TestJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestJSON.h; sourceTree = "<group>"; };
 		509B5BEB18C96CE2003A7CB9 /* TestJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestJSON.m; sourceTree = "<group>"; };
+		509F000518EA17970011EAB3 /* NSArrayUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSArrayUtils.h; sourceTree = "<group>"; };
+		509F000618EA17970011EAB3 /* NSArrayUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSArrayUtils.m; sourceTree = "<group>"; };
 		50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialSpec.m; sourceTree = "<group>"; };
 		50A36AED18C9405A00FA84F0 /* Heyzap (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Heyzap (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		50A36AEE18C9405A00FA84F0 /* Integration Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Integration Tests-Info.plist"; path = "/Users/Max/Documents/iOS/ios-sdk/Heyzap/Integration Tests/Integration Tests-Info.plist"; sourceTree = "<absolute>"; };
@@ -1020,6 +1023,8 @@
 				8641E1E118AD997800CAAEE0 /* HZDevice.m */,
 				5046CE8818E3B0C3000395AA /* HZDispatch.h */,
 				5046CE8918E3B0C3000395AA /* HZDispatch.m */,
+				509F000518EA17970011EAB3 /* NSArrayUtils.h */,
+				509F000618EA17970011EAB3 /* NSArrayUtils.m */,
 			);
 			name = Utils;
 			path = Heyzap;
@@ -1393,6 +1398,7 @@
 			files = (
 				504514CC18B68EF600E00E6C /* DeviceInfoViewController.m in Sources */,
 				86B941E81758056B00B8EACE /* main.m in Sources */,
+				509F000718EA17970011EAB3 /* NSArrayUtils.m in Sources */,
 				504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */,
 				86B941EC1758056B00B8EACE /* AppDelegate.m in Sources */,
 				5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */,

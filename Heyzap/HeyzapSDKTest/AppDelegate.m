@@ -26,6 +26,8 @@
 
 #import "HeyzapMediation.h"
 
+#import "HZAdMobAdapter.h"
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -76,9 +78,12 @@
     [[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
 #endif
     
+    [[HZAdMobAdapter sharedInstance] prefetch];
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-        [[HeyzapMediation sharedInstance] showAd];
+//        [[HeyzapMediation sharedInstance] showAd];
+        [[HZAdMobAdapter sharedInstance] showAd];
     });
     
     return YES;

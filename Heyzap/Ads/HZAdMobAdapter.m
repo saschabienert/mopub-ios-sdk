@@ -114,6 +114,11 @@
                                                 NSUnderlyingErrorKey: error}];
 }
 
+- (void)interstitialWillLeaveApplication:(HZGADInterstitial *)ad
+{
+    NSLog(@"Callback from ad mob about leaving the application");
+}
+
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
     self.lastError = nil;

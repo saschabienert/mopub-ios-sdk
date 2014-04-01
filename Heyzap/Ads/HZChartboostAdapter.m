@@ -162,6 +162,11 @@
 //    }
 }
 
+- (void)didClickInterstitial:(NSString *)location
+{
+    NSLog(@"Chartboost ad was clicked");
+}
+
 /*
  * didCacheInterstitial
  *

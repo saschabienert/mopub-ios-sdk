@@ -22,11 +22,19 @@
 #import "HZAdFetchRequest.h"
 #import "HeyzapAds.h"
 
+#define HZVideoAdUnit @"video"
+#define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
+
+#define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
+#define HZInterstitialAdCreativeTypesNoVideo @[@"interstitial", @"full_screen_interstitial"]
+#define HZInterstitialAdUnit @"interstitial"
+
 @interface HeyzapMediation()
 
 @property (nonatomic, strong) NSMutableSet *setupMediators; // Make this an NSSet when we get data from the server
 
 BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout);
+HZAdType hzAdTypeFromString(NSString *adUnit);
 
 @end
 
@@ -54,17 +62,19 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 {
     NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
     
-    [self mediateForTag:nil showImmediately:YES fetchTimeout:2];
+    [self mediateForAdUnit:HZInterstitialAdUnit
+                       tag:nil
+           showImmediately:YES
+              fetchTimeout:2];
 }
 
-#define HZVideoAdUnit @"video"
-#define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
 
-- (void)mediateForTag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout
+
+- (void)mediateForAdUnit:(NSString *)adUnit tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout
 {
     
-    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:HZVideoAdCreativeTypes
-                                                                         adUnit:HZVideoAdUnit
+    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:HZInterstitialAdCreativeTypes
+                                                                         adUnit:HZInterstitialAdUnit
                                                                             tag:[HeyzapAds defaultTagName]
                                                             andAdditionalParams:nil];
     
@@ -84,8 +94,16 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
             }
         }
         
-        NSLog(@"Asked to mediate; showImmediately = %i, chosen adapters = %@",showImmediately, adapters);
-        [self fetch:adapters tag:tag showImmediately:showImmediately fetchTimeout:timeout];
+                                       
+        NSLog(@"Asked to mediate; showImmediately = %i, adUnit = %@, chosen adapters = %@",showImmediately, adUnit, adapters);
+        NSIndexSet *indexes = [adapters indexesOfObjectsPassingTest:^BOOL(id<HZMediationAdapter> adapter, NSUInteger idx, BOOL *stop) {
+            return [[self class] adapter:adapter supportsAdUnit:adUnit];
+        }];
+        NSArray *validSDKs = [adapters objectsAtIndexes:indexes];
+                                       NSLog(@"After filtering, valid SDKs = %@",validSDKs);
+                                       
+        
+        [self fetch:validSDKs tag:tag showImmediately:showImmediately fetchTimeout:timeout];
     } failure:^(NSError *error) {
         
         NSLog(@"Error! Failed to get the list of list of networks to mediate from Heyzap. Mediation won't be possible. Error = %@,",error);
@@ -256,9 +274,27 @@ NSString * const kHZDataKey = @"data";
     self.setupMediators = setupMediators;
     NSLog(@"Setup mediators = %@",setupMediators);
     
-    [self mediateForTag:nil
-        showImmediately:NO
-           fetchTimeout:10];
+    [self mediateForAdUnit:HZInterstitialAdUnit
+                       tag:nil
+           showImmediately:NO
+              fetchTimeout:10];
+}
+
++ (BOOL)adapter:(id<HZMediationAdapter>)adapter supportsAdUnit:(NSString *)adUnit
+{
+    return [adapter supportedAdFormats] & hzAdTypeFromString(adUnit);
+}
+
+HZAdType hzAdTypeFromString(NSString *adUnit) {
+    if ([adUnit isEqualToString:@"interstitial"]) {
+        return HZAdTypeInterstitial;
+    } else if ([adUnit isEqualToString:@"incentivized"]) {
+        return HZAdTypeIncentivized;
+    } else if ([adUnit isEqualToString:@"video"]) {
+        return HZAdTypeVideo;
+    }
+    // hmm
+    abort();
 }
 
 @end
