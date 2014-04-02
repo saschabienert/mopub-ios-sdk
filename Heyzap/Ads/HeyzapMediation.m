@@ -214,15 +214,7 @@ NSString * NSStringFromAdType(HZAdType type)
                 }
             });
         }
-        // Send a fetch failed notification, if appropriate
-        // Send a show failed notification, if appropriate.
     });
-    
-//    if (didShowAd) {
-//        // did show ad with tag.
-//    } else {
-//        // did Fail to show ad with tag.
-//    }
 }
 
 // Did receive ad with tag -> Tag always nil (no consistent way to say what tag a fetch is for).
@@ -244,12 +236,6 @@ NSString * NSStringFromAdType(HZAdType type)
     } failure:^(NSError *error) {
         NSLog(@"Error! Failed to get networks from Heyzap. Mediation won't be possible. Error = %@,",error);
     }];
-    // Get a list of available mediators
-    // Send list to the server.
-    // Get back list of enabled mediators
-    // Set property of enabled mediators
-    // Initialize all those mediators with credentials
-        // -- need a way of validating our credentials are good. Have a class for each credential thing?
 }
 
 // Dictionary keys
@@ -288,6 +274,8 @@ NSString * const kHZDataKey = @"data";
                 id<HZMediationAdapter> adapter = [mediatorClass sharedInstance];
                 adapter.delegate = self;
                 [setupMediators addObject:adapter];
+            } else {
+                NSLog(@"Error setting up 3rd-party SDK. Error = %@",credentialError);
             }
         }
     }

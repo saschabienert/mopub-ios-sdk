@@ -18,6 +18,34 @@
 
 @implementation HZChartboostAdapter
 
+#pragma mark - Initialization
+
++ (instancetype)sharedInstance
+{
+    static HZChartboostAdapter *proxy;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        proxy = [[HZChartboostAdapter alloc] init];
+    });
+    return proxy;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        NSLog(@"Chartboost class proxy used");
+        [HZChartboost sharedChartboost].delegate = self;
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(applicationDidBecomeActive:)
+                                                     name:UIApplicationDidBecomeActiveNotification
+                                                   object:nil];
+    }
+    return self;
+}
+
+#pragma mark - Adapter Protocol
+
 + (BOOL)isSDKAvailable
 {
     return [HZChartboost hzProxiedClassIsAvailable];
@@ -44,54 +72,12 @@
     return kHZAdapterChartboost;
 }
 
-+ (instancetype)sharedInstance
-{
-    static HZChartboostAdapter *proxy;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        proxy = [[HZChartboostAdapter alloc] init];
-    });
-    return proxy;
-}
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        NSLog(@"Chartboost class proxy used");
-        [HZChartboost sharedChartboost].delegate = self;
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(applicationDidBecomeActive:)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
-    }
-    return self;
-}
-
 - (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature
 {
     [[HZChartboost sharedChartboost] setAppId:appID];
     [[HZChartboost sharedChartboost] setAppSignature:appSignature];
     
     [[HZChartboost sharedChartboost] startSession];
-}
-
-- (void)applicationDidBecomeActive:(NSNotification *)notification
-{
-    // Chartboost requires this to be called each time the app becomes active.
-    [[HZChartboost sharedChartboost] startSession];
-}
-
-#pragma mark - Protocol Implementation
-
-- (BOOL)conformsToProtocol:(Protocol *)aProtocol
-{
-    if ([NSStringFromProtocol(aProtocol) isEqualToString:@"ChartboostDelegate"]) {
-        NSLog(@"Conforms to protocol called on chartboost delegate");
-        return YES;
-    } else {
-        return [super conformsToProtocol:aProtocol];
-    }
 }
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
@@ -116,7 +102,25 @@
     return HZAdTypeInterstitial;
 }
 
-#pragma mark - Chartboost Delegate callbacks
+#pragma mark - NSNotifications
+
+- (void)applicationDidBecomeActive:(NSNotification *)notification
+{
+    // Chartboost requires this to be called each time the app becomes active.
+    [[HZChartboost sharedChartboost] startSession];
+}
+
+#pragma mark - Chartboost Delegate
+
+- (BOOL)conformsToProtocol:(Protocol *)aProtocol
+{
+    if ([NSStringFromProtocol(aProtocol) isEqualToString:@"ChartboostDelegate"]) {
+        NSLog(@"Conforms to protocol called on chartboost delegate");
+        return YES;
+    } else {
+        return [super conformsToProtocol:aProtocol];
+    }
+}
 
 /*
  * Chartboost Delegate Methods

@@ -20,6 +20,8 @@
 
 @implementation HZVungleAdapter
 
+#pragma mark - Initialization
+
 + (instancetype)sharedInstance
 {
     static HZVungleAdapter *proxy;
@@ -29,6 +31,17 @@
     });
     return proxy;
 }
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        [HZVGVunglePub setDelegate:self];
+    }
+    return self;
+}
+
+#pragma mark - Adapter Protocol
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
@@ -65,15 +78,6 @@
     return kHZAdapterVungle;
 }
 
-- (id)init
-{
-    self = [super init];
-    if (self) {
-        [HZVGVunglePub setDelegate:self];
-    }
-    return self;
-}
-
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
@@ -96,6 +100,8 @@
         [HZVGVunglePub playIncentivizedAd:vc animated:YES showClose:YES userTag:nil];
     }
 }
+
+#pragma mark - Vungle Delegate
 
 - (void)vungleStatusUpdate:(HZVGStatusData *)statusData
 {

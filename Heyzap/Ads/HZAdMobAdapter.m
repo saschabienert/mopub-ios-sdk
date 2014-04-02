@@ -23,6 +23,8 @@
 
 @implementation HZAdMobAdapter
 
+#pragma mark - Initialization
+
 + (instancetype)sharedInstance
 {
     static HZAdMobAdapter *proxy;
@@ -32,6 +34,8 @@
     });
     return proxy;
 }
+
+#pragma mark - Adapter Protocol
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {

@@ -24,8 +24,8 @@
 
 - (BOOL)isAvailableForAdUnitType:(HZAdType)adType tag:(NSString *)tag;
 
-- (void)adapterWasClicked:(id<HZMediationAdapter>)adapter;
-- (void)adapterDidDismissAd:(id<HZMediationAdapter>)adapter;
+//- (void)adapterWasClicked:(id<HZMediationAdapter>)adapter;
+//- (void)adapterDidDismissAd:(id<HZMediationAdapter>)adapter;
 
 // Need Delegate API for getting the current view controller.
 // We can handle the common scenarios by recursively finding the right view controller. 

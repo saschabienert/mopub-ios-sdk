@@ -19,6 +19,8 @@
 
 @implementation HZAdColonyAdapter
 
+#pragma mark - Initialization
+
 + (instancetype)sharedInstance
 {
     static HZAdColonyAdapter *proxy;
@@ -28,6 +30,8 @@
     });
     return proxy;
 }
+
+#pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
 {
@@ -84,6 +88,16 @@
     return (type & [self supportedAdFormats]) && [HZAdColony zoneStatusForZone:self.zoneID] == HZ_ADCOLONY_ZONE_STATUS_ACTIVE;
 }
 
+- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+{
+    // AdColony auto-prefetches
+}
+
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+{
+    [HZAdColony playVideoAdForZone:self.zoneID withDelegate:nil];
+}
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-property-ivar"
 - (NSError *)lastError
@@ -97,6 +111,8 @@
 }
 #pragma clang diagnostic pop
 
+#pragma mark - AdColony Delegation
+
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol
 {
     if ([NSStringFromProtocol(aProtocol) isEqualToString:@"AdColonyAdDelegate"]) {
@@ -106,16 +122,6 @@
     } else {
         return [super conformsToProtocol:aProtocol];
     }
-}
-
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
-{
-    // AdColony auto-prefetches
-}
-
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
-{
-    [HZAdColony playVideoAdForZone:self.zoneID withDelegate:nil];
 }
 
 #pragma mark - AdColonyAdDelegate (individual ads)
