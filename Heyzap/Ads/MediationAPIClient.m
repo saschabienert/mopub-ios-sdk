@@ -8,7 +8,7 @@
 
 #import "MediationAPIClient.h"
 
-NSString * const kHZAdsAPIBaseURLString = @"http://cron.ec2.heyzap.com:9011/";
+NSString * const kHZAdsAPIBaseURLString = @"http://med.heyzap.com/";
 
 @implementation MediationAPIClient
 

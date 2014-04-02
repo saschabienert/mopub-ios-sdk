@@ -94,17 +94,18 @@
     }
 }
 
-- (void)prefetch
+- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
+    // Chartboost has tag support, but we're going to use it for geos
     [[HZChartboost sharedChartboost] cacheInterstitial];
 }
 
-- (BOOL)hasAd
+- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    return [[HZChartboost sharedChartboost] hasCachedInterstitial];
+    return ([self supportedAdFormats] & type) && [[HZChartboost sharedChartboost] hasCachedInterstitial];
 }
 
-- (void)showAd
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
     NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
     [[HZChartboost sharedChartboost] showInterstitial];
@@ -164,6 +165,7 @@
 
 - (void)didClickInterstitial:(NSString *)location
 {
+    [self.delegate adapterWasClicked:self];
     NSLog(@"Chartboost ad was clicked");
 }
 
@@ -201,6 +203,7 @@
 - (void)didDismissInterstitial:(NSString *)location {
     NSLog(@"dismissed interstitial at location %@", location);
 //    [[Chartboost sharedChartboost] cacheInterstitial:location];
+    [self.delegate adapterDidDismissAd:self];
 }
 
 /*

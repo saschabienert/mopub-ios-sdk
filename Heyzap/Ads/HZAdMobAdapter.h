@@ -12,5 +12,6 @@
 @interface HZAdMobAdapter : NSObject <HZMediationAdapter>
 
 @property (nonatomic, strong) NSError *lastError;
+@property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
 
 @end

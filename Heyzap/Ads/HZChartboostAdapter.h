@@ -12,6 +12,7 @@
 @interface HZChartboostAdapter : NSObject <HZMediationAdapter>
 
 @property (nonatomic, strong) NSError *lastError;
+@property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
 
 - (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature;
 

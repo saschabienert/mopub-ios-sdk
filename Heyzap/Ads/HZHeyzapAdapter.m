@@ -9,6 +9,9 @@
 #import "HZHeyzapAdapter.h"
 #import "HeyzapAds.h"
 #import "HZMediationConstants.h"
+#import "HZInterstitialAd.h"
+#import "HZIncentivizedAd.h"
+#import "HZVideoAd.h"
 
 @interface HZHeyzapAdapter()
 
@@ -47,14 +50,56 @@
     return kHZAdapterHeyzap;
 }
 
+- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+{
+    switch (type) {
+        case HZAdTypeInterstitial: {
+            [HZInterstitialAd fetchForTag:tag];
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            [HZIncentivizedAd fetch];
+            break;
+        }
+        case HZAdTypeVideo: {
+            [HZVideoAd fetchForTag:tag];
+            break;
+        }
+    }
+}
+
 - (void)prefetch
 {
     // Heyzap auto-prefetches--no implementation
 }
 
-- (BOOL)hasAd
+- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    return [HZInterstitialAd isAvailable];
+    if (type & HZAdTypeVideo) {
+        return [HZVideoAd isAvailableForTag:tag];
+    } else if (type & HZAdTypeInterstitial) {
+        return [HZInterstitialAd isAvailableForTag:tag];
+    } else  {
+        return [HZIncentivizedAd isAvailable];
+    }
+}
+
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+{
+    switch (type) {
+        case HZAdTypeInterstitial: {
+            [HZInterstitialAd showForTag:tag];
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            [HZIncentivizedAd show];
+            break;
+        }
+        case HZAdTypeVideo: {
+            [HZVideoAd showForTag:tag];
+            break;
+        }
+    }
 }
 
 - (void)showAd

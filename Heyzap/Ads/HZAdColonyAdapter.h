@@ -12,6 +12,7 @@
 @interface HZAdColonyAdapter : NSObject <HZMediationAdapter>
 
 @property (nonatomic, strong) NSError *lastError;
+@property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
 
 - (void)setupAdColonyWithAppID:(NSString *)appID zoneID:(NSString *)zoneID;
 

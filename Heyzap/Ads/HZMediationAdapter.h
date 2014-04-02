@@ -14,16 +14,28 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
     HZAdTypeIncentivized = 1 << 2,
 };
 
+@protocol HZMediationAdapter;
+
+@protocol HZMediationAdapterDelegate <NSObject>
+
+- (void)adapterWasClicked:(id<HZMediationAdapter>)adapter;
+- (void)adapterDidDismissAd:(id<HZMediationAdapter>)adapter;
+
+- (void)adapterDidCompleteIncentivizedAd:(id<HZMediationAdapter>)adapter;
+- (void)adapterDidFailToCompleteIncentivizedAd:(id<HZMediationAdapter>)adapter;
+
+@end
+
 @protocol HZMediationAdapter <NSObject>
 
 
 + (instancetype)sharedInstance;
 
-- (void)prefetch;
+- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag;
 
-- (BOOL)hasAd;
+- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag;
 
-- (void)showAd;
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag;
 
 - (HZAdType)supportedAdFormats;
 
@@ -40,5 +52,10 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
  *  Adapters should record their lastError, from e.g. delegate callbacks.
  */
 @property (nonatomic, strong) NSError *lastError;
+
+@property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
+
+
+
 
 @end

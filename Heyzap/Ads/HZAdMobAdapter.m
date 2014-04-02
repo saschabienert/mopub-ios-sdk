@@ -51,13 +51,19 @@
     return [HZGADInterstitial hzProxiedClassIsAvailable] && [HZGADRequest hzProxiedClassIsAvailable];
 }
 
+- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+{
+    return [self supportedAdFormats] & type && self.currentInterstitial.isReady;
+}
+
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeInterstitial;
 }
 
-- (void)prefetch
+- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
+    NSAssert(self.adUnitID, @"Need an ad unit ID by this point");
     if (self.currentInterstitial
         && !self.currentInterstitial.hasBeenUsed
         && !self.lastError) {
@@ -67,7 +73,7 @@
     NSLog(@"Prefetch called for admob");
     
     self.currentInterstitial = [[HZGADInterstitial alloc] init];
-    self.currentInterstitial.adUnitID = @"ca-app-pub-3919373204654131/8414896602";
+    self.currentInterstitial.adUnitID = self.adUnitID;
     self.currentInterstitial.delegate = self;
     
     HZGADRequest *request = [HZGADRequest request];
@@ -82,14 +88,7 @@
     return kHZAdapterAdMob;
 }
 
-- (BOOL)hasAd
-{
-    BOOL hasAd = self.currentInterstitial.isReady;
-    NSLog(@"Admob has ad = %i",hasAd);
-    return hasAd;
-}
-
-- (void)showAd
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     [self.currentInterstitial presentFromRootViewController:vc];
@@ -114,9 +113,16 @@
                                                 NSUnderlyingErrorKey: error}];
 }
 
+- (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
+{
+    [self.delegate adapterDidDismissAd:self];
+}
+
+// As far as I can tell, this means a click.
 - (void)interstitialWillLeaveApplication:(HZGADInterstitial *)ad
 {
     NSLog(@"Callback from ad mob about leaving the application");
+    [self.delegate adapterWasClicked:self];
 }
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad

@@ -101,7 +101,6 @@
 		504E9CA618C9339700402BC3 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
 		504E9CA718C9339B00402BC3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86309F8318873D960000B6E3 /* StoreKit.framework */; };
 		504E9CA818C933A000402BC3 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B7175830A600B8EACE /* AdSupport.framework */; };
-		505286D318E5EEAE0060C210 /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 505286D218E5EEAE0060C210 /* AdColony.framework */; };
 		505286E118E61BD90060C210 /* MediationAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 505286DF18E61BD90060C210 /* MediationAPIClient.h */; };
 		505286E218E61BD90060C210 /* MediationAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 505286E018E61BD90060C210 /* MediationAPIClient.m */; };
 		509B5BE418C943B8003A7CB9 /* TestInterstitials.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE318C943B8003A7CB9 /* TestInterstitials.m */; };
@@ -109,6 +108,20 @@
 		509B5BE918C968FA003A7CB9 /* portraitInterstitialRequest.json in Resources */ = {isa = PBXBuildFile; fileRef = 509B5BE818C968FA003A7CB9 /* portraitInterstitialRequest.json */; };
 		509B5BEC18C96CE2003A7CB9 /* TestJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BEB18C96CE2003A7CB9 /* TestJSON.m */; };
 		509F000718EA17970011EAB3 /* NSArrayUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F000618EA17970011EAB3 /* NSArrayUtils.m */; };
+		509F002418EB5D770011EAB3 /* vg_button_close.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002018EB5D770011EAB3 /* vg_button_close.png */; };
+		509F002518EB5D770011EAB3 /* vg_button_mute_plain.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002118EB5D770011EAB3 /* vg_button_mute_plain.png */; };
+		509F002618EB5D770011EAB3 /* vg_button_mute_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002218EB5D770011EAB3 /* vg_button_mute_selected.png */; };
+		509F002918EB5D980011EAB3 /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 509F002818EB5D980011EAB3 /* AdColony.framework */; };
+		509F002D18EB62BC0011EAB3 /* HZMediationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F002B18EB62BC0011EAB3 /* HZMediationSession.h */; };
+		509F002E18EB62BC0011EAB3 /* HZMediationSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F002C18EB62BC0011EAB3 /* HZMediationSession.m */; };
+		509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */; };
+		509F003218EB6E2F0011EAB3 /* HZBaseAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */; };
+		509F00BA18EC8D010011EAB3 /* HZVGPlayData.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F00B818EC8D010011EAB3 /* HZVGPlayData.h */; };
+		509F00BB18EC8D010011EAB3 /* HZVGPlayData.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00B918EC8D010011EAB3 /* HZVGPlayData.m */; };
+		509F00BE18ECB4540011EAB3 /* TestDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F00BC18ECB4540011EAB3 /* TestDelegate.h */; };
+		509F00BF18ECB4540011EAB3 /* TestDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00BD18ECB4540011EAB3 /* TestDelegate.m */; };
+		509F00C218ECB4CE0011EAB3 /* DelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F00C018ECB4CE0011EAB3 /* DelegateProxy.h */; };
+		509F00C318ECB4CE0011EAB3 /* DelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00C118ECB4CE0011EAB3 /* DelegateProxy.m */; };
 		50A36ACC18C93B9C00FA84F0 /* InterstitialSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */; };
 		50A36AD218C9405A00FA84F0 /* DeviceInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514CB18B68EF600E00E6C /* DeviceInfoViewController.m */; };
 		50A36AD418C9405A00FA84F0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B941E71758056B00B8EACE /* main.m */; };
@@ -310,10 +323,6 @@
 		5011CE4718DB917200604B53 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		5011CE5318DB9B7F00604B53 /* HZAdColonyAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdColonyAdapter.h; sourceTree = "<group>"; };
 		5011CE5418DB9B7F00604B53 /* HZAdColonyAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdColonyAdapter.m; sourceTree = "<group>"; };
-		5011CE5918DBA70B00604B53 /* vg_button_close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_button_close.png; sourceTree = "<group>"; };
-		5011CE5A18DBA70B00604B53 /* vg_button_mute_plain.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_button_mute_plain.png; sourceTree = "<group>"; };
-		5011CE5B18DBA70C00604B53 /* vg_button_mute_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_button_mute_selected.png; sourceTree = "<group>"; };
-		5011CE5C18DBA70C00604B53 /* vunglepub.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = vunglepub.framework; sourceTree = "<group>"; };
 		5011CE6118DBAEAE00604B53 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		5011CE6218DBAEAE00604B53 /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
 		5011CE6818DBAEDD00604B53 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
@@ -344,7 +353,6 @@
 		504E9C9A18C9322100402BC3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		504E9C9C18C9322200402BC3 /* Ads_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Ads_Tests.m; sourceTree = "<group>"; };
 		504E9C9E18C9322200402BC3 /* Ads Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ads Tests-Prefix.pch"; sourceTree = "<group>"; };
-		505286D218E5EEAE0060C210 /* AdColony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdColony.framework; sourceTree = "<group>"; };
 		505286DF18E61BD90060C210 /* MediationAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediationAPIClient.h; sourceTree = "<group>"; };
 		505286E018E61BD90060C210 /* MediationAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediationAPIClient.m; sourceTree = "<group>"; };
 		509B5BE318C943B8003A7CB9 /* TestInterstitials.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestInterstitials.m; sourceTree = "<group>"; };
@@ -355,6 +363,21 @@
 		509B5BEB18C96CE2003A7CB9 /* TestJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestJSON.m; sourceTree = "<group>"; };
 		509F000518EA17970011EAB3 /* NSArrayUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSArrayUtils.h; sourceTree = "<group>"; };
 		509F000618EA17970011EAB3 /* NSArrayUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSArrayUtils.m; sourceTree = "<group>"; };
+		509F002018EB5D770011EAB3 /* vg_button_close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_button_close.png; sourceTree = "<group>"; };
+		509F002118EB5D770011EAB3 /* vg_button_mute_plain.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_button_mute_plain.png; sourceTree = "<group>"; };
+		509F002218EB5D770011EAB3 /* vg_button_mute_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_button_mute_selected.png; sourceTree = "<group>"; };
+		509F002318EB5D770011EAB3 /* vunglepub.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = vunglepub.framework; sourceTree = "<group>"; };
+		509F002818EB5D980011EAB3 /* AdColony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdColony.framework; sourceTree = "<group>"; };
+		509F002B18EB62BC0011EAB3 /* HZMediationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationSession.h; sourceTree = "<group>"; };
+		509F002C18EB62BC0011EAB3 /* HZMediationSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationSession.m; sourceTree = "<group>"; };
+		509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZBaseAdapter.h; sourceTree = "<group>"; };
+		509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZBaseAdapter.m; sourceTree = "<group>"; };
+		509F00B818EC8D010011EAB3 /* HZVGPlayData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVGPlayData.h; sourceTree = "<group>"; };
+		509F00B918EC8D010011EAB3 /* HZVGPlayData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVGPlayData.m; sourceTree = "<group>"; };
+		509F00BC18ECB4540011EAB3 /* TestDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestDelegate.h; sourceTree = "<group>"; };
+		509F00BD18ECB4540011EAB3 /* TestDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestDelegate.m; sourceTree = "<group>"; };
+		509F00C018ECB4CE0011EAB3 /* DelegateProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelegateProxy.h; sourceTree = "<group>"; };
+		509F00C118ECB4CE0011EAB3 /* DelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelegateProxy.m; sourceTree = "<group>"; };
 		50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialSpec.m; sourceTree = "<group>"; };
 		50A36AED18C9405A00FA84F0 /* Heyzap (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Heyzap (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		50A36AEE18C9405A00FA84F0 /* Integration Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Integration Tests-Info.plist"; path = "/Users/Max/Documents/iOS/ios-sdk/Heyzap/Integration Tests/Integration Tests-Info.plist"; sourceTree = "<absolute>"; };
@@ -538,10 +561,10 @@
 				5011CE6E18DBAF1300604B53 /* EventKitUI.framework in Frameworks */,
 				86B943BA175830AA00B8EACE /* AdSupport.framework in Frameworks */,
 				86234AAD185690510071957B /* MediaPlayer.framework in Frameworks */,
+				509F002918EB5D980011EAB3 /* AdColony.framework in Frameworks */,
 				5011CE4818DB917200604B53 /* CoreMedia.framework in Frameworks */,
 				5011CE4618DB916B00604B53 /* AudioToolbox.framework in Frameworks */,
 				86B941E01758056B00B8EACE /* CoreGraphics.framework in Frameworks */,
-				505286D318E5EEAE0060C210 /* AdColony.framework in Frameworks */,
 				5011CE4418DB915A00604B53 /* CFNetwork.framework in Frameworks */,
 				5011CE4218DB915500604B53 /* AVFoundation.framework in Frameworks */,
 				5011CE4018DB914200604B53 /* libz.dylib in Frameworks */,
@@ -582,6 +605,8 @@
 				500F88DE18E202F600E5D6F8 /* HZVGVunglePub.m */,
 				5046CE8018E346B5000395AA /* HZVGStatusData.h */,
 				5046CE8118E346B5000395AA /* HZVGStatusData.m */,
+				509F00B818EC8D010011EAB3 /* HZVGPlayData.h */,
+				509F00B918EC8D010011EAB3 /* HZVGPlayData.m */,
 			);
 			name = Vungle;
 			sourceTree = "<group>";
@@ -594,6 +619,8 @@
 				5046CE8518E3545E000395AA /* HZMediationConstants.m */,
 				500F88E218E203A500E5D6F8 /* HZClassProxy.h */,
 				500F88E318E203A500E5D6F8 /* HZClassProxy.m */,
+				509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */,
+				509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -639,25 +666,6 @@
 				50ECA1C018DB616B006284AB /* libChartboost.a */,
 			);
 			name = Chartboost;
-			sourceTree = "<group>";
-		};
-		5011CE5718DBA70B00604B53 /* vunglepub.embeddedframework */ = {
-			isa = PBXGroup;
-			children = (
-				5011CE5818DBA70B00604B53 /* Resources */,
-				5011CE5C18DBA70C00604B53 /* vunglepub.framework */,
-			);
-			path = vunglepub.embeddedframework;
-			sourceTree = "<group>";
-		};
-		5011CE5818DBA70B00604B53 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				5011CE5918DBA70B00604B53 /* vg_button_close.png */,
-				5011CE5A18DBA70B00604B53 /* vg_button_mute_plain.png */,
-				5011CE5B18DBA70C00604B53 /* vg_button_mute_selected.png */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		5011CE7218DBBBC100604B53 /* AdMob */ = {
@@ -719,6 +727,41 @@
 			name = "Ads JSON";
 			sourceTree = "<group>";
 		};
+		509F001E18EB5D770011EAB3 /* vunglepub.embeddedframework */ = {
+			isa = PBXGroup;
+			children = (
+				509F001F18EB5D770011EAB3 /* Resources */,
+				509F002318EB5D770011EAB3 /* vunglepub.framework */,
+			);
+			path = vunglepub.embeddedframework;
+			sourceTree = "<group>";
+		};
+		509F001F18EB5D770011EAB3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				509F002018EB5D770011EAB3 /* vg_button_close.png */,
+				509F002118EB5D770011EAB3 /* vg_button_mute_plain.png */,
+				509F002218EB5D770011EAB3 /* vg_button_mute_selected.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		509F002A18EB62AE0011EAB3 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				509F002B18EB62BC0011EAB3 /* HZMediationSession.h */,
+				509F002C18EB62BC0011EAB3 /* HZMediationSession.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		509F003318EB953E0011EAB3 /* Delegate */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Delegate;
+			sourceTree = "<group>";
+		};
 		50A36ACD18C9402200FA84F0 /* Integration Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -746,8 +789,13 @@
 		50ECA1BC18DB6108006284AB /* Mediation */ = {
 			isa = PBXGroup;
 			children = (
+				509F002A18EB62AE0011EAB3 /* Models */,
 				50ECA1CF18DB7340006284AB /* Adapters */,
 				505286DE18E61BAD0060C210 /* Networking */,
+				509F00C018ECB4CE0011EAB3 /* DelegateProxy.h */,
+				509F00C118ECB4CE0011EAB3 /* DelegateProxy.m */,
+				509F00BC18ECB4540011EAB3 /* TestDelegate.h */,
+				509F00BD18ECB4540011EAB3 /* TestDelegate.m */,
 			);
 			name = Mediation;
 			sourceTree = "<group>";
@@ -755,10 +803,10 @@
 		50ECA1BE18DB6157006284AB /* Mediation Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				505286D218E5EEAE0060C210 /* AdColony.framework */,
+				509F002818EB5D980011EAB3 /* AdColony.framework */,
+				509F001E18EB5D770011EAB3 /* vunglepub.embeddedframework */,
 				500F890418E21AF900E5D6F8 /* Chartboost */,
 				5011CE7218DBBBC100604B53 /* AdMob */,
-				5011CE5718DBA70B00604B53 /* vunglepub.embeddedframework */,
 			);
 			name = "Mediation Frameworks";
 			sourceTree = "<group>";
@@ -856,7 +904,6 @@
 			isa = PBXGroup;
 			children = (
 				50ECA1BE18DB6157006284AB /* Mediation Frameworks */,
-				86B9435C17581C4700B8EACE /* Common */,
 				86B942891758087E00B8EACE /* Vendor */,
 				86B941E11758056B00B8EACE /* SDK Test App */,
 				86B9432C1758108700B8EACE /* Ads */,
@@ -949,6 +996,7 @@
 		86B942891758087E00B8EACE /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				86B9435C17581C4700B8EACE /* Common */,
 				86B942CC1758098300B8EACE /* AFNetworking */,
 			);
 			name = Vendor;
@@ -980,6 +1028,7 @@
 		86B9432C1758108700B8EACE /* Ads */ = {
 			isa = PBXGroup;
 			children = (
+				509F003318EB953E0011EAB3 /* Delegate */,
 				50ECA1BC18DB6108006284AB /* Mediation */,
 				86114121185BF688002248EF /* Manager */,
 				866E3A1C18513AAA00B6E431 /* Data */,
@@ -1072,8 +1121,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				509F002D18EB62BC0011EAB3 /* HZMediationSession.h in Headers */,
 				500F88DF18E202F600E5D6F8 /* HZVGVunglePub.h in Headers */,
+				509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */,
+				509F00BA18EC8D010011EAB3 /* HZVGPlayData.h in Headers */,
 				5011CE5518DB9B7F00604B53 /* HZAdColonyAdapter.h in Headers */,
+				509F00BE18ECB4540011EAB3 /* TestDelegate.h in Headers */,
 				860FD47A187BB144008A35FD /* HZAdsFetchManager.h in Headers */,
 				86FF907918583FF100BC48BF /* HZAdLibrary.h in Headers */,
 				50ECA1CD18DB684D006284AB /* HZChartboostAdapter.h in Headers */,
@@ -1096,6 +1149,7 @@
 				86B09B84175958A50045AA54 /* HZInterstitialAd.h in Headers */,
 				866E3A181851329500B6E431 /* HZWebView.h in Headers */,
 				866E39FF1850172100B6E431 /* HZInterstitialAdModel.h in Headers */,
+				509F00C218ECB4CE0011EAB3 /* DelegateProxy.h in Headers */,
 				5011CE8918DBBBF700604B53 /* HZAdMobAdapter.h in Headers */,
 				500F88F218E215D000E5D6F8 /* HZGADInterstitial.h in Headers */,
 				86B09B92175975C80045AA54 /* HZLog.h in Headers */,
@@ -1261,10 +1315,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				509F002518EB5D770011EAB3 /* vg_button_mute_plain.png in Resources */,
 				86B941E61758056B00B8EACE /* InfoPlist.strings in Resources */,
 				86B941EE1758056B00B8EACE /* Default.png in Resources */,
 				86B941F01758056B00B8EACE /* Default@2x.png in Resources */,
+				509F002618EB5D770011EAB3 /* vg_button_mute_selected.png in Resources */,
 				86B941F21758056B00B8EACE /* Default-568h@2x.png in Resources */,
+				509F002418EB5D770011EAB3 /* vg_button_close.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1415,6 +1472,8 @@
 				8641E1F218ADE0FE00CAAEE0 /* HZImageView.m in Sources */,
 				500F88EB18E210D400E5D6F8 /* HZAdColony.m in Sources */,
 				866E39F01850087B00B6E431 /* HZVideoAd.m in Sources */,
+				509F00C318ECB4CE0011EAB3 /* DelegateProxy.m in Sources */,
+				509F00BF18ECB4540011EAB3 /* TestDelegate.m in Sources */,
 				86D0A99D1851897200B3D870 /* HZDownloadHelper.m in Sources */,
 				86CD0ECC17C3F7B00005BD3D /* HZAdsAPIClient.m in Sources */,
 				86CD0E8B17BB0B940005BD3D /* HZAdsManager.m in Sources */,
@@ -1444,6 +1503,7 @@
 				50ECA1D318DB7373006284AB /* HZHeyzapAdapter.m in Sources */,
 				86BDB4AD175853E100D85F29 /* HZAFHTTPRequestOperation.m in Sources */,
 				86BDB4AE175853E100D85F29 /* HZAFImageRequestOperation.m in Sources */,
+				509F002E18EB62BC0011EAB3 /* HZMediationSession.m in Sources */,
 				505286E218E61BD90060C210 /* MediationAPIClient.m in Sources */,
 				50ECA1C618DB618E006284AB /* HeyzapMediation.m in Sources */,
 				86234AAA18568EEA0071957B /* HZVideoView.m in Sources */,
@@ -1453,6 +1513,7 @@
 				86BDB4B0175853E100D85F29 /* HZAFNetworkActivityIndicatorManager.m in Sources */,
 				866E3A111851302C00B6E431 /* HZAdInterstitialViewController.m in Sources */,
 				86BDB4B1175853E100D85F29 /* HZAFURLConnectionOperation.m in Sources */,
+				509F00BB18EC8D010011EAB3 /* HZVGPlayData.m in Sources */,
 				500F88E518E203A500E5D6F8 /* HZClassProxy.m in Sources */,
 				86FF907A18583FF100BC48BF /* HZAdLibrary.m in Sources */,
 				866E3A001850172100B6E431 /* HZInterstitialAdModel.m in Sources */,
@@ -1460,6 +1521,7 @@
 				866E39F41850089C00B6E431 /* HZIncentivizedAd.m in Sources */,
 				866E39F818500DBE00B6E431 /* HZAdModel.m in Sources */,
 				866E3A191851329500B6E431 /* HZWebView.m in Sources */,
+				509F003218EB6E2F0011EAB3 /* HZBaseAdapter.m in Sources */,
 				86B09B85175958A50045AA54 /* HZInterstitialAd.m in Sources */,
 				866E39FC1850161900B6E431 /* HZVideoAdModel.m in Sources */,
 				5011CE3C18DB8F1500604B53 /* HZVungleAdapter.m in Sources */,

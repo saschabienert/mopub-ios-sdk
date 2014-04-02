@@ -17,6 +17,28 @@
 
 @end
 
+@protocol HZAdColonyAdDelegate <NSObject>
+@optional
+/**
+ * Notifies your app that an ad will actually play in response to the app's request to play an ad.
+ * This method is called when AdColony has taken control of the device screen and is about to begin
+ * showing an ad. Apps should implement app-specific code such as pausing a game and turning off app music.
+ * @param zoneID The affected zone
+ */
+- ( void ) onAdColonyAdStartedInZone:( NSString * )zoneID;
+
+/**
+ * Notifies your app that an ad completed playing (or never played) and control has been returned to the app.
+ * This method is called when AdColony has finished trying to show an ad, either successfully or unsuccessfully.
+ * If an ad was shown, apps should implement app-specific code such as unpausing a game and restarting app music.
+ * @param shown Whether an ad was actually shown
+ * @param zoneID The affected zone
+ */
+- ( void ) onAdColonyAdAttemptFinished:(BOOL)shown inZone:( NSString * )zoneID;
+
+@end
+
+
 typedef enum {
     HZ_ADCOLONY_ZONE_STATUS_NO_ZONE = 0,   /**< AdColony has not been configured with that zone ID. */
     HZ_ADCOLONY_ZONE_STATUS_OFF,           /**< The zone has been turned off on the www.adcolony.com control panel */

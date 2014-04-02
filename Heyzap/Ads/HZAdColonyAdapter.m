@@ -11,7 +11,7 @@
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
 
-@interface HZAdColonyAdapter() <HZAdColonyDelegate>
+@interface HZAdColonyAdapter() <HZAdColonyDelegate, HZAdColonyAdDelegate>
 
 @property (nonatomic, strong) NSString *zoneID;
 
@@ -79,11 +79,9 @@
     return _zoneID;
 }
 
-- (BOOL)hasAd
+- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    BOOL hasAd = [HZAdColony zoneStatusForZone:self.zoneID] == HZ_ADCOLONY_ZONE_STATUS_ACTIVE;
-    NSLog(@"Adcolony has ad = %i",hasAd);
-    return hasAd;
+    return (type & [self supportedAdFormats]) && [HZAdColony zoneStatusForZone:self.zoneID] == HZ_ADCOLONY_ZONE_STATUS_ACTIVE;
 }
 
 #pragma clang diagnostic push
@@ -99,14 +97,32 @@
 }
 #pragma clang diagnostic pop
 
-- (void)prefetch
+- (BOOL)conformsToProtocol:(Protocol *)aProtocol
+{
+    if ([NSStringFromProtocol(aProtocol) isEqualToString:@"AdColonyAdDelegate"]) {
+        return YES;
+    } else if ([NSStringFromProtocol(aProtocol) isEqualToString:@"AdColonyDelegate"]) {
+        return YES;
+    } else {
+        return [super conformsToProtocol:aProtocol];
+    }
+}
+
+- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
     // AdColony auto-prefetches
 }
 
-- (void)showAd
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
     [HZAdColony playVideoAdForZone:self.zoneID withDelegate:nil];
+}
+
+#pragma mark - AdColonyAdDelegate (individual ads)
+
+- (void)onAdColonyAdAttemptFinished:(BOOL)shown inZone:(NSString *)zoneID
+{
+    [self.delegate adapterDidDismissAd:self];
 }
 
 @end

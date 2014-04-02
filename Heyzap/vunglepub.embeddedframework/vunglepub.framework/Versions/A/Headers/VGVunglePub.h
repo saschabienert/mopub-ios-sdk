@@ -37,7 +37,6 @@
 #import "VGPlayData.h"
 #import "VGStatusData.h"
 #import "VGUserData.h"
-#import <UIKit/UIKit.h>
 
 
 /******************************************************************************/

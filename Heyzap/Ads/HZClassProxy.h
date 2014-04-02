@@ -11,7 +11,7 @@
 /**
  *  Subclass this to proxy a class. Add methods to your subclass's header filer that match the API of what you're proxying. Don't add implementation methods, instead ignore the warnings with "-Wincomplete-implementation" (see HZChartboost.m). 
  *  Implement properties with @dynamic in the implementation file.
- *  Copy over enum declarations, and prefix all of them with HZ.
+ *  Copy over enum declarations--no prefixing is necessary if they're not going to be public.
  *  Protocols I don't have a good solution for. My current approach is to prepend the protocol name with HZ, then have the delegate override `conformsToProtocol`.
  *  Preprocessor macros can be copied over exactly.
  *  

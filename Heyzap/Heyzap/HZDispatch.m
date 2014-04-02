@@ -10,15 +10,29 @@
 
 @implementation HZDispatch
 
-void hzDispatchSyncMainQueueIfNecessary(void (^block)(void))
+
+BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
 {
-    NSCParameterAssert(block);
-    if ([NSThread isMainThread]) {
-        block();
-    } else {
+    NSCParameterAssert(waitBlock);
+    NSCParameterAssert(timeout > 0);
+    
+    NSTimeInterval timeWaited = 0;
+    while (true) {
+        
+        __block BOOL waitCondition = NO;
         dispatch_sync(dispatch_get_main_queue(), ^{
-            block();
+            waitCondition = waitBlock();
         });
+        
+        if (waitCondition) {
+            return YES;
+        } else if (timeWaited >= timeout) {
+            return NO;
+        } else {
+            static const NSTimeInterval sleepInterval = 0.2;
+            [NSThread sleepForTimeInterval:sleepInterval];
+            timeWaited += sleepInterval;
+        }
     }
 }
 

@@ -12,6 +12,7 @@
 #import "HZVGStatusData.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZVGPlayData.h"
 
 @interface HZVungleAdapter() <HZVGVunglePubDelegate>
 
@@ -43,13 +44,15 @@
 
 - (void)startWithPubAppID:(NSString *)appID
 {
+    NSLog(@"Starting vungle!");
     [HZVGVunglePub startWithPubAppID:appID];
 }
 
 + (BOOL)isSDKAvailable
 {
     return [HZVGVunglePub hzProxiedClassIsAvailable]
-    && [HZVGStatusData hzProxiedClassIsAvailable];
+    && [HZVGStatusData hzProxiedClassIsAvailable]
+    && [HZVGPlayData hzProxiedClassIsAvailable];
 }
 
 - (HZAdType)supportedAdFormats
@@ -71,20 +74,27 @@
     return self;
 }
 
-- (void)prefetch
+- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
-    // Vungle autoprefetches
+    // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
 
-- (BOOL)hasAd
+- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    return [HZVGVunglePub adIsAvailable];
+    return [self supportedAdFormats] & type && [HZVGVunglePub adIsAvailable];
 }
 
-- (void)showAd
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
+    NSLog(@"Showing ad for vungle");
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-    [HZVGVunglePub playModalAd:vc animated:YES];
+    if (type == HZAdTypeVideo) {
+        NSLog(@"Showing video ad");
+        [HZVGVunglePub playModalAd:vc animated:YES];
+    } else if (type == HZAdTypeIncentivized) {
+        NSLog(@"Showing incentivized");
+        [HZVGVunglePub playIncentivizedAd:vc animated:YES showClose:YES userTag:nil];
+    }
 }
 
 - (void)vungleStatusUpdate:(HZVGStatusData *)statusData
@@ -94,6 +104,38 @@
     } else {
         self.lastError = nil;
     }
+}
+
+- (void)vungleMoviePlayed:(HZVGPlayData*)playData
+{
+    // Check if incentivized, if so send the incentivized callback.
+    const BOOL incentivized = YES;
+    if (incentivized) {
+        if ([playData playedFull]) {
+            [self.delegate adapterDidCompleteIncentivizedAd:self];
+        } else {
+            [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+        }
+    }
+}
+
+- (void)vungleViewDidDisappear:(UIViewController*)viewController willShowProductView:(BOOL)willShow
+{
+    // Use this callback to say that we're dismissing the ad.
+    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+    [self.delegate adapterDidDismissAd:self];
+}
+- (void)vungleViewWillAppear:(UIViewController*)viewController
+{
+    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+}
+- (void)vungleAppStoreWillAppear
+{
+    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+}
+- (void)vungleAppStoreViewDidDisappear
+{
+    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol

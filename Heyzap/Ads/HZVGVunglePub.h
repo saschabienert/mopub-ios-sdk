@@ -29,4 +29,6 @@
 
 + (void)setDelegate:(id<HZVGVunglePubDelegate>)delegate;
 
++ (void)playIncentivizedAd:(UIViewController*)controller animated:(BOOL)animated showClose:(BOOL)flag userTag:(NSString *)user;
+
 @end
