@@ -55,6 +55,11 @@
     return [HZGADInterstitial hzProxiedClassIsAvailable] && [HZGADRequest hzProxiedClassIsAvailable];
 }
 
++ (NSString *)name
+{
+    return kHZAdapterAdMob;
+}
+
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
     return [self supportedAdFormats] & type && self.currentInterstitial.isReady;
@@ -85,11 +90,6 @@
     request.testDevices = @[ GAD_SIMULATOR_ID ];
     
     [self.currentInterstitial loadRequest:[HZGADRequest request]];
-}
-
-+ (NSString *)name
-{
-    return kHZAdapterAdMob;
 }
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag

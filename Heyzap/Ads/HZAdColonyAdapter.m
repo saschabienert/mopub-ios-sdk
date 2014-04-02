@@ -38,11 +38,6 @@
     return [HZAdColony hzProxiedClassIsAvailable];
 }
 
-- (HZAdType)supportedAdFormats
-{
-    return HZAdTypeVideo;
-}
-
 + (NSString *)name
 {
     return kHZAdapterAdColony;
@@ -81,6 +76,11 @@
 {
     NSAssert(_zoneID != nil, @"Ad Colony must be initialized with a zone ID");
     return _zoneID;
+}
+
+- (HZAdType)supportedAdFormats
+{
+    return HZAdTypeVideo;
 }
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag

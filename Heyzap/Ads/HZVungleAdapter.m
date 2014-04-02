@@ -55,12 +55,6 @@
     return nil;
 }
 
-- (void)startWithPubAppID:(NSString *)appID
-{
-    NSLog(@"Starting vungle!");
-    [HZVGVunglePub startWithPubAppID:appID];
-}
-
 + (BOOL)isSDKAvailable
 {
     return [HZVGVunglePub hzProxiedClassIsAvailable]
@@ -68,14 +62,20 @@
     && [HZVGPlayData hzProxiedClassIsAvailable];
 }
 
-- (HZAdType)supportedAdFormats
-{
-    return HZAdTypeIncentivized | HZAdTypeVideo;
-}
-
 + (NSString *)name
 {
     return kHZAdapterVungle;
+}
+
+- (void)startWithPubAppID:(NSString *)appID
+{
+    NSLog(@"Starting vungle!");
+    [HZVGVunglePub startWithPubAppID:appID];
+}
+
+- (HZAdType)supportedAdFormats
+{
+    return HZAdTypeIncentivized | HZAdTypeVideo;
 }
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
