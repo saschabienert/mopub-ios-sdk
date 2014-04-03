@@ -7,9 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HZBaseAdapter.h"
 
 @interface HZMediationSession : NSObject
 
-//- (instancetype)initWithJSON:(NSDictionary *)json setupMediators:(NSSet *)setupMediators error:(NSError **)error;
+@property (nonatomic, strong, readonly) NSOrderedSet *chosenAdapters;
+@property (nonatomic, readonly) HZAdType adType;
+@property (nonatomic, strong, readonly) NSString *tag;
+
+- (instancetype)initWithJSON:(NSDictionary *)json setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error;
+
+- (HZBaseAdapter *)firstAdapterWithAd;
 
 @end
