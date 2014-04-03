@@ -112,8 +112,8 @@
 		509F002518EB5D770011EAB3 /* vg_button_mute_plain.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002118EB5D770011EAB3 /* vg_button_mute_plain.png */; };
 		509F002618EB5D770011EAB3 /* vg_button_mute_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002218EB5D770011EAB3 /* vg_button_mute_selected.png */; };
 		509F002918EB5D980011EAB3 /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 509F002818EB5D980011EAB3 /* AdColony.framework */; };
-		509F002D18EB62BC0011EAB3 /* HZMediationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F002B18EB62BC0011EAB3 /* HZMediationSession.h */; };
-		509F002E18EB62BC0011EAB3 /* HZMediationSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F002C18EB62BC0011EAB3 /* HZMediationSession.m */; };
+		509F002D18EB62BC0011EAB3 /* HZMediationSessionKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F002B18EB62BC0011EAB3 /* HZMediationSessionKey.h */; };
+		509F002E18EB62BC0011EAB3 /* HZMediationSessionKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F002C18EB62BC0011EAB3 /* HZMediationSessionKey.m */; };
 		509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */; };
 		509F003218EB6E2F0011EAB3 /* HZBaseAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */; };
 		509F00BA18EC8D010011EAB3 /* HZVGPlayData.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F00B818EC8D010011EAB3 /* HZVGPlayData.h */; };
@@ -122,6 +122,7 @@
 		509F00BF18ECB4540011EAB3 /* TestDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00BD18ECB4540011EAB3 /* TestDelegate.m */; };
 		509F00C218ECB4CE0011EAB3 /* DelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F00C018ECB4CE0011EAB3 /* DelegateProxy.h */; };
 		509F00C318ECB4CE0011EAB3 /* DelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00C118ECB4CE0011EAB3 /* DelegateProxy.m */; };
+		509F00C518ECF42E0011EAB3 /* HZMediationSessionKeySpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00C418ECF42E0011EAB3 /* HZMediationSessionKeySpec.m */; };
 		50A36ACC18C93B9C00FA84F0 /* InterstitialSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */; };
 		50A36AD218C9405A00FA84F0 /* DeviceInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514CB18B68EF600E00E6C /* DeviceInfoViewController.m */; };
 		50A36AD418C9405A00FA84F0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B941E71758056B00B8EACE /* main.m */; };
@@ -368,8 +369,8 @@
 		509F002218EB5D770011EAB3 /* vg_button_mute_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_button_mute_selected.png; sourceTree = "<group>"; };
 		509F002318EB5D770011EAB3 /* vunglepub.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = vunglepub.framework; sourceTree = "<group>"; };
 		509F002818EB5D980011EAB3 /* AdColony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdColony.framework; sourceTree = "<group>"; };
-		509F002B18EB62BC0011EAB3 /* HZMediationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationSession.h; sourceTree = "<group>"; };
-		509F002C18EB62BC0011EAB3 /* HZMediationSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationSession.m; sourceTree = "<group>"; };
+		509F002B18EB62BC0011EAB3 /* HZMediationSessionKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationSessionKey.h; sourceTree = "<group>"; };
+		509F002C18EB62BC0011EAB3 /* HZMediationSessionKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationSessionKey.m; sourceTree = "<group>"; };
 		509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZBaseAdapter.h; sourceTree = "<group>"; };
 		509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZBaseAdapter.m; sourceTree = "<group>"; };
 		509F00B818EC8D010011EAB3 /* HZVGPlayData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVGPlayData.h; sourceTree = "<group>"; };
@@ -378,6 +379,7 @@
 		509F00BD18ECB4540011EAB3 /* TestDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestDelegate.m; sourceTree = "<group>"; };
 		509F00C018ECB4CE0011EAB3 /* DelegateProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelegateProxy.h; sourceTree = "<group>"; };
 		509F00C118ECB4CE0011EAB3 /* DelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelegateProxy.m; sourceTree = "<group>"; };
+		509F00C418ECF42E0011EAB3 /* HZMediationSessionKeySpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationSessionKeySpec.m; sourceTree = "<group>"; };
 		50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialSpec.m; sourceTree = "<group>"; };
 		50A36AED18C9405A00FA84F0 /* Heyzap (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Heyzap (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		50A36AEE18C9405A00FA84F0 /* Integration Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Integration Tests-Info.plist"; path = "/Users/Max/Documents/iOS/ios-sdk/Heyzap/Integration Tests/Integration Tests-Info.plist"; sourceTree = "<absolute>"; };
@@ -692,6 +694,7 @@
 				509B5BED18C96CEA003A7CB9 /* Ads JSON */,
 				50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */,
 				50AA624418CBF4DC0018A0B6 /* InterstitialFetchSpec.m */,
+				509F00C418ECF42E0011EAB3 /* HZMediationSessionKeySpec.m */,
 				504E9C9C18C9322200402BC3 /* Ads_Tests.m */,
 				504E9C9718C9322100402BC3 /* Supporting Files */,
 			);
@@ -749,8 +752,8 @@
 		509F002A18EB62AE0011EAB3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				509F002B18EB62BC0011EAB3 /* HZMediationSession.h */,
-				509F002C18EB62BC0011EAB3 /* HZMediationSession.m */,
+				509F002B18EB62BC0011EAB3 /* HZMediationSessionKey.h */,
+				509F002C18EB62BC0011EAB3 /* HZMediationSessionKey.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1121,7 +1124,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				509F002D18EB62BC0011EAB3 /* HZMediationSession.h in Headers */,
+				509F002D18EB62BC0011EAB3 /* HZMediationSessionKey.h in Headers */,
 				500F88DF18E202F600E5D6F8 /* HZVGVunglePub.h in Headers */,
 				509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */,
 				509F00BA18EC8D010011EAB3 /* HZVGPlayData.h in Headers */,
@@ -1425,6 +1428,7 @@
 			files = (
 				50AA624918CBF58A0018A0B6 /* NSString+Tests.m in Sources */,
 				504E9C9D18C9322200402BC3 /* Ads_Tests.m in Sources */,
+				509F00C518ECF42E0011EAB3 /* HZMediationSessionKeySpec.m in Sources */,
 				50A36ACC18C93B9C00FA84F0 /* InterstitialSpec.m in Sources */,
 				509B5BEC18C96CE2003A7CB9 /* TestJSON.m in Sources */,
 				50AA624518CBF4DC0018A0B6 /* InterstitialFetchSpec.m in Sources */,
@@ -1503,7 +1507,7 @@
 				50ECA1D318DB7373006284AB /* HZHeyzapAdapter.m in Sources */,
 				86BDB4AD175853E100D85F29 /* HZAFHTTPRequestOperation.m in Sources */,
 				86BDB4AE175853E100D85F29 /* HZAFImageRequestOperation.m in Sources */,
-				509F002E18EB62BC0011EAB3 /* HZMediationSession.m in Sources */,
+				509F002E18EB62BC0011EAB3 /* HZMediationSessionKey.m in Sources */,
 				505286E218E61BD90060C210 /* MediationAPIClient.m in Sources */,
 				50ECA1C618DB618E006284AB /* HeyzapMediation.m in Sources */,
 				86234AAA18568EEA0071957B /* HZVideoView.m in Sources */,
