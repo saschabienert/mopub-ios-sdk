@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZMediationAdapter.h"
+#import "HZBaseAdapter.h"
 
 /**
  *  Session keys encapsulate the unique data for a request. By preventing

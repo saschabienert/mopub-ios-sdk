@@ -33,7 +33,7 @@ NSString * const kHZAdapterHeyzap = @"heyzap";
     return [NSError errorWithDomain:domain code:1 userInfo:errorInfo];
 }
 
-+ (NSError *)credentialErrorForAdapter:(Class<HZMediationAdapter>)adapter error:(NSError *)error
++ (NSError *)credentialErrorForAdapter:(Class)adapter error:(NSError *)error
 {
     return [HZMediationConstants errorWithAdapter:[adapter name]
                                            domain:kHZMediationCredentialsDomain

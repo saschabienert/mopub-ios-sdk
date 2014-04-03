@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZMediationAdapter.h"
+#import "HZBaseAdapter.h"
 
 @interface HZMediationConstants : NSObject
 
@@ -37,7 +37,7 @@ extern NSString * const kHZAdapterHeyzap;
                        domain:(NSString *)domain
                      userInfo:(NSDictionary *)userInfo;
 
-+ (NSError *)credentialErrorForAdapter:(Class<HZMediationAdapter>)adapter error:(NSError *)error;
++ (NSError *)credentialErrorForAdapter:(Class)adapter error:(NSError *)error;
 
 #define CHECK_CREDENTIALS_ERROR(error) if (error) { return [HZMediationConstants credentialErrorForAdapter:self error:error]; }
 

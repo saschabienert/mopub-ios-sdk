@@ -7,11 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZMediationAdapter.h"
+#import "HZBaseAdapter.h"
 
-@interface HZAdMobAdapter : NSObject <HZMediationAdapter>
-
-@property (nonatomic, strong) NSError *lastError;
-@property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
+@interface HZAdMobAdapter : HZBaseAdapter
 
 @end

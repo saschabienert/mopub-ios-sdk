@@ -7,12 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZMediationAdapter.h"
+#import "HZBaseAdapter.h"
 
-@interface HZChartboostAdapter : NSObject <HZMediationAdapter>
-
-@property (nonatomic, strong) NSError *lastError;
-@property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
+@interface HZChartboostAdapter : HZBaseAdapter
 
 - (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature;
 

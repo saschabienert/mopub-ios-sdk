@@ -397,7 +397,6 @@
 		50ECA1C318DB618E006284AB /* HeyzapMediation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeyzapMediation.h; sourceTree = "<group>"; };
 		50ECA1C418DB618E006284AB /* HeyzapMediation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeyzapMediation.m; sourceTree = "<group>"; };
 		50ECA1C718DB6234006284AB /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		50ECA1CA18DB681D006284AB /* HZMediationAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZMediationAdapter.h; sourceTree = "<group>"; };
 		50ECA1CB18DB684D006284AB /* HZChartboostAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZChartboostAdapter.h; sourceTree = "<group>"; };
 		50ECA1CC18DB684D006284AB /* HZChartboostAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZChartboostAdapter.m; sourceTree = "<group>"; };
 		50ECA1D018DB7373006284AB /* HZHeyzapAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapAdapter.h; sourceTree = "<group>"; };
@@ -620,7 +619,6 @@
 		500F88E118E2039A00E5D6F8 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				50ECA1CA18DB681D006284AB /* HZMediationAdapter.h */,
 				5046CE8418E3545E000395AA /* HZMediationConstants.h */,
 				5046CE8518E3545E000395AA /* HZMediationConstants.m */,
 				500F88E218E203A500E5D6F8 /* HZClassProxy.h */,

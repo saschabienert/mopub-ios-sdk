@@ -7,8 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZMediationAdapter.h"
-@protocol HZMediationAdapter;
+#import "HZBaseAdapter.h"
 
 @interface HeyzapMediation : NSObject
 

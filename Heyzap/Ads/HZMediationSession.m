@@ -8,7 +8,7 @@
 
 #import "HZMediationSession.h"
 #import "HZDictionaryUtils.h"
-#import "HZMediationAdapter.h"
+#import "HZBaseAdapter.h"
 
 @interface HZMediationSession()
 
