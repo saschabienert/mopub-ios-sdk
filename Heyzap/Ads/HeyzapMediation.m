@@ -137,35 +137,6 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
               fetchTimeout:2];
 }
 
-NSString * NSStringFromAdType(HZAdType type)
-{
-    if (type & HZAdTypeInterstitial) {
-        return @"interstitial";
-    } else if (type & HZAdTypeVideo) {
-        return @"video";
-    } else {
-        return @"incentivized";
-    }
-}
-
-+ (NSArray *)creativeTypesForAdType:(HZAdType)type
-{
-    switch (type) {
-        case HZAdTypeIncentivized: {
-            return HZIncentivizedAdCreativeTypes;
-            break;
-        }
-        case HZAdTypeInterstitial: {
-            return HZInterstitialAdCreativeTypes;
-            break;
-        }
-        case HZAdTypeVideo: {
-            return HZVideoAdCreativeTypes;
-            break;
-        }
-    }
-}
-
 - (void)mediateForAdType:(HZAdType)adType tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout
 {
     // Need to check for existing session here to prevent double requests.
@@ -307,20 +278,6 @@ NSString * NSStringFromAdType(HZAdType type)
 NSString * const kHZAdapterKey = @"name";
 NSString * const kHZDataKey = @"data";
 
-
-HZAdType hzAdTypeFromString(NSString *adUnit) {
-    if ([adUnit isEqualToString:@"interstitial"]) {
-        return HZAdTypeInterstitial;
-    } else if ([adUnit isEqualToString:@"incentivized"]) {
-        return HZAdTypeIncentivized;
-    } else if ([adUnit isEqualToString:@"video"]) {
-        return HZAdTypeVideo;
-    }
-    // hmm
-    NSLog(@"Invalid ad unit");
-    abort();
-}
-
 #pragma mark - Querying adapters
 
 - (BOOL)isAvailableForAdUnitType:(HZAdType)adType tag:(NSString *)tag
@@ -392,6 +349,47 @@ HZAdType hzAdTypeFromString(NSString *adUnit) {
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
     [self.incentivizedDelegate didFailToCompleteAd];
+}
+
+#pragma mark - Enum Support
+
+NSString * NSStringFromAdType(HZAdType type)
+{
+    if (type & HZAdTypeInterstitial) {
+        return @"interstitial";
+    } else if (type & HZAdTypeVideo) {
+        return @"video";
+    } else {
+        return @"incentivized";
+    }
+}
+
+HZAdType hzAdTypeFromString(NSString *adUnit) {
+    if ([adUnit isEqualToString:@"incentivized"]) {
+        return HZAdTypeIncentivized;
+    } else if ([adUnit isEqualToString:@"video"]) {
+        return HZAdTypeVideo;
+    } else {
+        return HZAdTypeInterstitial;
+    }
+}
+
++ (NSArray *)creativeTypesForAdType:(HZAdType)type
+{
+    switch (type) {
+        case HZAdTypeIncentivized: {
+            return HZIncentivizedAdCreativeTypes;
+            break;
+        }
+        case HZAdTypeInterstitial: {
+            return HZInterstitialAdCreativeTypes;
+            break;
+        }
+        case HZAdTypeVideo: {
+            return HZVideoAdCreativeTypes;
+            break;
+        }
+    }
 }
 
 @end
