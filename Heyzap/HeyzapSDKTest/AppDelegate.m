@@ -78,7 +78,7 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:nil];
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo tag:nil];
     });
     
     return YES;

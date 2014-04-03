@@ -95,7 +95,7 @@
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    [HZAdColony playVideoAdForZone:self.zoneID withDelegate:nil];
+    [HZAdColony playVideoAdForZone:self.zoneID withDelegate:self];
 }
 
 #pragma clang diagnostic push

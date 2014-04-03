@@ -22,12 +22,12 @@
 
 + (instancetype)sharedInstance
 {
-    static HZChartboostAdapter *proxy;
+    static HZChartboostAdapter *adapter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        proxy = [[HZChartboostAdapter alloc] init];
+        adapter = [[HZChartboostAdapter alloc] init];
     });
-    return proxy;
+    return adapter;
 }
 
 - (instancetype)init
