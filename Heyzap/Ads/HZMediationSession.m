@@ -9,15 +9,18 @@
 #import "HZMediationSession.h"
 #import "HZDictionaryUtils.h"
 #import "HZBaseAdapter.h"
+#import "MediationAPIClient.h"
 
 @interface HZMediationSession()
 
-@property (nonatomic, strong) NSDictionary *originalJSON;
-
-@property (nonatomic, strong) NSOrderedSet *chosenAdapters;
-
+#pragma mark - Properties from the client
 @property (nonatomic) HZAdType adType;
 @property (nonatomic, strong) NSString *tag;
+
+#pragma mark - Properties from the server
+@property (nonatomic, strong) NSDictionary *originalJSON;
+@property (nonatomic, strong) NSString *impressionID;
+@property (nonatomic, strong) NSOrderedSet *chosenAdapters;
 
 @end
 
@@ -30,6 +33,9 @@
         _originalJSON = json;
         _adType = adType;
         _tag = tag;
+        
+        _impressionID = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] dict:json error:error];
+        // Check error macro for impression ID being nil.
         
         NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:json error:error];
         // Check error macro for networks being nil/empty
@@ -64,6 +70,28 @@
     } else {
         return nil;
     }
+}
+
+#pragma mark - Reporting Events to the server
+
+NSString *const kHZImpressionIDKey = @"id";
+
+- (void)reportClick
+{
+    [[MediationAPIClient sharedClient] post:@"click" withParams:@{kHZImpressionIDKey: self.impressionID} success:^(id json) {
+        NSLog(@"click was successful");
+    } failure:^(NSError *error) {
+        NSLog(@"Click failed");
+    }];
+}
+
+- (void)reportImpression
+{
+    [[MediationAPIClient sharedClient] post:@"impression" withParams:@{kHZImpressionIDKey: self.impressionID} success:^(id json) {
+        NSLog(@"impression was successful");
+    } failure:^(NSError *error) {
+        NSLog(@"impression failed");
+    }];
 }
 
 @end

@@ -257,7 +257,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     self.sessionDictionary[showKey] = session;
     
     [adapter showAdForType:session.adType tag:session.tag];
-    [self adapterHadImpression:adapter session:session];
+    [session reportImpression];
     [self.adsDelegate didShowAdWithTag:session.tag];
 }
 
@@ -290,16 +290,6 @@ NSString * const kHZDataKey = @"data";
 
 #pragma mark - Adapter Callbacks
 
-- (void)adapterHadImpression:(HZBaseAdapter *)adapter session:(HZMediationSession *)session
-{
-    // Use session Data to send stuff like the impression ID and such.
-    [[MediationAPIClient sharedClient] post:@"impression" withParams:nil success:^(id json) {
-        NSLog(@"impression was successful");
-    } failure:^(NSError *error) {
-        NSLog(@"impression failed");
-    }];
-}
-
 /**
  *   We do not get this callback from several networks, so we can't rely on it.
  *
@@ -312,13 +302,8 @@ NSString * const kHZDataKey = @"data";
     }] anyObject]; // Should be just 1 key that is being shown at a time.
     
     if (key) {
-        NSLog(@"Did lookup session for click");
-        //        id sessionData = self.sessionDictionary[key];
-        [[MediationAPIClient sharedClient] post:@"click" withParams:nil success:^(id json) {
-            NSLog(@"click was successful");
-        } failure:^(NSError *error) {
-            NSLog(@"Click failed");
-        }];
+        HZMediationSession *session = self.sessionDictionary[key];
+        [session reportClick];
     }
 }
 
@@ -330,6 +315,7 @@ NSString * const kHZDataKey = @"data";
     HZMediationSessionKey *key = [[self.sessionDictionary keysOfEntriesPassingTest:^BOOL(HZMediationSessionKey *key, id obj, BOOL *stop) {
         return key.hasBeenShown;
     }] anyObject]; // Should be just 1 key that is being shown at a time.
+    
     
     if (key) {
         NSLog(@"Did lookup session for dismiss");

@@ -15,8 +15,16 @@
 @property (nonatomic, readonly) HZAdType adType;
 @property (nonatomic, strong, readonly) NSString *tag;
 
+@property (nonatomic, strong, readonly) NSString *impressionID;
+
 - (instancetype)initWithJSON:(NSDictionary *)json setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error;
 
 - (HZBaseAdapter *)firstAdapterWithAd;
+
+#pragma mark - Reporting Events to the server
+
+- (void)reportClick;
+
+- (void)reportImpression;
 
 @end
