@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+// This is a bitmasked parameter, but with the exception of the `supportedAdFormats` method, almost everything else should treat it as just an enum.
 typedef NS_OPTIONS(NSUInteger, HZAdType) {
     HZAdTypeInterstitial = 1 << 0,
     HZAdTypeVideo = 1 << 1,
@@ -61,5 +62,7 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 #pragma mark - Implemented methods
 
 + (Class)adapterClassForName:(NSString *)adapterName;
+
++ (NSSet *)allAdapterClasses;
 
 @end

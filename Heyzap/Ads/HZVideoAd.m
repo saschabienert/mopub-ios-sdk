@@ -13,95 +13,74 @@
 #import "HZAdsFetchManager.h"
 #import "HZAdFetchRequest.h"
 #import "HZAdsAPIClient.h"
-
-#define HZVideoAdUnit @"video"
-#define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
-
-static int HZVideoAdCreativeIDPin = 0;
+#import "HeyzapMediation.h"
+#import "HZHeyzapVideoAd.h"
 
 @implementation HZVideoAd
 
-+ (void) showWithCompletion:(void (^)(BOOL result, NSError *error))completion {
-    [self showForTag: nil completion: completion];
-}
+#pragma mark - Showing
 
-+ (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
-    if (![[HZAdsManager sharedManager] isEnabled]) return;
-    [[HZAdsManager sharedManager] showForAdUnit: HZVideoAdUnit andTag: tag withCompletion: completion];
++ (void) show {
+    [self showForTag: nil];
 }
 
 + (void) showForTag:(NSString *)tag {
     [self showForTag: tag completion: nil];
 }
 
-// -----------
-
-+ (void) show {
-    [self showForTag: nil];
-}
-
-+ (void) hide {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        [[HZAdsManager sharedManager] hideActiveAd];
++ (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
+    
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [HZHeyzapVideoAd showForTag:tag completion:completion];
+    } else {
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo tag:tag completion:completion];
     }
 }
 
+#pragma mark - Fetching
+
+
 + (void) fetch {
-    [self fetchForTag: [HeyzapAds defaultTagName] withCompletion: nil];
+    [self fetchForTag:nil withCompletion: nil];
 }
 
 + (void) fetchForTag: (NSString *) tag {
     [self fetchForTag: tag withCompletion: nil];
 }
 
++ (void) fetchWithCompletion: (void (^)(BOOL result, NSError *error))completion {
+    [self fetchForTag:nil withCompletion:completion];
+}
+
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        
-        NSDictionary *params = (HZVideoAdCreativeIDPin > 0) ? @{@"creative_id": [NSString stringWithFormat: @"%i", HZVideoAdCreativeIDPin]} : nil;
-        
-        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: HZVideoAdCreativeTypes
-                                                                             adUnit: HZVideoAdUnit
-                                                                                tag: tag
-                                                                andAdditionalParams: params];
-        
-        [[HZAdsFetchManager sharedManager] fetch: request
-                                  withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
-            if (completion) {
-                BOOL result = YES;
-                if (error != nil || ad == nil) {
-                    result = NO;
-                }
-                
-                completion(result, error);
-            }
-        }];
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [HZHeyzapVideoAd fetchForTag:tag withCompletion:completion];
+    } else {
+        [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeVideo tag:tag completion:completion];
     }
 }
 
-+ (void) fetchWithCompletion: (void (^)(BOOL result, NSError *error))completion {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        [self fetchForTag: [HeyzapAds defaultTagName] withCompletion: completion];
-    }
-}
+#pragma mark - Querying
 
 + (BOOL) isAvailable {
-    return [self isAvailableForTag: [HeyzapAds defaultTagName]];
+    return [self isAvailableForTag:nil];
 }
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
-    if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZVideoAdUnit withTag: tag] != nil;
-}
-
-+ (void) setCreativeID:(int)creativeID {
-    if (creativeID > 0) {
-        HZVideoAdCreativeIDPin = creativeID;
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        return [HZHeyzapVideoAd isAvailableForTag:tag];
     } else {
-        HZVideoAdCreativeIDPin = 0;
+        return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeVideo tag:tag];
     }
 }
 
+#pragma mark - Heyzap Only
+
++ (void) setCreativeID:(int)creativeID {
+    [HZHeyzapVideoAd setCreativeID:creativeID];
+}
+
+#pragma mark - Bookkeeping
 
 + (id)alloc {
     [NSException raise:@"CannotInstantiateStaticClass" format:@"'HZVideoAd' is a static class and cannot be instantiated."];

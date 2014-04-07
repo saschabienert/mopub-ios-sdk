@@ -16,23 +16,16 @@
 #define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
 
 #import "HZIncentivizedAd.h"
-
-static NSString *HZIncentivizedAdUserIdentifier = nil;
-static int HZIncentivizedCreativeIDPin = 0;
+#import "HeyzapMediation.h"
+#import "HZHeyzapIncentivizedAd.h"
 
 @implementation HZIncentivizedAd
 
 + (void) show {
-    if (![[HZAdsManager sharedManager] isEnabled]) {
-        return;
-    }
-    
-    [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag: [HeyzapAds defaultTagName] withCompletion: nil];
-}
-
-+ (void) hide {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        [[HZAdsManager sharedManager] hideActiveAd];
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [HZHeyzapIncentivizedAd show];
+    } else {
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:[HeyzapAds defaultTagName] completion:nil];
     }
 }
 
@@ -41,49 +34,34 @@ static int HZIncentivizedCreativeIDPin = 0;
 }
 
 + (void) fetchWithCompletion:(void (^)(BOOL, NSError *))completion {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        
-        NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-        if (HZIncentivizedCreativeIDPin > 0) {
-            [params setObject: [NSString stringWithFormat: @"%i", HZIncentivizedCreativeIDPin] forKey: @"creative_id"];
-        }
-        
-        if (HZIncentivizedAdUserIdentifier != nil) {
-            [params setObject: HZIncentivizedAdUserIdentifier forKey: @"user_identifier"];
-        }
-        
-        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: HZIncentivizedAdCreativeTypes adUnit: HZIncentivizedAdUnit tag: [HeyzapAds defaultTagName] andAdditionalParams: params];
-        
-        [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
-            if (completion) {
-                BOOL result = YES;
-                if (error != nil || ad == nil) {
-                    result = NO;
-                }
-                
-                completion(result, error);
-            }
-        }];
-    }
-}
-
-+ (void) setUserIdentifier: (NSString *) userIdentifier {
-    HZIncentivizedAdUserIdentifier = userIdentifier;
-}
-
-+ (void) setCreativeID:(int)creativeID {
-    if (creativeID > 0) {
-        HZIncentivizedCreativeIDPin = creativeID;
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [HZHeyzapIncentivizedAd fetchWithCompletion:completion];
     } else {
-        HZIncentivizedCreativeIDPin = 0;
+        [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeIncentivized
+                                                     tag:[HeyzapAds defaultTagName]
+                                              completion:completion];
     }
 }
 
 + (BOOL) isAvailable {
-    if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZIncentivizedAdUnit withTag: [HeyzapAds defaultTagName]] != nil;
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        return [HZHeyzapIncentivizedAd isAvailable];
+    } else {
+        return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeIncentivized tag:[HeyzapAds defaultTagName]];
+    }
 }
+
+#pragma mark - Heyzap specific
+
++ (void) setUserIdentifier: (NSString *) userIdentifier {
+    [HZHeyzapIncentivizedAd setUserIdentifier:userIdentifier];
+}
+
++ (void) setCreativeID:(int)creativeID {
+    [HZHeyzapIncentivizedAd setCreativeID:creativeID];
+}
+
+#pragma mark - Bookkeeping
 
 + (id)alloc {
     [NSException raise:@"CannotInstantiateStaticClass" format:@"'HZIncentivizedAd' is a static class and cannot be instantiated."];

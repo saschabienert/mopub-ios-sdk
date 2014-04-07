@@ -19,11 +19,20 @@
 
 #pragma mark - Showing Ads
 
-- (void)showAdForAdUnitType:(HZAdType)adType tag:(NSString *)tag;
+- (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion;
+
+- (void)showAdForAdUnitType:(HZAdType)adType tag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion;
 
 - (BOOL)isAvailableForAdUnitType:(HZAdType)adType tag:(NSString *)tag;
 
 // Need Delegate API for getting the current view controller.
-// We can handle the common scenarios by recursively finding the right view controller. 
+// We can handle the common scenarios by recursively finding the right view controller.
+
++ (BOOL)isOnlyHeyzapSDK;
+
+#pragma mark - Incentivized
+
+// Actually not sure where this will go.
+@property (nonatomic, strong) NSString *userIdentifier;
 
 @end

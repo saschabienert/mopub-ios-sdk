@@ -100,7 +100,7 @@
     
     // I think Subliminal is failing on finding elements in landscape, so just close manually.
     dispatch_sync(dispatch_get_main_queue(), ^{
-        [HZInterstitialAd hide];
+//        [HZInterstitialAd hide];
     });
     [self wait:1]; // Wait for hide animation to complete.
     SLAssertNoThrow([verify(delegate) didHideAdWithTag:@"default"], @"Delegate should get didHideAd callback");
@@ -152,7 +152,7 @@
     
     // I think Subliminal is failing on finding elements in landscape, so just close manually.
     dispatch_sync(dispatch_get_main_queue(), ^{
-        [HZVideoAd hide];
+//        [HZVideoAd hide];
     });
     [self wait:1]; // Wait for hide animation to complete.
     SLAssertNoThrow([verify(delegate) didHideAdWithTag:@"default"], @"Delegate should get didHideAd callback");

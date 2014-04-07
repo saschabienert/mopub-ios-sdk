@@ -87,4 +87,15 @@
     }
 }
 
++ (NSSet *)allAdapterClasses
+{
+    return [NSSet setWithObjects:
+            [HZVungleAdapter class],
+            [HZChartboostAdapter class],
+            [HZAdColonyAdapter class],
+            [HZAdMobAdapter class],
+            [HZHeyzapAdapter class],
+            nil];
+}
+
 @end

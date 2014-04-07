@@ -37,9 +37,6 @@
 /** Shows an incentivized video ad if one is available */
 + (void) show;
 
-/** Dismisses the current ad, if visible. */
-+ (void) hide;
-
 /** Fetches an incentivized video ad from Heyzap. */
 + (void) fetch;
 

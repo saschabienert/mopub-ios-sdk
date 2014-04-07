@@ -15,11 +15,8 @@
 #import "HZAdFetchRequest.h"
 #import "HZAdsFetchManager.h"
 
-#define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
-#define HZInterstitialAdCreativeTypesNoVideo @[@"interstitial", @"full_screen_interstitial"]
-#define HZInterstitialAdUnit @"interstitial"
-
-static int HZInterstitialAdCreativeIDPin = 0;
+#import "HZHeyzapInterstitialAd.h"
+#import "HeyzapMediation.h"
 
 @implementation HZInterstitialAd
 
@@ -29,130 +26,65 @@ static int HZInterstitialAdCreativeIDPin = 0;
     }
 }
 
-+ (void) showWithCompletion:(void (^)(BOOL result, NSError *error))completion {
-    [self showForTag: nil completion: completion];
-}
+#pragma mark - Showing Ads
 
-+ (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
-    
-    if (![[HZAdsManager sharedManager] isEnabled]) {
-        return;
-    }
-    
-    if (tag == nil) {
-        tag = [HeyzapAds defaultTagName];
-    }
-    
-    if (![self isAvailableForTag: tag]) {
-        HZAdFetchRequest *request = [self requestWithTag: tag andVideo: NO];
-        [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
-            [[HZAdsManager sharedManager] showForAdUnit: HZInterstitialAdUnit andTag: tag withCompletion: completion];
-        }];
-    } else {
-        [[HZAdsManager sharedManager] showForAdUnit: HZInterstitialAdUnit andTag: tag withCompletion: completion];
-    }
++ (void) show {
+    [self showForTag:nil];
 }
 
 + (void) showForTag:(NSString *)tag {
-    [HZInterstitialAd showForTag: tag completion: nil];
+    [self showForTag:tag completion:nil];
 }
 
-// Backwards Compatibility.
-+ (void) showWithTag: (NSString *) tag {
-    [self showForTag: tag];
-}
-
-+ (void)showWithTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
-    [self showForTag: tag completion: completion];
-}
-// -----------
-
-+ (void) show {
-    [HZInterstitialAd showForTag: nil];
-}
-
-+ (void) hide {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        [[HZAdsManager sharedManager] hideActiveAd];
++ (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [HZHeyzapInterstitialAd showForTag:tag completion:completion];
+    } else {
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeInterstitial tag:tag completion:completion];
     }
 }
+
+#pragma mark - Fetching Ads
 
 + (void) fetch {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        [HZInterstitialAd fetchForTag: [HeyzapAds defaultTagName]];
-    }
+    [self fetchForTag:nil];
 }
 
 + (void) fetchForTag: (NSString *) tag {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        [HZInterstitialAd fetchForTag: tag withCompletion: nil];
-    }
-}
-
-+ (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        
-        HZAdFetchRequest *request = [self requestWithTag: tag andVideo: YES];
-        
-        [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
-            if (completion) {
-                BOOL result = YES;
-                if (error != nil || ad == nil) {
-                    result = NO;
-                }
-                
-                completion(result, error);
-            }
-        }];
-    }
+    [self fetchForTag:tag withCompletion:nil];
 }
 
 + (void) fetchWithCompletion: (void (^)(BOOL result, NSError *error))completion {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        [HZInterstitialAd fetchForTag: [HeyzapAds defaultTagName] withCompletion: completion];
+    [self fetchForTag:nil withCompletion:completion];
+}
+
++ (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
+    tag = tag ?: [HeyzapAds defaultTagName];
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [HZHeyzapInterstitialAd fetchForTag:tag withCompletion:completion];
+    } else {
+        [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeInterstitial tag:tag completion:completion];
     }
 }
 
 + (BOOL) isAvailable {
-    return [self isAvailableForTag: [HeyzapAds defaultTagName]];
+    return [self isAvailableForTag:nil];
 }
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
-    if (![[HZAdsManager sharedManager] isEnabled]) return NO;
+    tag = tag ?: [HeyzapAds defaultTagName];
     
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZInterstitialAdUnit withTag: tag] != nil;
-}
-
-+ (void) setCreativeID:(int)creativeID {
-    if (creativeID > 0) {
-        HZInterstitialAdCreativeIDPin = creativeID;
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        return [HZHeyzapInterstitialAd isAvailableForTag:tag];
     } else {
-        HZInterstitialAdCreativeIDPin = 0;
+        return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeInterstitial tag:tag];
     }
-}
-
-+ (HZAdFetchRequest *) requestWithTag: (NSString *) tag andVideo: (BOOL) withVideo {
-    NSDictionary *params = nil;
-    
-    if (HZInterstitialAdCreativeIDPin > 0) {
-        params = @{@"creative_id": [NSString stringWithFormat: @"%i", HZInterstitialAdCreativeIDPin]};
-    }
-    
-    NSArray *creativeTypes = withVideo ? HZInterstitialAdCreativeTypes : HZInterstitialAdCreativeTypesNoVideo;
-    
-    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: creativeTypes adUnit: HZInterstitialAdUnit tag: tag andAdditionalParams: params];
-    
-    return request;
 }
 
 #pragma mark - Private API
 
-+ (void)showAdWithOptions:(NSDictionary *)options
-{
-    NSParameterAssert(options);
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        
-    }
++ (void) setCreativeID:(int)creativeID {
+    [HZHeyzapInterstitialAd setCreativeID:creativeID];
 }
 
 + (id)alloc {
