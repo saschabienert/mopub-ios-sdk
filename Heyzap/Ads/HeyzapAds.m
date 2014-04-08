@@ -36,6 +36,8 @@
 #import "HZAnalytics.h"
 #import "HZAdsManager.h"
 
+#import "HeyzapMediation.h"
+
 #define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"
 #define kHZDefaultTagName @"default"
 
@@ -46,6 +48,10 @@
 }
 
 + (void) startWithOptions: (HZAdOptions) options {
+    
+    [[HeyzapMediation sharedInstance] start];
+    return;
+    
     [HZAdsManager sharedManager];
     [[HZAdsManager sharedManager] setOptions: options];
     [[HZAdsManager sharedManager] setIsDebuggable: NO];

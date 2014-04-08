@@ -24,7 +24,7 @@
 #import "ServerSelectionViewController.h"
 #import "DeviceInfoViewController.h"
 
-#import "HeyzapMediation.h"
+#import "HZInterstitialAd.h"
 
 @implementation AppDelegate
 
@@ -42,15 +42,12 @@
     
     [HZLog setDebugLevel: HZDebugLevelError];
     
-    [[HeyzapMediation sharedInstance] start];
-    
-    
     self.controller = [[SDKTestAppViewController alloc] init];
     
     
     [HeyzapAds startWithOptions: HZAdOptionsDisableAutoPrefetching];
-    [HeyzapAds setDelegate: self.controller];
-    [HeyzapAds setIncentiveDelegate: self.controller];
+//    [HeyzapAds setDelegate: self.controller];
+//    [HeyzapAds setIncentiveDelegate: self.controller];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
@@ -78,10 +75,7 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo tag:nil completion:^(BOOL result, NSError *error) {
-            
-            NSLog(@"Completion block of show ad for ad unit type");
-        }];
+        [HZInterstitialAd show];
     });
     
     return YES;

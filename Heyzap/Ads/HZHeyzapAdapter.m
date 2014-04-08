@@ -9,11 +9,14 @@
 #import "HZHeyzapAdapter.h"
 #import "HeyzapAds.h"
 #import "HZMediationConstants.h"
-#import "HZInterstitialAd.h"
-#import "HZVideoAd.h"
 
 #import "HZHeyzapIncentivizedAd.h"
+#import "HZHeyzapInterstitialAd.h"
+#import "HZHeyzapVideoAd.h"
 
+/**
+ *  This class needs the most work. I should use delegate callbacks to get errors but thats it I think.
+ */
 @interface HZHeyzapAdapter()
 
 @end
@@ -26,7 +29,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         proxy = [[HZHeyzapAdapter alloc] init];
-        [HeyzapAds start];
+//        [HeyzapAds start]; // This should probably call into start..
     });
     return proxy;
 }
@@ -55,7 +58,7 @@
 {
     switch (type) {
         case HZAdTypeInterstitial: {
-            [HZInterstitialAd fetchForTag:tag];
+            [HZHeyzapInterstitialAd fetchForTag:tag withCompletion:nil];
             break;
         }
         case HZAdTypeIncentivized: {
@@ -63,7 +66,7 @@
             break;
         }
         case HZAdTypeVideo: {
-            [HZVideoAd fetchForTag:tag];
+            [HZHeyzapVideoAd fetchForTag:tag withCompletion:nil];
             break;
         }
     }
@@ -72,9 +75,9 @@
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
     if (type & HZAdTypeVideo) {
-        return [HZVideoAd isAvailableForTag:tag];
+        return [HZHeyzapVideoAd isAvailableForTag:tag];
     } else if (type & HZAdTypeInterstitial) {
-        return [HZInterstitialAd isAvailableForTag:tag];
+        return [HZHeyzapInterstitialAd isAvailableForTag:tag];
     } else  {
         return [HZHeyzapIncentivizedAd isAvailable];
     }
@@ -84,7 +87,7 @@
 {
     switch (type) {
         case HZAdTypeInterstitial: {
-            [HZInterstitialAd showForTag:tag];
+            [HZHeyzapInterstitialAd showForTag:tag completion:nil];
             break;
         }
         case HZAdTypeIncentivized: {
@@ -92,7 +95,7 @@
             break;
         }
         case HZAdTypeVideo: {
-            [HZVideoAd showForTag:tag];
+            [HZHeyzapVideoAd showForTag:tag completion:nil];
             break;
         }
     }

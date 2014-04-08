@@ -158,7 +158,7 @@
 		50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */; };
 		50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */; };
 		50D1599418F35CC600734ABB /* HZHeyzapInterstitialAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1599218F35CC600734ABB /* HZHeyzapInterstitialAd.m */; };
-		50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ECA1C318DB618E006284AB /* HeyzapMediation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ECA1C318DB618E006284AB /* HeyzapMediation.h */; };
 		50ECA1C618DB618E006284AB /* HeyzapMediation.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ECA1C418DB618E006284AB /* HeyzapMediation.m */; };
 		50ECA1C818DB6234006284AB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
 		50ECA1C918DB623A006284AB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
@@ -393,7 +393,7 @@
 		509F00C118ECB4CE0011EAB3 /* DelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelegateProxy.m; sourceTree = "<group>"; };
 		509F00C418ECF42E0011EAB3 /* HZMediationSessionKeySpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationSessionKeySpec.m; sourceTree = "<group>"; };
 		50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialSpec.m; sourceTree = "<group>"; };
-		50A36AED18C9405A00FA84F0 /* Heyzap (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Heyzap (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		50A36AED18C9405A00FA84F0 /* .app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = .app; sourceTree = BUILT_PRODUCTS_DIR; };
 		50A36AEE18C9405A00FA84F0 /* Integration Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Integration Tests-Info.plist"; path = "/Users/Max/Documents/iOS/ios-sdk/Heyzap/Integration Tests/Integration Tests-Info.plist"; sourceTree = "<absolute>"; };
 		50AA624418CBF4DC0018A0B6 /* InterstitialFetchSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialFetchSpec.m; sourceTree = "<group>"; };
 		50AA624718CBF58A0018A0B6 /* NSString+Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Tests.h"; sourceTree = "<group>"; };
@@ -954,7 +954,7 @@
 				86B941DC1758056B00B8EACE /* HeyzapSDKTest.app */,
 				86B9432A1758108700B8EACE /* libHeyzapAds.a */,
 				504E9C9218C9322100402BC3 /* Ads Tests.xctest */,
-				50A36AED18C9405A00FA84F0 /* Heyzap (Integration Tests).app */,
+				50A36AED18C9405A00FA84F0 /* .app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1160,10 +1160,10 @@
 				509F00BA18EC8D010011EAB3 /* HZVGPlayData.h in Headers */,
 				5011CE5518DB9B7F00604B53 /* HZAdColonyAdapter.h in Headers */,
 				509F00BE18ECB4540011EAB3 /* TestDelegate.h in Headers */,
+				50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */,
 				860FD47A187BB144008A35FD /* HZAdsFetchManager.h in Headers */,
 				86FF907918583FF100BC48BF /* HZAdLibrary.h in Headers */,
 				50ECA1CD18DB684D006284AB /* HZChartboostAdapter.h in Headers */,
-				50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */,
 				5019224E18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h in Headers */,
 				86D0A99C1851897200B3D870 /* HZDownloadHelper.h in Headers */,
 				866E39F31850089C00B6E431 /* HZIncentivizedAd.h in Headers */,
@@ -1243,7 +1243,7 @@
 			);
 			name = "Integration Tests";
 			productName = HeyzapSDKTest;
-			productReference = 50A36AED18C9405A00FA84F0 /* Heyzap (Integration Tests).app */;
+			productReference = 50A36AED18C9405A00FA84F0 /* .app */;
 			productType = "com.apple.product-type.application";
 		};
 		86B941DB1758056B00B8EACE /* HeyzapSDKTest */ = {
