@@ -5,10 +5,6 @@ xcode_sdk: iphonesimulator7.0
 
 env:
     global:
-        # Necessary to work around some Travis-only bugs
-        # (This should be set by Travis but is not currently:
-        # https://github.com/travis-ci/travis-ci/issues/1769)
-        - TRAVIS=true
         - SubliminalPassword=j4K7CK4oM49ZA27y532b
     matrix:
         - TEST_SCRIPT='runUnitTests.sh 7.0'
