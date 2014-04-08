@@ -1,5 +1,4 @@
-platform :ios, '5.0'
-inhibit_all_warnings!
+platform :ios, '5.1'
 
 target :"Ads Tests", :exclusive => true do
    pod 'Kiwi/XCTest'
@@ -7,6 +6,6 @@ target :"Ads Tests", :exclusive => true do
 end
 
 target :'Integration Tests', :exclusive => true do
-  pod 'Subliminal', :git => 'https://github.com/MaxGabriel/Subliminal.git', :branch => 'cleanCocoapod'
+  pod 'Subliminal', :git => 'https://github.com/inkling/Subliminal.git' # (Until 1.1 is released, use master)
   pod 'OCMockito'
 end
