@@ -59,7 +59,7 @@
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZHeyzapIncentivizedAd fetch];
+            [HZHeyzapIncentivizedAd fetchWithCompletion:nil];
             break;
         }
         case HZAdTypeVideo: {

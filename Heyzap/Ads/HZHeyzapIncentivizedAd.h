@@ -13,9 +13,6 @@
 /** Shows an incentivized video ad if one is available */
 + (void) show;
 
-/** Fetches an incentivized video ad from Heyzap. */
-+ (void) fetch;
-
 /**
  *  Fetches an incentivized video ad from Heyzap.
  *

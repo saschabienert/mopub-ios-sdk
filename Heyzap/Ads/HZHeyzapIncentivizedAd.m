@@ -29,10 +29,6 @@ static int HZIncentivizedCreativeIDPin = 0;
     [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag: [HeyzapAds defaultTagName] withCompletion: nil];
 }
 
-+ (void) fetch {
-    [self fetchWithCompletion: nil];
-}
-
 + (void) fetchWithCompletion:(void (^)(BOOL, NSError *))completion {
     if ([[HZAdsManager sharedManager] isEnabled]) {
         

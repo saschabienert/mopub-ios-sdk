@@ -27,28 +27,10 @@ static int HZVideoAdCreativeIDPin = 0;
     [[HZAdsManager sharedManager] showForAdUnit: HZVideoAdUnit andTag: tag withCompletion: completion];
 }
 
-+ (void) showForTag:(NSString *)tag {
-    [self showForTag: tag completion: nil];
-}
-
-// -----------
-
-+ (void) show {
-    [self showForTag: nil];
-}
-
 + (void) hide {
     if ([[HZAdsManager sharedManager] isEnabled]) {
         [[HZAdsManager sharedManager] hideActiveAd];
     }
-}
-
-+ (void) fetch {
-    [self fetchForTag: [HeyzapAds defaultTagName] withCompletion: nil];
-}
-
-+ (void) fetchForTag: (NSString *) tag {
-    [self fetchForTag: tag withCompletion: nil];
 }
 
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
@@ -73,16 +55,6 @@ static int HZVideoAdCreativeIDPin = 0;
                                       }
                                   }];
     }
-}
-
-+ (void) fetchWithCompletion: (void (^)(BOOL result, NSError *error))completion {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        [self fetchForTag: [HeyzapAds defaultTagName] withCompletion: completion];
-    }
-}
-
-+ (BOOL) isAvailable {
-    return [self isAvailableForTag: [HeyzapAds defaultTagName]];
 }
 
 + (BOOL) isAvailableForTag: (NSString *) tag {

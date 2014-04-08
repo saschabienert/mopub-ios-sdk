@@ -10,16 +10,6 @@
 
 @interface HZHeyzapVideoAd : NSObject
 
-/** Shows a video ad if one is available */
-+ (void) show;
-
-/**
- *  Shows a video ad for a given tag, if available.
- *
- *  @param tag An identifier for the location of the ad which you can use to disable the ad from your dashboard.
- */
-+ (void) showForTag: (NSString *) tag;
-
 /**
  *  Shows a video for a given tag, if available.
  *
@@ -30,25 +20,6 @@
 
 
 /**
- *  Fetches a video ad from Heyzap.
- */
-+ (void) fetch;
-
-
-/**
- *  Fetches a video ad from Heyzap.
- *
- *  @param completion A block called when the video is fetched or fails to fetch. `result` states whether the fetch was sucessful; the error object describes the issue, if there was one.
- */
-+ (void) fetchWithCompletion: (void (^)(BOOL result, NSError *error))completion;
-
-/** Fetches a new ad for a tag from Heyzap.
- @param tag An identifier for the location of the ad which you can use to disable the ad from your dashboard.
- */
-+ (void) fetchForTag: (NSString *) tag;
-
-
-/**
  *  Fetches a new ad for the given tag.
  *
  *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
@@ -56,13 +27,6 @@
  *
  */
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion;
-
-/**
- *  Whether or not a video ad is ready to show
- *
- *  @return If the video is ready to show
- */
-+ (BOOL) isAvailable;
 
 /**
  *  Whether or not the video is ready to show for the given tag
