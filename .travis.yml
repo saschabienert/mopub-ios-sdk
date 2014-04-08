@@ -6,6 +6,7 @@ xcode_sdk: iphonesimulator7.0
 env:
     global:
         - SubliminalPassword=j4K7CK4oM49ZA27y532b
+        - LANG=en_US.UTF-8
     matrix:
         - TEST_SCRIPT='runUnitTests.sh 7.0'
         - TEST_SCRIPT=runIntegrationTests.sh
