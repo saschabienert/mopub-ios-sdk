@@ -40,13 +40,13 @@
 
 @interface HeyzapMediation() <HZMediationAdapterDelegate>
 
-@property (nonatomic, strong) NSMutableSet *setupMediators; // Make this an NSSet when we get data from the server
+@property (nonatomic, strong) NSSet *setupMediators; // Make this an NSSet when we get data from the server
 
 HZAdType hzAdTypeFromString(NSString *adUnit);
 NSString * NSStringFromAdType(HZAdType type);
 
-@property (nonatomic, strong) id <HZAdsDelegate> adsDelegate;
-@property (nonatomic, strong) id <HZIncentivizedAdDelegate> incentivizedDelegate;
+@property (nonatomic, strong) id <HZAdsDelegate> adsDelegateProxy;
+@property (nonatomic, strong) id <HZIncentivizedAdDelegate> incentivizedDelegateProxy;
 
 @property (nonatomic, strong) NSMutableDictionary *sessionDictionary;
 
@@ -65,8 +65,8 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     dispatch_once(&onceToken, ^{
         mediator = [[HeyzapMediation alloc] init];
         mediator.setupMediators = [[NSMutableSet alloc] init];
-        mediator.adsDelegate = [[DelegateProxy alloc] init];
-        mediator.incentivizedDelegate = [[DelegateProxy alloc] init];
+        mediator.adsDelegateProxy = [[DelegateProxy alloc] init];
+        mediator.incentivizedDelegateProxy = [[DelegateProxy alloc] init];
         mediator.sessionDictionary = [NSMutableDictionary dictionary];
     });
     
@@ -231,17 +231,15 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                 successful = YES;
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if (completion) { completion(YES,nil); }
-                    [self.adsDelegate didReceiveAdWithTag:tag];
+                    [self.adsDelegateProxy didReceiveAdWithTag:tag];
                 });
-                // Send a fetch successful message
-                // For just a fetch we can break now.
-                if (!showImmediately) {
-                    break;
+                if (showImmediately) {
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey];
+                    });
+                    NSLog(@"Mediator %@ is showing an ad",[[adapter class] name]);
                 }
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey];
-                });
-                NSLog(@"Mediator %@ is showing an ad",[[adapter class] name]);
+                
                 break;
                 
                 // Send delegate notification about showing an ad.
@@ -276,16 +274,16 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     
     [adapter showAdForType:session.adType tag:session.tag];
     [session reportImpression];
-    [self.adsDelegate didShowAdWithTag:session.tag];
+    [self.adsDelegateProxy didShowAdWithTag:session.tag];
 }
 
 
 // Possibly this should take the completion block param too, and a potential NSUnderlying error?
 - (void)sendFailureMessagesForTag:(NSString *)tag wasAttemptingToShow:(BOOL)tryingToShow
 {
-    [self.adsDelegate didFailToReceiveAdWithTag:tag];
+    [self.adsDelegateProxy didFailToReceiveAdWithTag:tag];
     if (tryingToShow) {
-        [self.adsDelegate didFailToShowAdWithTag:tag andError:nil];
+        [self.adsDelegateProxy didFailToShowAdWithTag:tag andError:nil];
     }
 }
 
@@ -342,7 +340,7 @@ NSString * const kHZDataKey = @"data";
         NSLog(@"Did lookup session for dismiss");
         [self.sessionDictionary removeObjectForKey:key];
         
-        [self.adsDelegate didHideAdWithTag:nil];
+        [self.adsDelegateProxy didHideAdWithTag:nil];
     }
 }
 
@@ -350,12 +348,12 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
-    [self.incentivizedDelegate didCompleteAd];
+    [self.incentivizedDelegateProxy didCompleteAd];
 }
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
-    [self.incentivizedDelegate didFailToCompleteAd];
+    [self.incentivizedDelegateProxy didFailToCompleteAd];
 }
 
 #pragma mark - Enum Support

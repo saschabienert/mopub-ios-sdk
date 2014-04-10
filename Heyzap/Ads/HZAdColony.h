@@ -55,4 +55,6 @@ typedef enum {
 
 + (void) playVideoAdForZone:(NSString *)zoneID withDelegate:(id <HZAdColonyDelegate>)del;
 
++ (BOOL) isVirtualCurrencyRewardAvailableForZone:(NSString *)zoneID;
+
 @end

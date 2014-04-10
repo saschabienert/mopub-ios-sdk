@@ -43,19 +43,13 @@
 
 @implementation HeyzapAds
 
-+ (void) startWithAppStoreID: (int) appID andOptions: (HZAdOptions) options {
-    [self startWithOptions: options];
++ (void) start {
+    [self startWithOptions: HZAdOptionsNone];
 }
 
-+ (void) startWithOptions: (HZAdOptions) options {
-    
-    [[HeyzapMediation sharedInstance] start];
-    return;
-    
-    [HZAdsManager sharedManager];
-    [[HZAdsManager sharedManager] setOptions: options];
-    [[HZAdsManager sharedManager] setIsDebuggable: NO];
-    [[HZAdsManager sharedManager] onStart];
+// Deprecated
++ (void) startWithAppStoreID: (int) appID andOptions: (HZAdOptions) options {
+    [self startWithOptions: options];
 }
 
 + (void) startWithOptions:(HZAdOptions)options andFramework: (NSString *) framework {
@@ -63,8 +57,15 @@
     [self startWithOptions: options];
 }
 
-+ (void) start {
-    [self startWithOptions: HZAdOptionsNone];
++ (void) startWithOptions: (HZAdOptions) options {
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [[HeyzapMediation sharedInstance] start];
+    } else {
+        [HZAdsManager sharedManager];
+        [[HZAdsManager sharedManager] setOptions: options];
+        [[HZAdsManager sharedManager] setIsDebuggable: NO];
+        [[HZAdsManager sharedManager] onStart];
+    }
 }
 
 + (BOOL) isStarted {

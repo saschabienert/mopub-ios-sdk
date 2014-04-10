@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
 
+@protocol HZAdsDelegate;
+@protocol HZIncentivizedAdDelegate;
+
 @interface HeyzapMediation : NSObject
 
 + (instancetype)sharedInstance;
@@ -34,5 +37,9 @@
 
 // Actually not sure where this will go.
 @property (nonatomic, strong) NSString *userIdentifier;
+
+//- (void)setIncentivizedDelegate:(id<HZIncentivizedAdDelegate>)incentivizedDelegate;
+//- (void)setVideoDelegate:(id<HZAdsDelegate>)videoDelegate;
+//- (void)setInterstitialDelegate:(id<HZAdsDelegate>)interstitialDelegate;
 
 @end
