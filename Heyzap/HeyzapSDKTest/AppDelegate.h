@@ -13,7 +13,7 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-@property (strong, nonatomic) SDKTestAppViewController *controller;
+//@property (strong, nonatomic) SDKTestAppViewController *controller;
 @property (strong, nonatomic) UINavigationController *navController;
 
 @end

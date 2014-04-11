@@ -14,6 +14,8 @@
 #import "HZHeyzapInterstitialAd.h"
 #import "HZHeyzapVideoAd.h"
 
+#import "HZAdsManager.h"
+
 /**
  *  This class needs the most work. I should use delegate callbacks to get errors but thats it I think.
  */
@@ -29,6 +31,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         proxy = [[HZHeyzapAdapter alloc] init];
+        [[HZAdsManager sharedManager] onStart];
 //        [HeyzapAds start]; // This should probably call into start..
     });
     return proxy;

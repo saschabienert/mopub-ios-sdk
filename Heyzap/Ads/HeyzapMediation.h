@@ -42,4 +42,12 @@
 //- (void)setVideoDelegate:(id<HZAdsDelegate>)videoDelegate;
 //- (void)setInterstitialDelegate:(id<HZAdsDelegate>)interstitialDelegate;
 
++ (NSString *)commaSeparatedAdapterList;
+
+- (void)setDelegate:(id<HZAdsDelegate>)delegate;
+
+- (void)setIncentiveDelegate:(id<HZIncentivizedAdDelegate>)delegate;
+
+
+
 @end

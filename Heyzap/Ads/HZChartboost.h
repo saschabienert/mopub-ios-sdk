@@ -10,16 +10,16 @@
 #import "HZClassProxy.h"
 
 typedef enum {
-    HZCBLoadErrorInternal,
-    HZCBLoadErrorInternetUnavailable,
-    HZCBLoadErrorTooManyConnections, /**< Too many requests are pending for that location  */
-    HZCBLoadErrorWrongOrientation,    /**< Interstitial loaded with wrong orientation */
-    HZCBLoadErrorFirstSessionInterstitialsDisabled, /**< Interstitial disabled, first session */
-    HZCBLoadErrorNetworkFailure,  /**< Network request failed */
-    HZCBLoadErrorNoAdFound,  /**<  No ad received */
-    HZCBLoadErrorSessionNotStarted, /**< Session not started, use startSession method */
-    HZCBLoadErrorAgeGateFailure,  /**< User failed to pass the Age Gate */
-} HZCBLoadError;
+    CBLoadErrorInternal,
+    CBLoadErrorInternetUnavailable,
+    CBLoadErrorTooManyConnections, /**< Too many requests are pending for that location  */
+    CBLoadErrorWrongOrientation,    /**< Interstitial loaded with wrong orientation */
+    CBLoadErrorFirstSessionInterstitialsDisabled, /**< Interstitial disabled, first session */
+    CBLoadErrorNetworkFailure,  /**< Network request failed */
+    CBLoadErrorNoAdFound,  /**<  No ad received */
+    CBLoadErrorSessionNotStarted, /**< Session not started, use startSession method */
+    CBLoadErrorAgeGateFailure,  /**< User failed to pass the Age Gate */
+} CBLoadError;
 
 @interface HZChartboost : HZClassProxy
 

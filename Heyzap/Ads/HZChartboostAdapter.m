@@ -134,37 +134,37 @@
  * the reason of the failure
  */
 
-- (void)didFailToLoadInterstitial:(NSString *)location withError:(HZCBLoadError)error {
+- (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
     self.lastError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Charboost"}];
-//    switch(error){
-//        case CBLoadErrorInternetUnavailable: {
-//            NSLog(@"Failed to load Interstitial, no Internet connection !");
-//        } break;
-//        case CBLoadErrorInternal: {
-//            NSLog(@"Failed to load Interstitial, internal error !");
-//        } break;
-//        case CBLoadErrorNetworkFailure: {
-//            NSLog(@"Failed to load Interstitial, network error !");
-//        } break;
-//        case CBLoadErrorWrongOrientation: {
-//            NSLog(@"Failed to load Interstitial, wrong orientation !");
-//        } break;
-//        case CBLoadErrorTooManyConnections: {
-//            NSLog(@"Failed to load Interstitial, too many connections !");
-//        } break;
-//        case CBLoadErrorFirstSessionInterstitialsDisabled: {
-//            NSLog(@"Failed to load Interstitial, first session !");
-//        } break;
-//        case CBLoadErrorNoAdFound : {
-//            NSLog(@"Failed to load Interstitial, no ad found !");
-//        } break;
-//        case CBLoadErrorSessionNotStarted : {
-//            NSLog(@"Failed to load Interstitial, session not started !");
-//        } break;
-//        default: {
-//            NSLog(@"Failed to load Interstitial, unknown error !");
-//        }
-//    }
+    switch(error){
+        case CBLoadErrorInternetUnavailable: {
+            NSLog(@"Failed to load Interstitial, no Internet connection !");
+        } break;
+        case CBLoadErrorInternal: {
+            NSLog(@"Failed to load Interstitial, internal error !");
+        } break;
+        case CBLoadErrorNetworkFailure: {
+            NSLog(@"Failed to load Interstitial, network error !");
+        } break;
+        case CBLoadErrorWrongOrientation: {
+            NSLog(@"Failed to load Interstitial, wrong orientation !");
+        } break;
+        case CBLoadErrorTooManyConnections: {
+            NSLog(@"Failed to load Interstitial, too many connections !");
+        } break;
+        case CBLoadErrorFirstSessionInterstitialsDisabled: {
+            NSLog(@"Failed to load Interstitial, first session !");
+        } break;
+        case CBLoadErrorNoAdFound : {
+            NSLog(@"Failed to load Interstitial, no ad found !");
+        } break;
+        case CBLoadErrorSessionNotStarted : {
+            NSLog(@"Failed to load Interstitial, session not started !");
+        } break;
+        default: {
+            NSLog(@"Failed to load Interstitial, unknown error !");
+        }
+    }
 }
 
 - (void)didClickInterstitial:(NSString *)location

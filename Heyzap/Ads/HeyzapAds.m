@@ -59,12 +59,12 @@
 
 + (void) startWithOptions: (HZAdOptions) options {
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HeyzapMediation sharedInstance] start];
-    } else {
         [HZAdsManager sharedManager];
         [[HZAdsManager sharedManager] setOptions: options];
         [[HZAdsManager sharedManager] setIsDebuggable: NO];
         [[HZAdsManager sharedManager] onStart];
+    } else {
+        [[HeyzapMediation sharedInstance] start];
     }
 }
 
@@ -85,11 +85,19 @@
 }
 
 + (void) setDelegate: (id<HZAdsDelegate>) delegate {
-    [[HZAdsManager sharedManager] setStatusDelegate: delegate];
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [[HZAdsManager sharedManager] setStatusDelegate: delegate];
+    } else {
+        [[HeyzapMediation sharedInstance] setDelegate:delegate];
+    }
 }
 
 + (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate {
-    [[HZAdsManager sharedManager] setIncentivizedDelegate: delegate];
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [[HZAdsManager sharedManager] setIncentivizedDelegate: delegate];
+    } else {
+        [[HeyzapMediation sharedInstance] setIncentiveDelegate:delegate];
+    }
 }
 
 + (void) setFramework: (NSString *) framework {

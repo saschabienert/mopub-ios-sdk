@@ -7,6 +7,7 @@
 //
 
 #import "MediationAPIClient.h"
+#import "HeyzapMediation.h"
 
 NSString * const kHZAdsAPIBaseURLString = @"http://med.heyzap.com/";
 
@@ -27,6 +28,8 @@ NSString * const kHZAdsAPIBaseURLString = @"http://med.heyzap.com/";
 {
     NSMutableDictionary *defaults = [super defaultParamsWithDictionary:dictionary];
     defaults[@"external_package"] = [[NSBundle mainBundle] bundleIdentifier];
+    defaults[@"networks"] = [HeyzapMediation commaSeparatedAdapterList];
+    
     return defaults;
 }
 

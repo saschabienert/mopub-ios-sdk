@@ -26,6 +26,10 @@
 
 #import "HZInterstitialAd.h"
 
+#if MEDIATION
+#import "MediationTestAppViewController.h"
+#endif
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -37,23 +41,24 @@
             UITextAttributeTextColor: [UIColor whiteColor],
             UITextAttributeFont: [UIFont boldSystemFontOfSize: 24.0]
         }];
-        
     }
     
     [HZLog setDebugLevel: HZDebugLevelError];
     
-    self.controller = [[SDKTestAppViewController alloc] init];
+//#if MEDIATION
+//    UIViewController *mainController = [[MediationTestAppViewController alloc] init];
+//#else
+    UIViewController *mainController = [[SDKTestAppViewController alloc] init];
+//#endif
     
     
     [HeyzapAds startWithOptions: HZAdOptionsDisableAutoPrefetching];
-//    [HeyzapAds setDelegate: self.controller];
-//    [HeyzapAds setIncentiveDelegate: self.controller];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
     ServerSelectionViewController *serverController = [[ServerSelectionViewController alloc] init];
     DeviceInfoViewController *deviceController = [[DeviceInfoViewController alloc] init];
-    SDCSegmentedViewController *segmentedController = [[SDCSegmentedViewController alloc] initWithViewControllers:@[self.controller, serverController,deviceController]];
+    SDCSegmentedViewController *segmentedController = [[SDCSegmentedViewController alloc] initWithViewControllers:@[mainController, serverController,deviceController]];
 
     if ([segmentedController respondsToSelector:@selector(edgesForExtendedLayout)]) {
         segmentedController.edgesForExtendedLayout = UIRectEdgeNone;
@@ -73,10 +78,10 @@
     [[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
 #endif
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-        [HZInterstitialAd show];
-    });
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+//        [HZInterstitialAd show];
+//    });
     
     return YES;
 }

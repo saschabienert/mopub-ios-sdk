@@ -61,7 +61,11 @@ typedef enum {
 - (id) init {
     self = [super init];
     if (self) {
+#ifdef MEDIATION
+        self.title = @"Mediation";
+#else
         self.title = @"Ads";
+#endif
     }
     return self;
 }
@@ -192,7 +196,8 @@ const CGFloat kLeftMargin = 10;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    return;
+    [HeyzapAds setDelegate:self];
+    [HeyzapAds setIncentiveDelegate:self];
     
     self.view.accessibilityLabel = kViewAccessibilityLabel;
     

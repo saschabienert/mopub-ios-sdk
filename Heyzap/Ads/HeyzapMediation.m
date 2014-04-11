@@ -45,8 +45,8 @@
 HZAdType hzAdTypeFromString(NSString *adUnit);
 NSString * NSStringFromAdType(HZAdType type);
 
-@property (nonatomic, strong) id <HZAdsDelegate> adsDelegateProxy;
-@property (nonatomic, strong) id <HZIncentivizedAdDelegate> incentivizedDelegateProxy;
+@property (nonatomic, strong) DelegateProxy *adsDelegateProxy;
+@property (nonatomic, strong) DelegateProxy *incentivizedDelegateProxy;
 
 @property (nonatomic, strong) NSMutableDictionary *sessionDictionary;
 
@@ -203,7 +203,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         HZBaseAdapter *adapter = [session firstAdapterWithAd];
         if (adapter) {
             if (completion) { completion(YES,nil); }
-            NSLog(@"Using fast path by skipping to first network with an ad.");
+            NSLog(@"Using fast path by skipping to first network (%@) with an ad.",adapter.name);
             [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey];
             return;
         }
@@ -404,12 +404,33 @@ HZAdType hzAdTypeFromString(NSString *adUnit) {
     }
 }
 
++ (NSString *)commaSeparatedAdapterList
+{
+    NSMutableArray *adapterNames = [NSMutableArray array];
+    for (Class adapterClass in [HZBaseAdapter allAdapterClasses]) {
+        if ([adapterClass isSDKAvailable]) {
+            [adapterNames addObject:[adapterClass name]];
+        }
+    }
+    return [adapterNames componentsJoinedByString:@","];
+}
+
 + (BOOL)isOnlyHeyzapSDK
 {
     NSSet *availableNonHeyzapAdapters = [[HZBaseAdapter allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
         return ![[adapterClass name] isEqualToString:kHZAdapterHeyzap] && [adapterClass isSDKAvailable];
     }]];
     return [availableNonHeyzapAdapters count] == 0;
+}
+
+- (void)setDelegate:(id<HZAdsDelegate>)delegate
+{
+    self.adsDelegateProxy.forwardingTarget = delegate;
+}
+
+- (void)setIncentiveDelegate:(id<HZIncentivizedAdDelegate>)delegate
+{
+    self.incentivizedDelegateProxy.forwardingTarget = delegate;
 }
 
 @end

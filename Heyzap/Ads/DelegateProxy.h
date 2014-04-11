@@ -11,6 +11,8 @@
 
 @interface DelegateProxy : NSProxy  <HZAdsDelegate, HZIncentivizedAdDelegate>
 
+@property (nonatomic, weak) id forwardingTarget;
+
 - (instancetype)init;
 
 @end

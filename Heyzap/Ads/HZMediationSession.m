@@ -44,11 +44,11 @@
         for (NSDictionary *network in networks) {
             NSString *networkName = network[@"network"];
             Class adapter = [HZBaseAdapter adapterClassForName:networkName];
-            if (adapter && [adapter isSDKAvailable] && [setupMediators containsObject:[adapter sharedInstance]]) {
-                if ([[adapter sharedInstance] supportsAdType:adType]) {
-                    [adapters addObject:[adapter sharedInstance]];
-                }
-                
+            if (adapter
+                && [adapter isSDKAvailable]
+                && [setupMediators containsObject:[adapter sharedInstance]]
+                && [[adapter sharedInstance] supportsAdType:adType]) {
+                [adapters addObject:[adapter sharedInstance]];
             }
         }
         
@@ -59,6 +59,7 @@
 
 - (HZBaseAdapter *)firstAdapterWithAd
 {
+    
     NSArray *preferredMediatorList = [self.chosenAdapters array];
     
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {

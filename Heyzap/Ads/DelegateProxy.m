@@ -12,7 +12,7 @@
 #pragma clang diagnostic ignored "-Wincomplete-implementation"
 @interface DelegateProxy()
 
-@property (nonatomic, strong) TestDelegate *delegate;
+@property (nonatomic, strong) TestDelegate *delegateSelectorSwallower;
 
 @end
 
@@ -20,7 +20,7 @@
 
 - (id)init
 {
-    _delegate = [[TestDelegate alloc] init];
+    _delegateSelectorSwallower = [[TestDelegate alloc] init];
     return self;
 }
 
@@ -30,7 +30,11 @@
 {
     NSAssert([NSThread isMainThread], @"Callbacks must be on the main thread");
     NSLog(@"Delegate received selector: %@",NSStringFromSelector(aSelector));
-    return self.delegate;
+    if ([self.forwardingTarget respondsToSelector:aSelector]) {
+        return self.forwardingTarget;
+    } else {
+        return self.delegateSelectorSwallower;
+    }
 }
 
 @end
