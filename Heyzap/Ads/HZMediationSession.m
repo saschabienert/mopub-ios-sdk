@@ -48,7 +48,12 @@
                 && [adapter isSDKAvailable]
                 && [setupMediators containsObject:[adapter sharedInstance]]
                 && [[adapter sharedInstance] supportsAdType:adType]) {
-                [adapters addObject:[adapter sharedInstance]];
+                
+                if ([[adapter name] isEqualToString:@"applovin"]) {
+                    [adapters addObject:[adapter sharedInstance]];
+                }
+                
+                
             }
         }
         

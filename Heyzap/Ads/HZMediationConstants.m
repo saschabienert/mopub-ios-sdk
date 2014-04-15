@@ -21,6 +21,7 @@ NSString * const kHZAdapterChartboost = @"chartboost";
 NSString * const kHZAdapterAdColony = @"adcolony";
 NSString * const kHZAdapterAdMob = @"admob";
 NSString * const kHZAdapterHeyzap = @"heyzap";
+NSString * const kHZAdapterAppLovin = @"applovin";
 
 + (NSError *)errorWithAdapter:(NSString *)adapter
                        domain:(NSString *)domain

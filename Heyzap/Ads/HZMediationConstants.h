@@ -32,6 +32,7 @@ extern NSString * const kHZAdapterChartboost;
 extern NSString * const kHZAdapterAdColony;
 extern NSString * const kHZAdapterAdMob;
 extern NSString * const kHZAdapterHeyzap;
+extern NSString * const kHZAdapterAppLovin;
 
 + (NSError *)errorWithAdapter:(NSString *)adapter
                        domain:(NSString *)domain
@@ -39,6 +40,7 @@ extern NSString * const kHZAdapterHeyzap;
 
 + (NSError *)credentialErrorForAdapter:(Class)adapter error:(NSError *)error;
 
+// Must be used from a class method of an adapter, presumably `enableWithCredentials:`
 #define CHECK_CREDENTIALS_ERROR(error) if (error) { return [HZMediationConstants credentialErrorForAdapter:self error:error]; }
 
 

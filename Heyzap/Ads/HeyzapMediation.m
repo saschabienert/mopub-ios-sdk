@@ -149,6 +149,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 
 - (void)mediateForAdType:(HZAdType)adType tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout completion:(void (^)(BOOL result, NSError *error))completion
 {
+    NSLog(@"Fetching with timeout = %f",timeout);
     // Need to check for existing session here to prevent double requests.
     if (tag == nil) {
         tag = [HeyzapAds defaultTagName];
@@ -189,7 +190,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 
 // I *think* that both the show and fetch completion blocks can be combined here.
 
-- (void)fetchForSession:(HZMediationSession *)session showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout sessionKey:(HZMediationSessionKey *)sessionKey completion:(void (^)(BOOL result, NSError *error))completion
+- (void)fetchForSession:(HZMediationSession *)session showImmediately:(BOOL)showImmediately fetchTimeout:(const NSTimeInterval)timeout sessionKey:(HZMediationSessionKey *)sessionKey completion:(void (^)(BOOL result, NSError *error))completion
 {
     NSString *tag = session.tag;
     NSArray *preferredMediatorList = [session.chosenAdapters array];
@@ -224,7 +225,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                     NSLog(@"There was an error w/ the fetch = %@",adapter.lastError);
                 }
                 return [adapter hasAdForType:type tag:tag] || adapter.lastError != nil; // If it errored, exit early.
-            }, 2);
+            }, timeout);
             
             if (fetchedWithinTimeout) {
                 NSLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
@@ -268,7 +269,6 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 {
     [self.sessionDictionary removeObjectForKey:key];
     
-    
     HZMediationSessionKey *showKey = [key sessionKeyAfterShowing];
     self.sessionDictionary[showKey] = session;
     
@@ -283,7 +283,8 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 {
     [self.adsDelegateProxy didFailToReceiveAdWithTag:tag];
     if (tryingToShow) {
-        [self.adsDelegateProxy didFailToShowAdWithTag:tag andError:nil];
+        [self.adsDelegateProxy didFailToShowAdWithTag:tag
+                                             andError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil]];
     }
 }
 
@@ -340,7 +341,7 @@ NSString * const kHZDataKey = @"data";
         NSLog(@"Did lookup session for dismiss");
         [self.sessionDictionary removeObjectForKey:key];
         
-        [self.adsDelegateProxy didHideAdWithTag:nil];
+        [self.adsDelegateProxy didHideAdWithTag:key.tag];
     }
 }
 

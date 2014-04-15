@@ -28,4 +28,9 @@
     return NSClassFromString([self hzProxiedClassName]);
 }
 
++ (id)alloc
+{
+    return [NSClassFromString([self hzProxiedClassName]) alloc];
+}
+
 @end

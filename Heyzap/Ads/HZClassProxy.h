@@ -11,13 +11,11 @@
 /**
  *  Subclass this to proxy a class. Add methods to your subclass's header filer that match the API of what you're proxying. Don't add implementation methods, instead ignore the warnings with "-Wincomplete-implementation" (see HZChartboost.m). 
  *  Implement properties with @dynamic in the implementation file.
- *  Copy over enum declarations--no prefixing is necessary if they're not going to be public.
+ *  Anything that is discarded at compile time——enums, preprocessor macros, etc.——that is kept private doesn't need prefixing.
  *  Protocols I don't have a good solution for. My current approach is to prepend the protocol name with HZ, then have the delegate override `conformsToProtocol`.
- *  Preprocessor macros can be copied over exactly.
- *  
  *
  *  Methods on this class should be prefixed with hz to avoid selector collisions with the proxied class.
- *  NSProxy declares some methods that we actually want forwared to the class. In these cases, override that method in the subclass and manually forward it to the proxied class. This is notably the case for `alloc`. See HZGADInterstitial.
+ *  NSProxy declares some methods that we actually want forwared to the class. In these cases, override that method in the subclass and manually forward it to the proxied class (`HZClassProxy` already handles this for `alloc`).
  */
 @interface HZClassProxy : NSProxy
 

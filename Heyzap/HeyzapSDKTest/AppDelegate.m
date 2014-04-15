@@ -26,10 +26,6 @@
 
 #import "HZInterstitialAd.h"
 
-#if MEDIATION
-#import "MediationTestAppViewController.h"
-#endif
-
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -45,11 +41,7 @@
     
     [HZLog setDebugLevel: HZDebugLevelError];
     
-//#if MEDIATION
-//    UIViewController *mainController = [[MediationTestAppViewController alloc] init];
-//#else
     UIViewController *mainController = [[SDKTestAppViewController alloc] init];
-//#endif
     
     
     [HeyzapAds startWithOptions: HZAdOptionsDisableAutoPrefetching];

@@ -13,10 +13,35 @@
 #import "HZAdColonyAdapter.h"
 #import "HZAdMobAdapter.h"
 #import "HZHeyzapAdapter.h"
+#import "HZAppLovinAdapter.h"
 
 @implementation HZBaseAdapter
 
+#pragma mark - Initialization
+
 + (instancetype)sharedInstance
+{
+    abort();
+}
+
+#pragma mark - Adapter Protocol
+
++ (NSError *)enableWithCredentials:(NSDictionary *)credentials
+{
+    abort();
+}
+
++ (BOOL)isSDKAvailable
+{
+    abort();
+}
+
++ (NSString *)name
+{
+    abort();
+}
+
+- (HZAdType)supportedAdFormats
 {
     abort();
 }
@@ -32,26 +57,6 @@
 }
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
-{
-    abort();
-}
-
-- (HZAdType)supportedAdFormats
-{
-    abort();
-}
-
-+ (NSString *)name
-{
-    abort();
-}
-
-+ (BOOL)isSDKAvailable
-{
-    abort();
-}
-
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     abort();
 }
@@ -82,6 +87,8 @@
         return [HZAdMobAdapter class];
     } else if ([adapterName isEqualToString:kHZAdapterHeyzap]) {
         return [HZHeyzapAdapter class];
+    } else if ([adapterName isEqualToString:kHZAdapterAppLovin]) {
+        return [HZAppLovinAdapter class];
     } else {
         return nil;
     }
@@ -95,6 +102,7 @@
             [HZAdColonyAdapter class],
             [HZAdMobAdapter class],
             [HZHeyzapAdapter class],
+            [HZAppLovinAdapter class],
             nil];
 }
 
