@@ -11,6 +11,4 @@
 
 @interface HZAdColonyAdapter : HZBaseAdapter
 
-- (void)setupAdColonyWithAppID:(NSString *)appID zoneID:(NSString *)zoneID;
-
 @end
