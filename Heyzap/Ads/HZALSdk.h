@@ -8,10 +8,14 @@
 
 #import "HZClassProxy.h"
 
+@class HZALAdService;
+
 @interface HZALSdk : HZClassProxy
 
 + (HZALSdk *)sharedWithKey:(NSString *)sdkKey;
 
 - (void)initializeSdk;
+
+- (HZALAdService *)adService;
 
 @end

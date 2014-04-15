@@ -8,6 +8,10 @@
 
 #import "HZClassProxy.h"
 
+@class HZALAdSize;
+
 @interface HZALAdService : HZClassProxy
+
+- (BOOL)hasPreloadedAdOfSize:(HZALAdSize *)adSize;
 
 @end

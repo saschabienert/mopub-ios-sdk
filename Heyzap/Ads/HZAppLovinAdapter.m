@@ -17,6 +17,7 @@
 #import "HZALAdService.h"
 #import "HZALAd.h"
 #import "HZALIncentivizedInterstitialAd.h"
+#import "HZALAdSize.h"
 
 /**
  *  AppLovin's SDK is split between using (singletons+class methods) vs instances. Inexplicably, the former group is only available when you store the SDK Key in your info.plist file, so we need to use the instance methods.
@@ -173,6 +174,7 @@
     
     switch (type) {
         case HZAdTypeIncentivized: {
+//            [self.sdk adService] 
             self.incentivizedIsLoaded = YES;
             self.incentivizedError = nil;
             break;

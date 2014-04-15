@@ -192,6 +192,8 @@
 		50AA624C18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624B18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m */; };
 		50AC60B218FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 50AC60B018FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.h */; };
 		50AC60B318FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AC60B118FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m */; };
+		50AC611E18FDD3E70046EBC6 /* HZALAdSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 50AC611C18FDD3E70046EBC6 /* HZALAdSize.h */; };
+		50AC611F18FDD3E70046EBC6 /* HZALAdSize.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AC611D18FDD3E70046EBC6 /* HZALAdSize.m */; };
 		50B46AFA18F85F4F005155B8 /* libAppLovinSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50B46AF918F85F4F005155B8 /* libAppLovinSdk.a */; };
 		50B46B0D18F862B3005155B8 /* HZAppLovinAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B46B0B18F862B3005155B8 /* HZAppLovinAdapter.h */; };
 		50B46B0E18F862B3005155B8 /* HZAppLovinAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B46B0C18F862B3005155B8 /* HZAppLovinAdapter.m */; };
@@ -466,6 +468,8 @@
 		50AC60AF18FC79E80046EBC6 /* HZALAdRewardDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZALAdRewardDelegate.h; sourceTree = "<group>"; };
 		50AC60B018FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZIncentivizedAppLovinDelegate.h; sourceTree = "<group>"; };
 		50AC60B118FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZIncentivizedAppLovinDelegate.m; sourceTree = "<group>"; };
+		50AC611C18FDD3E70046EBC6 /* HZALAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZALAdSize.h; sourceTree = "<group>"; };
+		50AC611D18FDD3E70046EBC6 /* HZALAdSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZALAdSize.m; sourceTree = "<group>"; };
 		50B46AF918F85F4F005155B8 /* libAppLovinSdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAppLovinSdk.a; sourceTree = "<group>"; };
 		50B46AFB18F85F5B005155B8 /* ALAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAd.h; sourceTree = "<group>"; };
 		50B46AFC18F85F5B005155B8 /* ALAdDisplayDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdDisplayDelegate.h; sourceTree = "<group>"; };
@@ -1008,6 +1012,8 @@
 				50AC60AF18FC79E80046EBC6 /* HZALAdRewardDelegate.h */,
 				50B46B2518F8B241005155B8 /* HZALIncentivizedInterstitialAd.h */,
 				50B46B2618F8B241005155B8 /* HZALIncentivizedInterstitialAd.m */,
+				50AC611C18FDD3E70046EBC6 /* HZALAdSize.h */,
+				50AC611D18FDD3E70046EBC6 /* HZALAdSize.m */,
 			);
 			name = Proxies;
 			sourceTree = "<group>";
@@ -1361,6 +1367,7 @@
 				509F002D18EB62BC0011EAB3 /* HZMediationSessionKey.h in Headers */,
 				500F88DF18E202F600E5D6F8 /* HZVGVunglePub.h in Headers */,
 				509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */,
+				50AC611E18FDD3E70046EBC6 /* HZALAdSize.h in Headers */,
 				50B46B1D18F88C6B005155B8 /* HZALAd.h in Headers */,
 				509F00BA18EC8D010011EAB3 /* HZVGPlayData.h in Headers */,
 				5011CE5518DB9B7F00604B53 /* HZAdColonyAdapter.h in Headers */,
@@ -1824,6 +1831,7 @@
 				50B46B2218F89C58005155B8 /* HZAppLovinDelegate.m in Sources */,
 				866E3A001850172100B6E431 /* HZInterstitialAdModel.m in Sources */,
 				50ECA1CE18DB684D006284AB /* HZChartboostAdapter.m in Sources */,
+				50AC611F18FDD3E70046EBC6 /* HZALAdSize.m in Sources */,
 				866E39F41850089C00B6E431 /* HZIncentivizedAd.m in Sources */,
 				866E39F818500DBE00B6E431 /* HZAdModel.m in Sources */,
 				866E3A191851329500B6E431 /* HZWebView.m in Sources */,
