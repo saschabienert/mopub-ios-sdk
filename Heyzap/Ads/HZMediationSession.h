@@ -23,8 +23,8 @@
 
 #pragma mark - Reporting Events to the server
 
-- (void)reportClick;
+- (void)reportClickForAdapter:(HZBaseAdapter *)adapter;
 
-- (void)reportImpression;
+- (void)reportImpressionForAdapter:(HZBaseAdapter *)adapter;
 
 @end

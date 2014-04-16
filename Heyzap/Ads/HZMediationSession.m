@@ -79,19 +79,26 @@
 #pragma mark - Reporting Events to the server
 
 NSString *const kHZImpressionIDKey = @"id";
+NSString *const kHZNetworkKey = @"network";
 
-- (void)reportClick
+- (void)reportClickForAdapter:(HZBaseAdapter *)adapter
 {
-    [[MediationAPIClient sharedClient] post:@"click" withParams:@{kHZImpressionIDKey: self.impressionID} success:^(id json) {
+    [[MediationAPIClient sharedClient] post:@"click"
+                                 withParams:@{kHZImpressionIDKey: self.impressionID,
+                                              kHZNetworkKey: [adapter name]}
+                                    success:^(id json) {
         NSLog(@"click was successful");
     } failure:^(NSError *error) {
         NSLog(@"Click failed");
     }];
 }
 
-- (void)reportImpression
+- (void)reportImpressionForAdapter:(HZBaseAdapter *)adapter
 {
-    [[MediationAPIClient sharedClient] post:@"impression" withParams:@{kHZImpressionIDKey: self.impressionID} success:^(id json) {
+    [[MediationAPIClient sharedClient] post:@"impression"
+                                 withParams:@{kHZImpressionIDKey: self.impressionID,
+                                              kHZNetworkKey: [adapter name]}
+                                    success:^(id json) {
         NSLog(@"impression was successful");
     } failure:^(NSError *error) {
         NSLog(@"Failed to report impression to Heyzap, error = %@",error);

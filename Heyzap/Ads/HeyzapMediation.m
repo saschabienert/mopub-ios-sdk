@@ -285,7 +285,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     self.sessionDictionary[showKey] = session;
     
     [adapter showAdForType:session.adType tag:session.tag];
-    [session reportImpression];
+    [session reportImpressionForAdapter:adapter];
     [self.adsDelegateProxy didShowAdWithTag:session.tag];
 }
 
@@ -335,7 +335,7 @@ NSString * const kHZDataKey = @"data";
     
     if (key) {
         HZMediationSession *session = self.sessionDictionary[key];
-        [session reportClick];
+        [session reportClickForAdapter:adapter];
     }
 }
 
