@@ -17,48 +17,50 @@
 
 @implementation HZBaseAdapter
 
+#define ABSTRACT_METHOD_ERROR() @throw [NSException exceptionWithName:@"AbstractMethodException" reason:@"Subclasses should override this method" userInfo:nil];
+
 #pragma mark - Initialization
 
 + (instancetype)sharedInstance
 {
-    abort();
+    ABSTRACT_METHOD_ERROR();
 }
 
 #pragma mark - Adapter Protocol
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
-    abort();
+    ABSTRACT_METHOD_ERROR();
 }
 
 + (BOOL)isSDKAvailable
 {
-    abort();
+    ABSTRACT_METHOD_ERROR();
 }
 
 + (NSString *)name
 {
-    abort();
+    ABSTRACT_METHOD_ERROR();
 }
 
 - (HZAdType)supportedAdFormats
 {
-    abort();
+    ABSTRACT_METHOD_ERROR();
 }
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
-    abort();
+    ABSTRACT_METHOD_ERROR();
 }
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    abort();
+    ABSTRACT_METHOD_ERROR();
 }
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    abort();
+    ABSTRACT_METHOD_ERROR();
 }
 
 #pragma mark - Inferred methods

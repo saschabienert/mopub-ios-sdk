@@ -17,10 +17,9 @@
 
 + (NSString *)hzProxiedClassName
 {
-    [[NSException exceptionWithName:@"AbstractMethodException"
+    @throw [NSException exceptionWithName:@"AbstractMethodException"
                              reason:@"Subclasses should override this method"
-                           userInfo:nil] raise];
-    abort();
+                                 userInfo:nil];
 }
 
 + (id)forwardingTargetForSelector:(SEL)aSelector
