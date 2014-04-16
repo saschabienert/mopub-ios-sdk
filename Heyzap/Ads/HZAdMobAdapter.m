@@ -76,7 +76,7 @@
     NSAssert(self.adUnitID, @"Need an ad unit ID by this point");
     if (self.currentInterstitial
         && !self.currentInterstitial.hasBeenUsed
-        && !self.lastError) {
+        && !self.lastInterstitialError) {
         // If we have an interstitial already out fetching, don't start up a re-fetch.
         return;
     }
@@ -112,7 +112,7 @@
 
 - (void)interstitial:(HZGADInterstitial *)ad didFailToReceiveAdWithError:(HZGADRequestError *)error
 {
-    self.lastError = [NSError errorWithDomain:kHZMediationDomain
+    self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain
                                          code:1
                                      userInfo:@{kHZMediatorNameKey: @"AdMob",
                                                 NSUnderlyingErrorKey: error}];
@@ -132,7 +132,7 @@
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
-    self.lastError = nil;
+    self.lastInterstitialError = nil;
 }
 
 @end

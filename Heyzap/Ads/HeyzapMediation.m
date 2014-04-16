@@ -233,10 +233,10 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
             __block BOOL fetchedWithinTimeout = NO;
             hzWaitUntil(^BOOL{
                 fetchedWithinTimeout = [adapter hasAdForType:type tag:tag];
-                if (adapter.lastError) {
-                    NSLog(@"There was an error w/ the fetch = %@",adapter.lastError);
+                if ([adapter lastErrorForAdType:type]) {
+                    NSLog(@"There was an error w/ the fetch = %@",[adapter lastErrorForAdType:type]);
                 }
-                return [adapter hasAdForType:type tag:tag] || adapter.lastError != nil; // If it errored, exit early.
+                return [adapter hasAdForType:type tag:tag] || [adapter lastErrorForAdType:type] != nil; // If it errored, exit early.
             }, timeout);
             
             if (fetchedWithinTimeout) {
@@ -260,8 +260,8 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                 NSLog(@"The mediator with name = %@ didn't have an ad",[[adapter class] name]);
                 // If the mediated SDK errored, reset it and try again. If there's no error, they're probably still busy fetching.
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    if (adapter.lastError) {
-                        adapter.lastError = nil;
+                    if ([adapter lastErrorForAdType:type]) {
+                        [adapter clearErrorForAdType:type];
                         [adapter prefetchForType:type tag:tag];
                     }
                 });

@@ -134,7 +134,7 @@
  */
 
 - (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
-    self.lastError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Charboost"}];
+    self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Charboost"}];
     switch(error){
         case CBLoadErrorInternetUnavailable: {
             NSLog(@"Failed to load Interstitial, no Internet connection !");
@@ -187,7 +187,7 @@
  */
 
 - (void)didCacheInterstitial:(NSString *)location {
-    self.lastError = nil;
+    self.lastInterstitialError = nil;
     NSLog(@"Chartboost interstitial cached at location %@", location);
 }
 

@@ -157,19 +157,6 @@
     }
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-property-ivar"
-- (NSError *)lastError
-{
-    if ([HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_OFF
-        || [HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_NO_ZONE) {
-        return [NSError errorWithDomain:kHZMediatorNameKey code:1 userInfo:@{kHZMediatorNameKey: @"AdColony"}];
-    } else {
-        return nil;
-    }
-}
-#pragma clang diagnostic pop
-
 #pragma mark - AdColony Delegation
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol

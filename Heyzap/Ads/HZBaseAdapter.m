@@ -91,6 +91,24 @@
     }
 }
 
+- (void)clearErrorForAdType:(HZAdType)adType
+{
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            self.lastInterstitialError = nil;
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            self.lastIncentivizedError = nil;
+            break;
+        }
+        case HZAdTypeVideo: {
+            self.lastVideoError = nil;
+            break;
+        }
+    }
+}
+
 #pragma mark - Implemented Methods
 
 + (Class)adapterClassForName:(NSString *)adapterName

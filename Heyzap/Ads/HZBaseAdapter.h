@@ -37,12 +37,7 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 @interface HZBaseAdapter : NSObject
 
 /**
- *  Adapters should record their lastError, from e.g. delegate callbacks.
- */
-@property (nonatomic, strong) NSError *lastError;
-
-/**
- *  These properties exist for subclasses to use. Other callers must use `lastErrorForAdType:`.
+ *  These properties exist for subclasses to use. Other callers must use `lastErrorForAdType:` and `clearErrorForAdType:`.
  */
 @property (nonatomic, strong) NSError *lastInterstitialError;
 @property (nonatomic, strong) NSError *lastIncentivizedError;
@@ -80,6 +75,13 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 - (BOOL)supportsAdType:(HZAdType)adType;
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType;
+
+/**
+ *  Its possible this should be handled internally by the adapters, like when they fetch...
+ *
+ *  @param adType The type of ad to clear the error for.
+ */
+- (void)clearErrorForAdType:(HZAdType)adType;
 
 #pragma mark - Implemented methods
 

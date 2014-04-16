@@ -16,6 +16,11 @@
 
 @interface HZVungleAdapter() <HZVGVunglePubDelegate>
 
+/**
+ *  Because Vungle makes no differentiation between having an incentivized ad and having a video ad, we just store any error in a property shared between the ad types.
+ */
+@property (nonatomic, strong) NSError *lastError;
+
 @end
 
 @implementation HZVungleAdapter
@@ -86,6 +91,16 @@
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
     return [self supportedAdFormats] & type && [HZVGVunglePub adIsAvailable];
+}
+
+- (NSError *)lastErrorForAdType:(HZAdType)adType
+{
+    return self.lastError;
+}
+
+- (void)clearErrorForAdType:(HZAdType)adType
+{
+    self.lastError = nil;
 }
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
