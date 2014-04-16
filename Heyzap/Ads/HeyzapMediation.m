@@ -90,7 +90,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     [[MediationAPIClient sharedClient] get:@"start" withParams:nil success:^(NSDictionary *json) {
         self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
                                                      ofClass:[NSString class]
-                                                     default:@"zz"
+                                                     default:@"zz" // Unknown or invalid; the server also uses this.
                                                     withDict:json];
         
         NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
