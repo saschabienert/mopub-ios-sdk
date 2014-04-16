@@ -83,18 +83,17 @@
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
     // Chartboost has tag support, but we're going to use it for geos
-    [[HZChartboost sharedChartboost] cacheInterstitial];
+    [[HZChartboost sharedChartboost] cacheInterstitial:[self.delegate countryCode]];
 }
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    return ([self supportedAdFormats] & type) && [[HZChartboost sharedChartboost] hasCachedInterstitial];
+    return ([self supportedAdFormats] & type) && [[HZChartboost sharedChartboost] hasCachedInterstitial:[self.delegate countryCode]];
 }
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-    [[HZChartboost sharedChartboost] showInterstitial];
+    [[HZChartboost sharedChartboost] showInterstitial:[self.delegate countryCode]];
 }
 
 - (HZAdType)supportedAdFormats

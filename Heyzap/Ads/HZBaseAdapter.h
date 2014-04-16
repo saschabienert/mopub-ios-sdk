@@ -19,6 +19,13 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 @protocol HZMediationAdapterDelegate <NSObject>
 
+/**
+ *  The current country code. Must not be nil.
+ *
+ *  @return A 2 letter country code
+ */
+- (NSString *)countryCode;
+
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter;
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter;
 

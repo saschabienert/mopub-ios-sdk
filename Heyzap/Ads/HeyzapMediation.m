@@ -50,6 +50,10 @@ NSString * NSStringFromAdType(HZAdType type);
 
 @property (nonatomic, strong) NSMutableDictionary *sessionDictionary;
 
+@property (nonatomic, strong) NSString *countryCode;
+
+@property (nonatomic) BOOL hasBeenStarted;
+
 @end
 
 @implementation HeyzapMediation
@@ -77,9 +81,18 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 
 - (void)start
 {
+    if (self.hasBeenStarted) {
+        return;
+    }
+    self.hasBeenStarted = YES;
     NSLog(@"Is only heyzap SDK = %i",[[self class] isOnlyHeyzapSDK]);
     
     [[MediationAPIClient sharedClient] get:@"start" withParams:nil success:^(NSDictionary *json) {
+        self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
+                                                     ofClass:[NSString class]
+                                                     default:@"zz"
+                                                    withDict:json];
+        
         NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
         [NSOrderedSet orderedSetWithArray:networks];
         if (networks) {
@@ -121,7 +134,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     self.setupMediators = setupMediators;
     NSLog(@"Setup mediators = %@",setupMediators);
     
-    [self mediateForAdType:HZAdTypeIncentivized
+    [self mediateForAdType:HZAdTypeInterstitial
                        tag:nil
            showImmediately:NO
               fetchTimeout:10

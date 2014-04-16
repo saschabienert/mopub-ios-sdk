@@ -31,11 +31,11 @@ typedef enum {
 
 - (void)startSession;
 
-- (void)cacheInterstitial;
+- (void)cacheInterstitial:(NSString *)location;
 
-- (BOOL)hasCachedInterstitial;
+- (BOOL)hasCachedInterstitial:(NSString *)location;
 
-- (void)showInterstitial;
+- (void)showInterstitial:(NSString *)location;
 
 
 @end
