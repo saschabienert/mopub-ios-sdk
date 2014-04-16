@@ -49,9 +49,7 @@
                 && [setupMediators containsObject:[adapter sharedInstance]]
                 && [[adapter sharedInstance] supportsAdType:adType]) {
                 
-                if ([[adapter name] isEqualToString:@"applovin"]) {
-                    [adapters addObject:[adapter sharedInstance]];
-                }
+                [adapters addObject:[adapter sharedInstance]];
                 
                 
             }
@@ -96,7 +94,7 @@ NSString *const kHZImpressionIDKey = @"id";
     [[MediationAPIClient sharedClient] post:@"impression" withParams:@{kHZImpressionIDKey: self.impressionID} success:^(id json) {
         NSLog(@"impression was successful");
     } failure:^(NSError *error) {
-        NSLog(@"impression failed");
+        NSLog(@"Failed to report impression to Heyzap, error = %@",error);
     }];
 }
 

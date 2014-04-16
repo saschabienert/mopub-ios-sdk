@@ -80,7 +80,6 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     NSLog(@"Is only heyzap SDK = %i",[[self class] isOnlyHeyzapSDK]);
     
     [[MediationAPIClient sharedClient] get:@"start" withParams:nil success:^(NSDictionary *json) {
-        
         NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
         [NSOrderedSet orderedSetWithArray:networks];
         if (networks) {
@@ -122,7 +121,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     self.setupMediators = setupMediators;
     NSLog(@"Setup mediators = %@",setupMediators);
     
-    [self mediateForAdType:HZAdTypeInterstitial
+    [self mediateForAdType:HZAdTypeIncentivized
                        tag:nil
            showImmediately:NO
               fetchTimeout:10

@@ -73,6 +73,24 @@
     return [self supportedAdFormats] & adType;
 }
 
+- (NSError *)lastErrorForAdType:(HZAdType)adType
+{
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            return self.lastInterstitialError;
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            return self.lastIncentivizedError;
+            break;
+        }
+        case HZAdTypeVideo: {
+            return self.lastVideoError;
+            break;
+        }
+    }
+}
+
 #pragma mark - Implemented Methods
 
 + (Class)adapterClassForName:(NSString *)adapterName

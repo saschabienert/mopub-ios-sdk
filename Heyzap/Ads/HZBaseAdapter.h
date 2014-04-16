@@ -34,6 +34,13 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
  */
 @property (nonatomic, strong) NSError *lastError;
 
+/**
+ *  These properties exist for subclasses to use. Other callers must use `lastErrorForAdType:`.
+ */
+@property (nonatomic, strong) NSError *lastInterstitialError;
+@property (nonatomic, strong) NSError *lastIncentivizedError;
+@property (nonatomic, strong) NSError *lastVideoError;
+
 @property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
 
 
@@ -43,6 +50,12 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag;
 
+/**
+ *  The adapter should show an ad for the given ad type.
+ *
+ *  @param type The type of ad (video, incentivized, interstitial) to show
+ *  @param tag  The tag to show for. All adapters except Heyzap should ignore the tag.
+ */
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag;
 
 - (HZAdType)supportedAdFormats;
@@ -58,6 +71,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 - (NSString *)name;
 
 - (BOOL)supportsAdType:(HZAdType)adType;
+
+- (NSError *)lastErrorForAdType:(HZAdType)adType;
 
 #pragma mark - Implemented methods
 

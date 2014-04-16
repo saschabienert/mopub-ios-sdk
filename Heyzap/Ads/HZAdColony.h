@@ -11,9 +11,9 @@
 @protocol HZAdColonyDelegate <NSObject>
 @optional
 
-- (void) onAdColonyAdAvailabilityChange:(BOOL)available inZone:(NSString *) zoneID;
+- (void)onAdColonyAdAvailabilityChange:(BOOL)available inZone:(NSString *)zoneID;
 
-- (void) onAdColonyV4VCReward:(BOOL)success currencyName:(NSString *)currencyName currencyAmount:(int)amount inZone:(NSString *)zoneID;
+- (void)onAdColonyV4VCReward:(BOOL)success currencyName:(NSString *)currencyName currencyAmount:(int)amount inZone:(NSString *)zoneID;
 
 @end
 
@@ -25,7 +25,7 @@
  * showing an ad. Apps should implement app-specific code such as pausing a game and turning off app music.
  * @param zoneID The affected zone
  */
-- ( void ) onAdColonyAdStartedInZone:( NSString * )zoneID;
+- (void)onAdColonyAdStartedInZone:(NSString *)zoneID;
 
 /**
  * Notifies your app that an ad completed playing (or never played) and control has been returned to the app.
@@ -34,7 +34,7 @@
  * @param shown Whether an ad was actually shown
  * @param zoneID The affected zone
  */
-- ( void ) onAdColonyAdAttemptFinished:(BOOL)shown inZone:( NSString * )zoneID;
+- (void)onAdColonyAdAttemptFinished:(BOOL)shown inZone:(NSString *)zoneID;
 
 @end
 
@@ -49,12 +49,17 @@ typedef enum {
 
 @interface HZAdColony : HZClassProxy
 
-+ (void) configureWithAppID:(NSString *)appID zoneIDs:(NSArray *)zoneIDs delegate:(id <HZAdColonyDelegate>)del logging:(BOOL)log;
++ (void)configureWithAppID:(NSString *)appID zoneIDs:(NSArray *)zoneIDs delegate:(id <HZAdColonyDelegate>)del logging:(BOOL)log;
 
-+ (HZ_ADCOLONY_ZONE_STATUS) zoneStatusForZone:(NSString *)zoneID;
++ (HZ_ADCOLONY_ZONE_STATUS)zoneStatusForZone:(NSString *)zoneID;
 
-+ (void) playVideoAdForZone:(NSString *)zoneID withDelegate:(id <HZAdColonyDelegate>)del;
++ (void)playVideoAdForZone:(NSString *)zoneID withDelegate:(id<HZAdColonyDelegate>)del;
 
-+ (BOOL) isVirtualCurrencyRewardAvailableForZone:(NSString *)zoneID;
++ (BOOL)isVirtualCurrencyRewardAvailableForZone:(NSString *)zoneID;
+
++ (void)playVideoAdForZone:(NSString *)zoneID
+              withDelegate:(id<HZAdColonyDelegate>)del
+          withV4VCPrePopup:(BOOL)showPrePopup
+          andV4VCPostPopup:(BOOL)showPostPopup;
 
 @end

@@ -87,16 +87,11 @@
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     NSParameterAssert(credentials);
-//    NSError *error;
-//    NSString *const sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:credentials error:&error];
-//    CHECK_CREDENTIALS_ERROR(error);
+    NSError *error;
+    NSString *const sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:credentials error:&error];
+    CHECK_CREDENTIALS_ERROR(error);
     
-    [[self sharedInstance] initializeSDKWithKey:@"TvPRfJ0dxmTLiGoZQi9o3_5zG0d0FVQoOqD38Eh4-9QhQCFrvPdyOkwfkXfz24mRuzU1CB5BLVtmh7aaXDXwxS"];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        HZAppLovinAdapter *shared = [self sharedInstance];
-        NSLog(@"Shared = %@",shared);
-    });
+    [[self sharedInstance] initializeSDKWithKey:sdkKey];
     
     return nil;
 }

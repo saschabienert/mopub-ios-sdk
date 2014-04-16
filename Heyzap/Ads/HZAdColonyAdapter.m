@@ -91,12 +91,25 @@
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeVideo;
+    return HZAdTypeVideo | HZAdTypeIncentivized;
 }
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    return (type & [self supportedAdFormats]) && [HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_ACTIVE;
+    switch (type) {
+        case HZAdTypeInterstitial: {
+            return NO;
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            return [HZAdColony isVirtualCurrencyRewardAvailableForZone:self.incentivizedZoneID];
+            break;
+        }
+        case HZAdTypeVideo: {
+            return [HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_ACTIVE;
+            break;
+        }
+    }
 }
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
@@ -106,7 +119,42 @@
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    [HZAdColony playVideoAdForZone:self.interstitialZoneID withDelegate:self];
+    if (type == HZAdTypeIncentivized) {
+        [HZAdColony playVideoAdForZone:self.incentivizedZoneID
+                          withDelegate:self
+                      withV4VCPrePopup:NO
+                      andV4VCPostPopup:NO];
+    } else {
+        [HZAdColony playVideoAdForZone:self.interstitialZoneID withDelegate:self];
+    }
+}
+
+- (NSError *)lastErrorForAdType:(HZAdType)adType
+{
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            if ([HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_OFF
+                || [HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_NO_ZONE) {
+                return [NSError errorWithDomain:kHZMediatorNameKey code:1 userInfo:@{kHZMediatorNameKey: @"AdColony"}];
+            } else {
+                return nil;
+            }
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            if ([HZAdColony zoneStatusForZone:self.incentivizedZoneID] == HZ_ADCOLONY_ZONE_STATUS_OFF
+                || [HZAdColony zoneStatusForZone:self.incentivizedZoneID] == HZ_ADCOLONY_ZONE_STATUS_NO_ZONE) {
+                return [NSError errorWithDomain:kHZMediatorNameKey code:1 userInfo:@{kHZMediatorNameKey: @"AdColony"}];
+            } else {
+                return nil;
+            }
+            break;
+        }
+        case HZAdTypeVideo: {
+            return nil;
+            break;
+        }
+    }
 }
 
 #pragma clang diagnostic push
