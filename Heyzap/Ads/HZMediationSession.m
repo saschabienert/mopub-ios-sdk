@@ -78,7 +78,7 @@
 
 #pragma mark - Reporting Events to the server
 
-NSString *const kHZImpressionIDKey = @"id";
+NSString *const kHZImpressionIDKey = @"tracking_id";
 NSString *const kHZNetworkKey = @"network";
 
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter
