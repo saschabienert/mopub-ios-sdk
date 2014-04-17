@@ -32,7 +32,6 @@
     dispatch_once(&onceToken, ^{
         proxy = [[HZHeyzapAdapter alloc] init];
         [[HZAdsManager sharedManager] onStart];
-//        [HeyzapAds start]; // This should probably call into start..
     });
     return proxy;
 }
