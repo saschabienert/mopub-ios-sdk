@@ -9,7 +9,7 @@
 #import "HZMediationSession.h"
 #import "HZDictionaryUtils.h"
 #import "HZBaseAdapter.h"
-#import "HZMediationAPIClient.h"
+#import "HZMediationEventAPIClient.h"
 
 @interface HZMediationSession()
 
@@ -34,7 +34,7 @@
         _adType = adType;
         _tag = tag;
         
-        _impressionID = [HZDictionaryUtils objectForKey:@"tracking_id" ofClass:[NSString class] dict:json error:error];
+        _impressionID = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] dict:json error:error];
         // Check error macro for impression ID being nil.
         
         NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:json error:error];
@@ -83,7 +83,7 @@ NSString *const kHZNetworkKey = @"network";
 
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter
 {
-    [[HZMediationAPIClient sharedClient] post:@"click"
+    [[HZMediationEventAPIClient sharedClient] post:@"click"
                                  withParams:@{kHZImpressionIDKey: self.impressionID,
                                               kHZNetworkKey: [adapter name]}
                                     success:^(id json) {
@@ -95,10 +95,10 @@ NSString *const kHZNetworkKey = @"network";
 
 - (void)reportImpressionForAdapter:(HZBaseAdapter *)adapter
 {
-    [[HZMediationAPIClient sharedClient] post:@"impression"
+    [[HZMediationEventAPIClient sharedClient] post:@"impression"
                                  withParams:@{kHZImpressionIDKey: self.impressionID,
                                               kHZNetworkKey: [adapter name]}
-                                    success:^(id json) {
+                                    success:^(id json) {       
         NSLog(@"impression was successful");
     } failure:^(NSError *error) {
         NSLog(@"Failed to report impression to Heyzap, error = %@",error);

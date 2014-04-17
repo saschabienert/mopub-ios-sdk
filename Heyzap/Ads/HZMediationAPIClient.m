@@ -9,7 +9,7 @@
 #import "HZMediationAPIClient.h"
 #import "HeyzapMediation.h"
 
-NSString * const kHZAdsAPIBaseURLString = @"http://med.heyzap.com/";
+NSString * const kHZMediationAPIBaseURLString = @"https://med.heyzap.com/";
 
 @implementation HZMediationAPIClient
 
@@ -18,7 +18,7 @@ NSString * const kHZAdsAPIBaseURLString = @"http://med.heyzap.com/";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         
-        _sharedClient = [[HZMediationAPIClient alloc] initWithBaseURL:[NSURL URLWithString: kHZAdsAPIBaseURLString]];
+        _sharedClient = [[HZMediationAPIClient alloc] initWithBaseURL:[NSURL URLWithString: kHZMediationAPIBaseURLString]];
     });
     
     return _sharedClient;

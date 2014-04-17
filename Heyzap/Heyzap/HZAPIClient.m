@@ -19,7 +19,7 @@
 #import "HZDictionaryUtils.h"
 #import "HeyzapAds.h"
 
-static NSString * const kHZAPIBaseURLString = @"http://sdk.heyzap.com";
+static NSString * const kHZAPIBaseURLString = @"https://sdk.heyzap.com";
 
 //don't change these without also changing them in the test app's view controller
 NSString * const HZAPIClientDidReceiveResponseNotification = @"HZAPIClientDidReceiveResponse";
