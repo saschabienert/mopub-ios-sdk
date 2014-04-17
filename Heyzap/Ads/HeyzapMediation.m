@@ -16,7 +16,7 @@
 #import "HZVungleAdapter.h"
 #import "HZAdMobAdapter.h"
 #import "HZVGVunglePub.h"
-#import "MediationAPIClient.h"
+#import "HZMediationAPIClient.h"
 #import "HZDictionaryUtils.h"
 #import "HZMediationConstants.h"
 #import "HZAdFetchRequest.h"
@@ -89,7 +89,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     
     NSLog(@"The following SDKs have been detected = %@",[[self class] commaSeparatedAdapterList]);
     
-    [[MediationAPIClient sharedClient] get:@"start" withParams:nil success:^(NSDictionary *json) {
+    [[HZMediationAPIClient sharedClient] get:@"start" withParams:nil success:^(NSDictionary *json) {
         self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
                                                      ofClass:[NSString class]
                                                      default:@"zz" // Unknown or invalid; the server also uses this.
@@ -174,7 +174,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                                                                             tag:[HeyzapAds defaultTagName]
                                                             andAdditionalParams:nil];
     
-    [[MediationAPIClient sharedClient] get:@"mediate"
+    [[HZMediationAPIClient sharedClient] get:@"mediate"
                                 withParams:request.createParams
                                    success:^(NSDictionary *json) {
                                        

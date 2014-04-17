@@ -6,19 +6,19 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "MediationAPIClient.h"
+#import "HZMediationAPIClient.h"
 #import "HeyzapMediation.h"
 
 NSString * const kHZAdsAPIBaseURLString = @"http://med.heyzap.com/";
 
-@implementation MediationAPIClient
+@implementation HZMediationAPIClient
 
-+ (MediationAPIClient *)sharedClient {
-    static MediationAPIClient *_sharedClient = nil;
++ (HZMediationAPIClient *)sharedClient {
+    static HZMediationAPIClient *_sharedClient = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         
-        _sharedClient = [[MediationAPIClient alloc] initWithBaseURL:[NSURL URLWithString: kHZAdsAPIBaseURLString]];
+        _sharedClient = [[HZMediationAPIClient alloc] initWithBaseURL:[NSURL URLWithString: kHZAdsAPIBaseURLString]];
     });
     
     return _sharedClient;

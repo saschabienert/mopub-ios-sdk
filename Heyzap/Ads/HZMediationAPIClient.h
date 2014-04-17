@@ -8,8 +8,8 @@
 
 #import "HZAPIClient.h"
 
-@interface MediationAPIClient : HZAPIClient
+@interface HZMediationAPIClient : HZAPIClient
 
-+ (MediationAPIClient *)sharedClient;
++ (HZMediationAPIClient *)sharedClient;
 
 @end
