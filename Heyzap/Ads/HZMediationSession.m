@@ -34,7 +34,7 @@
         _adType = adType;
         _tag = tag;
         
-        _impressionID = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] dict:json error:error];
+        _impressionID = [HZDictionaryUtils objectForKey:@"tracking_id" ofClass:[NSString class] dict:json error:error];
         // Check error macro for impression ID being nil.
         
         NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:json error:error];
