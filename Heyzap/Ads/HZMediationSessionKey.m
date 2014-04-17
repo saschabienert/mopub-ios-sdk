@@ -73,7 +73,8 @@
 
 - (NSString *)debugDescription
 {
-    return [NSString stringWithFormat:@"MediationKey - tag = %@ adType = %lu beenShown = %i",self.tag,self.adType,self.hasBeenShown];
+    return [NSString stringWithFormat:@"MediationKey - tag = %@ adType = %@ beenShown = %i",
+            self.tag,@(self.adType),self.hasBeenShown];
 }
 
 @end

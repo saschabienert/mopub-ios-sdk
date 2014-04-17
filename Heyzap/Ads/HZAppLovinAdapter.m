@@ -29,13 +29,11 @@
 
 @property (nonatomic, strong) NSString *test;
 
-@property (nonatomic, strong) HZALInterstitialAd *currentInterstitial;
 @property (nonatomic, strong) HZALIncentivizedInterstitialAd *currentIncentivizedAd;
 
 @property (nonatomic, strong) HZAppLovinDelegate *interstitialDelegate;
 @property (nonatomic, strong) HZAppLovinDelegate *incentivizedDelegate;
 
-@property (nonatomic) BOOL interstitialIsLoaded;
 @property (nonatomic) BOOL incentivizedIsLoaded;
 
 @property (nonatomic, strong) NSError *interstitialError;
@@ -44,11 +42,6 @@
 @end
 
 @implementation HZAppLovinAdapter
-
-- (NSError *)lastError
-{
-    return nil;
-}
 
 #pragma mark - Initialization
 
@@ -107,13 +100,9 @@
     
     switch (type) {
         case HZAdTypeInterstitial: {
-            if (self.currentInterstitial) {
-                return;
-            }
-            self.currentInterstitial = [[HZALInterstitialAd alloc] initInterstitialAdWithSdk:self.sdk];
             self.interstitialDelegate = [[HZAppLovinDelegate alloc] initWithAdType:HZAdTypeInterstitial delegate:self];
-            self.currentInterstitial.adLoadDelegate = self.interstitialDelegate;
-            self.currentInterstitial.adDisplayDelegate = self.interstitialDelegate;
+            [[self.sdk adService] loadNextAd:[HZALAdSize sizeInterstitial]
+                                   andNotify:self.interstitialDelegate];
             break;
         }
         case HZAdTypeIncentivized: {
@@ -137,7 +126,7 @@
 {
     switch (type) {
         case HZAdTypeInterstitial: {
-            return self.interstitialIsLoaded;
+            return [[self.sdk adService] hasPreloadedAdOfSize:[HZALAdSize sizeInterstitial]];
             break;
         }
         case HZAdTypeIncentivized: {
@@ -153,12 +142,13 @@
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    
     if (type == HZAdTypeIncentivized) {
         [self.currentIncentivizedAd showOver:[[UIApplication sharedApplication] keyWindow]
                                    andNotify:nil];
     } else {
-        [self.currentInterstitial showOver:[[UIApplication sharedApplication] keyWindow]];
+        HZALInterstitialAd *interstitial = [[HZALInterstitialAd alloc] initInterstitialAdWithSdk:self.sdk];
+        interstitial.adDisplayDelegate = self.interstitialDelegate;
+        [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
     }
 }
 
@@ -169,13 +159,11 @@
     
     switch (type) {
         case HZAdTypeIncentivized: {
-//            [self.sdk adService] 
             self.incentivizedIsLoaded = YES;
             self.incentivizedError = nil;
             break;
         }
         case HZAdTypeInterstitial: {
-            self.incentivizedIsLoaded = YES;
             self.interstitialError = nil;
             break;
         }
@@ -197,9 +185,6 @@
             break;
         }
         case HZAdTypeInterstitial: {
-            self.interstitialIsLoaded = NO;
-            self.currentInterstitial = nil;
-            self.interstitialDelegate = nil;
             self.interstitialError = error;
             break;
         }

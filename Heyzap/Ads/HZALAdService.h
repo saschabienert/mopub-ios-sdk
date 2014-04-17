@@ -9,9 +9,12 @@
 #import "HZClassProxy.h"
 
 @class HZALAdSize;
+@protocol HZALAdLoadDelegate;
 
 @interface HZALAdService : HZClassProxy
 
 - (BOOL)hasPreloadedAdOfSize:(HZALAdSize *)adSize;
+
+- (void)loadNextAd:(HZALAdSize *)adSize andNotify:(id<HZALAdLoadDelegate>)delegate;
 
 @end

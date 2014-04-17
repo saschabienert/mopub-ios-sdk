@@ -35,7 +35,6 @@
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol
 {
-    
     if ([NSStringFromProtocol(aProtocol) isEqualToString:@"ALAdLoadDelegate"]) {
         return YES;
     } else if ([NSStringFromProtocol(aProtocol) isEqualToString:@"ALAdDisplayDelegate"]) {
@@ -49,14 +48,11 @@
 
 - (void)adService:(HZALAdService *)adService didLoadAd:(HZALAd *)ad
 {
-    // did load ad for type
-    
     [self.delegate didLoadAdOfType:self.adType];
 }
 
 - (void)adService:(HZALAdService *)adService didFailToLoadAdWithError:(int)code
 {
-    
     [self.delegate didFailToLoadAdOfType:self.adType
                                    error:[NSError errorWithDomain:kHZMediationDomain code:code userInfo:nil]];
 }
@@ -80,7 +76,6 @@
 
 - (BOOL)respondsToSelector:(SEL)aSelector
 {
-    
     return [super respondsToSelector:aSelector];
 }
 

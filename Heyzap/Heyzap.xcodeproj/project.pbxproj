@@ -1982,6 +1982,8 @@
 					"-ObjC",
 					"-force_load",
 					"$(SRCROOT)/vunglepub.embeddedframework/vunglepub.framework/Versions/Current/vunglepub",
+					"-force_load",
+					"$(SRCROOT)/libAppLovinSdk.a",
 				);
 				PRODUCT_NAME = MediationTestApp;
 				PROVISIONING_PROFILE = "65BB83E8-C41C-44AC-A496-91716DB0813D";
@@ -2017,6 +2019,8 @@
 					"-ObjC",
 					"-force_load",
 					"$(SRCROOT)/vunglepub.embeddedframework/vunglepub.framework/Versions/Current/vunglepub",
+					"-force_load",
+					"$(SRCROOT)/libAppLovinSdk.a",
 				);
 				PRODUCT_NAME = MediationTestApp;
 				PROVISIONING_PROFILE = "";
