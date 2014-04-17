@@ -40,8 +40,10 @@ return nil; \
     self = [super init];
     if (self) {
         _originalJSON = json;
+        CHECK_NOT_NIL(_originalJSON);
         _adType = adType;
         _tag = tag;
+        CHECK_NOT_NIL(_tag);
         
         _impressionID = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] dict:json error:error];
         CHECK_NOT_NIL(_impressionID);
