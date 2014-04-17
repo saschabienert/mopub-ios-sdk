@@ -10,6 +10,7 @@
 #import "HZDictionaryUtils.h"
 #import "HZBaseAdapter.h"
 #import "HZMediationEventAPIClient.h"
+#import "HZMediationConstants.h"
 
 @interface HZMediationSession()
 
@@ -26,6 +27,14 @@
 
 @implementation HZMediationSession
 
+#define CHECK_NOT_NIL(value) do { \
+if (value == nil) { \
+*error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil]; \
+return nil; \
+} \
+} while (0)
+
+
 - (instancetype)initWithJSON:(NSDictionary *)json setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error
 {
     self = [super init];
@@ -35,9 +44,13 @@
         _tag = tag;
         
         _impressionID = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] dict:json error:error];
+        CHECK_NOT_NIL(_impressionID);
+        
+            
         // Check error macro for impression ID being nil.
         
         NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:json error:error];
+        CHECK_NOT_NIL(networks);
         // Check error macro for networks being nil/empty
         
         NSMutableOrderedSet *adapters = [NSMutableOrderedSet orderedSet];
