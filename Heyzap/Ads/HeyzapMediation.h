@@ -38,15 +38,7 @@
 // Actually not sure where this will go.
 @property (nonatomic, strong) NSString *userIdentifier;
 
-//- (void)setIncentivizedDelegate:(id<HZIncentivizedAdDelegate>)incentivizedDelegate;
-//- (void)setVideoDelegate:(id<HZAdsDelegate>)videoDelegate;
-//- (void)setInterstitialDelegate:(id<HZAdsDelegate>)interstitialDelegate;
-
 + (NSString *)commaSeparatedAdapterList;
-
-//- (void)setDelegate:(id<HZAdsDelegate>)delegate;
-
-//- (void)setIncentiveDelegate:(id<HZIncentivizedAdDelegate>)delegate;
 
 - (void)setDelegate:(id<HZAdsDelegate>)delegate forAdType:(HZAdType)adType;
 
