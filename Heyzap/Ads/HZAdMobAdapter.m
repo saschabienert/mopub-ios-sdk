@@ -52,8 +52,7 @@
 
 + (BOOL)isSDKAvailable
 {
-    return NO;
-//    return [HZGADInterstitial hzProxiedClassIsAvailable] && [HZGADRequest hzProxiedClassIsAvailable];
+    return [HZGADInterstitial hzProxiedClassIsAvailable] && [HZGADRequest hzProxiedClassIsAvailable];
 }
 
 + (NSString *)name

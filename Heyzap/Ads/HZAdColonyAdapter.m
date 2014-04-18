@@ -11,6 +11,8 @@
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
 
+#import <UIKit/UIKit.h>
+
 @interface HZAdColonyAdapter() <HZAdColonyDelegate, HZAdColonyAdDelegate>
 
 @property (nonatomic, strong) NSString *interstitialZoneID;
@@ -96,6 +98,10 @@
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
+    if (![[[UIApplication sharedApplication] keyWindow] rootViewController]) {
+        NSLog(@"AdColony reqires a root view controller on the keyWindow to show ads. Make sure [[[UIApplication sharedApplication] keyWindow] rootViewController] does not return `nil`.");
+        return NO;
+    }
     switch (type) {
         case HZAdTypeInterstitial: {
             return NO;

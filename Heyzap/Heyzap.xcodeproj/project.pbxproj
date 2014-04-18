@@ -35,7 +35,6 @@
 /* Begin PBXBuildFile section */
 		500F88D918E0F9BE00E5D6F8 /* HZChartboost.h in Headers */ = {isa = PBXBuildFile; fileRef = 500F88D718E0F9BE00E5D6F8 /* HZChartboost.h */; };
 		500F88DA18E0F9BE00E5D6F8 /* HZChartboost.m in Sources */ = {isa = PBXBuildFile; fileRef = 500F88D818E0F9BE00E5D6F8 /* HZChartboost.m */; };
-		500F88DB18E2007900E5D6F8 /* libChartboost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C018DB616B006284AB /* libChartboost.a */; };
 		500F88DF18E202F600E5D6F8 /* HZVGVunglePub.h in Headers */ = {isa = PBXBuildFile; fileRef = 500F88DD18E202F600E5D6F8 /* HZVGVunglePub.h */; };
 		500F88E018E202F600E5D6F8 /* HZVGVunglePub.m in Sources */ = {isa = PBXBuildFile; fileRef = 500F88DE18E202F600E5D6F8 /* HZVGVunglePub.m */; };
 		500F88E418E203A500E5D6F8 /* HZClassProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 500F88E218E203A500E5D6F8 /* HZClassProxy.h */; };
@@ -46,7 +45,6 @@
 		500F88F318E215D000E5D6F8 /* HZGADInterstitial.m in Sources */ = {isa = PBXBuildFile; fileRef = 500F88F118E215D000E5D6F8 /* HZGADInterstitial.m */; };
 		500F88F618E215DD00E5D6F8 /* HZGADRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 500F88F418E215DD00E5D6F8 /* HZGADRequest.h */; };
 		500F88F718E215DD00E5D6F8 /* HZGADRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 500F88F518E215DD00E5D6F8 /* HZGADRequest.m */; };
-		500F890318E21AE300E5D6F8 /* libGoogleAdMobAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 500F890218E21AE300E5D6F8 /* libGoogleAdMobAds.a */; };
 		5011CE3B18DB8F1500604B53 /* HZVungleAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5011CE3918DB8F1500604B53 /* HZVungleAdapter.h */; };
 		5011CE3C18DB8F1500604B53 /* HZVungleAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5011CE3A18DB8F1500604B53 /* HZVungleAdapter.m */; };
 		5011CE4018DB914200604B53 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE3F18DB914200604B53 /* libz.dylib */; };
@@ -153,7 +151,6 @@
 		509F002418EB5D770011EAB3 /* vg_button_close.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002018EB5D770011EAB3 /* vg_button_close.png */; };
 		509F002518EB5D770011EAB3 /* vg_button_mute_plain.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002118EB5D770011EAB3 /* vg_button_mute_plain.png */; };
 		509F002618EB5D770011EAB3 /* vg_button_mute_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002218EB5D770011EAB3 /* vg_button_mute_selected.png */; };
-		509F002918EB5D980011EAB3 /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 509F002818EB5D980011EAB3 /* AdColony.framework */; };
 		509F002D18EB62BC0011EAB3 /* HZMediationSessionKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F002B18EB62BC0011EAB3 /* HZMediationSessionKey.h */; };
 		509F002E18EB62BC0011EAB3 /* HZMediationSessionKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F002C18EB62BC0011EAB3 /* HZMediationSessionKey.m */; };
 		509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */; };
@@ -707,13 +704,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				5011CE7118DBB4B700604B53 /* CoreLocation.framework in Frameworks */,
-				500F890318E21AE300E5D6F8 /* libGoogleAdMobAds.a in Frameworks */,
 				5011CE6F18DBAF1F00604B53 /* Social.framework in Frameworks */,
 				5011CE6D18DBAF1300604B53 /* EventKit.framework in Frameworks */,
 				5011CE6E18DBAF1300604B53 /* EventKitUI.framework in Frameworks */,
 				86B943BA175830AA00B8EACE /* AdSupport.framework in Frameworks */,
 				86234AAD185690510071957B /* MediaPlayer.framework in Frameworks */,
-				509F002918EB5D980011EAB3 /* AdColony.framework in Frameworks */,
 				5011CE4818DB917200604B53 /* CoreMedia.framework in Frameworks */,
 				5011CE4618DB916B00604B53 /* AudioToolbox.framework in Frameworks */,
 				86B941E01758056B00B8EACE /* CoreGraphics.framework in Frameworks */,
@@ -728,7 +723,6 @@
 				86BDB4EB17585A9000D85F29 /* UIKit.framework in Frameworks */,
 				86B943BB175830AA00B8EACE /* QuartzCore.framework in Frameworks */,
 				86B941DE1758056B00B8EACE /* Foundation.framework in Frameworks */,
-				500F88DB18E2007900E5D6F8 /* libChartboost.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1538,7 +1532,7 @@
 						TestTargetID = 86B943291758108700B8EACE;
 					};
 					86B941DB1758056B00B8EACE = {
-						DevelopmentTeam = DG2HGK7LFT;
+						DevelopmentTeam = A722HEF3XB;
 						SystemCapabilities = {
 							com.apple.InAppPurchase = {
 								enabled = 0;
@@ -2224,7 +2218,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2240,11 +2234,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-force_load",
-					"$(SRCROOT)/vunglepub.embeddedframework/vunglepub.framework/Versions/Current/vunglepub",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "65BB83E8-C41C-44AC-A496-91716DB0813D";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";
@@ -2257,7 +2247,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2274,11 +2264,7 @@
 					"$(PROJECT_DIR)",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-force_load",
-					"$(SRCROOT)/vunglepub.embeddedframework/vunglepub.framework/Versions/Current/vunglepub",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";

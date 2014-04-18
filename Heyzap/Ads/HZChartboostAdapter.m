@@ -134,7 +134,7 @@
  */
 
 - (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
-    self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Charboost"}];
+    self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Chartboost"}];
     switch(error){
         case CBLoadErrorInternetUnavailable: {
             NSLog(@"Failed to load Interstitial, no Internet connection !");
