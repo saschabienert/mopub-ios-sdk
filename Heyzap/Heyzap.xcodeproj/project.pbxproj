@@ -928,7 +928,7 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
-		509F003318EB953E0011EAB3 /* Delegate */ = {
+		509F003318EB953E0011EAB3 /* Delegation */ = {
 			isa = PBXGroup;
 			children = (
 				509F00C018ECB4CE0011EAB3 /* DelegateProxy.h */,
@@ -936,7 +936,7 @@
 				509F00BC18ECB4540011EAB3 /* TestDelegate.h */,
 				509F00BD18ECB4540011EAB3 /* TestDelegate.m */,
 			);
-			name = Delegate;
+			name = Delegation;
 			sourceTree = "<group>";
 		};
 		50A36ACD18C9402200FA84F0 /* Integration Tests */ = {
@@ -1279,7 +1279,7 @@
 			isa = PBXGroup;
 			children = (
 				5019224B18EF7492002793A3 /* Mediation To Heyzap Interface */,
-				509F003318EB953E0011EAB3 /* Delegate */,
+				509F003318EB953E0011EAB3 /* Delegation */,
 				50ECA1BC18DB6108006284AB /* Mediation */,
 				86114121185BF688002248EF /* Manager */,
 				866E3A1C18513AAA00B6E431 /* Data */,

@@ -32,10 +32,14 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol HZAdsDelegate;
+
 /** HZVideoAd is responsible for fetching and showing video ads. */
 @interface HZVideoAd : NSObject
 
 #pragma mark - Showing Ads
+
++ (void)setDelegate:(id<HZAdsDelegate>)delegate;
 
 /** Shows a video ad if one is available */
 + (void) show;

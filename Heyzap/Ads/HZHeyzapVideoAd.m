@@ -77,4 +77,11 @@ static int HZVideoAdCreativeIDPin = 0;
     return nil;
 }
 
++ (void)setDelegate:(id<HZAdsDelegate>)delegate
+{
+    if ([[HZAdsManager sharedManager] isEnabled]) {
+        [[HZAdsManager sharedManager] setVideoDelegate:delegate];
+    }
+}
+
 @end

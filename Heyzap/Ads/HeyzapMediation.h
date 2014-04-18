@@ -44,10 +44,10 @@
 
 + (NSString *)commaSeparatedAdapterList;
 
-- (void)setDelegate:(id<HZAdsDelegate>)delegate;
+//- (void)setDelegate:(id<HZAdsDelegate>)delegate;
 
-- (void)setIncentiveDelegate:(id<HZIncentivizedAdDelegate>)delegate;
+//- (void)setIncentiveDelegate:(id<HZIncentivizedAdDelegate>)delegate;
 
-
+- (void)setDelegate:(id<HZAdsDelegate>)delegate forAdType:(HZAdType)adType;
 
 @end

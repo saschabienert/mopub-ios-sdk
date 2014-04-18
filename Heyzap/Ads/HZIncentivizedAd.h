@@ -30,9 +30,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@protocol HZIncentivizedAdDelegate;
+
 #import <Foundation/Foundation.h>
 /** HZIncentivizedAd is responsible for fetching and showing incentivized video ads. */
 @interface HZIncentivizedAd : NSObject
+
++ (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate;
 
 /** Shows an incentivized video ad if one is available */
 + (void) show;
@@ -60,7 +64,6 @@
  *  @param userIdentifier Any unique identifier, like a username, email, or ID that your server-side database uses.
  */
 + (void) setUserIdentifier: (NSString *) userIdentifier;
-
 
 + (void) setCreativeID: (int) creativeID;
 @end

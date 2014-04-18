@@ -21,6 +21,19 @@
 
 @implementation HZIncentivizedAd
 
+#pragma mark - Delegation
+
++ (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate
+{
+    if ([HeyzapMediation isOnlyHeyzapSDK]){
+        [HZHeyzapIncentivizedAd setDelegate:delegate];
+    } else {
+        [[HeyzapMediation sharedInstance] setDelegate:delegate forAdType:HZAdTypeIncentivized];
+    }
+}
+
+#pragma mark - Showing Ads
+
 + (void) show {
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapIncentivizedAd show];
@@ -28,6 +41,8 @@
         [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:[HeyzapAds defaultTagName] completion:nil];
     }
 }
+
+#pragma mark - Fetching Ads
 
 + (void) fetch {
     [self fetchWithCompletion: nil];

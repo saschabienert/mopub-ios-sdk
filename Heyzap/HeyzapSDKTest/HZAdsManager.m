@@ -19,8 +19,18 @@
 #import "HZAdInterstitialViewController.h"
 #import "HeyzapAds.h"
 
+#import "DelegateProxy.h"
+
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
+
+@interface HZAdsManager()
+
+@property (nonatomic, strong) DelegateProxy *interstitialDelegateProxy;
+@property (nonatomic, strong) DelegateProxy *incentivizedDelegateProxy;
+@property (nonatomic, strong) DelegateProxy *videoDelegateProxy;
+
+@end
 
 @implementation HZAdsManager
 
@@ -28,6 +38,9 @@
     self = [super init];
     if (self) {
         _isEnabled = YES;
+        _interstitialDelegateProxy = [[DelegateProxy alloc] init];
+        _incentivizedDelegateProxy = [[DelegateProxy alloc] init];
+        _videoDelegateProxy = [[DelegateProxy alloc] init];
 
         [[self class] runInitialTasks];
     }
@@ -189,10 +202,7 @@
     
     if (!result || error) {
         // Not using the standard method here.
-        if (self.statusDelegate != nil
-            && [self.statusDelegate respondsToSelector: @selector(didFailToShowAdWithTag:andError:)]) {
-            [self.statusDelegate performSelector: @selector(didFailToShowAdWithTag:andError:) withObject: tag withObject: error];
-        }
+        [[self delegateForAdUnit:adUnit] didFailToShowAdWithTag:tag andError:error];
     }
     
     if (completion) {
@@ -245,6 +255,31 @@
         }
     });
     return sharedManager;
+}
+
+#pragma mark - Delegation
+
+- (void)setInterstitialDelegate:(id<HZAdsDelegate>)delegate
+{
+    self.interstitialDelegateProxy.forwardingTarget = delegate;
+}
+- (void)setIncentivizedDelegate:(id<HZAdsDelegate>)delegate
+{
+    self.incentivizedDelegateProxy.forwardingTarget = delegate;
+}
+- (void)setVideoDelegate:(id<HZAdsDelegate>)delegate
+{
+    self.videoDelegateProxy.forwardingTarget = delegate;
+}
+
+- (id)delegateForAdUnit:(NSString *)adUnit {
+    if ([adUnit isEqualToString:@"incentivized"]) {
+        return self.incentivizedDelegateProxy;
+    } else if ([adUnit isEqualToString:@"video"]) {
+        return self.videoDelegateProxy;
+    } else {
+        return self.interstitialDelegateProxy;
+    }
 }
 
 @end

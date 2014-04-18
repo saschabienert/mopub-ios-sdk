@@ -131,25 +131,6 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
  */
 @interface HeyzapAds : NSObject
 
-//+ (void)setInterstitialDelegate:(id<HZAdsDelegate>)delegate;
-//+ (void)setVideoDelegate:(id<HZAdsDelegate>)delegate;
-//+ (void)setIncentivizedDelegate:(id<HZIncentivizedAdDelegate>)delegate;
-
-
-/**
- *  Sets the object to receive HZAdsDelegate callbacks
- *
- *  @param delegate An object conforming to the HZAdsDelegate protocol
- */
-+ (void) setDelegate: (id<HZAdsDelegate>) delegate;
-
-/**
- *  Sets the object to receive HZIncentivizedAdDelegate callbacks
- *
- *  @param delegate An object conforing to the HZIncentivizedAdDelegate protocol
- */
-+ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate;
-
 + (void) startWithAppStoreID: (int) appID andOptions: (HZAdOptions) options DEPRECATED_ATTRIBUTE;
 + (void) startWithOptions:(HZAdOptions)options andFramework: (NSString *) framework;
 + (void) startWithOptions: (HZAdOptions) options; //Only use this method if you are using the Social SDK.

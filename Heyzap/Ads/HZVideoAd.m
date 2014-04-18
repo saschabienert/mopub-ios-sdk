@@ -18,6 +18,17 @@
 
 @implementation HZVideoAd
 
+#pragma mark - Delegation
+
++ (void)setDelegate:(id<HZAdsDelegate>)delegate
+{
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [HZHeyzapVideoAd setDelegate:delegate];
+    } else {
+        [[HeyzapMediation sharedInstance] setDelegate:delegate forAdType:HZAdTypeVideo];
+    }
+}
+
 #pragma mark - Showing
 
 + (void) show {

@@ -8,7 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol HZIncentivizedAdDelegate;
+
 @interface HZHeyzapIncentivizedAd : NSObject
+
++ (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate;
 
 /** Shows an incentivized video ad if one is available */
 + (void) show;

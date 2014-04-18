@@ -37,6 +37,8 @@ return nil; \
 
 - (instancetype)initWithJSON:(NSDictionary *)json setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error
 {
+    NSParameterAssert(error != NULL);
+    
     self = [super init];
     if (self) {
         _originalJSON = json;

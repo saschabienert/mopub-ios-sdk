@@ -83,15 +83,9 @@
     
     if (self.ad.adUnit != nil && [self.ad.adUnit isEqualToString: @"incentivized"]) {
         if (self.didFinishVideo) {
-            if ([HZAdsManager sharedManager].incentivizedDelegate != nil
-                && [[HZAdsManager sharedManager].incentivizedDelegate respondsToSelector:@selector(didCompleteAd)]) {
-                [[HZAdsManager sharedManager].incentivizedDelegate didCompleteAd];
-            }
+            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didCompleteAd];
         } else {
-            if ([HZAdsManager sharedManager].incentivizedDelegate != nil
-                && [[HZAdsManager sharedManager].incentivizedDelegate respondsToSelector:@selector(didFailToCompleteAd)]) {
-                [[HZAdsManager sharedManager].incentivizedDelegate didFailToCompleteAd];
-            }
+            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFailToCompleteAd];
         }
         
     }
@@ -218,10 +212,8 @@
 - (void) onActionHide: (UIView *) sender {
     switch (sender.tag) {
         case kHZVideoViewTag:
-            if (self.didStartVideo
-                && [HZAdsManager sharedManager].statusDelegate != nil
-                && [[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(didFinishAudio)]) {
-                [[HZAdsManager sharedManager].statusDelegate didFinishAudio];
+            if (self.didStartVideo) {
+                [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFinishAudio];
             }
             
             self.didStartVideo = NO;
@@ -243,10 +235,7 @@
 - (void) onActionShow: (UIView *) sender {
     if (sender.tag == kHZVideoViewTag) {
         self.didStartVideo = YES;
-        if ([HZAdsManager sharedManager].statusDelegate != nil
-            && [[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(willStartAudio)]) {
-            [[HZAdsManager sharedManager].statusDelegate willStartAudio];
-        }
+        [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] willStartAudio];
         
         [self didImpression];
     }
@@ -272,10 +261,7 @@
 - (void) onActionCompleted: (UIView *) sender {
     if (sender.tag == kHZVideoViewTag) {
         if (self.didStartVideo) {
-            if ([HZAdsManager sharedManager].statusDelegate != nil
-                && [[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(didFinishAudio)]) {
-                [[HZAdsManager sharedManager].statusDelegate didFinishAudio];
-            }
+            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFinishAudio];
         }
     
         self.didStartVideo = NO;
@@ -287,10 +273,7 @@
 
 - (void) onActionError: (UIView *) sender {
     if (sender.tag == kHZVideoViewTag && self.didStartVideo) {
-        if ([HZAdsManager sharedManager].statusDelegate != nil
-            && [[HZAdsManager sharedManager].statusDelegate respondsToSelector:@selector(didFinishAudio)]) {
-            [[HZAdsManager sharedManager].statusDelegate didFinishAudio];
-        }
+        [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFinishAudio];
     }
     
     if (sender.tag == kHZVideoViewTag && self.ad.postRollInterstitial) {

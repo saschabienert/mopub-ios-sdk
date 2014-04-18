@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol HZAdsDelegate;
+
 @interface HZHeyzapVideoAd : NSObject
 
 /**
@@ -44,5 +46,7 @@
 
 # pragma mark - Testing;
 + (void) setCreativeID:(int)creativeID;
+
++ (void)setDelegate:(id<HZAdsDelegate>)delegate;
 
 @end

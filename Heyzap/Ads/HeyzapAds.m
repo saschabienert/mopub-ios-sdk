@@ -84,22 +84,6 @@
     [[HZAdsManager sharedManager] setOptions: options];
 }
 
-+ (void) setDelegate: (id<HZAdsDelegate>) delegate {
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HZAdsManager sharedManager] setStatusDelegate: delegate];
-    } else {
-        [[HeyzapMediation sharedInstance] setDelegate:delegate];
-    }
-}
-
-+ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate {
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HZAdsManager sharedManager] setIncentivizedDelegate: delegate];
-    } else {
-        [[HeyzapMediation sharedInstance] setIncentiveDelegate:delegate];
-    }
-}
-
 + (void) setFramework: (NSString *) framework {
     [[HZAdsManager sharedManager] setFramework: framework];
 }

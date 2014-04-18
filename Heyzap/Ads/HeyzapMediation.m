@@ -40,19 +40,20 @@
 
 @interface HeyzapMediation() <HZMediationAdapterDelegate>
 
-@property (nonatomic, strong) NSSet *setupMediators; // Make this an NSSet when we get data from the server
+@property (nonatomic, strong) NSSet *setupMediators;
 
 HZAdType hzAdTypeFromString(NSString *adUnit);
 NSString * NSStringFromAdType(HZAdType type);
-
-@property (nonatomic, strong) DelegateProxy *adsDelegateProxy;
-@property (nonatomic, strong) DelegateProxy *incentivizedDelegateProxy;
 
 @property (nonatomic, strong) NSMutableDictionary *sessionDictionary;
 
 @property (nonatomic, strong) NSString *countryCode;
 
 @property (nonatomic) BOOL hasBeenStarted;
+
+@property (nonatomic, strong) DelegateProxy *interstitialDelegateProxy;
+@property (nonatomic, strong) DelegateProxy *incentivizedDelegateProxy;
+@property (nonatomic, strong) DelegateProxy *videoDelegateProxy;
 
 @end
 
@@ -68,13 +69,22 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         mediator = [[HeyzapMediation alloc] init];
-        mediator.setupMediators = [[NSMutableSet alloc] init];
-        mediator.adsDelegateProxy = [[DelegateProxy alloc] init];
-        mediator.incentivizedDelegateProxy = [[DelegateProxy alloc] init];
-        mediator.sessionDictionary = [NSMutableDictionary dictionary];
     });
     
     return mediator;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _setupMediators = [[NSMutableSet alloc] init];
+        _sessionDictionary = [NSMutableDictionary dictionary];
+        _interstitialDelegateProxy = [[DelegateProxy alloc] init];
+        _incentivizedDelegateProxy = [[DelegateProxy alloc] init];
+        _videoDelegateProxy = [[DelegateProxy alloc] init];
+    }
+    return self;
 }
 
 #pragma mark - Setup
@@ -196,7 +206,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                                        
                                    } failure:^(NSError *error) {
                                        if (completion) { completion(NO,[NSError errorWithDomain:@"heyzap" code:1 userInfo:@{NSUnderlyingErrorKey: error}]); }
-                                       [self sendFailureMessagesForTag:tag wasAttemptingToShow:showImmediately];
+                                       [self sendFailureMessagesForTag:tag adType:adType wasAttemptingToShow:showImmediately];
                                        NSLog(@"Error! Failed to get the list of networks to mediate from Heyzap. Mediation won't be possible. Error = %@,",error);
                                    }];
 }
@@ -245,7 +255,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                 successful = YES;
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if (completion) { completion(YES,nil); }
-                    [self.adsDelegateProxy didReceiveAdWithTag:tag];
+                    [[self delegateForAdType:type] didReceiveAdWithTag:tag];
                 });
                 if (showImmediately) {
                     dispatch_sync(dispatch_get_main_queue(), ^{
@@ -272,6 +282,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
             dispatch_sync(dispatch_get_main_queue(), ^{
                 if (completion) { completion(NO,[NSError errorWithDomain:@"heyzap" code:1 userInfo:nil]); }
                 [self sendFailureMessagesForTag:tag
+                                         adType:type
                             wasAttemptingToShow:showImmediately];
             });
         }
@@ -287,17 +298,17 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     
     [adapter showAdForType:session.adType tag:session.tag];
     [session reportImpressionForAdapter:adapter];
-    [self.adsDelegateProxy didShowAdWithTag:session.tag];
+    [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
 }
 
 
 // Possibly this should take the completion block param too, and a potential NSUnderlying error?
-- (void)sendFailureMessagesForTag:(NSString *)tag wasAttemptingToShow:(BOOL)tryingToShow
+- (void)sendFailureMessagesForTag:(NSString *)tag adType:(HZAdType)adType wasAttemptingToShow:(BOOL)tryingToShow
 {
-    [self.adsDelegateProxy didFailToReceiveAdWithTag:tag];
+    [[self delegateForAdType:adType] didFailToReceiveAdWithTag:tag];
     if (tryingToShow) {
-        [self.adsDelegateProxy didFailToShowAdWithTag:tag
-                                             andError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil]];
+        [[self delegateForAdType:adType] didFailToShowAdWithTag:tag
+                                                       andError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil]];
     }
 }
 
@@ -354,7 +365,7 @@ NSString * const kHZDataKey = @"data";
         NSLog(@"Did lookup session for dismiss");
         [self.sessionDictionary removeObjectForKey:key];
         
-        [self.adsDelegateProxy didHideAdWithTag:key.tag];
+        [[self delegateForAdType:key.adType] didHideAdWithTag:key.tag];
     }
 }
 
@@ -362,12 +373,12 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
-    [self.incentivizedDelegateProxy didCompleteAd];
+    [[self delegateForAdType:HZAdTypeIncentivized] didCompleteAd];
 }
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
-    [self.incentivizedDelegateProxy didFailToCompleteAd];
+    [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAd];
 }
 
 #pragma mark - Enum Support
@@ -437,14 +448,42 @@ HZAdType hzAdTypeFromString(NSString *adUnit) {
     return [availableNonHeyzapAdapters count] == 0;
 }
 
-- (void)setDelegate:(id<HZAdsDelegate>)delegate
+#pragma mark - Delegation
+
+- (void)setDelegate:(id<HZAdsDelegate>)delegate forAdType:(HZAdType)adType
 {
-    self.adsDelegateProxy.forwardingTarget = delegate;
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            self.interstitialDelegateProxy.forwardingTarget = delegate;
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            self.incentivizedDelegateProxy.forwardingTarget = delegate;
+            break;
+        }
+        case HZAdTypeVideo: {
+            self.videoDelegateProxy.forwardingTarget = delegate;
+            break;
+        }
+    }
 }
 
-- (void)setIncentiveDelegate:(id<HZIncentivizedAdDelegate>)delegate
+- (id)delegateForAdType:(HZAdType)adType
 {
-    self.incentivizedDelegateProxy.forwardingTarget = delegate;
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            return self.interstitialDelegateProxy;
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            return self.incentivizedDelegateProxy;
+            break;
+        }
+        case HZAdTypeVideo: {
+            return self.videoDelegateProxy;
+            break;
+        }
+    }
 }
 
 @end

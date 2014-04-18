@@ -21,8 +21,10 @@
 @implementation HZInterstitialAd
 
 + (void) setDelegate: (id<HZAdsDelegate>) delegate {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        [[HZAdsManager sharedManager] setStatusDelegate: delegate];
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [HZHeyzapInterstitialAd setDelegate:delegate];
+    } else {
+        [[HeyzapMediation sharedInstance] setDelegate:delegate forAdType:HZAdTypeInterstitial];
     }
 }
 

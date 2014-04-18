@@ -24,7 +24,7 @@
  *  @param setupMediators Currently setup adapters. Required.
  *  @param adType         Required
  *  @param tag            Required.
- *  @param error          Out param signalling there was an error.
+ *  @param error          Out param signalling there was an error. Must not be NULL.
  *
  *  @return nil if there was an error, otherwise a valid session.
  */

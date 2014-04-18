@@ -196,8 +196,9 @@ const CGFloat kLeftMargin = 10;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [HeyzapAds setDelegate:self];
-    [HeyzapAds setIncentiveDelegate:self];
+    [HZInterstitialAd setDelegate:self];
+    [HZVideoAd setDelegate:self];
+    [HZIncentivizedAd setDelegate:self];
     
     self.view.accessibilityLabel = kViewAccessibilityLabel;
     
