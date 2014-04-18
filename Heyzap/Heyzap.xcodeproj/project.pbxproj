@@ -409,6 +409,7 @@
 		501F9D7318989B8A00127E49 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		502BE84D18CD530D00EB6415 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
 		502BE84E18CD530D00EB6415 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
+		503CD2341901A86D00667C0D /* HZALAdVideoPlaybackDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZALAdVideoPlaybackDelegate.h; sourceTree = "<group>"; };
 		5045147D18B58C5A00E00E6C /* SDCSegmentedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCSegmentedViewController.h; sourceTree = "<group>"; };
 		5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCSegmentedViewController.m; sourceTree = "<group>"; };
 		504514C418B592CE00E00E6C /* ServerSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerSelectionViewController.h; sourceTree = "<group>"; };
@@ -843,6 +844,15 @@
 			name = "Mediation To Heyzap Interface";
 			sourceTree = "<group>";
 		};
+		503CD2351901A87300667C0D /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				503CD2341901A86D00667C0D /* HZALAdVideoPlaybackDelegate.h */,
+				50AC60AF18FC79E80046EBC6 /* HZALAdRewardDelegate.h */,
+			);
+			name = Protocols;
+			sourceTree = "<group>";
+		};
 		504E9C9618C9322100402BC3 /* Ads Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -1001,6 +1011,7 @@
 		50B46B2418F89C66005155B8 /* Proxies */ = {
 			isa = PBXGroup;
 			children = (
+				503CD2351901A87300667C0D /* Protocols */,
 				50B46B0F18F862DA005155B8 /* HZALSdk.h */,
 				50B46B1018F862DA005155B8 /* HZALSdk.m */,
 				50B46B1318F87B2C005155B8 /* HZALInterstitialAd.h */,
@@ -1009,7 +1020,6 @@
 				50B46B1818F88C2D005155B8 /* HZALAdService.m */,
 				50B46B1B18F88C6B005155B8 /* HZALAd.h */,
 				50B46B1C18F88C6B005155B8 /* HZALAd.m */,
-				50AC60AF18FC79E80046EBC6 /* HZALAdRewardDelegate.h */,
 				50B46B2518F8B241005155B8 /* HZALIncentivizedInterstitialAd.h */,
 				50B46B2618F8B241005155B8 /* HZALIncentivizedInterstitialAd.m */,
 				50AC611C18FDD3E70046EBC6 /* HZALAdSize.h */,

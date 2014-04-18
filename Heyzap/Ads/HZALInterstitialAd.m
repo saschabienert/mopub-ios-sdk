@@ -13,6 +13,7 @@
 
 @dynamic adLoadDelegate;
 @dynamic adDisplayDelegate;
+@dynamic adVideoPlaybackDelegate;
 
 + (NSString *)hzProxiedClassName
 {

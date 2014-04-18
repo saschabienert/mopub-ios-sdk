@@ -11,6 +11,7 @@
 
 @class HZALAdService;
 @class HZALAd;
+@protocol HZALAdVideoPlaybackDelegate;
 
 @protocol HZALAdLoadDelegate <NSObject>
 
@@ -36,7 +37,7 @@
 
 @property (strong, atomic) id<HZALAdLoadDelegate> adLoadDelegate;
 @property (strong, atomic) id<HZALAdDisplayDelegate> adDisplayDelegate;
-//@property (strong, atomic) id<ALAdVideoPlaybackDelegate> adVideoPlaybackDelegate;
+@property (strong, atomic) id<HZALAdVideoPlaybackDelegate> adVideoPlaybackDelegate;
 
 - (id)initInterstitialAdWithSdk:(HZALSdk *)anSdk;
 
