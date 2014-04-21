@@ -83,6 +83,8 @@
 		5019224F18EF74CC002793A3 /* HZHeyzapIncentivizedAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 5019224D18EF74CC002793A3 /* HZHeyzapIncentivizedAd.m */; };
 		501F9D7418989B8A00127E49 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
 		502BE84F18CD530D00EB6415 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 502BE84E18CD530D00EB6415 /* TestUtilities.m */; };
+		503CD2381901E29700667C0D /* HZHeyzapMediationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 503CD2361901E29700667C0D /* HZHeyzapMediationDelegate.h */; };
+		503CD2391901E29700667C0D /* HZHeyzapMediationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 503CD2371901E29700667C0D /* HZHeyzapMediationDelegate.m */; };
 		5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */; };
 		504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C518B592CE00E00E6C /* ServerSelectionViewController.m */; };
 		504514C918B5A59100E00E6C /* BaseTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C818B5A59100E00E6C /* BaseTestAppViewController.m */; };
@@ -410,6 +412,8 @@
 		502BE84D18CD530D00EB6415 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
 		502BE84E18CD530D00EB6415 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
 		503CD2341901A86D00667C0D /* HZALAdVideoPlaybackDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZALAdVideoPlaybackDelegate.h; sourceTree = "<group>"; };
+		503CD2361901E29700667C0D /* HZHeyzapMediationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapMediationDelegate.h; sourceTree = "<group>"; };
+		503CD2371901E29700667C0D /* HZHeyzapMediationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapMediationDelegate.m; sourceTree = "<group>"; };
 		5045147D18B58C5A00E00E6C /* SDCSegmentedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCSegmentedViewController.h; sourceTree = "<group>"; };
 		5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCSegmentedViewController.m; sourceTree = "<group>"; };
 		504514C418B592CE00E00E6C /* ServerSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerSelectionViewController.h; sourceTree = "<group>"; };
@@ -801,6 +805,8 @@
 			children = (
 				50ECA1D018DB7373006284AB /* HZHeyzapAdapter.h */,
 				50ECA1D118DB7373006284AB /* HZHeyzapAdapter.m */,
+				503CD2361901E29700667C0D /* HZHeyzapMediationDelegate.h */,
+				503CD2371901E29700667C0D /* HZHeyzapMediationDelegate.m */,
 			);
 			name = Heyzap;
 			sourceTree = "<group>";
@@ -1394,6 +1400,7 @@
 				866E3A0C18512F2500B6E431 /* HZAdViewController.h in Headers */,
 				500F88EA18E210D400E5D6F8 /* HZAdColony.h in Headers */,
 				50B46B2718F8B241005155B8 /* HZALIncentivizedInterstitialAd.h in Headers */,
+				503CD2381901E29700667C0D /* HZHeyzapMediationDelegate.h in Headers */,
 				50D1598F18F34B0900734ABB /* HZHeyzapVideoAd.h in Headers */,
 				50ECA1D218DB7373006284AB /* HZHeyzapAdapter.h in Headers */,
 				5046CE8A18E3B0C3000395AA /* HZDispatch.h in Headers */,
@@ -1852,6 +1859,7 @@
 				866E39FC1850161900B6E431 /* HZVideoAdModel.m in Sources */,
 				5011CE3C18DB8F1500604B53 /* HZVungleAdapter.m in Sources */,
 				50B46B2818F8B241005155B8 /* HZALIncentivizedInterstitialAd.m in Sources */,
+				503CD2391901E29700667C0D /* HZHeyzapMediationDelegate.m in Sources */,
 				50B46B1618F87B2C005155B8 /* HZALInterstitialAd.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

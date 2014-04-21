@@ -115,11 +115,13 @@
                                          code:1
                                      userInfo:@{kHZMediatorNameKey: @"AdMob",
                                                 NSUnderlyingErrorKey: error}];
+    self.currentInterstitial = nil;
 }
 
 - (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
 {
     [self.delegate adapterDidDismissAd:self];
+    self.currentInterstitial = nil;
 }
 
 // As far as I can tell, this means a click.

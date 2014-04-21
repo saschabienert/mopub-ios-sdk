@@ -9,6 +9,20 @@
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
 
+@protocol HZHeyzapDelegateReceiver <NSObject>
+
+- (void)didLoadAdOfAdType:(HZAdType)type;
+- (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error;
+
+- (void)didClickAd;
+- (void)didDismissAd;
+
+- (void)didCompleteIncentivizedAd;
+- (void)didFailToCompleteIncentivizedAd;
+
+
+@end
+
 @interface HZHeyzapAdapter : HZBaseAdapter
 
 @end

@@ -33,11 +33,6 @@
 
 + (BOOL)isOnlyHeyzapSDK;
 
-#pragma mark - Incentivized
-
-// Actually not sure where this will go.
-@property (nonatomic, strong) NSString *userIdentifier;
-
 + (NSString *)commaSeparatedAdapterList;
 
 - (void)setDelegate:(id<HZAdsDelegate>)delegate forAdType:(HZAdType)adType;

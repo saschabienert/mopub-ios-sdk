@@ -19,7 +19,7 @@
 /**
  *  This class needs the most work. I should use delegate callbacks to get errors but thats it I think.
  */
-@interface HZHeyzapAdapter()
+@interface HZHeyzapAdapter() <HZHeyzapDelegateReceiver>
 
 @end
 
@@ -101,6 +101,62 @@
             break;
         }
     }
+}
+
+#pragma mark - HZHeyzapDelegateReceiver
+
+- (void)didLoadAdOfAdType:(HZAdType)type
+{
+    switch (type) {
+        case HZAdTypeInterstitial: {
+            self.lastInterstitialError = nil;
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            self.lastIncentivizedError = nil;
+            break;
+        }
+        case HZAdTypeVideo: {
+            self.lastVideoError = nil;
+            break;
+        }
+    }
+}
+
+- (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error
+{
+    switch (type) {
+        case HZAdTypeInterstitial: {
+            self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            self.lastIncentivizedError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
+            break;
+        }
+        case HZAdTypeVideo: {
+            self.lastVideoError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
+            break;
+        }
+    }
+}
+
+- (void)didClickAd
+{
+    [self.delegate adapterWasClicked:self];
+}
+- (void)didDismissAd
+{
+    [self.delegate adapterDidDismissAd:self];
+}
+
+- (void)didCompleteIncentivizedAd
+{
+    [self.delegate adapterDidCompleteIncentivizedAd:self];
+}
+- (void)didFailToCompleteIncentivizedAd
+{
+    [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
 }
 
 @end
