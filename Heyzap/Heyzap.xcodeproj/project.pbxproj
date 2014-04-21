@@ -193,8 +193,6 @@
 		50AC60B318FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AC60B118FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m */; };
 		50AC611E18FDD3E70046EBC6 /* HZALAdSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 50AC611C18FDD3E70046EBC6 /* HZALAdSize.h */; };
 		50AC611F18FDD3E70046EBC6 /* HZALAdSize.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AC611D18FDD3E70046EBC6 /* HZALAdSize.m */; };
-		50B3AAC819007E2600E7C467 /* HZMediationEventAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B3AAC619007E2600E7C467 /* HZMediationEventAPIClient.h */; };
-		50B3AAC919007E2600E7C467 /* HZMediationEventAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B3AAC719007E2600E7C467 /* HZMediationEventAPIClient.m */; };
 		50B46AFA18F85F4F005155B8 /* libAppLovinSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50B46AF918F85F4F005155B8 /* libAppLovinSdk.a */; };
 		50B46B0D18F862B3005155B8 /* HZAppLovinAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B46B0B18F862B3005155B8 /* HZAppLovinAdapter.h */; };
 		50B46B0E18F862B3005155B8 /* HZAppLovinAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B46B0C18F862B3005155B8 /* HZAppLovinAdapter.m */; };
@@ -474,8 +472,6 @@
 		50AC60B118FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZIncentivizedAppLovinDelegate.m; sourceTree = "<group>"; };
 		50AC611C18FDD3E70046EBC6 /* HZALAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZALAdSize.h; sourceTree = "<group>"; };
 		50AC611D18FDD3E70046EBC6 /* HZALAdSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZALAdSize.m; sourceTree = "<group>"; };
-		50B3AAC619007E2600E7C467 /* HZMediationEventAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationEventAPIClient.h; sourceTree = "<group>"; };
-		50B3AAC719007E2600E7C467 /* HZMediationEventAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationEventAPIClient.m; sourceTree = "<group>"; };
 		50B46AF918F85F4F005155B8 /* libAppLovinSdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAppLovinSdk.a; sourceTree = "<group>"; };
 		50B46AFB18F85F5B005155B8 /* ALAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAd.h; sourceTree = "<group>"; };
 		50B46AFC18F85F5B005155B8 /* ALAdDisplayDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdDisplayDelegate.h; sourceTree = "<group>"; };
@@ -765,12 +761,12 @@
 		500F88E118E2039A00E5D6F8 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */,
+				509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */,
 				5046CE8418E3545E000395AA /* HZMediationConstants.h */,
 				5046CE8518E3545E000395AA /* HZMediationConstants.m */,
 				500F88E218E203A500E5D6F8 /* HZClassProxy.h */,
 				500F88E318E203A500E5D6F8 /* HZClassProxy.m */,
-				509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */,
-				509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -888,8 +884,6 @@
 			children = (
 				505286DF18E61BD90060C210 /* HZMediationAPIClient.h */,
 				505286E018E61BD90060C210 /* HZMediationAPIClient.m */,
-				50B3AAC619007E2600E7C467 /* HZMediationEventAPIClient.h */,
-				50B3AAC719007E2600E7C467 /* HZMediationEventAPIClient.m */,
 			);
 			name = Networking;
 			sourceTree = "<group>";
@@ -1045,6 +1039,8 @@
 		50ECA1BC18DB6108006284AB /* Mediation */ = {
 			isa = PBXGroup;
 			children = (
+				50ECA1C318DB618E006284AB /* HeyzapMediation.h */,
+				50ECA1C418DB618E006284AB /* HeyzapMediation.m */,
 				509F002A18EB62AE0011EAB3 /* Models */,
 				50ECA1CF18DB7340006284AB /* Adapters */,
 				505286DE18E61BAD0060C210 /* Networking */,
@@ -1122,8 +1118,6 @@
 			children = (
 				86B9434E1758181100B8EACE /* HeyzapAds.h */,
 				86B9434F1758181100B8EACE /* HeyzapAds.m */,
-				50ECA1C318DB618E006284AB /* HeyzapMediation.h */,
-				50ECA1C418DB618E006284AB /* HeyzapMediation.m */,
 				866E39F11850089C00B6E431 /* HZIncentivizedAd.h */,
 				866E39F21850089C00B6E431 /* HZIncentivizedAd.m */,
 				86B09B82175958A50045AA54 /* HZInterstitialAd.h */,
@@ -1427,7 +1421,6 @@
 				860FD47E187CC056008A35FD /* HZAdFetchRequest.h in Headers */,
 				505286E118E61BD90060C210 /* HZMediationAPIClient.h in Headers */,
 				866E3A101851302C00B6E431 /* HZAdInterstitialViewController.h in Headers */,
-				50B3AAC819007E2600E7C467 /* HZMediationEventAPIClient.h in Headers */,
 				86234AB018581B800071957B /* HZVideoControlView.h in Headers */,
 				50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */,
 				86CD0E8E17BB0C070005BD3D /* HZAdsAPIClient.h in Headers */,
@@ -1789,7 +1782,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50B3AAC919007E2600E7C467 /* HZMediationEventAPIClient.m in Sources */,
 				8641E1F018ADE0FE00CAAEE0 /* HZDevice.m in Sources */,
 				8641E1F218ADE0FE00CAAEE0 /* HZImageView.m in Sources */,
 				500F88EB18E210D400E5D6F8 /* HZAdColony.m in Sources */,

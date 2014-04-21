@@ -125,6 +125,7 @@
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
+    [self.delegate adapterWillPlayAudio:self];
     if (type == HZAdTypeIncentivized) {
         [HZAdColony playVideoAdForZone:self.incentivizedZoneID
                           withDelegate:self
@@ -180,6 +181,14 @@
 
 - (void)onAdColonyAdAttemptFinished:(BOOL)shown inZone:(NSString *)zoneID
 {
+    if ([zoneID isEqualToString:self.incentivizedZoneID]) {
+        if (shown) {
+            [self.delegate adapterDidCompleteIncentivizedAd:self];
+        } else {
+            [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+        }
+    }
+    [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
 }
 

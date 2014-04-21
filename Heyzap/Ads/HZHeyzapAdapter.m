@@ -159,4 +159,14 @@
     [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
 }
 
+- (void)willPlayAudio
+{
+    [self.delegate adapterWillPlayAudio:self];
+}
+
+- (void)didFinishPlayingAudio
+{
+    [self.delegate adapterDidFinishPlayingAudio:self];
+}
+
 @end

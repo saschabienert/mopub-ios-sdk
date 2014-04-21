@@ -66,11 +66,11 @@
 
 - (void)willStartAudio
 {
-    
+    [self.delegate willPlayAudio];
 }
 
-- (void) didFinishAudio
+- (void)didFinishAudio
 {
-    
+    [self.delegate didFinishPlayingAudio];
 }
 @end

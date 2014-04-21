@@ -18,6 +18,7 @@
 #import "HZALAd.h"
 #import "HZALIncentivizedInterstitialAd.h"
 #import "HZALAdSize.h"
+#import "HZIncentivizedAppLovinDelegate.h"
 
 /**
  *  AppLovin's SDK is split between using (singletons+class methods) vs instances. Inexplicably, the former group is only available when you store the SDK Key in your info.plist file, so we need to use the instance methods.
@@ -32,7 +33,7 @@
 @property (nonatomic, strong) HZALIncentivizedInterstitialAd *currentIncentivizedAd;
 
 @property (nonatomic, strong) HZAppLovinDelegate *interstitialDelegate;
-@property (nonatomic, strong) HZAppLovinDelegate *incentivizedDelegate;
+@property (nonatomic, strong) HZIncentivizedAppLovinDelegate *incentivizedDelegate;
 
 @property (nonatomic) BOOL incentivizedIsLoaded;
 
@@ -110,7 +111,7 @@
                 return;
             }
             self.currentIncentivizedAd = [[HZALIncentivizedInterstitialAd alloc] initIncentivizedInterstitialWithSdk:self.sdk];
-            self.incentivizedDelegate = [[HZAppLovinDelegate alloc] initWithAdType:HZAdTypeIncentivized delegate:self];
+            self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithAdType:HZAdTypeIncentivized delegate:self];
             [self.currentIncentivizedAd preloadAndNotify:self.incentivizedDelegate];
             
             break;
@@ -144,7 +145,7 @@
 {
     if (type == HZAdTypeIncentivized) {
         [self.currentIncentivizedAd showOver:[[UIApplication sharedApplication] keyWindow]
-                                   andNotify:nil];
+                                   andNotify:self.incentivizedDelegate];
     } else {
         HZALInterstitialAd *interstitial = [[HZALInterstitialAd alloc] initInterstitialAdWithSdk:self.sdk];
         interstitial.adDisplayDelegate = self.interstitialDelegate;
@@ -202,6 +203,24 @@
 - (void)didDismissAd
 {
     [self.delegate adapterDidDismissAd:self];
+}
+
+- (void)didCompleteIncentivized
+{
+    [self.delegate adapterDidCompleteIncentivizedAd:self];
+}
+- (void)didFailToCompleteIncentivized
+{
+    [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+}
+
+- (void)willPlayAudio
+{
+    [self.delegate adapterWillPlayAudio:self];
+}
+- (void)didFinishAudio
+{
+    [self.delegate adapterDidFinishPlayingAudio:self];
 }
 
 @end

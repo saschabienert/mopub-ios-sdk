@@ -17,6 +17,12 @@
 - (void)didClickAd;
 - (void)didDismissAd;
 
+- (void)willPlayAudio;
+- (void)didFinishAudio;
+
+- (void)didCompleteIncentivized;
+- (void)didFailToCompleteIncentivized;
+
 
 @end
 

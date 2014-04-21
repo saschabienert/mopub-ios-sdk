@@ -20,6 +20,9 @@
 - (void)didCompleteIncentivizedAd;
 - (void)didFailToCompleteIncentivizedAd;
 
+- (void)willPlayAudio;
+- (void)didFinishPlayingAudio;
+
 
 @end
 

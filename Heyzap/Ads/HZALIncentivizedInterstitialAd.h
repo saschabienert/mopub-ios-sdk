@@ -13,10 +13,12 @@
 @protocol HZALAdLoadDelegate;
 @protocol HZALAdRewardDelegate;
 @protocol HZALAdDisplayDelegate;
+@protocol HZALAdVideoPlaybackDelegate;
 
 @interface HZALIncentivizedInterstitialAd : HZClassProxy
 
 @property (strong, nonatomic) id<HZALAdDisplayDelegate> adDisplayDelegate;
+@property (strong, nonatomic) id<HZALAdVideoPlaybackDelegate> adVideoPlaybackDelegate;
 
 - (instancetype)initIncentivizedInterstitialWithSdk:(HZALSdk *)anSdk;
 

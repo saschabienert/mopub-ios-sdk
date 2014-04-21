@@ -32,6 +32,9 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter;
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter;
 
+- (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter;
+- (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter;
+
 @end
 
 @interface HZBaseAdapter : NSObject

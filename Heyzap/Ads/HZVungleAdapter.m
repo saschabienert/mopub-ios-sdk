@@ -105,7 +105,7 @@
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    NSLog(@"Showing ad for vungle");
+    [self.delegate adapterWillPlayAudio:self];
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     if (type == HZAdTypeVideo) {
         NSLog(@"Showing video ad");
@@ -129,6 +129,7 @@
 
 - (void)vungleMoviePlayed:(HZVGPlayData*)playData
 {
+    [self.delegate adapterDidFinishPlayingAudio:self];
     // Check if incentivized, if so send the incentivized callback.
     const BOOL incentivized = YES;
     if (incentivized) {

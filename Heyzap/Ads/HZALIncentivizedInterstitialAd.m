@@ -12,6 +12,7 @@
 @implementation HZALIncentivizedInterstitialAd
 
 @dynamic adDisplayDelegate;
+@dynamic adVideoPlaybackDelegate;
 
 + (NSString *)hzProxiedClassName
 {

@@ -9,8 +9,8 @@
 #import "HZMediationSession.h"
 #import "HZDictionaryUtils.h"
 #import "HZBaseAdapter.h"
-#import "HZMediationEventAPIClient.h"
 #import "HZMediationConstants.h"
+#import "HZMediationAPIClient.h"
 
 @interface HZMediationSession()
 
@@ -100,7 +100,7 @@ NSString *const kHZNetworkKey = @"network";
 
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter
 {
-    [[HZMediationEventAPIClient sharedClient] post:@"click"
+    [[HZMediationAPIClient sharedClient] post:@"click"
                                  withParams:@{kHZImpressionIDKey: self.impressionID,
                                               kHZNetworkKey: [adapter name]}
                                     success:^(id json) {
@@ -112,7 +112,7 @@ NSString *const kHZNetworkKey = @"network";
 
 - (void)reportImpressionForAdapter:(HZBaseAdapter *)adapter
 {
-    [[HZMediationEventAPIClient sharedClient] post:@"impression"
+    [[HZMediationAPIClient sharedClient] post:@"impression"
                                  withParams:@{kHZImpressionIDKey: self.impressionID,
                                               kHZNetworkKey: [adapter name]}
                                     success:^(id json) {       

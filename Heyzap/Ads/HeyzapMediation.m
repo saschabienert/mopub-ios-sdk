@@ -334,6 +334,13 @@ NSString * const kHZDataKey = @"data";
 
 #pragma mark - Adapter Callbacks
 
+- (HZMediationSessionKey *)currentShownSessionKey
+{
+    return [[self.sessionDictionary keysOfEntriesPassingTest:^BOOL(HZMediationSessionKey *key, id obj, BOOL *stop) {
+        return key.hasBeenShown;
+    }] anyObject]; // Should be just 1 key that is being shown at a time.
+}
+
 /**
  *   We do not get this callback from several networks, so we can't rely on it.
  *
@@ -341,9 +348,7 @@ NSString * const kHZDataKey = @"data";
  */
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter
 {
-    HZMediationSessionKey *key = [[self.sessionDictionary keysOfEntriesPassingTest:^BOOL(HZMediationSessionKey *key, id obj, BOOL *stop) {
-        return key.hasBeenShown;
-    }] anyObject]; // Should be just 1 key that is being shown at a time.
+    HZMediationSessionKey *key = [self currentShownSessionKey];
     
     if (key) {
         HZMediationSession *session = self.sessionDictionary[key];
@@ -354,11 +359,7 @@ NSString * const kHZDataKey = @"data";
 // Potential issue: If an adapter fails to send us a callback we might not remove the sessionKey from the dictionary
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter
 {
-    NSLog(@"Adapter dismissed ad");
-    // Store the last session we called show for, so we can have the tag.
-    HZMediationSessionKey *key = [[self.sessionDictionary keysOfEntriesPassingTest:^BOOL(HZMediationSessionKey *key, id obj, BOOL *stop) {
-        return key.hasBeenShown;
-    }] anyObject]; // Should be just 1 key that is being shown at a time.
+    HZMediationSessionKey *key = [self currentShownSessionKey];
     
     
     if (key) {
@@ -366,6 +367,21 @@ NSString * const kHZDataKey = @"data";
         [self.sessionDictionary removeObjectForKey:key];
         
         [[self delegateForAdType:key.adType] didHideAdWithTag:key.tag];
+    }
+}
+
+- (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter
+{
+    HZMediationSessionKey *key = [self currentShownSessionKey];
+    if (key) {
+        [[self delegateForAdType:key.adType] willStartAudio];
+    }
+}
+- (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter
+{
+    HZMediationSessionKey *key = [self currentShownSessionKey];
+    if (key) {
+        [[self delegateForAdType:key.adType] didFinishAudio];
     }
 }
 

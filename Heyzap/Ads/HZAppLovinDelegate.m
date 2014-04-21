@@ -14,7 +14,6 @@
 @interface HZAppLovinDelegate()
 
 @property (nonatomic) HZAdType adType;
-@property (nonatomic, weak) id<HZAppLovinDelegateReceiver>delegate;
 
 @end
 
@@ -38,6 +37,8 @@
     if ([NSStringFromProtocol(aProtocol) isEqualToString:@"ALAdLoadDelegate"]) {
         return YES;
     } else if ([NSStringFromProtocol(aProtocol) isEqualToString:@"ALAdDisplayDelegate"]) {
+        return YES;
+    } else if ([NSStringFromProtocol(aProtocol) isEqualToString:@"HZALAdVideoPlaybackDelegate"]) {
         return YES;
     } else {
         return [super conformsToProtocol:aProtocol];
@@ -77,6 +78,18 @@
 - (BOOL)respondsToSelector:(SEL)aSelector
 {
     return [super respondsToSelector:aSelector];
+}
+
+#pragma mark - Video Playback Delegate
+
+- (void)videoPlaybackBeganInAd:(HZALAd *)ad
+{
+    [self.delegate willPlayAudio];
+}
+
+- (void)videoPlaybackEndedInAd:(HZALAd *)ad atPlaybackPercent:(NSNumber *)percentPlayed fullyWatched:(BOOL)wasFullyWatched
+{
+    [self.delegate didFinishAudio];
 }
 
 @end
