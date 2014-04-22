@@ -182,6 +182,15 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     }
     NSString *adUnit = NSStringFromAdType(adType);
     
+    // If we have an existing, matching session we don't need to make another call to /mediate.
+    HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:tag];
+    HZMediationSession *session = self.sessionDictionary[key];
+    if (session && showImmediately) {
+        NSLog(@"Using an existing session");
+        [self fetchForSession:session showImmediately:YES fetchTimeout:timeout sessionKey:key completion:completion];
+        return;
+    }
+    
     HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[[self class] creativeTypesForAdType:adType]
                                                                          adUnit:adUnit
                                                                             tag:[HeyzapAds defaultTagName]
@@ -285,6 +294,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         }
         if (!successful) {
             dispatch_sync(dispatch_get_main_queue(), ^{
+                [self.sessionDictionary removeObjectForKey:sessionKey];
                 if (completion) { completion(NO,[NSError errorWithDomain:@"heyzap" code:1 userInfo:nil]); }
                 [self sendFailureMessagesForTag:tag
                                          adType:type

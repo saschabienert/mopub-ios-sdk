@@ -77,6 +77,11 @@ return nil; \
     return self;
 }
 
+- (BOOL)hasAd
+{
+    return [self firstAdapterWithAd] != nil;
+}
+
 - (HZBaseAdapter *)firstAdapterWithAd
 {
     

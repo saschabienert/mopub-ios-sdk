@@ -32,6 +32,8 @@
 
 - (HZBaseAdapter *)firstAdapterWithAd;
 
+- (BOOL)hasAd;
+
 #pragma mark - Reporting Events to the server
 
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter;
