@@ -113,6 +113,7 @@
             self.currentIncentivizedAd = [[HZALIncentivizedInterstitialAd alloc] initIncentivizedInterstitialWithSdk:self.sdk];
             self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithAdType:HZAdTypeIncentivized delegate:self];
             [self.currentIncentivizedAd preloadAndNotify:self.incentivizedDelegate];
+            self.currentIncentivizedAd.adVideoPlaybackDelegate = self.incentivizedDelegate;
             
             break;
         }
@@ -149,6 +150,7 @@
     } else {
         HZALInterstitialAd *interstitial = [[HZALInterstitialAd alloc] initInterstitialAdWithSdk:self.sdk];
         interstitial.adDisplayDelegate = self.interstitialDelegate;
+        interstitial.adVideoPlaybackDelegate = self.interstitialDelegate;
         [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
     }
 }
@@ -207,6 +209,11 @@
 
 - (void)didCompleteIncentivized
 {
+    self.incentivizedIsLoaded = NO;
+    self.incentivizedDelegate = nil;
+    self.currentIncentivizedAd = nil;
+    self.incentivizedError = nil;
+    
     [self.delegate adapterDidCompleteIncentivizedAd:self];
 }
 - (void)didFailToCompleteIncentivized
@@ -222,5 +229,6 @@
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
 }
+
 
 @end

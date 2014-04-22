@@ -163,6 +163,8 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 {
     tag = tag ?: [HeyzapAds defaultTagName];
     
+//    HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:tag];
+    
     [self mediateForAdType:adType
                        tag:tag
            showImmediately:YES
@@ -170,6 +172,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                 completion:completion];
 }
 
+// `mediateForSessionKey` and this method looks up the session. 
 - (void)mediateForAdType:(HZAdType)adType tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout completion:(void (^)(BOOL result, NSError *error))completion
 {
     NSLog(@"Fetching with timeout = %f",timeout);
@@ -183,6 +186,8 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                                                                          adUnit:adUnit
                                                                             tag:[HeyzapAds defaultTagName]
                                                             andAdditionalParams:nil];
+    
+    
     
     [[HZMediationAPIClient sharedClient] get:@"mediate"
                                 withParams:request.createParams

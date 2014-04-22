@@ -99,8 +99,12 @@ typedef enum {
     if(self.logCallbacksSwitch.isOn)[self logToConsole:[NSString stringWithFormat:@"%@:%@",NSStringFromSelector(_cmd),error]];
 }
 
-- (void)willStartAudio { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
-- (void)didFinishAudio { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
+- (void)willStartAudio {
+    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
+}
+- (void)didFinishAudio {
+    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
+}
 
 - (void)didCompleteAd {
     if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
