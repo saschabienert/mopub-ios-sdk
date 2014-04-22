@@ -103,6 +103,21 @@ return nil; \
 NSString *const kHZImpressionIDKey = @"tracking_id";
 NSString *const kHZNetworkKey = @"network";
 
+- (void)reportSuccessfulFetchUpToAdapter:(HZBaseAdapter *)chosenAdapter
+{
+    
+    const NSUInteger chosenIndex = [self.chosenAdapters indexOfObject:chosenAdapter];
+    NSArray *adapterList = [self.chosenAdapters objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, chosenIndex+1)]];
+    for (HZBaseAdapter *adapter in adapterList) {
+        NSNumber *const success = (adapter == [adapterList lastObject]) ? @1 : @0; // Last adapter was successful
+        [[HZMediationAPIClient sharedClient] post:@"fetch" withParams:@{@"success": success, kHZNetworkKey : [adapter name]} success:^(id json) {
+            NSLog(@"success");
+        } failure:^(NSError *error) {
+            NSLog(@"fail");
+        }];
+    }
+}
+
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter
 {
     [[HZMediationAPIClient sharedClient] post:@"click"

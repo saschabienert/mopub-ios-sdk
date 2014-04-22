@@ -36,6 +36,8 @@
 
 #pragma mark - Reporting Events to the server
 
+- (void)reportSuccessfulFetchUpToAdapter:(HZBaseAdapter *)chosenAdapter;
+
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter;
 
 - (void)reportImpressionForAdapter:(HZBaseAdapter *)adapter;

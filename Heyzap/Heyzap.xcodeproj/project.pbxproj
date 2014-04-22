@@ -116,13 +116,11 @@
 		505351F318F76550003C531E /* BaseTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C818B5A59100E00E6C /* BaseTestAppViewController.m */; };
 		505351F418F76550003C531E /* SDKTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 862D5341176D12E900C4221F /* SDKTestAppViewController.m */; };
 		505351F618F76550003C531E /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE7018DBB4B700604B53 /* CoreLocation.framework */; };
-		505351F718F76550003C531E /* libGoogleAdMobAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 500F890218E21AE300E5D6F8 /* libGoogleAdMobAds.a */; };
 		505351F818F76550003C531E /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE6818DBAEDD00604B53 /* Social.framework */; };
 		505351F918F76550003C531E /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE6118DBAEAE00604B53 /* EventKit.framework */; };
 		505351FA18F76550003C531E /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE6218DBAEAE00604B53 /* EventKitUI.framework */; };
 		505351FB18F76550003C531E /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B7175830A600B8EACE /* AdSupport.framework */; };
 		505351FC18F76550003C531E /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86234AAB185690410071957B /* MediaPlayer.framework */; };
-		505351FD18F76550003C531E /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 509F002818EB5D980011EAB3 /* AdColony.framework */; };
 		505351FE18F76550003C531E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4718DB917200604B53 /* CoreMedia.framework */; };
 		505351FF18F76550003C531E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4518DB916B00604B53 /* AudioToolbox.framework */; };
 		5053520018F76550003C531E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B941DF1758056B00B8EACE /* CoreGraphics.framework */; };
@@ -137,21 +135,15 @@
 		5053520918F76550003C531E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943BF1758347300B8EACE /* UIKit.framework */; };
 		5053520A18F76550003C531E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B8175830A700B8EACE /* QuartzCore.framework */; };
 		5053520B18F76550003C531E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9419E1757FD6300B8EACE /* Foundation.framework */; };
-		5053520E18F76550003C531E /* vg_button_mute_plain.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002118EB5D770011EAB3 /* vg_button_mute_plain.png */; };
 		5053520F18F76550003C531E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 86B941E41758056B00B8EACE /* InfoPlist.strings */; };
 		5053521018F76550003C531E /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941ED1758056B00B8EACE /* Default.png */; };
 		5053521118F76550003C531E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941EF1758056B00B8EACE /* Default@2x.png */; };
-		5053521218F76550003C531E /* vg_button_mute_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002218EB5D770011EAB3 /* vg_button_mute_selected.png */; };
 		5053521318F76550003C531E /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941F11758056B00B8EACE /* Default-568h@2x.png */; };
-		5053521418F76550003C531E /* vg_button_close.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002018EB5D770011EAB3 /* vg_button_close.png */; };
 		509B5BE418C943B8003A7CB9 /* TestInterstitials.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE318C943B8003A7CB9 /* TestInterstitials.m */; };
 		509B5BE718C94490003A7CB9 /* UIViewController+IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE618C94490003A7CB9 /* UIViewController+IntegrationTests.m */; };
 		509B5BE918C968FA003A7CB9 /* portraitInterstitialRequest.json in Resources */ = {isa = PBXBuildFile; fileRef = 509B5BE818C968FA003A7CB9 /* portraitInterstitialRequest.json */; };
 		509B5BEC18C96CE2003A7CB9 /* TestJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BEB18C96CE2003A7CB9 /* TestJSON.m */; };
 		509F000718EA17970011EAB3 /* NSArrayUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F000618EA17970011EAB3 /* NSArrayUtils.m */; };
-		509F002418EB5D770011EAB3 /* vg_button_close.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002018EB5D770011EAB3 /* vg_button_close.png */; };
-		509F002518EB5D770011EAB3 /* vg_button_mute_plain.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002118EB5D770011EAB3 /* vg_button_mute_plain.png */; };
-		509F002618EB5D770011EAB3 /* vg_button_mute_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 509F002218EB5D770011EAB3 /* vg_button_mute_selected.png */; };
 		509F002D18EB62BC0011EAB3 /* HZMediationSessionKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F002B18EB62BC0011EAB3 /* HZMediationSessionKey.h */; };
 		509F002E18EB62BC0011EAB3 /* HZMediationSessionKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F002C18EB62BC0011EAB3 /* HZMediationSessionKey.m */; };
 		509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */; };
@@ -192,7 +184,6 @@
 		50AC60B318FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AC60B118FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m */; };
 		50AC611E18FDD3E70046EBC6 /* HZALAdSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 50AC611C18FDD3E70046EBC6 /* HZALAdSize.h */; };
 		50AC611F18FDD3E70046EBC6 /* HZALAdSize.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AC611D18FDD3E70046EBC6 /* HZALAdSize.m */; };
-		50B46AFA18F85F4F005155B8 /* libAppLovinSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50B46AF918F85F4F005155B8 /* libAppLovinSdk.a */; };
 		50B46B0D18F862B3005155B8 /* HZAppLovinAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B46B0B18F862B3005155B8 /* HZAppLovinAdapter.h */; };
 		50B46B0E18F862B3005155B8 /* HZAppLovinAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B46B0C18F862B3005155B8 /* HZAppLovinAdapter.m */; };
 		50B46B1118F862DA005155B8 /* HZALSdk.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B46B0F18F862DA005155B8 /* HZALSdk.h */; };
@@ -213,7 +204,7 @@
 		50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */; };
 		50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */; };
 		50D1599418F35CC600734ABB /* HZHeyzapInterstitialAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1599218F35CC600734ABB /* HZHeyzapInterstitialAd.m */; };
-		50E14CF119070147003AA47D /* libChartboost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E14CF019070147003AA47D /* libChartboost.a */; };
+		50E14D4E19071E5A003AA47D /* libCombined.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E14D4D19071E5A003AA47D /* libCombined.a */; };
 		50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ECA1C318DB618E006284AB /* HeyzapMediation.h */; };
 		50ECA1C618DB618E006284AB /* HeyzapMediation.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ECA1C418DB618E006284AB /* HeyzapMediation.m */; };
 		50ECA1C818DB6234006284AB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
@@ -375,16 +366,6 @@
 		500F88F118E215D000E5D6F8 /* HZGADInterstitial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZGADInterstitial.m; sourceTree = "<group>"; };
 		500F88F418E215DD00E5D6F8 /* HZGADRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZGADRequest.h; sourceTree = "<group>"; };
 		500F88F518E215DD00E5D6F8 /* HZGADRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZGADRequest.m; sourceTree = "<group>"; };
-		500F88F918E21AE300E5D6F8 /* GADAdMobExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdMobExtras.h; sourceTree = "<group>"; };
-		500F88FA18E21AE300E5D6F8 /* GADAdNetworkExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdNetworkExtras.h; sourceTree = "<group>"; };
-		500F88FB18E21AE300E5D6F8 /* GADAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdSize.h; sourceTree = "<group>"; };
-		500F88FC18E21AE300E5D6F8 /* GADBannerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADBannerView.h; sourceTree = "<group>"; };
-		500F88FD18E21AE300E5D6F8 /* GADBannerViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADBannerViewDelegate.h; sourceTree = "<group>"; };
-		500F88FE18E21AE300E5D6F8 /* GADInterstitial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADInterstitial.h; sourceTree = "<group>"; };
-		500F88FF18E21AE300E5D6F8 /* GADInterstitialDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADInterstitialDelegate.h; sourceTree = "<group>"; };
-		500F890018E21AE300E5D6F8 /* GADRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADRequest.h; sourceTree = "<group>"; };
-		500F890118E21AE300E5D6F8 /* GADRequestError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADRequestError.h; sourceTree = "<group>"; };
-		500F890218E21AE300E5D6F8 /* libGoogleAdMobAds.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAdMobAds.a; sourceTree = "<group>"; };
 		500F890518E2206300E5D6F8 /* HZGADInterstitialDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZGADInterstitialDelegate.h; sourceTree = "<group>"; };
 		5011CE3918DB8F1500604B53 /* HZVungleAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVungleAdapter.h; sourceTree = "<group>"; };
 		5011CE3A18DB8F1500604B53 /* HZVungleAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVungleAdapter.m; sourceTree = "<group>"; };
@@ -443,11 +424,6 @@
 		509B5BEB18C96CE2003A7CB9 /* TestJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestJSON.m; sourceTree = "<group>"; };
 		509F000518EA17970011EAB3 /* NSArrayUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSArrayUtils.h; sourceTree = "<group>"; };
 		509F000618EA17970011EAB3 /* NSArrayUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSArrayUtils.m; sourceTree = "<group>"; };
-		509F002018EB5D770011EAB3 /* vg_button_close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_button_close.png; sourceTree = "<group>"; };
-		509F002118EB5D770011EAB3 /* vg_button_mute_plain.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_button_mute_plain.png; sourceTree = "<group>"; };
-		509F002218EB5D770011EAB3 /* vg_button_mute_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_button_mute_selected.png; sourceTree = "<group>"; };
-		509F002318EB5D770011EAB3 /* vunglepub.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = vunglepub.framework; sourceTree = "<group>"; };
-		509F002818EB5D980011EAB3 /* AdColony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdColony.framework; sourceTree = "<group>"; };
 		509F002B18EB62BC0011EAB3 /* HZMediationSessionKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationSessionKey.h; sourceTree = "<group>"; };
 		509F002C18EB62BC0011EAB3 /* HZMediationSessionKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationSessionKey.m; sourceTree = "<group>"; };
 		509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZBaseAdapter.h; sourceTree = "<group>"; };
@@ -472,22 +448,6 @@
 		50AC60B118FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZIncentivizedAppLovinDelegate.m; sourceTree = "<group>"; };
 		50AC611C18FDD3E70046EBC6 /* HZALAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZALAdSize.h; sourceTree = "<group>"; };
 		50AC611D18FDD3E70046EBC6 /* HZALAdSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZALAdSize.m; sourceTree = "<group>"; };
-		50B46AF918F85F4F005155B8 /* libAppLovinSdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAppLovinSdk.a; sourceTree = "<group>"; };
-		50B46AFB18F85F5B005155B8 /* ALAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAd.h; sourceTree = "<group>"; };
-		50B46AFC18F85F5B005155B8 /* ALAdDisplayDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdDisplayDelegate.h; sourceTree = "<group>"; };
-		50B46AFD18F85F5B005155B8 /* ALAdLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdLoadDelegate.h; sourceTree = "<group>"; };
-		50B46AFE18F85F5B005155B8 /* ALAdRewardDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdRewardDelegate.h; sourceTree = "<group>"; };
-		50B46AFF18F85F5B005155B8 /* ALAdService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdService.h; sourceTree = "<group>"; };
-		50B46B0018F85F5B005155B8 /* ALAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdSize.h; sourceTree = "<group>"; };
-		50B46B0118F85F5B005155B8 /* ALAdType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdType.h; sourceTree = "<group>"; };
-		50B46B0218F85F5B005155B8 /* ALAdUpdateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdUpdateDelegate.h; sourceTree = "<group>"; };
-		50B46B0318F85F5B005155B8 /* ALAdVideoPlaybackDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdVideoPlaybackDelegate.h; sourceTree = "<group>"; };
-		50B46B0418F85F5B005155B8 /* ALAdView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdView.h; sourceTree = "<group>"; };
-		50B46B0518F85F5B005155B8 /* ALIncentivizedInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALIncentivizedInterstitialAd.h; sourceTree = "<group>"; };
-		50B46B0618F85F5B005155B8 /* ALInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALInterstitialAd.h; sourceTree = "<group>"; };
-		50B46B0718F85F5B005155B8 /* ALSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSdk.h; sourceTree = "<group>"; };
-		50B46B0818F85F5B005155B8 /* ALSdkSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSdkSettings.h; sourceTree = "<group>"; };
-		50B46B0918F85F5B005155B8 /* ALTargetingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALTargetingData.h; sourceTree = "<group>"; };
 		50B46B0B18F862B3005155B8 /* HZAppLovinAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAppLovinAdapter.h; sourceTree = "<group>"; };
 		50B46B0C18F862B3005155B8 /* HZAppLovinAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAppLovinAdapter.m; sourceTree = "<group>"; };
 		50B46B0F18F862DA005155B8 /* HZALSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZALSdk.h; sourceTree = "<group>"; };
@@ -506,8 +466,7 @@
 		50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapVideoAd.m; sourceTree = "<group>"; };
 		50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapInterstitialAd.h; sourceTree = "<group>"; };
 		50D1599218F35CC600734ABB /* HZHeyzapInterstitialAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapInterstitialAd.m; sourceTree = "<group>"; };
-		50E14CEF19070147003AA47D /* Chartboost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chartboost.h; sourceTree = "<group>"; };
-		50E14CF019070147003AA47D /* libChartboost.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libChartboost.a; sourceTree = "<group>"; };
+		50E14D4D19071E5A003AA47D /* libCombined.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCombined.a; path = ../../../../../Downloads/libCombined.a; sourceTree = "<group>"; };
 		50ECA1C318DB618E006284AB /* HeyzapMediation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeyzapMediation.h; sourceTree = "<group>"; };
 		50ECA1C418DB618E006284AB /* HeyzapMediation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeyzapMediation.m; sourceTree = "<group>"; };
 		50ECA1C718DB6234006284AB /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -647,28 +606,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				505351F618F76550003C531E /* CoreLocation.framework in Frameworks */,
-				505351F718F76550003C531E /* libGoogleAdMobAds.a in Frameworks */,
 				505351F818F76550003C531E /* Social.framework in Frameworks */,
 				505351F918F76550003C531E /* EventKit.framework in Frameworks */,
 				505351FA18F76550003C531E /* EventKitUI.framework in Frameworks */,
 				505351FB18F76550003C531E /* AdSupport.framework in Frameworks */,
 				505351FC18F76550003C531E /* MediaPlayer.framework in Frameworks */,
-				505351FD18F76550003C531E /* AdColony.framework in Frameworks */,
 				505351FE18F76550003C531E /* CoreMedia.framework in Frameworks */,
-				50B46AFA18F85F4F005155B8 /* libAppLovinSdk.a in Frameworks */,
 				505351FF18F76550003C531E /* AudioToolbox.framework in Frameworks */,
 				5053520018F76550003C531E /* CoreGraphics.framework in Frameworks */,
 				5053520118F76550003C531E /* CFNetwork.framework in Frameworks */,
 				5053520218F76550003C531E /* AVFoundation.framework in Frameworks */,
 				5053520318F76550003C531E /* libz.dylib in Frameworks */,
 				5053520418F76550003C531E /* SystemConfiguration.framework in Frameworks */,
+				50E14D4E19071E5A003AA47D /* libCombined.a in Frameworks */,
 				5053520518F76550003C531E /* libHeyzapAds.a in Frameworks */,
 				5053520618F76550003C531E /* CoreTelephony.framework in Frameworks */,
 				5053520718F76550003C531E /* StoreKit.framework in Frameworks */,
 				5053520818F76550003C531E /* MessageUI.framework in Frameworks */,
 				5053520918F76550003C531E /* UIKit.framework in Frameworks */,
 				5053520A18F76550003C531E /* QuartzCore.framework in Frameworks */,
-				50E14CF119070147003AA47D /* libChartboost.a in Frameworks */,
 				5053520B18F76550003C531E /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -807,32 +763,6 @@
 			name = Heyzap;
 			sourceTree = "<group>";
 		};
-		500F890418E21AF900E5D6F8 /* Chartboost */ = {
-			isa = PBXGroup;
-			children = (
-				50E14CEF19070147003AA47D /* Chartboost.h */,
-				50E14CF019070147003AA47D /* libChartboost.a */,
-			);
-			name = Chartboost;
-			sourceTree = "<group>";
-		};
-		5011CE7218DBBBC100604B53 /* AdMob */ = {
-			isa = PBXGroup;
-			children = (
-				500F88F918E21AE300E5D6F8 /* GADAdMobExtras.h */,
-				500F88FA18E21AE300E5D6F8 /* GADAdNetworkExtras.h */,
-				500F88FB18E21AE300E5D6F8 /* GADAdSize.h */,
-				500F88FC18E21AE300E5D6F8 /* GADBannerView.h */,
-				500F88FD18E21AE300E5D6F8 /* GADBannerViewDelegate.h */,
-				500F88FE18E21AE300E5D6F8 /* GADInterstitial.h */,
-				500F88FF18E21AE300E5D6F8 /* GADInterstitialDelegate.h */,
-				500F890018E21AE300E5D6F8 /* GADRequest.h */,
-				500F890118E21AE300E5D6F8 /* GADRequestError.h */,
-				500F890218E21AE300E5D6F8 /* libGoogleAdMobAds.a */,
-			);
-			name = AdMob;
-			sourceTree = "<group>";
-		};
 		5019224B18EF7492002793A3 /* Mediation To Heyzap Interface */ = {
 			isa = PBXGroup;
 			children = (
@@ -898,25 +828,6 @@
 			name = "Ads JSON";
 			sourceTree = "<group>";
 		};
-		509F001E18EB5D770011EAB3 /* vunglepub.embeddedframework */ = {
-			isa = PBXGroup;
-			children = (
-				509F001F18EB5D770011EAB3 /* Resources */,
-				509F002318EB5D770011EAB3 /* vunglepub.framework */,
-			);
-			path = vunglepub.embeddedframework;
-			sourceTree = "<group>";
-		};
-		509F001F18EB5D770011EAB3 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				509F002018EB5D770011EAB3 /* vg_button_close.png */,
-				509F002118EB5D770011EAB3 /* vg_button_mute_plain.png */,
-				509F002218EB5D770011EAB3 /* vg_button_mute_selected.png */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		509F002A18EB62AE0011EAB3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -961,29 +872,6 @@
 				50AA624B18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m */,
 			);
 			name = Categories;
-			sourceTree = "<group>";
-		};
-		50B46AF818F85F37005155B8 /* AppLovin */ = {
-			isa = PBXGroup;
-			children = (
-				50B46AF918F85F4F005155B8 /* libAppLovinSdk.a */,
-				50B46AFB18F85F5B005155B8 /* ALAd.h */,
-				50B46AFC18F85F5B005155B8 /* ALAdDisplayDelegate.h */,
-				50B46AFD18F85F5B005155B8 /* ALAdLoadDelegate.h */,
-				50B46AFE18F85F5B005155B8 /* ALAdRewardDelegate.h */,
-				50B46AFF18F85F5B005155B8 /* ALAdService.h */,
-				50B46B0018F85F5B005155B8 /* ALAdSize.h */,
-				50B46B0118F85F5B005155B8 /* ALAdType.h */,
-				50B46B0218F85F5B005155B8 /* ALAdUpdateDelegate.h */,
-				50B46B0318F85F5B005155B8 /* ALAdVideoPlaybackDelegate.h */,
-				50B46B0418F85F5B005155B8 /* ALAdView.h */,
-				50B46B0518F85F5B005155B8 /* ALIncentivizedInterstitialAd.h */,
-				50B46B0618F85F5B005155B8 /* ALInterstitialAd.h */,
-				50B46B0718F85F5B005155B8 /* ALSdk.h */,
-				50B46B0818F85F5B005155B8 /* ALSdkSettings.h */,
-				50B46B0918F85F5B005155B8 /* ALTargetingData.h */,
-			);
-			name = AppLovin;
 			sourceTree = "<group>";
 		};
 		50B46B0A18F86274005155B8 /* AppLovin */ = {
@@ -1031,6 +919,7 @@
 		50E90E7A18F767E2003DC948 /* Mediation Test App */ = {
 			isa = PBXGroup;
 			children = (
+				50E14D4D19071E5A003AA47D /* libCombined.a */,
 			);
 			name = "Mediation Test App";
 			path = MediationTestApp;
@@ -1051,11 +940,6 @@
 		50ECA1BE18DB6157006284AB /* Mediation Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				50B46AF818F85F37005155B8 /* AppLovin */,
-				509F002818EB5D980011EAB3 /* AdColony.framework */,
-				509F001E18EB5D770011EAB3 /* vunglepub.embeddedframework */,
-				500F890418E21AF900E5D6F8 /* Chartboost */,
-				5011CE7218DBBBC100604B53 /* AdMob */,
 			);
 			name = "Mediation Frameworks";
 			sourceTree = "<group>";
@@ -1588,13 +1472,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5053520E18F76550003C531E /* vg_button_mute_plain.png in Resources */,
 				5053520F18F76550003C531E /* InfoPlist.strings in Resources */,
 				5053521018F76550003C531E /* Default.png in Resources */,
 				5053521118F76550003C531E /* Default@2x.png in Resources */,
-				5053521218F76550003C531E /* vg_button_mute_selected.png in Resources */,
 				5053521318F76550003C531E /* Default-568h@2x.png in Resources */,
-				5053521418F76550003C531E /* vg_button_close.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1613,13 +1494,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				509F002518EB5D770011EAB3 /* vg_button_mute_plain.png in Resources */,
 				86B941E61758056B00B8EACE /* InfoPlist.strings in Resources */,
 				86B941EE1758056B00B8EACE /* Default.png in Resources */,
 				86B941F01758056B00B8EACE /* Default@2x.png in Resources */,
-				509F002618EB5D770011EAB3 /* vg_button_mute_selected.png in Resources */,
 				86B941F21758056B00B8EACE /* Default-568h@2x.png in Resources */,
-				509F002418EB5D770011EAB3 /* vg_button_close.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1976,7 +1854,6 @@
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/vunglepub.embeddedframework",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
@@ -1989,13 +1866,11 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					/Users/Max/Downloads,
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
-					"-force_load",
-					"$(SRCROOT)/vunglepub.embeddedframework/vunglepub.framework/Versions/Current/vunglepub",
-					"-force_load",
-					"$(SRCROOT)/libAppLovinSdk.a",
+					"-all_load",
 				);
 				PRODUCT_NAME = MediationTestApp;
 				PROVISIONING_PROFILE = "65BB83E8-C41C-44AC-A496-91716DB0813D";
@@ -2015,7 +1890,6 @@
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/vunglepub.embeddedframework",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
@@ -2025,14 +1899,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					/Users/Max/Downloads,
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = (
 					"-ObjC",
-					"-force_load",
-					"$(SRCROOT)/vunglepub.embeddedframework/vunglepub.framework/Versions/Current/vunglepub",
-					"-force_load",
-					"$(SRCROOT)/libAppLovinSdk.a",
+					"-all_load",
 				);
 				PRODUCT_NAME = MediationTestApp;
 				PROVISIONING_PROFILE = "";

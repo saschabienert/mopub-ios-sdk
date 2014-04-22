@@ -270,6 +270,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if (completion) { completion(YES,nil); }
                     [[self delegateForAdType:type] didReceiveAdWithTag:tag];
+                    [session reportSuccessfulFetchUpToAdapter:adapter];
                 });
                 if (showImmediately) {
                     dispatch_sync(dispatch_get_main_queue(), ^{
