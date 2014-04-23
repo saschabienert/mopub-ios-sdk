@@ -58,5 +58,7 @@ typedef enum {
 + (void) error: (NSString *) message;
 + (void) debug: (NSString *) message;
 
+#define HZDLog(fmt, ...) [HZLog debug:[NSString stringWithFormat:fmt,##__VA_ARGS__]];
+
 
 @end

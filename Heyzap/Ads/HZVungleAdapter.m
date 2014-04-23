@@ -74,7 +74,6 @@
 
 - (void)startWithPubAppID:(NSString *)appID
 {
-    NSLog(@"Starting vungle!");
     [HZVGVunglePub startWithPubAppID:appID];
 }
 
@@ -108,10 +107,8 @@
     [self.delegate adapterWillPlayAudio:self];
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     if (type == HZAdTypeVideo) {
-        NSLog(@"Showing video ad");
         [HZVGVunglePub playModalAd:vc animated:YES];
     } else if (type == HZAdTypeIncentivized) {
-        NSLog(@"Showing incentivized");
         [HZVGVunglePub playIncentivizedAd:vc animated:YES showClose:YES userTag:nil];
     }
 }
@@ -143,21 +140,16 @@
 
 - (void)vungleViewDidDisappear:(UIViewController*)viewController willShowProductView:(BOOL)willShow
 {
-    // Use this callback to say that we're dismissing the ad.
-    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
     [self.delegate adapterDidDismissAd:self];
 }
 - (void)vungleViewWillAppear:(UIViewController*)viewController
 {
-    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
 }
 - (void)vungleAppStoreWillAppear
 {
-    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
 }
 - (void)vungleAppStoreViewDidDisappear
 {
-    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol

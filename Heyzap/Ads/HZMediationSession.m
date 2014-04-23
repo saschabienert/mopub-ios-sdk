@@ -11,6 +11,7 @@
 #import "HZBaseAdapter.h"
 #import "HZMediationConstants.h"
 #import "HZMediationAPIClient.h"
+#import "HZLog.h"
 
 @interface HZMediationSession()
 
@@ -111,9 +112,9 @@ NSString *const kHZNetworkKey = @"network";
     for (HZBaseAdapter *adapter in adapterList) {
         NSNumber *const success = (adapter == [adapterList lastObject]) ? @1 : @0; // Last adapter was successful
         [[HZMediationAPIClient sharedClient] post:@"fetch" withParams:@{@"success": success, kHZNetworkKey : [adapter name]} success:^(id json) {
-            NSLog(@"success");
+            HZDLog(@"Success reporting fetch");
         } failure:^(NSError *error) {
-            NSLog(@"fail");
+            HZDLog(@"Error reporting fetch = %@",error);
         }];
     }
 }
@@ -124,9 +125,9 @@ NSString *const kHZNetworkKey = @"network";
                                  withParams:@{kHZImpressionIDKey: self.impressionID,
                                               kHZNetworkKey: [adapter name]}
                                     success:^(id json) {
-        NSLog(@"click was successful");
+        HZDLog(@"Success reporting click");
     } failure:^(NSError *error) {
-        NSLog(@"Click failed");
+        HZDLog(@"Error reporting click = %@",error);
     }];
 }
 
@@ -136,9 +137,9 @@ NSString *const kHZNetworkKey = @"network";
                                  withParams:@{kHZImpressionIDKey: self.impressionID,
                                               kHZNetworkKey: [adapter name]}
                                     success:^(id json) {       
-        NSLog(@"impression was successful");
+        HZDLog(@"Success reporting impression");
     } failure:^(NSError *error) {
-        NSLog(@"Failed to report impression to Heyzap, error = %@",error);
+        HZDLog(@"Error reporting impression = @",error);
     }];
 }
 

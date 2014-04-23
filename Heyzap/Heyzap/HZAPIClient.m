@@ -95,8 +95,6 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
     
     [HZLog debug: [NSString stringWithFormat: @"Client: GET : %@ %@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], requestParams]];
     
-    //NSLog(@"%@?%@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], [HZDictionaryUtils hzUrlEncodedStringWithDict: requestParams]);
-    
     // This method can be called from a background thread or main thread, so we dispatch to the main thread (error if this runs on background b/c recipient modifies the UI)
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidSendRequestNotification

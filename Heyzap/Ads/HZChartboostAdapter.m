@@ -11,6 +11,7 @@
 #import "HZChartboost.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZLog.h"
 
 @interface HZChartboostAdapter()
 
@@ -34,7 +35,6 @@
 {
     self = [super init];
     if (self) {
-        NSLog(@"Chartboost class proxy used");
         [HZChartboost sharedChartboost].delegate = self;
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive:)
@@ -114,7 +114,6 @@
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol
 {
     if ([NSStringFromProtocol(aProtocol) isEqualToString:@"ChartboostDelegate"]) {
-        NSLog(@"Conforms to protocol called on chartboost delegate");
         return YES;
     } else {
         return [super conformsToProtocol:aProtocol];
@@ -137,31 +136,31 @@
     self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Chartboost"}];
     switch(error){
         case CBLoadErrorInternetUnavailable: {
-            NSLog(@"Failed to load Interstitial, no Internet connection !");
+            HZDLog(@"Chartboost: Failed to load Interstitial, no Internet connection !");
         } break;
         case CBLoadErrorInternal: {
-            NSLog(@"Failed to load Interstitial, internal error !");
+            HZDLog(@"Chartboost: Failed to load Interstitial, internal error !");
         } break;
         case CBLoadErrorNetworkFailure: {
-            NSLog(@"Failed to load Interstitial, network error !");
+            HZDLog(@"Chartboost: Failed to load Interstitial, network error !");
         } break;
         case CBLoadErrorWrongOrientation: {
-            NSLog(@"Failed to load Interstitial, wrong orientation !");
+            HZDLog(@"Chartboost: Failed to load Interstitial, wrong orientation !");
         } break;
         case CBLoadErrorTooManyConnections: {
-            NSLog(@"Failed to load Interstitial, too many connections !");
+            HZDLog(@"Chartboost: Failed to load Interstitial, too many connections !");
         } break;
         case CBLoadErrorFirstSessionInterstitialsDisabled: {
-            NSLog(@"Failed to load Interstitial, first session !");
+            HZDLog(@"Chartboost: Failed to load Interstitial, first session !");
         } break;
         case CBLoadErrorNoAdFound : {
-            NSLog(@"Failed to load Interstitial, no ad found !");
+            HZDLog(@"Chartboost: Failed to load Interstitial, no ad found !");
         } break;
         case CBLoadErrorSessionNotStarted : {
-            NSLog(@"Failed to load Interstitial, session not started !");
+            HZDLog(@"Chartboost: Failed to load Interstitial, session not started !");
         } break;
         default: {
-            NSLog(@"Failed to load Interstitial, unknown error !");
+            HZDLog(@"Chartboost: Failed to load Interstitial, unknown error !");
         }
     }
 }
@@ -169,7 +168,6 @@
 - (void)didClickInterstitial:(NSString *)location
 {
     [self.delegate adapterWasClicked:self];
-    NSLog(@"Chartboost ad was clicked");
 }
 
 /*
@@ -188,7 +186,6 @@
 
 - (void)didCacheInterstitial:(NSString *)location {
     self.lastInterstitialError = nil;
-    NSLog(@"Chartboost interstitial cached at location %@", location);
 }
 
 /*
@@ -204,8 +201,6 @@
  */
 
 - (void)didDismissInterstitial:(NSString *)location {
-    NSLog(@"dismissed interstitial at location %@", location);
-//    [[Chartboost sharedChartboost] cacheInterstitial:location];
     [self.delegate adapterDidDismissAd:self];
 }
 

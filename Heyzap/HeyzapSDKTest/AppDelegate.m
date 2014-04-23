@@ -70,11 +70,6 @@
     [[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
 #endif
     
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-//        [HZInterstitialAd show];
-//    });
-    
     return YES;
 }
 

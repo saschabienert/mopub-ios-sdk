@@ -79,7 +79,6 @@
         // If we have an interstitial already out fetching, don't start up a re-fetch.
         return;
     }
-    NSLog(@"Prefetch called for admob");
     
     self.currentInterstitial = [[HZGADInterstitial alloc] init];
     self.currentInterstitial.adUnitID = self.adUnitID;
@@ -127,7 +126,6 @@
 // As far as I can tell, this means a click.
 - (void)interstitialWillLeaveApplication:(HZGADInterstitial *)ad
 {
-    NSLog(@"Callback from ad mob about leaving the application");
     [self.delegate adapterWasClicked:self];
 }
 
