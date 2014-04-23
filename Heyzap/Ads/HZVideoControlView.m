@@ -39,11 +39,9 @@
         _skipButton.frame = CGRectMake(0.0, 0.0, 80.0, 40.0);
         _skipButton.accessibilityLabel = @"skip";
         [_skipButton setTitle: @"" forState: UIControlStateNormal];
-        [_skipButton setTitle: @"" forState: UIControlStateDisabled];
         [_skipButton.titleLabel setFont: [UIFont boldSystemFontOfSize: 20.0]];
         _skipButton.titleLabel.textAlignment = UITextAlignmentCenter;
         _skipButton.hidden = YES;
-        _skipButton.enabled = NO;
         _skipButton.layer.opacity = 0.8f;
         _skipButton.layer.shadowColor = [[UIColor blackColor] CGColor];
         _skipButton.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
@@ -114,13 +112,10 @@
     NSString *text;
     if (skipRemaining > 0) {
         text = [NSString stringWithFormat: self.skipFormatText, skipRemaining];
-        self.skipButton.enabled = NO;
     } else {
         text = self.skipNowText;
-        self.skipButton.enabled = YES;
     }
     
-    [self.skipButton setTitle: text forState: UIControlStateDisabled];
     [self.skipButton setTitle: text forState: UIControlStateNormal];
     
     CGSize textSize = [self.skipButton.currentTitle sizeWithFont: self.skipButton.titleLabel.font];
