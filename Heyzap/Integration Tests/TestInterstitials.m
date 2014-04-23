@@ -73,7 +73,7 @@
     
     
     id <HZAdsDelegate> delegate = mockProtocol(@protocol(HZAdsDelegate));
-    [HeyzapAds setDelegate:delegate];
+    [HZInterstitialAd setDelegate:delegate];
     
     
     dispatch_sync(dispatch_get_main_queue(), ^{
@@ -98,10 +98,9 @@
     
     SLAssertNoThrow([verify(delegate) didShowAdWithTag:@"default"], @"Delegate should get didShowAdWithTag callback");
     
-    // I think Subliminal is failing on finding elements in landscape, so just close manually.
-    dispatch_sync(dispatch_get_main_queue(), ^{
-//        [HZInterstitialAd hide];
-    });
+    SLElement *closeButton = [SLElement elementWithAccessibilityLabel:@"Close Ad"];
+    [closeButton tap];
+    
     [self wait:1]; // Wait for hide animation to complete.
     SLAssertNoThrow([verify(delegate) didHideAdWithTag:@"default"], @"Delegate should get didHideAd callback");
 }
@@ -119,7 +118,7 @@
     [[SLDevice currentDevice] setOrientation:UIDeviceOrientationLandscapeRight];
     [self wait:0.5];
     id <HZAdsDelegate> delegate = mockProtocol(@protocol(HZAdsDelegate));
-    [HeyzapAds setDelegate:delegate];
+    [HZVideoAd setDelegate:delegate];
     
     static const int videoCreativeID = 1246917;
     dispatch_sync(dispatch_get_main_queue(), ^{
@@ -150,10 +149,9 @@
     SLElement *skipButton = [SLElement elementWithAccessibilityLabel:@"skip"]; // Need to give this a label.
     [UIAElement(skipButton) tap];
     
-    // I think Subliminal is failing on finding elements in landscape, so just close manually.
-    dispatch_sync(dispatch_get_main_queue(), ^{
-//        [HZVideoAd hide];
-    });
+    SLElement *closeButton = [SLElement elementWithAccessibilityLabel:@"Close Ad"];
+    [closeButton tap];
+    
     [self wait:1]; // Wait for hide animation to complete.
     SLAssertNoThrow([verify(delegate) didHideAdWithTag:@"default"], @"Delegate should get didHideAd callback");
     SLAssertNoThrow([verify(delegate) didFinishAudio], @"Delegate should get didFinishAudio callback");
