@@ -129,7 +129,7 @@
 
 - (void) onHide: (id) sender {
     int remainingSkipButton = (self.skipButtonTimeInterval - self.player.currentPlaybackTime);
-    if (remainingSkipButton < 1) {
+    if (remainingSkipButton < 1 || sender == self.controlView.hideButton) {
         if (self.player.currentPlaybackTime > self.playbackTime) {
             self.playbackTime = self.player.currentPlaybackTime;
         }
