@@ -53,10 +53,9 @@
         [self setupCachingDirectory];
         
         //register this game as installed, if we haven't done so already
-        if ([[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY withDefault:(id)kCFBooleanFalse]) {
-            
+        if (![[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY]) {
             [[HZAdsAPIClient sharedClient] post:@"register_new_game_install" withParams:@{} success:^(id JSON) {
-                [[HZUserDefaults sharedDefaults] setObject:(id)kCFBooleanTrue forKey:HAS_REPORTED_INSTALL_KEY];
+                [[HZUserDefaults sharedDefaults] setObject:@YES forKey:HAS_REPORTED_INSTALL_KEY];
             } failure:nil];
         }
     });
