@@ -74,6 +74,7 @@ return nil; \
         }
         
         self.chosenAdapters = adapters;
+        HZDLog(@"Available SDKs for this fetch are = %@",self.chosenAdapters);
     }
     return self;
 }
@@ -139,7 +140,7 @@ NSString *const kHZNetworkKey = @"network";
                                     success:^(id json) {       
         HZDLog(@"Success reporting impression");
     } failure:^(NSError *error) {
-        HZDLog(@"Error reporting impression = @",error);
+        HZDLog(@"Error reporting impression = %@",error);
     }];
 }
 

@@ -30,13 +30,15 @@
 #import "HZMediationSessionKey.h"
 #import "HZMediationSession.h"
 
-#define HZVideoAdUnit @"video"
+#define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
+#define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
 #define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
 
-#define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
-#define HZInterstitialAdCreativeTypesNoVideo @[@"interstitial", @"full_screen_interstitial"]
-#define HZInterstitialAdUnit @"interstitial"
-#define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
+typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
+    HZMediationStartStatusNotStarted,
+    HZMediationStartStatusFailure,
+    HZMediationStartStatusSuccess,
+};
 
 @interface HeyzapMediation() <HZMediationAdapterDelegate>
 
@@ -49,7 +51,8 @@ NSString * NSStringFromAdType(HZAdType type);
 
 @property (nonatomic, strong) NSString *countryCode;
 
-@property (nonatomic) BOOL hasBeenStarted;
+@property (nonatomic) BOOL startHasBeenCalled;
+@property (nonatomic) HZMediationStartStatus startStatus;
 
 @property (nonatomic, strong) DelegateProxy *interstitialDelegateProxy;
 @property (nonatomic, strong) DelegateProxy *incentivizedDelegateProxy;
@@ -91,10 +94,11 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 
 - (void)start
 {
-    if (self.hasBeenStarted) {
+    // Prevent duplicate start calls.
+    if (self.startHasBeenCalled) {
         return;
     }
-    self.hasBeenStarted = YES;
+    self.startHasBeenCalled = YES;
     
     HZDLog(@"The following SDKs have been detected = %@",[[self class] commaSeparatedAdapterList]);
     
@@ -110,16 +114,40 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         } else {
             HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
         }
+        self.startStatus = [self.setupMediators count] == 0 ? HZMediationStartStatusFailure : HZMediationStartStatusSuccess;
     } failure:^(NSError *error) {
+        self.startStatus = HZMediationStartStatusFailure;
         HZDLog(@"Error! Failed to get networks from Heyzap. Mediation won't be possible. Error = %@,",error);
     }];
 }
 
 - (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion
 {
+    // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
+    // This feels pretty hacky..
+    if (self.startStatus == HZMediationStartStatusNotStarted) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self fetchForAdType:adType tag:tag completion:completion];
+        });
+        return;
+    }
+    
     tag = tag ?: [HeyzapAds defaultTagName];
     [self mediateForAdType:adType tag:tag showImmediately:NO fetchTimeout:10 completion:completion];
 }
+
+- (void)autoFetchInterstitial
+{
+    [self mediateForAdType:HZAdTypeInterstitial
+                       tag:nil
+           showImmediately:NO
+              fetchTimeout:10
+                completion:nil];
+}
+
+// Dictionary keys
+NSString * const kHZAdapterKey = @"name";
+NSString * const kHZDataKey = @"data";
 
 - (void)setupMediators:(NSArray *)mediatorJSON
 {
@@ -135,20 +163,17 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                 adapter.delegate = self;
                 [setupMediators addObject:adapter];
             } else {
-                HZDLog(@"Error setting up 3rd-party SDK. Error = %@",credentialError);
+                HZELog(@"Error setting up 3rd-party SDK. Error = %@",credentialError);
             }
         } else {
-            HZDLog(@"Unavailable mediator %@",[mediatorClass name]);
+            HZELog(@"Unavailable mediator %@",[mediatorClass name]);
         }
     }
     self.setupMediators = setupMediators;
-    HZDLog(@"Setup mediators = %@",setupMediators);
-    
-    [self mediateForAdType:HZAdTypeInterstitial
-                       tag:nil
-           showImmediately:NO
-              fetchTimeout:10
-                completion:nil];
+    HZILog(@"Setup mediators = %@",setupMediators);
+    if ([self.setupMediators count] != 0) {
+        [self autoFetchInterstitial];
+    }
 }
 
 
@@ -205,13 +230,14 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                                                     fetchTimeout:timeout
                                                       sessionKey:key
                                                       completion:completion];
+                                       } else {
+                                           [self sendFailureMessagesForTag:tag adType:adType wasAttemptingToShow:showImmediately completionBlock:completion underlyingError:error];
                                        }
         
                                        
                                    } failure:^(NSError *error) {
-                                       if (completion) { completion(NO,[NSError errorWithDomain:@"heyzap" code:1 userInfo:@{NSUnderlyingErrorKey: error}]); }
-                                       [self sendFailureMessagesForTag:tag adType:adType wasAttemptingToShow:showImmediately];
-                                       HZDLog(@"Error! Failed to get the list of networks to mediate from Heyzap. Mediation won't be possible. Error = %@,",error);
+                                       [self sendFailureMessagesForTag:tag adType:adType wasAttemptingToShow:showImmediately completionBlock:completion underlyingError:error];
+                                       HZELog(@"Error! Failed to get the list of networks to mediate from Heyzap. Mediation won't be possible. Error = %@,",error);
                                    }];
 }
 
@@ -248,7 +274,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
             hzWaitUntil(^BOOL{
                 fetchedWithinTimeout = [adapter hasAdForType:type tag:tag];
                 if ([adapter lastErrorForAdType:type]) {
-                    HZDLog(@"There was an error w/ the fetch = %@",[adapter lastErrorForAdType:type]);
+                    HZELog(@"There was an error w/ the fetch = %@",[adapter lastErrorForAdType:type]);
                 }
                 return [adapter hasAdForType:type tag:tag] || [adapter lastErrorForAdType:type] != nil; // If it errored, exit early.
             }, timeout);
@@ -285,10 +311,11 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         if (!successful) {
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self.sessionDictionary removeObjectForKey:sessionKey];
-                if (completion) { completion(NO,[NSError errorWithDomain:@"heyzap" code:1 userInfo:nil]); }
                 [self sendFailureMessagesForTag:tag
                                          adType:type
-                            wasAttemptingToShow:showImmediately];
+                            wasAttemptingToShow:showImmediately
+                                completionBlock:completion
+                                underlyingError:nil];
             });
         }
     });
@@ -307,24 +334,18 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 }
 
 
-// Possibly this should take the completion block param too, and a potential NSUnderlying error?
-- (void)sendFailureMessagesForTag:(NSString *)tag adType:(HZAdType)adType wasAttemptingToShow:(BOOL)tryingToShow
+- (void)sendFailureMessagesForTag:(NSString *)tag adType:(HZAdType)adType wasAttemptingToShow:(BOOL)tryingToShow completionBlock:(void (^)(BOOL result, NSError *error))completion underlyingError:(NSError *)underlyingError
 {
+    NSDictionary *userInfo = underlyingError ? @{NSUnderlyingErrorKey: underlyingError} : nil;
+    NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
+    
     [[self delegateForAdType:adType] didFailToReceiveAdWithTag:tag];
+    if (completion) { completion(NO,error); }
     if (tryingToShow) {
         [[self delegateForAdType:adType] didFailToShowAdWithTag:tag
-                                                       andError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil]];
+                                                       andError:error];
     }
 }
-
-// Did receive ad with tag -> Tag always nil (no consistent way to say what tag a fetch is for).
-// Did fail to receieve ad with tag -> Tag always nil (no consistent way to say what tag a fetch is for).
-
-// Did hide ad -> Receive callback from individual SDKs about whether
-
-// Dictionary keys
-NSString * const kHZAdapterKey = @"name";
-NSString * const kHZDataKey = @"data";
 
 #pragma mark - Querying adapters
 
@@ -370,6 +391,10 @@ NSString * const kHZDataKey = @"data";
         [self.sessionDictionary removeObjectForKey:key];
         
         [[self delegateForAdType:key.adType] didHideAdWithTag:key.tag];
+    }
+    
+    if (key.adType == HZAdTypeInterstitial && [key.tag isEqualToString:[HeyzapAds defaultTagName]]) {
+        [self autoFetchInterstitial];
     }
 }
 
