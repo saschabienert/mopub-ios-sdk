@@ -37,6 +37,9 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 @end
 
+/**
+ *  The (mostly abstract) superclass for adapters.
+ */
 @interface HZBaseAdapter : NSObject
 
 /**

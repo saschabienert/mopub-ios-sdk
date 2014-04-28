@@ -30,10 +30,6 @@
 #import "HZMediationSessionKey.h"
 #import "HZMediationSession.h"
 
-#define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
-#define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
-#define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
-
 typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
     HZMediationStartStatusNotStarted,
     HZMediationStartStatusFailure,
@@ -206,7 +202,7 @@ NSString * const kHZDataKey = @"data";
         return;
     }
     
-    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[[self class] creativeTypesForAdType:adType]
+    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[HZMediationConstants creativeTypesForAdType:adType]
                                                                          adUnit:adUnit
                                                                             tag:[HeyzapAds defaultTagName]
                                                             andAdditionalParams:nil];
@@ -241,7 +237,7 @@ NSString * const kHZDataKey = @"data";
                                    }];
 }
 
-// I *think* that both the show and fetch completion blocks can be combined here.
+
 
 - (void)fetchForSession:(HZMediationSession *)session showImmediately:(BOOL)showImmediately fetchTimeout:(const NSTimeInterval)timeout sessionKey:(HZMediationSessionKey *)sessionKey completion:(void (^)(BOOL result, NSError *error))completion
 {
@@ -249,7 +245,6 @@ NSString * const kHZDataKey = @"data";
     NSArray *preferredMediatorList = [session.chosenAdapters array];
     HZAdType type = session.adType;
     HZDLog(@"Preferred mediator list = %@",preferredMediatorList);
-    // Should take an ad unit, and filter out SDKs that don't support that ad unit.
     
     // Find the first SDK that has an ad, and use it
     // This means if e.g. the first 2 networks aren't working, we don't have to wait for a timeout to get to the third.
@@ -389,7 +384,6 @@ NSString * const kHZDataKey = @"data";
     
     if (key) {
         [self.sessionDictionary removeObjectForKey:key];
-        
         [[self delegateForAdType:key.adType] didHideAdWithTag:key.tag];
     }
     
@@ -425,53 +419,7 @@ NSString * const kHZDataKey = @"data";
     [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAd];
 }
 
-#pragma mark - Enum Support
-
-NSString * NSStringFromAdType(HZAdType type)
-{
-    switch (type) {
-        case HZAdTypeInterstitial: {
-            return @"interstitial";
-            break;
-        }
-        case HZAdTypeIncentivized: {
-            return @"incentivized";
-            break;
-        }
-        case HZAdTypeVideo: {
-            return @"video";
-            break;
-        }
-    }
-}
-
-HZAdType hzAdTypeFromString(NSString *adUnit) {
-    if ([adUnit isEqualToString:@"incentivized"]) {
-        return HZAdTypeIncentivized;
-    } else if ([adUnit isEqualToString:@"video"]) {
-        return HZAdTypeVideo;
-    } else {
-        return HZAdTypeInterstitial;
-    }
-}
-
-+ (NSArray *)creativeTypesForAdType:(HZAdType)type
-{
-    switch (type) {
-        case HZAdTypeIncentivized: {
-            return HZIncentivizedAdCreativeTypes;
-            break;
-        }
-        case HZAdTypeInterstitial: {
-            return HZInterstitialAdCreativeTypes;
-            break;
-        }
-        case HZAdTypeVideo: {
-            return HZVideoAdCreativeTypes;
-            break;
-        }
-    }
-}
+#pragma mark - Misc
 
 + (NSString *)commaSeparatedAdapterList
 {
@@ -492,7 +440,7 @@ HZAdType hzAdTypeFromString(NSString *adUnit) {
     return [availableNonHeyzapAdapters count] == 0;
 }
 
-#pragma mark - Delegation
+#pragma mark - Setters/Getters for delegates
 
 - (void)setDelegate:(id<HZAdsDelegate>)delegate forAdType:(HZAdType)adType
 {

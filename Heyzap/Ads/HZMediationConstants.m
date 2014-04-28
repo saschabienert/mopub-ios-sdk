@@ -23,6 +23,10 @@ NSString * const kHZAdapterAdMob = @"admob";
 NSString * const kHZAdapterHeyzap = @"heyzap";
 NSString * const kHZAdapterAppLovin = @"applovin";
 
+#define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
+#define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
+#define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
+
 + (NSError *)errorWithAdapter:(NSString *)adapter
                        domain:(NSString *)domain
                      userInfo:(NSDictionary *)userInfo
@@ -39,6 +43,52 @@ NSString * const kHZAdapterAppLovin = @"applovin";
     return [HZMediationConstants errorWithAdapter:[adapter name]
                                            domain:kHZMediationCredentialsDomain
                                          userInfo:error.userInfo];
+}
+
+NSString * NSStringFromAdType(HZAdType type)
+{
+    switch (type) {
+        case HZAdTypeInterstitial: {
+            return @"interstitial";
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            return @"incentivized";
+            break;
+        }
+        case HZAdTypeVideo: {
+            return @"video";
+            break;
+        }
+    }
+}
+
+HZAdType hzAdTypeFromString(NSString *adUnit) {
+    if ([adUnit isEqualToString:@"incentivized"]) {
+        return HZAdTypeIncentivized;
+    } else if ([adUnit isEqualToString:@"video"]) {
+        return HZAdTypeVideo;
+    } else {
+        return HZAdTypeInterstitial;
+    }
+}
+
++ (NSArray *)creativeTypesForAdType:(HZAdType)type
+{
+    switch (type) {
+        case HZAdTypeIncentivized: {
+            return HZIncentivizedAdCreativeTypes;
+            break;
+        }
+        case HZAdTypeInterstitial: {
+            return HZInterstitialAdCreativeTypes;
+            break;
+        }
+        case HZAdTypeVideo: {
+            return HZVideoAdCreativeTypes;
+            break;
+        }
+    }
 }
 
 @end
