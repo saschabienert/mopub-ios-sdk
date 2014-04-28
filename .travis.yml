@@ -19,6 +19,7 @@ before_install:
 script: sh $TEST_SCRIPT
 
 notifications:
+  slack: heyzap:BNRA5gUyLEhEAlxkwL9KX7Ap
   hipchat:
     rooms:
       secure: Pmpj0iM7SY4XPx+6CUR4J3BB5s+UmsSIK848YpYSjuAvYsP0P5UfWcG2rWHDP7O2ueYsfHLejhOCeIL0ezb/emob+DzYRK0Msy1O03U2k3Md+htvi2hJEqlNaZzFguPpVlUrxyVELWD7xSre5r8HJsAggqmTvxXPl9CB7IR7hcs=
