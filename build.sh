@@ -10,7 +10,7 @@ if [ $# -gt 0 ]; then
     sed -i "" "s/^#define\ SDK_VERSION.*/#define\ SDK_VERSION\ @\"$1\"/" Heyzap/Ads/HeyzapAds.h
 fi
 
-/usr/bin/env ant -buildfile build.xml all
+/usr/bin/env /usr/local/bin/ant -buildfile build.xml all
 
 # Build the ios sdk
 
