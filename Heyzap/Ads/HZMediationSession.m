@@ -104,27 +104,34 @@ return nil; \
 
 NSString *const kHZImpressionIDKey = @"tracking_id";
 NSString *const kHZNetworkKey = @"network";
+/**
+ *  The dictionary key for the position of a network within the list received from the server; for the list [chartboost, applovin], chartboost is 0.
+ */
+NSString *const kHZOrdinalKey = @"ordinal";
 
 - (void)reportSuccessfulFetchUpToAdapter:(HZBaseAdapter *)chosenAdapter
 {
     
     const NSUInteger chosenIndex = [self.chosenAdapters indexOfObject:chosenAdapter];
     NSArray *adapterList = [self.chosenAdapters objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, chosenIndex+1)]];
-    for (HZBaseAdapter *adapter in adapterList) {
+    
+    [adapterList enumerateObjectsUsingBlock:^(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         NSNumber *const success = (adapter == [adapterList lastObject]) ? @1 : @0; // Last adapter was successful
-        [[HZMediationAPIClient sharedClient] post:@"fetch" withParams:@{@"success": success, kHZNetworkKey : [adapter name]} success:^(id json) {
+        [[HZMediationAPIClient sharedClient] post:@"fetch" withParams:@{@"success": success, kHZOrdinalKey : @(idx), kHZNetworkKey : [adapter name]} success:^(id json) {
             HZDLog(@"Success reporting fetch");
         } failure:^(NSError *error) {
             HZDLog(@"Error reporting fetch = %@",error);
         }];
-    }
+    }];
 }
 
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter
 {
+    const NSUInteger ordinal = [self.chosenAdapters indexOfObject:adapter];
     [[HZMediationAPIClient sharedClient] post:@"click"
                                  withParams:@{kHZImpressionIDKey: self.impressionID,
-                                              kHZNetworkKey: [adapter name]}
+                                              kHZNetworkKey: [adapter name],
+                                              kHZOrdinalKey : @(ordinal)}
                                     success:^(id json) {
         HZDLog(@"Success reporting click");
     } failure:^(NSError *error) {
@@ -134,9 +141,11 @@ NSString *const kHZNetworkKey = @"network";
 
 - (void)reportImpressionForAdapter:(HZBaseAdapter *)adapter
 {
+    const NSUInteger ordinal = [self.chosenAdapters indexOfObject:adapter];
     [[HZMediationAPIClient sharedClient] post:@"impression"
                                  withParams:@{kHZImpressionIDKey: self.impressionID,
-                                              kHZNetworkKey: [adapter name]}
+                                              kHZNetworkKey: [adapter name],
+                                              kHZOrdinalKey: @(ordinal)}
                                     success:^(id json) {       
         HZDLog(@"Success reporting impression");
     } failure:^(NSError *error) {
