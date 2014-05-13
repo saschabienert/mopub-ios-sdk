@@ -76,16 +76,18 @@ extern "C" {
         HeyzapUnityAdDelegate *delegate = [[HeyzapUnityAdDelegate alloc] init];
         [HeyzapAds startWithOptions: flags];
         [HeyzapAds setFramework: @"unity3d"];
-        [HeyzapAds setDelegate: delegate];
-        [HeyzapAds setIncentiveDelegate: delegate];
+        [HZInterstitialAd setDelegate: delegate];
+        [HZVideoAd setDelegate: delegate];
+        [HZIncentivizedAd setDelegate: delegate];
     }
 
      void hz_ads_start_app(int flags) {
         HeyzapUnityAdDelegate *delegate = [[HeyzapUnityAdDelegate alloc] init];
         [HeyzapAds startWithOptions: flags];
         [HeyzapAds setFramework: @"unity3d"];
-        [HeyzapAds setDelegate: delegate];
-        [HeyzapAds setIncentiveDelegate: delegate];
+        [HZInterstitialAd setDelegate: delegate];
+        [HZVideoAd setDelegate: delegate];
+        [HZIncentivizedAd setDelegate: delegate];
      }
 
      //Interstitial
