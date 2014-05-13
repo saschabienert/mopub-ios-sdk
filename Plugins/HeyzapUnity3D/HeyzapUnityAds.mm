@@ -79,7 +79,7 @@ extern "C" {
         [HeyzapAds setDelegate: delegate];
         [HeyzapAds setIncentiveDelegate: delegate];
     }
-    
+
      void hz_ads_start_app(int flags) {
         HeyzapUnityAdDelegate *delegate = [[HeyzapUnityAdDelegate alloc] init];
         [HeyzapAds startWithOptions: flags];
@@ -89,19 +89,19 @@ extern "C" {
      }
 
      //Interstitial
-     
+
      void hz_ads_show_interstitial(const char *tag) {
          [HZInterstitialAd showForTag: [NSString stringWithUTF8String: tag]];
      }
-     
+
      void hz_ads_hide_interstitial(void) {
-         [HZInterstitialAd hide];
+         //[HZInterstitialAd hide];
      }
-     
+
      void hz_ads_fetch_interstitial(const char *tag) {
          [HZInterstitialAd fetchForTag: [NSString stringWithUTF8String: tag]];
      }
-     
+
      bool hz_ads_interstitial_is_available(const char *tag) {
          return [HZInterstitialAd isAvailableForTag: [NSString stringWithUTF8String: tag]];
      }
@@ -113,7 +113,7 @@ extern "C" {
      }
 
      void hz_ads_hide_video(void) {
-         [HZVideoAd hide];
+         //[HZVideoAd hide];
      }
 
      void hz_ads_fetch_video(const char *tag) {
@@ -131,7 +131,7 @@ extern "C" {
      }
 
      void hz_ads_hide_incentivized() {
-         [HZIncentivizedAd hide];
+         //[HZIncentivizedAd hide];
      }
 
      void hz_ads_fetch_incentivized(const char *tag) {
