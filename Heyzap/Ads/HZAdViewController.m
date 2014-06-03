@@ -163,10 +163,14 @@
         // You can check how often we run into this w/ this Kibana query @message="Error showing SKStoreProductViewController(modal app store)"
         [storeController loadProductWithParameters:productParameters completionBlock:^(BOOL result, NSError *error) {
             if (!result || error) {
+    
+                NSString *errorMessage = [NSString stringWithFormat:@"This means someone clicked on the ad but we couldn't show them the modal app store. We fallback to the regular app store if this is the case. If this link https://itunes.apple.com/app/id%@ fails, then we're probably showing an ad for a country the app isn't available in.",appID];
                 
                 [[HZAdsAPIClient sharedClient] logMessageToHeyzap:@"Error showing SKStoreProductViewController(modal app store)"
                                                             error:error
-                                                         userInfo:@{@"Explanation": @"This means someone clicked on the ad but we couldn't show them the modal app store. We fallback to the regular app store if this is the case."}];
+                                                         userInfo:@{@"Explanation": errorMessage,
+                                                                    @"App Store ID":appID,
+                                                                    @"Impression ID":self.ad.impressionID}];
                 
                 [[UIApplication sharedApplication] openURL: self.ad.clickURL];
                 
