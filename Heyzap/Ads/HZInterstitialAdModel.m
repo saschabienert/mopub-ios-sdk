@@ -10,6 +10,10 @@
 #import "HZDictionaryUtils.h"
 #import "HZUtils.h"
 
+@interface HZInterstitialAdModel()<UIWebViewDelegate>
+
+@end
+
 @implementation HZInterstitialAdModel
 
 - (id) initWithDictionary: (NSDictionary *) dict {
@@ -63,13 +67,30 @@
 }
 
 - (void) doPostFetchActionsWithCompletion:(void (^)(BOOL))completion {
-//    self.preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)];
-//    [self.preloadWebview loadHTMLString: self.HTMLContent baseURL: [NSURL fileURLWithPath: [HZUtils cacheDirectoryPath]]];
+    
+    NSString *path = [[NSBundle mainBundle] bundlePath];
+    NSURL *baseURL = [NSURL fileURLWithPath:path];
+    
+    _preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)];
+    _preloadWebview.delegate = self;
+    [_preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
     
     if (completion) {
         completion(YES);
         
     }
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    
 }
 
 @end

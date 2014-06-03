@@ -14,7 +14,7 @@
 #import "HZAdsAPIClient.h"
 #import "HZLog.h"
 
-@interface HZVideoAdModel()
+@interface HZVideoAdModel()<UIWebViewDelegate>
 @property (nonatomic, assign) BOOL sentComplete;
 @property (nonatomic) HZAFHTTPRequestOperation *downloadOperation;
 @end
@@ -95,6 +95,14 @@
 #pragma mark - Post Fetch
 
 - (void) doPostFetchActionsWithCompletion:(void (^)(BOOL))completion {
+    
+    NSString *path = [[NSBundle mainBundle] bundlePath];
+    NSURL *baseURL = [NSURL fileURLWithPath:path];
+    
+    _preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)];
+    _preloadWebview.delegate = self;
+    [_preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
+    
     if (!self.forceStreaming) {
         // Just in case it got deleted in meantime
         [HZUtils createCacheDirectory];
@@ -213,6 +221,18 @@
 
 + (BOOL) isValidForCreativeType: (NSString *) creativeType {
     return [creativeType isEqualToString: @"video"];
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    
 }
 
 @end
