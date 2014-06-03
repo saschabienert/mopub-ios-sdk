@@ -18,6 +18,6 @@
 @property (nonatomic, readonly) BOOL isFullScreen;
 @property (nonatomic, readonly) CGSize dimensions;
 
-@property (nonatomic, readonly) UIWebView *preloadWebview;
+@property (nonatomic) UIWebView *preloadWebview;
 
 @end

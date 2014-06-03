@@ -99,9 +99,15 @@
     NSString *path = [[NSBundle mainBundle] bundlePath];
     NSURL *baseURL = [NSURL fileURLWithPath:path];
     
-    _preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)];
-    _preloadWebview.delegate = self;
-    [_preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
+    __block HZVideoAdModel *blockSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        blockSelf.preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)];
+        blockSelf.preloadWebview.delegate = blockSelf;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,
+                                                 (unsigned long)NULL), ^(void) {
+            [blockSelf.preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
+        });
+    });
     
     if (!self.forceStreaming) {
         // Just in case it got deleted in meantime
