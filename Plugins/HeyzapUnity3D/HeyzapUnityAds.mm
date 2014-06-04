@@ -69,6 +69,14 @@ extern void UnitySendMessage(const char *, const char *, const char *);
     UnitySendMessage("HeyzapAds", "setDisplayState", "incentivized_result_incomplete,");
 }
 
+- (void)willStartAudio {
+    UnitySendMessage("HeyzapAds", "setDisplayState", "audio_starting,");
+}
+
+- (void) didFinishAudio {
+    UnitySendMessage("HeyzapAds", "setDisplayState", "audio_finished,");
+}
+
 @end
 
 extern "C" {
