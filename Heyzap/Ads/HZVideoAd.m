@@ -21,6 +21,12 @@ static int HZVideoAdCreativeIDPin = 0;
 
 @implementation HZVideoAd
 
++ (void) setDelegate:(id<HZAdsDelegate>)delegate {
+    if ([[HZAdsManager sharedManager] isEnabled]) {
+        [[HZAdsManager sharedManager] setVideoDelegate: delegate];
+    }
+}
+
 + (void) showWithCompletion:(void (^)(BOOL result, NSError *error))completion {
     [self showForTag: nil completion: completion];
 }

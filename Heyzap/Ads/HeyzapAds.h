@@ -115,7 +115,7 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
 
 /** The HZIncentivizedAdDelegate protocol provides global information about using an incentivized ad. If you want to give the user a reward
  after successfully finishing an incentivized ad, implement the didCompleteAd method */
-@protocol HZIncentivizedAdDelegate<NSObject>
+@protocol HZIncentivizedAdDelegate<HZAdsDelegate>
 
 @optional
 

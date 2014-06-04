@@ -18,9 +18,16 @@
 #import "HZAdVideoViewController.h"
 #import "HZAdInterstitialViewController.h"
 #import "HeyzapAds.h"
+#import "HZDelegateProxy.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
+
+@interface HZAdsManager()
+@property (nonatomic, strong) HZDelegateProxy *interstitialDelegateProxy;
+@property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
+@property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
+@end
 
 @implementation HZAdsManager
 
@@ -28,6 +35,9 @@
     self = [super init];
     if (self) {
         _isEnabled = YES;
+        _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
+        _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
+        _videoDelegateProxy = [[HZDelegateProxy alloc] init];
 
         [[self class] runInitialTasks];
     }
@@ -192,10 +202,7 @@
     
     if (!result || error) {
         // Not using the standard method here.
-        if (self.statusDelegate != nil
-            && [self.statusDelegate respondsToSelector: @selector(didFailToShowAdWithTag:andError:)]) {
-            [self.statusDelegate performSelector: @selector(didFailToShowAdWithTag:andError:) withObject: tag withObject: error];
-        }
+        [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag: tag andError: error];
     }
     
     if (completion) {
@@ -236,6 +243,31 @@
 - (void) applicationWillTerminate: (id) sender {
     [self cleanup];
 }
+
+#pragma mark - Delegates
+
+- (void)setInterstitialDelegate:(id<HZAdsDelegate>)delegate {
+    self.interstitialDelegateProxy.forwardingTarget = delegate;
+}
+
+- (void)setVideoDelegate:(id<HZAdsDelegate>)delegate {
+    self.videoDelegateProxy.forwardingTarget = delegate;
+}
+
+- (void) setIncentivizedDelegate:(id<HZIncentivizedAdDelegate>)incentivizedDelegate {
+    self.incentivizedDelegateProxy.forwardingTarget = incentivizedDelegate;
+}
+
+- (id)delegateForAdUnit:(NSString *)adUnit {
+    if ([adUnit isEqualToString:@"incentivized"]) {
+        return self.incentivizedDelegateProxy;
+    } else if ([adUnit isEqualToString:@"video"]) {
+        return self.videoDelegateProxy;
+    } else {
+        return self.interstitialDelegateProxy;
+    }
+}
+
 
 #pragma mark - Singleton
 

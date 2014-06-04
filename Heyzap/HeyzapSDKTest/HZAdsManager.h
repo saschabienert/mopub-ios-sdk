@@ -20,11 +20,6 @@
 
 #pragma mark - Active Controller
 @property (nonatomic, assign) HZAdViewController *activeController;
-
-#pragma mark - Global Status Delegates
-@property (nonatomic, weak) id<HZAdsDelegate> statusDelegate;
-@property (nonatomic, weak) id<HZIncentivizedAdDelegate> incentivizedDelegate;
-
 @property (nonatomic, assign, readonly) BOOL isEnabled;
 @property (nonatomic, assign) HZAdOptions options;
 
@@ -38,4 +33,10 @@
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
 - (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag withCompletion: (void (^)(BOOL result, NSError *error))completion;
 - (void) hideActiveAd;
+
+- (void) setVideoDelegate: (id<HZAdsDelegate>) delegate;
+- (void) setInterstitialDelegate: (id<HZAdsDelegate>) delegate;
+- (void) setIncentivizedDelegate:(id<HZIncentivizedAdDelegate>)incentivizedDelegate;
+- (id)delegateForAdUnit:(NSString *)adUnit;
+
 @end

@@ -31,8 +31,12 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "HeyzapAds.h"
+
 /** HZIncentivizedAd is responsible for fetching and showing incentivized video ads. */
 @interface HZIncentivizedAd : NSObject
+
++ (void) setDelegate: (id) delegate;
 
 /** Shows an incentivized video ad if one is available */
 + (void) show;

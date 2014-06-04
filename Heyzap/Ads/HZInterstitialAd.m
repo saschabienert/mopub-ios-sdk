@@ -25,7 +25,7 @@ static int HZInterstitialAdCreativeIDPin = 0;
 
 + (void) setDelegate: (id<HZAdsDelegate>) delegate {
     if ([[HZAdsManager sharedManager] isEnabled]) {
-        [[HZAdsManager sharedManager] setStatusDelegate: delegate];
+        [[HZAdsManager sharedManager] setInterstitialDelegate: delegate];
     }
 }
 

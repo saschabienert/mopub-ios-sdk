@@ -78,7 +78,8 @@
 }
 
 + (void) setDelegate: (id<HZAdsDelegate>) delegate {
-    [[HZAdsManager sharedManager] setStatusDelegate: delegate];
+    [[HZAdsManager sharedManager] setInterstitialDelegate: delegate];
+    [[HZAdsManager sharedManager] setVideoDelegate: delegate];
 }
 
 + (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate {
