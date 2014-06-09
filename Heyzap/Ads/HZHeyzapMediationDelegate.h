@@ -11,7 +11,7 @@
 #import "HeyzapAds.h"
 
 /**
- *  Because Heyzap delegate methods used the same selectors, we need separate objects to receive the selectors + differentiate between ad types.
+ *  Because Heyzap delegate methods use the same selectors, we need separate objects to receive the selectors + differentiate between ad types.
  */
 @interface HZHeyzapMediationDelegate : NSObject <HZIncentivizedAdDelegate>
 

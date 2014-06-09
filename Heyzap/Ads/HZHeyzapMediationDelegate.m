@@ -9,6 +9,10 @@
 #import "HZHeyzapMediationDelegate.h"
 #import "HZMediationConstants.h"
 
+#import "HZHeyzapIncentivizedAd.h"
+#import "HZHeyzapInterstitialAd.h"
+#import "HZHeyzapVideoAd.h"
+
 @interface HZHeyzapMediationDelegate()
 
 @property (nonatomic) HZAdType adType;
@@ -25,8 +29,27 @@
     if (self) {
         _adType = adType;
         _delegate = delegate;
+        [self becomeDelegateForType:adType];
     }
     return self;
+}
+
+- (void)becomeDelegateForType:(HZAdType)adType
+{
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            [HZHeyzapInterstitialAd setDelegate:self];
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            [HZHeyzapIncentivizedAd setDelegate:self];
+            break;
+        }
+        case HZAdTypeVideo: {
+            [HZHeyzapVideoAd setDelegate:self];
+            break;
+        }
+    }
 }
 
 - (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error

@@ -15,11 +15,16 @@
 #import "HZHeyzapVideoAd.h"
 
 #import "HZAdsManager.h"
+#import "HZHeyzapMediationDelegate.h"
 
 /**
  *  This class needs the most work. I should use delegate callbacks to get errors but thats it I think.
  */
 @interface HZHeyzapAdapter() <HZHeyzapDelegateReceiver>
+
+@property (nonatomic, strong) HZHeyzapMediationDelegate *interstitialDelegate;
+@property (nonatomic, strong) HZHeyzapMediationDelegate *incentivizedDelegate;
+@property (nonatomic, strong) HZHeyzapMediationDelegate *videoDelegate;
 
 @end
 
@@ -34,6 +39,17 @@
         [[HZAdsManager sharedManager] onStart];
     });
     return proxy;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _interstitialDelegate = [[HZHeyzapMediationDelegate alloc] initWithAdType:HZAdTypeInterstitial delegate:self];
+        _incentivizedDelegate = [[HZHeyzapMediationDelegate alloc] initWithAdType:HZAdTypeIncentivized delegate:self];
+        _videoDelegate = [[HZHeyzapMediationDelegate alloc] initWithAdType:HZAdTypeVideo delegate:self];
+    }
+    return self;
 }
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
