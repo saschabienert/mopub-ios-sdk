@@ -41,24 +41,26 @@
 
 @implementation HeyzapAds
 
-+ (void) startWithAppStoreID: (int) appID andOptions: (HZAdOptions) options {
-    [self startWithOptions: options];
++ (void) startWithPublisherID:(NSString *)publisherID {
+    [self startWithPublisherID: publisherID andOptions: HZAdOptionsNone andFramework: nil];
 }
 
-+ (void) startWithOptions: (HZAdOptions) options {
++ (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options {
+    [self startWithPublisherID: publisherID andOptions: options andFramework: nil];
+}
+
+
++ (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options andFramework:(NSString *)framework {
     [HZAdsManager sharedManager];
+
+    if (framework != nil && ![framework isEqualToString: @""]) {
+        [[HZAdsManager sharedManager] setFramework: framework];
+    }
+    
+    [[HZAdsManager sharedManager] setPublisherID: publisherID];
     [[HZAdsManager sharedManager] setOptions: options];
     [[HZAdsManager sharedManager] setIsDebuggable: NO];
     [[HZAdsManager sharedManager] onStart];
-}
-
-+ (void) startWithOptions:(HZAdOptions)options andFramework: (NSString *) framework {
-    [[HZAdsManager sharedManager] setFramework: framework];
-    [self startWithOptions: options];
-}
-
-+ (void) start {
-    [self startWithOptions: HZAdOptionsNone];
 }
 
 + (BOOL) isStarted {

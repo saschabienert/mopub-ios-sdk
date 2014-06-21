@@ -19,7 +19,9 @@
 #import "HZDictionaryUtils.h"
 #import "HeyzapAds.h"
 
-static NSString * const kHZAPIBaseURLString = @"http://sdk.heyzap.com";
+#import "HZAdsManager.h"
+
+static NSString * const kHZAPIBaseURLString = @"https://ads.heyzap.com";
 
 //don't change these without also changing them in the test app's view controller
 NSString * const HZAPIClientDidReceiveResponseNotification = @"HZAPIClientDidReceiveResponse";
@@ -47,22 +49,21 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
         deviceFormFactor = @"phone";
     }
     
-    NSString *heyzapInstalled = [HZUtils canOpenHeyzap] ? @"1" : @"0";
-    
     NSString *versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
     versionString = versionString ?: @"";
     
-    NSMutableDictionary *params = [@{@"device_id": [HZUtils deviceID],
+    NSString *publisherID = [HZUtils publisherID] ?: @"";
+    
+    NSMutableDictionary *params = [@{@"publisher_id": publisherID,
+                                     @"device_id": [HZUtils deviceID],
                                      @"app_bundle_id": [[NSBundle mainBundle] bundleIdentifier],
                                      @"app_version": versionString,
                                      @"device_form_factor": deviceFormFactor,
                                      @"platform": @"iphone",
                                      @"sdk_platform": @"iphone",
-                                     @"from_sdk": @"true",
                                      @"sdk_version": SDK_VERSION,
                                      @"ios_version": [UIDevice currentDevice].systemVersion,
                                      @"device_type": [HZAvailability platform],
-                                     @"installed": heyzapInstalled,
                                    } mutableCopy];
     
     if (dictionary) {

@@ -37,12 +37,13 @@
         }];
         
     }
+    
     [HZLog setDebugLevel: HZDebugLevelVerbose];
     
     
     self.controller = [[SDKTestAppViewController alloc] init];
     
-    [HeyzapAds startWithOptions: HZAdOptionsNone];
+    [HeyzapAds startWithPublisherID: @"1234"];
     [HeyzapAds setDelegate: self.controller];
     [HeyzapAds setIncentiveDelegate: self.controller];
 

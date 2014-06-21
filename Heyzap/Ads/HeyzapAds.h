@@ -144,10 +144,16 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
  */
 + (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate;
 
-+ (void) startWithAppStoreID: (int) appID andOptions: (HZAdOptions) options DEPRECATED_ATTRIBUTE;
-+ (void) startWithOptions:(HZAdOptions)options andFramework: (NSString *) framework;
-+ (void) startWithOptions: (HZAdOptions) options; //Only use this method if you are using the Social SDK.
-+ (void) start;
+
+/**
+ *
+ *
+ */
+
++ (void) startWithPublisherID: (NSString *) publisherID andOptions: (HZAdOptions) options;
++ (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options andFramework: (NSString *) framework;
++ (void) startWithPublisherID: (NSString *) publisherID;
+
 + (BOOL) isStarted;
 + (void) setDebugLevel:(HZDebugLevel)debugLevel;
 + (void) setDebug:(BOOL)choice;

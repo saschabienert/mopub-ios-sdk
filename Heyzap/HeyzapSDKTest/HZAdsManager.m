@@ -19,6 +19,7 @@
 #import "HZAdInterstitialViewController.h"
 #import "HeyzapAds.h"
 #import "HZDelegateProxy.h"
+#import "HZAnalytics.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
@@ -52,7 +53,11 @@
 #pragma mark - Run Initial Tasks
 
 - (void) onStart {
-    if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly] && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
+    // Instantiate Analytics
+    [HZAnalytics sharedInstance];
+    
+    if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly]
+        && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
         [HZInterstitialAd fetch];
     }
 }
@@ -131,6 +136,13 @@
         } failure:nil];
         
     } failure:nil];
+}
+
+#pragma mark - Getters/Setters
+
+- (void) setPublisherID:(NSString *)publisherID {
+    _publisherID = publisherID;
+    [HZUtils setPublisherID: publisherID];
 }
 
 #pragma mark - Enabled

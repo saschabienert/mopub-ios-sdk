@@ -8,7 +8,7 @@
 
 #import "HZAdsAPIClient.h"
 
-static NSString * const kHZAdsAPIBaseURLString = @"http://ads.heyzap.com/in_game_api/ads/";
+static NSString * const kHZAdsAPIBaseURLString = @"https://ads.heyzap.com/in_game_api/ads/";
 
 @implementation HZAdsAPIClient
 

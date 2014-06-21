@@ -258,9 +258,7 @@
 - (NSDictionary *)HZIdentifierDictionary
 {
     NSString *uniqueDeviceIdentifier = [self HZuniqueDeviceIdentifier] ?: @"";
-    NSString *macAddress = [self HZmacaddress] ?: @"";
     NSString *uniqueGlobalDeviceIdentifier = [self HZuniqueGlobalDeviceIdentifier] ?: @"";
-    NSString *md5MacAddress = [self HZmd5MacAddress] ?: @"";
     NSString *advertisingIdentifier = [self HZadvertisingIdentifier] ?: @"";
     NSString *connectivityType = [self HZConnectivityType] ?:@"";
     NSString *trackingEnabled = [self HZtrackingEnabled];
@@ -269,10 +267,9 @@
     return @{
              @"vendor_device_id": vendorDeviceID,
              @"uniqueDeviceIdentifier": uniqueDeviceIdentifier,
-             @"macAddress": macAddress,
              @"uniqueGlobalDeviceIdentifier":uniqueGlobalDeviceIdentifier,
-             @"md5MacAddress":md5MacAddress,
              @"advertisingIdentifier":advertisingIdentifier,
+             @"advertising_id": advertisingIdentifier,
              @"connection_type":connectivityType,
              @"tracking_enabled":trackingEnabled
              };

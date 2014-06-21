@@ -18,18 +18,18 @@ char *HZNewBase64Encode(
 
 @interface HZUtils : NSObject
 
-+(NSString *)urlEncodeString: (NSString *) string usingEncoding:(NSStringEncoding)encoding;
++ (NSString *)urlEncodeString: (NSString *) string usingEncoding:(NSStringEncoding)encoding;
 + (NSString *)base64EncodedStringFromString: (NSString *) string;
 + (id) objectFromArchivedData: (NSData *) data;
 + (NSData *) dataFromObject: (id<NSCoding>) object;
 + (NSString *) deviceID;
-+ (BOOL) canOpenHeyzap;
-+ (void) openHeyzap;
 + (NSString *) pathWithFilename: (NSString *) filename;
 + (NSString *) cacheDirectoryPath;
 + (NSString *) cacheDirectoryWithFilename: (NSString *) filename;
 + (void) createCacheDirectory;
 + (NSMutableDictionary *)hzQueryDictionaryFromURL: (NSURL *) url;
 + (NSMutableDictionary *)hzQueryStringToDictionary:(NSString *)string;
++ (void) setPublisherID: (NSString *) publisherID;
++ (NSString *) publisherID;
 
 @end

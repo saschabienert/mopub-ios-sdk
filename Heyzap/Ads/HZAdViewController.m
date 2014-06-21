@@ -98,11 +98,7 @@
 }
 
 - (void) didClickHeyzapInstall {
-    if ([HZUtils canOpenHeyzap]) {
-        [HZUtils openHeyzap];
-    } else {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.appstore.com/heyzap"]];
-    }
+    
 }
 
 - (void) didImpression {
