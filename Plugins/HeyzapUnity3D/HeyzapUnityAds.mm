@@ -32,84 +32,90 @@
 
 extern void UnitySendMessage(const char *, const char *, const char *);
 
+#define HZ_VIDEO_KLASS @"HZVideoAd"
+#define HZ_INTERSTITIAL_KLASS @"HZInterstitialAd"
+#define HZ_INCENTIVIZED_KLASS @"HZIncentivizedAd"
+
 @interface HeyzapUnityAdDelegate : NSObject<HZAdsDelegate,HZIncentivizedAdDelegate>
+
+@property (nonatomic, strong) NSString *klassName;
+
+- (id) initWithKlassName: (NSString *) klassName;
++ (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *);
+
 @end
 
 @implementation HeyzapUnityAdDelegate
 
-- (void) didReceiveAdWithTag:(NSString *)tag {
-    UnitySendMessage("HeyzapAds", "setDisplayState", [[NSString stringWithFormat: @"%@,%@", @"available", tag] UTF8String]);
+- (id) initWithKlassName: (NSString *) klassName {
+    self = [super init];
+    if (self) {
+        _klassName = klassName;
+    }
+    
+    return self;
 }
 
-- (void) didFailToReceiveAdWithTag:(NSString *)tag {
-    UnitySendMessage("HeyzapAds", "setDisplayState", [[NSString stringWithFormat: @"%@,%@", @"fetch_failed", tag] UTF8String]);
-}
+- (void) didReceiveAdWithTag:(NSString *)tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"available", tag]; }
 
-- (void) didShowAdWithTag:(NSString *)tag {
-    UnitySendMessage("HeyzapAds", "setDisplayState", [[NSString stringWithFormat: @"%@,%@", @"show", tag] UTF8String]);
-}
+- (void) didFailToReceiveAdWithTag:(NSString *)tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"fetch_failed", tag]; }
 
-- (void) didHideAdWithTag:(NSString *)tag {
-    UnitySendMessage("HeyzapAds", "setDisplayState", [[NSString stringWithFormat: @"%@,%@", @"hide", tag] UTF8String]);
-}
+- (void) didShowAdWithTag:(NSString *)tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"show", tag]; }
 
-- (void) didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error {
-    UnitySendMessage("HeyzapAds", "setDisplayState", [[NSString stringWithFormat: @"%@,%@", @"failed", tag] UTF8String]);
-}
+- (void) didHideAdWithTag:(NSString *)tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"hide", tag]; }
 
-- (void) didClickAdWithTag:(NSString *)tag {
-    UnitySendMessage("HeyzapAds", "setDisplayState", [[NSString stringWithFormat: @"%@,%@", @"click", tag] UTF8String]);
-}
+- (void) didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"failed", tag]; }
 
-- (void)didCompleteAd {
-    UnitySendMessage("HeyzapAds", "setDisplayState", "incentivized_result_complete,");
-}
+- (void) didClickAdWithTag:(NSString *)tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"click", tag]; }
 
-- (void)didFailToCompleteAd {
-    UnitySendMessage("HeyzapAds", "setDisplayState", "incentivized_result_incomplete,");
-}
+- (void)didCompleteAdWithTag: (NSString *) tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"incentivized_result_complete", tag]; }
 
-- (void)willStartAudio {
-    UnitySendMessage("HeyzapAds", "setDisplayState", "audio_starting,");
-}
+- (void)didFailToCompleteAdWithTag: (NSString *) tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"incentivized_result_incomplete", tag]; }
 
-- (void) didFinishAudio {
-    UnitySendMessage("HeyzapAds", "setDisplayState", "audio_finished,");
+- (void)willStartAudio { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"audio_starting", @""]; }
+
+- (void) didFinishAudio { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"audio_finished", @""]; }
+
++ (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *) message andTag: (NSString *) tag {
+    NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", message, tag];
+    UnitySendMessage([klass UTF8String], "setDisplayState", [unityMessage UTF8String]);
 }
 
 @end
 
 extern "C" {
-    void hz_ads_start(int flags) {
-        HeyzapUnityAdDelegate *delegate = [[HeyzapUnityAdDelegate alloc] init];
-        [HeyzapAds startWithOptions: flags];
-        [HeyzapAds setFramework: @"unity3d"];
-        [HeyzapAds setDelegate: delegate];
-        [HeyzapAds setIncentiveDelegate: delegate];
-    }
-    
-     void hz_ads_start_app(int flags) {
-        HeyzapUnityAdDelegate *delegate = [[HeyzapUnityAdDelegate alloc] init];
-        [HeyzapAds startWithOptions: flags];
-        [HeyzapAds setFramework: @"unity3d"];
-        [HeyzapAds setDelegate: delegate];
-        [HeyzapAds setIncentiveDelegate: delegate];
+
+     void hz_ads_start_app(const char *publisher_id, int flags) {
+        NSString *publisherID = [NSString stringWithUTF8String: publisher_id];
+        
+        [HeyzapAds startWithPublisherID: publisherID andOptions: flags andFramework: @"unity3d"];
+        [HeyzapAds setDebug: YES];
+        [HeyzapAds setDebugLevel: HZDebugLevelVerbose];
+
+        HeyzapUnityAdDelegate *incentivizedDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INCENTIVIZED_KLASS];
+        [HZIncentivizedAd setDelegate: incentivizedDelegate];
+
+        HeyzapUnityAdDelegate *interstitialDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INTERSTITIAL_KLASS];
+        [HZInterstitialAd setDelegate: interstitialDelegate];
+        
+        HeyzapUnityAdDelegate *videoDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_VIDEO_KLASS];
+        [HZVideoAd setDelegate: videoDelegate];
      }
 
      //Interstitial
-     
+
      void hz_ads_show_interstitial(const char *tag) {
          [HZInterstitialAd showForTag: [NSString stringWithUTF8String: tag]];
      }
-     
+
      void hz_ads_hide_interstitial(void) {
          [HZInterstitialAd hide];
      }
-     
+
      void hz_ads_fetch_interstitial(const char *tag) {
          [HZInterstitialAd fetchForTag: [NSString stringWithUTF8String: tag]];
      }
-     
+
      bool hz_ads_interstitial_is_available(const char *tag) {
          return [HZInterstitialAd isAvailableForTag: [NSString stringWithUTF8String: tag]];
      }
