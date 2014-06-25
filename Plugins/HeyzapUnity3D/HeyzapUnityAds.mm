@@ -41,7 +41,7 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 @property (nonatomic, strong) NSString *klassName;
 
 - (id) initWithKlassName: (NSString *) klassName;
-+ (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *);
+- (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *) message andTag: (NSString *) tag;
 
 @end
 
@@ -56,27 +56,27 @@ extern void UnitySendMessage(const char *, const char *, const char *);
     return self;
 }
 
-- (void) didReceiveAdWithTag:(NSString *)tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"available", tag]; }
+- (void) didReceiveAdWithTag:(NSString *)tag { [self sendMessageForKlass: self.klassName withMessage: @"available" andTag: tag]; }
 
-- (void) didFailToReceiveAdWithTag:(NSString *)tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"fetch_failed", tag]; }
+- (void) didFailToReceiveAdWithTag:(NSString *)tag { [self sendMessageForKlass: self.klassName withMessage: @"fetch_failed" andTag: tag]; }
 
-- (void) didShowAdWithTag:(NSString *)tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"show", tag]; }
+- (void) didShowAdWithTag:(NSString *)tag { [self sendMessageForKlass: self.klassName withMessage: @"show" andTag: tag]; }
 
-- (void) didHideAdWithTag:(NSString *)tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"hide", tag]; }
+- (void) didHideAdWithTag:(NSString *)tag { [self sendMessageForKlass: self.klassName withMessage:  @"hide" andTag: tag]; }
 
-- (void) didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"failed", tag]; }
+- (void) didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error { [self sendMessageForKlass: self.klassName withMessage:  @"failed" andTag: tag]; }
 
-- (void) didClickAdWithTag:(NSString *)tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"click", tag]; }
+- (void) didClickAdWithTag:(NSString *)tag { [self sendMessageForKlass: self.klassName withMessage:  @"click" andTag: tag]; }
 
-- (void)didCompleteAdWithTag: (NSString *) tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"incentivized_result_complete", tag]; }
+- (void) didCompleteAdWithTag: (NSString *) tag { [self sendMessageForKlass: self.klassName withMessage:  @"incentivized_result_complete" andTag: tag]; }
 
-- (void)didFailToCompleteAdWithTag: (NSString *) tag { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"incentivized_result_incomplete", tag]; }
+- (void) didFailToCompleteAdWithTag: (NSString *) tag { [self sendMessageForKlass: self.klassName withMessage:  @"incentivized_result_incomplete" andTag: tag]; }
 
-- (void)willStartAudio { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"audio_starting", @""]; }
+- (void) willStartAudio { [self sendMessageForKlass: self.klassName  withMessage: @"audio_starting" andTag:  @""]; }
 
-- (void) didFinishAudio { [HeyzapUnityAdDelegate sendMessageForKlass: self.klassName, @"audio_finished", @""]; }
+- (void) didFinishAudio { [self sendMessageForKlass: self.klassName withMessage:  @"audio_finished" andTag:  @""]; }
 
-+ (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *) message andTag: (NSString *) tag {
+- (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *) message andTag: (NSString *) tag {
     NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", message, tag];
     UnitySendMessage([klass UTF8String], "setDisplayState", [unityMessage UTF8String]);
 }
