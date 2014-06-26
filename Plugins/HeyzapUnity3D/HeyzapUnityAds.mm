@@ -78,6 +78,7 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 
 - (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *) message andTag: (NSString *) tag {
     NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", message, tag];
+    UnitySendMessage("HeyzapAds", "setDisplayState", [unityMessage UTF8String]);
     UnitySendMessage([klass UTF8String], "setDisplayState", [unityMessage UTF8String]);
 }
 
