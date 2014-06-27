@@ -84,6 +84,10 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 
 @end
 
+static HeyzapUnityAdDelegate *HZInterstitialDelegate = nil;
+static HeyzapUnityAdDelegate *HZIncentivizedDelegate = nil;
+static HeyzapUnityAdDelegate *HZVideoDelegate = nil;
+
 extern "C" {
 
      void hz_ads_start_app(const char *publisher_id, int flags) {
@@ -93,14 +97,14 @@ extern "C" {
         [HeyzapAds setDebug: YES];
         [HeyzapAds setDebugLevel: HZDebugLevelVerbose];
 
-        HeyzapUnityAdDelegate *incentivizedDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INCENTIVIZED_KLASS];
-        [HZIncentivizedAd setDelegate: incentivizedDelegate];
+        HZIncentivizedDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INCENTIVIZED_KLASS];
+        [HZIncentivizedAd setDelegate: HZIncentivizedDelegate];
 
-        HeyzapUnityAdDelegate *interstitialDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INTERSTITIAL_KLASS];
-        [HZInterstitialAd setDelegate: interstitialDelegate];
+        HZInterstitialDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INTERSTITIAL_KLASS];
+        [HZInterstitialAd setDelegate: HZInterstitialDelegate];
         
-        HeyzapUnityAdDelegate *videoDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_VIDEO_KLASS];
-        [HZVideoAd setDelegate: videoDelegate];
+        HZVideoDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_VIDEO_KLASS];
+        [HZVideoAd setDelegate: HZVideoDelegate];
      }
 
      //Interstitial
@@ -141,8 +145,8 @@ extern "C" {
 
      // Incentivized
 
-     void hz_ads_show_incentivized() {
-         [HZIncentivizedAd show];
+     void hz_ads_show_incentivized(const char *tag) {
+         [HZIncentivizedAd showForTag: [NSString stringWithUTF8String: tag]];
      }
 
      void hz_ads_hide_incentivized() {
@@ -150,11 +154,11 @@ extern "C" {
      }
 
      void hz_ads_fetch_incentivized(const char *tag) {
-        [HZIncentivizedAd fetch];
+        [HZIncentivizedAd fetchForTag: [NSString stringWithUTF8String: tag]];
      }
 
-     bool hz_ads_incentivized_is_available() {
-        return [HZIncentivizedAd isAvailable];
+     bool hz_ads_incentivized_is_available(const char *tag) {
+        return [HZIncentivizedAd isAvailableForTag: [NSString stringWithUTF8String: tag]];
      }
 
      void hz_ads_incentivized_set_user_identifier(const char *identifier) {
