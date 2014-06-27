@@ -29,11 +29,16 @@ static int HZIncentivizedCreativeIDPin = 0;
 }
 
 + (void) show {
+    [self showForTag: [HeyzapAds defaultTagName]];
+}
+
++ (void) showForTag: (NSString *) tag {
     if (![[HZAdsManager sharedManager] isEnabled]) {
         return;
     }
     
-    [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag: [HeyzapAds defaultTagName] withCompletion: nil];
+    [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag: tag withCompletion: nil];
+
 }
 
 + (void) hide {
@@ -43,10 +48,14 @@ static int HZIncentivizedCreativeIDPin = 0;
 }
 
 + (void) fetch {
-    [self fetchWithCompletion: nil];
+    [self fetchForTag: [HeyzapAds defaultTagName] withCompletion: nil];
 }
 
 + (void) fetchWithCompletion:(void (^)(BOOL, NSError *))completion {
+    [self fetchForTag: [HeyzapAds defaultTagName] withCompletion: completion];
+}
+
++ (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion {
     if ([[HZAdsManager sharedManager] isEnabled]) {
         
         NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
@@ -58,7 +67,10 @@ static int HZIncentivizedCreativeIDPin = 0;
             [params setObject: HZIncentivizedAdUserIdentifier forKey: @"user_identifier"];
         }
         
-        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: HZIncentivizedAdCreativeTypes adUnit: HZIncentivizedAdUnit tag: [HeyzapAds defaultTagName] andAdditionalParams: params];
+        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: HZIncentivizedAdCreativeTypes
+                                                                             adUnit: HZIncentivizedAdUnit
+                                                                                tag: tag
+                                                                andAdditionalParams: params];
         
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
             if (completion) {
@@ -86,9 +98,13 @@ static int HZIncentivizedCreativeIDPin = 0;
 }
 
 + (BOOL) isAvailable {
+    return [self isAvailableForTag: [HeyzapAds defaultTagName]];
+}
+
++ (BOOL) isAvailableForTag: (NSString *) tag {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
     
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZIncentivizedAdUnit withTag: [HeyzapAds defaultTagName]] != nil;
+    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZIncentivizedAdUnit withTag: tag] != nil;
 }
 
 + (id)alloc {

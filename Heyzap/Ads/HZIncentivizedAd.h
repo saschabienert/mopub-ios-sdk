@@ -41,6 +41,12 @@
 /** Shows an incentivized video ad if one is available */
 + (void) show;
 
+/** Shows an incentivized video ad if one with the particlar tag is available
+  *
+  * @param Tag name describing the location or context for the ad to be shown.
+  */
++ (void) showForTag: (NSString *) tag;
+
 /** Dismisses the current ad, if visible. */
 + (void) hide;
 
@@ -55,11 +61,27 @@
 + (void) fetchWithCompletion: (void (^)(BOOL result, NSError *error))completion;
 
 /**
+ *  Fetches an incentivized video ad from Heyzap with a tag.
+ *  @param Tag name describing the location or context for the ad to be shown.
+ *  @param completion A block called when the video is fetched or fails to fetch. `result` states whether the fetch was sucessful; the error object describes the issue, if there was one.
+ */
++ (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion;
+
+/**
  *  Whether or not a video ad is ready to show
  *
  *  @return If the video is ready to show
  */
 + (BOOL) isAvailable;
+
+/**
+ *  Whether or not an incentivized ad is ready to show for the particular tag.
+ *
+ *  @param Tag name describing the location or context for the ad to be shown.
+ *  
+ *  @return If the video is ready to show
+ */
++ (BOOL) isAvailableForTag: (NSString *) tag;
 
 /**
  *  (Optional) As a layer of added security, you can specify an identifier for the user. You can opt to receive a server-to-server callback with the provided userIdentifier.
