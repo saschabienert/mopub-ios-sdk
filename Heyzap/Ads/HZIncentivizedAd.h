@@ -56,6 +56,14 @@
 /**
  *  Fetches an incentivized video ad from Heyzap.
  *
+ *  @param tag An identifier for the location/context of the ad which you can use to disable the ad from your dashboard.
+ */
+
++ (void) fetchForTag:(NSString *)tag;
+
+/**
+ *  Fetches an incentivized video ad from Heyzap.
+ *
  *  @param completion A block called when the video is fetched or fails to fetch. `result` states whether the fetch was sucessful; the error object describes the issue, if there was one.
  */
 + (void) fetchWithCompletion: (void (^)(BOOL result, NSError *error))completion;

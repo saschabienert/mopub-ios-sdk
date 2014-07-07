@@ -55,6 +55,10 @@ static int HZIncentivizedCreativeIDPin = 0;
     [self fetchForTag: [HeyzapAds defaultTagName] withCompletion: completion];
 }
 
++ (void) fetchForTag:(NSString *)tag {
+    [self fetchForTag: tag withCompletion: nil];
+}
+
 + (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion {
     if ([[HZAdsManager sharedManager] isEnabled]) {
         
