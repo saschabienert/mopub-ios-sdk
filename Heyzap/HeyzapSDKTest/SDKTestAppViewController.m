@@ -459,7 +459,7 @@ const CGFloat kLeftMargin = 10;
             [HZVideoAd fetch];
             break;
         case kAdUnitSegmentIncentivized:
-            [HZIncentivizedAd fetch];
+            [HZIncentivizedAd fetchForTag: @"test456"];
             break;
         default:
             break;
