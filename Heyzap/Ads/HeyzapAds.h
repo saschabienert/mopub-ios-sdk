@@ -120,9 +120,9 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
 @optional
 
 /** Called when a user successfully completes viewing an ad */
-- (void)didCompleteAd;
+- (void)didCompleteAdWithTag: (NSString *) tag;
 /** Called when a user does not complete the viewing of an ad */
-- (void)didFailToCompleteAd;
+- (void)didFailToCompleteAdWithTag: (NSString *) tag;
 
 @end
 

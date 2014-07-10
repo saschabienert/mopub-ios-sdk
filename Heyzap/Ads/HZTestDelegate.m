@@ -10,54 +10,24 @@
 
 @implementation HZTestDelegate
 
-- (void)didShowAdWithTag: (NSString *) tag
-{
-    
-}
+- (void)didShowAdWithTag: (NSString *) tag { }
 
-- (void)didFailToShowAdWithTag: (NSString *) tag andError: (NSError *)error
-{
-    
-}
+- (void)didFailToShowAdWithTag: (NSString *) tag andError: (NSError *)error { }
 
-- (void)didReceiveAdWithTag: (NSString *) tag
-{
-    
-}
+- (void)didReceiveAdWithTag: (NSString *) tag { }
 
-- (void)didFailToReceiveAdWithTag: (NSString *) tag
-{
-    
-}
+- (void)didFailToReceiveAdWithTag: (NSString *) tag { }
 
-- (void)didClickAdWithTag: (NSString *) tag
-{
-    
-}
+- (void)didClickAdWithTag: (NSString *) tag { }
 
-- (void)didHideAdWithTag: (NSString *) tag
-{
-    
-}
+- (void)didHideAdWithTag: (NSString *) tag { }
 
-- (void)willStartAudio
-{
-    
-}
+- (void)willStartAudio { }
 
-- (void) didFinishAudio
-{
-    
-}
+- (void) didFinishAudio { }
 
-- (void)didCompleteAd
-{
-    
-}
+- (void)didCompleteAdWithTag:(NSString *)tag { }
 
-- (void)didFailToCompleteAd
-{
-    
-}
+- (void)didFailToCompleteAdWithTag:(NSString *)tag { }
 
 @end

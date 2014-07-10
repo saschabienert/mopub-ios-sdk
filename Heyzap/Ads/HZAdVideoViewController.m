@@ -83,9 +83,9 @@
     
     if (self.ad.adUnit != nil && [self.ad.adUnit isEqualToString: @"incentivized"]) {
         if (self.didFinishVideo) {
-            [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didCompleteAd];
+            [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didCompleteAdWithTag: self.ad.tag];
         } else {
-            [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFailToCompleteAd];
+            [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFailToCompleteAdWithTag: self.ad.tag];
         }
         
     }

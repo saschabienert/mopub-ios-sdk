@@ -94,7 +94,6 @@ extern "C" {
         NSString *publisherID = [NSString stringWithUTF8String: publisher_id];
         
         [HeyzapAds startWithPublisherID: publisherID andOptions: flags andFramework: @"unity3d"];
-        [HeyzapAds setDebug: YES];
         [HeyzapAds setDebugLevel: HZDebugLevelVerbose];
 
         HZIncentivizedDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INCENTIVIZED_KLASS];
