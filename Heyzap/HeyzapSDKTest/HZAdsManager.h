@@ -15,6 +15,9 @@
 
 @interface HZAdsManager : NSObject
 
+#pragma mark - Identity
+@property (nonatomic, strong) NSString *publisherID;
+
 #pragma mark - Debugging
 @property (nonatomic, assign) BOOL isDebuggable;
 

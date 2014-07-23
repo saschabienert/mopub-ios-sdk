@@ -31,6 +31,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "HeyzapAds.h"
 
 @protocol HZAdsDelegate;
 

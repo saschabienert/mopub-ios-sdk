@@ -45,7 +45,7 @@
 #pragma mark - Fetching Ads
 
 + (void) fetch {
-    [self fetchWithCompletion: nil];
+    [self fetchForTag: [HeyzapAds defaultTagName] withCompletion: nil];
 }
 
 + (void) fetchWithCompletion:(void (^)(BOOL, NSError *))completion {

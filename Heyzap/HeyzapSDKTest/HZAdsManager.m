@@ -18,6 +18,8 @@
 #import "HZAdVideoViewController.h"
 #import "HZAdInterstitialViewController.h"
 #import "HeyzapAds.h"
+#import "HZDelegateProxy.h"
+#import "HZAnalytics.h"
 
 #import "DelegateProxy.h"
 
@@ -55,7 +57,11 @@
 #pragma mark - Run Initial Tasks
 
 - (void) onStart {
-    if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly] && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
+    // Instantiate Analytics
+    [HZAnalytics sharedInstance];
+    
+    if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly]
+        && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
         [HZInterstitialAd fetch];
     }
 }
@@ -65,11 +71,14 @@
     dispatch_once(&onceToken, ^{
         [self setupCachingDirectory];
         
+        // Set cache size to big
+        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:100000000 diskCapacity: 1000000000 diskPath:nil];
+        [NSURLCache setSharedURLCache:sharedCache];
+        
         //register this game as installed, if we haven't done so already
-        if ([[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY withDefault:(id)kCFBooleanFalse]) {
-            
+        if (![[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY]) {
             [[HZAdsAPIClient sharedClient] post:@"register_new_game_install" withParams:@{} success:^(id JSON) {
-                [[HZUserDefaults sharedDefaults] setObject:(id)kCFBooleanTrue forKey:HAS_REPORTED_INSTALL_KEY];
+                [[HZUserDefaults sharedDefaults] setObject:@YES forKey:HAS_REPORTED_INSTALL_KEY];
             } failure:nil];
         }
     });
@@ -131,6 +140,13 @@
         } failure:nil];
         
     } failure:nil];
+}
+
+#pragma mark - Getters/Setters
+
+- (void) setPublisherID:(NSString *)publisherID {
+    _publisherID = publisherID;
+    [HZUtils setPublisherID: publisherID];
 }
 
 #pragma mark - Enabled
@@ -243,6 +259,31 @@
 - (void) applicationWillTerminate: (id) sender {
     [self cleanup];
 }
+
+#pragma mark - Delegates
+
+- (void)setInterstitialDelegate:(id<HZAdsDelegate>)delegate {
+    self.interstitialDelegateProxy.forwardingTarget = delegate;
+}
+
+- (void)setVideoDelegate:(id<HZAdsDelegate>)delegate {
+    self.videoDelegateProxy.forwardingTarget = delegate;
+}
+
+- (void) setIncentivizedDelegate:(id<HZIncentivizedAdDelegate>)incentivizedDelegate {
+    self.incentivizedDelegateProxy.forwardingTarget = incentivizedDelegate;
+}
+
+- (id)delegateForAdUnit:(NSString *)adUnit {
+    if ([adUnit isEqualToString:@"incentivized"]) {
+        return self.incentivizedDelegateProxy;
+    } else if ([adUnit isEqualToString:@"video"]) {
+        return self.videoDelegateProxy;
+    } else {
+        return self.interstitialDelegateProxy;
+    }
+}
+
 
 #pragma mark - Singleton
 

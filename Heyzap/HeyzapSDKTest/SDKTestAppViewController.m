@@ -84,18 +84,14 @@ typedef enum {
     
     [self changeColorOfShowButton];
 }
-- (void)didClickAdWithTag:(NSString *)tag { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
+- (void)didClickAdWithTag:(NSString *)tag { if (self.logCallbacksSwitch.isOn) LOG_METHOD_NAME_TO_CONSOLE;
     
 }
-- (void)didHideAdWithTag:(NSString *)tag { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-    
+- (void)didHideAdWithTag:(NSString *)tag { if (self.logCallbacksSwitch.isOn) LOG_METHOD_NAME_TO_CONSOLE;
     [self changeColorOfShowButton];
 }
-- (void)didFailToReceiveAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-}
-- (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error
-{
+- (void)didFailToReceiveAdWithTag:(NSString *)tag { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
+- (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error {
     if(self.logCallbacksSwitch.isOn)[self logToConsole:[NSString stringWithFormat:@"%@:%@",NSStringFromSelector(_cmd),error]];
 }
 
@@ -106,13 +102,9 @@ typedef enum {
     if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
 }
 
-- (void)didCompleteAd {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-}
+- (void)didCompleteAdWithTag:(NSString *)tag { if (self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
 
-- (void) didFailToCompleteAd {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-}
+- (void) didFailToCompleteAdWithTag:(NSString *)tag { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
 
 - (void)requestNotification:(NSNotification *)notification{
     if(self.logRequestsSwitch.isOn){
@@ -490,7 +482,7 @@ const CGFloat kLeftMargin = 10;
             [HZVideoAd show];
             break;
         case kAdUnitSegmentIncentivized:
-            NSLog(@"Showing Incent");
+            NSLog(@"Showing Incentivized");
             [HZIncentivizedAd show];
             break;
         default:

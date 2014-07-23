@@ -10,6 +10,10 @@
 #import "HZDictionaryUtils.h"
 #import "HZUtils.h"
 
+@interface HZInterstitialAdModel()<UIWebViewDelegate>
+
+@end
+
 @implementation HZInterstitialAdModel
 
 - (id) initWithDictionary: (NSDictionary *) dict {
@@ -63,13 +67,36 @@
 }
 
 - (void) doPostFetchActionsWithCompletion:(void (^)(BOOL))completion {
-//    self.preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)];
-//    [self.preloadWebview loadHTMLString: self.HTMLContent baseURL: [NSURL fileURLWithPath: [HZUtils cacheDirectoryPath]]];
     
+    NSString *path = [[NSBundle mainBundle] bundlePath];
+    NSURL *baseURL = [NSURL fileURLWithPath:path];
+    
+    __block HZInterstitialAdModel *blockSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        blockSelf.preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)];
+        blockSelf.preloadWebview.delegate = blockSelf;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,
+                                                 (unsigned long)NULL), ^(void) {
+            [blockSelf.preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
+        });
+    });
+
     if (completion) {
         completion(YES);
         
     }
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    
 }
 
 @end

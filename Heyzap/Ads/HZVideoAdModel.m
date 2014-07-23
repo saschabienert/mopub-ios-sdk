@@ -14,7 +14,7 @@
 #import "HZAdsAPIClient.h"
 #import "HZLog.h"
 
-@interface HZVideoAdModel()
+@interface HZVideoAdModel()<UIWebViewDelegate>
 @property (nonatomic, assign) BOOL sentComplete;
 @property (nonatomic) HZAFHTTPRequestOperation *downloadOperation;
 @end
@@ -95,6 +95,20 @@
 #pragma mark - Post Fetch
 
 - (void) doPostFetchActionsWithCompletion:(void (^)(BOOL))completion {
+    
+    NSString *path = [[NSBundle mainBundle] bundlePath];
+    NSURL *baseURL = [NSURL fileURLWithPath:path];
+    
+    __block HZVideoAdModel *blockSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        blockSelf.preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)];
+        blockSelf.preloadWebview.delegate = blockSelf;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,
+                                                 (unsigned long)NULL), ^(void) {
+            [blockSelf.preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
+        });
+    });
+    
     if (!self.forceStreaming) {
         // Just in case it got deleted in meantime
         [HZUtils createCacheDirectory];
@@ -213,6 +227,18 @@
 
 + (BOOL) isValidForCreativeType: (NSString *) creativeType {
     return [creativeType isEqualToString: @"video"];
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    
 }
 
 @end

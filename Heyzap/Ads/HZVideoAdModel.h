@@ -38,6 +38,7 @@
 
 // Download Ops
 @property (nonatomic) BOOL fileCached;
+@property (nonatomic) UIWebView *preloadWebview;
 
 - (BOOL) onCompleteWithViewDuration: (NSTimeInterval)time andTotalDuration: (NSTimeInterval)duration andFinished: (BOOL) finished;
 - (NSURL *) URLForVideo;

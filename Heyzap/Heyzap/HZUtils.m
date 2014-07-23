@@ -12,6 +12,7 @@
 
 
 static NSString *HZUtilsDeviceID;
+static NSString *HZUtilsPublisherID;
 
 static unsigned char HZbase64EncodeLookup[65] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -182,24 +183,19 @@ char *HZNewBase64Encode(
     }
 }
 
++ (void) setPublisherID: (NSString *) publisherID {
+    HZUtilsPublisherID = [publisherID copy];
+}
+
++ (NSString *) publisherID {
+    return HZUtilsPublisherID;
+}
+
 + (NSString *) pathWithFilename: (NSString *) filenameShort {
     NSArray *folders = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
     NSString *filename = [folders count] == 0 ? NSTemporaryDirectory() : [folders objectAtIndex:0];
     filename = [filename stringByAppendingPathComponent:[NSString stringWithFormat: @"Caches/%@.heyzap", filenameShort]];
     return filename;
-}
-
-+ (BOOL) canOpenHeyzap {
-    return [[UIApplication sharedApplication] canOpenURL: [NSURL URLWithString: @"heyzap://checkin"]];
-}
-
-+ (void) openHeyzap {
-    if ([HZUtils canOpenHeyzap]) {
-        NSURL *url = [NSURL URLWithString: @"heyzap://"];
-        [[UIApplication sharedApplication] openURL: url];
-    } else {
-        
-    }
 }
 
 + (NSString *) cacheDirectoryPath {

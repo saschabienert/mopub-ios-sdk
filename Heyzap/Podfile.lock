@@ -5,10 +5,10 @@ PODS:
     - Kiwi/ARC
     - Kiwi/NonARC
   - OCHamcrest (3.0.1)
-  - OCMockito (1.1.0):
+  - OCMockito (1.2.0):
     - OCHamcrest (~> 3.0)
-  - OHHTTPStubs (3.1.0)
-  - Subliminal (1.0.1)
+  - OHHTTPStubs (3.1.2)
+  - Subliminal (1.1.0)
 
 DEPENDENCIES:
   - Kiwi/XCTest
