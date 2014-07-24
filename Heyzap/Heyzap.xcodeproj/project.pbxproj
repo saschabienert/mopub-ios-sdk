@@ -200,7 +200,11 @@
 		50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */; };
 		50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */; };
 		50D1599418F35CC600734ABB /* HZHeyzapInterstitialAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1599218F35CC600734ABB /* HZHeyzapInterstitialAd.m */; };
-		50E14D4E19071E5A003AA47D /* libCombined.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E14D4D19071E5A003AA47D /* libCombined.a */; };
+		50E7B94F198086B5003ED638 /* adcolony.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94A198086B5003ED638 /* adcolony.a */; };
+		50E7B950198086B6003ED638 /* admob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94B198086B5003ED638 /* admob.a */; };
+		50E7B951198086B6003ED638 /* applovin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94C198086B5003ED638 /* applovin.a */; };
+		50E7B952198086B6003ED638 /* chartboost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94D198086B5003ED638 /* chartboost.a */; };
+		50E7B953198086B6003ED638 /* vungle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94E198086B5003ED638 /* vungle.a */; };
 		50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ECA1C318DB618E006284AB /* HeyzapMediation.h */; };
 		50ECA1C618DB618E006284AB /* HeyzapMediation.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ECA1C418DB618E006284AB /* HeyzapMediation.m */; };
 		50ECA1C818DB6234006284AB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
@@ -461,7 +465,11 @@
 		50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapVideoAd.m; sourceTree = "<group>"; };
 		50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapInterstitialAd.h; sourceTree = "<group>"; };
 		50D1599218F35CC600734ABB /* HZHeyzapInterstitialAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapInterstitialAd.m; sourceTree = "<group>"; };
-		50E14D4D19071E5A003AA47D /* libCombined.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCombined.a; path = ../../../../../Downloads/libCombined.a; sourceTree = "<group>"; };
+		50E7B94A198086B5003ED638 /* adcolony.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = adcolony.a; path = ../../libs/adcolony.a; sourceTree = "<group>"; };
+		50E7B94B198086B5003ED638 /* admob.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = admob.a; path = ../../libs/admob.a; sourceTree = "<group>"; };
+		50E7B94C198086B5003ED638 /* applovin.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = applovin.a; path = ../../libs/applovin.a; sourceTree = "<group>"; };
+		50E7B94D198086B5003ED638 /* chartboost.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = chartboost.a; path = ../../libs/chartboost.a; sourceTree = "<group>"; };
+		50E7B94E198086B5003ED638 /* vungle.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = vungle.a; path = ../../libs/vungle.a; sourceTree = "<group>"; };
 		50ECA1C318DB618E006284AB /* HeyzapMediation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeyzapMediation.h; sourceTree = "<group>"; };
 		50ECA1C418DB618E006284AB /* HeyzapMediation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeyzapMediation.m; sourceTree = "<group>"; };
 		50ECA1C718DB6234006284AB /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -604,6 +612,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50E7B951198086B6003ED638 /* applovin.a in Frameworks */,
+				50E7B94F198086B5003ED638 /* adcolony.a in Frameworks */,
+				50E7B953198086B6003ED638 /* vungle.a in Frameworks */,
 				505351F618F76550003C531E /* CoreLocation.framework in Frameworks */,
 				505351F818F76550003C531E /* Social.framework in Frameworks */,
 				505351F918F76550003C531E /* EventKit.framework in Frameworks */,
@@ -614,10 +625,11 @@
 				505351FF18F76550003C531E /* AudioToolbox.framework in Frameworks */,
 				5053520018F76550003C531E /* CoreGraphics.framework in Frameworks */,
 				5053520118F76550003C531E /* CFNetwork.framework in Frameworks */,
+				50E7B952198086B6003ED638 /* chartboost.a in Frameworks */,
 				5053520218F76550003C531E /* AVFoundation.framework in Frameworks */,
 				5053520318F76550003C531E /* libz.dylib in Frameworks */,
+				50E7B950198086B6003ED638 /* admob.a in Frameworks */,
 				5053520418F76550003C531E /* SystemConfiguration.framework in Frameworks */,
-				50E14D4E19071E5A003AA47D /* libCombined.a in Frameworks */,
 				5053520518F76550003C531E /* libHeyzapAds.a in Frameworks */,
 				5053520618F76550003C531E /* CoreTelephony.framework in Frameworks */,
 				5053520718F76550003C531E /* StoreKit.framework in Frameworks */,
@@ -917,7 +929,11 @@
 		50E90E7A18F767E2003DC948 /* Mediation Test App */ = {
 			isa = PBXGroup;
 			children = (
-				50E14D4D19071E5A003AA47D /* libCombined.a */,
+				50E7B94A198086B5003ED638 /* adcolony.a */,
+				50E7B94B198086B5003ED638 /* admob.a */,
+				50E7B94C198086B5003ED638 /* applovin.a */,
+				50E7B94D198086B5003ED638 /* chartboost.a */,
+				50E7B94E198086B5003ED638 /* vungle.a */,
 			);
 			name = "Mediation Test App";
 			path = MediationTestApp;
@@ -1865,6 +1881,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					/Users/Max/Downloads,
+					"/Users/Max/Documents/iOS/ios-sdk/libs",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1898,6 +1915,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					/Users/Max/Downloads,
+					"/Users/Max/Documents/iOS/ios-sdk/libs",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = (
