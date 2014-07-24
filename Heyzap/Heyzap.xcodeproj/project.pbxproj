@@ -150,10 +150,6 @@
 		509F003218EB6E2F0011EAB3 /* HZBaseAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */; };
 		509F00BA18EC8D010011EAB3 /* HZVGPlayData.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F00B818EC8D010011EAB3 /* HZVGPlayData.h */; };
 		509F00BB18EC8D010011EAB3 /* HZVGPlayData.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00B918EC8D010011EAB3 /* HZVGPlayData.m */; };
-		509F00BE18ECB4540011EAB3 /* TestDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F00BC18ECB4540011EAB3 /* TestDelegate.h */; };
-		509F00BF18ECB4540011EAB3 /* TestDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00BD18ECB4540011EAB3 /* TestDelegate.m */; };
-		509F00C218ECB4CE0011EAB3 /* DelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F00C018ECB4CE0011EAB3 /* DelegateProxy.h */; };
-		509F00C318ECB4CE0011EAB3 /* DelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00C118ECB4CE0011EAB3 /* DelegateProxy.m */; };
 		509F00C518ECF42E0011EAB3 /* HZMediationSessionKeySpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00C418ECF42E0011EAB3 /* HZMediationSessionKeySpec.m */; };
 		50A36ACC18C93B9C00FA84F0 /* InterstitialSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */; };
 		50A36AD218C9405A00FA84F0 /* DeviceInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514CB18B68EF600E00E6C /* DeviceInfoViewController.m */; };
@@ -434,14 +430,9 @@
 		509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZBaseAdapter.m; sourceTree = "<group>"; };
 		509F00B818EC8D010011EAB3 /* HZVGPlayData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVGPlayData.h; sourceTree = "<group>"; };
 		509F00B918EC8D010011EAB3 /* HZVGPlayData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVGPlayData.m; sourceTree = "<group>"; };
-		509F00BC18ECB4540011EAB3 /* TestDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestDelegate.h; sourceTree = "<group>"; };
-		509F00BD18ECB4540011EAB3 /* TestDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestDelegate.m; sourceTree = "<group>"; };
-		509F00C018ECB4CE0011EAB3 /* DelegateProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelegateProxy.h; sourceTree = "<group>"; };
-		509F00C118ECB4CE0011EAB3 /* DelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelegateProxy.m; sourceTree = "<group>"; };
 		509F00C418ECF42E0011EAB3 /* HZMediationSessionKeySpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationSessionKeySpec.m; sourceTree = "<group>"; };
 		50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialSpec.m; sourceTree = "<group>"; };
 		50A36AED18C9405A00FA84F0 /* Integration Tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Integration Tests.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		50A36AEE18C9405A00FA84F0 /* Integration Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Integration Tests-Info.plist"; path = "/Users/Max/Documents/iOS/ios-sdk/Heyzap/Integration Tests/Integration Tests-Info.plist"; sourceTree = "<absolute>"; };
 		50AA624418CBF4DC0018A0B6 /* InterstitialFetchSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialFetchSpec.m; sourceTree = "<group>"; };
 		50AA624718CBF58A0018A0B6 /* NSString+Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Tests.h"; sourceTree = "<group>"; };
 		50AA624818CBF58A0018A0B6 /* NSString+Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Tests.m"; sourceTree = "<group>"; };
@@ -850,10 +841,10 @@
 		509F003318EB953E0011EAB3 /* Delegation */ = {
 			isa = PBXGroup;
 			children = (
-				509F00C018ECB4CE0011EAB3 /* DelegateProxy.h */,
-				509F00C118ECB4CE0011EAB3 /* DelegateProxy.m */,
-				509F00BC18ECB4540011EAB3 /* TestDelegate.h */,
-				509F00BD18ECB4540011EAB3 /* TestDelegate.m */,
+				8680AC99193ED2DC0078B5CF /* HZDelegateProxy.h */,
+				8680AC9A193ED2DC0078B5CF /* HZDelegateProxy.m */,
+				8680AC9D193ED2E60078B5CF /* HZTestDelegate.h */,
+				8680AC9E193ED2E60078B5CF /* HZTestDelegate.m */,
 			);
 			name = Delegation;
 			sourceTree = "<group>";
@@ -987,10 +978,6 @@
 				860FD479187BB144008A35FD /* HZAdsFetchManager.m */,
 				860FD47C187CC056008A35FD /* HZAdFetchRequest.h */,
 				860FD47D187CC056008A35FD /* HZAdFetchRequest.m */,
-				8680AC99193ED2DC0078B5CF /* HZDelegateProxy.h */,
-				8680AC9A193ED2DC0078B5CF /* HZDelegateProxy.m */,
-				8680AC9D193ED2E60078B5CF /* HZTestDelegate.h */,
-				8680AC9E193ED2E60078B5CF /* HZTestDelegate.m */,
 			);
 			name = Manager;
 			sourceTree = "<group>";
@@ -1276,7 +1263,6 @@
 				50B46B1D18F88C6B005155B8 /* HZALAd.h in Headers */,
 				509F00BA18EC8D010011EAB3 /* HZVGPlayData.h in Headers */,
 				5011CE5518DB9B7F00604B53 /* HZAdColonyAdapter.h in Headers */,
-				509F00BE18ECB4540011EAB3 /* TestDelegate.h in Headers */,
 				50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */,
 				860FD47A187BB144008A35FD /* HZAdsFetchManager.h in Headers */,
 				86FF907918583FF100BC48BF /* HZAdLibrary.h in Headers */,
@@ -1307,7 +1293,6 @@
 				86B09B84175958A50045AA54 /* HZInterstitialAd.h in Headers */,
 				866E3A181851329500B6E431 /* HZWebView.h in Headers */,
 				866E39FF1850172100B6E431 /* HZInterstitialAdModel.h in Headers */,
-				509F00C218ECB4CE0011EAB3 /* DelegateProxy.h in Headers */,
 				50B46B2118F89C58005155B8 /* HZAppLovinDelegate.h in Headers */,
 				5011CE8918DBBBF700604B53 /* HZAdMobAdapter.h in Headers */,
 				500F88F218E215D000E5D6F8 /* HZGADInterstitial.h in Headers */,
@@ -1677,8 +1662,6 @@
 				8641E1F218ADE0FE00CAAEE0 /* HZImageView.m in Sources */,
 				500F88EB18E210D400E5D6F8 /* HZAdColony.m in Sources */,
 				866E39F01850087B00B6E431 /* HZVideoAd.m in Sources */,
-				509F00C318ECB4CE0011EAB3 /* DelegateProxy.m in Sources */,
-				509F00BF18ECB4540011EAB3 /* TestDelegate.m in Sources */,
 				86D0A99D1851897200B3D870 /* HZDownloadHelper.m in Sources */,
 				86CD0ECC17C3F7B00005BD3D /* HZAdsAPIClient.m in Sources */,
 				86CD0E8B17BB0B940005BD3D /* HZAdsManager.m in Sources */,

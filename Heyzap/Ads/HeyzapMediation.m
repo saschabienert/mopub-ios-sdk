@@ -24,7 +24,7 @@
 
 // Util
 #import "HZDispatch.h"
-#import "DelegateProxy.h"
+#import "HZDelegateProxy.h"
 
 // Session
 #import "HZMediationSessionKey.h"
@@ -50,9 +50,9 @@ NSString * NSStringFromAdType(HZAdType type);
 @property (nonatomic) BOOL startHasBeenCalled;
 @property (nonatomic) HZMediationStartStatus startStatus;
 
-@property (nonatomic, strong) DelegateProxy *interstitialDelegateProxy;
-@property (nonatomic, strong) DelegateProxy *incentivizedDelegateProxy;
-@property (nonatomic, strong) DelegateProxy *videoDelegateProxy;
+@property (nonatomic, strong) HZDelegateProxy *interstitialDelegateProxy;
+@property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
+@property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
 @end
 
@@ -79,9 +79,9 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     if (self) {
         _setupMediators = [[NSMutableSet alloc] init];
         _sessionDictionary = [NSMutableDictionary dictionary];
-        _interstitialDelegateProxy = [[DelegateProxy alloc] init];
-        _incentivizedDelegateProxy = [[DelegateProxy alloc] init];
-        _videoDelegateProxy = [[DelegateProxy alloc] init];
+        _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
+        _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
+        _videoDelegateProxy = [[HZDelegateProxy alloc] init];
     }
     return self;
 }

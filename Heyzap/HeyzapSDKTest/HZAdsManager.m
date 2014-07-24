@@ -21,7 +21,7 @@
 #import "HZDelegateProxy.h"
 #import "HZAnalytics.h"
 
-#import "DelegateProxy.h"
+#import "HZDelegateProxy.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
