@@ -23,7 +23,7 @@
 + (void)setDelegate:(id<HZAdsDelegate>)delegate
 {
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapVideoAd setDelegate:delegate];
+        [[HZAdsManager sharedManager] setVideoDelegate: delegate];
     } else {
         [[HeyzapMediation sharedInstance] setDelegate:delegate forAdType:HZAdTypeVideo];
     }
@@ -46,6 +46,10 @@
     } else {
         [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo tag:tag completion:completion];
     }
+}
+
++ (void) showWithCompletion:(void (^)(BOOL result, NSError *error))completion {
+    [self showForTag: nil completion: completion];
 }
 
 #pragma mark - Fetching

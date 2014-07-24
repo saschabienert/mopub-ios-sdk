@@ -43,6 +43,12 @@
 /** Shows an incentivized video ad if one is available */
 + (void) show;
 
+/** Shows an incentivized video ad if one with the particlar tag is available
+  *
+  * @param tag Tag name describing the location or context for the ad to be shown.
+  */
++ (void) showForTag: (NSString *) tag;
+
 /** Fetches an incentivized video ad from Heyzap. */
 + (void) fetch;
 

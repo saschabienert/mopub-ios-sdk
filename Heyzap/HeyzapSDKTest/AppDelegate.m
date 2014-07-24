@@ -39,12 +39,17 @@
         }];
     }
     
+    [HZLog setDebugLevel: HZDebugLevelVerbose];
+    
     [HZLog setDebugLevel: HZDebugLevelError];
     
-    UIViewController *mainController = [[SDKTestAppViewController alloc] init];
+    SDKTestAppViewController *mainController = [[SDKTestAppViewController alloc] init];
     
+    [HeyzapAds startWithPublisherID: @"1234"];
     
-    [HeyzapAds startWithOptions: HZAdOptionsDisableAutoPrefetching];
+    [HZInterstitialAd setDelegate:mainController];
+    [HZIncentivizedAd setDelegate:mainController];
+    [HZVideoAd setDelegate:mainController];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   

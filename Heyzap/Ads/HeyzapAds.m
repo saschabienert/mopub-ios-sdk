@@ -38,34 +38,32 @@
 
 #import "HeyzapMediation.h"
 
+@implementation HeyzapAds
+
 #define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"
 #define kHZDefaultTagName @"default"
 
-@implementation HeyzapAds
-
-+ (void) start {
-    [self startWithOptions: HZAdOptionsNone];
++ (void) startWithPublisherID:(NSString *)publisherID {
+    [self startWithPublisherID: publisherID andOptions: HZAdOptionsNone andFramework: nil];
 }
 
-// Deprecated
-+ (void) startWithAppStoreID: (int) appID andOptions: (HZAdOptions) options {
-    [self startWithOptions: options];
++ (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options {
+    [self startWithPublisherID: publisherID andOptions: options andFramework: nil];
 }
 
-+ (void) startWithOptions:(HZAdOptions)options andFramework: (NSString *) framework {
-    [[HZAdsManager sharedManager] setFramework: framework];
-    [self startWithOptions: options];
-}
-
-+ (void) startWithOptions: (HZAdOptions) options {
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZAdsManager sharedManager];
-        [[HZAdsManager sharedManager] setOptions: options];
-        [[HZAdsManager sharedManager] setIsDebuggable: NO];
-        [[HZAdsManager sharedManager] onStart];
-    } else {
++ (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options andFramework:(NSString *)framework {
+    if (![HeyzapMediation isOnlyHeyzapSDK]) {
         [[HeyzapMediation sharedInstance] start];
     }
+    
+    if (framework && ![framework isEqualToString:@""]) {
+        [[HZAdsManager sharedManager] setFramework:framework];
+    }
+        
+    [[HZAdsManager sharedManager] setPublisherID: publisherID];
+    [[HZAdsManager sharedManager] setOptions: options];
+    [[HZAdsManager sharedManager] setIsDebuggable: NO];
+    [[HZAdsManager sharedManager] onStart];
 }
 
 + (BOOL) isStarted {
@@ -82,6 +80,15 @@
 
 + (void) setOptions: (HZAdOptions) options {
     [[HZAdsManager sharedManager] setOptions: options];
+}
+
++ (void) setDelegate: (id<HZAdsDelegate>) delegate {
+    [[HZAdsManager sharedManager] setInterstitialDelegate: delegate];
+    [[HZAdsManager sharedManager] setVideoDelegate: delegate];
+}
+
++ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate {
+    [[HZAdsManager sharedManager] setIncentivizedDelegate: delegate];
 }
 
 + (void) setFramework: (NSString *) framework {
@@ -103,3 +110,4 @@
 
 
 @end
+

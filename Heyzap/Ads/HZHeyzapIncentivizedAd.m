@@ -28,12 +28,13 @@ static int HZIncentivizedCreativeIDPin = 0;
     }
 }
 
-+ (void) show {
++ (void)showForTag:(NSString *)tag
+{
     if (![[HZAdsManager sharedManager] isEnabled]) {
         return;
     }
     
-    [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag: [HeyzapAds defaultTagName] withCompletion: nil];
+    [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag:tag withCompletion: nil];
 }
 
 + (void) fetchWithCompletion:(void (^)(BOOL, NSError *))completion {
@@ -63,6 +64,11 @@ static int HZIncentivizedCreativeIDPin = 0;
     }
 }
 
++ (void)hide
+{
+    [[HZAdsManager sharedManager] hideActiveAd];
+}
+
 + (void) setUserIdentifier: (NSString *) userIdentifier {
     HZIncentivizedAdUserIdentifier = userIdentifier;
 }
@@ -75,10 +81,11 @@ static int HZIncentivizedCreativeIDPin = 0;
     }
 }
 
-+ (BOOL) isAvailable {
++ (BOOL)isAvailableForTag:(NSString *)tag
+{
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
     
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZIncentivizedAdUnit withTag: [HeyzapAds defaultTagName]] != nil;
+    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:HZIncentivizedAdUnit withTag:tag] != nil;
 }
 
 + (id)alloc {

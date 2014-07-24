@@ -43,7 +43,7 @@
 - (void) hideActiveAd;
 
 - (void)setInterstitialDelegate:(id<HZAdsDelegate>)delegate;
-- (void)setIncentivizedDelegate:(id<HZAdsDelegate>)delegate;
+- (void)setIncentivizedDelegate:(id<HZIncentivizedAdDelegate>)delegate;
 - (void)setVideoDelegate:(id<HZAdsDelegate>)delegate;
 
 - (id)delegateForAdUnit:(NSString *)adUnit;

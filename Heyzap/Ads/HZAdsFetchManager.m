@@ -112,14 +112,14 @@
             
             [[HZAdLibrary sharedLibrary] pushAd: ad forAdUnit: bRequest.adUnit andTag: bRequest.tag];
             
-            [[[HZAdsManager sharedManager] delegateForAdUnit:bRequest.adUnit] didReceiveAdWithTag:bRequest.tag];
+            [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didReceiveAdWithTag: request.tag];
             
             if (completion) {
                 completion(ad, bRequest.tag, nil);
             }
             
         } else {
-            [[[HZAdsManager sharedManager] delegateForAdUnit:bRequest.adUnit] didFailToReceiveAdWithTag:bRequest.tag];
+            [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: request.tag];
             
             if (completion) {
                 NSError *error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.fetch" code: 8 userInfo: @{NSLocalizedDescriptionKey: @"Failed to download assets."}];

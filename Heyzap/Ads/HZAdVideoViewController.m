@@ -83,9 +83,9 @@
     
     if (self.ad.adUnit != nil && [self.ad.adUnit isEqualToString: @"incentivized"]) {
         if (self.didFinishVideo) {
-            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didCompleteAd];
+            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didCompleteAdWithTag:self.ad.tag];
         } else {
-            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFailToCompleteAd];
+            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFailToCompleteAdWithTag:self.ad.tag];
         }
         
     }
@@ -235,6 +235,8 @@
 - (void) onActionShow: (UIView *) sender {
     if (sender.tag == kHZVideoViewTag) {
         self.didStartVideo = YES;
+        [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] willStartAudio];
+        
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] willStartAudio];
         
         [self didImpression];

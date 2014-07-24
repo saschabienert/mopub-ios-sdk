@@ -411,12 +411,18 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
-    [[self delegateForAdType:HZAdTypeIncentivized] didCompleteAd];
+    HZMediationSessionKey *key = [self currentShownSessionKey];
+    if (key) {
+        [[self delegateForAdType:HZAdTypeIncentivized] didCompleteAdWithTag:key.tag];
+    }
 }
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
-    [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAd];
+    HZMediationSessionKey *key = [self currentShownSessionKey];
+    if (key) {
+        [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAdWithTag:key.tag];
+    }
 }
 
 #pragma mark - Misc

@@ -19,7 +19,9 @@
 #import "HZDictionaryUtils.h"
 #import "HeyzapAds.h"
 
-static NSString * const kHZAPIBaseURLString = @"https://sdk.heyzap.com";
+#import "HZAdsManager.h"
+
+static NSString * const kHZAPIBaseURLString = @"https://ads.heyzap.com";
 
 //don't change these without also changing them in the test app's view controller
 NSString * const HZAPIClientDidReceiveResponseNotification = @"HZAPIClientDidReceiveResponse";
@@ -62,7 +64,6 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
                                      @"sdk_version": SDK_VERSION,
                                      @"ios_version": [UIDevice currentDevice].systemVersion,
                                      @"device_type": [HZAvailability platform],
-                                     @"installed": heyzapInstalled,
                                      @"advertising_id" : [HZUtils deviceID],
                                    } mutableCopy];
     

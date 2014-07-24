@@ -100,14 +100,20 @@ extern "C" {
         [HZIncentivizedAd setDelegate: delegate];
     }
 
-     void hz_ads_start_app(int flags) {
-        HeyzapUnityAdDelegate *delegate = [[HeyzapUnityAdDelegate alloc] init];
-        [HeyzapAds startWithOptions: flags andFramework: @"unity3d"];
-        [HeyzapAds setDebug: YES];
+     void hz_ads_start_app(const char *publisher_id, int flags) {
+        NSString *publisherID = [NSString stringWithUTF8String: publisher_id];
+        
+        [HeyzapAds startWithPublisherID: publisherID andOptions: flags andFramework: @"unity3d"];
         [HeyzapAds setDebugLevel: HZDebugLevelVerbose];
-        [HZInterstitialAd setDelegate: delegate];
-        [HZVideoAd setDelegate: delegate];
-        [HZIncentivizedAd setDelegate: delegate];
+
+        HZIncentivizedDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INCENTIVIZED_KLASS];
+        [HZIncentivizedAd setDelegate: HZIncentivizedDelegate];
+
+        HZInterstitialDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INTERSTITIAL_KLASS];
+        [HZInterstitialAd setDelegate: HZInterstitialDelegate];
+        
+        HZVideoDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_VIDEO_KLASS];
+        [HZVideoAd setDelegate: HZVideoDelegate];
      }
 
      //Interstitial

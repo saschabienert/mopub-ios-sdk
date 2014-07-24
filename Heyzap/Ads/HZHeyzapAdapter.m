@@ -97,7 +97,7 @@
     } else if (type & HZAdTypeInterstitial) {
         return [HZHeyzapInterstitialAd isAvailableForTag:tag];
     } else  {
-        return [HZHeyzapIncentivizedAd isAvailable];
+        return [HZHeyzapIncentivizedAd isAvailableForTag:tag];
     }
 }
 
@@ -109,7 +109,7 @@
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZHeyzapIncentivizedAd show];
+            [HZHeyzapIncentivizedAd showForTag:tag];
             break;
         }
         case HZAdTypeVideo: {
