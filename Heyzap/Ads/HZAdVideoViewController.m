@@ -235,7 +235,6 @@
 - (void) onActionShow: (UIView *) sender {
     if (sender.tag == kHZVideoViewTag) {
         self.didStartVideo = YES;
-        [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] willStartAudio];
         
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] willStartAudio];
         
