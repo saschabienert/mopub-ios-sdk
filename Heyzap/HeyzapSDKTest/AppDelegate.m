@@ -45,7 +45,13 @@
     
     SDKTestAppViewController *mainController = [[SDKTestAppViewController alloc] init];
     
+#if INTEGRATION_TESTING
+    // Integration tests don't want autoprefetching interfering with testing callbacks, fetching the wrong ad, etc.
+    [HeyzapAds startWithPublisherID:@"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
+#else
     [HeyzapAds startWithPublisherID: @"1234"];
+#endif
+    
     
     [HZInterstitialAd setDelegate:mainController];
     [HZIncentivizedAd setDelegate:mainController];

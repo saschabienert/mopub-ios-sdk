@@ -51,14 +51,14 @@
 
 #pragma mark - Landscape Tests
 
-- (void)testLandscapeFullscreenGameOfWar
+- (void)testLandscapeFullscreenBookOfRa
 {
-    [self testInterstitialWithCreativeID:495013 deviceOrientation:UIDeviceOrientationLandscapeRight];
+    [self testInterstitialWithCreativeID:2205811 deviceOrientation:UIDeviceOrientationLandscapeRight];
 }
 
-- (void)testLandscapeScreenshotsGameOfWar
+- (void)testLandscapeScreenshotsBookOfRa
 {
-    [self testInterstitialWithCreativeID:495021 deviceOrientation:UIDeviceOrientationLandscapeRight];
+    [self testInterstitialWithCreativeID:2205823 deviceOrientation:UIDeviceOrientationLandscapeRight];
 }
 
 - (void)testLandscapeFullscreenCleanDragonVale
