@@ -11,6 +11,7 @@
 #import "HZWebView.h"
 #import "HZVideoAdModel.h"
 #import "HZAdsManager.h"
+#import "HZMetrics.h"
 
 #define kHZVideoViewTag 1
 #define kHZWebViewTag 2
@@ -54,7 +55,10 @@
         _webView.actionDelegate = self;
         
         [_webView setHTML: self.ad.HTMLContent];
-        
+        NSString *hostValue = (BOOL)[ad.launchURI host]?  [ad.launchURI host] : @"nil";
+        [[HZMetrics sharedInstance] logMetricsEvent:@"creative-host" withValue:hostValue forTag:ad.tag  andType:ad.adUnit];
+        NSString *pathValue = (BOOL)[ad.launchURI path]?  [ad.launchURI path] : @"nil";
+        [[HZMetrics sharedInstance] logMetricsEvent:@"creative-path" withValue:pathValue forTag:ad.tag  andType:ad.adUnit];
         [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterForeground:) name: UIApplicationDidBecomeActiveNotification object: nil];
         
         [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterBackground:) name: UIApplicationDidEnterBackgroundNotification object: nil];
@@ -212,6 +216,7 @@
 - (void) onActionHide: (UIView *) sender {
     switch (sender.tag) {
         case kHZVideoViewTag:
+            [[HZMetrics sharedInstance] logMetricsEvent:@"close" withValue:@1 forTag:self.ad.tag andType:self.ad.adUnit];
             if (self.didStartVideo) {
                 [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFinishAudio];
             }

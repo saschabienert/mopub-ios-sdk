@@ -9,6 +9,7 @@
 #import "HZAdLibrary.h"
 #import "HZAdModel.h"
 #import "HZQueue.h"
+#import "HZMetrics.h"
 
 @interface HZAdLibrary()
 @property (nonatomic) NSMutableDictionary *adUnitDict;
@@ -72,6 +73,7 @@
                 HZAdModel *model = [self.adImpressionDict objectForKey: impressionID];
                 if (model != nil) {
                     [self.adImpressionDict removeObjectForKey: impressionID];
+                    [[HZMetrics sharedInstance] removeAdForTag:tag andType:adUnit];
                     return model;
                 }
             }

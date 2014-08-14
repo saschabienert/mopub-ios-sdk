@@ -11,6 +11,7 @@
 #import "HZVideoControlView.h"
 #import "HZDevice.h"
 #import "HZLog.h"
+#import "HZMetrics.h"
 
 @interface HZVideoView()
 @property (nonatomic) MPMoviePlayerController *player;

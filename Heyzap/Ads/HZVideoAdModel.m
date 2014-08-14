@@ -13,6 +13,7 @@
 #import "HZUtils.h"
 #import "HZAdsAPIClient.h"
 #import "HZLog.h"
+#import "HZMetrics.h"
 
 @interface HZVideoAdModel()<UIWebViewDelegate>
 @property (nonatomic, assign) BOOL sentComplete;
@@ -122,10 +123,15 @@
         }
         
         __block HZVideoAdModel *modelSelf = self;
-        self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload toFilePath: [self filePathForCachedVideo] withCompletion:^(BOOL result) {
+        CFTimeInterval startDownloadTime = CACurrentMediaTime();
+        self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload toFilePath: [self filePathForCachedVideo] forTag:self.tag andType:self.adUnit withCompletion:^(BOOL result) {
+            CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startDownloadTime;
+            int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
+            [[HZMetrics sharedInstance] logMetricsEvent:@"video-download-time" withValue:@(elapsedMiliseconds) forTag:self.tag andType:self.adUnit];
             modelSelf.fileCached = result;
             if (![modelSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
                 if (modelSelf.allowFallbacktoStreaming) {
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"video-download-failed" withValue:@1 forTag:self.tag andType:self.adUnit];
                     completion(YES);
                 } else {
                     completion(result);

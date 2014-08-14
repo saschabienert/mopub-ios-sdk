@@ -12,6 +12,7 @@
 #import "HZUtils.h"
 #import "HZAdsManager.h"
 #import "HZAdsAPIClient.h"
+#import "HZMetrics.h"
 
 @interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
 
@@ -56,6 +57,8 @@
 }
 
 - (void) show {
+    [[HZMetrics sharedInstance] logTimeSinceStartFor:@"show-ad-time-from-start" forTag:self.ad.tag andType:self.ad.adUnit];
+    
     self.statusBarHidden = [UIApplication sharedApplication].statusBarHidden;
     
     // ** Steal UIWindow
@@ -70,6 +73,7 @@
     [self.window setBackgroundColor: [UIColor clearColor]];
     [self.window makeKeyAndVisible];
     [self.window setRootViewController: self];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show-ad-time-till-ad-displayed" forTag:self.ad.tag andType:self.ad.adUnit];
 }
 
 - (void) hide {

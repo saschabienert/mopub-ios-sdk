@@ -163,6 +163,8 @@
 		86FF907D185842D900BC48BF /* HZQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 86FF907B185842D900BC48BF /* HZQueue.h */; };
 		86FF907E185842D900BC48BF /* HZQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 86FF907C185842D900BC48BF /* HZQueue.m */; };
 		996D9AA5BB144F82A96FC8B0 /* libPods-Integration Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */; };
+		B304C4C2197EDC4A009ACC5D /* HZMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = B304C4C0197EDC4A009ACC5D /* HZMetrics.h */; };
+		B304C4C3197EDC4A009ACC5D /* HZMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = B304C4C1197EDC4A009ACC5D /* HZMetrics.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -350,6 +352,8 @@
 		86FF907C185842D900BC48BF /* HZQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZQueue.m; sourceTree = "<group>"; };
 		9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Integration Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1D5F5ECB01E4EDFA33DE9B0 /* libPods-Ads Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ads Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B304C4C0197EDC4A009ACC5D /* HZMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMetrics.h; sourceTree = "<group>"; };
+		B304C4C1197EDC4A009ACC5D /* HZMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMetrics.m; sourceTree = "<group>"; };
 		C9E09E3CF972477FA4ED9657 /* Pods-Ads Tests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ads Tests.xcconfig"; path = "Pods/Pods-Ads Tests.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -682,6 +686,8 @@
 		86B9435917581AC600B8EACE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				B304C4C0197EDC4A009ACC5D /* HZMetrics.h */,
+				B304C4C1197EDC4A009ACC5D /* HZMetrics.m */,
 				86B94295175808F800B8EACE /* HZAvailability.h */,
 				86B94296175808F800B8EACE /* HZAvailability.m */,
 				86B9421F1758086300B8EACE /* HZAnalytics.h */,
@@ -765,6 +771,7 @@
 				860FD47E187CC056008A35FD /* HZAdFetchRequest.h in Headers */,
 				866E3A101851302C00B6E431 /* HZAdInterstitialViewController.h in Headers */,
 				86234AB018581B800071957B /* HZVideoControlView.h in Headers */,
+				B304C4C2197EDC4A009ACC5D /* HZMetrics.h in Headers */,
 				86CD0E8E17BB0C070005BD3D /* HZAdsAPIClient.h in Headers */,
 				86234AA918568EEA0071957B /* HZVideoView.h in Headers */,
 				866E39F718500DBE00B6E431 /* HZAdModel.h in Headers */,
@@ -1107,6 +1114,7 @@
 				866E39F41850089C00B6E431 /* HZIncentivizedAd.m in Sources */,
 				866E39F818500DBE00B6E431 /* HZAdModel.m in Sources */,
 				866E3A191851329500B6E431 /* HZWebView.m in Sources */,
+				B304C4C3197EDC4A009ACC5D /* HZMetrics.m in Sources */,
 				86B09B85175958A50045AA54 /* HZInterstitialAd.m in Sources */,
 				866E39FC1850161900B6E431 /* HZVideoAdModel.m in Sources */,
 			);

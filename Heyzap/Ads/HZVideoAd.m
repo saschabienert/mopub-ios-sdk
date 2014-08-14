@@ -7,6 +7,7 @@
 //
 
 #import "HZVideoAd.h"
+#import "HZMetrics.h"
 #import "HZAdsManager.h"
 #import "HZAdLibrary.h"
 #import "HZAdViewController.h"
@@ -18,6 +19,7 @@
 #define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
 
 static int HZVideoAdCreativeIDPin = 0;
+static NSString * adUnit = @"";
 
 @implementation HZVideoAd
 
@@ -61,7 +63,9 @@ static int HZVideoAdCreativeIDPin = 0;
 }
 
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
+    NSString *type = @"video";
     if ([[HZAdsManager sharedManager] isEnabled]) {
+        [[HZMetrics sharedInstance] logFetchTimeForTag:tag andType:type];
         
         NSDictionary *params = (HZVideoAdCreativeIDPin > 0) ? @{@"creative_id": [NSString stringWithFormat: @"%i", HZVideoAdCreativeIDPin]} : nil;
         
@@ -69,15 +73,21 @@ static int HZVideoAdCreativeIDPin = 0;
                                                                              adUnit: HZVideoAdUnit
                                                                                 tag: tag
                                                                 andAdditionalParams: params];
-        
+        CFTimeInterval startTime = CACurrentMediaTime();
         [[HZAdsFetchManager sharedManager] fetch: request
                                   withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
+            CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
+            int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
+            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-download-time" withValue:@(elapsedMiliseconds) forTag:tag andType:type];
             if (completion) {
                 BOOL result = YES;
                 if (error != nil || ad == nil) {
                     result = NO;
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch" withValue:@0 forTag:tag andType:type];
+                } else {
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail" withValue:@1 forTag:tag andType:type];
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail-reason" withValue:error forTag:tag andType:type];
                 }
-                
                 completion(result, error);
             }
         }];
@@ -97,7 +107,17 @@ static int HZVideoAdCreativeIDPin = 0;
 + (BOOL) isAvailableForTag: (NSString *) tag {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
     
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZVideoAdUnit withTag: tag] != nil;
+    [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible" withValue:@1 forTag:tag andType:HZVideoAdUnit];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"is-availible-time-since-fetch" forTag:tag andType:HZVideoAdUnit];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"is-availible-download" forTag:tag andType:HZVideoAdUnit];
+
+    BOOL available = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZVideoAdUnit withTag: tag] != nil;
+    if (available){
+        [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible-result" withValue:@"is-availible" forTag:tag andType:HZVideoAdUnit];
+    } else {
+        [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible-result" withValue:@"is-not-availible" forTag:tag andType:HZVideoAdUnit];
+    }
+    return available;
 }
 
 + (void) setCreativeID:(int)creativeID {
