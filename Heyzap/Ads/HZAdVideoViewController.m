@@ -55,9 +55,9 @@
         _webView.actionDelegate = self;
         
         [_webView setHTML: self.ad.HTMLContent];
-        NSString *hostValue = (BOOL)[ad.launchURI host]?  [ad.launchURI host] : @"nil";
+        NSString *hostValue = [ad.launchURI host] ?: @"nil";
         [[HZMetrics sharedInstance] logMetricsEvent:@"creative-host" withValue:hostValue forTag:ad.tag  andType:ad.adUnit];
-        NSString *pathValue = (BOOL)[ad.launchURI path]?  [ad.launchURI path] : @"nil";
+        NSString *pathValue = [ad.launchURI path] ?: @"nil";
         [[HZMetrics sharedInstance] logMetricsEvent:@"creative-path" withValue:pathValue forTag:ad.tag  andType:ad.adUnit];
         [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterForeground:) name: UIApplicationDidBecomeActiveNotification object: nil];
         
