@@ -114,8 +114,7 @@ static NSMutableDictionary *metricsInstanceDict = nil;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
                                                         object:nil
                                                       userInfo:self.metricsTagDict];
-    NSLog(@"Logged %@ for %@ %@ as %@, \nMetrics: %@", eventName, tag, type, value, self.metricsTagDict);
-    [self cacheMetrics];
+        [self cacheMetrics];
 }
 
 - (void) logFetchTimeForTag: (NSString *) tag andType:(NSString *) type {
@@ -208,9 +207,6 @@ static NSMutableDictionary *metricsInstanceDict = nil;
         NSLog(@"%@", @"wrote to file!");
     }
     NSLog(@"Contents of File: %@", [NSMutableDictionary dictionaryWithContentsOfFile:filePath]);
-//    NSData *dataJSON = [NSJSONSerialization dataWithJSONObject:dataToSave options:NSJSONWritingPrettyPrinted error:nil];
-//    NSFileHandle *filehandle = [NSFileHandle fileHandleForWritingAtPath:filePath];
-//    [filehandle writeData:dataJSON];
 }
 
 - (NSMutableDictionary *)getCachedMetrics {
@@ -224,23 +220,26 @@ static NSMutableDictionary *metricsInstanceDict = nil;
     }
 }
 
+- (void) clearCache {
+    [self.metricsIDDict removeAllObjects];
+    [self.metricsTagDict removeAllObjects];
+    NSString *libraryDir = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *filePath = [libraryDir stringByAppendingPathComponent:kDataFileName];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtPath:filePath error:nil];
+}
+
 
 //forground
 - (void)sendCachedMetrics {
     //if (self.enabled && self.metricsBeingSent.count == 0){
         NSMutableDictionary *savedMetrics = [self getCachedMetrics];
-        if (savedMetrics != nil){
-            self.metricsBeingSent = [NSMutableDictionary dictionaryWithDictionary:savedMetrics];
-            if ([savedMetrics count] > 0) {
-                [[HZAPIClient sharedClient] post: kSendMetricsUrl  withParams: savedMetrics success:^(id data) {
-                    NSLog(@"%@",@"yay");
-                    [self.metricsTagDict removeAllObjects];
-                    [self.metricsBeingSent removeAllObjects];
-                } failure:^(NSError *error) {
-                    NSLog(@"%@",@"nay");
-                    [self.metricsBeingSent removeAllObjects];
-                }];
-            }
+        if ((savedMetrics != nil) && ([savedMetrics[@"metrics"] count] > 0)){
+            [[HZAPIClient sharedClient] post: kSendMetricsUrl  withParams: savedMetrics success:^(id data) {
+                [self.metricsTagDict removeAllObjects];
+                [self clearCache];
+            } failure:^(NSError *error) {
+            }];
         }
     //}
 }

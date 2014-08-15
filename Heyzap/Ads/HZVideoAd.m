@@ -19,7 +19,6 @@
 #define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
 
 static int HZVideoAdCreativeIDPin = 0;
-static NSString * adUnit = @"";
 
 @implementation HZVideoAd
 
