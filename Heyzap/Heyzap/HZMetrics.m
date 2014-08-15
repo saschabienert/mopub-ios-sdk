@@ -152,13 +152,6 @@ static NSMutableDictionary *metricsInstanceDict = nil;
 }
 
 - (NSMutableDictionary *) addConstantsToDict:(NSMutableDictionary *)dict{
-    NSString *deviceFormFactor;
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        deviceFormFactor = @"tablet";
-    } else {
-        deviceFormFactor = @"phone";
-    }
-    dict[@"device-type"] = deviceFormFactor;
     
     CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
     CTCarrier *carrier = [netinfo subscriberCellularProvider];
