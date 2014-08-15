@@ -63,7 +63,7 @@ static int HZIncentivizedCreativeIDPin = 0;
 + (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion {
     NSString *type = @"incentivized";
     if ([[HZAdsManager sharedManager] isEnabled]) {
-        [[HZMetrics sharedInstance] logFetchTimeForTag:tag andType:type];
+        [[HZMetrics sharedInstance] logFetchTimeForTag:tag type:type];
         
         NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
         if (HZIncentivizedCreativeIDPin > 0) {
@@ -83,15 +83,15 @@ static int HZIncentivizedCreativeIDPin = 0;
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
             CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
             int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
-            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-download-time" withValue:@(elapsedMiliseconds) forTag:tag andType:type];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-download-time" value:@(elapsedMiliseconds) tag:tag type:type];
             if (completion) {
                 BOOL result = YES;
                 if (error != nil || ad == nil) {
                     result = NO;
-                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch" withValue:@0 forTag:tag andType:type];
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch" value:@0 tag:tag type:type];
                 } else {
-                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail" withValue:@1 forTag:tag andType:type];
-                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail-reason" withValue:error forTag:tag andType:type];
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail" value:@1 tag:tag type:type];
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail-reason" value:error tag:tag type:type];
                 }
                 
                 completion(result, error);
@@ -118,9 +118,9 @@ static int HZIncentivizedCreativeIDPin = 0;
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible" withValue:@1 forTag:tag andType:@"incentivized"];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"is-availible-time-since-fetch" forTag:tag andType:@"incentivized"];
-    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"is-availible-download" forTag:tag andType:@"incentivized"];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible" value:@1 tag:tag type:@"incentivized"];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"is-availible-time-since-fetch" tag:tag type:@"incentivized"];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"is-availible-download" tag:tag type:@"incentivized"];
 
     return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZIncentivizedAdUnit withTag: tag] != nil;
 }

@@ -70,7 +70,7 @@ static NSMutableDictionary *metricsInstanceDict = nil;
     return newDict;
 }
 
-- (NSMutableDictionary *) getMetricsForTag:(NSString *)tag andType:(NSString *)type {
+- (NSMutableDictionary *) getMetricsForTag:(NSString *)tag type:(NSString *)type {
     if (tag == nil ) tag = @"default";
     //make or get instance from instace dict (cache 1)
     if (self.metricsTagDict[tag]){
@@ -102,14 +102,14 @@ static NSMutableDictionary *metricsInstanceDict = nil;
     }
 }
 
-- (void) removeAdForTag:(NSString *)tag andType:(NSString *)type {
+- (void) removeAdForTag:(NSString *)tag type:(NSString *)type {
     if(self.metricsTagDict[tag]){
         [self.metricsTagDict[tag] removeObjectForKey:type];
     }
 }
 
-- (void) logMetricsEvent: (NSString *) eventName withValue:(id)value forTag:(NSString *)tag andType:(NSString *)type {
-    NSMutableDictionary *d = [self getMetricsForTag:tag andType:type];
+- (void) logMetricsEvent: (NSString *) eventName value:(id)value tag:(NSString *)tag type:(NSString *)type {
+    NSMutableDictionary *d = [self getMetricsForTag:tag type:type];
     d[eventName] = value;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
                                                         object:nil
@@ -117,38 +117,38 @@ static NSMutableDictionary *metricsInstanceDict = nil;
         [self cacheMetrics];
 }
 
-- (void) logFetchTimeForTag: (NSString *) tag andType:(NSString *) type {
+- (void) logFetchTimeForTag: (NSString *) tag type:(NSString *) type {
     self.fetchCalledTime = CACurrentMediaTime();
-    [self logMetricsEvent:@"fetch" withValue:@1 forTag:tag andType:type];
+    [self logMetricsEvent:@"fetch" value:@1 tag:tag type:type];
 }
 
-- (void) logTimeSinceFetchFor:(NSString *)eventName forTag:(NSString *)tag andType:(NSString *)type{
+- (void) logTimeSinceFetchFor:(NSString *)eventName tag:(NSString *)tag type:(NSString *)type{
     CFTimeInterval currentTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceFetchMiliseconds = lround((currentTime - self.fetchCalledTime)*1000);
-    [self logMetricsEvent:eventName withValue:@(elapsedtimeSinceFetchMiliseconds) forTag:tag andType:type];
+    [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMiliseconds) tag:tag type:type];
 }
 
-- (void) logShowAdForTag:(NSString *)tag andType:(NSString *)type{
-    [[HZMetrics sharedInstance] logMetricsEvent:@"show-ad" withValue:@1 forTag:tag andType:type];
+- (void) logShowAdForTag:(NSString *)tag type:(NSString *)type{
+    [[HZMetrics sharedInstance] logMetricsEvent:@"show-ad" value:@1 tag:tag type:type];
     self.showAdCalledTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceShowMiliseconds = lround((self.showAdCalledTime - self.fetchCalledTime)*1000);
-    [self logMetricsEvent:@"show-ad-time-since-fetch" withValue:@(elapsedtimeSinceShowMiliseconds) forTag:tag andType:type];
+    [self logMetricsEvent:@"show-ad-time-since-fetch" value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
 }
 
-- (void) logTimeSinceShowAdFor:(NSString *)eventname forTag:(NSString *)tag andType:(NSString *)type{
+- (void) logTimeSinceShowAdFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type{
     CFTimeInterval currentTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceShowMiliseconds = lround((currentTime - self.showAdCalledTime)*1000);
-    [self logMetricsEvent:eventname withValue:@(elapsedtimeSinceShowMiliseconds) forTag:tag andType:type];
+    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
 }
 
-- (void) logDownloadPercentageFor:(NSString *)eventname forTag:(NSString *)tag andType:(NSString *)type{
-    [self logMetricsEvent:eventname withValue:@(self.downloadPercentage) forTag:tag andType:type];
+- (void) logDownloadPercentageFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type{
+    [self logMetricsEvent:eventname value:@(self.downloadPercentage) tag:tag type:type];
 }
 
-- (void) logTimeSinceStartFor:(NSString *)eventname forTag:(NSString *)tag andType:(NSString *)type {
+- (void) logTimeSinceStartFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type {
     CFTimeInterval currentTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceShowMiliseconds = lround((currentTime - self.startTime)*1000);
-    [self logMetricsEvent:eventname withValue:@(elapsedtimeSinceShowMiliseconds) forTag:tag andType:type];
+    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
 }
 
 - (NSMutableDictionary *) addConstantsToDict:(NSMutableDictionary *)dict{

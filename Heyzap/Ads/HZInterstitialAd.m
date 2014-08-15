@@ -92,22 +92,22 @@ static int HZInterstitialAdCreativeIDPin = 0;
 
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
     if ([[HZAdsManager sharedManager] isEnabled]) {
-[       [HZMetrics sharedInstance] logFetchTimeForTag:tag andType:HZInterstitialAdUnit];
+[       [HZMetrics sharedInstance] logFetchTimeForTag:tag type:HZInterstitialAdUnit];
         
         HZAdFetchRequest *request = [self requestWithTag: tag andVideo: YES];
         CFTimeInterval startTime = CACurrentMediaTime();
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
             CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
             int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
-            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-download-time" withValue:@(elapsedMiliseconds) forTag:tag andType:HZInterstitialAdUnit];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-download-time" value:@(elapsedMiliseconds) tag:tag type:HZInterstitialAdUnit];
             if (completion) {
                 BOOL result = YES;
                 if (error != nil || ad == nil) {
                     result = NO;
-                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch" withValue:@0 forTag:tag andType:HZInterstitialAdUnit];
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch" value:@0 tag:tag type:HZInterstitialAdUnit];
                 } else {
-                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail" withValue:@1 forTag:tag andType:HZInterstitialAdUnit];
-                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail-reason" withValue:error forTag:tag andType:HZInterstitialAdUnit];
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail" value:@1 tag:tag type:HZInterstitialAdUnit];
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail-reason" value:error tag:tag type:HZInterstitialAdUnit];
                 }
                 
                 completion(result, error);
@@ -128,16 +128,16 @@ static int HZInterstitialAdCreativeIDPin = 0;
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible" withValue:@1 forTag:tag andType:HZInterstitialAdUnit];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"is-availible-time-since-fetch" forTag:tag andType:HZInterstitialAdUnit];
-    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"is-availible-download" forTag:tag andType:HZInterstitialAdUnit];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible" value:@1 tag:tag type:HZInterstitialAdUnit];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"is-availible-time-since-fetch" tag:tag type:HZInterstitialAdUnit];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"is-availible-download" tag:tag type:HZInterstitialAdUnit];
     
     BOOL available = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZInterstitialAdUnit withTag: tag] != nil;
     
     if (available){
-        [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible-result" withValue:@"is-availible" forTag:tag andType:HZInterstitialAdUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible-result" value:@"is-availible" tag:tag type:HZInterstitialAdUnit];
     } else {
-        [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible-result" withValue:@"is-not-availible" forTag:tag andType:HZInterstitialAdUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible-result" value:@"is-not-availible" tag:tag type:HZInterstitialAdUnit];
     }
 
     return available;

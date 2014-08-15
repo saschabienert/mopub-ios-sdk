@@ -127,11 +127,11 @@
         self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload toFilePath: [self filePathForCachedVideo] forTag:self.tag andType:self.adUnit withCompletion:^(BOOL result) {
             CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startDownloadTime;
             int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
-            [[HZMetrics sharedInstance] logMetricsEvent:@"video-download-time" withValue:@(elapsedMiliseconds) forTag:self.tag andType:self.adUnit];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"video-download-time" value:@(elapsedMiliseconds) tag:self.tag type:self.adUnit];
             modelSelf.fileCached = result;
             if (![modelSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
                 if (modelSelf.allowFallbacktoStreaming) {
-                    [[HZMetrics sharedInstance] logMetricsEvent:@"video-download-failed" withValue:@1 forTag:self.tag andType:self.adUnit];
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"video-download-failed" value:@1 tag:self.tag type:self.adUnit];
                     completion(YES);
                 } else {
                     completion(result);

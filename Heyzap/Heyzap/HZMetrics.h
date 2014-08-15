@@ -11,15 +11,15 @@
 @interface HZMetrics : NSObject
 
 + (HZMetrics *) sharedInstance;
-- (NSMutableDictionary *) getMetricsForTag:(NSString *)tag andType:(NSString *)type;
-- (void) logMetricsEvent: (NSString *) eventName withValue:(id)value forTag:(NSString *)tag andType:(NSString *)type;
-- (void) logTimeSinceFetchFor: (NSString *) eventName forTag:(NSString *)tag andType:(NSString *)type;
-- (void) logFetchTimeForTag: (NSString *) tag andType:(NSString *) type;
-- (void) logShowAdForTag: (NSString *) tag andType: (NSString *) type;
-- (void) logTimeSinceShowAdFor:(NSString *)eventname forTag:(NSString *)tag andType:(NSString *)type;
-- (void) logDownloadPercentageFor:(NSString *)eventname forTag:(NSString *)tag andType:(NSString *)type;
-- (void) logTimeSinceStartFor:(NSString *)eventname forTag:(NSString *)tag andType:(NSString *)type;
-- (void) removeAdForTag:(NSString *)tag andType:(NSString *)type;
+- (NSMutableDictionary *) getMetricsForTag:(NSString *)tag type:(NSString *)type;
+- (void) logMetricsEvent: (NSString *) eventName value:(id)value tag:(NSString *)tag type:(NSString *)type;
+- (void) logTimeSinceFetchFor: (NSString *) eventName tag:(NSString *)tag type:(NSString *)type;
+- (void) logFetchTimeForTag: (NSString *) tag type:(NSString *) type;
+- (void) logShowAdForTag: (NSString *) tag type: (NSString *) type;
+- (void) logTimeSinceShowAdFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type;
+- (void) logDownloadPercentageFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type;
+- (void) logTimeSinceStartFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type;
+- (void) removeAdForTag:(NSString *)tag type:(NSString *)type;
 - (void) cacheMetrics;
 - (void) sendCachedMetrics;
 

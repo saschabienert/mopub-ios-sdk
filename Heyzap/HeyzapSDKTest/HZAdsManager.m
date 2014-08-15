@@ -156,9 +156,9 @@
 #pragma mark - Show
 
 - (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag withCompletion: (void (^)(BOOL result, NSError *error))completion  {
-    [[HZMetrics sharedInstance] logShowAdForTag:tag andType:adUnit];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"show-ad-time-since-fetch" forTag:tag andType:adUnit];
-    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"show-ad-download" forTag:tag andType:adUnit];
+    [[HZMetrics sharedInstance] logShowAdForTag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"show-ad-time-since-fetch" tag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"show-ad-download" tag:tag type:adUnit];
     BOOL result = NO;
     NSError *error;
     
@@ -167,7 +167,7 @@
     }
     
     if ([self activeController] != nil) {
-        [[HZMetrics sharedInstance] logMetricsEvent:@"show-ad-result" withValue:@"Another ad is currently displaying." forTag:tag andType:adUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"show-ad-result" value:@"Another ad is currently displaying." tag:tag type:adUnit];
         if (completion) {
             completion(NO, [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 7 userInfo: @{NSLocalizedDescriptionKey: @"Another ad is currently displaying."}]);
         }
@@ -176,7 +176,7 @@
     }
     
     if (![[HZDevice currentDevice] HZConnectivityType]) {
-        [[HZMetrics sharedInstance] logMetricsEvent:@"show-ad-result" withValue:@"no-connectivity" forTag:tag andType:adUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"show-ad-result" value:@"no-connectivity" tag:tag type:adUnit];
         error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 1 userInfo: @{NSLocalizedDescriptionKey: @"No internet connection."}];
     } else {
         if (!tag) {
@@ -215,7 +215,7 @@
         }
         
         if (!result) {
-            [[HZMetrics sharedInstance] logMetricsEvent:@"show-ad-result" withValue:@"No ad available" forTag:tag andType:adUnit];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"show-ad-result" value:@"No ad available" tag:tag type:adUnit];
             error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 6 userInfo: @{NSLocalizedDescriptionKey: @"No ad available"}];
         }
     }
@@ -224,7 +224,7 @@
         // Not using the standard method here.
         [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag: tag andError: error];
     } else {
-        [[HZMetrics sharedInstance] logMetricsEvent:@"show-ad-result" withValue:@(result) forTag:tag andType:adUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"show-ad-result" value:@(result) tag:tag type:adUnit];
     }
     
     if (completion) {
