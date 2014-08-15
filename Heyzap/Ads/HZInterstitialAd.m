@@ -89,6 +89,11 @@
     [HZHeyzapInterstitialAd setCreativeID:creativeID];
 }
 
++ (void)forceTestCreative:(BOOL)forceTestCreative
+{
+    [HZHeyzapInterstitialAd forceTestCreative:forceTestCreative];
+}
+
 + (id)alloc {
     [NSException raise:@"CannotInstantiateStaticClass" format:@"'HZInterstitialAd' is a static class and cannot be instantiated."];
     return nil;

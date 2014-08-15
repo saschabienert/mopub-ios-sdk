@@ -20,6 +20,7 @@
 #define HZInterstitialAdUnit @"interstitial"
 
 static int HZInterstitialAdCreativeIDPin = 0;
+static BOOL HZInterstitialForceTestCreative = NO;
 
 @implementation HZHeyzapInterstitialAd
 
@@ -87,10 +88,17 @@ static int HZInterstitialAdCreativeIDPin = 0;
     }
 }
 
++ (void)forceTestCreative:(BOOL)forceTestCreative
+{
+    HZInterstitialForceTestCreative = forceTestCreative;
+}
+
 + (HZAdFetchRequest *) requestWithTag: (NSString *) tag andVideo: (BOOL) withVideo {
     NSDictionary *params = nil;
     
-    if (HZInterstitialAdCreativeIDPin > 0) {
+    if (HZInterstitialForceTestCreative) {
+        params = @{@"force_test_creative":@"true"};
+    } else if (HZInterstitialAdCreativeIDPin > 0) {
         params = @{@"creative_id": [NSString stringWithFormat: @"%i", HZInterstitialAdCreativeIDPin]};
     }
     

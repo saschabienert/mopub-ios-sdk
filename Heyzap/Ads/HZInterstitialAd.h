@@ -110,5 +110,6 @@
 #pragma mark - Private methods
 
 + (void) setCreativeID:(int)creativeID;
++ (void)forceTestCreative:(BOOL)forceTestCreative;
 
 @end
