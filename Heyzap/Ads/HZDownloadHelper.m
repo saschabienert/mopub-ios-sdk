@@ -19,8 +19,8 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
 
     __block NSDate *startDownload = [NSDate date];
     
-    NSMutableURLRequest *request =  [NSURLRequest requestWithURL:url
-                                                     cachePolicy:NSURLCacheStorageNotAllowed
+    NSURLRequest *request =  [NSURLRequest requestWithURL:url
+                                                     cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                  timeoutInterval:20.0];
     
     HZAFHTTPRequestOperation *operation = [[HZAFHTTPRequestOperation alloc] initWithRequest:request];

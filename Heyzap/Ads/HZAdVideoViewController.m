@@ -216,7 +216,7 @@
 - (void) onActionHide: (UIView *) sender {
     switch (sender.tag) {
         case kHZVideoViewTag:
-            [[HZMetrics sharedInstance] logMetricsEvent:@"close" withValue:@1 forTag:self.ad.tag andType:self.ad.adUnit];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"close" value:@1 tag:self.ad.tag type:self.ad.adUnit];
             if (self.didStartVideo) {
                 [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFinishAudio];
             }

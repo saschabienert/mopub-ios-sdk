@@ -234,7 +234,7 @@
 
 - (void) hideActiveAd {
     if ([self activeController] != nil) {
-        [[HZMetrics sharedInstance] logMetricsEvent:@"dev-hide" withValue:@1 forTag:[self activeController].ad.tag andType:[self activeController].ad.adUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"dev-hide" value:@1 tag:[self activeController].ad.tag type:[self activeController].ad.adUnit];
         [[self activeController] hide];
     }
 }
