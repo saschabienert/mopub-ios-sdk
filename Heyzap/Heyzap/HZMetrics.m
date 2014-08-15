@@ -55,6 +55,9 @@ static NSMutableDictionary *metricsInstanceDict = nil;
     self.metricsIDDict = [[NSMutableDictionary alloc] init];;
     self.untypedMetrics = [[NSMutableDictionary alloc] init];
     self.startTime = CACurrentMediaTime();
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(sendCachedMetrics)
+                                                 name: UIApplicationWillTerminateNotification object: nil];
     return self;
 }
 
@@ -221,21 +224,29 @@ static NSMutableDictionary *metricsInstanceDict = nil;
     }
 }
 
+
+//forground
 - (void)sendCachedMetrics {
-    if (self.enabled && self.metricsBeingSent.count == 0){
+    //if (self.enabled && self.metricsBeingSent.count == 0){
         NSMutableDictionary *savedMetrics = [self getCachedMetrics];
         if (savedMetrics != nil){
             self.metricsBeingSent = [NSMutableDictionary dictionaryWithDictionary:savedMetrics];
             if ([savedMetrics count] > 0) {
                 [[HZAPIClient sharedClient] post: kSendMetricsUrl  withParams: savedMetrics success:^(id data) {
+                    NSLog(@"%@",@"yay");
                     [self.metricsTagDict removeAllObjects];
                     [self.metricsBeingSent removeAllObjects];
                 } failure:^(NSError *error) {
+                    NSLog(@"%@",@"nay");
                     [self.metricsBeingSent removeAllObjects];
                 }];
             }
         }
-    }
+    //}
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 @end

@@ -11,6 +11,7 @@
 
 #import "HeyzapAds.h"
 #import "HZLog.h"
+#import "HZMetrics.h"
 
 #import "HZInterstitialAd.h"
 #import "SDKTestAppViewController.h"
@@ -74,6 +75,10 @@
     return YES;
 }
 
+    - (void)applicationWillTerminate:(UIApplication *)application
+    {
+        [[HZMetrics sharedInstance] sendCachedMetrics];
+    }
 
 
 @end
