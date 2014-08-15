@@ -160,24 +160,11 @@ static NSMutableDictionary *metricsInstanceDict = nil;
     }
     dict[@"device-type"] = deviceFormFactor;
     
-    NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];  // get the current locale.
-    NSString *countryCode = [currentLocale objectForKey:NSLocaleCountryCode];
-    dict[@"country"] = countryCode;
-    
-    NSString *versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
-    versionString = versionString ?: @"";
-    dict[@"app-version"] = versionString;
-    
     CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
     CTCarrier *carrier = [netinfo subscriberCellularProvider];
     NSString *carrierName = carrier.carrierName ? carrier.carrierName : @"";
     dict[@"carrier"] = carrierName;
     
-    dict[@"app_bundle_id"] = [[NSBundle mainBundle] bundleIdentifier];
-    dict[@"sdk-version"] = SDK_VERSION;
-    dict[@"platform"] = @"ios";
-    dict[@"publisher-id"] = [HZUtils publisherID] ?: @"";
-    dict[@"device_id"] = [HZUtils deviceID];
     dict[@"os_version"] = [UIDevice currentDevice].systemVersion;
     dict[@"connectivity"] = [[HZDevice currentDevice] HZConnectivityType] == nil ? @0 : @1;
     dict[@"conection_type"] = [[HZDevice currentDevice] HZConnectivityType] ?: @"no_internet";
