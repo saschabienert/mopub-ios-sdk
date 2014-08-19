@@ -83,15 +83,15 @@ static int HZIncentivizedCreativeIDPin = 0;
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
             CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
             int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
-            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-download-time" value:@(elapsedMiliseconds) tag:tag type:type];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elapsedMiliseconds) tag:tag type:type];
             if (completion) {
                 BOOL result = YES;
                 if (error != nil || ad == nil) {
                     result = NO;
                     [[HZMetrics sharedInstance] logMetricsEvent:@"fetch" value:@0 tag:tag type:type];
                 } else {
-                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail" value:@1 tag:tag type:type];
-                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch-fail-reason" value:error tag:tag type:type];
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_fail" value:@1 tag:tag type:type];
+                    [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_fail_reason" value:error tag:tag type:type];
                 }
                 
                 completion(result, error);
@@ -118,9 +118,9 @@ static int HZIncentivizedCreativeIDPin = 0;
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    [[HZMetrics sharedInstance] logMetricsEvent:@"is-availible" value:@1 tag:tag type:@"incentivized"];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"is-availible-time-since-fetch" tag:tag type:@"incentivized"];
-    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"is-availible-download" tag:tag type:@"incentivized"];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"is_available" value:@1 tag:tag type:@"incentivized"];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"is_available_time_since_fetch" tag:tag type:@"incentivized"];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"is_available_download" tag:tag type:@"incentivized"];
 
     return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZIncentivizedAdUnit withTag: tag] != nil;
 }

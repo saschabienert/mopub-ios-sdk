@@ -121,9 +121,9 @@
 
 - (BOOL) onClick {
     if (self.sentClick) return false;
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad-clicked" value:@1 tag:self.tag type:self.adUnit];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_clicked" value:@1 tag:self.tag type:self.adUnit];
     long timeCLickedMiliseconds = lround([[NSDate date] timeIntervalSince1970] * 1000);
-    [[HZMetrics sharedInstance] logMetricsEvent:@"time-clicked" value:@(timeCLickedMiliseconds) tag:self.tag type:self.adUnit];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"time_clicked" value:@(timeCLickedMiliseconds) tag:self.tag type:self.adUnit];
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     
@@ -141,8 +141,8 @@
 
 - (BOOL) onImpression {
     if (self.sentImpression) return false;
-    [[HZMetrics sharedInstance] logMetricsEvent:@"creative-id" value:self.creativeID tag:self.tag type:self.adUnit];
-    [[HZMetrics sharedInstance] logMetricsEvent:@"impression-id" value:self.impressionID tag:self.tag type:self.adUnit];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"creative_id" value:self.creativeID tag:self.tag type:self.adUnit];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:self.impressionID tag:self.tag type:self.adUnit];
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     

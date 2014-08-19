@@ -32,7 +32,7 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
         int percent = (int) (decimal * 100);
         [HZMetrics sharedInstance].downloadPercentage = percent;
         if (!loggedTotal){
-            [[HZMetrics sharedInstance] logMetricsEvent:@"video-size" value:@(totalBytesExpectedToRead) tag:tag type:type];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"video_size" value:@(totalBytesExpectedToRead) tag:tag type:type];
             loggedTotal = YES;
         }
     }];

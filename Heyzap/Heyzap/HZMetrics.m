@@ -138,10 +138,10 @@ NSString * const kMetricID = @"metricIdentifier";
 }
 
 - (void) logShowAdForTag:(NSString *)tag type:(NSString *)type{
-    [[HZMetrics sharedInstance] logMetricsEvent:@"show-ad" value:@1 tag:tag type:type];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad" value:@1 tag:tag type:type];
     self.showAdCalledTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceShowMiliseconds = lround((self.showAdCalledTime - self.fetchCalledTime)*1000);
-    [self logMetricsEvent:@"show-ad-time-since-fetch" value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
+    [self logMetricsEvent:@"show_ad_time_since_fetch" value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
 }
 
 - (void) logTimeSinceShowAdFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type{

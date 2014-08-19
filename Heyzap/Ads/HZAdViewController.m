@@ -57,7 +57,7 @@
 }
 
 - (void) show {
-    [[HZMetrics sharedInstance] logTimeSinceStartFor:@"show-ad-time-from-start" tag:self.ad.tag type:self.ad.adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceStartFor:@"show_ad_time_from_start" tag:self.ad.tag type:self.ad.adUnit];
     
     self.statusBarHidden = [UIApplication sharedApplication].statusBarHidden;
     
@@ -73,7 +73,7 @@
     [self.window setBackgroundColor: [UIColor clearColor]];
     [self.window makeKeyAndVisible];
     [self.window setRootViewController: self];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show-ad-time-till-ad-displayed" tag:self.ad.tag type:self.ad.adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_displayed" tag:self.ad.tag type:self.ad.adUnit];
 }
 
 - (void) hide {
