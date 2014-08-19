@@ -11,7 +11,6 @@
 @interface HZMetrics : NSObject
 
 + (HZMetrics *) sharedInstance;
-- (NSMutableDictionary *) getMetricsForTag:(NSString *)tag type:(NSString *)type;
 - (void) logMetricsEvent: (NSString *) eventName value:(id)value tag:(NSString *)tag type:(NSString *)type;
 - (void) logTimeSinceFetchFor: (NSString *) eventName tag:(NSString *)tag type:(NSString *)type;
 - (void) logFetchTimeForTag: (NSString *) tag type:(NSString *) type;
@@ -20,7 +19,6 @@
 - (void) logDownloadPercentageFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type;
 - (void) logTimeSinceStartFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type;
 - (void) removeAdForTag:(NSString *)tag type:(NSString *)type;
-- (void) cacheMetrics;
 - (void) sendCachedMetrics;
 
 @property (nonatomic) int downloadPercentage;

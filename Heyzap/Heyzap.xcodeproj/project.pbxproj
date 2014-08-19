@@ -80,6 +80,7 @@
 		50AA624C18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624B18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m */; };
 		50BDD00118B8183200265212 /* HZDictionaryUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B942491758086300B8EACE /* HZDictionaryUtils.h */; };
 		50BDD00218B819D600265212 /* libHeyzapAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9432A1758108700B8EACE /* libHeyzapAds.a */; };
+		50E76E1419A29FBA00FD2639 /* HZMetricsKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 50E76E1319A29FBA00FD2639 /* HZMetricsKey.m */; };
 		72A18C05178B64E600536547 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A18C04178B64E600536547 /* MessageUI.framework */; };
 		860FD47A187BB144008A35FD /* HZAdsFetchManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 860FD478187BB144008A35FD /* HZAdsFetchManager.h */; };
 		860FD47B187BB144008A35FD /* HZAdsFetchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 860FD479187BB144008A35FD /* HZAdsFetchManager.m */; };
@@ -250,6 +251,8 @@
 		50AA624818CBF58A0018A0B6 /* NSString+Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Tests.m"; sourceTree = "<group>"; };
 		50AA624A18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OHHTTPStubs+Heyzap.h"; sourceTree = "<group>"; };
 		50AA624B18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OHHTTPStubs+Heyzap.m"; sourceTree = "<group>"; };
+		50E76E1219A29FBA00FD2639 /* HZMetricsKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMetricsKey.h; sourceTree = "<group>"; };
+		50E76E1319A29FBA00FD2639 /* HZMetricsKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMetricsKey.m; sourceTree = "<group>"; };
 		72A18C04178B64E600536547 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		860FD478187BB144008A35FD /* HZAdsFetchManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdsFetchManager.h; sourceTree = "<group>"; };
 		860FD479187BB144008A35FD /* HZAdsFetchManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdsFetchManager.m; sourceTree = "<group>"; };
@@ -481,6 +484,17 @@
 			name = Categories;
 			sourceTree = "<group>";
 		};
+		50E76E1119A29F9200FD2639 /* Metrics */ = {
+			isa = PBXGroup;
+			children = (
+				B304C4C0197EDC4A009ACC5D /* HZMetrics.h */,
+				B304C4C1197EDC4A009ACC5D /* HZMetrics.m */,
+				50E76E1219A29FBA00FD2639 /* HZMetricsKey.h */,
+				50E76E1319A29FBA00FD2639 /* HZMetricsKey.m */,
+			);
+			name = Metrics;
+			sourceTree = "<group>";
+		};
 		86114121185BF688002248EF /* Manager */ = {
 			isa = PBXGroup;
 			children = (
@@ -686,8 +700,7 @@
 		86B9435917581AC600B8EACE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				B304C4C0197EDC4A009ACC5D /* HZMetrics.h */,
-				B304C4C1197EDC4A009ACC5D /* HZMetrics.m */,
+				50E76E1119A29F9200FD2639 /* Metrics */,
 				86B94295175808F800B8EACE /* HZAvailability.h */,
 				86B94296175808F800B8EACE /* HZAvailability.m */,
 				86B9421F1758086300B8EACE /* HZAnalytics.h */,
@@ -1067,6 +1080,7 @@
 				504514CC18B68EF600E00E6C /* DeviceInfoViewController.m in Sources */,
 				86B941E81758056B00B8EACE /* main.m in Sources */,
 				504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */,
+				50E76E1419A29FBA00FD2639 /* HZMetricsKey.m in Sources */,
 				86B941EC1758056B00B8EACE /* AppDelegate.m in Sources */,
 				5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */,
 				504514C918B5A59100E00E6C /* BaseTestAppViewController.m in Sources */,

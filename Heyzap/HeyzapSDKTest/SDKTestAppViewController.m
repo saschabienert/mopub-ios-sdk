@@ -563,12 +563,12 @@ const CGFloat kLeftMargin = 10;
 
 - (void)logToConsole:(NSString *)consoleString
 {
-    NSDateFormatter * format = [[NSDateFormatter alloc]init];
-    [format setDateFormat:@"[h:mm:ss a]"];
-    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[format stringFromDate:[NSDate date]],consoleString];
-    if (self.scrollSwitch.isOn) {
-        [self.consoleTextView scrollRangeToVisible:NSMakeRange(self.consoleTextView.text.length, 0)];
-    }
+//    NSDateFormatter * format = [[NSDateFormatter alloc]init];
+//    [format setDateFormat:@"[h:mm:ss a]"];
+//    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[format stringFromDate:[NSDate date]],consoleString];
+//    if (self.scrollSwitch.isOn) {
+//        [self.consoleTextView scrollRangeToVisible:NSMakeRange(self.consoleTextView.text.length, 0)];
+//    }
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

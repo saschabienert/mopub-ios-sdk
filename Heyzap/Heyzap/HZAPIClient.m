@@ -63,6 +63,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
                                      @"sdk_platform": @"iphone",
                                      @"sdk_version": SDK_VERSION,
                                      @"ios_version": [UIDevice currentDevice].systemVersion,
+                                     @"os_version": [UIDevice currentDevice].systemVersion,
                                      @"device_type": [HZAvailability platform],
                                    } mutableCopy];
     

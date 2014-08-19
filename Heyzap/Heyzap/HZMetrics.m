@@ -14,27 +14,38 @@
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
 #import "HZDevice.h"
+#import "HZMetricsKey.h"
 
-#define METRICS_URL @"/mobile/track_sdk_event" //change url
 NSString * const kSendMetricsUrl = @"/in_game_api/metrics/export";
-NSString * const kDataFileName = @"metrics.hz";
-
-static NSMutableDictionary *metricsInstanceDict = nil;
 
 @interface HZMetrics()
-@property (nonatomic, strong) NSMutableDictionary *metrics;
-@property (nonatomic, strong) NSMutableDictionary *untypedMetrics;
-@property (nonatomic, strong) NSMutableDictionary *metricsTagDict;
-@property (nonatomic, strong) NSMutableDictionary *metricsBeingSent;
-@property (nonatomic, strong) NSMutableDictionary *metricsIDDict;
-@property (nonatomic) BOOL enabled;
-@property (nonatomic) NSInteger id;
+@property (nonatomic, strong) NSMutableDictionary *metricsDict;
 @property (nonatomic) CFTimeInterval fetchCalledTime;
 @property (nonatomic) CFTimeInterval showAdCalledTime;
 @property (nonatomic) CFTimeInterval startTime;
 @end
 
 @implementation HZMetrics
+
+// ****************************
+// ***** Metric Lifecycle *****
+// ****************************
+
+// App startup -> Send all metrics from filesystem. Delete those metrics.
+
+// Fetch ad -> Record metric info
+// Download video -> Record metric info
+// (etc)
+
+// Ad showed -> Cache metric to disk. We're done with it at this point.
+
+// App enters background -> Write all remaining metrics to disk.
+
+// ****************************
+// ****** Debugging Tips ******
+// ****************************
+
+// You can access the simulator file system at /Users/Max/Library/Application Support/iPhone Simulator/SIMULATOR_VERSION/Applications/APP_HASH/
 
 #pragma mark Static Methods
 
@@ -47,74 +58,72 @@ static NSMutableDictionary *metricsInstanceDict = nil;
     
     return HZMetricsSharedInstance;
 }
+
 - (HZMetrics *) init {
     self = [super init];
-    self.enabled = NO;
-    self.metricsBeingSent = [[NSMutableDictionary alloc] init];
-    self.metricsTagDict = [[NSMutableDictionary alloc] init];
-    self.metricsIDDict = [[NSMutableDictionary alloc] init];;
-    self.untypedMetrics = [[NSMutableDictionary alloc] init];
-    self.startTime = CACurrentMediaTime();
-    [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(sendCachedMetrics)
-                                                 name: UIApplicationWillTerminateNotification object: nil];
+    if (self) {
+        NSLog(@"Initializing");
+        _metricsDict = [[NSMutableDictionary alloc] init];
+
+        _startTime = CACurrentMediaTime();
+        
+        [[NSNotificationCenter defaultCenter] addObserver: self
+                                                 selector: @selector(cacheAllMetrics)
+                                                     name: UIApplicationDidEnterBackgroundNotification object: nil];
+    }
+    NSLog(@"making directory");
+    [[self class] createMetricsDirectory];
+    // Send metrics on next run loop iteration.
+    [self performSelector:@selector(sendCachedMetrics) withObject:nil afterDelay:1];
+    
     return self;
 }
 
-- (NSMutableDictionary *) adDictForType:(NSString *)type{
-    NSMutableDictionary *newDict = [[NSMutableDictionary alloc] init];
-    if (type != nil) newDict[@"ad-unit"] = type;
-    newDict[@"metric-id"] = @(arc4random());
-    NSString *stringID = [NSString stringWithFormat: @"%@", newDict[@"metric-id"]];
-    self.metricsIDDict[stringID] = newDict;
-    return newDict;
+NSString * const kMetricID = @"metricIdentifier";
+
++ (NSDictionary *)baseMetricsForAdType:(NSString *)adType
+{
+    return @{
+             @"ad-unit": adType,
+             kMetricID:[[self class] uniqueIdentifier],
+            };
 }
 
-- (NSMutableDictionary *) getMetricsForTag:(NSString *)tag type:(NSString *)type {
+- (NSMutableDictionary *)getMetricsForTag:(NSString *)tag type:(NSString *)type {
     if (tag == nil ) tag = @"default";
-    //make or get instance from instace dict (cache 1)
-    if (self.metricsTagDict[tag]){
-        NSMutableDictionary *dict = self.metricsTagDict[tag][type];
-        if(dict){
-            return dict;
-        } else if (type != nil){
-            if (self.untypedMetrics[tag] != nil){
-                self.metricsTagDict[tag][type] = [NSMutableDictionary dictionaryWithDictionary:self.untypedMetrics[tag]];
-                self.metricsTagDict[tag][type][@"ad-unit"] = type;
-                [self.untypedMetrics removeAllObjects];
-            } else {
-                self.metricsTagDict[tag][type] = [self adDictForType:type];
-            }
-            return self.metricsTagDict[tag][type];
-        } else {
-            if (self.untypedMetrics[tag] == nil) self.untypedMetrics[tag] = [self adDictForType:type];
-            return self.untypedMetrics[tag];
-        }
-    } else {
-        self.metricsTagDict[tag] = [[NSMutableDictionary alloc] init];
-        if (type == nil) {
-            if (self.untypedMetrics[tag] == nil) self.untypedMetrics[tag] = [[NSMutableDictionary alloc] init];
-            return self.untypedMetrics[tag];
-        } else {
-            self.metricsTagDict[tag][type] = [self adDictForType:type];
-            return self.metricsTagDict[tag][type];
-        }
+    NSParameterAssert(type);
+    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag type:type];
+    if (!self.metricsDict[key]) {
+        self.metricsDict[key] = [[[self class] baseMetricsForAdType:type] mutableCopy];
     }
+    return self.metricsDict[key];
+}
+
+- (void)finishUsingAdWithTag:(NSString *)tag type:(NSString *)type {
+    if (tag == nil ) tag = @"default";
+    NSParameterAssert(type);
+    
+    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag type:type];
+    NSDictionary *const metrics = self.metricsDict[key];
+    [[self class] writeMetricToDisk:metrics];
+    [self.metricsDict removeObjectForKey:key];
+    
 }
 
 - (void) removeAdForTag:(NSString *)tag type:(NSString *)type {
-    if(self.metricsTagDict[tag]){
-        [self.metricsTagDict[tag] removeObjectForKey:type];
-    }
+    [self finishUsingAdWithTag:tag type:type];
+//    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag type:type];
+//    [self.metricsDict removeObjectForKey:key];
 }
+
+#pragma mark - Logging Metrics
 
 - (void) logMetricsEvent: (NSString *) eventName value:(id)value tag:(NSString *)tag type:(NSString *)type {
     NSMutableDictionary *d = [self getMetricsForTag:tag type:type];
     d[eventName] = value;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
                                                         object:nil
-                                                      userInfo:self.metricsTagDict];
-        [self cacheMetrics];
+                                                      userInfo:nil];
 }
 
 - (void) logFetchTimeForTag: (NSString *) tag type:(NSString *) type {
@@ -151,78 +160,143 @@ static NSMutableDictionary *metricsInstanceDict = nil;
     [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
 }
 
-- (NSMutableDictionary *) addConstantsToDict:(NSMutableDictionary *)dict{
++ (NSDictionary *) staticValuesDict {
+    return @{
+      @"carrier": [[CTTelephonyNetworkInfo alloc] init].subscriberCellularProvider.carrierName ?: @"",
+      @"connectivity": [[HZDevice currentDevice] HZConnectivityType] == nil ? @0 : @1,
+      @"conection_type": [[HZDevice currentDevice] HZConnectivityType] ?: @"no_internet",
+      };
+}
+
+NSString *const kMetricsDir = @"hzMetrics";
+
+- (NSArray *)getCachedMetrics {
     
-    CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
-    CTCarrier *carrier = [netinfo subscriberCellularProvider];
-    NSString *carrierName = carrier.carrierName ? carrier.carrierName : @"";
-    dict[@"carrier"] = carrierName;
+    NSError *error;
+    NSArray *const fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[[self class] metricsDirectory]
+                                  includingPropertiesForKeys:nil
+                                                     options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants|NSDirectoryEnumerationSkipsPackageDescendants|NSDirectoryEnumerationSkipsHiddenFiles)
+                                                       error:&error];
     
-    dict[@"os_version"] = [UIDevice currentDevice].systemVersion;
-    dict[@"connectivity"] = [[HZDevice currentDevice] HZConnectivityType] == nil ? @0 : @1;
-    dict[@"conection_type"] = [[HZDevice currentDevice] HZConnectivityType] ?: @"no_internet";
-    return dict;
-}
-
-- (NSMutableDictionary *)formatedMetricsToSave {
-    NSMutableArray *metricsArray = [[NSMutableArray alloc] init];
-    NSEnumerator *idEnumerator = [self.metricsIDDict keyEnumerator];
-    NSString *metricID;
-    while ((metricID = [idEnumerator nextObject])) {
-        [metricsArray addObject:self.metricsIDDict[metricID]];
-    }
-    NSMutableDictionary *metricsToSave = [NSMutableDictionary dictionaryWithObject:metricsArray forKey:@"metrics"];
-    return metricsToSave;
-}
-
-- (void)cacheMetrics {
-    NSString *libraryDir = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *filePath = [libraryDir stringByAppendingPathComponent:kDataFileName];
-    NSMutableDictionary *metricsToSave = [self formatedMetricsToSave];
-    NSLog(@"Caching: %@", metricsToSave);
-    NSMutableDictionary *dataToSave = [self addConstantsToDict:metricsToSave];
-    if (![dataToSave writeToFile:filePath atomically:YES]){
-        NSLog(@"%@", @"error writing file");
-    } else {
-        NSLog(@"%@", @"wrote to file!");
-    }
-    NSLog(@"Contents of File: %@", [NSMutableDictionary dictionaryWithContentsOfFile:filePath]);
-}
-
-- (NSMutableDictionary *)getCachedMetrics {
-    NSString *libraryDir = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *filePath = [libraryDir stringByAppendingPathComponent:kDataFileName];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if ([fileManager fileExistsAtPath:filePath]){
-        return [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
-    } else {
-        return nil;
-    }
-}
-
-- (void) clearCache {
-    [self.metricsIDDict removeAllObjects];
-    [self.metricsTagDict removeAllObjects];
-    NSString *libraryDir = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *filePath = [libraryDir stringByAppendingPathComponent:kDataFileName];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager removeItemAtPath:filePath error:nil];
-}
-
-
-//forground
-- (void)sendCachedMetrics {
-    //if (self.enabled && self.metricsBeingSent.count == 0){
-        NSMutableDictionary *savedMetrics = [self getCachedMetrics];
-        if ((savedMetrics != nil) && ([savedMetrics[@"metrics"] count] > 0)){
-            [[HZAPIClient sharedClient] post: kSendMetricsUrl  withParams: savedMetrics success:^(id data) {
-                [self.metricsTagDict removeAllObjects];
-                [self clearCache];
-            } failure:^(NSError *error) {
-            }];
+    
+    NSArray *const metricDictionaries = ({
+        NSMutableArray *metrics = [[NSMutableArray alloc] init];
+        for (NSURL *url in fileURLs) {
+            NSDictionary *dict = [NSDictionary dictionaryWithContentsOfURL:url];
+            if (dict) {
+                [metrics addObject:dict];
+            }
         }
-    //}
+        metrics;
+    });
+    return metricDictionaries;
 }
+
+
+- (void)sendCachedMetrics {
+    NSLog(@"Sending cached metrics");
+    NSArray *metrics = [self getCachedMetrics];
+    NSArray *metricIDs = hzMap(metrics, ^NSURL *(NSDictionary *metric) {
+        return metric[kMetricID];
+    });
+    
+    if ([metrics count]) {
+        NSMutableDictionary *params = [[[self class] staticValuesDict] mutableCopy];
+        
+        params[@"metrics"] = metrics;
+        
+        [[HZAPIClient sharedClient] post:kSendMetricsUrl withParams:params success:^(id data) {
+            NSLog(@"Success! Response from server = %@",data);
+            [[self class] clearMetricsWithMetricIDs:metricIDs];
+        } failure:^(NSError *error) {
+            NSLog(@"Error from server = %@",error);
+        }];
+    } else {
+        NSLog(@"No metrics");
+    }
+}
+
+#pragma mark - Cleanup
+
+/**
+ *  This method is called when the app enters the background (e.g. user presses home button).
+ *  At this point we cache all the metrics to disk; if they re-enter the app we can just overwrite the files later.
+ *  `applicationWillTerminate` is not reliably called so this approach is ideal.
+ */
+- (void)cacheAllMetrics
+{
+    NSLog(@"Cache all metrics called");
+    [self.metricsDict enumerateKeysAndObjectsUsingBlock:^(HZMetricsKey *key, NSMutableDictionary *metric, BOOL *stop) {
+        NSLog(@"About to write metric to disk");
+        const BOOL success = [[self class] writeMetricToDisk:metric];
+        NSLog(@"Wrote to disk = %i",success);
+    }];
+}
+
++ (void)clearMetricsWithMetricIDs:(NSArray *)metricIDs
+{
+    for (NSString *metridID in metricIDs) {
+        NSURL *metricPath = [self pathToMetricWithID:metridID];
+        NSError *error;
+        [[NSFileManager defaultManager] removeItemAtURL:metricPath error:&error];
+    }
+}
+
+#pragma mark - Directory/File Utils
+
++ (void)createMetricsDirectory {
+    NSURL *metricsPath = [self metricsDirectory];
+    
+    NSError *error;
+    [[NSFileManager defaultManager] createDirectoryAtURL:metricsPath withIntermediateDirectories:YES attributes:nil error:&error];
+    if (error) {
+        NSLog(@"Error creating directory; error = %@",error);
+    }
+    
+}
+
++ (BOOL)writeMetricToDisk:(NSDictionary *)metricDict {
+    NSString *metricID = metricDict[kMetricID];
+    NSURL *metricPath = [self pathToMetricWithID:metricID];
+    return [metricDict writeToURL:metricPath atomically:YES];
+}
+
++ (NSURL *)pathToMetricWithID:(NSString *)metricID {
+    NSString *fileName = [self metricFileNameForID:metricID];
+    return [[self metricsDirectory] URLByAppendingPathComponent:fileName];
+}
+
+
++ (NSString *)metricFileNameForID:(NSString *)metricID {
+    return [[@"hzMetric-" stringByAppendingString:metricID] stringByAppendingPathExtension:@"plist"];
+}
+
++ (NSURL *)metricsDirectory {
+    NSString *libraryDir = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
+    
+    NSError *directoryError;
+    NSURL *directoryURL = [[NSURL fileURLWithPath:libraryDir] URLByAppendingPathComponent:@"hzMetrics" isDirectory:YES];
+    
+    [[NSFileManager defaultManager] createDirectoryAtURL:directoryURL
+                             withIntermediateDirectories:YES
+                                              attributes:@{}
+                                                   error:&directoryError];
+    
+    return directoryURL;
+}
+
+#pragma mark - Utils
+
++ (NSString *)uniqueIdentifier
+{
+    CFUUIDRef newUniqueId = CFUUIDCreate(kCFAllocatorDefault);
+    NSString * uuidString = (__bridge_transfer NSString*)CFUUIDCreateString(kCFAllocatorDefault, newUniqueId);
+    CFRelease(newUniqueId);
+    
+    return uuidString;
+}
+
+#pragma mark - dealloc
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver: self];
