@@ -16,8 +16,8 @@
 
 @implementation HZInterstitialAdModel
 
-- (id) initWithDictionary: (NSDictionary *) dict {
-    self = [super initWithDictionary: dict];
+- (id) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit {
+    self = [super initWithDictionary: dict adUnit:adUnit];
     if (self) {
         _HTMLContent = [HZDictionaryUtils hzObjectForKey: @"ad_html" ofClass: [NSString class] default: @"<html></html>" withDict: dict];
         
@@ -59,6 +59,7 @@
         }
     }
     
+    [self sendInitializationMetrics];
     return self;
 }
 

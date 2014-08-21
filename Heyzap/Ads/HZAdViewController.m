@@ -57,7 +57,6 @@
 }
 
 - (void) show {
-    [[HZMetrics sharedInstance] logTimeSinceStartFor:@"show_ad_time_from_start" tag:self.ad.tag type:self.ad.adUnit];
     
     self.statusBarHidden = [UIApplication sharedApplication].statusBarHidden;
     
@@ -73,7 +72,7 @@
     [self.window setBackgroundColor: [UIColor clearColor]];
     [self.window makeKeyAndVisible];
     [self.window setRootViewController: self];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_displayed" tag:self.ad.tag type:self.ad.adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" tag:self.ad.tag type:self.ad.adUnit];
 }
 
 - (void) hide {
@@ -105,13 +104,27 @@
     
 }
 
+static int totalImpressions = 0;
+
 - (void) didImpression {
+    totalImpressions++;
+    [[HZMetrics sharedInstance] logMetricsEvent:@"nth_ad"
+                                          value:@(totalImpressions)
+                                            tag:self.ad.tag
+                                           type:self.ad.adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"time_from_fetch_to_impression"
+                                                 tag:self.ad.tag
+                                                type:self.ad.adUnit];
+    
+    
     if ([self.ad onImpression]) {
         [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didShowAdWithTag: self.ad.tag];
     }
 }
 
 - (void) didClickWithURL: (NSURL *) url {
+    
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad-clicked" value:@1 tag:self.ad.tag type:self.ad.adUnit];
     
     if ([self.ad onClick]) {
         [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didClickAdWithTag: self.ad.tag];
@@ -155,7 +168,13 @@
         SKStoreProductViewController *storeController = [[SKStoreProductViewController alloc] init];
         storeController.delegate = self; // productViewControllerDidFinish
         
-        NSDictionary *productParameters = @{ SKStoreProductParameterITunesItemIdentifier :  appID};
+        static NSString * const kAffiliateKey = @"at";
+        static NSString * const kAffiliateToken = @"10l74x";
+        
+        NSDictionary *productParameters = @{ SKStoreProductParameterITunesItemIdentifier :  appID,
+                                             kAffiliateKey:kAffiliateToken};
+        
+        
         
         // WWDC 2012 Session 302: Selling Products with Store Kit does the `presentViewController` step inside the `completionBlock` after checking for the `result`. The downside to this is that we have to wait for that load to finish. As an alternative, I present immediately and if we run into an error, dismiss the ad and fallback to the regular app store.
         

@@ -66,10 +66,10 @@
 
 #pragma mark - Initializers
 
-- (id) initWithDictionary:(NSDictionary *)dict {
+- (id) initWithDictionary:(NSDictionary *)dict adUnit:(NSString *)adUnit {
     self = [super init];
     if (self) {
-        
+        _adUnit = adUnit;
         
         _impressionID = [HZDictionaryUtils hzObjectForKey: @"impression_id" ofClass: [NSString class] default: @"" withDict: dict];
         _promotedGamePackage = [HZDictionaryUtils hzObjectForKey: @"promoted_game_package" ofClass: [NSNumber class] default: @(0) withDict: dict];
@@ -97,6 +97,10 @@
     }
     
     return self;
+}
+
+- (void)sendInitializationMetrics {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:_impressionID tag:self.tag type:self.adUnit];
 }
 
 
@@ -141,8 +145,7 @@
 
 - (BOOL) onImpression {
     if (self.sentImpression) return false;
-    [[HZMetrics sharedInstance] logMetricsEvent:@"creative_id" value:self.creativeID tag:self.tag type:self.adUnit];
-    [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:self.impressionID tag:self.tag type:self.adUnit];
+
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     
@@ -163,13 +166,13 @@
 }
 
 #pragma mark - Factory
-+ (HZAdModel *) modelForResponse: (NSDictionary *) response {
++ (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit {
     NSString *creativeType = [HZDictionaryUtils hzObjectForKey: @"creative_type" ofClass: [NSString class] default: @"interstitial" withDict: response];
     
     if ([HZVideoAdModel isValidForCreativeType: creativeType]) {
-        return [[HZVideoAdModel alloc] initWithDictionary: response];
+        return [[HZVideoAdModel alloc] initWithDictionary: response adUnit:adUnit];
     } else {
-        return [[HZInterstitialAdModel alloc] initWithDictionary: response];
+        return [[HZInterstitialAdModel alloc] initWithDictionary: response adUnit:adUnit];
     }
     
     return nil;

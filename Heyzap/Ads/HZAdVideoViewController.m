@@ -35,6 +35,7 @@
         _videoView.tag = kHZVideoViewTag;
         
         if (ad.fileCached || ad.allowFallbacktoStreaming || ad.forceStreaming) {
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" tag:self.ad.tag type:self.ad.adUnit];
             if (![_videoView setVideoURL: [self.ad URLForVideo]]) {
                 return nil;
             }
@@ -56,9 +57,9 @@
         
         [_webView setHTML: self.ad.HTMLContent];
         NSString *hostValue = [ad.launchURI host] ?: @"nil";
-        [[HZMetrics sharedInstance] logMetricsEvent:@"creative_host" value:hostValue tag:ad.tag  type:ad.adUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"video_host" value:hostValue tag:ad.tag  type:ad.adUnit];
         NSString *pathValue = [ad.launchURI path] ?: @"nil";
-        [[HZMetrics sharedInstance] logMetricsEvent:@"creative_path" value:pathValue tag:ad.tag  type:ad.adUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"video_path" value:pathValue tag:ad.tag  type:ad.adUnit];
         [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterForeground:) name: UIApplicationDidBecomeActiveNotification object: nil];
         
         [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterBackground:) name: UIApplicationDidEnterBackgroundNotification object: nil];
@@ -216,7 +217,6 @@
 - (void) onActionHide: (UIView *) sender {
     switch (sender.tag) {
         case kHZVideoViewTag:
-            [[HZMetrics sharedInstance] logMetricsEvent:@"close" value:@1 tag:self.ad.tag type:self.ad.adUnit];
             if (self.didStartVideo) {
                 [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFinishAudio];
             }
@@ -278,6 +278,8 @@
 
 
 - (void) onActionError: (UIView *) sender {
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue tag:self.ad.tag type:self.ad.adUnit];
+    
     if (sender.tag == kHZVideoViewTag && self.didStartVideo) {
         [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFinishAudio];
     }

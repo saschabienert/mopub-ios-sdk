@@ -11,6 +11,7 @@
 #import "HZInterstitialAdModel.h"
 #import "HZAdsManager.h"
 #import "HZInterstitialAd.h"
+#import "HZMetrics.h"
 
 @interface HZAdInterstitialViewController()
 
@@ -29,6 +30,7 @@
         self.webview.actionDelegate = self;
         self.webview.backgroundColor = [UIColor clearColor];
         [self.webview setHTML: self.ad.HTMLContent];
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" tag:self.ad.tag type:self.ad.adUnit];
     }
     
     return self;
@@ -95,6 +97,8 @@
 - (void) onActionCompleted: (id) sender {}
 
 - (void) onActionError: (id) sender {
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue tag:self.ad.tag type:self.ad.adUnit];
+    
     [self hide];
 }
 

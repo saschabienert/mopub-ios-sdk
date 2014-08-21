@@ -886,7 +886,7 @@
 						TestTargetID = 86B943291758108700B8EACE;
 					};
 					86B941DB1758056B00B8EACE = {
-						DevelopmentTeam = DG2HGK7LFT;
+						DevelopmentTeam = A722HEF3XB;
 						SystemCapabilities = {
 							com.apple.InAppPurchase = {
 								enabled = 0;
@@ -1423,7 +1423,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1435,8 +1435,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "65BB83E8-C41C-44AC-A496-91716DB0813D";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";
+				PROVISIONING_PROFILE = "9ACC6B7F-C12E-4B1C-91E4-CC42F8D9A10F";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "9ACC6B7F-C12E-4B1C-91E4-CC42F8D9A10F";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1446,7 +1446,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1459,8 +1459,8 @@
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";
+				PROVISIONING_PROFILE = "9ACC6B7F-C12E-4B1C-91E4-CC42F8D9A10F";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "9ACC6B7F-C12E-4B1C-91E4-CC42F8D9A10F";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};

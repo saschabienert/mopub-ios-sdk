@@ -30,7 +30,7 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
     [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead){
         float decimal = (float)totalBytesRead / (float)totalBytesExpectedToRead;
         int percent = (int) (decimal * 100);
-        [HZMetrics sharedInstance].downloadPercentage = percent;
+        [[HZMetrics sharedInstance] setDownloadPercentage:percent tag:tag type:type];
         if (!loggedTotal){
             [[HZMetrics sharedInstance] logMetricsEvent:@"video_size" value:@(totalBytesExpectedToRead) tag:tag type:type];
             loggedTotal = YES;

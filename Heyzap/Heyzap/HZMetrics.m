@@ -16,6 +16,20 @@
 #import "HZDevice.h"
 #import "HZMetricsKey.h"
 
+
+
+// Metrics
+NSString *const kIsAvailableCalledKey = @"is_available_called";
+NSString *const kFetchKey = @"fetched";
+NSString *const kFetchFailedKey = @"fetch_failed";
+NSString *const kFetchFailReasonKey = @"reason_fetch_failed";
+NSString *const kShowAdResultKey = @"show_ad_status";
+NSString *const kIsAvailablePercentDownloadedKey = @"is_available_percentage_downloaded";
+NSString *const kIsAvailableTimeSincePreviousFetchKey = @"is_available_time_since_previous_relevant_fetch";
+NSString *const kShowAdTimeSincePreviousRelevantFetchKey = @"show_ad_time_since_previous_relevant_fetch";
+
+NSString *const kAdFailedToLoadValue = @"failed-on-load";
+
 NSString * const kSendMetricsUrl = @"/in_game_api/metrics/export";
 
 @interface HZMetrics()
@@ -24,6 +38,8 @@ NSString * const kSendMetricsUrl = @"/in_game_api/metrics/export";
 @property (nonatomic) CFTimeInterval showAdCalledTime;
 @property (nonatomic) CFTimeInterval startTime;
 @end
+
+NSString * metricFailureReason(NSDictionary *metric);
 
 @implementation HZMetrics
 
@@ -73,13 +89,17 @@ NSString * const kSendMetricsUrl = @"/in_game_api/metrics/export";
     }
     NSLog(@"making directory");
     [[self class] createMetricsDirectory];
-    // Send metrics on next run loop iteration.
-    [self performSelector:@selector(sendCachedMetrics) withObject:nil afterDelay:1];
+    
+    // Immad is worried that we'll send too many network requests
+    [self performSelector:@selector(sendCachedMetrics) withObject:nil afterDelay:15];
+    // Run NStimer to sweep up stuff?
+    // Or send as soon as we get a 'show ad' and only cache to disk if it fails...?
     
     return self;
 }
 
 NSString * const kMetricID = @"metricIdentifier";
+NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
 
 + (NSDictionary *)baseMetricsForAdType:(NSString *)adType
 {
@@ -138,10 +158,10 @@ NSString * const kMetricID = @"metricIdentifier";
 }
 
 - (void) logShowAdForTag:(NSString *)tag type:(NSString *)type{
-    [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad" value:@1 tag:tag type:type];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad_called" value:@1 tag:tag type:type];
     self.showAdCalledTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceShowMiliseconds = lround((self.showAdCalledTime - self.fetchCalledTime)*1000);
-    [self logMetricsEvent:@"show_ad_time_since_fetch" value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
+    [self logMetricsEvent:kShowAdTimeSincePreviousRelevantFetchKey value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
 }
 
 - (void) logTimeSinceShowAdFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type{
@@ -151,7 +171,10 @@ NSString * const kMetricID = @"metricIdentifier";
 }
 
 - (void) logDownloadPercentageFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type{
-    [self logMetricsEvent:eventname value:@(self.downloadPercentage) tag:tag type:type];
+    NSNumber *downloadPercentage = [self getMetricsForTag:tag type:type][kMetricDownloadPercentageKey];
+    if (downloadPercentage) { // If we aren't downloading a video, don't log anything
+        [self logMetricsEvent:eventname value:downloadPercentage tag:tag type:type];
+    }
 }
 
 - (void) logTimeSinceStartFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type {
@@ -160,11 +183,27 @@ NSString * const kMetricID = @"metricIdentifier";
     [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
 }
 
+- (void)logIsAvailable:(BOOL)isAvailable tag:(NSString *)tag type:(NSString *)type {
+    if (tag == nil ) tag = @"default";
+    NSParameterAssert(type);
+    
+    
+    if (isAvailable) {
+        [[HZMetrics sharedInstance] logMetricsEvent:@"is_available_result" value:@"is_available" tag:tag type:type];
+    } else {
+        NSDictionary *const currentMetric = [self getMetricsForTag:tag type:type];
+        [self logMetricsEvent:@"is_available_status" value:metricFailureReason(currentMetric) tag:tag type:type];
+    }
+}
+
+// This isn't actually a metric, but the metric dictionary is a useful place to store the current download percentage for that video ad.
+- (void)setDownloadPercentage:(int)downloadPercentage tag:(NSString *)tag type:(NSString *)type {
+    [self logMetricsEvent:kMetricDownloadPercentageKey value:@(downloadPercentage) tag:tag type:type];
+}
+
 + (NSDictionary *) staticValuesDict {
     return @{
       @"carrier": [[CTTelephonyNetworkInfo alloc] init].subscriberCellularProvider.carrierName ?: @"",
-      @"connectivity": [[HZDevice currentDevice] HZConnectivityType] == nil ? @0 : @1,
-      @"conection_type": [[HZDevice currentDevice] HZConnectivityType] ?: @"no_internet",
       };
 }
 
@@ -201,11 +240,13 @@ NSString *const kMetricsDir = @"hzMetrics";
     });
     
     if ([metrics count]) {
+        
         NSMutableDictionary *params = [[[self class] staticValuesDict] mutableCopy];
         
         params[@"metrics"] = metrics;
         
         [[HZAPIClient sharedClient] post:kSendMetricsUrl withParams:params success:^(id data) {
+            NSLog(@"Metrics sent = %lu",(unsigned long)[metrics count]);
             NSLog(@"Success! Response from server = %@",data);
             [[self class] clearMetricsWithMetricIDs:metricIDs];
         } failure:^(NSError *error) {
@@ -294,6 +335,16 @@ NSString *const kMetricsDir = @"hzMetrics";
     CFRelease(newUniqueId);
     
     return uuidString;
+}
+
+NSString * metricFailureReason(NSDictionary *metric) {
+    if (metric[kFetchFailedKey]) {
+        return @"not-available-fetch-failed";
+    } else if (metric[kFetchKey]) {
+        return @"not-available-fetch-downloading";
+    } else {
+        return @"not-available-not-fetching";
+    }
 }
 
 #pragma mark - dealloc
