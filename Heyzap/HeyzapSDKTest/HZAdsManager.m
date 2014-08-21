@@ -56,7 +56,6 @@
 - (void) onStart {
     // Instantiate Analytics and Metrics - check send cache if possible
     [HZAnalytics sharedInstance];
-    [[HZMetrics sharedInstance] sendCachedMetrics];
     
     if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly]
         && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {

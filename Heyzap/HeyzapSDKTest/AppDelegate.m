@@ -75,10 +75,5 @@
     return YES;
 }
 
-    - (void)applicationWillTerminate:(UIApplication *)application
-    {
-        [[HZMetrics sharedInstance] sendCachedMetrics];
-    }
-
 
 @end

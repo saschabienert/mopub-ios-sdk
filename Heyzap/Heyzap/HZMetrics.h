@@ -40,7 +40,6 @@ extern NSString *const kShowAdTimeSincePreviousRelevantFetchKey;
 
 
 - (void) removeAdForTag:(NSString *)tag type:(NSString *)type;
-- (void) sendCachedMetrics;
 
 //- (void)logFetchResultsForTag:(HZAdModel *)ad error:(NSError *)error;
 

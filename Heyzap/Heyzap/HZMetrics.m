@@ -61,7 +61,19 @@ NSString * metricFailureReason(NSDictionary *metric);
 // ****** Debugging Tips ******
 // ****************************
 
-// You can access the simulator file system at /Users/Max/Library/Application Support/iPhone Simulator/SIMULATOR_VERSION/Applications/APP_HASH/
+// You can access the simulator file system at ~/Library/Application Support/iPhone Simulator/SIMULATOR_VERSION/Applications/APP_HASH/
+
+// ****************************
+// *** Refactoring Thoughts ***
+// ****************************
+
+// This Metrics system is based on Noah's original implementation, and of course this release was rushed, so I'm not 100% happy with it.
+
+// Instead of storing metrics in an NSMutableDictionary, store them in object with tons of properties like Android does.
+// This would make things more typesafe, though we'd have to write a bunch of annoying serialization code for it.
+// Another advantage is that we could return that object to set properties on it, which is nice when we're doing several metrics at once.
+// I'd also like to make a `metricProtocol` for objects that can provide a tag and adUnit. These objects would be passed to HZMetrics and it'd give back the proper metric instance. This would clean up the code has to do `self.ad.tag` and `self.ad.adUnit`
+
 
 #pragma mark Static Methods
 
@@ -78,22 +90,25 @@ NSString * metricFailureReason(NSDictionary *metric);
 - (HZMetrics *) init {
     self = [super init];
     if (self) {
-        NSLog(@"Initializing");
         _metricsDict = [[NSMutableDictionary alloc] init];
 
         _startTime = CACurrentMediaTime();
         
-        [[NSNotificationCenter defaultCenter] addObserver: self
-                                                 selector: @selector(cacheAllMetrics)
-                                                     name: UIApplicationDidEnterBackgroundNotification object: nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(cacheAllMetrics)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
     }
-    NSLog(@"making directory");
     [[self class] createMetricsDirectory];
     
-    // Immad is worried that we'll send too many network requests
-    [self performSelector:@selector(sendCachedMetrics) withObject:nil afterDelay:15];
-    // Run NStimer to sweep up stuff?
-    // Or send as soon as we get a 'show ad' and only cache to disk if it fails...?
+    // Check to see if we need to send metrics every 15 seconds.
+    // This avoids sending many HTTP requests at app launch, when we're already busy fetching (Immad's concern).
+    // It also cleanly handles us having potentially alot of metrics.
+    [NSTimer scheduledTimerWithTimeInterval:15
+                                     target:self
+                                   selector:@selector(sendCachedMetrics)
+                                   userInfo:nil
+                                    repeats:YES];
     
     return self;
 }
@@ -233,7 +248,7 @@ NSString *const kMetricsDir = @"hzMetrics";
 
 
 - (void)sendCachedMetrics {
-    NSLog(@"Sending cached metrics");
+    HZDLog(@"Sending cached metrics");
     NSArray *metrics = [self getCachedMetrics];
     NSArray *metricIDs = hzMap(metrics, ^NSURL *(NSDictionary *metric) {
         return metric[kMetricID];
@@ -246,14 +261,13 @@ NSString *const kMetricsDir = @"hzMetrics";
         params[@"metrics"] = metrics;
         
         [[HZAPIClient sharedClient] post:kSendMetricsUrl withParams:params success:^(id data) {
-            NSLog(@"Metrics sent = %lu",(unsigned long)[metrics count]);
-            NSLog(@"Success! Response from server = %@",data);
+            HZDLog(@"# Metrics sent = %lu",(unsigned long)[metrics count]);
             [[self class] clearMetricsWithMetricIDs:metricIDs];
         } failure:^(NSError *error) {
-            NSLog(@"Error from server = %@",error);
+            HZELog(@"Error from server = %@",error);
         }];
     } else {
-        NSLog(@"No metrics");
+        HZDLog(@"No metrics");
     }
 }
 
@@ -266,11 +280,9 @@ NSString *const kMetricsDir = @"hzMetrics";
  */
 - (void)cacheAllMetrics
 {
-    NSLog(@"Cache all metrics called");
     [self.metricsDict enumerateKeysAndObjectsUsingBlock:^(HZMetricsKey *key, NSMutableDictionary *metric, BOOL *stop) {
-        NSLog(@"About to write metric to disk");
         const BOOL success = [[self class] writeMetricToDisk:metric];
-        NSLog(@"Wrote to disk = %i",success);
+        HZDLog(@"Able to write metric to disk = %i",success);
     }];
 }
 
@@ -291,7 +303,7 @@ NSString *const kMetricsDir = @"hzMetrics";
     NSError *error;
     [[NSFileManager defaultManager] createDirectoryAtURL:metricsPath withIntermediateDirectories:YES attributes:nil error:&error];
     if (error) {
-        NSLog(@"Error creating directory; error = %@",error);
+        HZELog(@"Error creating directory; error = %@",error);
     }
     
 }
