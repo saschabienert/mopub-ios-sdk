@@ -215,6 +215,7 @@
 #pragma mark - Callbacks
 
 - (void) onActionHide: (UIView *) sender {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"close_clicked" value:@1 tag:self.ad.tag type:self.ad.adUnit];
     switch (sender.tag) {
         case kHZVideoViewTag:
             if (self.didStartVideo) {

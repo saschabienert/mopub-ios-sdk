@@ -73,7 +73,6 @@
                 HZAdModel *model = [self.adImpressionDict objectForKey: impressionID];
                 if (model != nil) {
                     [self.adImpressionDict removeObjectForKey: impressionID];
-                    [[HZMetrics sharedInstance] removeAdForTag:tag type:adUnit];
                     return model;
                 }
             }

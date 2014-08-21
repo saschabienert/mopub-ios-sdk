@@ -224,7 +224,7 @@
         // Not using the standard method here.
         [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag: tag andError: error];
     } else {
-        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"full-cached" tag:tag type:adUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" tag:tag type:adUnit];
     }
     
     if (completion) {

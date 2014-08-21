@@ -133,8 +133,6 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
     
     NSMutableDictionary *requestParams = [HZAPIClient defaultParamsWithDictionary: params];
     
-    ;
-    
     [HZLog debug: [NSString stringWithFormat: @"Client: POST : %@ %@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], requestParams]];
     
     // This method can be called from a background thread or main thread, so we dispatch to the main thread (error if this runs on background b/c recipient modifies the UI)

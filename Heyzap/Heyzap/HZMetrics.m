@@ -19,6 +19,7 @@
 
 
 // Metrics
+NSString *const kIsAvailableStatusKey = @"is_available_status";
 NSString *const kIsAvailableCalledKey = @"is_available_called";
 NSString *const kFetchKey = @"fetched";
 NSString *const kFetchFailedKey = @"fetch_failed";
@@ -154,6 +155,7 @@ NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
 #pragma mark - Logging Metrics
 
 - (void) logMetricsEvent: (NSString *) eventName value:(id)value tag:(NSString *)tag type:(NSString *)type {
+    NSParameterAssert(value);
     NSMutableDictionary *d = [self getMetricsForTag:tag type:type];
     d[eventName] = value;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
@@ -204,10 +206,10 @@ NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
     
     
     if (isAvailable) {
-        [[HZMetrics sharedInstance] logMetricsEvent:@"is_available_result" value:@"is_available" tag:tag type:type];
+        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableStatusKey value:@"is_available" tag:tag type:type];
     } else {
         NSDictionary *const currentMetric = [self getMetricsForTag:tag type:type];
-        [self logMetricsEvent:@"is_available_status" value:metricFailureReason(currentMetric) tag:tag type:type];
+        [self logMetricsEvent:kIsAvailableStatusKey value:metricFailureReason(currentMetric) tag:tag type:type];
     }
 }
 

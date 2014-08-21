@@ -103,6 +103,7 @@
 }
 
 - (void) onActionHide: (id) sender {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"close_clicked" value:@1 tag:self.ad.tag type:self.ad.adUnit];
     [self hide];
 }
 

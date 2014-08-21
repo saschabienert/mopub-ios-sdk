@@ -76,6 +76,8 @@
 }
 
 - (void) hide {
+    [[HZMetrics sharedInstance] removeAdForTag:self.ad.tag type:self.ad.adUnit];
+    
     [UIView animateWithDuration: 0.15 delay: 0.0 options: UIViewAnimationOptionCurveEaseOut animations:^{
         self.view.layer.opacity = 0.0f;
     } completion:^(BOOL finished) {
