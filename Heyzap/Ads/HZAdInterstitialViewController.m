@@ -65,6 +65,7 @@
 }
 
 - (void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     self.webview.frame = self.view.bounds;
     
     [self didImpression];
