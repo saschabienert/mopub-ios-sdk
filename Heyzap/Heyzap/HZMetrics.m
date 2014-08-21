@@ -288,8 +288,8 @@ NSString *const kMetricsDir = @"hzMetrics";
 
 + (void)clearMetricsWithMetricIDs:(NSArray *)metricIDs
 {
-    for (NSString *metridID in metricIDs) {
-        NSURL *metricPath = [self pathToMetricWithID:metridID];
+    for (NSString *metricID in metricIDs) {
+        NSURL *metricPath = [self pathToMetricWithID:metricID];
         NSError *error;
         [[NSFileManager defaultManager] removeItemAtURL:metricPath error:&error];
     }
