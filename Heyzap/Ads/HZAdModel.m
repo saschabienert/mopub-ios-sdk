@@ -15,6 +15,7 @@
 #import "HZAdInterstitialViewController.h"
 #import "HZDevice.h"
 #import "HeyzapAds.h"
+#import "HZMetrics.h"
 
 #import "HZAdsAPIClient.h"
 
@@ -65,10 +66,10 @@
 
 #pragma mark - Initializers
 
-- (id) initWithDictionary:(NSDictionary *)dict {
+- (id) initWithDictionary:(NSDictionary *)dict adUnit:(NSString *)adUnit {
     self = [super init];
     if (self) {
-        
+        _adUnit = adUnit;
         
         _impressionID = [HZDictionaryUtils hzObjectForKey: @"impression_id" ofClass: [NSString class] default: @"" withDict: dict];
         _promotedGamePackage = [HZDictionaryUtils hzObjectForKey: @"promoted_game_package" ofClass: [NSNumber class] default: @(0) withDict: dict];
@@ -98,6 +99,10 @@
     return self;
 }
 
+- (void)sendInitializationMetrics {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:_impressionID tag:self.tag type:self.adUnit];
+}
+
 
 - (NSString *) description {
     return [NSString stringWithFormat: @"<%@ I:%@ A:%@ T:%@ PKG: %@>", [self class], _impressionID, _adUnit, _tag, _promotedGamePackage];
@@ -120,6 +125,9 @@
 
 - (BOOL) onClick {
     if (self.sentClick) return false;
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_clicked" value:@1 tag:self.tag type:self.adUnit];
+    long timeCLickedMiliseconds = lround([[NSDate date] timeIntervalSince1970] * 1000);
+    [[HZMetrics sharedInstance] logMetricsEvent:@"time_clicked" value:@(timeCLickedMiliseconds) tag:self.tag type:self.adUnit];
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     
@@ -138,6 +146,7 @@
 - (BOOL) onImpression {
     if (self.sentImpression) return false;
 
+    
     NSMutableDictionary *params = [self paramsForEventCallback];
     
     [[HZAdsAPIClient sharedClient] post: @"register_impression" withParams: params success:^(id JSON) {
@@ -157,13 +166,13 @@
 }
 
 #pragma mark - Factory
-+ (HZAdModel *) modelForResponse: (NSDictionary *) response {
++ (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit {
     NSString *creativeType = [HZDictionaryUtils hzObjectForKey: @"creative_type" ofClass: [NSString class] default: @"interstitial" withDict: response];
     
     if ([HZVideoAdModel isValidForCreativeType: creativeType]) {
-        return [[HZVideoAdModel alloc] initWithDictionary: response];
+        return [[HZVideoAdModel alloc] initWithDictionary: response adUnit:adUnit];
     } else {
-        return [[HZInterstitialAdModel alloc] initWithDictionary: response];
+        return [[HZInterstitialAdModel alloc] initWithDictionary: response adUnit:adUnit];
     }
     
     return nil;

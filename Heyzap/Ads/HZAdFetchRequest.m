@@ -12,6 +12,7 @@
 #import "HZAdsManager.h"
 
 #import "HZDevice.h"
+#import "HZMetrics.h"
 
 #define kHZAdRetries 3
 
@@ -22,6 +23,9 @@
 @implementation HZAdFetchRequest
 
 - (id) initWithCreativeTypes: (NSArray *) creativeTypes adUnit: (NSString *) adUnit tag: (NSString *) tag andAdditionalParams: (NSDictionary *) additionalParams {
+    
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:adUnit tag:tag type:adUnit];
+    
     self = [super init];
     if (self) {
         _requestID = [NSUUID UUID];

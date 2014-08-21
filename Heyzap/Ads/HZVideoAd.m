@@ -7,6 +7,7 @@
 //
 
 #import "HZVideoAd.h"
+#import "HZMetrics.h"
 #import "HZAdsManager.h"
 #import "HZAdLibrary.h"
 #import "HZAdViewController.h"
@@ -61,6 +62,7 @@ static int HZVideoAdCreativeIDPin = 0;
 }
 
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
+    NSString *type = @"video";
     if ([[HZAdsManager sharedManager] isEnabled]) {
         
         NSDictionary *params = (HZVideoAdCreativeIDPin > 0) ? @{@"creative_id": [NSString stringWithFormat: @"%i", HZVideoAdCreativeIDPin]} : nil;
@@ -69,15 +71,21 @@ static int HZVideoAdCreativeIDPin = 0;
                                                                              adUnit: HZVideoAdUnit
                                                                                 tag: tag
                                                                 andAdditionalParams: params];
-        
+        CFTimeInterval startTime = CACurrentMediaTime();
         [[HZAdsFetchManager sharedManager] fetch: request
                                   withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
+            CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
+            int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
+            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elapsedMiliseconds) tag:tag type:type];
             if (completion) {
                 BOOL result = YES;
                 if (error != nil || ad == nil) {
                     result = NO;
+                    
+                } else {
+                    [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 tag:tag type:type];
+                    [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:error tag:tag type:type];
                 }
-                
                 completion(result, error);
             }
         }];
@@ -97,7 +105,15 @@ static int HZVideoAdCreativeIDPin = 0;
 + (BOOL) isAvailableForTag: (NSString *) tag {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
     
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZVideoAdUnit withTag: tag] != nil;
+    [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 tag:tag type:HZVideoAdUnit];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey tag:tag type:HZVideoAdUnit];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:kIsAvailablePercentDownloadedKey tag:tag type:HZVideoAdUnit];
+
+    const BOOL available = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZVideoAdUnit withTag: tag] != nil;
+    
+    [[HZMetrics sharedInstance] logIsAvailable:available tag:tag type:HZVideoAdUnit];
+    
+    return available;
 }
 
 + (void) setCreativeID:(int)creativeID {

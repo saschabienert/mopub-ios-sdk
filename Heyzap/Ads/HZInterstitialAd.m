@@ -7,6 +7,7 @@
 //
 
 #import "HZInterstitialAd.h"
+#import "HZMetrics.h"
 #import "HZAnalytics.h"
 #import "HZAdsManager.h"
 #import "HZAdInterstitialViewController.h"
@@ -93,12 +94,19 @@ static int HZInterstitialAdCreativeIDPin = 0;
     if ([[HZAdsManager sharedManager] isEnabled]) {
         
         HZAdFetchRequest *request = [self requestWithTag: tag andVideo: YES];
-        
+        CFTimeInterval startTime = CACurrentMediaTime();
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
+            CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
+            int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
+            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elapsedMiliseconds) tag:tag type:HZInterstitialAdUnit];
             if (completion) {
                 BOOL result = YES;
                 if (error != nil || ad == nil) {
                     result = NO;
+                    
+                } else {
+                    [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 tag:tag type:HZInterstitialAdUnit];
+                    [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:error tag:tag type:HZInterstitialAdUnit];
                 }
                 
                 completion(result, error);
@@ -119,8 +127,15 @@ static int HZInterstitialAdCreativeIDPin = 0;
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
+    [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 tag:tag type:HZInterstitialAdUnit];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey tag:tag type:HZInterstitialAdUnit];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:kIsAvailablePercentDownloadedKey tag:tag type:HZInterstitialAdUnit];
     
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZInterstitialAdUnit withTag: tag] != nil;
+    const BOOL available = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZInterstitialAdUnit withTag: tag] != nil;
+    
+    [[HZMetrics sharedInstance] logIsAvailable:available tag:tag type:HZInterstitialAdUnit];
+
+    return available;
 }
 
 + (void) setCreativeID:(int)creativeID {

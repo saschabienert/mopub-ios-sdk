@@ -15,6 +15,8 @@
 #import "HZAdsManager.h"
 #import "HZAdFetchRequest.h"
 #import "HZAdsAPIClient.h"
+#import "HZDevice.h"
+#import "HZMetrics.h"
 
 @implementation HZAdsFetchManager
 
@@ -28,6 +30,14 @@
         // ad is expired. purge it and continue.
         [[HZAdLibrary sharedLibrary] purgeAd: ad];
     }
+    
+    [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 tag:request.tag type:request.adUnit];
+    [[HZMetrics sharedInstance] logFetchTimeForTag:request.tag type:request.adUnit];
+    
+    [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity"
+                                          value:[[HZDevice currentDevice] HZConnectivityType]
+                                            tag:request.tag
+                                           type:request.adUnit];
     
     [[HZAdsAPIClient sharedClient] loadRequest: request withCompletion: ^(HZAdFetchRequest *aRequest) {
         if (aRequest.lastError != nil) {
@@ -54,7 +64,7 @@
     if (![HZAdModel isResponseValid: request.lastResponse withError: &error]) {
         validAd = NO;
     } else {
-        ad = [HZAdModel modelForResponse: request.lastResponse];
+        ad = [HZAdModel modelForResponse: request.lastResponse adUnit:request.adUnit];
         if (ad == nil) {
             validAd = NO;
         }

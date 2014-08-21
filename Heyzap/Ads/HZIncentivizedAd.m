@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Heyzap. All rights reserved.
 //
 
+#import "HZMetrics.h"
 #import "HZAdsManager.h"
 #import "HZAdViewController.h"
 #import "HZAdLibrary.h"
@@ -60,6 +61,7 @@ static int HZIncentivizedCreativeIDPin = 0;
 }
 
 + (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion {
+    NSString *type = @"incentivized";
     if ([[HZAdsManager sharedManager] isEnabled]) {
         
         NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
@@ -75,12 +77,20 @@ static int HZIncentivizedCreativeIDPin = 0;
                                                                              adUnit: HZIncentivizedAdUnit
                                                                                 tag: tag
                                                                 andAdditionalParams: params];
-        
+
+        CFTimeInterval startTime = CACurrentMediaTime();
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
+            CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
+            int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
+            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elapsedMiliseconds) tag:tag type:type];
             if (completion) {
                 BOOL result = YES;
                 if (error != nil || ad == nil) {
                     result = NO;
+                    
+                } else {
+                    [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 tag:tag type:type];
+                    [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:error tag:tag type:type];
                 }
                 
                 completion(result, error);
@@ -107,8 +117,15 @@ static int HZIncentivizedCreativeIDPin = 0;
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
+    [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 tag:tag type:HZIncentivizedAdUnit];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey tag:tag type:HZIncentivizedAdUnit];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:kIsAvailablePercentDownloadedKey tag:tag type:HZIncentivizedAdUnit];
+
+    BOOL available = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZIncentivizedAdUnit withTag: tag] != nil;
     
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZIncentivizedAdUnit withTag: tag] != nil;
+    [[HZMetrics sharedInstance] logIsAvailable:available tag:tag type:HZIncentivizedAdUnit];
+    
+    return available;
 }
 
 + (id)alloc {

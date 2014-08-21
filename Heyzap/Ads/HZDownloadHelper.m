@@ -9,12 +9,13 @@
 #import "HZDownloadHelper.h"
 #import "HZAFNetworking.h"
 #import "HZLog.h"
+#import "HZMetrics.h"
 
 NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccessNotification";
 
 @implementation HZDownloadHelper
 
-+ (HZAFHTTPRequestOperation *) downloadURL: (NSURL *) url toFilePath: (NSString *) filePath withCompletion:(void (^)(BOOL result))completion {
++ (HZAFHTTPRequestOperation *) downloadURL: (NSURL *) url toFilePath: (NSString *) filePath forTag:(NSString *)tag andType:(NSString *)type withCompletion:(void (^)(BOOL result))completion {
 
     __block NSDate *startDownload = [NSDate date];
     
@@ -25,7 +26,17 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
     HZAFHTTPRequestOperation *operation = [[HZAFHTTPRequestOperation alloc] initWithRequest:request];
     
     operation.outputStream = [NSOutputStream outputStreamToFileAtPath: filePath append:NO];
-    
+    __block BOOL loggedTotal = NO;
+    [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead){
+        float decimal = (float)totalBytesRead / (float)totalBytesExpectedToRead;
+        int percent = (int) (decimal * 100);
+        [[HZMetrics sharedInstance] setDownloadPercentage:percent tag:tag type:type];
+        if (!loggedTotal){
+            [[HZMetrics sharedInstance] logMetricsEvent:@"video_size" value:@(totalBytesExpectedToRead) tag:tag type:type];
+            loggedTotal = YES;
+        }
+    }];
+
     
     [operation setCompletionBlockWithSuccess:^(HZAFHTTPRequestOperation *operation, id responseObject) {
         NSTimeInterval executionTime = [[NSDate date] timeIntervalSinceDate:startDownload];
@@ -42,6 +53,7 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
             completion(YES);
         }
         
+
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         if (completion) {
             completion(NO);

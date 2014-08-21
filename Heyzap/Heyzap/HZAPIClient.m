@@ -63,6 +63,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
                                      @"sdk_platform": @"iphone",
                                      @"sdk_version": SDK_VERSION,
                                      @"ios_version": [UIDevice currentDevice].systemVersion,
+                                     @"os_version": [UIDevice currentDevice].systemVersion,
                                      @"device_type": [HZAvailability platform],
                                    } mutableCopy];
     
@@ -131,8 +132,6 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
 - (void) post:(NSString *)endpoint withParams:(NSDictionary *)params success:(HZRequestSuccessBlock)success failure:(HZRequestFailureBlock)failure {
     
     NSMutableDictionary *requestParams = [HZAPIClient defaultParamsWithDictionary: params];
-    
-    ;
     
     [HZLog debug: [NSString stringWithFormat: @"Client: POST : %@ %@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], requestParams]];
     

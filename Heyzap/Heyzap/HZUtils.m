@@ -241,4 +241,12 @@ char *HZNewBase64Encode(
 	return [HZUtils hzQueryStringToDictionary:[url query]];
 }
 
+NSArray *hzMap(NSArray *array, id (^block)(id object)) {
+    NSMutableArray *newArray = [[NSMutableArray alloc] initWithCapacity:array.count];
+    for (id obj in array) {
+        [newArray addObject:block(obj)];
+    }
+    return newArray;
+}
+
 @end

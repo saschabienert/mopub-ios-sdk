@@ -27,7 +27,7 @@
 @property (nonatomic) BOOL sentIncentiveComplete;
 
 #pragma mark - Initializers
-- (id) initWithDictionary: (NSDictionary *) dict;
+- (id) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit;
 
 #pragma mark - Validity
 + (BOOL) isResponseValid:(NSDictionary *)response withError: (NSError **) error;
@@ -45,7 +45,7 @@
 - (Class) controller;
 
 #pragma mark - Factory
-+ (HZAdModel *) modelForResponse: (NSDictionary *) response;
++ (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit;
 
 #pragma mark - Actions
 - (void) doPostFetchActionsWithCompletion: (void (^)(BOOL result))completion;
@@ -58,5 +58,6 @@
 - (void) setEventCallbackParams: (NSMutableDictionary *) dict;
 
 + (NSString *) normalizeTag: (NSString *) tag;
+- (void)sendInitializationMetrics;
 
 @end
