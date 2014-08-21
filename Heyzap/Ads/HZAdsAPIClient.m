@@ -25,7 +25,9 @@ static NSString * const kHZAdsAPIBaseURLString = @"https://ads.heyzap.com/in_gam
             completion(request);
         }
         
-    } failure:^(NSError *error) {
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+        
+        request.lastFailingStatusCode = operation.response.statusCode;
         request.lastResponse = nil;
         request.lastError = error;
         

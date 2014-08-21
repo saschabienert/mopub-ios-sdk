@@ -198,7 +198,7 @@
             if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @(0) withDict: JSON] intValue] == 200) {
                 self.sentComplete = YES;
             }
-        } failure:^(NSError *error) {
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
             [HZLog debug: [NSString stringWithFormat: @"(COMPLETE) %@ Error: %@", self, error]];
         }];
     }

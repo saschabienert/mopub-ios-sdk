@@ -34,8 +34,9 @@
     [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 tag:request.tag type:request.adUnit];
     [[HZMetrics sharedInstance] logFetchTimeForTag:request.tag type:request.adUnit];
     
+    NSString *const connectivity = [[HZDevice currentDevice] HZConnectivityType];
     [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity"
-                                          value:[[HZDevice currentDevice] HZConnectivityType]
+                                          value:connectivity
                                             tag:request.tag
                                            type:request.adUnit];
     
@@ -43,7 +44,11 @@
         if (aRequest.lastError != nil) {
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", aRequest.lastError]];
-            
+            if (aRequest.lastFailingStatusCode) {
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@(aRequest.lastFailingStatusCode) tag:request.tag type:request.adUnit];
+            } else if (!connectivity) {
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@"no-connectivity" tag:request.tag type:request.adUnit];
+            }
             [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: request.tag];
             
             if (completion) {

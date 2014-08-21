@@ -168,7 +168,7 @@ static HZAnalytics *HZAnalyticsSharedInstance = nil;
                 [HZAnalyticsSharedInstance sendAnalytic:[self.outstandingAnalytics objectAtIndex:0]];
             }
             
-        } failure:^(NSError *error) {
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
             
             self.data = nil;
             self.analyticBeingTransmitted = nil;

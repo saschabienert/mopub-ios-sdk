@@ -155,7 +155,14 @@ NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
 #pragma mark - Logging Metrics
 
 - (void) logMetricsEvent: (NSString *) eventName value:(id)value tag:(NSString *)tag type:(NSString *)type {
-    NSParameterAssert(value);
+    if (!value) {
+        HZDLog(@"nil value for key %@",eventName);
+        return;
+    }
+    
+    BOOL validClass = [value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSString class]];
+    NSParameterAssert(validClass);
+    
     NSMutableDictionary *d = [self getMetricsForTag:tag type:type];
     d[eventName] = value;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
@@ -265,7 +272,7 @@ NSString *const kMetricsDir = @"hzMetrics";
         [[HZAPIClient sharedClient] post:kSendMetricsUrl withParams:params success:^(id data) {
             HZDLog(@"# Metrics sent = %lu",(unsigned long)[metrics count]);
             [[self class] clearMetricsWithMetricIDs:metricIDs];
-        } failure:^(NSError *error) {
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
             HZELog(@"Error from server = %@",error);
         }];
     } else {

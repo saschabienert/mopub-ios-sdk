@@ -123,8 +123,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         if (failure) {
             [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidReceiveResponseNotification object:nil userInfo:@{@"error_name": [error domain], @"error_info": [error userInfo]}];
-            
-            failure(error);
+            failure(operation, error);
         }
     }];
 }
@@ -160,7 +159,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
         if (failure) {
             [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidReceiveResponseNotification object:nil userInfo:@{@"error_name": [error domain], @"error_info": [error userInfo]}];
 
-            failure(error);
+            failure(operation, error);
         }
     }];
 }
@@ -184,7 +183,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
        success:^(id response) {
            
        }
-       failure:^(NSError *anError) {
+       failure:^(HZAFHTTPRequestOperation *operation, NSError *anError) {
            
        }];
 }

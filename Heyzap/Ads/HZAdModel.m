@@ -136,7 +136,7 @@
             self.sentClick = YES;
             [HZLog debug: [NSString stringWithFormat: @"(CLICK) %@", self]];
         }
-    } failure:^(NSError *error) {
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         [HZLog debug: [NSString stringWithFormat: @"(CLICK ERROR) %@ Error: %@", self, error]];
     }];
     
@@ -154,7 +154,7 @@
             self.sentImpression = YES;
             [HZLog debug: [NSString stringWithFormat: @"(IMPRESSION) %@", self]];
         }
-    } failure:^(NSError *error) {
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         [HZLog debug: [NSString stringWithFormat: @"(IMPRESSION ERROR) %@, Error: %@", self, error]];
     }];
     
