@@ -55,6 +55,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
     NSString *publisherID = [HZUtils publisherID] ?: @"";
     
     NSMutableDictionary *params = [@{@"publisher_id": publisherID,
+                                     @"publisher_sdk_key": publisherID,
                                      @"device_id": [HZUtils deviceID],
                                      @"app_bundle_id": [[NSBundle mainBundle] bundleIdentifier],
                                      @"app_version": versionString,
