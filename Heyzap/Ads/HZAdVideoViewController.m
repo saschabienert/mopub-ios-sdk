@@ -56,10 +56,7 @@
         _webView.actionDelegate = self;
         
         [_webView setHTML: self.ad.HTMLContent];
-        NSString *hostValue = [ad.launchURI host] ?: @"nil";
-        [[HZMetrics sharedInstance] logMetricsEvent:@"video_host" value:hostValue tag:ad.tag  type:ad.adUnit];
-        NSString *pathValue = [ad.launchURI path] ?: @"nil";
-        [[HZMetrics sharedInstance] logMetricsEvent:@"video_path" value:pathValue tag:ad.tag  type:ad.adUnit];
+        
         [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterForeground:) name: UIApplicationDidBecomeActiveNotification object: nil];
         
         [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterBackground:) name: UIApplicationDidEnterBackgroundNotification object: nil];
