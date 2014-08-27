@@ -34,4 +34,6 @@ char *HZNewBase64Encode(
 
 NSArray *hzMap(NSArray *array, id (^block)(id object));
 
+BOOL hziOS8Plus(void);
+
 @end

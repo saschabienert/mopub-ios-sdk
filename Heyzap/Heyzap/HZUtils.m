@@ -249,4 +249,8 @@ NSArray *hzMap(NSArray *array, id (^block)(id object)) {
     return newArray;
 }
 
+BOOL hziOS8Plus(void) {
+    return [[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0;
+}
+
 @end
