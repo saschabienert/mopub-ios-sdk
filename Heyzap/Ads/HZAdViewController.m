@@ -92,6 +92,11 @@
         // Revert back to old status bar state
         [[UIApplication sharedApplication] setStatusBarHidden: self.statusBarHidden];
         
+        if (hziOS8Plus()) {
+            [UIViewController attemptRotationToDeviceOrientation];
+            self.originalKeyWindow.frame = [UIScreen mainScreen].bounds;
+        }
+        
         [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didHideAdWithTag: self.ad.tag];
         
         if ([self.ad.adUnit isEqualToString: @"interstitial"]) {
