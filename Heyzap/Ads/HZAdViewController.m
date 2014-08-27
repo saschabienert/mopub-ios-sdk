@@ -93,7 +93,6 @@
         [[UIApplication sharedApplication] setStatusBarHidden: self.statusBarHidden];
         
         if (hziOS8Plus()) {
-            [UIViewController attemptRotationToDeviceOrientation];
             self.originalKeyWindow.frame = [UIScreen mainScreen].bounds;
         }
         
@@ -153,7 +152,7 @@ static int totalImpressions = 0;
     }
     
     //try and open StoreKit, otherwise just use market link
-    if(NSClassFromString(@"SKStoreProductViewController") && appID && self.ad.useModalAppStore) { // Checks for iOS 6 feature.
+    if(NSClassFromString(@"SKStoreProductViewController") && appID && self.ad.useModalAppStore && NO) { // Checks for iOS 6 feature.
         
         if (clickURL != nil) {
             // Ping the tracking url (effectively does nothing if there is no real tracking URL)
