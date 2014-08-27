@@ -92,6 +92,9 @@
         // Revert back to old status bar state
         [[UIApplication sharedApplication] setStatusBarHidden: self.statusBarHidden];
         
+        //    Fix for iOS 8 not rotating the view/window correctly.
+        //    https://devforums.apple.com/thread/240069?tstart=15
+        //    http://openradar.appspot.com/radar?id=4933288959410176
         if (self.ad.enableWindowBoundsReset) {
             self.originalKeyWindow.frame = [UIScreen mainScreen].bounds;
         }

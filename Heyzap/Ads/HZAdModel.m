@@ -107,6 +107,10 @@
                                                               default:@(!hziOS8Plus())
                                                              withDict:dict] boolValue];
         
+        
+        //    Fix for iOS 8 not rotating the view/window correctly.
+        //    https://devforums.apple.com/thread/240069?tstart=15
+        //    http://openradar.appspot.com/radar?id=4933288959410176
         _enableWindowBoundsReset = [[HZDictionaryUtils hzObjectForKey:@"enable_window_bounds_reset"
                                                               ofClass:[NSNumber class]
                                                               default:@(hziOS8Plus())
