@@ -72,7 +72,7 @@
     //    https://devforums.apple.com/thread/240069?tstart=15
     //    http://openradar.appspot.com/radar?id=4933288959410176
     
-    if (hziOS8Plus()) {
+    if (self.ad.enableWindowBoundsReset) {
         self.view.window.frame = [UIScreen mainScreen].bounds;
     }
     

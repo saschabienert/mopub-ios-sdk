@@ -18,6 +18,7 @@
 #import "HZMetrics.h"
 
 #import "HZAdsAPIClient.h"
+#import "HZUtils.h"
 
 @interface HZAdModel()
 @property (nonatomic) NSMutableDictionary *additionalEventParams;
@@ -26,6 +27,11 @@
 @property (nonatomic) NSNumber *creativeID;
 @property (nonatomic) NSDate *fetchDate;
 @property (nonatomic) BOOL hideOnOrientationChange;
+
+// iOS 8 Server Side Configurable Properties
+@property (nonatomic) BOOL enable90DegreeTransform;
+@property (nonatomic) BOOL enableWindowBoundsReset;
+
 @end
 
 @implementation HZAdModel
@@ -94,6 +100,17 @@
         _sentImpression = NO;
         _sentIncentiveComplete = NO;
         _fetchDate = [NSDate date];
+        
+        
+        _enable90DegreeTransform = [[HZDictionaryUtils hzObjectForKey:@"enable_90_degree_transform"
+                                                              ofClass:[NSNumber class]
+                                                              default:@(!hziOS8Plus())
+                                                             withDict:dict] boolValue];
+        
+        _enableWindowBoundsReset = [[HZDictionaryUtils hzObjectForKey:@"enable_window_bounds_reset"
+                                                              ofClass:[NSNumber class]
+                                                              default:@(hziOS8Plus())
+                                                             withDict:dict] boolValue];
     }
     
     return self;

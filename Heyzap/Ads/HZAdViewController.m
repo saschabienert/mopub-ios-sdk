@@ -92,7 +92,7 @@
         // Revert back to old status bar state
         [[UIApplication sharedApplication] setStatusBarHidden: self.statusBarHidden];
         
-        if (hziOS8Plus()) {
+        if (self.ad.enableWindowBoundsReset) {
             self.originalKeyWindow.frame = [UIScreen mainScreen].bounds;
         }
         

@@ -26,6 +26,10 @@
 @property (nonatomic) BOOL sentImpression;
 @property (nonatomic) BOOL sentIncentiveComplete;
 
+// iOS 8 Server Side Configurable Properties
+@property (nonatomic, readonly) BOOL enable90DegreeTransform;
+@property (nonatomic, readonly) BOOL enableWindowBoundsReset;
+
 #pragma mark - Initializers
 - (id) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit;
 

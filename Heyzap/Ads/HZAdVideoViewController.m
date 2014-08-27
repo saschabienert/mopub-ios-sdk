@@ -134,7 +134,7 @@
     self.videoView.hidden = YES;
     self.videoView.layer.opacity = 0.0f;
     
-    if (forceRotation && !hziOS8Plus()) {
+    if (forceRotation && self.ad.enable90DegreeTransform) {
         self.videoView.transform = ninetyDegreeTransform;
         self.webView.transform = ninetyDegreeTransform;
     }
@@ -161,7 +161,7 @@
     //    https://devforums.apple.com/thread/240069?tstart=15
     //    http://openradar.appspot.com/radar?id=4933288959410176
     
-    if (hziOS8Plus()) {
+    if (self.ad.enableWindowBoundsReset) {
         self.view.window.frame = [UIScreen mainScreen].bounds;
     }
     
