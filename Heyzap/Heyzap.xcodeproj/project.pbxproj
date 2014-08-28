@@ -33,6 +33,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		501EBDA819AFE22600CA80ED /* HZMetricsKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 50E76E1219A29FBA00FD2639 /* HZMetricsKey.h */; };
+		501EBDA919AFE30600CA80ED /* HZMetricsKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 50E76E1319A29FBA00FD2639 /* HZMetricsKey.m */; };
 		501F9D7418989B8A00127E49 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
 		502BE84F18CD530D00EB6415 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 502BE84E18CD530D00EB6415 /* TestUtilities.m */; };
 		5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */; };
@@ -80,7 +82,6 @@
 		50AA624C18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624B18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m */; };
 		50BDD00118B8183200265212 /* HZDictionaryUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B942491758086300B8EACE /* HZDictionaryUtils.h */; };
 		50BDD00218B819D600265212 /* libHeyzapAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9432A1758108700B8EACE /* libHeyzapAds.a */; };
-		50E76E1419A29FBA00FD2639 /* HZMetricsKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 50E76E1319A29FBA00FD2639 /* HZMetricsKey.m */; };
 		72A18C05178B64E600536547 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A18C04178B64E600536547 /* MessageUI.framework */; };
 		860FD47A187BB144008A35FD /* HZAdsFetchManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 860FD478187BB144008A35FD /* HZAdsFetchManager.h */; };
 		860FD47B187BB144008A35FD /* HZAdsFetchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 860FD479187BB144008A35FD /* HZAdsFetchManager.m */; };
@@ -771,6 +772,7 @@
 				86D0A99C1851897200B3D870 /* HZDownloadHelper.h in Headers */,
 				8680AC9F193ED2E60078B5CF /* HZTestDelegate.h in Headers */,
 				866E39F31850089C00B6E431 /* HZIncentivizedAd.h in Headers */,
+				501EBDA819AFE22600CA80ED /* HZMetricsKey.h in Headers */,
 				866E39EF1850087B00B6E431 /* HZVideoAd.h in Headers */,
 				866E3A0C18512F2500B6E431 /* HZAdViewController.h in Headers */,
 				50BDD00118B8183200265212 /* HZDictionaryUtils.h in Headers */,
@@ -1080,7 +1082,6 @@
 				504514CC18B68EF600E00E6C /* DeviceInfoViewController.m in Sources */,
 				86B941E81758056B00B8EACE /* main.m in Sources */,
 				504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */,
-				50E76E1419A29FBA00FD2639 /* HZMetricsKey.m in Sources */,
 				86B941EC1758056B00B8EACE /* AppDelegate.m in Sources */,
 				5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */,
 				504514C918B5A59100E00E6C /* BaseTestAppViewController.m in Sources */,
@@ -1092,6 +1093,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				501EBDA919AFE30600CA80ED /* HZMetricsKey.m in Sources */,
 				8641E1F018ADE0FE00CAAEE0 /* HZDevice.m in Sources */,
 				8641E1F218ADE0FE00CAAEE0 /* HZImageView.m in Sources */,
 				866E39F01850087B00B6E431 /* HZVideoAd.m in Sources */,
