@@ -15,7 +15,6 @@
 #import "HZAdColonyAdapter.h"
 #import "HZVungleAdapter.h"
 #import "HZAdMobAdapter.h"
-#import "HZVGVunglePub.h"
 #import "HZMediationAPIClient.h"
 #import "HZDictionaryUtils.h"
 #import "HZMediationConstants.h"
