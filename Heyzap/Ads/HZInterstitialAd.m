@@ -8,7 +8,6 @@
 
 #import "HZInterstitialAd.h"
 #import "HZMetrics.h"
-#import "HZAnalytics.h"
 #import "HZAdsManager.h"
 #import "HZAdInterstitialViewController.h"
 #import "HZAdVideoViewController.h"

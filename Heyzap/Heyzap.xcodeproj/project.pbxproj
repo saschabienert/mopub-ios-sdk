@@ -137,7 +137,6 @@
 		86B943BB175830AA00B8EACE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B8175830A700B8EACE /* QuartzCore.framework */; };
 		86BDB49A175853A200D85F29 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943BF1758347300B8EACE /* UIKit.framework */; };
 		86BDB49B175853E100D85F29 /* HZAvailability.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B94296175808F800B8EACE /* HZAvailability.m */; };
-		86BDB49C175853E100D85F29 /* HZAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942201758086300B8EACE /* HZAnalytics.m */; };
 		86BDB4A1175853E100D85F29 /* HZAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942221758086300B8EACE /* HZAPIClient.m */; };
 		86BDB4A4175853E100D85F29 /* HZUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942461758086300B8EACE /* HZUserDefaults.m */; };
 		86BDB4A5175853E100D85F29 /* HZUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942481758086300B8EACE /* HZUtils.m */; };
@@ -308,8 +307,6 @@
 		86B941ED1758056B00B8EACE /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		86B941EF1758056B00B8EACE /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		86B941F11758056B00B8EACE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		86B9421F1758086300B8EACE /* HZAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAnalytics.h; sourceTree = "<group>"; };
-		86B942201758086300B8EACE /* HZAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAnalytics.m; sourceTree = "<group>"; };
 		86B942211758086300B8EACE /* HZAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAPIClient.h; sourceTree = "<group>"; };
 		86B942221758086300B8EACE /* HZAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAPIClient.m; sourceTree = "<group>"; };
 		86B942331758086300B8EACE /* HZLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZLog.h; sourceTree = "<group>"; };
@@ -704,8 +701,6 @@
 				50E76E1119A29F9200FD2639 /* Metrics */,
 				86B94295175808F800B8EACE /* HZAvailability.h */,
 				86B94296175808F800B8EACE /* HZAvailability.m */,
-				86B9421F1758086300B8EACE /* HZAnalytics.h */,
-				86B942201758086300B8EACE /* HZAnalytics.m */,
 				86B942211758086300B8EACE /* HZAPIClient.h */,
 				86B942221758086300B8EACE /* HZAPIClient.m */,
 				86B942451758086300B8EACE /* HZUserDefaults.h */,
@@ -1104,7 +1099,6 @@
 				86B09B89175973E60045AA54 /* HeyzapAds.m in Sources */,
 				866E3A0D18512F2500B6E431 /* HZAdViewController.m in Sources */,
 				86BDB49B175853E100D85F29 /* HZAvailability.m in Sources */,
-				86BDB49C175853E100D85F29 /* HZAnalytics.m in Sources */,
 				86FF907E185842D900BC48BF /* HZQueue.m in Sources */,
 				8680ACA0193ED2E60078B5CF /* HZTestDelegate.m in Sources */,
 				860FD47F187CC056008A35FD /* HZAdFetchRequest.m in Sources */,
