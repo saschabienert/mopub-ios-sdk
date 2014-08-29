@@ -258,9 +258,14 @@ NSString *const kMetricsDir = @"hzMetrics";
 
 - (void)sendCachedMetrics {
     HZDLog(@"Sending cached metrics");
-    NSArray *metrics = [self getCachedMetrics];
+    __block NSArray *metrics = [self getCachedMetrics];
     NSArray *metricIDs = hzMap(metrics, ^NSURL *(NSDictionary *metric) {
         return metric[kMetricID];
+    });
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        metrics = [metrics arrayByAddingObject:@{@"start": @1}];
     });
     
     if ([metrics count]) {

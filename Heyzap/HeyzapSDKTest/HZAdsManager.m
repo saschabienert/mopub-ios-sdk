@@ -19,7 +19,6 @@
 #import "HZAdInterstitialViewController.h"
 #import "HeyzapAds.h"
 #import "HZDelegateProxy.h"
-#import "HZAnalytics.h"
 #import "HZMetrics.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
@@ -54,8 +53,6 @@
 #pragma mark - Run Initial Tasks
 
 - (void) onStart {
-    // Instantiate Analytics and Metrics - check send cache if possible
-    [HZAnalytics sharedInstance];
     
     if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly]
         && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {

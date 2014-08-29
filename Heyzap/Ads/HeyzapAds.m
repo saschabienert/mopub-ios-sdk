@@ -33,7 +33,6 @@
 #import "HeyzapAds.h"
 #import "HZUtils.h"
 #import "HZLog.h"
-#import "HZAnalytics.h"
 #import "HZAdsManager.h"
 
 #define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"
