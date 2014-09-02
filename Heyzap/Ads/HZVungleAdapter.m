@@ -7,19 +7,34 @@
 //
 
 #import "HZVungleAdapter.h"
-#import "HZVGVunglePub.h"
 #import <UIKit/UIKit.h>
-#import "HZVGStatusData.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
-#import "HZVGPlayData.h"
+#import "HZVungleSDK.h"
 
-@interface HZVungleAdapter() <HZVGVunglePubDelegate>
+const NSString* HZVunglePlayAdOptionKeyIncentivized        = @"incentivized";
+const NSString* HZVunglePlayAdOptionKeyShowClose           = @"showClose";
+const NSString* HZVunglePlayAdOptionKeyOrientations        = @"orientations";
+const NSString* HZVunglePlayAdOptionKeyUser                = @"user";
+const NSString* HZVunglePlayAdOptionKeyPlacement           = @"placement";
+const NSString* HZVunglePlayAdOptionKeyExtraInfoDictionary = @"extraInfo";
+const NSString* HZVunglePlayAdOptionKeyExtra1              = @"extra1";
+const NSString* HZVunglePlayAdOptionKeyExtra2              = @"extra2";
+const NSString* HZVunglePlayAdOptionKeyExtra3              = @"extra3";
+const NSString* HZVunglePlayAdOptionKeyExtra4              = @"extra4";
+const NSString* HZVunglePlayAdOptionKeyExtra5              = @"extra5";
+const NSString* HZVunglePlayAdOptionKeyExtra6              = @"extra6";
+const NSString* HZVunglePlayAdOptionKeyExtra7              = @"extra7";
+const NSString* HZVunglePlayAdOptionKeyExtra8              = @"extra8";
+const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
+
+@interface HZVungleAdapter() <HZVungleSDKDelegate>
 
 /**
  *  Because Vungle makes no differentiation between having an incentivized ad and having a video ad, we just store any error in a property shared between the ad types.
  */
 @property (nonatomic, strong) NSError *lastError;
+@property (nonatomic) BOOL isShowingIncentivized;
 
 @end
 
@@ -41,7 +56,7 @@
 {
     self = [super init];
     if (self) {
-        [HZVGVunglePub setDelegate:self];
+        [[HZVungleSDK sharedSDK] setDelegate:self];
     }
     return self;
 }
@@ -62,9 +77,7 @@
 
 + (BOOL)isSDKAvailable
 {
-    return [HZVGVunglePub hzProxiedClassIsAvailable]
-    && [HZVGStatusData hzProxiedClassIsAvailable]
-    && [HZVGPlayData hzProxiedClassIsAvailable];
+    return [HZVungleSDK hzProxiedClassIsAvailable];
 }
 
 + (NSString *)name
@@ -74,7 +87,7 @@
 
 - (void)startWithPubAppID:(NSString *)appID
 {
-    [HZVGVunglePub startWithPubAppID:appID];
+    [[HZVungleSDK sharedSDK] startWithAppId:appID];
 }
 
 - (HZAdType)supportedAdFormats
@@ -89,7 +102,7 @@
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    return [self supportedAdFormats] & type && [HZVGVunglePub adIsAvailable];
+    return [self supportedAdFormats] & type && [[HZVungleSDK sharedSDK] isCachedAdAvailable];
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType
@@ -107,54 +120,40 @@
     [self.delegate adapterWillPlayAudio:self];
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     if (type == HZAdTypeVideo) {
-        [HZVGVunglePub playModalAd:vc animated:YES];
+        [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyShowClose: @1}];
     } else if (type == HZAdTypeIncentivized) {
-        [HZVGVunglePub playIncentivizedAd:vc animated:YES showClose:YES userTag:nil];
+        self.isShowingIncentivized = YES;
+        [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyIncentivized: @1}];
     }
 }
 
 #pragma mark - Vungle Delegate
 
-- (void)vungleStatusUpdate:(HZVGStatusData *)statusData
+- (void)vungleSDKwillCloseAdWithViewInfo:(NSDictionary*)viewInfo willPresentProductSheet:(BOOL)willPresentProductSheet
 {
-    if (statusData.status != HZVGStatusOkay) {
-        self.lastError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Vungle"}];
-    } else {
-        self.lastError = nil;
+    if (self.isShowingIncentivized && viewInfo[@"completedView"]) {
+        [self.delegate adapterDidCompleteIncentivizedAd:self];
     }
+    
+    if (willPresentProductSheet) {
+        [self.delegate adapterWasClicked:self];
+    } else {
+        [self.delegate adapterDidFinishPlayingAudio:self];
+        [self.delegate adapterDidDismissAd:self];
+    }
+    
+    self.isShowingIncentivized = NO;
 }
 
-- (void)vungleMoviePlayed:(HZVGPlayData*)playData
+- (void)vungleSDKwillCloseProductSheet:(id)productSheet
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
-    // Check if incentivized, if so send the incentivized callback.
-    const BOOL incentivized = YES;
-    if (incentivized) {
-        if ([playData playedFull]) {
-            [self.delegate adapterDidCompleteIncentivizedAd:self];
-        } else {
-            [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
-        }
-    }
-}
-
-- (void)vungleViewDidDisappear:(UIViewController*)viewController willShowProductView:(BOOL)willShow
-{
     [self.delegate adapterDidDismissAd:self];
-}
-- (void)vungleViewWillAppear:(UIViewController*)viewController
-{
-}
-- (void)vungleAppStoreWillAppear
-{
-}
-- (void)vungleAppStoreViewDidDisappear
-{
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol
 {
-    if ([NSStringFromProtocol(aProtocol) isEqualToString:@"VGVunglePubDelegate"]) {
+    if ([NSStringFromProtocol(aProtocol) isEqualToString:@"VungleSDKDelegate"]) {
         return YES;
     } else {
         return [super conformsToProtocol:aProtocol];
