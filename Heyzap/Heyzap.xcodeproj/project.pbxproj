@@ -144,8 +144,6 @@
 		509F002E18EB62BC0011EAB3 /* HZMediationSessionKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F002C18EB62BC0011EAB3 /* HZMediationSessionKey.m */; };
 		509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */; };
 		509F003218EB6E2F0011EAB3 /* HZBaseAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */; };
-		509F00BA18EC8D010011EAB3 /* HZVGPlayData.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F00B818EC8D010011EAB3 /* HZVGPlayData.h */; };
-		509F00BB18EC8D010011EAB3 /* HZVGPlayData.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00B918EC8D010011EAB3 /* HZVGPlayData.m */; };
 		509F00C518ECF42E0011EAB3 /* HZMediationSessionKeySpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00C418ECF42E0011EAB3 /* HZMediationSessionKeySpec.m */; };
 		50A36ACC18C93B9C00FA84F0 /* InterstitialSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */; };
 		50A36AD218C9405A00FA84F0 /* DeviceInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514CB18B68EF600E00E6C /* DeviceInfoViewController.m */; };
@@ -196,11 +194,8 @@
 		50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */; };
 		50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */; };
 		50D1599418F35CC600734ABB /* HZHeyzapInterstitialAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1599218F35CC600734ABB /* HZHeyzapInterstitialAd.m */; };
-		50E7B94F198086B5003ED638 /* adcolony.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94A198086B5003ED638 /* adcolony.a */; };
 		50E7B950198086B6003ED638 /* admob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94B198086B5003ED638 /* admob.a */; };
-		50E7B951198086B6003ED638 /* applovin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94C198086B5003ED638 /* applovin.a */; };
 		50E7B952198086B6003ED638 /* chartboost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94D198086B5003ED638 /* chartboost.a */; };
-		50E7B953198086B6003ED638 /* vungle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94E198086B5003ED638 /* vungle.a */; };
 		50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ECA1C318DB618E006284AB /* HeyzapMediation.h */; };
 		50ECA1C618DB618E006284AB /* HeyzapMediation.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ECA1C418DB618E006284AB /* HeyzapMediation.m */; };
 		50ECA1C818DB6234006284AB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
@@ -428,8 +423,6 @@
 		509F002C18EB62BC0011EAB3 /* HZMediationSessionKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationSessionKey.m; sourceTree = "<group>"; };
 		509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZBaseAdapter.h; sourceTree = "<group>"; };
 		509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZBaseAdapter.m; sourceTree = "<group>"; };
-		509F00B818EC8D010011EAB3 /* HZVGPlayData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVGPlayData.h; sourceTree = "<group>"; };
-		509F00B918EC8D010011EAB3 /* HZVGPlayData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVGPlayData.m; sourceTree = "<group>"; };
 		509F00C418ECF42E0011EAB3 /* HZMediationSessionKeySpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationSessionKeySpec.m; sourceTree = "<group>"; };
 		50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialSpec.m; sourceTree = "<group>"; };
 		50A36AED18C9405A00FA84F0 /* Integration Tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Integration Tests.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -783,6 +776,41 @@
 			name = "Mediation To Heyzap Interface";
 			sourceTree = "<group>";
 		};
+		50269FB119B64B9200CD7C88 /* Chartboost */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Chartboost;
+			sourceTree = "<group>";
+		};
+		50269FB219B64C9A00CD7C88 /* AdColony */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = AdColony;
+			sourceTree = "<group>";
+		};
+		50269FB319B64CB200CD7C88 /* AdMob */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = AdMob;
+			sourceTree = "<group>";
+		};
+		50269FB419B64CE600CD7C88 /* Vungle */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Vungle;
+			sourceTree = "<group>";
+		};
+		50269FB519B64D5100CD7C88 /* AppLovin */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = AppLovin;
+			sourceTree = "<group>";
+		};
 		503CD2351901A87300667C0D /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
@@ -950,8 +978,14 @@
 		50ECA1BE18DB6157006284AB /* Mediation Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				50269FB219B64C9A00CD7C88 /* AdColony */,
+				50269FB319B64CB200CD7C88 /* AdMob */,
+				50269FB519B64D5100CD7C88 /* AppLovin */,
+				50269FB119B64B9200CD7C88 /* Chartboost */,
+				50269FB419B64CE600CD7C88 /* Vungle */,
 			);
 			name = "Mediation Frameworks";
+			path = MediationFrameworks;
 			sourceTree = "<group>";
 		};
 		50ECA1CF18DB7340006284AB /* Adapters */ = {
