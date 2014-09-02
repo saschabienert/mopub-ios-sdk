@@ -80,6 +80,17 @@
 		5019224E18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5019224C18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h */; };
 		5019224F18EF74CC002793A3 /* HZHeyzapIncentivizedAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 5019224D18EF74CC002793A3 /* HZHeyzapIncentivizedAd.m */; };
 		501F9D7418989B8A00127E49 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
+		50269FBD19B64EE000CD7C88 /* libChartboost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50269FBC19B64EE000CD7C88 /* libChartboost.a */; };
+		50269FCB19B64F1B00CD7C88 /* libGoogleAdMobAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50269FCA19B64F1B00CD7C88 /* libGoogleAdMobAds.a */; };
+		50269FCD19B6503400CD7C88 /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50269FCC19B6503400CD7C88 /* AdColony.framework */; };
+		50269FD719B6505C00CD7C88 /* __vungle.db in Resources */ = {isa = PBXBuildFile; fileRef = 50269FD019B6505B00CD7C88 /* __vungle.db */; };
+		50269FD819B6505C00CD7C88 /* vg_close.png in Resources */ = {isa = PBXBuildFile; fileRef = 50269FD119B6505C00CD7C88 /* vg_close.png */; };
+		50269FD919B6505C00CD7C88 /* vg_cta.png in Resources */ = {isa = PBXBuildFile; fileRef = 50269FD219B6505C00CD7C88 /* vg_cta.png */; };
+		50269FDA19B6505C00CD7C88 /* vg_mute_off.png in Resources */ = {isa = PBXBuildFile; fileRef = 50269FD319B6505C00CD7C88 /* vg_mute_off.png */; };
+		50269FDB19B6505C00CD7C88 /* vg_mute_on.png in Resources */ = {isa = PBXBuildFile; fileRef = 50269FD419B6505C00CD7C88 /* vg_mute_on.png */; };
+		50269FDC19B6505C00CD7C88 /* vg_timer.png in Resources */ = {isa = PBXBuildFile; fileRef = 50269FD519B6505C00CD7C88 /* vg_timer.png */; };
+		50269FDD19B6505C00CD7C88 /* VungleSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50269FD619B6505C00CD7C88 /* VungleSDK.framework */; };
+		50269FF119B650AF00CD7C88 /* libAppLovinSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50269FF019B650AF00CD7C88 /* libAppLovinSdk.a */; };
 		502BE84F18CD530D00EB6415 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 502BE84E18CD530D00EB6415 /* TestUtilities.m */; };
 		503CD2381901E29700667C0D /* HZHeyzapMediationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 503CD2361901E29700667C0D /* HZHeyzapMediationDelegate.h */; };
 		503CD2391901E29700667C0D /* HZHeyzapMediationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 503CD2371901E29700667C0D /* HZHeyzapMediationDelegate.m */; };
@@ -194,8 +205,6 @@
 		50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */; };
 		50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */; };
 		50D1599418F35CC600734ABB /* HZHeyzapInterstitialAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1599218F35CC600734ABB /* HZHeyzapInterstitialAd.m */; };
-		50E7B950198086B6003ED638 /* admob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94B198086B5003ED638 /* admob.a */; };
-		50E7B952198086B6003ED638 /* chartboost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E7B94D198086B5003ED638 /* chartboost.a */; };
 		50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ECA1C318DB618E006284AB /* HeyzapMediation.h */; };
 		50ECA1C618DB618E006284AB /* HeyzapMediation.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ECA1C418DB618E006284AB /* HeyzapMediation.m */; };
 		50ECA1C818DB6234006284AB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
@@ -385,6 +394,53 @@
 		5019224C18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapIncentivizedAd.h; sourceTree = "<group>"; };
 		5019224D18EF74CC002793A3 /* HZHeyzapIncentivizedAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapIncentivizedAd.m; sourceTree = "<group>"; };
 		501F9D7318989B8A00127E49 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		50269FB619B64EE000CD7C88 /* CBMoreAppsButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBMoreAppsButton.h; sourceTree = "<group>"; };
+		50269FB719B64EE000CD7C88 /* CBNewsfeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBNewsfeed.h; sourceTree = "<group>"; };
+		50269FB819B64EE000CD7C88 /* CBNewsfeedUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBNewsfeedUI.h; sourceTree = "<group>"; };
+		50269FB919B64EE000CD7C88 /* CBPostInstallAnalyticsTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBPostInstallAnalyticsTracker.h; sourceTree = "<group>"; };
+		50269FBA19B64EE000CD7C88 /* CBStory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBStory.h; sourceTree = "<group>"; };
+		50269FBB19B64EE000CD7C88 /* Chartboost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chartboost.h; sourceTree = "<group>"; };
+		50269FBC19B64EE000CD7C88 /* libChartboost.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libChartboost.a; sourceTree = "<group>"; };
+		50269FBE19B64F1B00CD7C88 /* GADAdMobExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdMobExtras.h; sourceTree = "<group>"; };
+		50269FBF19B64F1B00CD7C88 /* GADAdNetworkExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdNetworkExtras.h; sourceTree = "<group>"; };
+		50269FC019B64F1B00CD7C88 /* GADAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdSize.h; sourceTree = "<group>"; };
+		50269FC119B64F1B00CD7C88 /* GADBannerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADBannerView.h; sourceTree = "<group>"; };
+		50269FC219B64F1B00CD7C88 /* GADBannerViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADBannerViewDelegate.h; sourceTree = "<group>"; };
+		50269FC319B64F1B00CD7C88 /* GADInAppPurchase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADInAppPurchase.h; sourceTree = "<group>"; };
+		50269FC419B64F1B00CD7C88 /* GADInAppPurchaseDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADInAppPurchaseDelegate.h; sourceTree = "<group>"; };
+		50269FC519B64F1B00CD7C88 /* GADInterstitial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADInterstitial.h; sourceTree = "<group>"; };
+		50269FC619B64F1B00CD7C88 /* GADInterstitialDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADInterstitialDelegate.h; sourceTree = "<group>"; };
+		50269FC719B64F1B00CD7C88 /* GADModules.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADModules.h; sourceTree = "<group>"; };
+		50269FC819B64F1B00CD7C88 /* GADRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADRequest.h; sourceTree = "<group>"; };
+		50269FC919B64F1B00CD7C88 /* GADRequestError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADRequestError.h; sourceTree = "<group>"; };
+		50269FCA19B64F1B00CD7C88 /* libGoogleAdMobAds.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAdMobAds.a; sourceTree = "<group>"; };
+		50269FCC19B6503400CD7C88 /* AdColony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdColony.framework; sourceTree = "<group>"; };
+		50269FD019B6505B00CD7C88 /* __vungle.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = __vungle.db; sourceTree = "<group>"; };
+		50269FD119B6505C00CD7C88 /* vg_close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_close.png; sourceTree = "<group>"; };
+		50269FD219B6505C00CD7C88 /* vg_cta.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_cta.png; sourceTree = "<group>"; };
+		50269FD319B6505C00CD7C88 /* vg_mute_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_mute_off.png; sourceTree = "<group>"; };
+		50269FD419B6505C00CD7C88 /* vg_mute_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_mute_on.png; sourceTree = "<group>"; };
+		50269FD519B6505C00CD7C88 /* vg_timer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_timer.png; sourceTree = "<group>"; };
+		50269FD619B6505C00CD7C88 /* VungleSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = VungleSDK.framework; sourceTree = "<group>"; };
+		50269FDF19B650AF00CD7C88 /* ALAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAd.h; sourceTree = "<group>"; };
+		50269FE019B650AF00CD7C88 /* ALAdDisplayDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdDisplayDelegate.h; sourceTree = "<group>"; };
+		50269FE119B650AF00CD7C88 /* ALAdLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdLoadDelegate.h; sourceTree = "<group>"; };
+		50269FE219B650AF00CD7C88 /* ALAdRewardDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdRewardDelegate.h; sourceTree = "<group>"; };
+		50269FE319B650AF00CD7C88 /* ALAdService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdService.h; sourceTree = "<group>"; };
+		50269FE419B650AF00CD7C88 /* ALAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdSize.h; sourceTree = "<group>"; };
+		50269FE519B650AF00CD7C88 /* ALAdType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdType.h; sourceTree = "<group>"; };
+		50269FE619B650AF00CD7C88 /* ALAdUpdateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdUpdateDelegate.h; sourceTree = "<group>"; };
+		50269FE719B650AF00CD7C88 /* ALAdVideoPlaybackDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdVideoPlaybackDelegate.h; sourceTree = "<group>"; };
+		50269FE819B650AF00CD7C88 /* ALAdView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdView.h; sourceTree = "<group>"; };
+		50269FE919B650AF00CD7C88 /* ALErrorCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALErrorCodes.h; sourceTree = "<group>"; };
+		50269FEA19B650AF00CD7C88 /* ALIncentivizedInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALIncentivizedInterstitialAd.h; sourceTree = "<group>"; };
+		50269FEB19B650AF00CD7C88 /* ALInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALInterstitialAd.h; sourceTree = "<group>"; };
+		50269FEC19B650AF00CD7C88 /* ALSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSdk.h; sourceTree = "<group>"; };
+		50269FED19B650AF00CD7C88 /* ALSdkSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSdkSettings.h; sourceTree = "<group>"; };
+		50269FEE19B650AF00CD7C88 /* ALSwiftHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSwiftHeaders.h; sourceTree = "<group>"; };
+		50269FEF19B650AF00CD7C88 /* ALTargetingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALTargetingData.h; sourceTree = "<group>"; };
+		50269FF019B650AF00CD7C88 /* libAppLovinSdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAppLovinSdk.a; sourceTree = "<group>"; };
+		50269FF219B65D9500CD7C88 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		502BE84D18CD530D00EB6415 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
 		502BE84E18CD530D00EB6415 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
 		503CD2341901A86D00667C0D /* HZALAdVideoPlaybackDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZALAdVideoPlaybackDelegate.h; sourceTree = "<group>"; };
@@ -454,11 +510,6 @@
 		50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapVideoAd.m; sourceTree = "<group>"; };
 		50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapInterstitialAd.h; sourceTree = "<group>"; };
 		50D1599218F35CC600734ABB /* HZHeyzapInterstitialAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapInterstitialAd.m; sourceTree = "<group>"; };
-		50E7B94A198086B5003ED638 /* adcolony.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = adcolony.a; path = ../../libs/adcolony.a; sourceTree = "<group>"; };
-		50E7B94B198086B5003ED638 /* admob.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = admob.a; path = ../../libs/admob.a; sourceTree = "<group>"; };
-		50E7B94C198086B5003ED638 /* applovin.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = applovin.a; path = ../../libs/applovin.a; sourceTree = "<group>"; };
-		50E7B94D198086B5003ED638 /* chartboost.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = chartboost.a; path = ../../libs/chartboost.a; sourceTree = "<group>"; };
-		50E7B94E198086B5003ED638 /* vungle.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = vungle.a; path = ../../libs/vungle.a; sourceTree = "<group>"; };
 		50ECA1C318DB618E006284AB /* HeyzapMediation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeyzapMediation.h; sourceTree = "<group>"; };
 		50ECA1C418DB618E006284AB /* HeyzapMediation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeyzapMediation.m; sourceTree = "<group>"; };
 		50ECA1C718DB6234006284AB /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -618,17 +669,20 @@
 				505351FF18F76550003C531E /* AudioToolbox.framework in Frameworks */,
 				5053520018F76550003C531E /* CoreGraphics.framework in Frameworks */,
 				5053520118F76550003C531E /* CFNetwork.framework in Frameworks */,
-				50E7B952198086B6003ED638 /* chartboost.a in Frameworks */,
 				5053520218F76550003C531E /* AVFoundation.framework in Frameworks */,
+				50269FCB19B64F1B00CD7C88 /* libGoogleAdMobAds.a in Frameworks */,
 				5053520318F76550003C531E /* libz.dylib in Frameworks */,
-				50E7B950198086B6003ED638 /* admob.a in Frameworks */,
 				5053520418F76550003C531E /* SystemConfiguration.framework in Frameworks */,
+				50269FDD19B6505C00CD7C88 /* VungleSDK.framework in Frameworks */,
 				5053520518F76550003C531E /* libHeyzapAds.a in Frameworks */,
 				5053520618F76550003C531E /* CoreTelephony.framework in Frameworks */,
 				5053520718F76550003C531E /* StoreKit.framework in Frameworks */,
+				50269FF119B650AF00CD7C88 /* libAppLovinSdk.a in Frameworks */,
 				5053520818F76550003C531E /* MessageUI.framework in Frameworks */,
 				5053520918F76550003C531E /* UIKit.framework in Frameworks */,
 				5053520A18F76550003C531E /* QuartzCore.framework in Frameworks */,
+				50269FCD19B6503400CD7C88 /* AdColony.framework in Frameworks */,
+				50269FBD19B64EE000CD7C88 /* libChartboost.a in Frameworks */,
 				5053520B18F76550003C531E /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -779,6 +833,13 @@
 		50269FB119B64B9200CD7C88 /* Chartboost */ = {
 			isa = PBXGroup;
 			children = (
+				50269FB619B64EE000CD7C88 /* CBMoreAppsButton.h */,
+				50269FB719B64EE000CD7C88 /* CBNewsfeed.h */,
+				50269FB819B64EE000CD7C88 /* CBNewsfeedUI.h */,
+				50269FB919B64EE000CD7C88 /* CBPostInstallAnalyticsTracker.h */,
+				50269FBA19B64EE000CD7C88 /* CBStory.h */,
+				50269FBB19B64EE000CD7C88 /* Chartboost.h */,
+				50269FBC19B64EE000CD7C88 /* libChartboost.a */,
 			);
 			path = Chartboost;
 			sourceTree = "<group>";
@@ -786,6 +847,7 @@
 		50269FB219B64C9A00CD7C88 /* AdColony */ = {
 			isa = PBXGroup;
 			children = (
+				50269FCC19B6503400CD7C88 /* AdColony.framework */,
 			);
 			path = AdColony;
 			sourceTree = "<group>";
@@ -793,6 +855,19 @@
 		50269FB319B64CB200CD7C88 /* AdMob */ = {
 			isa = PBXGroup;
 			children = (
+				50269FBE19B64F1B00CD7C88 /* GADAdMobExtras.h */,
+				50269FBF19B64F1B00CD7C88 /* GADAdNetworkExtras.h */,
+				50269FC019B64F1B00CD7C88 /* GADAdSize.h */,
+				50269FC119B64F1B00CD7C88 /* GADBannerView.h */,
+				50269FC219B64F1B00CD7C88 /* GADBannerViewDelegate.h */,
+				50269FC319B64F1B00CD7C88 /* GADInAppPurchase.h */,
+				50269FC419B64F1B00CD7C88 /* GADInAppPurchaseDelegate.h */,
+				50269FC519B64F1B00CD7C88 /* GADInterstitial.h */,
+				50269FC619B64F1B00CD7C88 /* GADInterstitialDelegate.h */,
+				50269FC719B64F1B00CD7C88 /* GADModules.h */,
+				50269FC819B64F1B00CD7C88 /* GADRequest.h */,
+				50269FC919B64F1B00CD7C88 /* GADRequestError.h */,
+				50269FCA19B64F1B00CD7C88 /* libGoogleAdMobAds.a */,
 			);
 			path = AdMob;
 			sourceTree = "<group>";
@@ -800,6 +875,7 @@
 		50269FB419B64CE600CD7C88 /* Vungle */ = {
 			isa = PBXGroup;
 			children = (
+				50269FCE19B6505B00CD7C88 /* VungleSDK.embeddedframework */,
 			);
 			path = Vungle;
 			sourceTree = "<group>";
@@ -807,8 +883,56 @@
 		50269FB519B64D5100CD7C88 /* AppLovin */ = {
 			isa = PBXGroup;
 			children = (
+				50269FDE19B650AF00CD7C88 /* headers */,
+				50269FF019B650AF00CD7C88 /* libAppLovinSdk.a */,
 			);
 			path = AppLovin;
+			sourceTree = "<group>";
+		};
+		50269FCE19B6505B00CD7C88 /* VungleSDK.embeddedframework */ = {
+			isa = PBXGroup;
+			children = (
+				50269FCF19B6505B00CD7C88 /* Resources */,
+				50269FD619B6505C00CD7C88 /* VungleSDK.framework */,
+			);
+			path = VungleSDK.embeddedframework;
+			sourceTree = "<group>";
+		};
+		50269FCF19B6505B00CD7C88 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				50269FD019B6505B00CD7C88 /* __vungle.db */,
+				50269FD119B6505C00CD7C88 /* vg_close.png */,
+				50269FD219B6505C00CD7C88 /* vg_cta.png */,
+				50269FD319B6505C00CD7C88 /* vg_mute_off.png */,
+				50269FD419B6505C00CD7C88 /* vg_mute_on.png */,
+				50269FD519B6505C00CD7C88 /* vg_timer.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		50269FDE19B650AF00CD7C88 /* headers */ = {
+			isa = PBXGroup;
+			children = (
+				50269FDF19B650AF00CD7C88 /* ALAd.h */,
+				50269FE019B650AF00CD7C88 /* ALAdDisplayDelegate.h */,
+				50269FE119B650AF00CD7C88 /* ALAdLoadDelegate.h */,
+				50269FE219B650AF00CD7C88 /* ALAdRewardDelegate.h */,
+				50269FE319B650AF00CD7C88 /* ALAdService.h */,
+				50269FE419B650AF00CD7C88 /* ALAdSize.h */,
+				50269FE519B650AF00CD7C88 /* ALAdType.h */,
+				50269FE619B650AF00CD7C88 /* ALAdUpdateDelegate.h */,
+				50269FE719B650AF00CD7C88 /* ALAdVideoPlaybackDelegate.h */,
+				50269FE819B650AF00CD7C88 /* ALAdView.h */,
+				50269FE919B650AF00CD7C88 /* ALErrorCodes.h */,
+				50269FEA19B650AF00CD7C88 /* ALIncentivizedInterstitialAd.h */,
+				50269FEB19B650AF00CD7C88 /* ALInterstitialAd.h */,
+				50269FEC19B650AF00CD7C88 /* ALSdk.h */,
+				50269FED19B650AF00CD7C88 /* ALSdkSettings.h */,
+				50269FEE19B650AF00CD7C88 /* ALSwiftHeaders.h */,
+				50269FEF19B650AF00CD7C88 /* ALTargetingData.h */,
+			);
+			path = headers;
 			sourceTree = "<group>";
 		};
 		503CD2351901A87300667C0D /* Protocols */ = {
@@ -950,19 +1074,6 @@
 			name = Proxies;
 			sourceTree = "<group>";
 		};
-		50E90E7A18F767E2003DC948 /* Mediation Test App */ = {
-			isa = PBXGroup;
-			children = (
-				50E7B94A198086B5003ED638 /* adcolony.a */,
-				50E7B94B198086B5003ED638 /* admob.a */,
-				50E7B94C198086B5003ED638 /* applovin.a */,
-				50E7B94D198086B5003ED638 /* chartboost.a */,
-				50E7B94E198086B5003ED638 /* vungle.a */,
-			);
-			name = "Mediation Test App";
-			path = MediationTestApp;
-			sourceTree = "<group>";
-		};
 		50ECA1BC18DB6108006284AB /* Mediation */ = {
 			isa = PBXGroup;
 			children = (
@@ -983,6 +1094,7 @@
 				50269FB519B64D5100CD7C88 /* AppLovin */,
 				50269FB119B64B9200CD7C88 /* Chartboost */,
 				50269FB419B64CE600CD7C88 /* Vungle */,
+				50269FF219B65D9500CD7C88 /* README.md */,
 			);
 			name = "Mediation Frameworks";
 			path = MediationFrameworks;
@@ -1079,7 +1191,6 @@
 		86B941921757FD6300B8EACE = {
 			isa = PBXGroup;
 			children = (
-				50E90E7A18F767E2003DC948 /* Mediation Test App */,
 				50ECA1BE18DB6157006284AB /* Mediation Frameworks */,
 				86B942891758087E00B8EACE /* Vendor */,
 				86B941E11758056B00B8EACE /* SDK Test App */,
@@ -1517,9 +1628,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				5053520F18F76550003C531E /* InfoPlist.strings in Resources */,
+				50269FD819B6505C00CD7C88 /* vg_close.png in Resources */,
+				50269FDC19B6505C00CD7C88 /* vg_timer.png in Resources */,
+				50269FDB19B6505C00CD7C88 /* vg_mute_on.png in Resources */,
 				5053521018F76550003C531E /* Default.png in Resources */,
+				50269FDA19B6505C00CD7C88 /* vg_mute_off.png in Resources */,
 				5053521118F76550003C531E /* Default@2x.png in Resources */,
 				5053521318F76550003C531E /* Default-568h@2x.png in Resources */,
+				50269FD719B6505C00CD7C88 /* __vungle.db in Resources */,
+				50269FD919B6505C00CD7C88 /* vg_cta.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1900,6 +2017,8 @@
 					/Users/stumm/Downloads/VungleSDK.embeddedframework,
 					2,
 					/Users/stumm/Downloads/VungleSDK.embeddedframework,
+					"$(PROJECT_DIR)/MediationFrameworks/AdColony",
+					"$(PROJECT_DIR)/MediationFrameworks/Vungle/VungleSDK.embeddedframework",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
@@ -1916,6 +2035,9 @@
 					"/Users/stumm/Downloads/GoogleMobileAdsSdkiOS-6.11.1",
 					"/Users/stumm/Downloads/applovin-ios-sdk-2.5.1",
 					/Users/stumm/Downloads/Chartboost/Chartboost,
+					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
+					"$(PROJECT_DIR)/MediationFrameworks/AdMob",
+					"$(PROJECT_DIR)/MediationFrameworks/AppLovin",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1943,6 +2065,8 @@
 					/Users/stumm/Downloads/VungleSDK.embeddedframework,
 					2,
 					/Users/stumm/Downloads/VungleSDK.embeddedframework,
+					"$(PROJECT_DIR)/MediationFrameworks/AdColony",
+					"$(PROJECT_DIR)/MediationFrameworks/Vungle/VungleSDK.embeddedframework",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
@@ -1956,6 +2080,9 @@
 					"/Users/stumm/Downloads/GoogleMobileAdsSdkiOS-6.11.1",
 					"/Users/stumm/Downloads/applovin-ios-sdk-2.5.1",
 					/Users/stumm/Downloads/Chartboost/Chartboost,
+					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
+					"$(PROJECT_DIR)/MediationFrameworks/AdMob",
+					"$(PROJECT_DIR)/MediationFrameworks/AppLovin",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = (
