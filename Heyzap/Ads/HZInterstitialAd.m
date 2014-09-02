@@ -91,23 +91,13 @@ static int HZInterstitialAdCreativeIDPin = 0;
 
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
     if ([[HZAdsManager sharedManager] isEnabled]) {
-        
         HZAdFetchRequest *request = [self requestWithTag: tag andVideo: YES];
-        CFTimeInterval startTime = CACurrentMediaTime();
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
-            CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
-            int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
-            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elapsedMiliseconds) tag:tag type:HZInterstitialAdUnit];
             if (completion) {
                 BOOL result = YES;
                 if (error != nil || ad == nil) {
                     result = NO;
-                    
-                } else {
-                    [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 tag:tag type:HZInterstitialAdUnit];
-                    [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:error tag:tag type:HZInterstitialAdUnit];
                 }
-                
                 completion(result, error);
             }
         }];

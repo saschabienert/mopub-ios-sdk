@@ -31,6 +31,7 @@
         [[HZAdLibrary sharedLibrary] purgeAd: ad];
     }
     
+    const CFTimeInterval startTime = CACurrentMediaTime();
     [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 tag:request.tag type:request.adUnit];
     [[HZMetrics sharedInstance] logFetchTimeForTag:request.tag type:request.adUnit];
     
@@ -41,9 +42,14 @@
                                            type:request.adUnit];
     
     [[HZAdsAPIClient sharedClient] loadRequest: request withCompletion: ^(HZAdFetchRequest *aRequest) {
+        const CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
+        const int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
+        [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elapsedMiliseconds) tag:aRequest.tag type:aRequest.adUnit];
+        
         if (aRequest.lastError != nil) {
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", aRequest.lastError]];
+            [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 tag:aRequest.tag type:aRequest.adUnit];
             if (aRequest.lastFailingStatusCode) {
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@(aRequest.lastFailingStatusCode) tag:request.tag type:request.adUnit];
             } else if (!connectivity) {
