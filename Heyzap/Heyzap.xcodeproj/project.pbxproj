@@ -612,9 +612,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50E7B951198086B6003ED638 /* applovin.a in Frameworks */,
-				50E7B94F198086B5003ED638 /* adcolony.a in Frameworks */,
-				50E7B953198086B6003ED638 /* vungle.a in Frameworks */,
+				5053520218F76550003C531E /* AVFoundation.framework in Frameworks */,
+				505351FE18F76550003C531E /* CoreMedia.framework in Frameworks */,
+				E62181F919AFCEEE0099BE8C /* CoreData.framework in Frameworks */,
+				E62181B319AFB3CC0099BE8C /* libsqlite3.dylib in Frameworks */,
 				505351F618F76550003C531E /* CoreLocation.framework in Frameworks */,
 				505351F818F76550003C531E /* Social.framework in Frameworks */,
 				505351F918F76550003C531E /* EventKit.framework in Frameworks */,
@@ -1878,7 +1879,9 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					/Users/Max/Downloads,
-					"/Users/Max/Documents/iOS/ios-sdk/libs",
+					"/Users/stumm/Downloads/GoogleMobileAdsSdkiOS-6.11.1",
+					"/Users/stumm/Downloads/applovin-ios-sdk-2.5.1",
+					/Users/stumm/Downloads/Chartboost/Chartboost,
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1916,7 +1919,9 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					/Users/Max/Downloads,
-					"/Users/Max/Documents/iOS/ios-sdk/libs",
+					"/Users/stumm/Downloads/GoogleMobileAdsSdkiOS-6.11.1",
+					"/Users/stumm/Downloads/applovin-ios-sdk-2.5.1",
+					/Users/stumm/Downloads/Chartboost/Chartboost,
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = (
