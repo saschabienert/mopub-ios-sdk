@@ -16,14 +16,18 @@ DEPENDENCIES:
   - Kiwi/XCTest
   - OCMockito
   - OHHTTPStubs
-  - Subliminal
+  - Subliminal (from `https://github.com/inkling/Subliminal.git`)
+
+EXTERNAL SOURCES:
+  Subliminal:
+    :git: https://github.com/inkling/Subliminal.git
 
 SPEC CHECKSUMS:
   Kiwi: c73667f2b84cbf36f1a3830267c5a4ae8dcbd8ba
   OCHamcrest: b464725bbb48d0f1cd9c6f4ec3cb35fe0c4f2b94
   OCMockito: eca2670b3ce4a457d316b046a36d6f2b980a4da7
   OHHTTPStubs: c1c2007839687eaf9b80f061ce84440515080ebb
-  Subliminal: ed7811c592f738e99e0d89b80dbbeb08af14f1bf
+  Subliminal: 3fa4291de86aff7a60b799b8a1911311e513e396
   TPWeakProxy: a23251ba7fbe268c93f809cc072ef834f5063798
 
 COCOAPODS: 0.33.1

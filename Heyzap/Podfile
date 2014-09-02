@@ -6,6 +6,6 @@ target :"Ads Tests", :exclusive => true do
 end
 
 target :'Integration Tests', :exclusive => true do
-  pod 'Subliminal'
+  pod 'Subliminal', :git => 'https://github.com/inkling/Subliminal.git'
   pod 'OCMockito'
 end
