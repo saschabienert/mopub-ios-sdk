@@ -19,7 +19,7 @@
 #import "HZAdInterstitialViewController.h"
 #import "HeyzapAds.h"
 #import "HZDelegateProxy.h"
-#import "HZAnalytics.h"
+#import "HZMetrics.h"
 
 #import "HZDelegateProxy.h"
 
@@ -55,8 +55,6 @@
 #pragma mark - Run Initial Tasks
 
 - (void) onStart {
-    // Instantiate Analytics
-    [HZAnalytics sharedInstance];
     
     if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly]
         && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
@@ -156,6 +154,10 @@
 #pragma mark - Show
 
 - (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag withCompletion: (void (^)(BOOL result, NSError *error))completion  {
+    [[HZMetrics sharedInstance] logShowAdForTag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey tag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceStartFor:@"time_from_start_to_show_ad" tag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"show_ad_percentage_downloaded" tag:tag type:adUnit];
     BOOL result = NO;
     NSError *error;
     
@@ -164,6 +166,7 @@
     }
     
     if ([self activeController] != nil) {
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"ad-already-displayed" tag:tag type:adUnit];
         if (completion) {
             completion(NO, [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 7 userInfo: @{NSLocalizedDescriptionKey: @"Another ad is currently displaying."}]);
         }
@@ -172,6 +175,7 @@
     }
     
     if (![[HZDevice currentDevice] HZConnectivityType]) {
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"no-connectivity" tag:tag type:adUnit];
         error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 1 userInfo: @{NSLocalizedDescriptionKey: @"No internet connection."}];
     } else {
         if (!tag) {
@@ -210,6 +214,7 @@
         }
         
         if (!result) {
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"no-ad-available" tag:tag type:adUnit];
             error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 6 userInfo: @{NSLocalizedDescriptionKey: @"No ad available"}];
         }
     }
@@ -217,6 +222,8 @@
     if (!result || error) {
         // Not using the standard method here.
         [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag: tag andError: error];
+    } else {
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" tag:tag type:adUnit];
     }
     
     if (completion) {
@@ -226,6 +233,7 @@
 
 - (void) hideActiveAd {
     if ([self activeController] != nil) {
+        [[HZMetrics sharedInstance] logMetricsEvent:@"dev_hidden" value:@1 tag:[self activeController].ad.tag type:[self activeController].ad.adUnit];
         [[self activeController] hide];
     }
 }

@@ -13,7 +13,7 @@
 #endif
 
 typedef void (^HZRequestSuccessBlock)(id);
-typedef void (^HZRequestFailureBlock)(NSError *);
+typedef void (^HZRequestFailureBlock)(HZAFHTTPRequestOperation *, NSError *);
 
 extern NSString * const HZAPIClientDidReceiveResponseNotification;
 extern NSString * const HZAPIClientDidSendRequestNotification;

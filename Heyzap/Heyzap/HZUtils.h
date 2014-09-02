@@ -32,4 +32,8 @@ char *HZNewBase64Encode(
 + (void) setPublisherID: (NSString *) publisherID;
 + (NSString *) publisherID;
 
+NSArray *hzMap(NSArray *array, id (^block)(id object));
+
+BOOL hziOS8Plus(void);
+
 @end

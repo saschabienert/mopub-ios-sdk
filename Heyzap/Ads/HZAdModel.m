@@ -15,8 +15,10 @@
 #import "HZAdInterstitialViewController.h"
 #import "HZDevice.h"
 #import "HeyzapAds.h"
+#import "HZMetrics.h"
 
 #import "HZAdsAPIClient.h"
+#import "HZUtils.h"
 
 @interface HZAdModel()
 @property (nonatomic) NSMutableDictionary *additionalEventParams;
@@ -25,6 +27,11 @@
 @property (nonatomic) NSNumber *creativeID;
 @property (nonatomic) NSDate *fetchDate;
 @property (nonatomic) BOOL hideOnOrientationChange;
+
+// iOS 8 Server Side Configurable Properties
+@property (nonatomic) BOOL enable90DegreeTransform;
+@property (nonatomic) BOOL enableWindowBoundsReset;
+
 @end
 
 @implementation HZAdModel
@@ -65,10 +72,10 @@
 
 #pragma mark - Initializers
 
-- (id) initWithDictionary:(NSDictionary *)dict {
+- (id) initWithDictionary:(NSDictionary *)dict adUnit:(NSString *)adUnit {
     self = [super init];
     if (self) {
-        
+        _adUnit = adUnit;
         
         _impressionID = [HZDictionaryUtils hzObjectForKey: @"impression_id" ofClass: [NSString class] default: @"" withDict: dict];
         _promotedGamePackage = [HZDictionaryUtils hzObjectForKey: @"promoted_game_package" ofClass: [NSNumber class] default: @(0) withDict: dict];
@@ -93,9 +100,28 @@
         _sentImpression = NO;
         _sentIncentiveComplete = NO;
         _fetchDate = [NSDate date];
+        
+        
+        _enable90DegreeTransform = [[HZDictionaryUtils hzObjectForKey:@"enable_90_degree_transform"
+                                                              ofClass:[NSNumber class]
+                                                              default:@(!hziOS8Plus())
+                                                             withDict:dict] boolValue];
+        
+        
+        //    Fix for iOS 8 not rotating the view/window correctly.
+        //    https://devforums.apple.com/thread/240069?tstart=15
+        //    http://openradar.appspot.com/radar?id=4933288959410176
+        _enableWindowBoundsReset = [[HZDictionaryUtils hzObjectForKey:@"enable_window_bounds_reset"
+                                                              ofClass:[NSNumber class]
+                                                              default:@(hziOS8Plus())
+                                                             withDict:dict] boolValue];
     }
     
     return self;
+}
+
+- (void)sendInitializationMetrics {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:_impressionID tag:self.tag type:self.adUnit];
 }
 
 
@@ -120,6 +146,9 @@
 
 - (BOOL) onClick {
     if (self.sentClick) return false;
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_clicked" value:@1 tag:self.tag type:self.adUnit];
+    long timeCLickedMiliseconds = lround([[NSDate date] timeIntervalSince1970] * 1000);
+    [[HZMetrics sharedInstance] logMetricsEvent:@"time_clicked" value:@(timeCLickedMiliseconds) tag:self.tag type:self.adUnit];
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     
@@ -128,7 +157,7 @@
             self.sentClick = YES;
             [HZLog debug: [NSString stringWithFormat: @"(CLICK) %@", self]];
         }
-    } failure:^(NSError *error) {
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         [HZLog debug: [NSString stringWithFormat: @"(CLICK ERROR) %@ Error: %@", self, error]];
     }];
     
@@ -138,6 +167,7 @@
 - (BOOL) onImpression {
     if (self.sentImpression) return false;
 
+    
     NSMutableDictionary *params = [self paramsForEventCallback];
     
     [[HZAdsAPIClient sharedClient] post: @"register_impression" withParams: params success:^(id JSON) {
@@ -145,7 +175,7 @@
             self.sentImpression = YES;
             [HZLog debug: [NSString stringWithFormat: @"(IMPRESSION) %@", self]];
         }
-    } failure:^(NSError *error) {
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         [HZLog debug: [NSString stringWithFormat: @"(IMPRESSION ERROR) %@, Error: %@", self, error]];
     }];
     
@@ -157,13 +187,13 @@
 }
 
 #pragma mark - Factory
-+ (HZAdModel *) modelForResponse: (NSDictionary *) response {
++ (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit {
     NSString *creativeType = [HZDictionaryUtils hzObjectForKey: @"creative_type" ofClass: [NSString class] default: @"interstitial" withDict: response];
     
     if ([HZVideoAdModel isValidForCreativeType: creativeType]) {
-        return [[HZVideoAdModel alloc] initWithDictionary: response];
+        return [[HZVideoAdModel alloc] initWithDictionary: response adUnit:adUnit];
     } else {
-        return [[HZInterstitialAdModel alloc] initWithDictionary: response];
+        return [[HZInterstitialAdModel alloc] initWithDictionary: response adUnit:adUnit];
     }
     
     return nil;

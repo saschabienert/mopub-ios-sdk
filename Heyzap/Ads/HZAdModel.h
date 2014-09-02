@@ -26,8 +26,12 @@
 @property (nonatomic) BOOL sentImpression;
 @property (nonatomic) BOOL sentIncentiveComplete;
 
+// iOS 8 Server Side Configurable Properties
+@property (nonatomic, readonly) BOOL enable90DegreeTransform;
+@property (nonatomic, readonly) BOOL enableWindowBoundsReset;
+
 #pragma mark - Initializers
-- (id) initWithDictionary: (NSDictionary *) dict;
+- (id) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit;
 
 #pragma mark - Validity
 + (BOOL) isResponseValid:(NSDictionary *)response withError: (NSError **) error;
@@ -45,7 +49,7 @@
 - (Class) controller;
 
 #pragma mark - Factory
-+ (HZAdModel *) modelForResponse: (NSDictionary *) response;
++ (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit;
 
 #pragma mark - Actions
 - (void) doPostFetchActionsWithCompletion: (void (^)(BOOL result))completion;
@@ -58,5 +62,6 @@
 - (void) setEventCallbackParams: (NSMutableDictionary *) dict;
 
 + (NSString *) normalizeTag: (NSString *) tag;
+- (void)sendInitializationMetrics;
 
 @end

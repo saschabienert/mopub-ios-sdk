@@ -9,6 +9,7 @@
 #import "HZAdLibrary.h"
 #import "HZAdModel.h"
 #import "HZQueue.h"
+#import "HZMetrics.h"
 
 @interface HZAdLibrary()
 @property (nonatomic) NSMutableDictionary *adUnitDict;

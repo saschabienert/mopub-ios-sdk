@@ -11,6 +11,8 @@
 #import "HZWebView.h"
 #import "HZVideoAdModel.h"
 #import "HZAdsManager.h"
+#import "HZMetrics.h"
+#import "HZUtils.h"
 
 #define kHZVideoViewTag 1
 #define kHZWebViewTag 2
@@ -34,6 +36,7 @@
         _videoView.tag = kHZVideoViewTag;
         
         if (ad.fileCached || ad.allowFallbacktoStreaming || ad.forceStreaming) {
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" tag:self.ad.tag type:self.ad.adUnit];
             if (![_videoView setVideoURL: [self.ad URLForVideo]]) {
                 return nil;
             }
@@ -131,7 +134,7 @@
     self.videoView.hidden = YES;
     self.videoView.layer.opacity = 0.0f;
     
-    if (forceRotation) {
+    if (forceRotation && self.ad.enable90DegreeTransform) {
         self.videoView.transform = ninetyDegreeTransform;
         self.webView.transform = ninetyDegreeTransform;
     }
@@ -153,6 +156,15 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear: animated];
+    
+    //    Fix for iOS 8 not rotating the view/window correctly.
+    //    https://devforums.apple.com/thread/240069?tstart=15
+    //    http://openradar.appspot.com/radar?id=4933288959410176
+    
+    if (self.ad.enableWindowBoundsReset) {
+        self.view.window.frame = [UIScreen mainScreen].bounds;
+    }
+    
     self.videoView.frame = self.view.bounds;
     self.webView.frame = self.view.bounds;
     
@@ -210,6 +222,7 @@
 #pragma mark - Callbacks
 
 - (void) onActionHide: (UIView *) sender {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"close_clicked" value:@1 tag:self.ad.tag type:self.ad.adUnit];
     switch (sender.tag) {
         case kHZVideoViewTag:
             if (self.didStartVideo) {
@@ -273,6 +286,8 @@
 
 
 - (void) onActionError: (UIView *) sender {
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue tag:self.ad.tag type:self.ad.adUnit];
+    
     if (sender.tag == kHZVideoViewTag && self.didStartVideo) {
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFinishAudio];
     }

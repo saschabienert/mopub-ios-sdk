@@ -55,6 +55,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
     NSString *publisherID = [HZUtils publisherID] ?: @"";
     
     NSMutableDictionary *params = [@{@"publisher_id": publisherID,
+                                     @"publisher_sdk_key": publisherID,
                                      @"device_id": [HZUtils deviceID],
                                      @"app_bundle_id": [[NSBundle mainBundle] bundleIdentifier],
                                      @"app_version": versionString,
@@ -63,6 +64,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
                                      @"sdk_platform": @"iphone",
                                      @"sdk_version": SDK_VERSION,
                                      @"ios_version": [UIDevice currentDevice].systemVersion,
+                                     @"os_version": [UIDevice currentDevice].systemVersion,
                                      @"device_type": [HZAvailability platform],
                                      @"advertising_id" : [HZUtils deviceID],
                                    } mutableCopy];
@@ -121,8 +123,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         if (failure) {
             [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidReceiveResponseNotification object:nil userInfo:@{@"error_name": [error domain], @"error_info": [error userInfo]}];
-            
-            failure(error);
+            failure(operation, error);
         }
     }];
 }
@@ -130,8 +131,6 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
 - (void) post:(NSString *)endpoint withParams:(NSDictionary *)params success:(HZRequestSuccessBlock)success failure:(HZRequestFailureBlock)failure {
     
     NSMutableDictionary *requestParams = [[self class] defaultParamsWithDictionary: params];
-    
-    ;
     
     [HZLog debug: [NSString stringWithFormat: @"Client: POST : %@ %@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], requestParams]];
     
@@ -160,7 +159,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
         if (failure) {
             [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidReceiveResponseNotification object:nil userInfo:@{@"error_name": [error domain], @"error_info": [error userInfo]}];
 
-            failure(error);
+            failure(operation, error);
         }
     }];
 }
@@ -184,7 +183,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
        success:^(id response) {
            
        }
-       failure:^(NSError *anError) {
+       failure:^(HZAFHTTPRequestOperation *operation, NSError *anError) {
            
        }];
 }

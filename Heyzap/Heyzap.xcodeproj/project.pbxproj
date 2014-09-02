@@ -268,7 +268,6 @@
 		86B943BB175830AA00B8EACE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B8175830A700B8EACE /* QuartzCore.framework */; };
 		86BDB49A175853A200D85F29 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943BF1758347300B8EACE /* UIKit.framework */; };
 		86BDB49B175853E100D85F29 /* HZAvailability.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B94296175808F800B8EACE /* HZAvailability.m */; };
-		86BDB49C175853E100D85F29 /* HZAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942201758086300B8EACE /* HZAnalytics.m */; };
 		86BDB4A1175853E100D85F29 /* HZAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942221758086300B8EACE /* HZAPIClient.m */; };
 		86BDB4A4175853E100D85F29 /* HZUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942461758086300B8EACE /* HZUserDefaults.m */; };
 		86BDB4A5175853E100D85F29 /* HZUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B942481758086300B8EACE /* HZUtils.m */; };
@@ -537,9 +536,9 @@
 		8646A8A117B071D700316453 /* HZAdsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZAdsManager.h; path = ../HeyzapSDKTest/HZAdsManager.h; sourceTree = "<group>"; };
 		8646A8A217B071D700316453 /* HZAdsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZAdsManager.m; path = ../HeyzapSDKTest/HZAdsManager.m; sourceTree = "<group>"; };
 		866E39ED1850087B00B6E431 /* HZVideoAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVideoAd.h; sourceTree = "<group>"; };
-		866E39EE1850087B00B6E431 /* HZVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVideoAd.m; sourceTree = "<group>"; };
+		866E39EE1850087B00B6E431 /* HZVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HZVideoAd.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		866E39F11850089C00B6E431 /* HZIncentivizedAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZIncentivizedAd.h; sourceTree = "<group>"; };
-		866E39F21850089C00B6E431 /* HZIncentivizedAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZIncentivizedAd.m; sourceTree = "<group>"; };
+		866E39F21850089C00B6E431 /* HZIncentivizedAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HZIncentivizedAd.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		866E39F518500DBE00B6E431 /* HZAdModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdModel.h; sourceTree = "<group>"; };
 		866E39F618500DBE00B6E431 /* HZAdModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdModel.m; sourceTree = "<group>"; };
 		866E39F91850161900B6E431 /* HZVideoAdModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVideoAdModel.h; sourceTree = "<group>"; };
@@ -557,7 +556,7 @@
 		8680AC9D193ED2E60078B5CF /* HZTestDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZTestDelegate.h; sourceTree = "<group>"; };
 		8680AC9E193ED2E60078B5CF /* HZTestDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestDelegate.m; sourceTree = "<group>"; };
 		86B09B82175958A50045AA54 /* HZInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZInterstitialAd.h; sourceTree = "<group>"; };
-		86B09B83175958A50045AA54 /* HZInterstitialAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZInterstitialAd.m; sourceTree = "<group>"; };
+		86B09B83175958A50045AA54 /* HZInterstitialAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HZInterstitialAd.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		86B9419E1757FD6300B8EACE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		86B941AF1757FD6400B8EACE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		86B941DC1758056B00B8EACE /* HeyzapSDKTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HeyzapSDKTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -571,8 +570,6 @@
 		86B941ED1758056B00B8EACE /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		86B941EF1758056B00B8EACE /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		86B941F11758056B00B8EACE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		86B9421F1758086300B8EACE /* HZAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAnalytics.h; sourceTree = "<group>"; };
-		86B942201758086300B8EACE /* HZAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAnalytics.m; sourceTree = "<group>"; };
 		86B942211758086300B8EACE /* HZAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAPIClient.h; sourceTree = "<group>"; };
 		86B942221758086300B8EACE /* HZAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAPIClient.m; sourceTree = "<group>"; };
 		86B942331758086300B8EACE /* HZLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZLog.h; sourceTree = "<group>"; };
@@ -619,6 +616,8 @@
 		86FF907C185842D900BC48BF /* HZQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZQueue.m; sourceTree = "<group>"; };
 		9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Integration Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1D5F5ECB01E4EDFA33DE9B0 /* libPods-Ads Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ads Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B304C4C0197EDC4A009ACC5D /* HZMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMetrics.h; sourceTree = "<group>"; };
+		B304C4C1197EDC4A009ACC5D /* HZMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMetrics.m; sourceTree = "<group>"; };
 		C9E09E3CF972477FA4ED9657 /* Pods-Ads Tests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ads Tests.xcconfig"; path = "Pods/Pods-Ads Tests.xcconfig"; sourceTree = "<group>"; };
 		E62181B219AFB3CC0099BE8C /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		E62181B619AFBF520099BE8C /* HZVungleSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVungleSDK.h; sourceTree = "<group>"; };
@@ -1344,10 +1343,9 @@
 		86B9435917581AC600B8EACE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				50E76E1119A29F9200FD2639 /* Metrics */,
 				86B94295175808F800B8EACE /* HZAvailability.h */,
 				86B94296175808F800B8EACE /* HZAvailability.m */,
-				86B9421F1758086300B8EACE /* HZAnalytics.h */,
-				86B942201758086300B8EACE /* HZAnalytics.m */,
 				86B942211758086300B8EACE /* HZAPIClient.h */,
 				86B942221758086300B8EACE /* HZAPIClient.m */,
 				86B942451758086300B8EACE /* HZUserDefaults.h */,
@@ -1821,6 +1819,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				501EBDA919AFE30600CA80ED /* HZMetricsKey.m in Sources */,
 				8641E1F018ADE0FE00CAAEE0 /* HZDevice.m in Sources */,
 				8641E1F218ADE0FE00CAAEE0 /* HZImageView.m in Sources */,
 				500F88EB18E210D400E5D6F8 /* HZAdColony.m in Sources */,
@@ -1835,7 +1834,6 @@
 				E62181B919AFBF520099BE8C /* HZVungleSDK.m in Sources */,
 				866E3A0D18512F2500B6E431 /* HZAdViewController.m in Sources */,
 				86BDB49B175853E100D85F29 /* HZAvailability.m in Sources */,
-				86BDB49C175853E100D85F29 /* HZAnalytics.m in Sources */,
 				86FF907E185842D900BC48BF /* HZQueue.m in Sources */,
 				8680ACA0193ED2E60078B5CF /* HZTestDelegate.m in Sources */,
 				860FD47F187CC056008A35FD /* HZAdFetchRequest.m in Sources */,
@@ -2303,8 +2301,8 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "65BB83E8-C41C-44AC-A496-91716DB0813D";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";
+				PROVISIONING_PROFILE = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2333,8 +2331,8 @@
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";
+				PROVISIONING_PROFILE = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};

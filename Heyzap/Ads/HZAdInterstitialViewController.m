@@ -11,6 +11,8 @@
 #import "HZInterstitialAdModel.h"
 #import "HZAdsManager.h"
 #import "HZInterstitialAd.h"
+#import "HZMetrics.h"
+#import "HZUtils.h"
 
 @interface HZAdInterstitialViewController()
 
@@ -29,6 +31,7 @@
         self.webview.actionDelegate = self;
         self.webview.backgroundColor = [UIColor clearColor];
         [self.webview setHTML: self.ad.HTMLContent];
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" tag:self.ad.tag type:self.ad.adUnit];
     }
     
     return self;
@@ -63,6 +66,16 @@
 }
 
 - (void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    //    Fix for iOS 8 not rotating the view/window correctly.
+    //    https://devforums.apple.com/thread/240069?tstart=15
+    //    http://openradar.appspot.com/radar?id=4933288959410176
+    
+    if (self.ad.enableWindowBoundsReset) {
+        self.view.window.frame = [UIScreen mainScreen].bounds;
+    }
+    
     self.webview.frame = self.view.bounds;
     
     [self didImpression];
@@ -95,10 +108,13 @@
 - (void) onActionCompleted: (id) sender {}
 
 - (void) onActionError: (id) sender {
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue tag:self.ad.tag type:self.ad.adUnit];
+    
     [self hide];
 }
 
 - (void) onActionHide: (id) sender {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"close_clicked" value:@1 tag:self.ad.tag type:self.ad.adUnit];
     [self hide];
 }
 

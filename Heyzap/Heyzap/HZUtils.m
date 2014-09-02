@@ -241,4 +241,16 @@ char *HZNewBase64Encode(
 	return [HZUtils hzQueryStringToDictionary:[url query]];
 }
 
+NSArray *hzMap(NSArray *array, id (^block)(id object)) {
+    NSMutableArray *newArray = [[NSMutableArray alloc] initWithCapacity:array.count];
+    for (id obj in array) {
+        [newArray addObject:block(obj)];
+    }
+    return newArray;
+}
+
+BOOL hziOS8Plus(void) {
+    return [[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0;
+}
+
 @end

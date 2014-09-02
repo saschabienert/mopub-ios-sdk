@@ -15,6 +15,8 @@
 #import "HZAdsManager.h"
 #import "HZAdFetchRequest.h"
 #import "HZAdsAPIClient.h"
+#import "HZDevice.h"
+#import "HZMetrics.h"
 
 @implementation HZAdsFetchManager
 
@@ -29,7 +31,21 @@
         [[HZAdLibrary sharedLibrary] purgeAd: ad];
     }
     
+    const CFTimeInterval startTime = CACurrentMediaTime();
+    [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 tag:request.tag type:request.adUnit];
+    [[HZMetrics sharedInstance] logFetchTimeForTag:request.tag type:request.adUnit];
+    
+    NSString *const connectivity = [[HZDevice currentDevice] HZConnectivityType];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity"
+                                          value:connectivity
+                                            tag:request.tag
+                                           type:request.adUnit];
+    
     [[HZAdsAPIClient sharedClient] loadRequest: request withCompletion: ^(HZAdFetchRequest *aRequest) {
+        const CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
+        const int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
+        [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elapsedMiliseconds) tag:aRequest.tag type:aRequest.adUnit];
+        
         if (aRequest.lastError != nil) {
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", aRequest.lastError]];
@@ -54,7 +70,7 @@
     if (![HZAdModel isResponseValid: request.lastResponse withError: &error]) {
         validAd = NO;
     } else {
-        ad = [HZAdModel modelForResponse: request.lastResponse];
+        ad = [HZAdModel modelForResponse: request.lastResponse adUnit:request.adUnit];
         if (ad == nil) {
             validAd = NO;
         }

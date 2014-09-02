@@ -21,6 +21,7 @@
 @property (nonatomic) NSNumber *alreadyInstalledGame;
 
 @property (nonatomic) NSDictionary *lastResponse;
+@property (nonatomic) NSInteger lastFailingStatusCode;
 @property (nonatomic) NSError *lastError;
 @property (nonatomic, getter = createParams, readonly) NSDictionary *params;
 

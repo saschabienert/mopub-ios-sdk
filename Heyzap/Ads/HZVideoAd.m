@@ -7,6 +7,7 @@
 //
 
 #import "HZVideoAd.h"
+#import "HZMetrics.h"
 #import "HZAdsManager.h"
 #import "HZAdLibrary.h"
 #import "HZAdViewController.h"
