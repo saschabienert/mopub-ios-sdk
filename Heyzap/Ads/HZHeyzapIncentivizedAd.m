@@ -84,8 +84,7 @@ static int HZIncentivizedCreativeIDPin = 0;
 + (BOOL)isAvailableForTag:(NSString *)tag
 {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:HZIncentivizedAdUnit withTag:tag] != nil;
+    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZIncentivizedAdUnit tag:tag];
 }
 
 + (id)alloc {

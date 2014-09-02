@@ -59,8 +59,7 @@ static int HZVideoAdCreativeIDPin = 0;
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZVideoAdUnit withTag: tag] != nil;
+    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZVideoAdUnit tag:tag];
 }
 
 + (void) setCreativeID:(int)creativeID {

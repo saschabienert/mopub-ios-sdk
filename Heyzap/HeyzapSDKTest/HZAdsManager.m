@@ -151,6 +151,20 @@
     return NO;
 }
 
+#pragma mark - Is Available
+
+- (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag
+{
+    [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 tag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey tag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:kIsAvailablePercentDownloadedKey tag:tag type:adUnit];
+    
+    const BOOL available = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: adUnit withTag: tag] != nil;
+    [[HZMetrics sharedInstance] logIsAvailable:available tag:tag type:adUnit];
+    
+    return available;
+}
+
 #pragma mark - Show
 
 - (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag withCompletion: (void (^)(BOOL result, NSError *error))completion  {

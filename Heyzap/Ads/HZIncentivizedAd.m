@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Heyzap. All rights reserved.
 //
 
-#import "HZMetrics.h"
 #import "HZAdsManager.h"
 #import "HZAdViewController.h"
 #import "HZAdLibrary.h"

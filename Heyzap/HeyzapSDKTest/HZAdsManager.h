@@ -39,6 +39,8 @@
 - (void) onStart;
 + (BOOL) isEnabled;
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
+
+- (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag;
 - (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag withCompletion: (void (^)(BOOL result, NSError *error))completion;
 - (void) hideActiveAd;
 

@@ -57,16 +57,13 @@ static BOOL HZInterstitialForceTestCreative = NO;
 
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
     if ([[HZAdsManager sharedManager] isEnabled]) {
-        
         HZAdFetchRequest *request = [self requestWithTag: tag andVideo: YES];
-        
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
             if (completion) {
                 BOOL result = YES;
                 if (error != nil || ad == nil) {
                     result = NO;
                 }
-                
                 completion(result, error);
             }
         }];
@@ -75,8 +72,7 @@ static BOOL HZInterstitialForceTestCreative = NO;
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZInterstitialAdUnit withTag: tag] != nil;
+    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZInterstitialAdUnit tag:tag];
 }
 
 + (void) setCreativeID:(int)creativeID {
