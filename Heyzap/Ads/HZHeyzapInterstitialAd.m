@@ -7,7 +7,6 @@
 //
 
 #import "HZHeyzapInterstitialAd.h"
-#import "HZAnalytics.h"
 #import "HZAdsManager.h"
 #import "HZAdInterstitialViewController.h"
 #import "HZAdVideoViewController.h"

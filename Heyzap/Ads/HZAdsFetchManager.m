@@ -49,8 +49,13 @@
         if (aRequest.lastError != nil) {
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", aRequest.lastError]];
-            
-            [[[HZAdsManager sharedManager] delegateForAdUnit:request.adUnit] didFailToReceiveAdWithTag:request.tag];
+            [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 tag:aRequest.tag type:aRequest.adUnit];
+            if (aRequest.lastFailingStatusCode) {
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@(aRequest.lastFailingStatusCode) tag:request.tag type:request.adUnit];
+            } else if (!connectivity) {
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@"no-connectivity" tag:request.tag type:request.adUnit];
+            }
+            [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: request.tag];
             
             if (completion) {
                 completion(nil, aRequest.tag, aRequest.lastError);

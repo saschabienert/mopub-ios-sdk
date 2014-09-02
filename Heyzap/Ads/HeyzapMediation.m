@@ -110,7 +110,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
             HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
         }
         self.startStatus = [self.setupMediators count] == 0 ? HZMediationStartStatusFailure : HZMediationStartStatusSuccess;
-    } failure:^(NSError *error) {
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         self.startStatus = HZMediationStartStatusFailure;
         HZDLog(@"Error! Failed to get networks from Heyzap. Mediation won't be possible. Error = %@,",error);
     }];
@@ -230,7 +230,7 @@ NSString * const kHZDataKey = @"data";
                                        }
         
                                        
-                                   } failure:^(NSError *error) {
+                                   } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
                                        [self sendFailureMessagesForTag:tag adType:adType wasAttemptingToShow:showImmediately completionBlock:completion underlyingError:error];
                                        HZELog(@"Error! Failed to get the list of networks to mediate from Heyzap. Mediation won't be possible. Error = %@,",error);
                                    }];

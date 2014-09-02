@@ -71,6 +71,7 @@
                                                      tag:[HeyzapAds defaultTagName]
                                               completion:completion];
     }
+    
 }
 
 #pragma mark - Querying Status
