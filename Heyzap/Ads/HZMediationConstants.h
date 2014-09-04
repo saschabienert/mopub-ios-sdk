@@ -32,6 +32,7 @@ extern NSString * const kHZAdapterChartboost;
 extern NSString * const kHZAdapterAdColony;
 extern NSString * const kHZAdapterAdMob;
 extern NSString * const kHZAdapterHeyzap;
+extern NSString * const kHZAdapterCrossPromo;
 extern NSString * const kHZAdapterAppLovin;
 
 + (NSError *)errorWithAdapter:(NSString *)adapter

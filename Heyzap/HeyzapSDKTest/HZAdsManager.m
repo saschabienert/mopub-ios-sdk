@@ -236,6 +236,7 @@
     if (!result || error) {
         // Not using the standard method here.
         [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag: tag andError: error];
+        [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification tag:tag adUnit:adUnit auctionType:auctionType];
     } else {
         [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" tag:tag type:adUnit];
     }
@@ -317,6 +318,17 @@
     } else {
         return self.interstitialDelegateProxy;
     }
+}
+
++ (void)postNotificationName:(NSString *const)notificationName tag:(NSString *)tag adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
+    HZAdInfo *const info = [[HZAdInfo alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName
+                                                        object:info];
+}
+
++ (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider {
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName
+                                                        object:[[HZAdInfo alloc] initWithProvider:infoProvider]];
 }
 
 @end

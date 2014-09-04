@@ -8,10 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol HZAdInfoProvider <NSObject>
+
+- (NSString *)tag;
+- (NSString *)adUnit;
+- (HZAuctionType)auctionType;
+
+@end
+
 /**
  *  This class is used by HZAdLibrary as an immutable dictionary key
  */
-@interface HZAdLibraryKey : NSObject <NSCopying>
+@interface HZAdInfo : NSObject <NSCopying>
 
 @property (nonatomic, readonly) NSString *tag;
 @property (nonatomic, readonly) NSString *adUnit;
@@ -27,5 +35,7 @@
  *  @return The key.
  */
 - (instancetype)initWithTag:(NSString *)tag adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;
+
+- (instancetype)initWithProvider:(id<HZAdInfoProvider>)provider;
 
 @end

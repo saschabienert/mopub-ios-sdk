@@ -10,7 +10,7 @@
 #import "HZAdModel.h"
 #import "HZQueue.h"
 #import "HZMetrics.h"
-#import "HZAdLibraryKey.h"
+#import "HZAdInfo.h"
 
 @interface HZAdLibrary()
 @property (nonatomic, strong) NSMutableDictionary *adDict;
@@ -45,21 +45,21 @@
 - (HZAdModel *)peekAtAdForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType
 {
     tag = [HZAdModel normalizeTag: tag];
-    HZAdLibraryKey *key = [[HZAdLibraryKey alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
+    HZAdInfo *key = [[HZAdInfo alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
     HZQueue *queue =  self.adDict[key];
     return [queue peekTail];
 }
 
 - (HZAdModel *) popAdForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType {
     tag = [HZAdModel normalizeTag: tag];
-    HZAdLibraryKey *key = [[HZAdLibraryKey alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
+    HZAdInfo *key = [[HZAdInfo alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
     HZQueue *queue =  self.adDict[key];
     return [queue dequeue];
 }
 
 - (void) pushAd:(HZAdModel *)ad forAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType {
     tag = [HZAdModel normalizeTag: tag];
-    HZAdLibraryKey *key = [[HZAdLibraryKey alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
+    HZAdInfo *key = [[HZAdInfo alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
     
     HZQueue *const queue = ({
         HZQueue *maybeQueue = self.adDict[key];

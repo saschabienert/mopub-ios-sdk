@@ -72,10 +72,11 @@
 
 #pragma mark - Initializers
 
-- (id) initWithDictionary:(NSDictionary *)dict adUnit:(NSString *)adUnit {
+- (instancetype) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
     self = [super init];
     if (self) {
         _adUnit = adUnit;
+        _auctionType = auctionType;
         
         _impressionID = [HZDictionaryUtils hzObjectForKey: @"impression_id" ofClass: [NSString class] default: @"" withDict: dict];
         _promotedGamePackage = [HZDictionaryUtils hzObjectForKey: @"promoted_game_package" ofClass: [NSNumber class] default: @(0) withDict: dict];
@@ -187,13 +188,13 @@
 }
 
 #pragma mark - Factory
-+ (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit {
++ (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
     NSString *creativeType = [HZDictionaryUtils hzObjectForKey: @"creative_type" ofClass: [NSString class] default: @"interstitial" withDict: response];
     
     if ([HZVideoAdModel isValidForCreativeType: creativeType]) {
-        return [[HZVideoAdModel alloc] initWithDictionary: response adUnit:adUnit];
+        return [[HZVideoAdModel alloc] initWithDictionary: response adUnit:adUnit auctionType:auctionType];
     } else {
-        return [[HZInterstitialAdModel alloc] initWithDictionary: response adUnit:adUnit];
+        return [[HZInterstitialAdModel alloc] initWithDictionary: response adUnit:adUnit auctionType:auctionType];
     }
     
     return nil;

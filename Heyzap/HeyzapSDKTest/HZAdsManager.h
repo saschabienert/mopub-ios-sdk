@@ -50,4 +50,6 @@
 
 - (id)delegateForAdUnit:(NSString *)adUnit;
 
++ (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider;
+
 @end

@@ -6,10 +6,15 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZAdLibraryKey.h"
+#import "HZAdInfo.h"
 
-@implementation HZAdLibraryKey
+@implementation HZAdInfo
 
+- (instancetype)initWithProvider:(id<HZAdInfoProvider>)provider {
+    return [self initWithTag:[provider tag] adUnit:[provider adUnit] auctionType:[provider auctionType]];
+}
+
+// Designated Initializer
 - (instancetype)initWithTag:(NSString *)tag adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType
 {
     NSParameterAssert(tag);
@@ -34,7 +39,7 @@
     if (![object isKindOfClass:[self class]]) {
         return NO;
     }
-    HZAdLibraryKey *other = object;
+    HZAdInfo *other = object;
     return [other.tag isEqualToString:self.tag]
     && [other.adUnit isEqualToString:self.adUnit]
     && other.auctionType == self.auctionType;
@@ -47,7 +52,7 @@
 
 - (instancetype)copyWithZone:(NSZone *)zone
 {
-    return self; // HZAdLibraryKey is immutable; we can safely return ourselves.
+    return self; // HZAdInfo is immutable; we can safely return ourselves.
 }
 
 #pragma mark - Utility
