@@ -153,13 +153,13 @@
 
 #pragma mark - Is Available
 
-- (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag
+- (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType
 {
     [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 tag:tag type:adUnit];
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey tag:tag type:adUnit];
     [[HZMetrics sharedInstance] logDownloadPercentageFor:kIsAvailablePercentDownloadedKey tag:tag type:adUnit];
     
-    const BOOL available = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: adUnit withTag: tag] != nil;
+    const BOOL available =[[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:adUnit tag:tag auctionType:auctionType] != nil;
     [[HZMetrics sharedInstance] logIsAvailable:available tag:tag type:adUnit];
     
     return available;
@@ -167,7 +167,7 @@
 
 #pragma mark - Show
 
-- (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag withCompletion: (void (^)(BOOL result, NSError *error))completion  {
+- (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion  {
     [[HZMetrics sharedInstance] logShowAdForTag:tag type:adUnit];
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey tag:tag type:adUnit];
     [[HZMetrics sharedInstance] logTimeSinceStartFor:@"time_from_start_to_show_ad" tag:tag type:adUnit];
@@ -196,9 +196,9 @@
             tag = [HeyzapAds defaultTagName];
         }
         
-        HZAdModel *ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit: adUnit andTag: tag];
+        HZAdModel *ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:tag auctionType:auctionType];
         while (ad != nil && [ad isExpired]) {
-            ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit: adUnit andTag: tag];
+            ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:tag auctionType:auctionType];
         }
         
         if (ad != nil) {

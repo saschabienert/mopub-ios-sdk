@@ -204,6 +204,7 @@ NSString * const kHZDataKey = @"data";
     HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[HZMediationConstants creativeTypesForAdType:adType]
                                                                          adUnit:adUnit
                                                                             tag:[HeyzapAds defaultTagName]
+                                                                    auctionType:HZAuctionTypeMixed
                                                             andAdditionalParams:nil];
     
     

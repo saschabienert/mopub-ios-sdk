@@ -95,7 +95,7 @@
         } else {
             _requiredAdOrientation = UIInterfaceOrientationMaskLandscape;
         }
-
+        
         _sentClick = NO;
         _sentImpression = NO;
         _sentIncentiveComplete = NO;

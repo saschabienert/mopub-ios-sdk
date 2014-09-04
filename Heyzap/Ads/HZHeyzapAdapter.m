@@ -76,15 +76,15 @@
 {
     switch (type) {
         case HZAdTypeInterstitial: {
-            [HZHeyzapInterstitialAd fetchForTag:tag withCompletion:nil];
+            [HZHeyzapInterstitialAd fetchForTag:tag auctionType:HZAuctionTypeMonetization withCompletion:nil];
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZHeyzapIncentivizedAd fetchWithCompletion:nil];
+            [HZHeyzapIncentivizedAd fetchForAuctionType:HZAuctionTypeMonetization completion:nil];
             break;
         }
         case HZAdTypeVideo: {
-            [HZHeyzapVideoAd fetchForTag:tag withCompletion:nil];
+            [HZHeyzapVideoAd fetchForTag:tag auctionType:HZAuctionTypeMonetization withCompletion:nil];
             break;
         }
     }
@@ -93,11 +93,11 @@
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
     if (type & HZAdTypeVideo) {
-        return [HZHeyzapVideoAd isAvailableForTag:tag];
+        return [HZHeyzapVideoAd isAvailableForTag:tag auctionType:HZAuctionTypeMonetization];
     } else if (type & HZAdTypeInterstitial) {
-        return [HZHeyzapInterstitialAd isAvailableForTag:tag];
+        return [HZHeyzapInterstitialAd isAvailableForTag:tag auctionType:HZAuctionTypeMonetization];
     } else  {
-        return [HZHeyzapIncentivizedAd isAvailableForTag:tag];
+        return [HZHeyzapIncentivizedAd isAvailableForTag:tag auctionType:HZAuctionTypeMonetization];
     }
 }
 
@@ -105,15 +105,15 @@
 {
     switch (type) {
         case HZAdTypeInterstitial: {
-            [HZHeyzapInterstitialAd showForTag:tag completion:nil];
+            [HZHeyzapInterstitialAd showForTag:tag auctionType:HZAuctionTypeMonetization completion:nil];
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZHeyzapIncentivizedAd showForTag:tag];
+            [HZHeyzapIncentivizedAd showForTag:tag auctionType:HZAuctionTypeMonetization];
             break;
         }
         case HZAdTypeVideo: {
-            [HZHeyzapVideoAd showForTag:tag completion:nil];
+            [HZHeyzapVideoAd showForTag:tag auctionType:HZAuctionTypeMonetization completion:nil];
             break;
         }
     }

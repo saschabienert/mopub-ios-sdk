@@ -22,7 +22,7 @@
 
 - (void) fetch: (HZAdFetchRequest *) request withCompletion:(void (^)(HZAdModel *, NSString *, NSError *))completion {
     // Already have the ad, let's bail out.
-    HZAdModel *ad = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: request.adUnit withTag: request.tag];
+    HZAdModel *ad = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:request.adUnit tag:request.tag auctionType:request.auctionType];
     if (ad != nil && !request.shouldSkipCache) {
         // ad is available. no need to fetch another.
         if (![ad isExpired]) return;
@@ -131,7 +131,7 @@
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) %@", ad]];
             
-            [[HZAdLibrary sharedLibrary] pushAd: ad forAdUnit: bRequest.adUnit andTag: bRequest.tag];
+            [[HZAdLibrary sharedLibrary] pushAd:ad forAdUnit:request.adUnit tag:request.tag auctionType:request.auctionType];
             
             [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didReceiveAdWithTag: request.tag];
             
