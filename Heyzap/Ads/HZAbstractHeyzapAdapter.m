@@ -45,7 +45,7 @@
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZHeyzapIncentivizedAd fetchForAuctionType:auctionType completion:nil];
+            [HZHeyzapIncentivizedAd fetchForTag:tag auctionType:auctionType completion:nil];
             break;
         }
         case HZAdTypeVideo: {

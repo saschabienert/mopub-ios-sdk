@@ -64,7 +64,7 @@
 + (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion
 {
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapIncentivizedAd fetchForAuctionType:HZAuctionTypeMixed completion:completion];
+        [HZHeyzapIncentivizedAd fetchForTag: tag auctionType:HZAuctionTypeMixed completion:completion];
     } else {
         [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeIncentivized
                                                      tag:[HeyzapAds defaultTagName]

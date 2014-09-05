@@ -25,7 +25,7 @@
  *
  *  @param completion A block called when the video is fetched or fails to fetch. `result` states whether the fetch was sucessful; the error object describes the issue, if there was one.
  */
-+ (void)fetchForAuctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion;
++ (void)fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion;
 
 /** Dismisses the current ad, if visible. */
 + (void)hide;
