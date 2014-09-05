@@ -320,6 +320,8 @@
     }
 }
 
+// Send out NSNotifications so mediation can get more info than delegate callbacks provide (e.g. auctionType, easier access to adUnit).
+// See HZNotification for details.
 + (void)postNotificationName:(NSString *const)notificationName tag:(NSString *)tag adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
     HZAdInfo *const info = [[HZAdInfo alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationName
