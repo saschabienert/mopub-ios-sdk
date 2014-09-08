@@ -14,6 +14,7 @@
 #import "HZAdMobAdapter.h"
 #import "HZHeyzapAdapter.h"
 #import "HZAppLovinAdapter.h"
+#import "HZApplifierAdapter.h"
 
 @implementation HZBaseAdapter
 
@@ -127,6 +128,8 @@
         return [HZHeyzapAdapter class];
     } else if ([adapterName isEqualToString:kHZAdapterAppLovin]) {
         return [HZAppLovinAdapter class];
+    } else if ([adapterName isEqualToString:kHZAdapterApplifier]) {
+        return [HZApplifierAdapter class];
     } else {
         return nil;
     }
@@ -141,6 +144,7 @@
             [HZAdMobAdapter class],
             [HZHeyzapAdapter class],
             [HZAppLovinAdapter class],
+            [HZApplifierAdapter class],
             nil];
 }
 
