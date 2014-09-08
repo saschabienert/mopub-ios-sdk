@@ -11,6 +11,8 @@
 #pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation HZApplifier
 
+@dynamic delegate;
+
 + (NSString *)hzProxiedClassName
 {
     return @"UnityAds";
