@@ -44,7 +44,7 @@
     
     self.controller = [[SDKTestAppViewController alloc] init];
     
-    [HeyzapAds startWithPublisherID: @"1234"];
+    [HeyzapAds startWithPublisherID: @"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
     [HeyzapAds setDelegate: self.controller];
     [HeyzapAds setIncentiveDelegate: self.controller];
 
