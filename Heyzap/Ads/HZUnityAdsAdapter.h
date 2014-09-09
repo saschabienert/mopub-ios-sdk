@@ -1,5 +1,5 @@
 //
-//  HZApplifierAdapter.h
+//  HZUnityAdsAdapter.h
 //  Heyzap
 //
 //  Created by David Stumm on 9/8/14.
@@ -9,6 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
 
-@interface HZApplifierAdapter : HZBaseAdapter
+@interface HZUnityAdsAdapter : HZBaseAdapter
 
 @end

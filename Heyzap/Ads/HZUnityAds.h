@@ -1,5 +1,5 @@
 //
-//  HZApplifier.h
+//  HZUnityAds.h
 //  Heyzap
 //
 //  Created by David Stumm on 9/8/14.
@@ -26,11 +26,11 @@
 - (void)unityAdsFetchFailed;
 @end
 
-@interface HZApplifier : HZClassProxy
+@interface HZUnityAds : HZClassProxy
 
 @property (nonatomic, weak) id<HZUnityAdsDelegate> delegate;
 
-+ (HZApplifier *)sharedInstance;
++ (HZUnityAds *)sharedInstance;
 + (BOOL)isSupported;
 + (NSString *)getSDKVersion;
 

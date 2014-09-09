@@ -33,7 +33,7 @@ extern NSString * const kHZAdapterAdColony;
 extern NSString * const kHZAdapterAdMob;
 extern NSString * const kHZAdapterHeyzap;
 extern NSString * const kHZAdapterAppLovin;
-extern NSString * const kHZAdapterApplifier;
+extern NSString * const kHZAdapterUnityAds;
 
 + (NSError *)errorWithAdapter:(NSString *)adapter
                        domain:(NSString *)domain

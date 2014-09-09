@@ -1,17 +1,17 @@
 //
-//  HZApplifierAdapter.m
+//  HZUnityAdsAdapter.m
 //  Heyzap
 //
 //  Created by David Stumm on 9/8/14.
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZApplifierAdapter.h"
-#import "HZApplifier.h"
+#import "HZUnityAdsAdapter.h"
+#import "HZUnityAds.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
 
-@interface HZApplifierAdapter() <HZUnityAdsDelegate>
+@interface HZUnityAdsAdapter() <HZUnityAdsDelegate>
 
 @property (nonatomic, strong) NSString *videoZoneID;
 @property (nonatomic, strong) NSString *incentivizedZoneID;
@@ -19,16 +19,16 @@
 
 @end
 
-@implementation HZApplifierAdapter
+@implementation HZUnityAdsAdapter
 
 #pragma mark - Initialization
 
 + (instancetype)sharedInstance
 {
-    static HZApplifierAdapter *proxy;
+    static HZUnityAdsAdapter *proxy;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        proxy = [[HZApplifierAdapter alloc] init];
+        proxy = [[HZUnityAdsAdapter alloc] init];
     });
     return proxy;
 }
@@ -37,7 +37,7 @@
 {
     self = [super init];
     if (self) {
-        [[HZApplifier sharedInstance] setDelegate:self];
+        [[HZUnityAds sharedInstance] setDelegate:self];
     }
     return self;
 }
@@ -46,12 +46,12 @@
 
 + (BOOL)isSDKAvailable
 {
-    return [HZApplifier hzProxiedClassIsAvailable];
+    return [HZUnityAds hzProxiedClassIsAvailable];
 }
 
 + (NSString *)name
 {
-    return kHZAdapterApplifier;
+    return kHZAdapterUnityAds;
 }
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
@@ -78,13 +78,13 @@
     
     
     
-    [[self sharedInstance] setupApplifierWithAppID:appID
+    [[self sharedInstance] setupUnityAdsWithAppID:appID
                                      videoZoneID:videoZoneID incentivizedZoneID:incentivizedZoneID];
     
     return nil;
 }
 
-- (void)setupApplifierWithAppID:(NSString *)appID
+- (void)setupUnityAdsWithAppID:(NSString *)appID
                     videoZoneID:(NSString *)videoZoneID
              incentivizedZoneID:(NSString *)incentivizedZoneID
 {
@@ -96,7 +96,7 @@
     
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     
-    [[HZApplifier sharedInstance] startWithGameId:appID andViewController:vc];
+    [[HZUnityAds sharedInstance] startWithGameId:appID andViewController:vc];
     
     //TODO: set view controller
 }
@@ -110,7 +110,7 @@
 {
     if (![[[UIApplication sharedApplication] keyWindow] rootViewController]) {
         // This is important so we should always NSLog this.
-        NSLog(@"Applifier reqires a root view controller on the keyWindow to show ads. Make sure [[[UIApplication sharedApplication] keyWindow] rootViewController] does not return `nil`.");
+        NSLog(@"UnityAds reqires a root view controller on the keyWindow to show ads. Make sure [[[UIApplication sharedApplication] keyWindow] rootViewController] does not return `nil`.");
         return NO;
     }
     switch (type) {
@@ -119,7 +119,7 @@
             break;
         }
         default: {
-            return [[HZApplifier sharedInstance] canShowAds];
+            return [[HZUnityAds sharedInstance] canShowAds];
             break;
         }
     }
@@ -134,12 +134,12 @@
 {
     if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
-        [[HZApplifier sharedInstance] setZone:self.incentivizedZoneID];
+        [[HZUnityAds sharedInstance] setZone:self.incentivizedZoneID];
     } else {
         self.isShowingIncentivized = NO;
-        [[HZApplifier sharedInstance] setZone:self.videoZoneID];
+        [[HZUnityAds sharedInstance] setZone:self.videoZoneID];
     }
-    [[HZApplifier sharedInstance] show];
+    [[HZUnityAds sharedInstance] show];
 }
 
 #pragma mark - AdColony Delegation

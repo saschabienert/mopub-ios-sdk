@@ -1,15 +1,15 @@
 //
-//  HZApplifier.m
+//  HZUnityAds.m
 //  Heyzap
 //
 //  Created by David Stumm on 9/8/14.
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZApplifier.h"
+#import "HZUnityAds.h"
 
 #pragma clang diagnostic ignored "-Wincomplete-implementation"
-@implementation HZApplifier
+@implementation HZUnityAds
 
 @dynamic delegate;
 

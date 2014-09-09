@@ -14,7 +14,7 @@
 #import "HZAdMobAdapter.h"
 #import "HZHeyzapAdapter.h"
 #import "HZAppLovinAdapter.h"
-#import "HZApplifierAdapter.h"
+#import "HZUnityAdsAdapter.h"
 
 @implementation HZBaseAdapter
 
@@ -128,8 +128,8 @@
         return [HZHeyzapAdapter class];
     } else if ([adapterName isEqualToString:kHZAdapterAppLovin]) {
         return [HZAppLovinAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterApplifier]) {
-        return [HZApplifierAdapter class];
+    } else if ([adapterName isEqualToString:kHZAdapterUnityAds]) {
+        return [HZUnityAdsAdapter class];
     } else {
         return nil;
     }
@@ -144,7 +144,7 @@
             [HZAdMobAdapter class],
             [HZHeyzapAdapter class],
             [HZAppLovinAdapter class],
-            [HZApplifierAdapter class],
+            [HZUnityAdsAdapter class],
             nil];
 }
 
