@@ -7,7 +7,7 @@
 //
 
 #import "NativeAdDetailsTableViewController.h"
-#import "HZNativeAdModel.h"
+#import "HZNativeAd.h"
 
 @interface NativeAdDetailsTableViewController () <SKStoreProductViewControllerDelegate>
 

@@ -51,10 +51,10 @@
 		504E9CA618C9339700402BC3 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
 		504E9CA718C9339B00402BC3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86309F8318873D960000B6E3 /* StoreKit.framework */; };
 		504E9CA818C933A000402BC3 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B7175830A600B8EACE /* AdSupport.framework */; };
-		507A454819BE29CC00C7AEEA /* HZNativeAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A454619BE29CC00C7AEEA /* HZNativeAd.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		507A454919BE29CC00C7AEEA /* HZNativeAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A454719BE29CC00C7AEEA /* HZNativeAd.m */; };
-		507A454D19BE318200C7AEEA /* HZNativeAdModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A454B19BE318200C7AEEA /* HZNativeAdModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		507A454E19BE318200C7AEEA /* HZNativeAdModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A454C19BE318200C7AEEA /* HZNativeAdModel.m */; };
+		507A454819BE29CC00C7AEEA /* HZNativeAdController.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A454619BE29CC00C7AEEA /* HZNativeAdController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		507A454919BE29CC00C7AEEA /* HZNativeAdController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A454719BE29CC00C7AEEA /* HZNativeAdController.m */; };
+		507A454D19BE318200C7AEEA /* HZNativeAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A454B19BE318200C7AEEA /* HZNativeAd.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		507A454E19BE318200C7AEEA /* HZNativeAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A454C19BE318200C7AEEA /* HZNativeAd.m */; };
 		507A455119BE4E5100C7AEEA /* HZNativeAdCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A454F19BE4E5100C7AEEA /* HZNativeAdCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		507A455219BE4E5100C7AEEA /* HZNativeAdCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455019BE4E5100C7AEEA /* HZNativeAdCollection.m */; };
 		507A455919BE762900C7AEEA /* NativeAdTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455819BE762900C7AEEA /* NativeAdTableViewController.m */; };
@@ -255,13 +255,13 @@
 		504E9C9A18C9322100402BC3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		504E9C9C18C9322200402BC3 /* Ads_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Ads_Tests.m; sourceTree = "<group>"; };
 		504E9C9E18C9322200402BC3 /* Ads Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ads Tests-Prefix.pch"; sourceTree = "<group>"; };
-		507A454619BE29CC00C7AEEA /* HZNativeAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAd.h; sourceTree = "<group>"; };
-		507A454719BE29CC00C7AEEA /* HZNativeAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAd.m; sourceTree = "<group>"; };
-		507A454B19BE318200C7AEEA /* HZNativeAdModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAdModel.h; sourceTree = "<group>"; };
-		507A454C19BE318200C7AEEA /* HZNativeAdModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdModel.m; sourceTree = "<group>"; };
+		507A454619BE29CC00C7AEEA /* HZNativeAdController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAdController.h; sourceTree = "<group>"; };
+		507A454719BE29CC00C7AEEA /* HZNativeAdController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdController.m; sourceTree = "<group>"; };
+		507A454B19BE318200C7AEEA /* HZNativeAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAd.h; sourceTree = "<group>"; };
+		507A454C19BE318200C7AEEA /* HZNativeAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAd.m; sourceTree = "<group>"; };
 		507A454F19BE4E5100C7AEEA /* HZNativeAdCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAdCollection.h; sourceTree = "<group>"; };
 		507A455019BE4E5100C7AEEA /* HZNativeAdCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdCollection.m; sourceTree = "<group>"; };
-		507A455319BE708F00C7AEEA /* HZNativeAdModel_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZNativeAdModel_Private.h; sourceTree = "<group>"; };
+		507A455319BE708F00C7AEEA /* HZNativeAd_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZNativeAd_Private.h; sourceTree = "<group>"; };
 		507A455519BE711000C7AEEA /* HZNativeAdCollection_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZNativeAdCollection_Private.h; sourceTree = "<group>"; };
 		507A455719BE762900C7AEEA /* NativeAdTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeAdTableViewController.h; sourceTree = "<group>"; };
 		507A455819BE762900C7AEEA /* NativeAdTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NativeAdTableViewController.m; sourceTree = "<group>"; };
@@ -486,12 +486,12 @@
 		507A454A19BE317000C7AEEA /* Native Ads */ = {
 			isa = PBXGroup;
 			children = (
-				507A454619BE29CC00C7AEEA /* HZNativeAd.h */,
-				507A454719BE29CC00C7AEEA /* HZNativeAd.m */,
+				507A454619BE29CC00C7AEEA /* HZNativeAdController.h */,
+				507A454719BE29CC00C7AEEA /* HZNativeAdController.m */,
 				507A454F19BE4E5100C7AEEA /* HZNativeAdCollection.h */,
 				507A455019BE4E5100C7AEEA /* HZNativeAdCollection.m */,
-				507A454B19BE318200C7AEEA /* HZNativeAdModel.h */,
-				507A454C19BE318200C7AEEA /* HZNativeAdModel.m */,
+				507A454B19BE318200C7AEEA /* HZNativeAd.h */,
+				507A454C19BE318200C7AEEA /* HZNativeAd.m */,
 			);
 			name = "Native Ads";
 			sourceTree = "<group>";
@@ -499,7 +499,7 @@
 		507A455619BE712C00C7AEEA /* Native Ads */ = {
 			isa = PBXGroup;
 			children = (
-				507A455319BE708F00C7AEEA /* HZNativeAdModel_Private.h */,
+				507A455319BE708F00C7AEEA /* HZNativeAd_Private.h */,
 				507A455519BE711000C7AEEA /* HZNativeAdCollection_Private.h */,
 			);
 			name = "Native Ads";
@@ -850,9 +850,9 @@
 				86D0A99C1851897200B3D870 /* HZDownloadHelper.h in Headers */,
 				8680AC9F193ED2E60078B5CF /* HZTestDelegate.h in Headers */,
 				866E39F31850089C00B6E431 /* HZIncentivizedAd.h in Headers */,
-				507A454D19BE318200C7AEEA /* HZNativeAdModel.h in Headers */,
+				507A454D19BE318200C7AEEA /* HZNativeAd.h in Headers */,
 				507A455119BE4E5100C7AEEA /* HZNativeAdCollection.h in Headers */,
-				507A454819BE29CC00C7AEEA /* HZNativeAd.h in Headers */,
+				507A454819BE29CC00C7AEEA /* HZNativeAdController.h in Headers */,
 				501EBDA819AFE22600CA80ED /* HZMetricsKey.h in Headers */,
 				507A456219BE95B000C7AEEA /* HZStorePresenter.h in Headers */,
 				866E39EF1850087B00B6E431 /* HZVideoAd.h in Headers */,
@@ -1215,7 +1215,7 @@
 				86BDB4AF175853E100D85F29 /* HZAFJSONRequestOperation.m in Sources */,
 				86BDB4B0175853E100D85F29 /* HZAFNetworkActivityIndicatorManager.m in Sources */,
 				8680AC9C193ED2DC0078B5CF /* HZDelegateProxy.m in Sources */,
-				507A454919BE29CC00C7AEEA /* HZNativeAd.m in Sources */,
+				507A454919BE29CC00C7AEEA /* HZNativeAdController.m in Sources */,
 				866E3A111851302C00B6E431 /* HZAdInterstitialViewController.m in Sources */,
 				86BDB4B1175853E100D85F29 /* HZAFURLConnectionOperation.m in Sources */,
 				86FF907A18583FF100BC48BF /* HZAdLibrary.m in Sources */,
@@ -1224,7 +1224,7 @@
 				866E39F818500DBE00B6E431 /* HZAdModel.m in Sources */,
 				866E3A191851329500B6E431 /* HZWebView.m in Sources */,
 				B304C4C3197EDC4A009ACC5D /* HZMetrics.m in Sources */,
-				507A454E19BE318200C7AEEA /* HZNativeAdModel.m in Sources */,
+				507A454E19BE318200C7AEEA /* HZNativeAd.m in Sources */,
 				86B09B85175958A50045AA54 /* HZInterstitialAd.m in Sources */,
 				866E39FC1850161900B6E431 /* HZVideoAdModel.m in Sources */,
 			);

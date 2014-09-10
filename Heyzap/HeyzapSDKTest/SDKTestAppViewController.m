@@ -18,11 +18,10 @@
 #import "HZVideoAd.h"
 #import "HZIncentivizedAd.h"
 #import <MessageUI/MessageUI.h>
-#import "HZNativeAd.h"
+#import "HZNativeAdController.h"
 #import "HZNativeAdCollection.h"
-#import "HZNativeAdModel.h"
+#import "HZNativeAd.h"
 #import "NativeAdTableViewController.h"
-#import "NativeAdDetailsTableViewController.h"
 
 #define kTagCreativeIDField 4393
 
@@ -495,7 +494,7 @@ const CGFloat kLeftMargin = 10;
 #pragma mark - Target-Action
 
 - (void)showNativeAds {
-    [HZNativeAd fetchAds:10 tag:nil completion:^(NSError *error, HZNativeAdCollection *collection) {
+    [HZNativeAdController fetchAds:10 tag:nil completion:^(NSError *error, HZNativeAdCollection *collection) {
         if (error) {
             NSLog(@"error = %@",error);
         } else {

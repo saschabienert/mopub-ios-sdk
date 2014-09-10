@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  This object is a thin wrapper around an `NSArray` of `HZNativeAdModel`s. From it, you can access the individual ads and report an impression on all the ads at once.
+ *  This object is a thin wrapper around an `NSArray` of `HZNativeAd`s. From it, you can access the individual ads and report an impression on all the ads at once.
  */
 @interface HZNativeAdCollection : NSObject
 

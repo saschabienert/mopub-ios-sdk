@@ -8,7 +8,7 @@
 
 #import "NativeTableViewCell.h"
 #import "HZImageView.h"
-#import "HZNativeAdModel.h"
+#import "HZNativeAd.h"
 
 @interface NativeTableViewCell()
 
@@ -19,7 +19,7 @@
 
 @implementation NativeTableViewCell
 
-- (void)configureWithAd:(HZNativeAdModel *)nativeAd {
+- (void)configureWithAd:(HZNativeAd *)nativeAd {
     self.appNameLabel.text = nativeAd.appName;
     [self.iconImageView HZsetImageWithURL:nativeAd.iconURL];
 }

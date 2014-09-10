@@ -8,7 +8,7 @@
 
 #import "NativeAdTableViewController.h"
 #import "HZNativeAdCollection.h"
-#import "HZNativeAdModel.h"
+#import "HZNativeAd.h"
 #import "NativeTableViewCell.h"
 #import "NativeAdDetailsTableViewController.h"
 
@@ -30,7 +30,7 @@ NSString *const kNativeCellIdentifier = @"nativeCell";
 
 #pragma mark - Table view data source
 
-- (HZNativeAdModel *)adModelAtIndexPath:(NSIndexPath *)indexPath {
+- (HZNativeAd *)adModelAtIndexPath:(NSIndexPath *)indexPath {
     return self.adCollection.ads[indexPath.row];
 }
 
@@ -43,7 +43,7 @@ NSString *const kNativeCellIdentifier = @"nativeCell";
 {
     NativeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"nativeCellReuseIdentifier" forIndexPath:indexPath];
     
-    HZNativeAdModel *ad = [self adModelAtIndexPath:indexPath];
+    HZNativeAd *ad = [self adModelAtIndexPath:indexPath];
     
     [cell configureWithAd:ad];
     
@@ -52,7 +52,7 @@ NSString *const kNativeCellIdentifier = @"nativeCell";
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-    HZNativeAdModel *nativeAd = [self adModelAtIndexPath:indexPath];
+    HZNativeAd *nativeAd = [self adModelAtIndexPath:indexPath];
     
     NativeAdDetailsTableViewController *vc = segue.destinationViewController;
     vc.nativeAd = nativeAd;

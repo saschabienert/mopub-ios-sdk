@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@class HZNativeAdModel;
+@class HZNativeAd;
 
 @interface NativeTableViewCell : UITableViewCell
 
-- (void)configureWithAd:(HZNativeAdModel *)nativeAd;
+- (void)configureWithAd:(HZNativeAd *)nativeAd;
 
 @end
