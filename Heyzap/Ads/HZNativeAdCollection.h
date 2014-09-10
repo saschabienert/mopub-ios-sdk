@@ -20,6 +20,8 @@
 
 /**
  *  If you request multiple ads and want to show them all at once (say, in a `UITableView`), call this method to report an impression for all of them.
+ *
+ *  @warning Do not reuse an `HZNativeAd` after showing it to the user. This will cause your impressions to be underreported. Instead fetch new ads using `HZNativeAdController.`
  */
 - (void)reportImpressionOnAllAds;
 

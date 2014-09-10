@@ -68,11 +68,13 @@ return nil; \
 
         _iconURL = [NSURL URLWithString:[HZDictionaryUtils hzObjectForKey:kHZNativeAdIconURLKey ofClass:[NSString class] withDict:publicDictionary]];
         CHECK_NOT_NIL(_iconURL);
-
-        _rating = [NSNumber numberWithFloat:[[HZDictionaryUtils hzObjectForKey:kHZNativeAdRatingKey ofClass:[NSString class] withDict:publicDictionary] floatValue]];
-        CHECK_NOT_NIL(_rating);
+        
         
         // Nullable properties
+        _rating = ({
+            NSString *ratingString = [HZDictionaryUtils hzObjectForKey:kHZNativeAdRatingKey ofClass:[NSString class] withDict:publicDictionary];
+            ratingString ? [NSNumber numberWithFloat:[ratingString floatValue]] : nil;
+        });
         _category = [HZDictionaryUtils hzObjectForKey:kHZNativeAdCategoryKey ofClass:[NSString class] withDict:publicDictionary];
         _appDescription = [HZDictionaryUtils hzObjectForKey:kHZNativeAdDescriptionKey ofClass:[NSString class] withDict:publicDictionary];
         _developerName = [HZDictionaryUtils hzObjectForKey:kHZNativeAdDeveloperNameKey ofClass:[NSString class] withDict:publicDictionary];

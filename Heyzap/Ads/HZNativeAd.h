@@ -26,7 +26,7 @@
  */
 @property (nonatomic, readonly) NSURL *iconURL;
 /**
- *  The rating of the game. This number is a value between 0 and 5, incremented in half-step increments (i.e. 0, 0.5, 1.0,... 5.0). This property is guaranteed to be non-nil.
+ *  The rating of the game. This number is a value between 0 and 5, incremented in half-step increments (i.e. 0, 0.5, 1.0,... 5.0). May be nil.
  */
 @property (nonatomic, readonly) NSNumber *rating;
 
@@ -53,11 +53,18 @@
 #pragma mark - Reporting Events
 
 /**
+ *  Call this method when you show an individual ad. If you are showing multiple ads at once, you can report multiple impressions at once using `HZNativeAdCollection`'s `reportImpressionOnAllAds` API (this reduces network requests).
+ *
+ *  @warning Do not reuse an `HZNativeAd` after showing it to the user. This will cause your impressions to be underreported. Instead fetch new ads using `HZNativeAdController.`
+ */
+- (void)reportImpression;
+
+/**
  *  When the user clicks the ad, call this method to present an SKStoreProductViewController for that ad. This method will handle reporting the click to Heyzap.
  *
  *  @param viewController The view controller which should present the `SKStoreProductViewController`.
  *  @param storeDelegate  The delegate for the `SKStoreProductViewController`. The delegate should dismiss the `SKStoreProductViewController` when `productViewControllerDidFinish:` is called on it.
- *  @param completion     In rare cases, `SKStoreProductViewController` will fail to load the App Store, as described in `loadProductWithParameters:completionBlock:`. This method will call the completion block with the values that API returns. If the `SKStoreProductViewController` fails to load, we open the App Store App.
+ *  @param completion     In rare cases, `SKStoreProductViewController` will fail to load the App Store, as described in `loadProductWithParameters:completionBlock:`. This method will call the completion block with the values that API returns. If the `SKStoreProductViewController` fails to load, we open the App Store App using `[UIApplication openURL:]`.
  
  It's recommended that you display a loading spinner before calling this method, in case the app store takes some time to load. You can dismiss the loading spinner in the `completion` block of this method.
  */
