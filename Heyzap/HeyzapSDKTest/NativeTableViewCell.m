@@ -19,6 +19,12 @@
 
 @implementation NativeTableViewCell
 
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    self.iconImageView.layer.cornerRadius = 15;
+    self.iconImageView.layer.masksToBounds = YES;
+}
+
 - (void)configureWithAd:(HZNativeAd *)nativeAd {
     self.appNameLabel.text = nativeAd.appName;
     [self.iconImageView HZsetImageWithURL:nativeAd.iconURL];

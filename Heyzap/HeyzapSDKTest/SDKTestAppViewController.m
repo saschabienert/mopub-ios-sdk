@@ -494,7 +494,7 @@ const CGFloat kLeftMargin = 10;
 #pragma mark - Target-Action
 
 - (void)showNativeAds {
-    [HZNativeAdController fetchAds:10 tag:nil completion:^(NSError *error, HZNativeAdCollection *collection) {
+    [HZNativeAdController fetchAds:20 tag:nil completion:^(NSError *error, HZNativeAdCollection *collection) {
         if (error) {
             NSLog(@"error = %@",error);
         } else {

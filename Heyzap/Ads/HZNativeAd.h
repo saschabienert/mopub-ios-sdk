@@ -22,7 +22,7 @@
  */
 @property (nonatomic, readonly) NSString *appName;
 /**
- *  The URL of the game's icon. Images are in JPEG format (which doesn't support transparency), so you'll need to apply a corner radius yourself. Guaranteed to be non-nil.
+ *  The URL of the game's icon. Images are 256x256 px PNGs. These images do not necessarily already have rounded corners, so you'll need to apply a mask or corner radius yourself. Guaranteed to be non-nil.
  */
 @property (nonatomic, readonly) NSURL *iconURL;
 /**
