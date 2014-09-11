@@ -16,6 +16,7 @@
 
 #import "HZNativeAdCollection_Private.h"
 #import "HZNativeAd_Private.h"
+#import "HZUtils.h"
 
 @implementation HZNativeAdController
 
@@ -47,14 +48,18 @@
         
         HZNativeAdCollection *const collection = ({
             NSMutableArray *ads = [NSMutableArray array];
+            NSMutableArray *errors = [NSMutableArray array];
             for (NSDictionary *ad in adsArray) {
-                HZNativeAd *adModel = [[HZNativeAd alloc]initWithDictionary:ad];
+                NSError *error;
+                HZNativeAd *adModel = [[HZNativeAd alloc] initWithDictionary:ad error:&error];
                 if (adModel) {
                     [ads addObject:adModel];
                 } else {
-                    HZELog(@"Invalid native ad model");
+                    [errors addObject:error];
+                    HZELog(@"Error creating native ad = %@",error);
                 }
             }
+            [self reportErrors:errors];
             [[HZNativeAdCollection alloc] initWithAds:ads];
         });
         
@@ -66,6 +71,20 @@
         }
         
     }];
+}
+
++ (void)reportErrors:(NSArray *)errors {
+    if ([errors count]) {
+        NSArray *reasons = hzMap(errors, ^NSString *(NSError *error) {
+            return error.localizedFailureReason;
+        });
+        
+        [[HZAPIClient sharedClient] logMessageToHeyzap:@"Error(s) creating native ads"
+                                                 error:nil
+                                              userInfo:@{
+                                                         @"reasons":[reasons componentsJoinedByString:@", "]
+                                                        }];
+    }
 }
 
 @end

@@ -36,25 +36,27 @@ NSString *const kHZNativeAdRatingKey = @"rating";
 
 @implementation HZNativeAd
 
-#define CHECK_NOT_NIL(value) do { \
+#define CHECK_NOT_NIL(value,name) do { \
 if (value == nil) { \
+*error = [NSError errorWithDomain:@"heyzap" code:3 userInfo:@{NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat: @"Missing value: %@",name]}]; \
 return nil; \
 } \
 } while (0)
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary {
+// Errors *must* have an NSLocalizedFailureReasonKey
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary error:(NSError **)error {
+    NSParameterAssert(error != NULL);
     self = [super init];
     if (self) {
         
         // Private properties
         _impressionID = [HZDictionaryUtils hzObjectForKey:@"impression_id" ofClass:[NSString class] withDict:dictionary];
-        CHECK_NOT_NIL(_impressionID);
+        CHECK_NOT_NIL(_impressionID,@"Impression ID");
         
         _promotedGameAppStoreID = [HZDictionaryUtils hzObjectForKey:@"promoted_game_package" ofClass:[NSNumber class] withDict:dictionary];
-        CHECK_NOT_NIL(_promotedGameAppStoreID);
+        CHECK_NOT_NIL(_promotedGameAppStoreID,@"advertised game App Store ID");
         
         _clickURL = [NSURL URLWithString:[HZDictionaryUtils hzObjectForKey:@"click_url" ofClass:[NSString class] withDict:dictionary]];
-        CHECK_NOT_NIL(_clickURL);
         
         _tag = [HZDictionaryUtils hzObjectForKey:@"tag" ofClass:[NSString class] withDict:dictionary];
         
@@ -64,10 +66,10 @@ return nil; \
         
         // Non-nil properties
         _appName = [HZDictionaryUtils hzObjectForKey:kHZNativeAdAppNameKey ofClass:[NSString class] withDict:publicDictionary];
-        CHECK_NOT_NIL(_appName);
+        CHECK_NOT_NIL(_appName, @"advertised app name");
 
         _iconURL = [NSURL URLWithString:[HZDictionaryUtils hzObjectForKey:kHZNativeAdIconURLKey ofClass:[NSString class] withDict:publicDictionary]];
-        CHECK_NOT_NIL(_iconURL);
+        CHECK_NOT_NIL(_iconURL, @"icon URL");
         
         
         // Nullable properties
