@@ -42,8 +42,6 @@
     
     [HZLog setDebugLevel: HZDebugLevelVerbose];
     
-    [HZLog setDebugLevel: HZDebugLevelError];
-    
     SDKTestAppViewController *mainController = [[SDKTestAppViewController alloc] init];
     
 #if INTEGRATION_TESTING
