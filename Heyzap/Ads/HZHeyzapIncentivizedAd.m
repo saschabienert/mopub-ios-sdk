@@ -28,16 +28,16 @@ static int HZIncentivizedCreativeIDPin = 0;
     }
 }
 
-+ (void)showForTag:(NSString *)tag
++ (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType
 {
     if (![[HZAdsManager sharedManager] isEnabled]) {
         return;
     }
     
-    [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag:tag withCompletion: nil];
+    [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag:tag auctionType:auctionType withCompletion: nil];
 }
 
-+ (void) fetchWithCompletion:(void (^)(BOOL, NSError *))completion {
++ (void)fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion {
     if ([[HZAdsManager sharedManager] isEnabled]) {
         
         NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
@@ -49,7 +49,7 @@ static int HZIncentivizedCreativeIDPin = 0;
             [params setObject: HZIncentivizedAdUserIdentifier forKey: @"user_identifier"];
         }
         
-        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: HZIncentivizedAdCreativeTypes adUnit: HZIncentivizedAdUnit tag: [HeyzapAds defaultTagName] andAdditionalParams: params];
+        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: HZIncentivizedAdCreativeTypes adUnit: HZIncentivizedAdUnit tag: tag auctionType:auctionType andAdditionalParams: params];
         
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
             if (completion) {
@@ -81,10 +81,10 @@ static int HZIncentivizedCreativeIDPin = 0;
     }
 }
 
-+ (BOOL)isAvailableForTag:(NSString *)tag
++ (BOOL)isAvailableForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType
 {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZIncentivizedAdUnit tag:tag];
+    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZIncentivizedAdUnit tag:tag auctionType:auctionType];
 }
 
 + (id)alloc {

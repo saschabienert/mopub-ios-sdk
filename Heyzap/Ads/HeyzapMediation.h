@@ -37,4 +37,7 @@
 
 - (void)setDelegate:(id<HZAdsDelegate>)delegate forAdType:(HZAdType)adType;
 
+HZAdType hzAdTypeFromString(NSString *adUnit);
+NSString * NSStringFromAdType(HZAdType type);
+
 @end

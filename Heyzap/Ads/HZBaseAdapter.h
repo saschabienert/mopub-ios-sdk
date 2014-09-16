@@ -95,4 +95,6 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 + (NSSet *)allAdapterClasses;
 
++ (BOOL)isHeyzapAdapter;
+
 @end

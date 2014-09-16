@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@interface HZAdModel : NSObject
+@interface HZAdModel : NSObject <HZAdInfoProvider>
 
 @property (nonatomic, readonly) NSString *impressionID;
 @property (nonatomic, readonly) NSNumber *promotedGamePackage;
@@ -20,6 +20,7 @@
 @property (nonatomic, assign, readonly) BOOL useModalAppStore;
 @property (nonatomic) NSString *tag;
 @property (nonatomic) NSString *adUnit;
+@property (nonatomic, readonly) HZAuctionType auctionType;
 @property (nonatomic, readonly) int requiredAdOrientation;
 
 @property (nonatomic) BOOL sentClick;
@@ -31,7 +32,7 @@
 @property (nonatomic, readonly) BOOL enableWindowBoundsReset;
 
 #pragma mark - Initializers
-- (id) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit;
+- (instancetype) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;
 
 #pragma mark - Validity
 + (BOOL) isResponseValid:(NSDictionary *)response withError: (NSError **) error;
@@ -49,7 +50,7 @@
 - (Class) controller;
 
 #pragma mark - Factory
-+ (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit;
++ (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;
 
 #pragma mark - Actions
 - (void) doPostFetchActionsWithCompletion: (void (^)(BOOL result))completion;
