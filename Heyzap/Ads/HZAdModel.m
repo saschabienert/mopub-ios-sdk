@@ -153,7 +153,7 @@
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     
-    [[HZAdsAPIClient sharedClient] post: @"register_click" withParams: params success:^(id JSON) {
+    [[HZAdsAPIClient sharedClient] post:kHZRegisterClickEndpoint withParams: params success:^(id JSON) {
         if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @(0) withDict: JSON] intValue] == 200) {
             self.sentClick = YES;
             [HZLog debug: [NSString stringWithFormat: @"(CLICK) %@", self]];
@@ -171,7 +171,7 @@
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     
-    [[HZAdsAPIClient sharedClient] post: @"register_impression" withParams: params success:^(id JSON) {
+    [[HZAdsAPIClient sharedClient] post:kHZRegisterImpressionEndpoint withParams: params success:^(id JSON) {
         if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @(0) withDict: JSON] intValue] == 200) {
             self.sentImpression = YES;
             [HZLog debug: [NSString stringWithFormat: @"(IMPRESSION) %@", self]];

@@ -18,6 +18,10 @@
 #import "HZVideoAd.h"
 #import "HZIncentivizedAd.h"
 #import <MessageUI/MessageUI.h>
+#import "HZNativeAdController.h"
+#import "HZNativeAdCollection.h"
+#import "HZNativeAd.h"
+#import "NativeAdTableViewController.h"
 
 #define kTagCreativeIDField 4393
 
@@ -239,8 +243,16 @@ const CGFloat kLeftMargin = 10;
                 forControlEvents:UIControlEventEditingChanged];
     [self.scrollView addSubview:self.adsTextField];
     
+    UIButton *nativeAdsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    nativeAdsButton.frame = CGRectMake(10.0, CGRectGetMaxY(self.showButton.frame) + 10, 120.0, 25.0);
+    nativeAdsButton.layer.cornerRadius = 4.0;
+    nativeAdsButton.backgroundColor = [UIColor lightTextColor];
+    [nativeAdsButton setTitle:@"Show Native Ad" forState:UIControlStateNormal];
+    [nativeAdsButton addTarget:self action:@selector(showNativeAds) forControlEvents:UIControlEventTouchUpInside];
+    [self.scrollView addSubview:nativeAdsButton];
+    
     self.adUnitSegmentedControl = [[UISegmentedControl alloc] initWithItems: @[@"Interstitial", @"Video", @"Incentivized"]];
-    self.adUnitSegmentedControl.frame = CGRectMake(10, CGRectGetMaxY(self.showButton.frame)+10, self.view.frame.size.width-20, 44);
+    self.adUnitSegmentedControl.frame = CGRectMake(10, CGRectGetMaxY(nativeAdsButton.frame)+10, self.view.frame.size.width-20, 44);
     self.adUnitSegmentedControl.tag = 3203;
     self.adUnitSegmentedControl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     [self.adUnitSegmentedControl setSelectedSegmentIndex: 0];
@@ -492,6 +504,20 @@ const CGFloat kLeftMargin = 10;
 
 #pragma mark - Target-Action
 
+- (void)showNativeAds {
+    [HZNativeAdController fetchAds:20 tag:nil completion:^(NSError *error, HZNativeAdCollection *collection) {
+        if (error) {
+            NSLog(@"error = %@",error);
+        } else {
+            
+            UINavigationController *navController = [[UIStoryboard storyboardWithName:@"Storyboard" bundle:[NSBundle mainBundle]] instantiateInitialViewController];
+            NativeAdTableViewController *vc = (id)navController.topViewController;
+            vc.adCollection = collection;
+            [self presentViewController:navController animated:YES completion:nil];
+        }
+    }];
+}
+
 - (void)creativeIDEditingChanged:(UITextField *)sender
 {
     [self setCreativeID: [sender.text intValue]];
@@ -570,6 +596,14 @@ const CGFloat kLeftMargin = 10;
     }
 }
 
+- (BOOL)shouldAutorotate {
+    return YES;
+}
+
+- (NSUInteger)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskAllButUpsideDown;
+}
+
 #pragma mark - Console
 
 - (void)logToConsole:(NSString *)consoleString
@@ -582,10 +616,6 @@ const CGFloat kLeftMargin = 10;
 //    }
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return YES;
-}
 
 #pragma mark - Cleanup
 
