@@ -111,6 +111,8 @@
 		504E9CA618C9339700402BC3 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
 		504E9CA718C9339B00402BC3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86309F8318873D960000B6E3 /* StoreKit.framework */; };
 		504E9CA818C933A000402BC3 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B7175830A600B8EACE /* AdSupport.framework */; };
+		504FE39B19C8E25000221E01 /* UnityAds.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 504FE39919C8E25000221E01 /* UnityAds.bundle */; };
+		504FE39C19C8E25000221E01 /* UnityAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504FE39A19C8E25000221E01 /* UnityAds.framework */; };
 		505286E118E61BD90060C210 /* HZMediationAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 505286DF18E61BD90060C210 /* HZMediationAPIClient.h */; };
 		505286E218E61BD90060C210 /* HZMediationAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 505286E018E61BD90060C210 /* HZMediationAPIClient.m */; };
 		505351ED18F76550003C531E /* DeviceInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514CB18B68EF600E00E6C /* DeviceInfoViewController.m */; };
@@ -486,6 +488,8 @@
 		504E9C9A18C9322100402BC3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		504E9C9C18C9322200402BC3 /* Ads_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Ads_Tests.m; sourceTree = "<group>"; };
 		504E9C9E18C9322200402BC3 /* Ads Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ads Tests-Prefix.pch"; sourceTree = "<group>"; };
+		504FE39919C8E25000221E01 /* UnityAds.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = UnityAds.bundle; sourceTree = "<group>"; };
+		504FE39A19C8E25000221E01 /* UnityAds.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UnityAds.framework; sourceTree = "<group>"; };
 		505286DF18E61BD90060C210 /* HZMediationAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationAPIClient.h; sourceTree = "<group>"; };
 		505286E018E61BD90060C210 /* HZMediationAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationAPIClient.m; sourceTree = "<group>"; };
 		5053521818F76550003C531E /* MediationTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MediationTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -731,6 +735,7 @@
 				5053520418F76550003C531E /* SystemConfiguration.framework in Frameworks */,
 				50269FDD19B6505C00CD7C88 /* VungleSDK.framework in Frameworks */,
 				5053520518F76550003C531E /* libHeyzapAds.a in Frameworks */,
+				504FE39C19C8E25000221E01 /* UnityAds.framework in Frameworks */,
 				5053520618F76550003C531E /* CoreTelephony.framework in Frameworks */,
 				5053520718F76550003C531E /* StoreKit.framework in Frameworks */,
 				50269FF119B650AF00CD7C88 /* libAppLovinSdk.a in Frameworks */,
@@ -1022,6 +1027,8 @@
 		504FE39819C8E19400221E01 /* UnityAds */ = {
 			isa = PBXGroup;
 			children = (
+				504FE39919C8E25000221E01 /* UnityAds.bundle */,
+				504FE39A19C8E25000221E01 /* UnityAds.framework */,
 			);
 			path = UnityAds;
 			sourceTree = "<group>";
@@ -1783,6 +1790,7 @@
 				50269FDA19B6505C00CD7C88 /* vg_mute_off.png in Resources */,
 				5053521118F76550003C531E /* Default@2x.png in Resources */,
 				5053521318F76550003C531E /* Default-568h@2x.png in Resources */,
+				504FE39B19C8E25000221E01 /* UnityAds.bundle in Resources */,
 				50269FD719B6505C00CD7C88 /* __vungle.db in Resources */,
 				50269FD919B6505C00CD7C88 /* vg_cta.png in Resources */,
 			);
@@ -2184,6 +2192,7 @@
 					2,
 					"$(PROJECT_DIR)/MediationFrameworks/AdColony",
 					"$(PROJECT_DIR)/MediationFrameworks/Vungle/VungleSDK.embeddedframework",
+					"$(PROJECT_DIR)/MediationFrameworks/UnityAds",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
@@ -2227,6 +2236,7 @@
 					2,
 					"$(PROJECT_DIR)/MediationFrameworks/AdColony",
 					"$(PROJECT_DIR)/MediationFrameworks/Vungle/VungleSDK.embeddedframework",
+					"$(PROJECT_DIR)/MediationFrameworks/UnityAds",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
