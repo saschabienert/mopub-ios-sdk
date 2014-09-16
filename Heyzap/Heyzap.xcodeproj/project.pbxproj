@@ -330,7 +330,6 @@
 		E621820E19BE669B0099BE8C /* HZUnityAds.m in Sources */ = {isa = PBXBuildFile; fileRef = E621820C19BE669B0099BE8C /* HZUnityAds.m */; };
 		E621821119BE66A90099BE8C /* HZUnityAdsAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = E621820F19BE66A90099BE8C /* HZUnityAdsAdapter.h */; };
 		E621821219BE66A90099BE8C /* HZUnityAdsAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = E621821019BE66A90099BE8C /* HZUnityAdsAdapter.m */; };
-		E621821519BFAE720099BE8C /* UnityAds.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E621821319BFAE720099BE8C /* UnityAds.bundle */; };
 		E621821619BFAE720099BE8C /* UnityAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E621821419BFAE720099BE8C /* UnityAds.framework */; };
 /* End PBXBuildFile section */
 
@@ -680,7 +679,6 @@
 		E621820C19BE669B0099BE8C /* HZUnityAds.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZUnityAds.m; sourceTree = "<group>"; };
 		E621820F19BE66A90099BE8C /* HZUnityAdsAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZUnityAdsAdapter.h; sourceTree = "<group>"; };
 		E621821019BE66A90099BE8C /* HZUnityAdsAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZUnityAdsAdapter.m; sourceTree = "<group>"; };
-		E621821319BFAE720099BE8C /* UnityAds.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = UnityAds.bundle; path = "../../../../../Downloads/unity-ads-sdk-master/UnityAds.bundle"; sourceTree = "<group>"; };
 		E621821419BFAE720099BE8C /* UnityAds.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UnityAds.framework; path = "../../../../../Downloads/unity-ads-sdk-master/UnityAds.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1021,6 +1019,13 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		504FE39819C8E19400221E01 /* UnityAds */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = UnityAds;
+			sourceTree = "<group>";
+		};
 		505286DE18E61BAD0060C210 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
@@ -1202,6 +1207,7 @@
 				50269FB319B64CB200CD7C88 /* AdMob */,
 				50269FB519B64D5100CD7C88 /* AppLovin */,
 				50269FB119B64B9200CD7C88 /* Chartboost */,
+				504FE39819C8E19400221E01 /* UnityAds */,
 				50269FB419B64CE600CD7C88 /* Vungle */,
 				50269FF219B65D9500CD7C88 /* README.md */,
 			);
@@ -1990,6 +1996,7 @@
 				866E3A0D18512F2500B6E431 /* HZAdViewController.m in Sources */,
 				86BDB49B175853E100D85F29 /* HZAvailability.m in Sources */,
 				86FF907E185842D900BC48BF /* HZQueue.m in Sources */,
+				E621821219BE66A90099BE8C /* HZUnityAdsAdapter.m in Sources */,
 				509E8D4319B9065500ABF2D2 /* HZNotifications.m in Sources */,
 				8680ACA0193ED2E60078B5CF /* HZTestDelegate.m in Sources */,
 				507A455219BE4E5100C7AEEA /* HZNativeAdCollection.m in Sources */,

@@ -39,5 +39,8 @@ Heyzap/MediationFrameworks/AdMob/**
 Heyzap/MediationFrameworks/Chartboost/**
 !Heyzap/MediationFrameworks/Chartboost/.gitkeep
 
+Heyzap/MediationFrameworks/UnityAds/**
+!Heyzap/MediationFrameworks/UnityAds/.gitkeep
+
 Heyzap/MediationFrameworks/Vungle/**
 !Heyzap/MediationFrameworks/Vungle/.gitkeep
