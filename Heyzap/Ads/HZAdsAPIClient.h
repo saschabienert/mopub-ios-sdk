@@ -9,6 +9,9 @@
 #import "HZAPIClient.h"
 #import "HZAdFetchRequest.h"
 
+extern NSString *const kHZRegisterImpressionEndpoint;
+extern NSString *const kHZRegisterClickEndpoint;
+
 @interface HZAdsAPIClient : HZAPIClient
 
 - (void) loadRequest: (HZAdFetchRequest *)request withCompletion: (void (^)(HZAdFetchRequest *request))completion;

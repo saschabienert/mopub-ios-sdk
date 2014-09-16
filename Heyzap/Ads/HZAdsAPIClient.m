@@ -8,6 +8,9 @@
 
 #import "HZAdsAPIClient.h"
 
+NSString *const kHZRegisterImpressionEndpoint = @"register_impression";
+NSString *const kHZRegisterClickEndpoint = @"register_click";
+
 static NSString * const kHZAdsAPIBaseURLString = @"https://ads.heyzap.com/in_game_api/ads/";
 
 @implementation HZAdsAPIClient

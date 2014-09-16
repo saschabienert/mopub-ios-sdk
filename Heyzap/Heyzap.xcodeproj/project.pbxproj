@@ -51,6 +51,23 @@
 		504E9CA618C9339700402BC3 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
 		504E9CA718C9339B00402BC3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86309F8318873D960000B6E3 /* StoreKit.framework */; };
 		504E9CA818C933A000402BC3 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B7175830A600B8EACE /* AdSupport.framework */; };
+		507A454819BE29CC00C7AEEA /* HZNativeAdController.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A454619BE29CC00C7AEEA /* HZNativeAdController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		507A454919BE29CC00C7AEEA /* HZNativeAdController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A454719BE29CC00C7AEEA /* HZNativeAdController.m */; };
+		507A454D19BE318200C7AEEA /* HZNativeAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A454B19BE318200C7AEEA /* HZNativeAd.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		507A454E19BE318200C7AEEA /* HZNativeAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A454C19BE318200C7AEEA /* HZNativeAd.m */; };
+		507A455119BE4E5100C7AEEA /* HZNativeAdCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A454F19BE4E5100C7AEEA /* HZNativeAdCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		507A455219BE4E5100C7AEEA /* HZNativeAdCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455019BE4E5100C7AEEA /* HZNativeAdCollection.m */; };
+		507A455919BE762900C7AEEA /* NativeAdTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455819BE762900C7AEEA /* NativeAdTableViewController.m */; };
+		507A455A19BE762900C7AEEA /* NativeAdTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455819BE762900C7AEEA /* NativeAdTableViewController.m */; };
+		507A455E19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455D19BE80E100C7AEEA /* NativeTableViewCell.m */; };
+		507A455F19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455D19BE80E100C7AEEA /* NativeTableViewCell.m */; };
+		507A456219BE95B000C7AEEA /* HZStorePresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A456019BE95B000C7AEEA /* HZStorePresenter.h */; };
+		507A456319BE95B000C7AEEA /* HZStorePresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A456119BE95B000C7AEEA /* HZStorePresenter.m */; };
+		507A456419BE95B000C7AEEA /* HZStorePresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A456119BE95B000C7AEEA /* HZStorePresenter.m */; };
+		507A457019BF91ED00C7AEEA /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */; };
+		507A457119BF91ED00C7AEEA /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */; };
+		507A457419BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
+		507A457519BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
 		509B5BE418C943B8003A7CB9 /* TestInterstitials.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE318C943B8003A7CB9 /* TestInterstitials.m */; };
 		509B5BE718C94490003A7CB9 /* UIViewController+IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE618C94490003A7CB9 /* UIViewController+IntegrationTests.m */; };
 		509B5BE918C968FA003A7CB9 /* portraitInterstitialRequest.json in Resources */ = {isa = PBXBuildFile; fileRef = 509B5BE818C968FA003A7CB9 /* portraitInterstitialRequest.json */; };
@@ -238,6 +255,23 @@
 		504E9C9A18C9322100402BC3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		504E9C9C18C9322200402BC3 /* Ads_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Ads_Tests.m; sourceTree = "<group>"; };
 		504E9C9E18C9322200402BC3 /* Ads Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ads Tests-Prefix.pch"; sourceTree = "<group>"; };
+		507A454619BE29CC00C7AEEA /* HZNativeAdController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAdController.h; sourceTree = "<group>"; };
+		507A454719BE29CC00C7AEEA /* HZNativeAdController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdController.m; sourceTree = "<group>"; };
+		507A454B19BE318200C7AEEA /* HZNativeAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAd.h; sourceTree = "<group>"; };
+		507A454C19BE318200C7AEEA /* HZNativeAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAd.m; sourceTree = "<group>"; };
+		507A454F19BE4E5100C7AEEA /* HZNativeAdCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAdCollection.h; sourceTree = "<group>"; };
+		507A455019BE4E5100C7AEEA /* HZNativeAdCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdCollection.m; sourceTree = "<group>"; };
+		507A455319BE708F00C7AEEA /* HZNativeAd_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZNativeAd_Private.h; sourceTree = "<group>"; };
+		507A455519BE711000C7AEEA /* HZNativeAdCollection_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZNativeAdCollection_Private.h; sourceTree = "<group>"; };
+		507A455719BE762900C7AEEA /* NativeAdTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeAdTableViewController.h; sourceTree = "<group>"; };
+		507A455819BE762900C7AEEA /* NativeAdTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NativeAdTableViewController.m; sourceTree = "<group>"; };
+		507A455C19BE80E100C7AEEA /* NativeTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeTableViewCell.h; sourceTree = "<group>"; };
+		507A455D19BE80E100C7AEEA /* NativeTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NativeTableViewCell.m; sourceTree = "<group>"; };
+		507A456019BE95B000C7AEEA /* HZStorePresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZStorePresenter.h; sourceTree = "<group>"; };
+		507A456119BE95B000C7AEEA /* HZStorePresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZStorePresenter.m; sourceTree = "<group>"; };
+		507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
+		507A457219BF943700C7AEEA /* NativeAdDetailsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeAdDetailsTableViewController.h; sourceTree = "<group>"; };
+		507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NativeAdDetailsTableViewController.m; sourceTree = "<group>"; };
 		509B5BE318C943B8003A7CB9 /* TestInterstitials.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestInterstitials.m; sourceTree = "<group>"; };
 		509B5BE518C94490003A7CB9 /* UIViewController+IntegrationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+IntegrationTests.h"; sourceTree = "<group>"; };
 		509B5BE618C94490003A7CB9 /* UIViewController+IntegrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+IntegrationTests.m"; sourceTree = "<group>"; };
@@ -449,6 +483,49 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		507A454A19BE317000C7AEEA /* Native Ads */ = {
+			isa = PBXGroup;
+			children = (
+				507A454619BE29CC00C7AEEA /* HZNativeAdController.h */,
+				507A454719BE29CC00C7AEEA /* HZNativeAdController.m */,
+				507A454F19BE4E5100C7AEEA /* HZNativeAdCollection.h */,
+				507A455019BE4E5100C7AEEA /* HZNativeAdCollection.m */,
+				507A454B19BE318200C7AEEA /* HZNativeAd.h */,
+				507A454C19BE318200C7AEEA /* HZNativeAd.m */,
+			);
+			name = "Native Ads";
+			sourceTree = "<group>";
+		};
+		507A455619BE712C00C7AEEA /* Native Ads */ = {
+			isa = PBXGroup;
+			children = (
+				507A455319BE708F00C7AEEA /* HZNativeAd_Private.h */,
+				507A455519BE711000C7AEEA /* HZNativeAdCollection_Private.h */,
+			);
+			name = "Native Ads";
+			sourceTree = "<group>";
+		};
+		507A455B19BE80AA00C7AEEA /* Native Ad Testing */ = {
+			isa = PBXGroup;
+			children = (
+				507A455719BE762900C7AEEA /* NativeAdTableViewController.h */,
+				507A455819BE762900C7AEEA /* NativeAdTableViewController.m */,
+				507A455C19BE80E100C7AEEA /* NativeTableViewCell.h */,
+				507A455D19BE80E100C7AEEA /* NativeTableViewCell.m */,
+				507A457219BF943700C7AEEA /* NativeAdDetailsTableViewController.h */,
+				507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */,
+			);
+			name = "Native Ad Testing";
+			sourceTree = "<group>";
+		};
+		507A456E19BF91DF00C7AEEA /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
 		509B5BED18C96CEA003A7CB9 /* Ads JSON */ = {
 			isa = PBXGroup;
 			children = (
@@ -536,6 +613,7 @@
 				86B09B83175958A50045AA54 /* HZInterstitialAd.m */,
 				866E39ED1850087B00B6E431 /* HZVideoAd.h */,
 				866E39EE1850087B00B6E431 /* HZVideoAd.m */,
+				507A454A19BE317000C7AEEA /* Native Ads */,
 			);
 			name = "Public Interface";
 			sourceTree = "<group>";
@@ -610,12 +688,14 @@
 		86B941E11758056B00B8EACE /* SDK Test App */ = {
 			isa = PBXGroup;
 			children = (
+				507A456E19BF91DF00C7AEEA /* UI */,
 				504514C718B5A59100E00E6C /* BaseTestAppViewController.h */,
 				504514C818B5A59100E00E6C /* BaseTestAppViewController.m */,
 				5045147D18B58C5A00E00E6C /* SDCSegmentedViewController.h */,
 				5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */,
 				862D5340176D12E900C4221F /* SDKTestAppViewController.h */,
 				862D5341176D12E900C4221F /* SDKTestAppViewController.m */,
+				507A455B19BE80AA00C7AEEA /* Native Ad Testing */,
 				504514C418B592CE00E00E6C /* ServerSelectionViewController.h */,
 				504514C518B592CE00E00E6C /* ServerSelectionViewController.m */,
 				504514CA18B68EF600E00E6C /* DeviceInfoViewController.h */,
@@ -715,6 +795,8 @@
 				86FF907C185842D900BC48BF /* HZQueue.m */,
 				8641E1E018AD997800CAAEE0 /* HZDevice.h */,
 				8641E1E118AD997800CAAEE0 /* HZDevice.m */,
+				507A456019BE95B000C7AEEA /* HZStorePresenter.h */,
+				507A456119BE95B000C7AEEA /* HZStorePresenter.m */,
 			);
 			name = Utils;
 			path = Heyzap;
@@ -732,6 +814,7 @@
 		86B9436C17581DA400B8EACE /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				507A455619BE712C00C7AEEA /* Native Ads */,
 				866E39F518500DBE00B6E431 /* HZAdModel.h */,
 				866E39F618500DBE00B6E431 /* HZAdModel.m */,
 				866E39F91850161900B6E431 /* HZVideoAdModel.h */,
@@ -767,7 +850,11 @@
 				86D0A99C1851897200B3D870 /* HZDownloadHelper.h in Headers */,
 				8680AC9F193ED2E60078B5CF /* HZTestDelegate.h in Headers */,
 				866E39F31850089C00B6E431 /* HZIncentivizedAd.h in Headers */,
+				507A454D19BE318200C7AEEA /* HZNativeAd.h in Headers */,
+				507A455119BE4E5100C7AEEA /* HZNativeAdCollection.h in Headers */,
+				507A454819BE29CC00C7AEEA /* HZNativeAdController.h in Headers */,
 				501EBDA819AFE22600CA80ED /* HZMetricsKey.h in Headers */,
+				507A456219BE95B000C7AEEA /* HZStorePresenter.h in Headers */,
 				866E39EF1850087B00B6E431 /* HZVideoAd.h in Headers */,
 				866E3A0C18512F2500B6E431 /* HZAdViewController.h in Headers */,
 				50BDD00118B8183200265212 /* HZDictionaryUtils.h in Headers */,
@@ -932,6 +1019,7 @@
 				50A36AE718C9405A00FA84F0 /* Default.png in Resources */,
 				50A36AE818C9405A00FA84F0 /* Default@2x.png in Resources */,
 				50A36AE918C9405A00FA84F0 /* Default-568h@2x.png in Resources */,
+				507A457119BF91ED00C7AEEA /* Storyboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -943,6 +1031,7 @@
 				86B941EE1758056B00B8EACE /* Default.png in Resources */,
 				86B941F01758056B00B8EACE /* Default@2x.png in Resources */,
 				86B941F21758056B00B8EACE /* Default-568h@2x.png in Resources */,
+				507A457019BF91ED00C7AEEA /* Storyboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1059,13 +1148,17 @@
 			files = (
 				50A36AD218C9405A00FA84F0 /* DeviceInfoViewController.m in Sources */,
 				50A36AD418C9405A00FA84F0 /* main.m in Sources */,
+				507A456419BE95B000C7AEEA /* HZStorePresenter.m in Sources */,
 				509B5BE718C94490003A7CB9 /* UIViewController+IntegrationTests.m in Sources */,
+				507A455A19BE762900C7AEEA /* NativeAdTableViewController.m in Sources */,
 				50A36AD518C9405A00FA84F0 /* ServerSelectionViewController.m in Sources */,
 				502BE84F18CD530D00EB6415 /* TestUtilities.m in Sources */,
 				50A36AD618C9405A00FA84F0 /* AppDelegate.m in Sources */,
 				509B5BE418C943B8003A7CB9 /* TestInterstitials.m in Sources */,
 				50A36AD718C9405A00FA84F0 /* SDCSegmentedViewController.m in Sources */,
+				507A457519BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */,
 				50A36AD818C9405A00FA84F0 /* BaseTestAppViewController.m in Sources */,
+				507A455F19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */,
 				50A36AD918C9405A00FA84F0 /* SDKTestAppViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1075,9 +1168,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				504514CC18B68EF600E00E6C /* DeviceInfoViewController.m in Sources */,
+				507A455E19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */,
 				86B941E81758056B00B8EACE /* main.m in Sources */,
 				504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */,
+				507A455919BE762900C7AEEA /* NativeAdTableViewController.m in Sources */,
 				86B941EC1758056B00B8EACE /* AppDelegate.m in Sources */,
+				507A457419BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */,
 				5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */,
 				504514C918B5A59100E00E6C /* BaseTestAppViewController.m in Sources */,
 				862D5342176D12E900C4221F /* SDKTestAppViewController.m in Sources */,
@@ -1088,6 +1184,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				507A456319BE95B000C7AEEA /* HZStorePresenter.m in Sources */,
 				501EBDA919AFE30600CA80ED /* HZMetricsKey.m in Sources */,
 				8641E1F018ADE0FE00CAAEE0 /* HZDevice.m in Sources */,
 				8641E1F218ADE0FE00CAAEE0 /* HZImageView.m in Sources */,
@@ -1101,6 +1198,7 @@
 				86BDB49B175853E100D85F29 /* HZAvailability.m in Sources */,
 				86FF907E185842D900BC48BF /* HZQueue.m in Sources */,
 				8680ACA0193ED2E60078B5CF /* HZTestDelegate.m in Sources */,
+				507A455219BE4E5100C7AEEA /* HZNativeAdCollection.m in Sources */,
 				860FD47F187CC056008A35FD /* HZAdFetchRequest.m in Sources */,
 				86234AB118581B800071957B /* HZVideoControlView.m in Sources */,
 				860FD47B187BB144008A35FD /* HZAdsFetchManager.m in Sources */,
@@ -1117,6 +1215,7 @@
 				86BDB4AF175853E100D85F29 /* HZAFJSONRequestOperation.m in Sources */,
 				86BDB4B0175853E100D85F29 /* HZAFNetworkActivityIndicatorManager.m in Sources */,
 				8680AC9C193ED2DC0078B5CF /* HZDelegateProxy.m in Sources */,
+				507A454919BE29CC00C7AEEA /* HZNativeAdController.m in Sources */,
 				866E3A111851302C00B6E431 /* HZAdInterstitialViewController.m in Sources */,
 				86BDB4B1175853E100D85F29 /* HZAFURLConnectionOperation.m in Sources */,
 				86FF907A18583FF100BC48BF /* HZAdLibrary.m in Sources */,
@@ -1125,6 +1224,7 @@
 				866E39F818500DBE00B6E431 /* HZAdModel.m in Sources */,
 				866E3A191851329500B6E431 /* HZWebView.m in Sources */,
 				B304C4C3197EDC4A009ACC5D /* HZMetrics.m in Sources */,
+				507A454E19BE318200C7AEEA /* HZNativeAd.m in Sources */,
 				86B09B85175958A50045AA54 /* HZInterstitialAd.m in Sources */,
 				866E39FC1850161900B6E431 /* HZVideoAdModel.m in Sources */,
 			);
@@ -1247,7 +1347,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/HeyzapSDKTest-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Integration Tests";
 				PROVISIONING_PROFILE = "65BB83E8-C41C-44AC-A496-91716DB0813D";
@@ -1271,7 +1371,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/HeyzapSDKTest-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Integration Tests";
@@ -1418,6 +1518,7 @@
 		86B942081758056B00B8EACE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Max Tagher (X49J6W55CT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Max Tagher (X49J6W55CT)";
@@ -1428,7 +1529,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
 				INFOPLIST_FILE = "HeyzapSDKTest/HeyzapSDKTest-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
@@ -1441,6 +1542,7 @@
 		86B942091758056B00B8EACE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Max Tagher (X49J6W55CT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Max Tagher (X49J6W55CT)";
@@ -1451,7 +1553,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
 				INFOPLIST_FILE = "HeyzapSDKTest/HeyzapSDKTest-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1465,6 +1567,7 @@
 		86B943491758108800B8EACE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DSTROOT = /tmp/Ads.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Ads/Ads-Prefix.pch";
@@ -1478,6 +1581,7 @@
 		86B9434A1758108800B8EACE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DSTROOT = /tmp/Ads.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Ads/Ads-Prefix.pch";
