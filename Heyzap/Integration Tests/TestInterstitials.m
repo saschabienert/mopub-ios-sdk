@@ -36,47 +36,58 @@
 
 - (void)testPortraitFullscreenCandyCrush
 {
-    [self testInterstitialWithCreativeID:231237 deviceOrientation:UIDeviceOrientationPortrait];
+    [self testInterstitialWithCreativeID:231237 useTestCreative:NO deviceOrientation:UIDeviceOrientationPortrait];
 }
 
 - (void)testPortraitScreenshotsFarmHeroes
 {
-    [self testInterstitialWithCreativeID:1079355 deviceOrientation:UIDeviceOrientationPortrait];
+    [self testInterstitialWithCreativeID:1079355 useTestCreative:NO deviceOrientation:UIDeviceOrientationPortrait];
 }
 
 - (void)testPortraitSocialStream
 {
-    [self testInterstitialWithCreativeID:512037 deviceOrientation:UIDeviceOrientationPortrait];
+    [self testInterstitialWithCreativeID:512037 useTestCreative:NO deviceOrientation:UIDeviceOrientationPortrait];
 }
 
 #pragma mark - Landscape Tests
 
-- (void)testLandscapeFullscreenGameOfWar
+- (void)testLandscapeFullscreenBookOfRa
 {
-    [self testInterstitialWithCreativeID:495013 deviceOrientation:UIDeviceOrientationLandscapeRight];
+    [self testInterstitialWithCreativeID:2205811 useTestCreative:NO deviceOrientation:UIDeviceOrientationLandscapeRight];
 }
 
-- (void)testLandscapeScreenshotsGameOfWar
+- (void)testLandscapeScreenshotsBookOfRa
 {
-    [self testInterstitialWithCreativeID:495021 deviceOrientation:UIDeviceOrientationLandscapeRight];
+    [self testInterstitialWithCreativeID:2205823 useTestCreative:NO deviceOrientation:UIDeviceOrientationLandscapeRight];
 }
 
 - (void)testLandscapeFullscreenCleanDragonVale
 {
-    [self testInterstitialWithCreativeID:554113 deviceOrientation:UIDeviceOrientationLandscapeRight];
+    [self testInterstitialWithCreativeID:554113 useTestCreative:NO deviceOrientation:UIDeviceOrientationLandscapeRight];
 }
 
-- (void)testInterstitialWithCreativeID:(const int)creativeID deviceOrientation:(const UIDeviceOrientation)orientation
+- (void)testLandscapeTestCreative
+{
+    [self testInterstitialWithCreativeID:0 useTestCreative:YES deviceOrientation:UIDeviceOrientationLandscapeLeft];
+}
+
+- (void)testPortraitTestCreative
+{
+    [self testInterstitialWithCreativeID:0 useTestCreative:YES deviceOrientation:UIDeviceOrientationPortrait];
+}
+
+- (void)testInterstitialWithCreativeID:(const int)creativeID useTestCreative:(BOOL)useTestCreative deviceOrientation:(const UIDeviceOrientation)orientation
 {
     [[SLDevice currentDevice] setOrientation:orientation];
     [self wait:0.5];
     
     
     id <HZAdsDelegate> delegate = mockProtocol(@protocol(HZAdsDelegate));
-    [HeyzapAds setDelegate:delegate];
+    [HZInterstitialAd setDelegate:delegate];
     
     
     dispatch_sync(dispatch_get_main_queue(), ^{
+        [HZInterstitialAd forceTestCreative:useTestCreative];
         [HZInterstitialAd setCreativeID:creativeID];
         [HZInterstitialAd fetch];
     });
@@ -98,10 +109,9 @@
     
     SLAssertNoThrow([verify(delegate) didShowAdWithTag:@"default"], @"Delegate should get didShowAdWithTag callback");
     
-    // I think Subliminal is failing on finding elements in landscape, so just close manually.
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        [HZInterstitialAd hide];
-    });
+    SLElement *closeButton = [SLElement elementWithAccessibilityLabel:@"Close Ad"];
+    [closeButton tap];
+    
     [self wait:1]; // Wait for hide animation to complete.
     SLAssertNoThrow([verify(delegate) didHideAdWithTag:@"default"], @"Delegate should get didHideAd callback");
 }
@@ -119,7 +129,7 @@
     [[SLDevice currentDevice] setOrientation:UIDeviceOrientationLandscapeRight];
     [self wait:0.5];
     id <HZAdsDelegate> delegate = mockProtocol(@protocol(HZAdsDelegate));
-    [HeyzapAds setDelegate:delegate];
+    [HZVideoAd setDelegate:delegate];
     
     static const int videoCreativeID = 1246917;
     dispatch_sync(dispatch_get_main_queue(), ^{
@@ -150,10 +160,9 @@
     SLElement *skipButton = [SLElement elementWithAccessibilityLabel:@"skip"]; // Need to give this a label.
     [UIAElement(skipButton) tap];
     
-    // I think Subliminal is failing on finding elements in landscape, so just close manually.
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        [HZVideoAd hide];
-    });
+    SLElement *closeButton = [SLElement elementWithAccessibilityLabel:@"Close Ad"];
+    [closeButton tap];
+    
     [self wait:1]; // Wait for hide animation to complete.
     SLAssertNoThrow([verify(delegate) didHideAdWithTag:@"default"], @"Delegate should get didHideAd callback");
     SLAssertNoThrow([verify(delegate) didFinishAudio], @"Delegate should get didFinishAudio callback");

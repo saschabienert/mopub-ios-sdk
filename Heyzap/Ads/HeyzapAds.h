@@ -134,12 +134,6 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
  *  A class with miscellaneous Heyzap Ads methods.
  */
 @interface HeyzapAds : NSObject
-/**
- *  Sets the object to receive HZAdsDelegate callbacks
- *
- *  @param delegate An object conforming to the HZAdsDelegate protocol
- */
-+ (void) setDelegate: (id<HZAdsDelegate>) delegate;
 
 /**
  *  Sets the object to receive HZIncentivizedAdDelegate callbacks

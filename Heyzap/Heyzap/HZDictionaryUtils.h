@@ -13,4 +13,8 @@
 + (id) hzObjectForKey:(id)key ofClass:(Class)class default:(id)_default withDict: (NSDictionary *) dict;
 + (NSString*) hzUrlEncodedStringWithDict: (NSDictionary *) dic;
 
++ (id)objectForKey:(id)key ofClass:(Class)class dict:(NSDictionary *)dict error:(NSError **)error;
+
+extern NSString * const kHZMissingPropertyKey;
+
 @end

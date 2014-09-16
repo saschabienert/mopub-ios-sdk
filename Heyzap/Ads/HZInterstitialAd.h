@@ -106,14 +106,10 @@
  */
 + (BOOL) isAvailableForTag: (NSString *) tag;
 
-/** Dismisses the current ad, if visible. */
-+ (void) hide;
-
 
 #pragma mark - Private methods
 
 + (void) setCreativeID:(int)creativeID;
-
-+ (void)showAdWithOptions:(NSDictionary *)options;
++ (void)forceTestCreative:(BOOL)forceTestCreative;
 
 @end

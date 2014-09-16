@@ -33,6 +33,8 @@
 #import <Foundation/Foundation.h>
 #import "HeyzapAds.h"
 
+@protocol HZAdsDelegate;
+
 /** HZVideoAd is responsible for fetching and showing video ads. */
 @interface HZVideoAd : NSObject
 
@@ -102,11 +104,6 @@
  *  @return Whether or not the video is ready to show for the given tag
  */
 + (BOOL) isAvailableForTag: (NSString *) tag;
-
-/**
- *  Dismisses the current ad, if visible.
- */
-+ (void) hide;
 
 # pragma mark - Testing;
 + (void) setCreativeID:(int)creativeID;

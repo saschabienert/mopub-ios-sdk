@@ -66,6 +66,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
                                      @"ios_version": [UIDevice currentDevice].systemVersion,
                                      @"os_version": [UIDevice currentDevice].systemVersion,
                                      @"device_type": [HZAvailability platform],
+                                     @"advertising_id" : [HZUtils deviceID],
                                    } mutableCopy];
     
     if (dictionary) {
@@ -93,11 +94,9 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
 
 - (void) get:(NSString *)endpoint withParams:(NSDictionary *)params success:(HZRequestSuccessBlock)success failure:(HZRequestFailureBlock)failure {
     
-    NSMutableDictionary *requestParams = [HZAPIClient defaultParamsWithDictionary: params];
+    NSMutableDictionary *requestParams = [[self class] defaultParamsWithDictionary: params];
     
     [HZLog debug: [NSString stringWithFormat: @"Client: GET : %@ %@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], requestParams]];
-    
-    //NSLog(@"%@?%@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], [HZDictionaryUtils hzUrlEncodedStringWithDict: requestParams]);
     
     // This method can be called from a background thread or main thread, so we dispatch to the main thread (error if this runs on background b/c recipient modifies the UI)
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -131,7 +130,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
 
 - (void) post:(NSString *)endpoint withParams:(NSDictionary *)params success:(HZRequestSuccessBlock)success failure:(HZRequestFailureBlock)failure {
     
-    NSMutableDictionary *requestParams = [HZAPIClient defaultParamsWithDictionary: params];
+    NSMutableDictionary *requestParams = [[self class] defaultParamsWithDictionary: params];
     
     [HZLog debug: [NSString stringWithFormat: @"Client: POST : %@ %@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], requestParams]];
     

@@ -101,6 +101,8 @@
         }
         
         [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didHideAdWithTag: self.ad.tag];
+        [HZAdsManager postNotificationName:kHeyzapDidHideAdNotification infoProvider:self.ad];
+        
         
         if ([self.ad.adUnit isEqualToString: @"interstitial"]) {
             if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
@@ -128,7 +130,8 @@ static int totalImpressions = 0;
     
     
     if ([self.ad onImpression]) {
-        [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didShowAdWithTag: self.ad.tag];
+        [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didShowAdWithTag:self.ad.tag];
+        [HZAdsManager postNotificationName:kHeyzapDidShowAdNotitification infoProvider:self.ad];
     }
 }
 
@@ -137,7 +140,8 @@ static int totalImpressions = 0;
     [[HZMetrics sharedInstance] logMetricsEvent:@"ad-clicked" value:@1 tag:self.ad.tag type:self.ad.adUnit];
     
     if ([self.ad onClick]) {
-        [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didClickAdWithTag: self.ad.tag];
+        [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didClickAdWithTag:self.ad.tag];
+        [HZAdsManager postNotificationName:kHeyzapDidClickAdNotification infoProvider:self.ad];
     }
 
     NSDictionary *queryDictionary = [HZUtils hzQueryDictionaryFromURL: url];

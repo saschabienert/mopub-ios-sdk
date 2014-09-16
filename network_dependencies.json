@@ -1,0 +1,17 @@
+{
+  "vungle": {
+    "frameworks": ["AVFoundation","CFNetwork","AudioToolbox","CoreMedia","libz","MediaPlayer","QuartzCore","SystemConfiguration","AdSupport","StoreKit","CoreLocation"]
+  },
+  "adcolony": {
+    "frameworks": ["libz","AdSupport","AudioToolbox","AVFoundation","CoreMedia","CoreTelephony","EventKit","EventKitUI","MediaPlayer","MessageUI","QuartzCore","Social","StoreKit","SystemConfiguration"]
+  },
+  "admob": {
+    "frameworks": ["AdSupport","AudioToolbox","AVFoundation","CoreTelephony","MessageUI","StoreKit","SystemConfiguration"]
+  },
+  "chartboost": {
+    "frameworks": ["SystemConfiguration","QuartzCore","AdSupport","StoreKit"]
+  },
+  "applovin": {
+    "frameworks": ["AdSupport","CoreTelephony","MediaPlayer","SystemConfiguration"]
+  }
+}

@@ -25,6 +25,8 @@
 #import "ServerSelectionViewController.h"
 #import "DeviceInfoViewController.h"
 
+#import "HZInterstitialAd.h"
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -36,23 +38,29 @@
             UITextAttributeTextColor: [UIColor whiteColor],
             UITextAttributeFont: [UIFont boldSystemFontOfSize: 24.0]
         }];
-        
     }
     
     [HZLog setDebugLevel: HZDebugLevelVerbose];
     
+    SDKTestAppViewController *mainController = [[SDKTestAppViewController alloc] init];
     
-    self.controller = [[SDKTestAppViewController alloc] init];
+#if INTEGRATION_TESTING
+    // Integration tests don't want autoprefetching interfering with testing callbacks, fetching the wrong ad, etc.
+    [HeyzapAds startWithPublisherID:@"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
+#else
+    [HeyzapAds startWithPublisherID: @"1234"];
+#endif
     
-    [HeyzapAds startWithPublisherID: @"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
-    [HeyzapAds setDelegate: self.controller];
-    [HeyzapAds setIncentiveDelegate: self.controller];
+    
+    [HZInterstitialAd setDelegate:mainController];
+    [HZIncentivizedAd setDelegate:mainController];
+    [HZVideoAd setDelegate:mainController];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
     ServerSelectionViewController *serverController = [[ServerSelectionViewController alloc] init];
     DeviceInfoViewController *deviceController = [[DeviceInfoViewController alloc] init];
-    SDCSegmentedViewController *segmentedController = [[SDCSegmentedViewController alloc] initWithViewControllers:@[self.controller, serverController,deviceController]];
+    SDCSegmentedViewController *segmentedController = [[SDCSegmentedViewController alloc] initWithViewControllers:@[mainController, serverController,deviceController]];
 
     if ([segmentedController respondsToSelector:@selector(edgesForExtendedLayout)]) {
         segmentedController.edgesForExtendedLayout = UIRectEdgeNone;

@@ -86,9 +86,11 @@
     
     if (self.ad.adUnit != nil && [self.ad.adUnit isEqualToString: @"incentivized"]) {
         if (self.didFinishVideo) {
-            [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didCompleteAdWithTag: self.ad.tag];
+            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didCompleteAdWithTag:self.ad.tag];
+            [HZAdsManager postNotificationName:kHeyzapDidCompleteIncentivizedAd infoProvider:self.ad];
         } else {
-            [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFailToCompleteAdWithTag: self.ad.tag];
+            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFailToCompleteAdWithTag:self.ad.tag];
+            [HZAdsManager postNotificationName:kHeyzapDidFailToCompleteIncentivizedAd infoProvider:self.ad];
         }
         
     }
@@ -226,7 +228,8 @@
     switch (sender.tag) {
         case kHZVideoViewTag:
             if (self.didStartVideo) {
-                [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFinishAudio];
+                [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFinishAudio];
+                [HZAdsManager postNotificationName:kHeyzapDidFinishAudio infoProvider:self.ad];
             }
             
             self.didStartVideo = NO;
@@ -249,7 +252,8 @@
     if (sender.tag == kHZVideoViewTag) {
         self.didStartVideo = YES;
         
-        [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] willStartAudio];
+        [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] willStartAudio];
+        [HZAdsManager postNotificationName:kHeyzapWillStartAudio infoProvider:self.ad];
         
         [self didImpression];
     }
@@ -275,7 +279,8 @@
 - (void) onActionCompleted: (UIView *) sender {
     if (sender.tag == kHZVideoViewTag) {
         if (self.didStartVideo) {
-            [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFinishAudio];
+            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFinishAudio];
+            [HZAdsManager postNotificationName:kHeyzapDidFinishAudio infoProvider:self.ad];
         }
     
         self.didStartVideo = NO;
@@ -289,7 +294,8 @@
     [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue tag:self.ad.tag type:self.ad.adUnit];
     
     if (sender.tag == kHZVideoViewTag && self.didStartVideo) {
-        [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFinishAudio];
+        [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFinishAudio];
+        [HZAdsManager postNotificationName:kHeyzapDidFinishAudio infoProvider:self.ad];
     }
     
     if (sender.tag == kHZVideoViewTag && self.ad.postRollInterstitial) {

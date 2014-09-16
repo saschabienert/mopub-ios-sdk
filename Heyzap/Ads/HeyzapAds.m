@@ -35,10 +35,12 @@
 #import "HZLog.h"
 #import "HZAdsManager.h"
 
-#define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"
-#define kHZDefaultTagName @"default"
+#import "HeyzapMediation.h"
 
 @implementation HeyzapAds
+
+#define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"
+#define kHZDefaultTagName @"default"
 
 + (void) startWithPublisherID:(NSString *)publisherID {
     [self startWithPublisherID: publisherID andOptions: HZAdOptionsNone andFramework: nil];
@@ -48,14 +50,15 @@
     [self startWithPublisherID: publisherID andOptions: options andFramework: nil];
 }
 
-
 + (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options andFramework:(NSString *)framework {
-    [HZAdsManager sharedManager];
-
-    if (framework != nil && ![framework isEqualToString: @""]) {
-        [[HZAdsManager sharedManager] setFramework: framework];
+    if (![HeyzapMediation isOnlyHeyzapSDK]) {
+        [[HeyzapMediation sharedInstance] start];
     }
     
+    if (framework && ![framework isEqualToString:@""]) {
+        [[HZAdsManager sharedManager] setFramework:framework];
+    }
+        
     [[HZAdsManager sharedManager] setPublisherID: publisherID];
     [[HZAdsManager sharedManager] setOptions: options];
     [[HZAdsManager sharedManager] setIsDebuggable: NO];
@@ -106,3 +109,4 @@
 
 
 @end
+

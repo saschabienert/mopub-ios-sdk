@@ -30,13 +30,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@protocol HZIncentivizedAdDelegate;
+
 #import <Foundation/Foundation.h>
 #import "HeyzapAds.h"
 
 /** HZIncentivizedAd is responsible for fetching and showing incentivized video ads. */
 @interface HZIncentivizedAd : NSObject
 
-+ (void) setDelegate: (id) delegate;
++ (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate;
 
 /** Shows an incentivized video ad if one is available */
 + (void) show;
@@ -46,9 +48,6 @@
   * @param tag Tag name describing the location or context for the ad to be shown.
   */
 + (void) showForTag: (NSString *) tag;
-
-/** Dismisses the current ad, if visible. */
-+ (void) hide;
 
 /** Fetches an incentivized video ad from Heyzap. */
 + (void) fetch;
@@ -97,7 +96,6 @@
  *  @param userIdentifier Any unique identifier, like a username, email, or ID that your server-side database uses.
  */
 + (void) setUserIdentifier: (NSString *) userIdentifier;
-
 
 + (void) setCreativeID: (int) creativeID;
 @end

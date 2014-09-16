@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Heyzap. All rights reserved.
 //
 
-#import "HZMetrics.h"
 #import "HZAdsManager.h"
 #import "HZAdViewController.h"
 #import "HZAdLibrary.h"
@@ -17,107 +16,89 @@
 #define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
 
 #import "HZIncentivizedAd.h"
-
-static NSString *HZIncentivizedAdUserIdentifier = nil;
-static int HZIncentivizedCreativeIDPin = 0;
+#import "HeyzapMediation.h"
+#import "HZHeyzapIncentivizedAd.h"
 
 @implementation HZIncentivizedAd
 
-+ (void) setDelegate:(id<HZIncentivizedAdDelegate>) delegate {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        [[HZAdsManager sharedManager] setIncentivizedDelegate: delegate];
+#pragma mark - Delegation
+
++ (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate
+{
+    if ([HeyzapMediation isOnlyHeyzapSDK]){
+        [HZHeyzapIncentivizedAd setDelegate:delegate];
+    } else {
+        [[HeyzapMediation sharedInstance] setDelegate:delegate forAdType:HZAdTypeIncentivized];
     }
 }
+
+#pragma mark - Showing Ads
 
 + (void) show {
-    [self showForTag: [HeyzapAds defaultTagName]];
+    [[self class] showForTag:[HeyzapAds defaultTagName]];
 }
 
-+ (void) showForTag: (NSString *) tag {
-    if (![[HZAdsManager sharedManager] isEnabled]) {
-        return;
-    }
-    
-    [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag: tag withCompletion: nil];
-
-}
-
-+ (void) hide {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        [[HZAdsManager sharedManager] hideActiveAd];
++ (void)showForTag:(NSString *)tag
+{
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [HZHeyzapIncentivizedAd showForTag:tag auctionType:HZAuctionTypeMixed];
+    } else {
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:tag completion:nil];
     }
 }
+
+#pragma mark - Fetching Ads
 
 + (void) fetch {
     [self fetchForTag: [HeyzapAds defaultTagName] withCompletion: nil];
 }
 
++ (void)fetchForTag:(NSString *)tag {
+    [[self class] fetchForTag:tag withCompletion:nil];
+}
+
 + (void) fetchWithCompletion:(void (^)(BOOL, NSError *))completion {
-    [self fetchForTag: [HeyzapAds defaultTagName] withCompletion: completion];
+    [[self class] fetchForTag:[HeyzapAds defaultTagName] withCompletion:completion];
 }
 
-+ (void) fetchForTag:(NSString *)tag {
-    [self fetchForTag: tag withCompletion: nil];
++ (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion
+{
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        [HZHeyzapIncentivizedAd fetchForTag: tag auctionType:HZAuctionTypeMixed completion:completion];
+    } else {
+        [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeIncentivized
+                                                     tag:[HeyzapAds defaultTagName]
+                                              completion:completion];
+    }
+    
 }
 
-+ (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
-        
-        NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-        if (HZIncentivizedCreativeIDPin > 0) {
-            [params setObject: [NSString stringWithFormat: @"%i", HZIncentivizedCreativeIDPin] forKey: @"creative_id"];
-        }
-        
-        if (HZIncentivizedAdUserIdentifier != nil) {
-            [params setObject: HZIncentivizedAdUserIdentifier forKey: @"user_identifier"];
-        }
-        
-        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: HZIncentivizedAdCreativeTypes
-                                                                             adUnit: HZIncentivizedAdUnit
-                                                                                tag: tag
-                                                                andAdditionalParams: params];
+#pragma mark - Querying Status
 
-        [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
-            if (completion) {
-                BOOL result = YES;
-                if (error != nil || ad == nil) {
-                    result = NO;
-                    
-                }
-                completion(result, error);
-            }
-        }];
++ (BOOL) isAvailable {
+    return [[self class] isAvailableForTag:[HeyzapAds defaultTagName]];
+}
+
++ (BOOL)isAvailableForTag:(NSString *)tag
+{
+    if ([HeyzapMediation isOnlyHeyzapSDK]) {
+        return [HZHeyzapIncentivizedAd isAvailableForTag:tag auctionType:HZAuctionTypeMixed];
+    } else {
+        return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeIncentivized tag:[HeyzapAds defaultTagName]];
     }
 }
 
+#pragma mark - Heyzap specific
+
 + (void) setUserIdentifier: (NSString *) userIdentifier {
-    HZIncentivizedAdUserIdentifier = userIdentifier;
+    [HZHeyzapIncentivizedAd setUserIdentifier:userIdentifier];
 }
 
 + (void) setCreativeID:(int)creativeID {
-    if (creativeID > 0) {
-        HZIncentivizedCreativeIDPin = creativeID;
-    } else {
-        HZIncentivizedCreativeIDPin = 0;
-    }
+    [HZHeyzapIncentivizedAd setCreativeID:creativeID];
 }
 
-+ (BOOL) isAvailable {
-    return [self isAvailableForTag: [HeyzapAds defaultTagName]];
-}
-
-+ (BOOL) isAvailableForTag: (NSString *) tag {
-    if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 tag:tag type:HZIncentivizedAdUnit];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey tag:tag type:HZIncentivizedAdUnit];
-    [[HZMetrics sharedInstance] logDownloadPercentageFor:kIsAvailablePercentDownloadedKey tag:tag type:HZIncentivizedAdUnit];
-
-    BOOL available = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZIncentivizedAdUnit withTag: tag] != nil;
-    
-    [[HZMetrics sharedInstance] logIsAvailable:available tag:tag type:HZIncentivizedAdUnit];
-    
-    return available;
-}
+#pragma mark - Bookkeeping
 
 + (id)alloc {
     [NSException raise:@"CannotInstantiateStaticClass" format:@"'HZIncentivizedAd' is a static class and cannot be instantiated."];

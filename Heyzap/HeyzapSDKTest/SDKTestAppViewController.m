@@ -65,7 +65,11 @@ typedef enum {
 - (id) init {
     self = [super init];
     if (self) {
+#ifdef MEDIATION
+        self.title = @"Mediation";
+#else
         self.title = @"Ads";
+#endif
     }
     return self;
 }
@@ -95,8 +99,12 @@ typedef enum {
     if(self.logCallbacksSwitch.isOn)[self logToConsole:[NSString stringWithFormat:@"%@:%@",NSStringFromSelector(_cmd),error]];
 }
 
-- (void)willStartAudio { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
-- (void)didFinishAudio { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
+- (void)willStartAudio {
+    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
+}
+- (void)didFinishAudio {
+    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
+}
 
 - (void)didCompleteAdWithTag:(NSString *)tag { if (self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
 
@@ -188,6 +196,9 @@ const CGFloat kLeftMargin = 10;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [HZInterstitialAd setDelegate:self];
+    [HZVideoAd setDelegate:self];
+    [HZIncentivizedAd setDelegate:self];
     
     self.view.accessibilityLabel = kViewAccessibilityLabel;
     
