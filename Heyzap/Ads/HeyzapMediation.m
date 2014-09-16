@@ -39,9 +39,6 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 
 @property (nonatomic, strong) NSSet *setupMediators;
 
-HZAdType hzAdTypeFromString(NSString *adUnit);
-NSString * NSStringFromAdType(HZAdType type);
-
 @property (nonatomic, strong) NSMutableDictionary *sessionDictionary;
 
 @property (nonatomic, strong) NSString *countryCode;
@@ -204,6 +201,7 @@ NSString * const kHZDataKey = @"data";
     HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[HZMediationConstants creativeTypesForAdType:adType]
                                                                          adUnit:adUnit
                                                                             tag:[HeyzapAds defaultTagName]
+                                                                    auctionType:HZAuctionTypeMixed
                                                             andAdditionalParams:nil];
     
     
@@ -256,6 +254,8 @@ NSString * const kHZDataKey = @"data";
         }
     }
     
+    NSLog(@"Preferred mediator list = %@",preferredMediatorList);
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         BOOL successful = NO;
         for (HZBaseAdapter *adapter in preferredMediatorList) {
@@ -274,7 +274,7 @@ NSString * const kHZDataKey = @"data";
             }, timeout);
             
             if (fetchedWithinTimeout) {
-                HZDLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
+                NSLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
                 successful = YES;
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if (completion) { completion(YES,nil); }
@@ -440,7 +440,7 @@ NSString * const kHZDataKey = @"data";
 + (BOOL)isOnlyHeyzapSDK
 {
     NSSet *availableNonHeyzapAdapters = [[HZBaseAdapter allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
-        return ![[adapterClass name] isEqualToString:kHZAdapterHeyzap] && [adapterClass isSDKAvailable];
+        return ![adapterClass isHeyzapAdapter] && [adapterClass isSDKAvailable];
     }]];
     return [availableNonHeyzapAdapters count] == 0;
 }

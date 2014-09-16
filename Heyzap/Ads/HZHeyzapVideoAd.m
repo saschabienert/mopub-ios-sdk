@@ -22,9 +22,9 @@ static int HZVideoAdCreativeIDPin = 0;
 @implementation HZHeyzapVideoAd
 
 
-+ (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
++ (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion {
     if (![[HZAdsManager sharedManager] isEnabled]) return;
-    [[HZAdsManager sharedManager] showForAdUnit: HZVideoAdUnit andTag: tag withCompletion: completion];
+    [[HZAdsManager sharedManager] showForAdUnit: HZVideoAdUnit andTag: tag auctionType:auctionType withCompletion: completion];
 }
 
 + (void) hide {
@@ -33,15 +33,16 @@ static int HZVideoAdCreativeIDPin = 0;
     }
 }
 
-+ (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
++ (void) fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion {
     if ([[HZAdsManager sharedManager] isEnabled]) {
         
         NSDictionary *params = (HZVideoAdCreativeIDPin > 0) ? @{@"creative_id": [NSString stringWithFormat: @"%i", HZVideoAdCreativeIDPin]} : nil;
         
-        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: HZVideoAdCreativeTypes
-                                                                             adUnit: HZVideoAdUnit
-                                                                                tag: tag
-                                                                andAdditionalParams: params];
+        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:HZVideoAdCreativeTypes
+                                                                             adUnit:HZVideoAdUnit
+                                                                                tag:tag
+                                                                        auctionType:auctionType
+                                                                andAdditionalParams:params];
         
         [[HZAdsFetchManager sharedManager] fetch: request
                                   withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
@@ -57,9 +58,9 @@ static int HZVideoAdCreativeIDPin = 0;
     }
 }
 
-+ (BOOL) isAvailableForTag: (NSString *) tag {
++ (BOOL) isAvailableForTag: (NSString *) tag auctionType:(HZAuctionType)auctionType {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZVideoAdUnit tag:tag];
+    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZVideoAdUnit tag:tag auctionType:auctionType];
 }
 
 + (void) setCreativeID:(int)creativeID {

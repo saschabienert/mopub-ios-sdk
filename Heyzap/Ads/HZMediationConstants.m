@@ -21,6 +21,7 @@ NSString * const kHZAdapterChartboost = @"chartboost";
 NSString * const kHZAdapterAdColony = @"adcolony";
 NSString * const kHZAdapterAdMob = @"admob";
 NSString * const kHZAdapterHeyzap = @"heyzap";
+NSString * const kHZAdapterCrossPromo = @"heyzap_cross_promo";
 NSString * const kHZAdapterAppLovin = @"applovin";
 
 #define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]

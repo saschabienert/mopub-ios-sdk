@@ -1,45 +1,42 @@
 //
-//  HZHeyzapProxy.m
+//  HZCrossPromoAdapter.m
 //  Heyzap
 //
-//  Created by Maximilian Tagher on 3/20/14.
+//  Created by Maximilian Tagher on 9/3/14.
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZHeyzapAdapter.h"
-#import "HeyzapAds.h"
-#import "HZMediationConstants.h"
-
+#import "HZCrossPromoAdapter.h"
 #import "HZHeyzapIncentivizedAd.h"
 #import "HZHeyzapInterstitialAd.h"
 #import "HZHeyzapVideoAd.h"
-
 #import "HZAdsManager.h"
+#import "HZMediationConstants.h"
 
-@interface HZHeyzapAdapter()
+@interface HZCrossPromoAdapter()
 
 @end
 
-@implementation HZHeyzapAdapter
+@implementation HZCrossPromoAdapter
 
 + (instancetype)sharedInstance
 {
-    static HZHeyzapAdapter *proxy;
+    static HZCrossPromoAdapter *adapter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        proxy = [[HZHeyzapAdapter alloc] init];
+        adapter = [[HZCrossPromoAdapter alloc] init];
         [[HZAdsManager sharedManager] onStart];
     });
-    return proxy;
+    return adapter;
 }
 
 + (NSString *)name
 {
-    return kHZAdapterHeyzap;
+    return kHZAdapterCrossPromo;
 }
 
 - (HZAuctionType)auctionType {
-    return HZAuctionTypeMonetization;
+    return HZAuctionTypeCrossPromo;
 }
 
 

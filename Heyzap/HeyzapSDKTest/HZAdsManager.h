@@ -40,8 +40,8 @@
 + (BOOL) isEnabled;
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
 
-- (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag;
-- (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag withCompletion: (void (^)(BOOL result, NSError *error))completion;
+- (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
+- (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion;
 - (void) hideActiveAd;
 
 - (void)setInterstitialDelegate:(id<HZAdsDelegate>)delegate;
@@ -49,5 +49,7 @@
 - (void)setVideoDelegate:(id<HZAdsDelegate>)delegate;
 
 - (id)delegateForAdUnit:(NSString *)adUnit;
+
++ (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider;
 
 @end

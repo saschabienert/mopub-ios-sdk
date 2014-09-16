@@ -14,6 +14,7 @@
 #import "HZAdMobAdapter.h"
 #import "HZHeyzapAdapter.h"
 #import "HZAppLovinAdapter.h"
+#import "HZCrossPromoAdapter.h"
 
 @implementation HZBaseAdapter
 
@@ -127,6 +128,8 @@
         return [HZHeyzapAdapter class];
     } else if ([adapterName isEqualToString:kHZAdapterAppLovin]) {
         return [HZAppLovinAdapter class];
+    } else if ([adapterName isEqualToString:kHZAdapterCrossPromo]) {
+        return [HZCrossPromoAdapter class];
     } else {
         return nil;
     }
@@ -141,7 +144,12 @@
             [HZAdMobAdapter class],
             [HZHeyzapAdapter class],
             [HZAppLovinAdapter class],
+            [HZCrossPromoAdapter class],
             nil];
+}
+
++ (BOOL)isHeyzapAdapter {
+    return NO;
 }
 
 @end

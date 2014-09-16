@@ -4,4 +4,8 @@
 
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
+    #import "HZEnums.h"
+    #import "HZNotifications.h"
+    #import "HZAdInfo.h"
 #endif
+

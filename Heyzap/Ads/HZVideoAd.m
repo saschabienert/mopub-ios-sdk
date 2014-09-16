@@ -42,7 +42,7 @@
 + (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
     
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapVideoAd showForTag:tag completion:completion];
+        [HZHeyzapVideoAd showForTag:tag auctionType:HZAuctionTypeMixed completion:completion];
     } else {
         [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo tag:tag completion:completion];
     }
@@ -69,7 +69,7 @@
 
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapVideoAd fetchForTag:tag withCompletion:completion];
+        [HZHeyzapVideoAd fetchForTag:tag auctionType:HZAuctionTypeMixed withCompletion:completion];
     } else {
         [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeVideo tag:tag completion:completion];
     }
@@ -83,7 +83,7 @@
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        return [HZHeyzapVideoAd isAvailableForTag:tag];
+        return [HZHeyzapVideoAd isAvailableForTag:tag auctionType:HZAuctionTypeMixed];
     } else {
         return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeVideo tag:tag];
     }
