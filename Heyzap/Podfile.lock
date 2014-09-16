@@ -10,16 +10,17 @@ PODS:
     - TPWeakProxy (~> 1.0)
   - OHHTTPStubs (3.1.2)
   - Subliminal (1.1.0)
-  - TPWeakProxy (1.0.0)
+  - TPWeakProxy (1.0.1)
 
 DEPENDENCIES:
   - Kiwi/XCTest
   - OCMockito
   - OHHTTPStubs
-  - Subliminal (from `https://github.com/inkling/Subliminal.git`)
+  - Subliminal (from `https://github.com/inkling/Subliminal.git`, branch `shared/XCode6`)
 
 EXTERNAL SOURCES:
   Subliminal:
+    :branch: shared/XCode6
     :git: https://github.com/inkling/Subliminal.git
 
 SPEC CHECKSUMS:
@@ -28,6 +29,6 @@ SPEC CHECKSUMS:
   OCMockito: eca2670b3ce4a457d316b046a36d6f2b980a4da7
   OHHTTPStubs: c1c2007839687eaf9b80f061ce84440515080ebb
   Subliminal: 3fa4291de86aff7a60b799b8a1911311e513e396
-  TPWeakProxy: a23251ba7fbe268c93f809cc072ef834f5063798
+  TPWeakProxy: da4177b6ae5eff685642c1cd9698f71ef7060ea5
 
 COCOAPODS: 0.33.1
