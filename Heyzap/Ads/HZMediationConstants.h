@@ -34,6 +34,7 @@ extern NSString * const kHZAdapterAdMob;
 extern NSString * const kHZAdapterHeyzap;
 extern NSString * const kHZAdapterCrossPromo;
 extern NSString * const kHZAdapterAppLovin;
+extern NSString * const kHZAdapterUnityAds;
 
 + (NSError *)errorWithAdapter:(NSString *)adapter
                        domain:(NSString *)domain

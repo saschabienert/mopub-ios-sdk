@@ -23,6 +23,7 @@ NSString * const kHZAdapterAdMob = @"admob";
 NSString * const kHZAdapterHeyzap = @"heyzap";
 NSString * const kHZAdapterCrossPromo = @"heyzap_cross_promo";
 NSString * const kHZAdapterAppLovin = @"applovin";
+NSString * const kHZAdapterUnityAds = @"unityads";
 
 #define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
 #define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
