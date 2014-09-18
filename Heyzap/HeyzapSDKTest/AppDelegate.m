@@ -48,7 +48,7 @@
     // Integration tests don't want autoprefetching interfering with testing callbacks, fetching the wrong ad, etc.
     [HeyzapAds startWithPublisherID:@"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
 #else
-    [HeyzapAds startWithPublisherID: @"1234"];
+    [HeyzapAds startWithPublisherID: @"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
 #endif
     
     

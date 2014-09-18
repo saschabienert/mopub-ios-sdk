@@ -35,11 +35,8 @@
 {
     self = [super init];
     if (self) {
-        [HZChartboost sharedChartboost].delegate = self;
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(applicationDidBecomeActive:)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
+        [HZChartboost setShouldDisplayLoadingViewForMoreApps:NO];
+        [HZChartboost setShouldPrefetchVideoContent:YES];
     }
     return self;
 }
@@ -67,46 +64,63 @@
     return nil;
 }
 
+- (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature
+{
+    [HZChartboost startWithAppId:appID appSignature:appSignature delegate:self];
+}
+
 + (NSString *)name
 {
     return kHZAdapterChartboost;
 }
 
-- (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature
-{
-    [[HZChartboost sharedChartboost] setAppId:appID];
-    [[HZChartboost sharedChartboost] setAppSignature:appSignature];
-    
-    [[HZChartboost sharedChartboost] startSession];
-}
-
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
-    // Chartboost has tag support, but we're going to use it for geos
-    [[HZChartboost sharedChartboost] cacheInterstitial:[self.delegate countryCode]];
+    switch (type) {
+        case HZAdTypeInterstitial: {
+            [HZChartboost cacheInterstitial: [self.delegate countryCode]];
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            [HZChartboost cacheRewardedVideo:[self.delegate countryCode]];
+            break;
+        }
+        case HZAdTypeVideo: {
+            // Unsupported
+        }
+    }
 }
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    return ([self supportedAdFormats] & type) && [[HZChartboost sharedChartboost] hasCachedInterstitial:[self.delegate countryCode]];
+    switch (type) {
+        case HZAdTypeIncentivized: {
+            return [HZChartboost hasRewardedVideo: [self.delegate countryCode]];
+        }
+        case HZAdTypeInterstitial:
+            return [HZChartboost hasInterstitial: [self.delegate countryCode]];
+        case HZAdTypeVideo:
+            return NO;
+    }
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
-{
-    [[HZChartboost sharedChartboost] showInterstitial:[self.delegate countryCode]];
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag {
+    switch (type) {
+        case HZAdTypeInterstitial:
+            [HZChartboost showInterstitial: [self.delegate countryCode]];
+            break;
+        case HZAdTypeIncentivized:
+            [HZChartboost showRewardedVideo: [self.delegate countryCode]];
+            break;
+        case HZAdTypeVideo:
+            // Unsupported
+            break;
+    }
 }
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeInterstitial;
-}
-
-#pragma mark - NSNotifications
-
-- (void)applicationDidBecomeActive:(NSNotification *)notification
-{
-    // Chartboost requires this to be called each time the app becomes active.
-    [[HZChartboost sharedChartboost] startSession];
+    return HZAdTypeInterstitial | HZAdTypeIncentivized;
 }
 
 #pragma mark - Chartboost Delegate
@@ -133,7 +147,93 @@
  */
 
 - (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
+    [[self class] logError:error];
     self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Chartboost"}];
+    
+}
+
+- (void)didFailToLoadRewardedVideo:(CBLocation)location
+                         withError:(CBLoadError)error {
+    [[self class] logError:error];
+    self.lastIncentivizedError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey:@"Chartboost"}];
+    
+}
+
+- (void)didCacheRewardedVideo:(CBLocation)location {
+    self.lastIncentivizedError = nil;
+}
+
+- (void)didClickRewardedVideo:(CBLocation)location {
+    [self.delegate adapterWasClicked: self];
+}
+
+- (void)didClickInterstitial:(CBLocation)location
+{
+    [self.delegate adapterWasClicked:self];
+}
+
+- (BOOL)shouldRequestInterstitial:(CBLocation)location {
+    return YES;
+}
+
+- (void)didCompleteRewardedVideo:(CBLocation)location
+                      withReward:(int)reward {
+    [self.delegate adapterDidCompleteIncentivizedAd: self];
+}
+
+- (void)didDismissRewardedVideo:(CBLocation)location {
+    [self.delegate adapterDidDismissAd:self];
+}
+
+
+
+/*
+ * didCacheInterstitial
+ *
+ * Passes in the location name that has successfully been cached.
+ *
+ * Is fired on:
+ * - All assets loaded
+ * - Triggered by cacheInterstitial
+ *
+ * Notes:
+ * - Similar to this is: (BOOL)hasCachedInterstitial:(NSString *)location;
+ * Which will return true if a cached interstitial exists for that location
+ */
+
+- (void)didCacheInterstitial:(CBLocation)location {
+    self.lastInterstitialError = nil;
+}
+
+/*
+ * didDismissInterstitial
+ *
+ * This is called when an interstitial is dismissed
+ *
+ * Is fired on:
+ * - Interstitial click
+ * - Interstitial close
+ *
+ * #Pro Tip: Use the delegate method below to immediately re-cache interstitials
+ */
+- (void)didDismissInterstitial:(CBLocation)location {
+    [self.delegate adapterDidDismissAd:self];
+}
+
+/*
+ * shouldRequestInterstitialsInFirstSession
+ *
+ * This sets logic to prevent interstitials from being displayed until the second startSession call
+ *
+ * The default is YES, meaning that it will always request & display interstitials.
+ * If your app displays interstitials before the first time the user plays the game, implement this method to return NO.
+ */
+
+- (BOOL)shouldRequestInterstitialsInFirstSession {
+    return YES;
+}
+
++ (void)logError:(CBLoadError)error {
     switch(error){
         case CBLoadErrorInternetUnavailable: {
             HZDLog(@"Chartboost: Failed to load Interstitial, no Internet connection !");
@@ -163,58 +263,6 @@
             HZDLog(@"Chartboost: Failed to load Interstitial, unknown error !");
         }
     }
-}
-
-- (void)didClickInterstitial:(NSString *)location
-{
-    [self.delegate adapterWasClicked:self];
-}
-
-/*
- * didCacheInterstitial
- *
- * Passes in the location name that has successfully been cached.
- *
- * Is fired on:
- * - All assets loaded
- * - Triggered by cacheInterstitial
- *
- * Notes:
- * - Similar to this is: (BOOL)hasCachedInterstitial:(NSString *)location;
- * Which will return true if a cached interstitial exists for that location
- */
-
-- (void)didCacheInterstitial:(NSString *)location {
-    self.lastInterstitialError = nil;
-}
-
-/*
- * didDismissInterstitial
- *
- * This is called when an interstitial is dismissed
- *
- * Is fired on:
- * - Interstitial click
- * - Interstitial close
- *
- * #Pro Tip: Use the delegate method below to immediately re-cache interstitials
- */
-
-- (void)didDismissInterstitial:(NSString *)location {
-    [self.delegate adapterDidDismissAd:self];
-}
-
-/*
- * shouldRequestInterstitialsInFirstSession
- *
- * This sets logic to prevent interstitials from being displayed until the second startSession call
- *
- * The default is YES, meaning that it will always request & display interstitials.
- * If your app displays interstitials before the first time the user plays the game, implement this method to return NO.
- */
-
-- (BOOL)shouldRequestInterstitialsInFirstSession {
-    return YES;
 }
 
 

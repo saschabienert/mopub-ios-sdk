@@ -163,6 +163,7 @@
 		507A457119BF91ED00C7AEEA /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */; };
 		507A457419BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
 		507A457519BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
+		5094349619CA04080086D564 /* Chartboost.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5094349519CA04080086D564 /* Chartboost.framework */; };
 		509B5BE418C943B8003A7CB9 /* TestInterstitials.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE318C943B8003A7CB9 /* TestInterstitials.m */; };
 		509B5BE718C94490003A7CB9 /* UIViewController+IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE618C94490003A7CB9 /* UIViewController+IntegrationTests.m */; };
 		509B5BE918C968FA003A7CB9 /* portraitInterstitialRequest.json in Resources */ = {isa = PBXBuildFile; fileRef = 509B5BE818C968FA003A7CB9 /* portraitInterstitialRequest.json */; };
@@ -510,6 +511,7 @@
 		507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		507A457219BF943700C7AEEA /* NativeAdDetailsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeAdDetailsTableViewController.h; sourceTree = "<group>"; };
 		507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NativeAdDetailsTableViewController.m; sourceTree = "<group>"; };
+		5094349519CA04080086D564 /* Chartboost.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Chartboost.framework; sourceTree = "<group>"; };
 		509B5BE318C943B8003A7CB9 /* TestInterstitials.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestInterstitials.m; sourceTree = "<group>"; };
 		509B5BE518C94490003A7CB9 /* UIViewController+IntegrationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+IntegrationTests.h"; sourceTree = "<group>"; };
 		509B5BE618C94490003A7CB9 /* UIViewController+IntegrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+IntegrationTests.m"; sourceTree = "<group>"; };
@@ -731,6 +733,7 @@
 				5053520118F76550003C531E /* CFNetwork.framework in Frameworks */,
 				5053520218F76550003C531E /* AVFoundation.framework in Frameworks */,
 				50269FCB19B64F1B00CD7C88 /* libGoogleAdMobAds.a in Frameworks */,
+				5094349619CA04080086D564 /* Chartboost.framework in Frameworks */,
 				5053520318F76550003C531E /* libz.dylib in Frameworks */,
 				5053520418F76550003C531E /* SystemConfiguration.framework in Frameworks */,
 				50269FDD19B6505C00CD7C88 /* VungleSDK.framework in Frameworks */,
@@ -896,6 +899,7 @@
 		50269FB119B64B9200CD7C88 /* Chartboost */ = {
 			isa = PBXGroup;
 			children = (
+				5094349519CA04080086D564 /* Chartboost.framework */,
 			);
 			path = Chartboost;
 			sourceTree = "<group>";
@@ -2193,6 +2197,7 @@
 					"$(PROJECT_DIR)/MediationFrameworks/AdColony",
 					"$(PROJECT_DIR)/MediationFrameworks/Vungle/VungleSDK.embeddedframework",
 					"$(PROJECT_DIR)/MediationFrameworks/UnityAds",
+					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
@@ -2237,6 +2242,7 @@
 					"$(PROJECT_DIR)/MediationFrameworks/AdColony",
 					"$(PROJECT_DIR)/MediationFrameworks/Vungle/VungleSDK.embeddedframework",
 					"$(PROJECT_DIR)/MediationFrameworks/UnityAds",
+					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
