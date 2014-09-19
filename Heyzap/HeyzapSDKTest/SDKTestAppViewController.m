@@ -601,7 +601,7 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (NSUInteger)supportedInterfaceOrientations {
-    return UIInterfaceOrientationMaskAllButUpsideDown;
+    return UIInterfaceOrientationMaskAll;
 }
 
 #pragma mark - Console

@@ -257,7 +257,6 @@ NSString *const kMetricsDir = @"hzMetrics";
 
 
 - (void)sendCachedMetrics {
-    HZDLog(@"Sending cached metrics");
     __block NSArray *metrics = [self getCachedMetrics];
     NSArray *metricIDs = hzMap(metrics, ^NSURL *(NSDictionary *metric) {
         return metric[kMetricID];
@@ -280,8 +279,6 @@ NSString *const kMetricsDir = @"hzMetrics";
         } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
             HZELog(@"Error from server = %@",error);
         }];
-    } else {
-        HZDLog(@"No metrics");
     }
 }
 
