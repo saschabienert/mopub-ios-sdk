@@ -49,7 +49,6 @@
     [self.webview stopLoading];
     self.webview.delegate = nil;
     [self.webview removeFromSuperview];
-//    [self.webview HZcleanForDealloc];
     
     self.webview = nil;
 }

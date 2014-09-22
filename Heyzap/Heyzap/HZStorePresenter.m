@@ -9,6 +9,7 @@
 #import "HZStorePresenter.h"
 #import "HZDevice.h"
 #import "HZAdsAPIClient.h"
+#import "HZUtils.h"
 @import StoreKit;
 
 @interface HZStorePresenter() <UIWebViewDelegate>
@@ -37,6 +38,12 @@
                     clickURL:(NSURL *)clickURL
                 impressionID:(NSString *)impressionID
                   completion:(void(^)(BOOL result, NSError *error))completion {
+    
+    // Override app store ID from the click URL, if applicable.
+    NSString *const clickURLAppID = [HZUtils hzQueryDictionaryFromURL:clickURL][@"app_id"];
+    if (clickURLAppID && clickURLAppID.intValue) {
+        appStoreID = [NSNumber numberWithInt:clickURLAppID.intValue];
+    }
     
     if(NSClassFromString(@"SKStoreProductViewController") && appStoreID && useModalAppStore) { // Checks for iOS 6 feature.
         if (clickURL) {

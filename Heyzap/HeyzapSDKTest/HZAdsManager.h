@@ -22,7 +22,7 @@
 @property (nonatomic, assign) BOOL isDebuggable;
 
 #pragma mark - Active Controller
-@property (nonatomic, assign) HZAdViewController *activeController;
+@property (nonatomic, weak) HZAdViewController *activeController;
 
 #pragma mark - Global Status Delegates
 //@property (nonatomic, weak) id<HZAdsDelegate> statusDelegate;
