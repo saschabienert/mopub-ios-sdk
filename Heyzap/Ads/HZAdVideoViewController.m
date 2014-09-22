@@ -159,14 +159,6 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear: animated];
     
-    //    Fix for iOS 8 not rotating the view/window correctly.
-    //    https://devforums.apple.com/thread/240069?tstart=15
-    //    http://openradar.appspot.com/radar?id=4933288959410176
-    
-    if (self.ad.enableWindowBoundsReset) {
-        self.view.window.frame = [UIScreen mainScreen].bounds;
-    }
-    
     self.videoView.frame = self.view.bounds;
     self.webView.frame = self.view.bounds;
     
@@ -200,8 +192,7 @@
     if ([self applicationSupportsLandscape]) {
         return UIInterfaceOrientationMaskLandscape;
     } else {
-        
-        return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: self.window];
+        return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow:[UIApplication sharedApplication].keyWindow];
     }
 }
 

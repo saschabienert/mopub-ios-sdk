@@ -26,7 +26,6 @@
 @interface HZAdViewController : UIViewController
 
 @property (nonatomic) HZAdModel *ad;
-@property (nonatomic) UIWindow *window;
 
 - (id) initWithAd: (HZAdModel *) ad;
 - (void) show;
