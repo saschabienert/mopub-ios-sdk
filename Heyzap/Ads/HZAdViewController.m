@@ -76,14 +76,7 @@
 - (void) hide {
     [[HZMetrics sharedInstance] removeAdForTag:self.ad.tag type:self.ad.adUnit];
     
-    // If we're presenting a view controller (e.g. the SKStoreProductViewController), dismiss that first, otherwise dismiss ourselves.
-    if (self.presentedViewController) {
-        [self.presentedViewController dismissViewControllerAnimated:YES completion:^{
-            [self dismissViewControllerAnimated:YES completion:nil];
-        }];
-    } else {
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     
     [self.ad cleanup];
     
