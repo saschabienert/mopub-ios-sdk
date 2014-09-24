@@ -30,7 +30,6 @@
 
 // iOS 8 Server Side Configurable Properties
 @property (nonatomic) BOOL enable90DegreeTransform;
-@property (nonatomic) BOOL enableWindowBoundsReset;
 
 @end
 
@@ -106,15 +105,6 @@
         _enable90DegreeTransform = [[HZDictionaryUtils hzObjectForKey:@"enable_90_degree_transform"
                                                               ofClass:[NSNumber class]
                                                               default:@(!hziOS8Plus())
-                                                             withDict:dict] boolValue];
-        
-        
-        //    Fix for iOS 8 not rotating the view/window correctly.
-        //    https://devforums.apple.com/thread/240069?tstart=15
-        //    http://openradar.appspot.com/radar?id=4933288959410176
-        _enableWindowBoundsReset = [[HZDictionaryUtils hzObjectForKey:@"enable_window_bounds_reset"
-                                                              ofClass:[NSNumber class]
-                                                              default:@(hziOS8Plus())
                                                              withDict:dict] boolValue];
     }
     

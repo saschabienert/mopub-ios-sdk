@@ -29,7 +29,6 @@
 
 // iOS 8 Server Side Configurable Properties
 @property (nonatomic, readonly) BOOL enable90DegreeTransform;
-@property (nonatomic, readonly) BOOL enableWindowBoundsReset;
 
 #pragma mark - Initializers
 - (instancetype) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;

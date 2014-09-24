@@ -18,7 +18,6 @@
 @interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
 
 @property (nonatomic) UIWebView *clickTrackingWebView;
-@property (nonatomic) UIWindow *originalKeyWindow;
 @property (nonatomic) UIViewController *storeController;
 
 @property (nonatomic) BOOL statusBarHidden;
@@ -50,8 +49,6 @@
         [self.clickTrackingWebView stopLoading];
         self.clickTrackingWebView.delegate = nil;
         [self.clickTrackingWebView removeFromSuperview];
-//        
-//        [self.clickTrackingWebView HZcleanForDealloc];
     }
     
     self.clickTrackingWebView = nil;
@@ -61,55 +58,40 @@
     
     self.statusBarHidden = [UIApplication sharedApplication].statusBarHidden;
     
-    // ** Steal UIWindow
-    // The order of this is important because we are hiding the
-    // status bar, and if the root controller is set before this happens,
-    // the controller's coordinate space assumes the status bar is visible.
-    self.originalKeyWindow = [[UIApplication sharedApplication] keyWindow];
-    self.window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
-    
+    UIViewController *rootVC = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+    if (!rootVC) {
+        NSLog(@"Heyzap requires a root view controller to display an ad. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
+        
+        NSError *const error = [NSError errorWithDomain:@"Heyzap" code:10 userInfo:@{NSLocalizedFailureReasonErrorKey:@"There was no root view controller to display the ad."}];
+        [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFailToShowAdWithTag:self.ad.tag andError:error];
+        [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification infoProvider:self.ad];
+        return;
+    }
+    [rootVC presentViewController:self animated:NO completion:nil];
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
     
-    [self.window setBackgroundColor: [UIColor clearColor]];
-    [self.window makeKeyAndVisible];
-    [self.window setRootViewController: self];
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" tag:self.ad.tag type:self.ad.adUnit];
 }
 
 - (void) hide {
     [[HZMetrics sharedInstance] removeAdForTag:self.ad.tag type:self.ad.adUnit];
     
-    [UIView animateWithDuration: 0.15 delay: 0.0 options: UIViewAnimationOptionCurveEaseOut animations:^{
-        self.view.layer.opacity = 0.0f;
-    } completion:^(BOOL finished) {
-        [self.originalKeyWindow makeKeyAndVisible];
-        [self.window setRootViewController: nil];
-        self.window = nil;
-        
-        [self.ad cleanup];
-        
-        [[HZAdsManager sharedManager] setActiveController: nil];
-
-        // Revert back to old status bar state
-        [[UIApplication sharedApplication] setStatusBarHidden: self.statusBarHidden];
-        
-        //    Fix for iOS 8 not rotating the view/window correctly.
-        //    https://devforums.apple.com/thread/240069?tstart=15
-        //    http://openradar.appspot.com/radar?id=4933288959410176
-        if (self.ad.enableWindowBoundsReset) {
-            self.originalKeyWindow.frame = [UIScreen mainScreen].bounds;
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    
+    [self.ad cleanup];
+    
+    // Revert back to old status bar state
+    [[UIApplication sharedApplication] setStatusBarHidden: self.statusBarHidden];
+    
+    [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didHideAdWithTag: self.ad.tag];
+    [HZAdsManager postNotificationName:kHeyzapDidHideAdNotification infoProvider:self.ad];
+    
+    
+    if ([self.ad.adUnit isEqualToString: @"interstitial"]) {
+        if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
+            [HZInterstitialAd fetchForTag: self.ad.tag];
         }
-        
-        [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didHideAdWithTag: self.ad.tag];
-        [HZAdsManager postNotificationName:kHeyzapDidHideAdNotification infoProvider:self.ad];
-        
-        
-        if ([self.ad.adUnit isEqualToString: @"interstitial"]) {
-            if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
-                [HZInterstitialAd fetchForTag: self.ad.tag];
-            }
-        }
-    }];
+    }
 }
 
 - (void) didClickHeyzapInstall {
@@ -192,7 +174,8 @@ static int totalImpressions = 0;
     if ([HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
         return YES;
     } else {
-        return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: self.window] & UIInterfaceOrientationMaskLandscape;
+        UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+        return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: keyWindow] & UIInterfaceOrientationMaskLandscape;
     }
 }
 
