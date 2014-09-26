@@ -92,7 +92,6 @@ extern "C" {
     void hz_ads_start(int flags) {
         HeyzapUnityAdDelegate *delegate = [[HeyzapUnityAdDelegate alloc] init];
         [HeyzapAds startWithOptions: flags andFramework: @"unity3d"];
-        [HeyzapAds setDebug: YES];
         [HeyzapAds setDebugLevel: HZDebugLevelVerbose];
         [HeyzapAds setFramework: @"unity3d"];
         [HZInterstitialAd setDelegate: delegate];
