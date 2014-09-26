@@ -12,7 +12,7 @@
 /**
  *  Sending delegate messages is a pain since you have to check if the delegate `respondsToSelector:` everywhere. This class transparently forwards selectors to the given `forwardingTarget` if they respond to the selector, otherwise it swallows them, eliminating the `respondsToSelector:` checks.
  */
-@interface DelegateProxy : NSProxy  <HZAdsDelegate, HZIncentivizedAdDelegate>
+@interface HZDelegateProxy : NSProxy  <HZAdsDelegate, HZIncentivizedAdDelegate>
 
 @property (nonatomic, weak) id forwardingTarget;
 

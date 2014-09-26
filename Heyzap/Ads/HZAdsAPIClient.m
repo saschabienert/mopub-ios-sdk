@@ -8,6 +8,9 @@
 
 #import "HZAdsAPIClient.h"
 
+NSString *const kHZRegisterImpressionEndpoint = @"register_impression";
+NSString *const kHZRegisterClickEndpoint = @"register_click";
+
 static NSString * const kHZAdsAPIBaseURLString = @"https://ads.heyzap.com/in_game_api/ads/";
 
 @implementation HZAdsAPIClient
@@ -25,7 +28,9 @@ static NSString * const kHZAdsAPIBaseURLString = @"https://ads.heyzap.com/in_gam
             completion(request);
         }
         
-    } failure:^(NSError *error) {
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+        
+        request.lastFailingStatusCode = operation.response.statusCode;
         request.lastResponse = nil;
         request.lastError = error;
         

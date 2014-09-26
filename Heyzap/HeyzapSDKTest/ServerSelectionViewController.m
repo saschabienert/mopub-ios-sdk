@@ -39,7 +39,7 @@
     const CGFloat kLeftMargin = 5;
     
     self.serverSegmentedControl = ({
-        UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Production",@"Stage 1",@"Stage 2", @"localhost",@"IP Address"]];;
+        UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Prod",@"1",@"2",@"3",@"4",@"5", @"local",@"IP"]];;
         segmentedControl.frame = CGRectMake(kLeftMargin, 20, self.view.frame.size.width-(kLeftMargin * 2), 44);
         segmentedControl.selectedSegmentIndex = 0;
         segmentedControl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -101,10 +101,13 @@
         case 0: { [self setBaseURLToString:@"https://ads.heyzap.com/"]; break; }
         case 1: { [self setBaseURLToString:@"http://ads.stage-one.heyzap.com/"]; break; }
         case 2: { [self setBaseURLToString:@"http://ads.stage-two.heyzap.com/"]; break; }
-        case 3: { [self setBaseURLToString:@"http://localhost:3000/"]; break; }
-        case 4: { [self setBaseURLToString:self.ipAddressField.text]; break; }
+        case 3: { [self setBaseURLToString:@"http://ads.stage-three.heyzap.com/"]; break; }
+        case 4: { [self setBaseURLToString:@"http://ads.stage-four.heyzap.com/"]; break; }
+        case 5: { [self setBaseURLToString:@"http://ads.stage-five.heyzap.com/"]; break; }
+        case 6: { [self setBaseURLToString:@"http://localhost:3000/"]; break; }
+        case 7: { [self setBaseURLToString:self.ipAddressField.text]; break; }
     }
-    NSArray *const titles = @[@"Production",@"Stage One",@"Stage Two",@"localhost",@"IP"];
+    NSArray *const titles = @[@"Production",@"Stage One",@"Stage Two", @"Stage Three", @"Stage Four", @"Stage Five", @"localhost", @"IP"];
     self.title = titles[sender.selectedSegmentIndex];
 }
 

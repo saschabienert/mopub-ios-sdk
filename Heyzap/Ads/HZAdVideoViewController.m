@@ -11,6 +11,8 @@
 #import "HZWebView.h"
 #import "HZVideoAdModel.h"
 #import "HZAdsManager.h"
+#import "HZMetrics.h"
+#import "HZUtils.h"
 
 #define kHZVideoViewTag 1
 #define kHZWebViewTag 2
@@ -34,6 +36,7 @@
         _videoView.tag = kHZVideoViewTag;
         
         if (ad.fileCached || ad.allowFallbacktoStreaming || ad.forceStreaming) {
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" tag:self.ad.tag type:self.ad.adUnit];
             if (![_videoView setVideoURL: [self.ad URLForVideo]]) {
                 return nil;
             }
@@ -83,9 +86,11 @@
     
     if (self.ad.adUnit != nil && [self.ad.adUnit isEqualToString: @"incentivized"]) {
         if (self.didFinishVideo) {
-            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didCompleteAd];
+            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didCompleteAdWithTag:self.ad.tag];
+            [HZAdsManager postNotificationName:kHeyzapDidCompleteIncentivizedAd infoProvider:self.ad];
         } else {
-            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFailToCompleteAd];
+            [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFailToCompleteAdWithTag:self.ad.tag];
+            [HZAdsManager postNotificationName:kHeyzapDidFailToCompleteIncentivizedAd infoProvider:self.ad];
         }
         
     }
@@ -131,7 +136,7 @@
     self.videoView.hidden = YES;
     self.videoView.layer.opacity = 0.0f;
     
-    if (forceRotation) {
+    if (forceRotation && self.ad.enable90DegreeTransform) {
         self.videoView.transform = ninetyDegreeTransform;
         self.webView.transform = ninetyDegreeTransform;
     }
@@ -153,6 +158,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear: animated];
+    
     self.videoView.frame = self.view.bounds;
     self.webView.frame = self.view.bounds;
     
@@ -186,8 +192,7 @@
     if ([self applicationSupportsLandscape]) {
         return UIInterfaceOrientationMaskLandscape;
     } else {
-        
-        return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: self.window];
+        return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow:[UIApplication sharedApplication].keyWindow];
     }
 }
 
@@ -210,10 +215,12 @@
 #pragma mark - Callbacks
 
 - (void) onActionHide: (UIView *) sender {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"close_clicked" value:@1 tag:self.ad.tag type:self.ad.adUnit];
     switch (sender.tag) {
         case kHZVideoViewTag:
             if (self.didStartVideo) {
                 [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFinishAudio];
+                [HZAdsManager postNotificationName:kHeyzapDidFinishAudio infoProvider:self.ad];
             }
             
             self.didStartVideo = NO;
@@ -235,7 +242,9 @@
 - (void) onActionShow: (UIView *) sender {
     if (sender.tag == kHZVideoViewTag) {
         self.didStartVideo = YES;
+        
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] willStartAudio];
+        [HZAdsManager postNotificationName:kHeyzapWillStartAudio infoProvider:self.ad];
         
         [self didImpression];
     }
@@ -262,6 +271,7 @@
     if (sender.tag == kHZVideoViewTag) {
         if (self.didStartVideo) {
             [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFinishAudio];
+            [HZAdsManager postNotificationName:kHeyzapDidFinishAudio infoProvider:self.ad];
         }
     
         self.didStartVideo = NO;
@@ -272,8 +282,11 @@
 
 
 - (void) onActionError: (UIView *) sender {
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue tag:self.ad.tag type:self.ad.adUnit];
+    
     if (sender.tag == kHZVideoViewTag && self.didStartVideo) {
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFinishAudio];
+        [HZAdsManager postNotificationName:kHeyzapDidFinishAudio infoProvider:self.ad];
     }
     
     if (sender.tag == kHZVideoViewTag && self.ad.postRollInterstitial) {

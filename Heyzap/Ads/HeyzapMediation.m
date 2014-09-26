@@ -15,7 +15,6 @@
 #import "HZAdColonyAdapter.h"
 #import "HZVungleAdapter.h"
 #import "HZAdMobAdapter.h"
-#import "HZVGVunglePub.h"
 #import "HZMediationAPIClient.h"
 #import "HZDictionaryUtils.h"
 #import "HZMediationConstants.h"
@@ -24,7 +23,7 @@
 
 // Util
 #import "HZDispatch.h"
-#import "DelegateProxy.h"
+#import "HZDelegateProxy.h"
 
 // Session
 #import "HZMediationSessionKey.h"
@@ -40,9 +39,6 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 
 @property (nonatomic, strong) NSSet *setupMediators;
 
-HZAdType hzAdTypeFromString(NSString *adUnit);
-NSString * NSStringFromAdType(HZAdType type);
-
 @property (nonatomic, strong) NSMutableDictionary *sessionDictionary;
 
 @property (nonatomic, strong) NSString *countryCode;
@@ -50,9 +46,9 @@ NSString * NSStringFromAdType(HZAdType type);
 @property (nonatomic) BOOL startHasBeenCalled;
 @property (nonatomic) HZMediationStartStatus startStatus;
 
-@property (nonatomic, strong) DelegateProxy *interstitialDelegateProxy;
-@property (nonatomic, strong) DelegateProxy *incentivizedDelegateProxy;
-@property (nonatomic, strong) DelegateProxy *videoDelegateProxy;
+@property (nonatomic, strong) HZDelegateProxy *interstitialDelegateProxy;
+@property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
+@property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
 @end
 
@@ -79,9 +75,9 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     if (self) {
         _setupMediators = [[NSMutableSet alloc] init];
         _sessionDictionary = [NSMutableDictionary dictionary];
-        _interstitialDelegateProxy = [[DelegateProxy alloc] init];
-        _incentivizedDelegateProxy = [[DelegateProxy alloc] init];
-        _videoDelegateProxy = [[DelegateProxy alloc] init];
+        _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
+        _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
+        _videoDelegateProxy = [[HZDelegateProxy alloc] init];
     }
     return self;
 }
@@ -111,7 +107,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
             HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
         }
         self.startStatus = [self.setupMediators count] == 0 ? HZMediationStartStatusFailure : HZMediationStartStatusSuccess;
-    } failure:^(NSError *error) {
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         self.startStatus = HZMediationStartStatusFailure;
         HZDLog(@"Error! Failed to get networks from Heyzap. Mediation won't be possible. Error = %@,",error);
     }];
@@ -205,6 +201,7 @@ NSString * const kHZDataKey = @"data";
     HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[HZMediationConstants creativeTypesForAdType:adType]
                                                                          adUnit:adUnit
                                                                             tag:[HeyzapAds defaultTagName]
+                                                                    auctionType:HZAuctionTypeMixed
                                                             andAdditionalParams:nil];
     
     
@@ -231,7 +228,7 @@ NSString * const kHZDataKey = @"data";
                                        }
         
                                        
-                                   } failure:^(NSError *error) {
+                                   } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
                                        [self sendFailureMessagesForTag:tag adType:adType wasAttemptingToShow:showImmediately completionBlock:completion underlyingError:error];
                                        HZELog(@"Error! Failed to get the list of networks to mediate from Heyzap. Mediation won't be possible. Error = %@,",error);
                                    }];
@@ -257,6 +254,8 @@ NSString * const kHZDataKey = @"data";
         }
     }
     
+    NSLog(@"Preferred mediator list = %@",preferredMediatorList);
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         BOOL successful = NO;
         for (HZBaseAdapter *adapter in preferredMediatorList) {
@@ -275,7 +274,7 @@ NSString * const kHZDataKey = @"data";
             }, timeout);
             
             if (fetchedWithinTimeout) {
-                HZDLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
+                NSLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
                 successful = YES;
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if (completion) { completion(YES,nil); }
@@ -411,12 +410,18 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
-    [[self delegateForAdType:HZAdTypeIncentivized] didCompleteAd];
+    HZMediationSessionKey *key = [self currentShownSessionKey];
+    if (key) {
+        [[self delegateForAdType:HZAdTypeIncentivized] didCompleteAdWithTag:key.tag];
+    }
 }
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
-    [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAd];
+    HZMediationSessionKey *key = [self currentShownSessionKey];
+    if (key) {
+        [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAdWithTag:key.tag];
+    }
 }
 
 #pragma mark - Misc
@@ -435,7 +440,7 @@ NSString * const kHZDataKey = @"data";
 + (BOOL)isOnlyHeyzapSDK
 {
     NSSet *availableNonHeyzapAdapters = [[HZBaseAdapter allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
-        return ![[adapterClass name] isEqualToString:kHZAdapterHeyzap] && [adapterClass isSDKAvailable];
+        return ![adapterClass isHeyzapAdapter] && [adapterClass isSDKAvailable];
     }]];
     return [availableNonHeyzapAdapters count] == 0;
 }

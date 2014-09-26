@@ -6,21 +6,21 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "DelegateProxy.h"
-#import "TestDelegate.h"
+#import "HZDelegateProxy.h"
+#import "HZTestDelegate.h"
 
 #pragma clang diagnostic ignored "-Wincomplete-implementation"
-@interface DelegateProxy()
+@interface HZDelegateProxy()
 
-@property (nonatomic, strong) TestDelegate *delegateSelectorSwallower;
+@property (nonatomic, strong) HZTestDelegate *delegateSelectorSwallower;
 
 @end
 
-@implementation DelegateProxy
+@implementation HZDelegateProxy
 
 - (id)init
 {
-    _delegateSelectorSwallower = [[TestDelegate alloc] init];
+    _delegateSelectorSwallower = [[HZTestDelegate alloc] init];
     return self;
 }
 

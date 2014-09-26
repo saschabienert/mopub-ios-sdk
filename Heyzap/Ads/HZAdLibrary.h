@@ -11,16 +11,19 @@
 
 @interface HZAdLibrary : NSObject
 
+#pragma mark - Singleton Access
+
 + (instancetype) sharedLibrary;
 
-- (HZAdModel *) peekAtAdForAdUnit: (NSString *) adUnit withTag: (NSString *) tag;
-- (HZAdModel *) peekAtAdWithImpressionID: (NSString *) impressionID;
-- (NSString *) peekAtImpressionIDForAdUnit: (NSString *) adUnit withTag: (NSString *) tag;
+#pragma mark - Ad Stack
 
-// Stack Implemention
+- (HZAdModel *)peekAtAdForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
+- (NSArray *)peekAtAllAds;
 
-- (HZAdModel *) popAdForAdUnit: (NSString *) adUnit andTag: (NSString *) tag;
-- (void) pushAd: (HZAdModel *) ad forAdUnit: (NSString *) adUnit andTag: (NSString *) tag;
-- (NSArray *) peekAtAllAds;
-- (void) purgeAd: (HZAdModel *) ad;
+- (void)pushAd:(HZAdModel *)ad forAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
+
+- (HZAdModel *)popAdForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
+- (void)purgeAd:(HZAdModel *)ad;
+
+
 @end

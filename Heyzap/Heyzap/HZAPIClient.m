@@ -19,7 +19,9 @@
 #import "HZDictionaryUtils.h"
 #import "HeyzapAds.h"
 
-static NSString * const kHZAPIBaseURLString = @"https://sdk.heyzap.com";
+#import "HZAdsManager.h"
+
+static NSString * const kHZAPIBaseURLString = @"https://ads.heyzap.com";
 
 //don't change these without also changing them in the test app's view controller
 NSString * const HZAPIClientDidReceiveResponseNotification = @"HZAPIClientDidReceiveResponse";
@@ -47,22 +49,23 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
         deviceFormFactor = @"phone";
     }
     
-    NSString *heyzapInstalled = [HZUtils canOpenHeyzap] ? @"1" : @"0";
-    
     NSString *versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
     versionString = versionString ?: @"";
     
-    NSMutableDictionary *params = [@{@"device_id": [HZUtils deviceID],
+    NSString *publisherID = [HZUtils publisherID] ?: @"";
+    
+    NSMutableDictionary *params = [@{@"publisher_id": publisherID,
+                                     @"publisher_sdk_key": publisherID,
+                                     @"device_id": [HZUtils deviceID],
                                      @"app_bundle_id": [[NSBundle mainBundle] bundleIdentifier],
                                      @"app_version": versionString,
                                      @"device_form_factor": deviceFormFactor,
                                      @"platform": @"iphone",
                                      @"sdk_platform": @"iphone",
-                                     @"from_sdk": @"true",
                                      @"sdk_version": SDK_VERSION,
                                      @"ios_version": [UIDevice currentDevice].systemVersion,
+                                     @"os_version": [UIDevice currentDevice].systemVersion,
                                      @"device_type": [HZAvailability platform],
-                                     @"installed": heyzapInstalled,
                                      @"advertising_id" : [HZUtils deviceID],
                                    } mutableCopy];
     
@@ -120,8 +123,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         if (failure) {
             [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidReceiveResponseNotification object:nil userInfo:@{@"error_name": [error domain], @"error_info": [error userInfo]}];
-            
-            failure(error);
+            failure(operation, error);
         }
     }];
 }
@@ -129,8 +131,6 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
 - (void) post:(NSString *)endpoint withParams:(NSDictionary *)params success:(HZRequestSuccessBlock)success failure:(HZRequestFailureBlock)failure {
     
     NSMutableDictionary *requestParams = [[self class] defaultParamsWithDictionary: params];
-    
-    ;
     
     [HZLog debug: [NSString stringWithFormat: @"Client: POST : %@ %@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], requestParams]];
     
@@ -159,7 +159,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
         if (failure) {
             [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidReceiveResponseNotification object:nil userInfo:@{@"error_name": [error domain], @"error_info": [error userInfo]}];
 
-            failure(error);
+            failure(operation, error);
         }
     }];
 }
@@ -183,7 +183,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
        success:^(id response) {
            
        }
-       failure:^(NSError *anError) {
+       failure:^(HZAFHTTPRequestOperation *operation, NSError *anError) {
            
        }];
 }

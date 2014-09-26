@@ -13,16 +13,17 @@
 #import "HZUtils.h"
 #import "HZAdsAPIClient.h"
 #import "HZLog.h"
+#import "HZMetrics.h"
 
-@interface HZVideoAdModel()
+@interface HZVideoAdModel()<UIWebViewDelegate>
 @property (nonatomic, assign) BOOL sentComplete;
 @property (nonatomic) HZAFHTTPRequestOperation *downloadOperation;
 @end
 
 @implementation HZVideoAdModel
 
-- (id) initWithDictionary: (NSDictionary *) dict {
-    self = [super initWithDictionary: dict];
+- (instancetype) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
+    self = [super initWithDictionary: dict adUnit:adUnit auctionType:auctionType];
     if (self) {
         NSDictionary *interstitial = [HZDictionaryUtils hzObjectForKey: @"interstitial" ofClass: [NSDictionary class] default: @{} withDict: dict];
         if ([interstitial objectForKey: @"html_data"] != nil) {
@@ -79,9 +80,20 @@
         
         // Other
         _fileCached = NO;
+
     }
     
+    [self sendInitializationMetrics];
+    [self logVideoMetrics];
     return self;
+}
+
+- (void)logVideoMetrics {
+    NSURL *videoURL = self.forceStreaming ? self.streamingURLs.firstObject : self.staticURLs.firstObject;
+    if (videoURL) {
+        [[HZMetrics sharedInstance] logMetricsEvent:@"video_host" value:videoURL.host tag:self.tag type:self.adUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"video_path" value:videoURL.path tag:self.tag type:self.adUnit];
+    }
 }
 
 - (void) dealloc {
@@ -95,6 +107,20 @@
 #pragma mark - Post Fetch
 
 - (void) doPostFetchActionsWithCompletion:(void (^)(BOOL))completion {
+    
+    NSString *path = [[NSBundle mainBundle] bundlePath];
+    NSURL *baseURL = [NSURL fileURLWithPath:path];
+    
+    __block HZVideoAdModel *blockSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        blockSelf.preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)];
+        blockSelf.preloadWebview.delegate = blockSelf;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,
+                                                 (unsigned long)NULL), ^(void) {
+            [blockSelf.preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
+        });
+    });
+    
     if (!self.forceStreaming) {
         // Just in case it got deleted in meantime
         [HZUtils createCacheDirectory];
@@ -108,7 +134,23 @@
         }
         
         __block HZVideoAdModel *modelSelf = self;
-        self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload toFilePath: [self filePathForCachedVideo] withCompletion:^(BOOL result) {
+        CFTimeInterval startDownloadTime = CACurrentMediaTime();
+        self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload
+                                                    toFilePath: [self filePathForCachedVideo]
+                                                        forTag:self.tag
+                                                       andType:self.adUnit
+                                                withCompletion:^(BOOL result) {
+                                                    
+            if (!result) {
+                [[HZMetrics sharedInstance] logMetricsEvent:@"video_download_failed"
+                                                      value:@1
+                                                        tag:self.tag
+                                                       type:self.adUnit];
+            }
+                                                    
+            CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startDownloadTime;
+            int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
+            [[HZMetrics sharedInstance] logMetricsEvent:@"video_download_time" value:@(elapsedMiliseconds) tag:self.tag type:self.adUnit];
             modelSelf.fileCached = result;
             if (![modelSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
                 if (modelSelf.allowFallbacktoStreaming) {
@@ -156,7 +198,7 @@
             if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @(0) withDict: JSON] intValue] == 200) {
                 self.sentComplete = YES;
             }
-        } failure:^(NSError *error) {
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
             [HZLog debug: [NSString stringWithFormat: @"(COMPLETE) %@ Error: %@", self, error]];
         }];
     }
@@ -166,6 +208,8 @@
 
 - (void) onInterstitialFallback {
     [self cancelDownload];
+    
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"video-not-downloaded-but-interstitial-shown" tag:self.tag type:self.adUnit];
     
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setObject: @"1" forKey: @"interstitial_fallback"];
@@ -213,6 +257,18 @@
 
 + (BOOL) isValidForCreativeType: (NSString *) creativeType {
     return [creativeType isEqualToString: @"video"];
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    
 }
 
 @end

@@ -12,6 +12,7 @@
 #import "HZAdsManager.h"
 
 #import "HZDevice.h"
+#import "HZMetrics.h"
 
 #define kHZAdRetries 3
 
@@ -21,12 +22,20 @@
 
 @implementation HZAdFetchRequest
 
-- (id) initWithCreativeTypes: (NSArray *) creativeTypes adUnit: (NSString *) adUnit tag: (NSString *) tag andAdditionalParams: (NSDictionary *) additionalParams {
+- (id) initWithCreativeTypes:(NSArray *)creativeTypes
+                      adUnit:(NSString *)adUnit
+                         tag:(NSString *)tag
+                 auctionType:(HZAuctionType)auctionType
+         andAdditionalParams:(NSDictionary *)additionalParams {
+    
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:adUnit tag:tag type:adUnit];
+    
     self = [super init];
     if (self) {
         _requestID = [NSUUID UUID];
         _creativeTypes = creativeTypes;
         _adUnit = adUnit;
+        _auctionType = auctionType;
         _tag = tag != nil ? tag : [HeyzapAds defaultTagName];
         _retriesRemaining = kHZAdRetries;
         
@@ -63,7 +72,9 @@
                                                                            @"device_dpi": deviceDPI,
                                                                            @"creative_type": creativeTypesString,
                                                                            @"ad_unit": _adUnit,
-                                                                           @"tag": _tag}];
+                                                                           @"tag": _tag,
+                                                                           @"auction_type": NSStringFromHZAuctionType(auctionType),
+                                                                           }];
         
         if ([NSLocale preferredLanguages] != nil && [[NSLocale preferredLanguages] count] > 0) {
             NSString * language = [[NSLocale preferredLanguages] objectAtIndex:0];

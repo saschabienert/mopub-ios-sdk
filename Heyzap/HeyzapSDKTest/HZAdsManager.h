@@ -15,11 +15,14 @@
 
 @interface HZAdsManager : NSObject
 
+#pragma mark - Identity
+@property (nonatomic, strong) NSString *publisherID;
+
 #pragma mark - Debugging
 @property (nonatomic, assign) BOOL isDebuggable;
 
 #pragma mark - Active Controller
-@property (nonatomic, assign) HZAdViewController *activeController;
+@property (nonatomic, weak) HZAdViewController *activeController;
 
 #pragma mark - Global Status Delegates
 //@property (nonatomic, weak) id<HZAdsDelegate> statusDelegate;
@@ -36,13 +39,17 @@
 - (void) onStart;
 + (BOOL) isEnabled;
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
-- (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag withCompletion: (void (^)(BOOL result, NSError *error))completion;
+
+- (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
+- (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion;
 - (void) hideActiveAd;
 
 - (void)setInterstitialDelegate:(id<HZAdsDelegate>)delegate;
-- (void)setIncentivizedDelegate:(id<HZAdsDelegate>)delegate;
+- (void)setIncentivizedDelegate:(id<HZIncentivizedAdDelegate>)delegate;
 - (void)setVideoDelegate:(id<HZAdsDelegate>)delegate;
 
 - (id)delegateForAdUnit:(NSString *)adUnit;
+
++ (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider;
 
 @end

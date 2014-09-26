@@ -18,6 +18,10 @@
 #import "HZVideoAd.h"
 #import "HZIncentivizedAd.h"
 #import <MessageUI/MessageUI.h>
+#import "HZNativeAdController.h"
+#import "HZNativeAdCollection.h"
+#import "HZNativeAd.h"
+#import "NativeAdTableViewController.h"
 
 #define kTagCreativeIDField 4393
 
@@ -84,18 +88,14 @@ typedef enum {
     
     [self changeColorOfShowButton];
 }
-- (void)didClickAdWithTag:(NSString *)tag { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
+- (void)didClickAdWithTag:(NSString *)tag { if (self.logCallbacksSwitch.isOn) LOG_METHOD_NAME_TO_CONSOLE;
     
 }
-- (void)didHideAdWithTag:(NSString *)tag { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-    
+- (void)didHideAdWithTag:(NSString *)tag { if (self.logCallbacksSwitch.isOn) LOG_METHOD_NAME_TO_CONSOLE;
     [self changeColorOfShowButton];
 }
-- (void)didFailToReceiveAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-}
-- (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error
-{
+- (void)didFailToReceiveAdWithTag:(NSString *)tag { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
+- (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error {
     if(self.logCallbacksSwitch.isOn)[self logToConsole:[NSString stringWithFormat:@"%@:%@",NSStringFromSelector(_cmd),error]];
 }
 
@@ -106,13 +106,9 @@ typedef enum {
     if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
 }
 
-- (void)didCompleteAd {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-}
+- (void)didCompleteAdWithTag:(NSString *)tag { if (self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
 
-- (void) didFailToCompleteAd {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-}
+- (void) didFailToCompleteAdWithTag:(NSString *)tag { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
 
 - (void)requestNotification:(NSNotification *)notification{
     if(self.logRequestsSwitch.isOn){
@@ -247,8 +243,16 @@ const CGFloat kLeftMargin = 10;
                 forControlEvents:UIControlEventEditingChanged];
     [self.scrollView addSubview:self.adsTextField];
     
+    UIButton *nativeAdsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    nativeAdsButton.frame = CGRectMake(10.0, CGRectGetMaxY(self.showButton.frame) + 10, 120.0, 25.0);
+    nativeAdsButton.layer.cornerRadius = 4.0;
+    nativeAdsButton.backgroundColor = [UIColor lightTextColor];
+    [nativeAdsButton setTitle:@"Show Native Ad" forState:UIControlStateNormal];
+    [nativeAdsButton addTarget:self action:@selector(showNativeAds) forControlEvents:UIControlEventTouchUpInside];
+    [self.scrollView addSubview:nativeAdsButton];
+    
     self.adUnitSegmentedControl = [[UISegmentedControl alloc] initWithItems: @[@"Interstitial", @"Video", @"Incentivized"]];
-    self.adUnitSegmentedControl.frame = CGRectMake(10, CGRectGetMaxY(self.showButton.frame)+10, self.view.frame.size.width-20, 44);
+    self.adUnitSegmentedControl.frame = CGRectMake(10, CGRectGetMaxY(nativeAdsButton.frame)+10, self.view.frame.size.width-20, 44);
     self.adUnitSegmentedControl.tag = 3203;
     self.adUnitSegmentedControl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     [self.adUnitSegmentedControl setSelectedSegmentIndex: 0];
@@ -490,7 +494,7 @@ const CGFloat kLeftMargin = 10;
             [HZVideoAd show];
             break;
         case kAdUnitSegmentIncentivized:
-            NSLog(@"Showing Incent");
+            NSLog(@"Showing Incentivized");
             [HZIncentivizedAd show];
             break;
         default:
@@ -499,6 +503,20 @@ const CGFloat kLeftMargin = 10;
 }
 
 #pragma mark - Target-Action
+
+- (void)showNativeAds {
+    [HZNativeAdController fetchAds:20 tag:nil completion:^(NSError *error, HZNativeAdCollection *collection) {
+        if (error) {
+            NSLog(@"error = %@",error);
+        } else {
+            
+            UINavigationController *navController = [[UIStoryboard storyboardWithName:@"Storyboard" bundle:[NSBundle mainBundle]] instantiateInitialViewController];
+            NativeAdTableViewController *vc = (id)navController.topViewController;
+            vc.adCollection = collection;
+            [self presentViewController:navController animated:YES completion:nil];
+        }
+    }];
+}
 
 - (void)creativeIDEditingChanged:(UITextField *)sender
 {
@@ -578,22 +596,26 @@ const CGFloat kLeftMargin = 10;
     }
 }
 
+- (BOOL)shouldAutorotate {
+    return YES;
+}
+
+- (NSUInteger)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskAll;
+}
+
 #pragma mark - Console
 
 - (void)logToConsole:(NSString *)consoleString
 {
-    NSDateFormatter * format = [[NSDateFormatter alloc]init];
-    [format setDateFormat:@"[h:mm:ss a]"];
-    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[format stringFromDate:[NSDate date]],consoleString];
-    if (self.scrollSwitch.isOn) {
-        [self.consoleTextView scrollRangeToVisible:NSMakeRange(self.consoleTextView.text.length, 0)];
-    }
+//    NSDateFormatter * format = [[NSDateFormatter alloc]init];
+//    [format setDateFormat:@"[h:mm:ss a]"];
+//    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[format stringFromDate:[NSDate date]],consoleString];
+//    if (self.scrollSwitch.isOn) {
+//        [self.consoleTextView scrollRangeToVisible:NSMakeRange(self.consoleTextView.text.length, 0)];
+//    }
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return YES;
-}
 
 #pragma mark - Cleanup
 

@@ -8,6 +8,7 @@
 
 #import "HZWebView.h"
 #import "HZUtils.h"
+#import "HZMetrics.h"
 
 @interface HZWebView()
 @property (nonatomic) UIInterfaceOrientation currOrientation;
@@ -48,7 +49,6 @@
     [self.webview stopLoading];
     self.webview.delegate = nil;
     [self.webview removeFromSuperview];
-//    [self.webview HZcleanForDealloc];
     
     self.webview = nil;
 }

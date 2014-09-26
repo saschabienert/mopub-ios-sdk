@@ -11,6 +11,7 @@
 
 #import "HeyzapAds.h"
 #import "HZLog.h"
+#import "HZMetrics.h"
 
 #import "HZInterstitialAd.h"
 #import "SDKTestAppViewController.h"
@@ -39,12 +40,21 @@
         }];
     }
     
-    [HZLog setDebugLevel: HZDebugLevelError];
+    [HZLog setDebugLevel: HZDebugLevelVerbose];
     
-    UIViewController *mainController = [[SDKTestAppViewController alloc] init];
+    SDKTestAppViewController *mainController = [[SDKTestAppViewController alloc] init];
+    
+#if INTEGRATION_TESTING
+    // Integration tests don't want autoprefetching interfering with testing callbacks, fetching the wrong ad, etc.
+    [HeyzapAds startWithPublisherID:@"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
+#else
+    [HeyzapAds startWithPublisherID: @"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
+#endif
     
     
-    [HeyzapAds startWithOptions: HZAdOptionsDisableAutoPrefetching];
+    [HZInterstitialAd setDelegate:mainController];
+    [HZIncentivizedAd setDelegate:mainController];
+    [HZVideoAd setDelegate:mainController];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
@@ -72,7 +82,6 @@
     
     return YES;
 }
-
 
 
 @end

@@ -1,19 +1,21 @@
 //
-//  HZVGPlayData.m
+//  HZUnityAds.m
 //  Heyzap
 //
-//  Created by Maximilian Tagher on 4/2/14.
+//  Created by David Stumm on 9/8/14.
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZVGPlayData.h"
+#import "HZUnityAds.h"
 
 #pragma clang diagnostic ignored "-Wincomplete-implementation"
-@implementation HZVGPlayData
+@implementation HZUnityAds
+
+@dynamic delegate;
 
 + (NSString *)hzProxiedClassName
 {
-    return @"VGPlayData";
+    return @"UnityAds";
 }
 
 @end

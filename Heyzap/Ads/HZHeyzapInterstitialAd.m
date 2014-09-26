@@ -7,7 +7,6 @@
 //
 
 #import "HZHeyzapInterstitialAd.h"
-#import "HZAnalytics.h"
 #import "HZAdsManager.h"
 #import "HZAdInterstitialViewController.h"
 #import "HZAdVideoViewController.h"
@@ -20,6 +19,7 @@
 #define HZInterstitialAdUnit @"interstitial"
 
 static int HZInterstitialAdCreativeIDPin = 0;
+static BOOL HZInterstitialForceTestCreative = NO;
 
 @implementation HZHeyzapInterstitialAd
 
@@ -29,7 +29,7 @@ static int HZInterstitialAdCreativeIDPin = 0;
     }
 }
 
-+ (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
++ (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion {
     
     if (![[HZAdsManager sharedManager] isEnabled]) {
         return;
@@ -39,13 +39,13 @@ static int HZInterstitialAdCreativeIDPin = 0;
         tag = [HeyzapAds defaultTagName];
     }
     
-    if (![self isAvailableForTag: tag]) {
-        HZAdFetchRequest *request = [self requestWithTag: tag andVideo: NO];
+    if (![self isAvailableForTag:tag auctionType:auctionType]) {
+        HZAdFetchRequest *request = [self requestWithTag:tag auctionType:auctionType andVideo:NO];
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
-            [[HZAdsManager sharedManager] showForAdUnit: HZInterstitialAdUnit andTag: tag withCompletion: completion];
+            [[HZAdsManager sharedManager] showForAdUnit: HZInterstitialAdUnit andTag:tag auctionType:(HZAuctionType)auctionType withCompletion: completion];
         }];
     } else {
-        [[HZAdsManager sharedManager] showForAdUnit: HZInterstitialAdUnit andTag: tag withCompletion: completion];
+        [[HZAdsManager sharedManager] showForAdUnit: HZInterstitialAdUnit andTag: tag auctionType:(HZAuctionType)auctionType withCompletion: completion];
     }
 }
 
@@ -55,28 +55,24 @@ static int HZInterstitialAdCreativeIDPin = 0;
     }
 }
 
-+ (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
++ (void) fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion {
     if ([[HZAdsManager sharedManager] isEnabled]) {
-        
-        HZAdFetchRequest *request = [self requestWithTag: tag andVideo: YES];
-        
+        HZAdFetchRequest *request = [self requestWithTag:tag auctionType:auctionType andVideo:YES];
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
             if (completion) {
                 BOOL result = YES;
                 if (error != nil || ad == nil) {
                     result = NO;
                 }
-                
                 completion(result, error);
             }
         }];
     }
 }
 
-+ (BOOL) isAvailableForTag: (NSString *) tag {
++ (BOOL) isAvailableForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType {
     if (![[HZAdsManager sharedManager] isEnabled]) return NO;
-    
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: HZInterstitialAdUnit withTag: tag] != nil;
+    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZInterstitialAdUnit tag:tag auctionType:(HZAuctionType)auctionType];
 }
 
 + (void) setCreativeID:(int)creativeID {
@@ -87,16 +83,23 @@ static int HZInterstitialAdCreativeIDPin = 0;
     }
 }
 
-+ (HZAdFetchRequest *) requestWithTag: (NSString *) tag andVideo: (BOOL) withVideo {
++ (void)forceTestCreative:(BOOL)forceTestCreative
+{
+    HZInterstitialForceTestCreative = forceTestCreative;
+}
+
++ (HZAdFetchRequest *) requestWithTag: (NSString *) tag auctionType:(HZAuctionType)auctionType andVideo: (BOOL) withVideo {
     NSDictionary *params = nil;
     
-    if (HZInterstitialAdCreativeIDPin > 0) {
+    if (HZInterstitialForceTestCreative) {
+        params = @{@"force_test_creative":@"true"};
+    } else if (HZInterstitialAdCreativeIDPin > 0) {
         params = @{@"creative_id": [NSString stringWithFormat: @"%i", HZInterstitialAdCreativeIDPin]};
     }
     
     NSArray *creativeTypes = withVideo ? HZInterstitialAdCreativeTypes : HZInterstitialAdCreativeTypesNoVideo;
     
-    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: creativeTypes adUnit: HZInterstitialAdUnit tag: tag andAdditionalParams: params];
+    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:creativeTypes adUnit:HZInterstitialAdUnit tag:tag auctionType:auctionType andAdditionalParams: params];
     
     return request;
 }

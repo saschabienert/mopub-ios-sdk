@@ -7,25 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZBaseAdapter.h"
+#import "HZAbstractHeyzapAdapter.h"
 
-@protocol HZHeyzapDelegateReceiver <NSObject>
-
-- (void)didLoadAdOfAdType:(HZAdType)type;
-- (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error;
-
-- (void)didClickAd;
-- (void)didDismissAd;
-
-- (void)didCompleteIncentivizedAd;
-- (void)didFailToCompleteIncentivizedAd;
-
-- (void)willPlayAudio;
-- (void)didFinishPlayingAudio;
-
-
-@end
-
-@interface HZHeyzapAdapter : HZBaseAdapter
+@interface HZHeyzapAdapter : HZAbstractHeyzapAdapter
 
 @end

@@ -18,18 +18,18 @@
 #import "HZAdVideoViewController.h"
 #import "HZAdInterstitialViewController.h"
 #import "HeyzapAds.h"
+#import "HZDelegateProxy.h"
+#import "HZMetrics.h"
 
-#import "DelegateProxy.h"
+#import "HZDelegateProxy.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
 
 @interface HZAdsManager()
-
-@property (nonatomic, strong) DelegateProxy *interstitialDelegateProxy;
-@property (nonatomic, strong) DelegateProxy *incentivizedDelegateProxy;
-@property (nonatomic, strong) DelegateProxy *videoDelegateProxy;
-
+@property (nonatomic, strong) HZDelegateProxy *interstitialDelegateProxy;
+@property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
+@property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 @end
 
 @implementation HZAdsManager
@@ -38,9 +38,9 @@
     self = [super init];
     if (self) {
         _isEnabled = YES;
-        _interstitialDelegateProxy = [[DelegateProxy alloc] init];
-        _incentivizedDelegateProxy = [[DelegateProxy alloc] init];
-        _videoDelegateProxy = [[DelegateProxy alloc] init];
+        _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
+        _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
+        _videoDelegateProxy = [[HZDelegateProxy alloc] init];
 
         [[self class] runInitialTasks];
     }
@@ -55,7 +55,9 @@
 #pragma mark - Run Initial Tasks
 
 - (void) onStart {
-    if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly] && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
+    
+    if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly]
+        && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
         [HZInterstitialAd fetch];
     }
 }
@@ -64,6 +66,10 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [self setupCachingDirectory];
+        
+        // Set cache size to big
+        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:100000000 diskCapacity: 1000000000 diskPath:nil];
+        [NSURLCache setSharedURLCache:sharedCache];
         
         //register this game as installed, if we haven't done so already
         if (![[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY]) {
@@ -132,15 +138,40 @@
     } failure:nil];
 }
 
+#pragma mark - Getters/Setters
+
+- (void) setPublisherID:(NSString *)publisherID {
+    _publisherID = publisherID;
+    [HZUtils setPublisherID: publisherID];
+}
+
 #pragma mark - Enabled
 
 + (BOOL) isEnabled {
     return NO;
 }
 
+#pragma mark - Is Available
+
+- (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType
+{
+    [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 tag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey tag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:kIsAvailablePercentDownloadedKey tag:tag type:adUnit];
+    
+    const BOOL available =[[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:adUnit tag:tag auctionType:auctionType] != nil;
+    [[HZMetrics sharedInstance] logIsAvailable:available tag:tag type:adUnit];
+    
+    return available;
+}
+
 #pragma mark - Show
 
-- (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag withCompletion: (void (^)(BOOL result, NSError *error))completion  {
+- (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion  {
+    [[HZMetrics sharedInstance] logShowAdForTag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey tag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceStartFor:@"time_from_start_to_show_ad" tag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"show_ad_percentage_downloaded" tag:tag type:adUnit];
     BOOL result = NO;
     NSError *error;
     
@@ -149,6 +180,7 @@
     }
     
     if ([self activeController] != nil) {
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"ad-already-displayed" tag:tag type:adUnit];
         if (completion) {
             completion(NO, [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 7 userInfo: @{NSLocalizedDescriptionKey: @"Another ad is currently displaying."}]);
         }
@@ -157,15 +189,16 @@
     }
     
     if (![[HZDevice currentDevice] HZConnectivityType]) {
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"no-connectivity" tag:tag type:adUnit];
         error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 1 userInfo: @{NSLocalizedDescriptionKey: @"No internet connection."}];
     } else {
         if (!tag) {
             tag = [HeyzapAds defaultTagName];
         }
         
-        HZAdModel *ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit: adUnit andTag: tag];
+        HZAdModel *ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:tag auctionType:auctionType];
         while (ad != nil && [ad isExpired]) {
-            ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit: adUnit andTag: tag];
+            ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:tag auctionType:auctionType];
         }
         
         if (ad != nil) {
@@ -195,13 +228,17 @@
         }
         
         if (!result) {
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"no-ad-available" tag:tag type:adUnit];
             error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 6 userInfo: @{NSLocalizedDescriptionKey: @"No ad available"}];
         }
     }
     
     if (!result || error) {
         // Not using the standard method here.
-        [[self delegateForAdUnit:adUnit] didFailToShowAdWithTag:tag andError:error];
+        [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag: tag andError: error];
+        [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification tag:tag adUnit:adUnit auctionType:auctionType];
+    } else {
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" tag:tag type:adUnit];
     }
     
     if (completion) {
@@ -211,6 +248,7 @@
 
 - (void) hideActiveAd {
     if ([self activeController] != nil) {
+        [[HZMetrics sharedInstance] logMetricsEvent:@"dev_hidden" value:@1 tag:[self activeController].ad.tag type:[self activeController].ad.adUnit];
         [[self activeController] hide];
     }
 }
@@ -242,6 +280,7 @@
 - (void) applicationWillTerminate: (id) sender {
     [self cleanup];
 }
+
 
 #pragma mark - Singleton
 
@@ -279,6 +318,19 @@
     } else {
         return self.interstitialDelegateProxy;
     }
+}
+
+// Send out NSNotifications so mediation can get more info than delegate callbacks provide (e.g. auctionType, easier access to adUnit).
+// See HZNotification for details.
++ (void)postNotificationName:(NSString *const)notificationName tag:(NSString *)tag adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
+    HZAdInfo *const info = [[HZAdInfo alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName
+                                                        object:info];
+}
+
++ (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider {
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName
+                                                        object:[[HZAdInfo alloc] initWithProvider:infoProvider]];
 }
 
 @end

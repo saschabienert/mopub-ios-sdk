@@ -18,7 +18,7 @@
  *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
  *  @param completion A block called when the ad is shown or failed to show. result contains whether or not the fetch was successful, and if not, error contains the reason why.
  */
-+ (void) showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion;
++ (void) showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion;
 
 #pragma mark - Callbacks
 
@@ -34,7 +34,7 @@
  *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
  *  @param completion A block called when the ad is fetched or failed to fetch. result contains whether or not the fetch was successful, and if not, error contains the reason why.
  */
-+ (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion;
++ (void) fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion;
 
 
 /**
@@ -44,7 +44,7 @@
  *
  *  @return If the ad was available
  */
-+ (BOOL) isAvailableForTag: (NSString *) tag;
++ (BOOL) isAvailableForTag: (NSString *) tag auctionType:(HZAuctionType)auctionType;
 
 /** Dismisses the current ad, if visible. */
 + (void) hide;
@@ -53,6 +53,7 @@
 #pragma mark - Private methods
 
 + (void) setCreativeID:(int)creativeID;
++ (void)forceTestCreative:(BOOL)forceTestCreative;
 
 + (void)showAdWithOptions:(NSDictionary *)options;
 

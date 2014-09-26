@@ -10,6 +10,6 @@
 
 #import "HeyzapAds.h"
 
-@interface TestDelegate : NSObject <HZAdsDelegate, HZIncentivizedAdDelegate>
+@interface HZTestDelegate : NSObject <HZAdsDelegate, HZIncentivizedAdDelegate>
 
 @end

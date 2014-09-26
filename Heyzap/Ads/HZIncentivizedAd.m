@@ -35,32 +35,54 @@
 #pragma mark - Showing Ads
 
 + (void) show {
+    [[self class] showForTag:[HeyzapAds defaultTagName]];
+}
+
++ (void)showForTag:(NSString *)tag
+{
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapIncentivizedAd show];
+        [HZHeyzapIncentivizedAd showForTag:tag auctionType:HZAuctionTypeMixed];
     } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:[HeyzapAds defaultTagName] completion:nil];
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:tag completion:nil];
     }
 }
 
 #pragma mark - Fetching Ads
 
 + (void) fetch {
-    [self fetchWithCompletion: nil];
+    [self fetchForTag: [HeyzapAds defaultTagName] withCompletion: nil];
+}
+
++ (void)fetchForTag:(NSString *)tag {
+    [[self class] fetchForTag:tag withCompletion:nil];
 }
 
 + (void) fetchWithCompletion:(void (^)(BOOL, NSError *))completion {
+    [[self class] fetchForTag:[HeyzapAds defaultTagName] withCompletion:completion];
+}
+
++ (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion
+{
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapIncentivizedAd fetchWithCompletion:completion];
+        [HZHeyzapIncentivizedAd fetchForTag: tag auctionType:HZAuctionTypeMixed completion:completion];
     } else {
         [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeIncentivized
                                                      tag:[HeyzapAds defaultTagName]
                                               completion:completion];
     }
+    
 }
 
+#pragma mark - Querying Status
+
 + (BOOL) isAvailable {
+    return [[self class] isAvailableForTag:[HeyzapAds defaultTagName]];
+}
+
++ (BOOL)isAvailableForTag:(NSString *)tag
+{
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        return [HZHeyzapIncentivizedAd isAvailable];
+        return [HZHeyzapIncentivizedAd isAvailableForTag:tag auctionType:HZAuctionTypeMixed];
     } else {
         return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeIncentivized tag:[HeyzapAds defaultTagName]];
     }

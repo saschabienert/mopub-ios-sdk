@@ -119,7 +119,7 @@ NSString *const kHZOrdinalKey = @"ordinal";
         NSNumber *const success = (adapter == [adapterList lastObject]) ? @1 : @0; // Last adapter was successful
         [[HZMediationAPIClient sharedClient] post:@"fetch" withParams:@{@"success": success, kHZOrdinalKey : @(idx), kHZNetworkKey : [adapter name]} success:^(id json) {
             HZDLog(@"Success reporting fetch");
-        } failure:^(NSError *error) {
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
             HZDLog(@"Error reporting fetch = %@",error);
         }];
     }];
@@ -134,7 +134,7 @@ NSString *const kHZOrdinalKey = @"ordinal";
                                               kHZOrdinalKey : @(ordinal)}
                                     success:^(id json) {
         HZDLog(@"Success reporting click");
-    } failure:^(NSError *error) {
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         HZDLog(@"Error reporting click = %@",error);
     }];
 }
@@ -148,7 +148,7 @@ NSString *const kHZOrdinalKey = @"ordinal";
                                               kHZOrdinalKey: @(ordinal)}
                                     success:^(id json) {       
         HZDLog(@"Success reporting impression");
-    } failure:^(NSError *error) {
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         HZDLog(@"Error reporting impression = %@",error);
     }];
 }

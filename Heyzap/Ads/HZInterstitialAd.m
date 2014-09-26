@@ -7,7 +7,6 @@
 //
 
 #import "HZInterstitialAd.h"
-#import "HZAnalytics.h"
 #import "HZAdsManager.h"
 #import "HZAdInterstitialViewController.h"
 #import "HZAdVideoViewController.h"
@@ -40,7 +39,7 @@
 
 + (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapInterstitialAd showForTag:tag completion:completion];
+        [HZHeyzapInterstitialAd showForTag:tag auctionType:HZAuctionTypeMixed completion:completion];
     } else {
         [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeInterstitial tag:tag completion:completion];
     }
@@ -63,7 +62,7 @@
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
     tag = tag ?: [HeyzapAds defaultTagName];
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapInterstitialAd fetchForTag:tag withCompletion:completion];
+        [HZHeyzapInterstitialAd fetchForTag:tag auctionType:HZAuctionTypeMixed withCompletion:completion];
     } else {
         [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeInterstitial tag:tag completion:completion];
     }
@@ -77,7 +76,7 @@
     tag = tag ?: [HeyzapAds defaultTagName];
     
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        return [HZHeyzapInterstitialAd isAvailableForTag:tag];
+        return [HZHeyzapInterstitialAd isAvailableForTag:tag auctionType:HZAuctionTypeMixed];
     } else {
         return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeInterstitial tag:tag];
     }
@@ -87,6 +86,11 @@
 
 + (void) setCreativeID:(int)creativeID {
     [HZHeyzapInterstitialAd setCreativeID:creativeID];
+}
+
++ (void)forceTestCreative:(BOOL)forceTestCreative
+{
+    [HZHeyzapInterstitialAd forceTestCreative:forceTestCreative];
 }
 
 + (id)alloc {

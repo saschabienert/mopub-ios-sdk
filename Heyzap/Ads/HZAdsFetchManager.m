@@ -15,12 +15,14 @@
 #import "HZAdsManager.h"
 #import "HZAdFetchRequest.h"
 #import "HZAdsAPIClient.h"
+#import "HZDevice.h"
+#import "HZMetrics.h"
 
 @implementation HZAdsFetchManager
 
 - (void) fetch: (HZAdFetchRequest *) request withCompletion:(void (^)(HZAdModel *, NSString *, NSError *))completion {
     // Already have the ad, let's bail out.
-    HZAdModel *ad = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit: request.adUnit withTag: request.tag];
+    HZAdModel *ad = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:request.adUnit tag:request.tag auctionType:request.auctionType];
     if (ad != nil && !request.shouldSkipCache) {
         // ad is available. no need to fetch another.
         if (![ad isExpired]) return;
@@ -29,12 +31,32 @@
         [[HZAdLibrary sharedLibrary] purgeAd: ad];
     }
     
+    const CFTimeInterval startTime = CACurrentMediaTime();
+    [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 tag:request.tag type:request.adUnit];
+    [[HZMetrics sharedInstance] logFetchTimeForTag:request.tag type:request.adUnit];
+    
+    NSString *const connectivity = [[HZDevice currentDevice] HZConnectivityType];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity"
+                                          value:connectivity
+                                            tag:request.tag
+                                           type:request.adUnit];
+    
     [[HZAdsAPIClient sharedClient] loadRequest: request withCompletion: ^(HZAdFetchRequest *aRequest) {
+        const CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
+        const int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
+        [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elapsedMiliseconds) tag:aRequest.tag type:aRequest.adUnit];
+        
         if (aRequest.lastError != nil) {
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", aRequest.lastError]];
-            
-            [[[HZAdsManager sharedManager] delegateForAdUnit:request.adUnit] didFailToReceiveAdWithTag:request.tag];
+            [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 tag:aRequest.tag type:aRequest.adUnit];
+            if (aRequest.lastFailingStatusCode) {
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@(aRequest.lastFailingStatusCode) tag:request.tag type:request.adUnit];
+            } else if (!connectivity) {
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@"no-connectivity" tag:request.tag type:request.adUnit];
+            }
+            [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: request.tag];
+            [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
             
             if (completion) {
                 completion(nil, aRequest.tag, aRequest.lastError);
@@ -54,7 +76,7 @@
     if (![HZAdModel isResponseValid: request.lastResponse withError: &error]) {
         validAd = NO;
     } else {
-        ad = [HZAdModel modelForResponse: request.lastResponse];
+        ad = [HZAdModel modelForResponse: request.lastResponse adUnit:request.adUnit auctionType:request.auctionType];
         if (ad == nil) {
             validAd = NO;
         }
@@ -63,6 +85,7 @@
     if (!validAd) {
         
         [[[HZAdsManager sharedManager] delegateForAdUnit:request.adUnit] didFailToReceiveAdWithTag:request.tag];
+        [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
         
         if (completion) {
             NSError *error;
@@ -110,16 +133,18 @@
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) %@", ad]];
             
-            [[HZAdLibrary sharedLibrary] pushAd: ad forAdUnit: bRequest.adUnit andTag: bRequest.tag];
+            [[HZAdLibrary sharedLibrary] pushAd:ad forAdUnit:request.adUnit tag:request.tag auctionType:request.auctionType];
             
-            [[[HZAdsManager sharedManager] delegateForAdUnit:bRequest.adUnit] didReceiveAdWithTag:bRequest.tag];
+            [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didReceiveAdWithTag: request.tag];
+            [HZAdsManager postNotificationName:kHeyzapDidReceiveAdNotification infoProvider:request];
             
             if (completion) {
                 completion(ad, bRequest.tag, nil);
             }
             
         } else {
-            [[[HZAdsManager sharedManager] delegateForAdUnit:bRequest.adUnit] didFailToReceiveAdWithTag:bRequest.tag];
+            [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: request.tag];
+            [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
             
             if (completion) {
                 NSError *error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.fetch" code: 8 userInfo: @{NSLocalizedDescriptionKey: @"Failed to download assets."}];

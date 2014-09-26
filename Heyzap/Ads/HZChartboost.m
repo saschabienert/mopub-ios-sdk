@@ -11,10 +11,6 @@
 #pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation HZChartboost
 
-@dynamic appId;
-@dynamic appSignature;
-@dynamic delegate;
-
 + (NSString *)hzProxiedClassName
 {
     return @"Chartboost";
