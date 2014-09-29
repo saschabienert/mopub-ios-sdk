@@ -44,11 +44,6 @@
     [self testInterstitialWithCreativeID:1079355 useTestCreative:NO deviceOrientation:UIDeviceOrientationPortrait];
 }
 
-- (void)testPortraitSocialStream
-{
-    [self testInterstitialWithCreativeID:512037 useTestCreative:NO deviceOrientation:UIDeviceOrientationPortrait];
-}
-
 #pragma mark - Landscape Tests
 
 - (void)testLandscapeFullscreenBookOfRa
