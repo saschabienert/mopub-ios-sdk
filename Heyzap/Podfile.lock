@@ -1,12 +1,10 @@
 PODS:
   - Kiwi (2.3.0)
   - OCHamcrest (4.0.1)
-  - OCMockito (1.3.0):
+  - OCMockito (1.3.1):
     - OCHamcrest (~> 4.0)
-    - TPWeakProxy (~> 1.0)
   - OHHTTPStubs (3.1.2)
   - Subliminal (1.1.0)
-  - TPWeakProxy (1.0.1)
 
 DEPENDENCIES:
   - Kiwi
@@ -22,9 +20,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Kiwi: 54bece5b35564d9b8e03c608d926f1a22fcfc589
   OCHamcrest: b464725bbb48d0f1cd9c6f4ec3cb35fe0c4f2b94
-  OCMockito: eca2670b3ce4a457d316b046a36d6f2b980a4da7
+  OCMockito: 57b8c4bb54ff3a4a14eb2174f9e57faf9f56efb6
   OHHTTPStubs: c1c2007839687eaf9b80f061ce84440515080ebb
   Subliminal: 3fa4291de86aff7a60b799b8a1911311e513e396
-  TPWeakProxy: da4177b6ae5eff685642c1cd9698f71ef7060ea5
 
 COCOAPODS: 0.34.1
