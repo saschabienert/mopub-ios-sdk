@@ -1,9 +1,5 @@
 PODS:
-  - Kiwi/ARC (2.2.4)
-  - Kiwi/NonARC (2.2.4)
-  - Kiwi/XCTest (2.2.4):
-    - Kiwi/ARC
-    - Kiwi/NonARC
+  - Kiwi (2.3.0)
   - OCHamcrest (4.0.1)
   - OCMockito (1.3.0):
     - OCHamcrest (~> 4.0)
@@ -13,7 +9,7 @@ PODS:
   - TPWeakProxy (1.0.1)
 
 DEPENDENCIES:
-  - Kiwi/XCTest
+  - Kiwi
   - OCMockito
   - OHHTTPStubs
   - Subliminal (from `https://github.com/inkling/Subliminal.git`, branch `shared/XCode6`)
@@ -24,11 +20,11 @@ EXTERNAL SOURCES:
     :git: https://github.com/inkling/Subliminal.git
 
 SPEC CHECKSUMS:
-  Kiwi: c73667f2b84cbf36f1a3830267c5a4ae8dcbd8ba
+  Kiwi: 54bece5b35564d9b8e03c608d926f1a22fcfc589
   OCHamcrest: b464725bbb48d0f1cd9c6f4ec3cb35fe0c4f2b94
   OCMockito: eca2670b3ce4a457d316b046a36d6f2b980a4da7
   OHHTTPStubs: c1c2007839687eaf9b80f061ce84440515080ebb
   Subliminal: 3fa4291de86aff7a60b799b8a1911311e513e396
   TPWeakProxy: da4177b6ae5eff685642c1cd9698f71ef7060ea5
 
-COCOAPODS: 0.33.1
+COCOAPODS: 0.34.1

@@ -16,12 +16,6 @@
 #import "HZAdsManager.h"
 #import "HZDevice.h"
 
-@interface HZInterstitialAd(Testing)
-
-+ (HZAdFetchRequest *) requestWithTag: (NSString *) tag andVideo: (BOOL) withVideo;
-
-@end
-
 @interface HZAdsManager(Testing)
 
 + (void)runInitialTasks;
@@ -48,7 +42,7 @@ describe(@"InterstitialFetch", ^{
             
             [OHHTTPStubs stubRequestContainingString:@"fetch_ad" withJSON:[TestJSON portraitInterstitialJSON]];
             
-            HZAdFetchRequest *request = [HZInterstitialAd requestWithTag:nil andVideo:NO];
+            HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:@[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"] adUnit:@"interstitial" tag:nil auctionType:HZAuctionTypeMonetization andAdditionalParams:nil];
             
             __block HZAdModel *blockModel;
             [[HZAdsFetchManager sharedManager] fetch:request withCompletion:^(HZAdModel *model, NSString *tag, NSError *error) {

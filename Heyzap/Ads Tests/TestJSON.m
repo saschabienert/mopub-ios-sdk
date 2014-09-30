@@ -15,6 +15,10 @@
     return [self jsonForResource:@"portraitInterstitialRequest"];
 }
 
++ (NSMutableDictionary *)nativeAdJSON {
+    return [self jsonForResource:@"ValidNativeAd"];
+}
+
 + (NSMutableDictionary *)jsonForResource:(NSString *)resource
 {
     NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:resource withExtension:@"json"];

@@ -17,4 +17,11 @@
  */
 + (NSMutableDictionary *)portraitInterstitialJSON;
 
+/**
+ *  JSON for a valid native ad.
+ *
+ *  @return The dictionary, guaranteed to not be nil.
+ */
++ (NSMutableDictionary *)nativeAdJSON;
+
 @end

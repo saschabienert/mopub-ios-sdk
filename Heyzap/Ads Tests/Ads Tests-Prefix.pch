@@ -11,4 +11,7 @@
     #import "NSString+Tests.h"
     #import "OHHTTPStubs+Heyzap.h"
     #import "HeyzapAds.h"
+    #import "HZEnums.h"
+    #import "HZNotifications.h"
+    #import "HZAdInfo.h"
 #endif

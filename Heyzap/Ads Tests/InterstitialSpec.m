@@ -22,7 +22,7 @@ describe(@"HZInterstitialAdModel", ^{
     
     context(@"Initialization", ^{
         it(@"Should initialize with portrait interstitial JSON", ^{
-            HZInterstitialAdModel *ad = [[HZInterstitialAdModel alloc] initWithDictionary:[TestJSON portraitInterstitialJSON]];
+            HZInterstitialAdModel *ad = [[HZInterstitialAdModel alloc] initWithDictionary:[TestJSON portraitInterstitialJSON] adUnit:@"interstitial" auctionType:HZAuctionTypeMonetization];
             [[ad shouldNot] beNil];
         });
         

@@ -82,6 +82,9 @@
 		501EBDA819AFE22600CA80ED /* HZMetricsKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 50E76E1219A29FBA00FD2639 /* HZMetricsKey.h */; };
 		501EBDA919AFE30600CA80ED /* HZMetricsKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 50E76E1319A29FBA00FD2639 /* HZMetricsKey.m */; };
 		501F9D7418989B8A00127E49 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
+		5020884019DA2574005C3C1B /* HZNativeAdCollectionSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5020883F19DA2574005C3C1B /* HZNativeAdCollectionSpec.m */; };
+		5020884219DA28DE005C3C1B /* HZNativeAdSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5020884119DA28DE005C3C1B /* HZNativeAdSpec.m */; };
+		5020884619DA2A87005C3C1B /* ValidNativeAd.json in Resources */ = {isa = PBXBuildFile; fileRef = 5020884419DA2A87005C3C1B /* ValidNativeAd.json */; };
 		50269FCB19B64F1B00CD7C88 /* libGoogleAdMobAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50269FCA19B64F1B00CD7C88 /* libGoogleAdMobAds.a */; };
 		50269FCD19B6503400CD7C88 /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50269FCC19B6503400CD7C88 /* AdColony.framework */; };
 		50269FD719B6505C00CD7C88 /* __vungle.db in Resources */ = {isa = PBXBuildFile; fileRef = 50269FD019B6505B00CD7C88 /* __vungle.db */; };
@@ -395,7 +398,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		090B07CD6F614B1286E88909 /* Pods-Integration Tests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integration Tests.xcconfig"; path = "Pods/Pods-Integration Tests.xcconfig"; sourceTree = "<group>"; };
 		500F88D718E0F9BE00E5D6F8 /* HZChartboost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZChartboost.h; sourceTree = "<group>"; };
 		500F88D818E0F9BE00E5D6F8 /* HZChartboost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZChartboost.m; sourceTree = "<group>"; };
 		500F88E218E203A500E5D6F8 /* HZClassProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZClassProxy.h; sourceTree = "<group>"; };
@@ -428,6 +430,9 @@
 		5019224C18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapIncentivizedAd.h; sourceTree = "<group>"; };
 		5019224D18EF74CC002793A3 /* HZHeyzapIncentivizedAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapIncentivizedAd.m; sourceTree = "<group>"; };
 		501F9D7318989B8A00127E49 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		5020883F19DA2574005C3C1B /* HZNativeAdCollectionSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdCollectionSpec.m; sourceTree = "<group>"; };
+		5020884119DA28DE005C3C1B /* HZNativeAdSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdSpec.m; sourceTree = "<group>"; };
+		5020884419DA2A87005C3C1B /* ValidNativeAd.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ValidNativeAd.json; sourceTree = "<group>"; };
 		50269FBE19B64F1B00CD7C88 /* GADAdMobExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdMobExtras.h; sourceTree = "<group>"; };
 		50269FBF19B64F1B00CD7C88 /* GADAdNetworkExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdNetworkExtras.h; sourceTree = "<group>"; };
 		50269FC019B64F1B00CD7C88 /* GADAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdSize.h; sourceTree = "<group>"; };
@@ -574,6 +579,8 @@
 		50ECA1CC18DB684D006284AB /* HZChartboostAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZChartboostAdapter.m; sourceTree = "<group>"; };
 		50ECA1D018DB7373006284AB /* HZHeyzapAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapAdapter.h; sourceTree = "<group>"; };
 		50ECA1D118DB7373006284AB /* HZHeyzapAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapAdapter.m; sourceTree = "<group>"; };
+		5B32B52129AEF7895DFB6A17 /* Pods-Ads Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ads Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests.release.xcconfig"; sourceTree = "<group>"; };
+		604FF60355743B39E9AD975E /* Pods-Integration Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integration Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Integration Tests/Pods-Integration Tests.release.xcconfig"; sourceTree = "<group>"; };
 		72A18C04178B64E600536547 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		860FD478187BB144008A35FD /* HZAdsFetchManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdsFetchManager.h; sourceTree = "<group>"; };
 		860FD479187BB144008A35FD /* HZAdsFetchManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdsFetchManager.m; sourceTree = "<group>"; };
@@ -676,7 +683,7 @@
 		B1D5F5ECB01E4EDFA33DE9B0 /* libPods-Ads Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ads Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B304C4C0197EDC4A009ACC5D /* HZMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMetrics.h; sourceTree = "<group>"; };
 		B304C4C1197EDC4A009ACC5D /* HZMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMetrics.m; sourceTree = "<group>"; };
-		C9E09E3CF972477FA4ED9657 /* Pods-Ads Tests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ads Tests.xcconfig"; path = "Pods/Pods-Ads Tests.xcconfig"; sourceTree = "<group>"; };
+		B9241C359E50B2D9005581FE /* Pods-Integration Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integration Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Integration Tests/Pods-Integration Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		E62181B219AFB3CC0099BE8C /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		E62181B619AFBF520099BE8C /* HZVungleSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVungleSDK.h; sourceTree = "<group>"; };
 		E62181B719AFBF520099BE8C /* HZVungleSDK.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVungleSDK.m; sourceTree = "<group>"; };
@@ -686,6 +693,7 @@
 		E621820F19BE66A90099BE8C /* HZUnityAdsAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZUnityAdsAdapter.h; sourceTree = "<group>"; };
 		E621821019BE66A90099BE8C /* HZUnityAdsAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZUnityAdsAdapter.m; sourceTree = "<group>"; };
 		E621821419BFAE720099BE8C /* UnityAds.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UnityAds.framework; path = "../../../../../Downloads/unity-ads-sdk-master/UnityAds.framework"; sourceTree = "<group>"; };
+		F3F5764E2F27A103D8E719B4 /* Pods-Ads Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ads Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -821,6 +829,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0A84FE9B0634B91D44D83A4A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F3F5764E2F27A103D8E719B4 /* Pods-Ads Tests.debug.xcconfig */,
+				5B32B52129AEF7895DFB6A17 /* Pods-Ads Tests.release.xcconfig */,
+				B9241C359E50B2D9005581FE /* Pods-Integration Tests.debug.xcconfig */,
+				604FF60355743B39E9AD975E /* Pods-Integration Tests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		500F88DC18E201CC00E5D6F8 /* Vungle */ = {
 			isa = PBXGroup;
 			children = (
@@ -894,6 +913,24 @@
 				5019224D18EF74CC002793A3 /* HZHeyzapIncentivizedAd.m */,
 			);
 			name = "Mediation To Heyzap Interface";
+			sourceTree = "<group>";
+		};
+		5020883E19DA255D005C3C1B /* Native Ads */ = {
+			isa = PBXGroup;
+			children = (
+				5020883F19DA2574005C3C1B /* HZNativeAdCollectionSpec.m */,
+				5020884119DA28DE005C3C1B /* HZNativeAdSpec.m */,
+				5020884319DA2A73005C3C1B /* Native Ad JSON */,
+			);
+			name = "Native Ads";
+			sourceTree = "<group>";
+		};
+		5020884319DA2A73005C3C1B /* Native Ad JSON */ = {
+			isa = PBXGroup;
+			children = (
+				5020884419DA2A87005C3C1B /* ValidNativeAd.json */,
+			);
+			name = "Native Ad JSON";
 			sourceTree = "<group>";
 		};
 		50269FB119B64B9200CD7C88 /* Chartboost */ = {
@@ -1007,6 +1044,7 @@
 		504E9C9618C9322100402BC3 /* Ads Tests */ = {
 			isa = PBXGroup;
 			children = (
+				5020883E19DA255D005C3C1B /* Native Ads */,
 				50AA624618CBF5720018A0B6 /* Categories */,
 				509B5BED18C96CEA003A7CB9 /* Ads JSON */,
 				50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */,
@@ -1329,8 +1367,7 @@
 				50A36ACD18C9402200FA84F0 /* Integration Tests */,
 				86B9419D1757FD6300B8EACE /* Frameworks */,
 				86B9419C1757FD6300B8EACE /* Products */,
-				C9E09E3CF972477FA4ED9657 /* Pods-Ads Tests.xcconfig */,
-				090B07CD6F614B1286E88909 /* Pods-Integration Tests.xcconfig */,
+				0A84FE9B0634B91D44D83A4A /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1779,6 +1816,7 @@
 			files = (
 				504E9C9B18C9322100402BC3 /* InfoPlist.strings in Resources */,
 				509B5BE918C968FA003A7CB9 /* portraitInterstitialRequest.json in Resources */,
+				5020884619DA2A87005C3C1B /* ValidNativeAd.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1839,7 +1877,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-Ads Tests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		86B943571758198100B8EACE /* Prepare Framework */ = {
@@ -1882,7 +1920,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-Integration Tests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Integration Tests/Pods-Integration Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B7BA62A16F294B7BBBCC3D3F /* Check Pods Manifest.lock */ = {
@@ -1924,8 +1962,10 @@
 			files = (
 				50AA624918CBF58A0018A0B6 /* NSString+Tests.m in Sources */,
 				504E9C9D18C9322200402BC3 /* Ads_Tests.m in Sources */,
+				5020884019DA2574005C3C1B /* HZNativeAdCollectionSpec.m in Sources */,
 				509F00C518ECF42E0011EAB3 /* HZMediationSessionKeySpec.m in Sources */,
 				50A36ACC18C93B9C00FA84F0 /* InterstitialSpec.m in Sources */,
+				5020884219DA28DE005C3C1B /* HZNativeAdSpec.m in Sources */,
 				509B5BEC18C96CE2003A7CB9 /* TestJSON.m in Sources */,
 				50AA624518CBF4DC0018A0B6 /* InterstitialFetchSpec.m in Sources */,
 				50AA624C18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m in Sources */,
@@ -2129,7 +2169,7 @@
 /* Begin XCBuildConfiguration section */
 		504E9CA218C9322200402BC3 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C9E09E3CF972477FA4ED9657 /* Pods-Ads Tests.xcconfig */;
+			baseConfigurationReference = F3F5764E2F27A103D8E719B4 /* Pods-Ads Tests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -2158,7 +2198,7 @@
 		};
 		504E9CA318C9322200402BC3 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C9E09E3CF972477FA4ED9657 /* Pods-Ads Tests.xcconfig */;
+			baseConfigurationReference = 5B32B52129AEF7895DFB6A17 /* Pods-Ads Tests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -2220,8 +2260,8 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = MediationTestApp;
-				PROVISIONING_PROFILE = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
+				PROVISIONING_PROFILE = "E0F4A88C-BE47-4DBF-BEAE-218B295F8A26";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E0F4A88C-BE47-4DBF-BEAE-218B295F8A26";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2272,7 +2312,7 @@
 		};
 		50A36AEB18C9405A00FA84F0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 090B07CD6F614B1286E88909 /* Pods-Integration Tests.xcconfig */;
+			baseConfigurationReference = B9241C359E50B2D9005581FE /* Pods-Integration Tests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
@@ -2297,7 +2337,7 @@
 		};
 		50A36AEC18C9405A00FA84F0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 090B07CD6F614B1286E88909 /* Pods-Integration Tests.xcconfig */;
+			baseConfigurationReference = 604FF60355743B39E9AD975E /* Pods-Integration Tests.release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
@@ -2477,8 +2517,8 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
+				PROVISIONING_PROFILE = "E0F4A88C-BE47-4DBF-BEAE-218B295F8A26";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E0F4A88C-BE47-4DBF-BEAE-218B295F8A26";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
