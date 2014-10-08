@@ -373,6 +373,7 @@ NSString * const kHZDataKey = @"data";
     if (key) {
         HZMediationSession *session = self.sessionDictionary[key];
         [session reportClickForAdapter:adapter];
+        [[self delegateForAdType:key.adType] didClickAdWithTag:key.tag];
     }
 }
 
