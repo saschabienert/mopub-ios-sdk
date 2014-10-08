@@ -1,4 +1,4 @@
-OS_VERSION=${1-"7.1"} # Default to 7.1, which Xcode 5.1 has installed by default
+OS_VERSION=${1-"8.0"}
 
 echo "Using $OS_VERSION"
 
