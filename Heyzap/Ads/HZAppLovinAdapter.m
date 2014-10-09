@@ -78,6 +78,10 @@
     return kHZAdapterAppLovin;
 }
 
++ (NSString *)sdkVersion {
+    return [HZALSdk version];
+}
+
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     NSParameterAssert(credentials);

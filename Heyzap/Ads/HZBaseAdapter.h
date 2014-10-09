@@ -70,6 +70,13 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 + (NSString *)name;
 
+/**
+ *  The version of the SDK, if available.
+ *
+ *  @return The version string, or `nil` if it wasn't available.
+ */
++ (NSString *)sdkVersion;
+
 + (BOOL)isSDKAvailable;
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials;

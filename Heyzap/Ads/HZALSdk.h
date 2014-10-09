@@ -18,4 +18,6 @@
 
 - (HZALAdService *)adService;
 
++ (NSString *)version;
+
 @end

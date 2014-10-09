@@ -45,6 +45,11 @@
     ABSTRACT_METHOD_ERROR();
 }
 
++ (NSString *)sdkVersion
+{
+    ABSTRACT_METHOD_ERROR();
+}
+
 - (HZAdType)supportedAdFormats
 {
     ABSTRACT_METHOD_ERROR();
