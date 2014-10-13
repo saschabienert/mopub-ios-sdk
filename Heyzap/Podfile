@@ -8,6 +8,6 @@ target :"Ads Tests", :exclusive => true do
 end
 
 target :'Integration Tests', :exclusive => true do
-  pod 'Subliminal', :git => 'https://github.com/inkling/Subliminal.git', :branch => "shared/XCode6"
+  pod 'Subliminal', :git => 'https://github.com/inkling/Subliminal.git', :branch => "shared/Xcode6"
   pod 'OCMockito'
 end

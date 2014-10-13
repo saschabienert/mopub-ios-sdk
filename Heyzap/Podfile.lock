@@ -10,11 +10,11 @@ DEPENDENCIES:
   - Kiwi
   - OCMockito
   - OHHTTPStubs
-  - Subliminal (from `https://github.com/inkling/Subliminal.git`, branch `shared/XCode6`)
+  - Subliminal (from `https://github.com/inkling/Subliminal.git`, branch `shared/Xcode6`)
 
 EXTERNAL SOURCES:
   Subliminal:
-    :branch: shared/XCode6
+    :branch: shared/Xcode6
     :git: https://github.com/inkling/Subliminal.git
 
 SPEC CHECKSUMS:
@@ -24,4 +24,4 @@ SPEC CHECKSUMS:
   OHHTTPStubs: c1c2007839687eaf9b80f061ce84440515080ebb
   Subliminal: 3fa4291de86aff7a60b799b8a1911311e513e396
 
-COCOAPODS: 0.34.1
+COCOAPODS: 0.34.2
