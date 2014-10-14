@@ -2303,8 +2303,8 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = MediationTestApp;
-				PROVISIONING_PROFILE = "a830ae4b-9224-4fd1-8e61-f1e9d45cc4db";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "a830ae4b-9224-4fd1-8e61-f1e9d45cc4db";
+				PROVISIONING_PROFILE = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2547,8 +2547,8 @@
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "a830ae4b-9224-4fd1-8e61-f1e9d45cc4db";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "a830ae4b-9224-4fd1-8e61-f1e9d45cc4db";
+				PROVISIONING_PROFILE = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
