@@ -35,7 +35,7 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
     HZMediationStartStatusSuccess,
 };
 
-@interface HeyzapMediation() <HZMediationAdapterDelegate>
+@interface HeyzapMediation()
 
 @property (nonatomic, strong) NSSet *setupMediators;
 

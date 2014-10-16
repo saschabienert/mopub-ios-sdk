@@ -251,6 +251,14 @@ const CGFloat kLeftMargin = 10;
     [nativeAdsButton addTarget:self action:@selector(showNativeAds) forControlEvents:UIControlEventTouchUpInside];
     [self.scrollView addSubview:nativeAdsButton];
     
+    UIButton *testActivityButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    testActivityButton.frame = CGRectMake(CGRectGetMaxX(nativeAdsButton.frame) + 10, CGRectGetMaxY(self.showButton.frame) + 10, 167.0, 25.0);
+    testActivityButton.layer.cornerRadius = 4.0;
+    testActivityButton.backgroundColor = [UIColor lightTextColor];
+    [testActivityButton setTitle:@"Start Test Activity" forState:UIControlStateNormal];
+    [testActivityButton addTarget:self action:@selector(showTestActivity) forControlEvents:UIControlEventTouchUpInside];
+    [self.scrollView addSubview:testActivityButton];
+
     self.adUnitSegmentedControl = [[UISegmentedControl alloc] initWithItems: @[@"Interstitial", @"Video", @"Incentivized"]];
     self.adUnitSegmentedControl.frame = CGRectMake(10, CGRectGetMaxY(nativeAdsButton.frame)+10, self.view.frame.size.width-20, 44);
     self.adUnitSegmentedControl.tag = 3203;
@@ -516,6 +524,10 @@ const CGFloat kLeftMargin = 10;
             [self presentViewController:navController animated:YES completion:nil];
         }
     }];
+}
+
+- (void) showTestActivity {
+    [HeyzapAds startTestActivity];
 }
 
 - (void)creativeIDEditingChanged:(UITextField *)sender

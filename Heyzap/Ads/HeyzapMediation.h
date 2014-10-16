@@ -12,7 +12,7 @@
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
 
-@interface HeyzapMediation : NSObject
+@interface HeyzapMediation : NSObject <HZMediationAdapterDelegate>
 
 + (instancetype)sharedInstance;
 
