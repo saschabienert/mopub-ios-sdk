@@ -449,6 +449,7 @@
 		505286DF18E61BD90060C210 /* HZMediationAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationAPIClient.h; sourceTree = "<group>"; };
 		505286E018E61BD90060C210 /* HZMediationAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationAPIClient.m; sourceTree = "<group>"; };
 		5053521818F76550003C531E /* MediationTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MediationTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		506AE93219EF397300188B72 /* HeyzapSDKTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HeyzapSDKTest-Info.plist"; sourceTree = "<group>"; };
 		507A454619BE29CC00C7AEEA /* HZNativeAdController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAdController.h; sourceTree = "<group>"; };
 		507A454719BE29CC00C7AEEA /* HZNativeAdController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdController.m; sourceTree = "<group>"; };
 		507A454B19BE318200C7AEEA /* HZNativeAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAd.h; sourceTree = "<group>"; };
@@ -575,7 +576,7 @@
 		86B941AF1757FD6400B8EACE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		86B941DC1758056B00B8EACE /* HeyzapSDKTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HeyzapSDKTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		86B941DF1758056B00B8EACE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		86B941E31758056B00B8EACE /* HeyzapSDKTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HeyzapSDKTest-Info.plist"; sourceTree = "<group>"; };
+		86B941E31758056B00B8EACE /* MediationTestApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MediationTestApp-Info.plist"; sourceTree = "<group>"; };
 		86B941E51758056B00B8EACE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		86B941E71758056B00B8EACE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		86B941E91758056B00B8EACE /* HeyzapSDKTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HeyzapSDKTest-Prefix.pch"; sourceTree = "<group>"; };
@@ -1274,7 +1275,8 @@
 		86B941E21758056B00B8EACE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				86B941E31758056B00B8EACE /* HeyzapSDKTest-Info.plist */,
+				86B941E31758056B00B8EACE /* MediationTestApp-Info.plist */,
+				506AE93219EF397300188B72 /* HeyzapSDKTest-Info.plist */,
 				86B941E41758056B00B8EACE /* InfoPlist.strings */,
 				86B941E71758056B00B8EACE /* main.m */,
 				86B941E91758056B00B8EACE /* HeyzapSDKTest-Prefix.pch */,
@@ -2103,7 +2105,7 @@
 					"$(inherited)",
 					"MEDIATION=1",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/HeyzapSDKTest-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/MediationTestApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2147,7 +2149,7 @@
 					"$(inherited)",
 					"MEDIATION=1",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/HeyzapSDKTest-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/MediationTestApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
