@@ -36,12 +36,6 @@
 
 @interface HZTestActivityViewController : UIViewController
 
-@property (nonatomic) UIViewController *rootVC;
-@property (nonatomic) NSSet *availableNetworks;
-@property (nonatomic) NSSet *initializedNetworks;
-@property (nonatomic) NSSet *enabledNetworks;
-
 + (void) show;
-- (void) checkNetworkInfo;
 
 @end

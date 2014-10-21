@@ -439,10 +439,14 @@ NSString * const kHZDataKey = @"data";
 
 + (BOOL)isOnlyHeyzapSDK
 {
-    NSSet *availableNonHeyzapAdapters = [[HZBaseAdapter allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
+    return [[self availableNonHeyzapAdapters] count] == 0;
+}
+
++ (NSSet *)availableNonHeyzapAdapters
+{
+    return [[HZBaseAdapter allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
         return ![adapterClass isHeyzapAdapter] && [adapterClass isSDKAvailable];
     }]];
-    return [availableNonHeyzapAdapters count] == 0;
 }
 
 #pragma mark - Setters/Getters for delegates

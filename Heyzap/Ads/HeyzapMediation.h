@@ -33,6 +33,8 @@
 
 + (BOOL)isOnlyHeyzapSDK;
 
++ (NSSet *)availableNonHeyzapAdapters;
+
 + (NSString *)commaSeparatedAdapterList;
 
 - (void)setDelegate:(id<HZAdsDelegate>)delegate forAdType:(HZAdType)adType;

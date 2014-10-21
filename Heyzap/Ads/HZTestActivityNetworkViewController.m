@@ -32,12 +32,19 @@
 
 #import "HZTestActivityNetworkViewController.h"
 #import "HeyzapAds.h"
+#import "HeyzapMediation.h"
+#import "HZMediationAPIClient.h"
+#import "HZDictionaryUtils.h"
 #import "HZDispatch.h"
 #import "HZUnityAds.h"
 
-@interface HZTestActivityNetworkViewController()
+@interface HZTestActivityNetworkViewController() <HZMediationAdapterDelegate>
 
 @property (nonatomic) HZBaseAdapter *network;
+@property (nonatomic) UIViewController *rootVC;
+@property (nonatomic) BOOL available;
+@property (nonatomic) BOOL initialized;
+@property (nonatomic) BOOL enabled;
 @property (nonatomic) UIView *adControls;
 @property (nonatomic) NSString *currentAdFormat;
 @property (nonatomic) HZAdType currentAdType;
@@ -50,14 +57,15 @@
 
 @implementation HZTestActivityNetworkViewController
 
-- (instancetype) initWithNetwork:(HZBaseAdapter *)network available:(NSSet *)available initialized:(NSSet *)initialized enabled:(NSSet *)enabled {
+- (instancetype) initWithNetwork:(HZBaseAdapter *)network rootVC:(UIViewController *)rootVC available:(BOOL)available initialized:(BOOL)initialized enabled:(BOOL)enabled {
     self = [super init];
     self.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 
     self.network = network;
-    self.availableNetworks = available;
-    self.initializedNetworks = initialized;
-    self.enabledNetworks = enabled;
+    self.rootVC = rootVC;
+    self.available = available;
+    self.initialized = initialized;
+    self.enabled = enabled;
     
     // set this adapter's delegate to us so we can get callbacks
     self.network.delegate = self;
@@ -82,39 +90,61 @@
     // reset this network adapter's delegate
     self.network.delegate = [HeyzapMediation sharedInstance];
     
-    UIViewController *rootVC = ((HZTestActivityViewController *) self.presentingViewController).rootVC;
-    
     // reset the UnityAds view controller
     if ([[[self.network class] name] isEqualToString:@"unityads"]) {
-        [[HZUnityAds sharedInstance] setViewController:rootVC];
+        [[HZUnityAds sharedInstance] setViewController:self.rootVC];
     }
     
     [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
         // reset the root view controller
-        [[[UIApplication sharedApplication] keyWindow] setRootViewController:rootVC];
+        [[[UIApplication sharedApplication] keyWindow] setRootViewController:self.rootVC];
     }];
 }
 
 - (void) refresh {
-    [self checkNetworkInfo];
+    // check available
+    self.available = [[self.network class] isSDKAvailable] && ![[self.network class] isHeyzapAdapter];
     
-    BOOL available = [self.availableNetworks containsObject:self.network];
-    [self setStatusForLabel:self.availableStatus withBool:available];
-    
-    BOOL initialized = [self.initializedNetworks containsObject:self.network];
-    [self setStatusForLabel:self.initializationStatus withBool:initialized];
-    
-    BOOL enabled = [self.enabledNetworks containsObject:self.network];
-    [self setStatusForLabel:self.enabledStatus withBool:enabled];
-    
-    if (available && initialized) {
-        NSLog(@"adcontrols = %@",self.adControls);
-        [self.adControls removeFromSuperview];
-        self.adControls = [self makeAdControls];
-        [self.view addSubview:self.adControls];
-    } else {
-        [self.adControls removeFromSuperview];
-    }
+    // hit the /info endpoint for enabled status and initialization credentials
+    [[HZMediationAPIClient sharedClient] get:@"info" withParams:nil success:^(NSDictionary *json) {
+        NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
+        NSArray *thisNetworkArray = [networks filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSDictionary *mediator, NSDictionary *bindings) {
+            return [mediator[@"name"] isEqualToString:[[self.network class] name]];
+        }]];
+        
+        // for whatever reason, sometimes /info doesn't always give disabled networks, in that case don't change anything
+        if(thisNetworkArray.count == 1){
+            NSDictionary *network = thisNetworkArray[0];
+            
+            // check enabled
+            self.enabled = [network[@"enabled"] boolValue];
+            
+            // check initialization
+            NSDictionary *networkInfo = network[@"data"];
+            NSError *credentialError = [[self.network class] enableWithCredentials:networkInfo];
+            self.initialized = !credentialError;
+            
+            NSLog(@"Available: %d", self.available);
+            NSLog(@"Initialized: %d", self.initialized);
+            NSLog(@"Enabled: %d", self.enabled);
+            
+            // update the checks and crosses
+            [self setStatusForLabel:self.availableStatus withBool:self.available];
+            [self setStatusForLabel:self.initializationStatus withBool:self.initialized];
+            [self setStatusForLabel:self.enabledStatus withBool:self.enabled];
+            
+            // display or remove the ad controls
+            if (self.available && self.initialized) {
+                [self.adControls removeFromSuperview];
+                self.adControls = [self makeAdControls];
+                [self.view addSubview:self.adControls];
+            } else {
+                [self.adControls removeFromSuperview];
+            }
+        }
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error from /info: %@", error);
+    }];
 }
 
 - (void) switchAdFormat:(id)sender {
@@ -230,117 +260,19 @@
     [currentNetworkView addSubview:headerView];
     
     // sdk available label
-    BOOL available = [self.availableNetworks containsObject:[[self.network class] sharedInstance]];
-    
-    UIView *availableView = ({
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(currentNetworkView.frame.origin.x + 10, headerView.frame.origin.y + headerView.frame.size.height + 5,
-                                                                currentNetworkView.frame.size.width - 20, 30)];
-        view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        view.backgroundColor = [UIColor clearColor];
-        view;
-    });
-    
-    UILabel *availableLabel = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(availableView.frame.origin.x + 10, availableView.frame.origin.y - 65,
-                                                                   availableView.frame.size.width - 20, availableView.frame.size.height)];
-        label.text = @"SDK available";
-        label.textAlignment = NSTextAlignmentLeft;
-        label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont systemFontOfSize:16];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        label;
-    });
-    [availableView addSubview:availableLabel];
-    
-    self.availableStatus = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(availableView.frame.origin.x - 10, availableLabel.frame.origin.y, 20, availableLabel.frame.size.height)];
-        label.textAlignment = NSTextAlignmentLeft;
-        label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont systemFontOfSize:16];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        label;
-    });
-    [self setStatusForLabel:self.availableStatus withBool:available];
-    [availableView addSubview:self.availableStatus];
-    
+    UIView *availableView = [self makeStatusLabel:@"available" withStatus:self.available text:@"SDK Available" y:95];
     [currentNetworkView addSubview:availableView];
     
     // sdk initialization succeeded label
-    BOOL initialized = [self.initializedNetworks containsObject:[[self.network class] sharedInstance]];
-    
-    UIView *initializationView = ({
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(currentNetworkView.frame.origin.x + 10, availableView.frame.origin.y + 30,
-                                                                currentNetworkView.frame.size.width - 20, 30)];
-        view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        view.backgroundColor = [UIColor clearColor];
-        view;
-    });
-    
-    UILabel *initializationLabel = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(initializationView.frame.origin.x + 10, initializationView.frame.origin.y - 95,
-                                                                   initializationView.frame.size.width - 20, initializationView.frame.size.height)];
-        label.text = @"SDK initialized with credentials";
-        label.textAlignment = NSTextAlignmentLeft;
-        label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont systemFontOfSize:16];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        label;
-    });
-    [initializationView addSubview:initializationLabel];
-    
-    self.initializationStatus = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(initializationView.frame.origin.x - 10, initializationLabel.frame.origin.y,
-                                                                   20, initializationLabel.frame.size.height)];
-        label.textAlignment = NSTextAlignmentLeft;
-        label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont systemFontOfSize:16];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        label;
-    });
-    [self setStatusForLabel:self.initializationStatus withBool:initialized];
-    [initializationView addSubview:self.initializationStatus];
-    
+    UIView *initializationView = [self makeStatusLabel:@"initialization" withStatus:self.initialized text:@"SDK initialized with credentials" y:availableView.frame.origin.y + 15];
     [currentNetworkView addSubview:initializationView];
-    
+
     // network is enabled label
-    BOOL enabled = [self.enabledNetworks containsObject:[[self.network class] sharedInstance]];
-    
-    UIView *enabledView = ({
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(currentNetworkView.frame.origin.x + 10, initializationView.frame.origin.y + 30,
-                                                                currentNetworkView.frame.size.width - 20, 30)];
-        view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        view.backgroundColor = [UIColor clearColor];
-        view;
-    });
-    
-    UILabel *enabledLabel = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(enabledView.frame.origin.x + 10, enabledView.frame.origin.y - 125,
-                                                                   enabledView.frame.size.width - 20, enabledView.frame.size.height)];
-        label.text = @"Network enabled on dashboard";
-        label.textAlignment = NSTextAlignmentLeft;
-        label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont systemFontOfSize:16];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        label;
-    });
-    [enabledView addSubview:enabledLabel];
-    
-    self.enabledStatus = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(enabledView.frame.origin.x - 10, enabledLabel.frame.origin.y,
-                                                                   20, enabledLabel.frame.size.height)];
-        label.textAlignment = NSTextAlignmentLeft;
-        label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont systemFontOfSize:16];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        label;
-    });
-    [self setStatusForLabel:self.enabledStatus withBool:enabled];
-    [enabledView addSubview:self.enabledStatus];
-    
+    UIView *enabledView = [self makeStatusLabel:@"enabled" withStatus:self.enabled text:@"Network enabled on dashboard" y:initializationView.frame.origin.y + 15];
     [currentNetworkView addSubview:enabledView];
     
     // only show ad fetching/showing controls if the network was initialized correctly
-    if(available && initialized){
+    if(self.available && self.initialized){
         self.adControls = [self makeAdControls];
         [currentNetworkView addSubview:self.adControls];
     }
@@ -409,6 +341,49 @@
     [adControls addSubview:self.showButton];
     
     return adControls;
+}
+
+- (UIView *) makeStatusLabel:(NSString *)type withStatus:(BOOL)status text:(NSString *)text y:(CGFloat)y {
+    UIView *wrapperView = ({
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x + 10, y, self.view.frame.size.width - 20, 30)];
+        view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        view.backgroundColor = [UIColor clearColor];
+        view;
+    });
+    
+    UILabel *textLabel = ({
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(wrapperView.frame.origin.x + 10, wrapperView.frame.origin.y - 125,
+                                                                   wrapperView.frame.size.width - 20, wrapperView.frame.size.height)];
+        label.text = text;
+        label.textAlignment = NSTextAlignmentLeft;
+        label.backgroundColor = [UIColor clearColor];
+        label.font = [UIFont systemFontOfSize:16];
+        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        label;
+    });
+    [wrapperView addSubview:textLabel];
+    
+    UILabel *statusLabel = ({
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(wrapperView.frame.origin.x - 10, textLabel.frame.origin.y,
+                                                                   20, textLabel.frame.size.height)];
+        label.textAlignment = NSTextAlignmentLeft;
+        label.backgroundColor = [UIColor clearColor];
+        label.font = [UIFont systemFontOfSize:16];
+        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        label;
+    });
+    [self setStatusForLabel:statusLabel withBool:status];
+    [wrapperView addSubview:statusLabel];
+
+    if ([type isEqualToString:@"available"]) {
+        self.availableStatus = statusLabel;
+    } else if ([type isEqualToString:@"initialization"]) {
+        self.initializationStatus = statusLabel;
+    } else if ([type isEqualToString:@"enabled"]) {
+        self.enabledStatus = statusLabel;
+    }
+    
+    return wrapperView;
 }
 
 - (void) setStatusForLabel:(UILabel  *)label withBool:(BOOL)status {

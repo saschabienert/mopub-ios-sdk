@@ -47,7 +47,11 @@
 @interface HZTestActivityViewController() <UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic) BOOL statusBarHidden;
+@property (nonatomic) UIViewController *rootVC;
 @property (nonatomic) NSArray *allNetworks;
+@property (nonatomic) NSSet *availableNetworks;
+@property (nonatomic) NSSet *initializedNetworks;
+@property (nonatomic) NSSet *enabledNetworks;
 
 @end
 
@@ -103,6 +107,13 @@
     [self.view addSubview:[self makeView]];
 }
 
+- (void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    // check network info again, so that if we switch back to a network that has been refreshed we don't forget the new state
+    [self checkNetworkInfo];
+}
+
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [self.allNetworks count];
 }
@@ -124,9 +135,10 @@
     NSLog(@"Current network adapter: %@", network);
     
     HZTestActivityNetworkViewController *networkVC = [[HZTestActivityNetworkViewController alloc] initWithNetwork:network
-                                                                                                        available:self.availableNetworks
-                                                                                                      initialized:self.initializedNetworks
-                                                                                                          enabled:self.enabledNetworks];
+                                                                                                           rootVC:self.rootVC
+                                                                                                        available:[self.availableNetworks containsObject:network]
+                                                                                                      initialized:[self.initializedNetworks containsObject:network]
+                                                                                                          enabled:[self.enabledNetworks containsObject:network]];
     [self presentViewController:networkVC animated:YES completion:^{
         // some adapters (AdMob, Vungle) attempt to display their ads on the root view controller, so set it
         [[[UIApplication sharedApplication] keyWindow] setRootViewController:networkVC];
@@ -206,10 +218,8 @@
 - (void) checkNetworkInfo {
     // check available
     NSMutableSet *availableNetworks = [NSMutableSet set];
-    for( HZBaseAdapter *adapter in [HZBaseAdapter allAdapterClasses]){
-        if(![[adapter class] isHeyzapAdapter] && [[adapter class] isSDKAvailable]){
-            [availableNetworks addObject:[[adapter class] sharedInstance]];
-        }
+    for (HZBaseAdapter *adapter in [HeyzapMediation availableNonHeyzapAdapters]) {
+        [availableNetworks addObject:[[adapter class] sharedInstance]];
     }
     self.availableNetworks = availableNetworks;
 
@@ -242,7 +252,7 @@
         NSLog(@"Networks initialized: %@", self.initializedNetworks);
         NSLog(@"Networks enabled: %@", self.enabledNetworks);
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error from /start: %@", error);
+        NSLog(@"Error from /info: %@", error);
     }];
 }
 
