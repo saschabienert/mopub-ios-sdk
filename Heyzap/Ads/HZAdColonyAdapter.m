@@ -46,6 +46,11 @@
     return kHZAdapterAdColony;
 }
 
++ (NSString *)humanizedName
+{
+    return kHZAdapterAdColonyHumanized;
+}
+
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     NSParameterAssert(credentials);

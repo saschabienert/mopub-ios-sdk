@@ -74,6 +74,11 @@
     return kHZAdapterChartboost;
 }
 
++ (NSString *)humanizedName
+{
+    return kHZAdapterChartboostHumanized;
+}
+
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
     switch (type) {

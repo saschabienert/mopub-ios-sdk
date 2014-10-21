@@ -70,6 +70,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 + (NSString *)name;
 
++ (NSString *)humanizedName;
+
 + (BOOL)isSDKAvailable;
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials;

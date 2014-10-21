@@ -78,6 +78,11 @@
     return kHZAdapterAppLovin;
 }
 
++ (NSString *)humanizedName
+{
+    return kHZAdapterAppLovinHumanized;
+}
+
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     NSParameterAssert(credentials);

@@ -85,6 +85,11 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     return kHZAdapterVungle;
 }
 
++ (NSString *)humanizedName
+{
+    return kHZAdapterVungleHumanized;
+}
+
 - (void)startWithPubAppID:(NSString *)appID
 {
     [[HZVungleSDK sharedSDK] startWithAppId:appID];

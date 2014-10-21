@@ -32,16 +32,11 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "HeyzapMediation.h"
+#import "HZTestActivityViewController.h"
+#import "HZBaseAdapter.h"
 
-@interface HZTestActivityViewController : UIViewController
+@interface HZTestActivityNetworkViewController : HZTestActivityViewController <HZMediationAdapterDelegate>
 
-@property (nonatomic) UIViewController *rootVC;
-@property (nonatomic) NSSet *availableNetworks;
-@property (nonatomic) NSSet *initializedNetworks;
-@property (nonatomic) NSSet *enabledNetworks;
-
-+ (void) show;
-- (void) checkNetworkInfo;
+- (instancetype) initWithNetwork:(HZBaseAdapter *)network available:(NSSet *)available initialized:(NSSet *)initialized enabled:(NSSet *)enabled;
 
 @end

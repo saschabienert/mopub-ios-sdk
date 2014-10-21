@@ -339,6 +339,8 @@
 		E626227F19E738DD0094957B /* vg_timer.png in Resources */ = {isa = PBXBuildFile; fileRef = E626227819E738DD0094957B /* vg_timer.png */; };
 		E626228019E738DD0094957B /* VungleSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E626227919E738DD0094957B /* VungleSDK.framework */; };
 		E626228419F08F930094957B /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E626228319F08F930094957B /* AdColony.framework */; };
+		E626228619F5BAD40094957B /* HZTestActivityNetworkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */; };
+		E626228819F5BB6C0094957B /* HZTestActivityNetworkViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -697,6 +699,8 @@
 		E626227819E738DD0094957B /* vg_timer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_timer.png; sourceTree = "<group>"; };
 		E626227919E738DD0094957B /* VungleSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = VungleSDK.framework; sourceTree = "<group>"; };
 		E626228319F08F930094957B /* AdColony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdColony.framework; sourceTree = "<group>"; };
+		E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityNetworkViewController.m; sourceTree = "<group>"; };
+		E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZTestActivityNetworkViewController.h; sourceTree = "<group>"; };
 		F3F5764E2F27A103D8E719B4 /* Pods-Ads Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ads Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1276,6 +1280,8 @@
 				86D0A9971851808200B3D870 /* HZAdVideoViewController.m */,
 				E626220819E707540094957B /* HZTestActivityViewController.h */,
 				E626220A19E7076A0094957B /* HZTestActivityViewController.m */,
+				E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */,
+				E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1670,6 +1676,7 @@
 				500F88E418E203A500E5D6F8 /* HZClassProxy.h in Headers */,
 				8680AC9B193ED2DC0078B5CF /* HZDelegateProxy.h in Headers */,
 				86FF907D185842D900BC48BF /* HZQueue.h in Headers */,
+				E626228819F5BB6C0094957B /* HZTestActivityNetworkViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2048,6 +2055,7 @@
 				86CD0ECC17C3F7B00005BD3D /* HZAdsAPIClient.m in Sources */,
 				86CD0E8B17BB0B940005BD3D /* HZAdsManager.m in Sources */,
 				5046CE8B18E3B0C3000395AA /* HZDispatch.m in Sources */,
+				E626228619F5BAD40094957B /* HZTestActivityNetworkViewController.m in Sources */,
 				86B09B8A1759743F0045AA54 /* HZRotatingView.m in Sources */,
 				5011CE5618DB9B7F00604B53 /* HZAdColonyAdapter.m in Sources */,
 				86B09B89175973E60045AA54 /* HeyzapAds.m in Sources */,

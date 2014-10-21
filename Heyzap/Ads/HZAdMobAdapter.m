@@ -60,6 +60,11 @@
     return kHZAdapterAdMob;
 }
 
++ (NSString *)humanizedName
+{
+    return kHZAdapterAdMobHumanized;
+}
+
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
     return [self supportedAdFormats] & type && self.currentInterstitial.isReady;

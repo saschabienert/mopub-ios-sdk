@@ -54,6 +54,11 @@
     return kHZAdapterUnityAds;
 }
 
++ (NSString *) humanizedName
+{
+    return kHZAdapterUnityAdsHumanized;
+}
+
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     NSParameterAssert(credentials);

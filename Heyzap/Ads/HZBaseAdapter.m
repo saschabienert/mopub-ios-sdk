@@ -45,6 +45,11 @@
     ABSTRACT_METHOD_ERROR();
 }
 
++ (NSString *)humanizedName
+{
+    ABSTRACT_METHOD_ERROR();
+}
+
 - (HZAdType)supportedAdFormats
 {
     ABSTRACT_METHOD_ERROR();
