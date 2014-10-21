@@ -83,6 +83,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 #pragma mark - Inferred methods
 
+- (NSString *)sdkVersion;
+
 - (NSString *)name;
 
 - (BOOL)supportsAdType:(HZAdType)adType;

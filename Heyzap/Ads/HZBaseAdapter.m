@@ -72,6 +72,11 @@
 
 #pragma mark - Inferred methods
 
+- (NSString *)sdkVersion
+{
+    return [[self class] sdkVersion];
+}
+
 - (NSString *)name
 {
     return [[self class] name];
