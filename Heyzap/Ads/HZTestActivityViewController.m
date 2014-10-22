@@ -52,6 +52,7 @@
 @property (nonatomic) NSSet *availableNetworks;
 @property (nonatomic) NSSet *initializedNetworks;
 @property (nonatomic) NSSet *enabledNetworks;
+@property (nonatomic) NSMutableDictionary *integrationStatusHash;
 
 @end
 
@@ -84,6 +85,7 @@
     NSLog(@"All networks: %@", vc.allNetworks);
     
     // get the networks' enabled status and credentials to build sets of enabled and initialized networks
+    vc.integrationStatusHash = [NSMutableDictionary dictionary];
     [vc checkNetworkInfo];
 
     // take over the screen
@@ -128,12 +130,17 @@
 }
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    HZBaseAdapter *network = [[self.allNetworks objectAtIndex:indexPath.row] sharedInstance];
+
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
     if(cell == nil){
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"reuseIdentifier"];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"reuseIdentifier"];
     }
-    cell.textLabel.text = [[self.allNetworks objectAtIndex:indexPath.row] humanizedName];
+    cell.textLabel.text = [[network class] humanizedName];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
+    [self.integrationStatusHash setValue:cell forKey:[[network class] name]];
+
     return cell;
 }
 
@@ -210,6 +217,18 @@
     return chooseNetworkView;
 }
 
+- (void) updateIntegrationStatus:(HZBaseAdapter *)network {
+    UITableViewCell *cell = self.integrationStatusHash[[[network class] name]];
+
+    if ([self.availableNetworks containsObject:network] && [self.initializedNetworks containsObject:network] && [self.enabledNetworks containsObject:network]) {
+        cell.detailTextLabel.text = @"☑︎";
+        cell.detailTextLabel.textColor = [UIColor greenColor];
+    } else {
+        cell.detailTextLabel.text = @"☒";
+        cell.detailTextLabel.textColor = [UIColor redColor];
+    }
+}
+
 #pragma mark - General utility methods
 
 - (void) checkNetworkInfo {
@@ -242,6 +261,9 @@
                     [initializedNetworks addObject:adapter];
                 }
             }
+
+            // update the check/cross for this network
+            [self updateIntegrationStatus:[mediatorClass sharedInstance]];
         }
         self.enabledNetworks = enabledNetworks;
         self.initializedNetworks = initializedNetworks;
