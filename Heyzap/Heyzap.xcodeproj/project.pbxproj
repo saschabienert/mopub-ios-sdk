@@ -33,6 +33,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		3FA7DE290B80ED14D265F344 /* libPods-MediationTestApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A4D105EBBFD2834D2AD2D00 /* libPods-MediationTestApp.a */; };
 		500F88D918E0F9BE00E5D6F8 /* HZChartboost.h in Headers */ = {isa = PBXBuildFile; fileRef = 500F88D718E0F9BE00E5D6F8 /* HZChartboost.h */; };
 		500F88DA18E0F9BE00E5D6F8 /* HZChartboost.m in Sources */ = {isa = PBXBuildFile; fileRef = 500F88D818E0F9BE00E5D6F8 /* HZChartboost.m */; };
 		500F88E418E203A500E5D6F8 /* HZClassProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 500F88E218E203A500E5D6F8 /* HZClassProxy.h */; };
@@ -124,7 +125,6 @@
 		505351FF18F76550003C531E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4518DB916B00604B53 /* AudioToolbox.framework */; };
 		5053520018F76550003C531E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B941DF1758056B00B8EACE /* CoreGraphics.framework */; };
 		5053520118F76550003C531E /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4318DB915A00604B53 /* CFNetwork.framework */; };
-		5053520218F76550003C531E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4118DB915500604B53 /* AVFoundation.framework */; };
 		5053520318F76550003C531E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE3F18DB914200604B53 /* libz.dylib */; };
 		5053520418F76550003C531E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
 		5053520518F76550003C531E /* libHeyzapAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9432A1758108700B8EACE /* libHeyzapAds.a */; };
@@ -223,6 +223,7 @@
 		50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */; };
 		50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */; };
 		50D1599418F35CC600734ABB /* HZHeyzapInterstitialAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1599218F35CC600734ABB /* HZHeyzapInterstitialAd.m */; };
+		50DB6F0219EDF6B40074B3E4 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4118DB915500604B53 /* AVFoundation.framework */; };
 		50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ECA1C318DB618E006284AB /* HeyzapMediation.h */; };
 		50ECA1C618DB618E006284AB /* HeyzapMediation.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ECA1C418DB618E006284AB /* HeyzapMediation.m */; };
 		50ECA1C818DB6234006284AB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
@@ -329,14 +330,7 @@
 		E626221219E736820094957B /* Chartboost.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E626221119E736820094957B /* Chartboost.framework */; };
 		E626221419E736AF0094957B /* libAppLovinSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E626221319E736AF0094957B /* libAppLovinSdk.a */; };
 		E626226A19E737BF0094957B /* libGoogleAdMobAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E626226919E737BF0094957B /* libGoogleAdMobAds.a */; };
-		E626226D19E737F00094957B /* UnityAds.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E626226B19E737F00094957B /* UnityAds.bundle */; };
 		E626226E19E737F00094957B /* UnityAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E626226C19E737F00094957B /* UnityAds.framework */; };
-		E626227A19E738DD0094957B /* __vungle.db in Resources */ = {isa = PBXBuildFile; fileRef = E626227319E738DD0094957B /* __vungle.db */; };
-		E626227B19E738DD0094957B /* vg_close.png in Resources */ = {isa = PBXBuildFile; fileRef = E626227419E738DD0094957B /* vg_close.png */; };
-		E626227C19E738DD0094957B /* vg_cta.png in Resources */ = {isa = PBXBuildFile; fileRef = E626227519E738DD0094957B /* vg_cta.png */; };
-		E626227D19E738DD0094957B /* vg_mute_off.png in Resources */ = {isa = PBXBuildFile; fileRef = E626227619E738DD0094957B /* vg_mute_off.png */; };
-		E626227E19E738DD0094957B /* vg_mute_on.png in Resources */ = {isa = PBXBuildFile; fileRef = E626227719E738DD0094957B /* vg_mute_on.png */; };
-		E626227F19E738DD0094957B /* vg_timer.png in Resources */ = {isa = PBXBuildFile; fileRef = E626227819E738DD0094957B /* vg_timer.png */; };
 		E626228019E738DD0094957B /* VungleSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E626227919E738DD0094957B /* VungleSDK.framework */; };
 		E626228419F08F930094957B /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E626228319F08F930094957B /* AdColony.framework */; };
 		E626228619F5BAD40094957B /* HZTestActivityNetworkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */; };
@@ -402,6 +396,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		16019D1EEED87A2B518F178B /* Pods-MediationTestApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediationTestApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MediationTestApp/Pods-MediationTestApp.debug.xcconfig"; sourceTree = "<group>"; };
+		3A4D105EBBFD2834D2AD2D00 /* libPods-MediationTestApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MediationTestApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AC97BB61691E598ABE47CC3 /* Pods-MediationTestApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediationTestApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-MediationTestApp/Pods-MediationTestApp.release.xcconfig"; sourceTree = "<group>"; };
 		500F88D718E0F9BE00E5D6F8 /* HZChartboost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZChartboost.h; sourceTree = "<group>"; };
 		500F88D818E0F9BE00E5D6F8 /* HZChartboost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZChartboost.m; sourceTree = "<group>"; };
 		500F88E218E203A500E5D6F8 /* HZClassProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZClassProxy.h; sourceTree = "<group>"; };
@@ -462,6 +459,7 @@
 		505286DF18E61BD90060C210 /* HZMediationAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationAPIClient.h; sourceTree = "<group>"; };
 		505286E018E61BD90060C210 /* HZMediationAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationAPIClient.m; sourceTree = "<group>"; };
 		5053521818F76550003C531E /* MediationTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MediationTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		506AE93219EF397300188B72 /* HeyzapSDKTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HeyzapSDKTest-Info.plist"; sourceTree = "<group>"; };
 		507A454619BE29CC00C7AEEA /* HZNativeAdController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAdController.h; sourceTree = "<group>"; };
 		507A454719BE29CC00C7AEEA /* HZNativeAdController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdController.m; sourceTree = "<group>"; };
 		507A454B19BE318200C7AEEA /* HZNativeAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAd.h; sourceTree = "<group>"; };
@@ -588,7 +586,7 @@
 		86B941AF1757FD6400B8EACE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		86B941DC1758056B00B8EACE /* HeyzapSDKTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HeyzapSDKTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		86B941DF1758056B00B8EACE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		86B941E31758056B00B8EACE /* HeyzapSDKTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HeyzapSDKTest-Info.plist"; sourceTree = "<group>"; };
+		86B941E31758056B00B8EACE /* MediationTestApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MediationTestApp-Info.plist"; sourceTree = "<group>"; };
 		86B941E51758056B00B8EACE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		86B941E71758056B00B8EACE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		86B941E91758056B00B8EACE /* HeyzapSDKTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HeyzapSDKTest-Prefix.pch"; sourceTree = "<group>"; };
@@ -659,44 +657,8 @@
 		E626220A19E7076A0094957B /* HZTestActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityViewController.m; sourceTree = "<group>"; };
 		E626221119E736820094957B /* Chartboost.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Chartboost.framework; sourceTree = "<group>"; };
 		E626221319E736AF0094957B /* libAppLovinSdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAppLovinSdk.a; sourceTree = "<group>"; };
-		E626224C19E737770094957B /* ALAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAd.h; sourceTree = "<group>"; };
-		E626224D19E737770094957B /* ALAdDisplayDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdDisplayDelegate.h; sourceTree = "<group>"; };
-		E626224E19E737770094957B /* ALAdLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdLoadDelegate.h; sourceTree = "<group>"; };
-		E626224F19E737770094957B /* ALAdRewardDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdRewardDelegate.h; sourceTree = "<group>"; };
-		E626225019E737770094957B /* ALAdService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdService.h; sourceTree = "<group>"; };
-		E626225119E737770094957B /* ALAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdSize.h; sourceTree = "<group>"; };
-		E626225219E737770094957B /* ALAdType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdType.h; sourceTree = "<group>"; };
-		E626225319E737770094957B /* ALAdUpdateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdUpdateDelegate.h; sourceTree = "<group>"; };
-		E626225419E737770094957B /* ALAdVideoPlaybackDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdVideoPlaybackDelegate.h; sourceTree = "<group>"; };
-		E626225519E737770094957B /* ALAdView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALAdView.h; sourceTree = "<group>"; };
-		E626225619E737770094957B /* ALErrorCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALErrorCodes.h; sourceTree = "<group>"; };
-		E626225719E737770094957B /* ALIncentivizedInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALIncentivizedInterstitialAd.h; sourceTree = "<group>"; };
-		E626225819E737770094957B /* ALInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALInterstitialAd.h; sourceTree = "<group>"; };
-		E626225919E737770094957B /* ALSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSdk.h; sourceTree = "<group>"; };
-		E626225A19E737770094957B /* ALSdkSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSdkSettings.h; sourceTree = "<group>"; };
-		E626225B19E737770094957B /* ALSwiftHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALSwiftHeaders.h; sourceTree = "<group>"; };
-		E626225C19E737770094957B /* ALTargetingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALTargetingData.h; sourceTree = "<group>"; };
-		E626225D19E737BF0094957B /* GADAdMobExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdMobExtras.h; sourceTree = "<group>"; };
-		E626225E19E737BF0094957B /* GADAdNetworkExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdNetworkExtras.h; sourceTree = "<group>"; };
-		E626225F19E737BF0094957B /* GADAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdSize.h; sourceTree = "<group>"; };
-		E626226019E737BF0094957B /* GADBannerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADBannerView.h; sourceTree = "<group>"; };
-		E626226119E737BF0094957B /* GADBannerViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADBannerViewDelegate.h; sourceTree = "<group>"; };
-		E626226219E737BF0094957B /* GADInAppPurchase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADInAppPurchase.h; sourceTree = "<group>"; };
-		E626226319E737BF0094957B /* GADInAppPurchaseDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADInAppPurchaseDelegate.h; sourceTree = "<group>"; };
-		E626226419E737BF0094957B /* GADInterstitial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADInterstitial.h; sourceTree = "<group>"; };
-		E626226519E737BF0094957B /* GADInterstitialDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADInterstitialDelegate.h; sourceTree = "<group>"; };
-		E626226619E737BF0094957B /* GADModules.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADModules.h; sourceTree = "<group>"; };
-		E626226719E737BF0094957B /* GADRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADRequest.h; sourceTree = "<group>"; };
-		E626226819E737BF0094957B /* GADRequestError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADRequestError.h; sourceTree = "<group>"; };
 		E626226919E737BF0094957B /* libGoogleAdMobAds.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAdMobAds.a; sourceTree = "<group>"; };
-		E626226B19E737F00094957B /* UnityAds.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = UnityAds.bundle; sourceTree = "<group>"; };
 		E626226C19E737F00094957B /* UnityAds.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UnityAds.framework; sourceTree = "<group>"; };
-		E626227319E738DD0094957B /* __vungle.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = __vungle.db; sourceTree = "<group>"; };
-		E626227419E738DD0094957B /* vg_close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_close.png; sourceTree = "<group>"; };
-		E626227519E738DD0094957B /* vg_cta.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_cta.png; sourceTree = "<group>"; };
-		E626227619E738DD0094957B /* vg_mute_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_mute_off.png; sourceTree = "<group>"; };
-		E626227719E738DD0094957B /* vg_mute_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_mute_on.png; sourceTree = "<group>"; };
-		E626227819E738DD0094957B /* vg_timer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vg_timer.png; sourceTree = "<group>"; };
 		E626227919E738DD0094957B /* VungleSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = VungleSDK.framework; sourceTree = "<group>"; };
 		E626228319F08F930094957B /* AdColony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdColony.framework; sourceTree = "<group>"; };
 		E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityNetworkViewController.m; sourceTree = "<group>"; };
@@ -734,7 +696,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5053520218F76550003C531E /* AVFoundation.framework in Frameworks */,
+				50DB6F0219EDF6B40074B3E4 /* AVFoundation.framework in Frameworks */,
 				505351FE18F76550003C531E /* CoreMedia.framework in Frameworks */,
 				E62181F919AFCEEE0099BE8C /* CoreData.framework in Frameworks */,
 				E62181B319AFB3CC0099BE8C /* libsqlite3.dylib in Frameworks */,
@@ -749,7 +711,6 @@
 				505351FF18F76550003C531E /* AudioToolbox.framework in Frameworks */,
 				5053520018F76550003C531E /* CoreGraphics.framework in Frameworks */,
 				5053520118F76550003C531E /* CFNetwork.framework in Frameworks */,
-				5053520218F76550003C531E /* AVFoundation.framework in Frameworks */,
 				5053520318F76550003C531E /* libz.dylib in Frameworks */,
 				5053520418F76550003C531E /* SystemConfiguration.framework in Frameworks */,
 				5053520518F76550003C531E /* libHeyzapAds.a in Frameworks */,
@@ -764,6 +725,7 @@
 				5053520A18F76550003C531E /* QuartzCore.framework in Frameworks */,
 				5053520B18F76550003C531E /* Foundation.framework in Frameworks */,
 				E621821619BFAE720099BE8C /* UnityAds.framework in Frameworks */,
+				3FA7DE290B80ED14D265F344 /* libPods-MediationTestApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -844,6 +806,8 @@
 				5B32B52129AEF7895DFB6A17 /* Pods-Ads Tests.release.xcconfig */,
 				B9241C359E50B2D9005581FE /* Pods-Integration Tests.debug.xcconfig */,
 				604FF60355743B39E9AD975E /* Pods-Integration Tests.release.xcconfig */,
+				16019D1EEED87A2B518F178B /* Pods-MediationTestApp.debug.xcconfig */,
+				4AC97BB61691E598ABE47CC3 /* Pods-MediationTestApp.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -941,59 +905,6 @@
 			name = "Native Ad JSON";
 			sourceTree = "<group>";
 		};
-		50269FB119B64B9200CD7C88 /* Chartboost */ = {
-			isa = PBXGroup;
-			children = (
-				E626221119E736820094957B /* Chartboost.framework */,
-			);
-			path = Chartboost;
-			sourceTree = "<group>";
-		};
-		50269FB219B64C9A00CD7C88 /* AdColony */ = {
-			isa = PBXGroup;
-			children = (
-				E626228319F08F930094957B /* AdColony.framework */,
-			);
-			path = AdColony;
-			sourceTree = "<group>";
-		};
-		50269FB319B64CB200CD7C88 /* AdMob */ = {
-			isa = PBXGroup;
-			children = (
-				E626225D19E737BF0094957B /* GADAdMobExtras.h */,
-				E626225E19E737BF0094957B /* GADAdNetworkExtras.h */,
-				E626225F19E737BF0094957B /* GADAdSize.h */,
-				E626226019E737BF0094957B /* GADBannerView.h */,
-				E626226119E737BF0094957B /* GADBannerViewDelegate.h */,
-				E626226219E737BF0094957B /* GADInAppPurchase.h */,
-				E626226319E737BF0094957B /* GADInAppPurchaseDelegate.h */,
-				E626226419E737BF0094957B /* GADInterstitial.h */,
-				E626226519E737BF0094957B /* GADInterstitialDelegate.h */,
-				E626226619E737BF0094957B /* GADModules.h */,
-				E626226719E737BF0094957B /* GADRequest.h */,
-				E626226819E737BF0094957B /* GADRequestError.h */,
-				E626226919E737BF0094957B /* libGoogleAdMobAds.a */,
-			);
-			path = AdMob;
-			sourceTree = "<group>";
-		};
-		50269FB419B64CE600CD7C88 /* Vungle */ = {
-			isa = PBXGroup;
-			children = (
-				E626227119E738DD0094957B /* VungleSDK.embeddedframework */,
-			);
-			path = Vungle;
-			sourceTree = "<group>";
-		};
-		50269FB519B64D5100CD7C88 /* AppLovin */ = {
-			isa = PBXGroup;
-			children = (
-				E626224B19E737770094957B /* headers */,
-				E626221319E736AF0094957B /* libAppLovinSdk.a */,
-			);
-			path = AppLovin;
-			sourceTree = "<group>";
-		};
 		503CD2351901A87300667C0D /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
@@ -1026,15 +937,6 @@
 				504E9C9E18C9322200402BC3 /* Ads Tests-Prefix.pch */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		504FE39819C8E19400221E01 /* UnityAds */ = {
-			isa = PBXGroup;
-			children = (
-				E626226B19E737F00094957B /* UnityAds.bundle */,
-				E626226C19E737F00094957B /* UnityAds.framework */,
-			);
-			path = UnityAds;
 			sourceTree = "<group>";
 		};
 		505286DE18E61BAD0060C210 /* Networking */ = {
@@ -1214,12 +1116,6 @@
 		50ECA1BE18DB6157006284AB /* Mediation Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				50269FB219B64C9A00CD7C88 /* AdColony */,
-				50269FB319B64CB200CD7C88 /* AdMob */,
-				50269FB519B64D5100CD7C88 /* AppLovin */,
-				50269FB119B64B9200CD7C88 /* Chartboost */,
-				504FE39819C8E19400221E01 /* UnityAds */,
-				50269FB419B64CE600CD7C88 /* Vungle */,
 				50269FF219B65D9500CD7C88 /* README.md */,
 			);
 			name = "Mediation Frameworks";
@@ -1378,6 +1274,7 @@
 				86B941DF1758056B00B8EACE /* CoreGraphics.framework */,
 				B1D5F5ECB01E4EDFA33DE9B0 /* libPods-Ads Tests.a */,
 				9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */,
+				3A4D105EBBFD2834D2AD2D00 /* libPods-MediationTestApp.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1408,7 +1305,8 @@
 		86B941E21758056B00B8EACE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				86B941E31758056B00B8EACE /* HeyzapSDKTest-Info.plist */,
+				86B941E31758056B00B8EACE /* MediationTestApp-Info.plist */,
+				506AE93219EF397300188B72 /* HeyzapSDKTest-Info.plist */,
 				86B941E41758056B00B8EACE /* InfoPlist.strings */,
 				86B941E71758056B00B8EACE /* main.m */,
 				86B941E91758056B00B8EACE /* HeyzapSDKTest-Prefix.pch */,
@@ -1556,52 +1454,6 @@
 			name = UnityAds;
 			sourceTree = "<group>";
 		};
-		E626224B19E737770094957B /* headers */ = {
-			isa = PBXGroup;
-			children = (
-				E626224C19E737770094957B /* ALAd.h */,
-				E626224D19E737770094957B /* ALAdDisplayDelegate.h */,
-				E626224E19E737770094957B /* ALAdLoadDelegate.h */,
-				E626224F19E737770094957B /* ALAdRewardDelegate.h */,
-				E626225019E737770094957B /* ALAdService.h */,
-				E626225119E737770094957B /* ALAdSize.h */,
-				E626225219E737770094957B /* ALAdType.h */,
-				E626225319E737770094957B /* ALAdUpdateDelegate.h */,
-				E626225419E737770094957B /* ALAdVideoPlaybackDelegate.h */,
-				E626225519E737770094957B /* ALAdView.h */,
-				E626225619E737770094957B /* ALErrorCodes.h */,
-				E626225719E737770094957B /* ALIncentivizedInterstitialAd.h */,
-				E626225819E737770094957B /* ALInterstitialAd.h */,
-				E626225919E737770094957B /* ALSdk.h */,
-				E626225A19E737770094957B /* ALSdkSettings.h */,
-				E626225B19E737770094957B /* ALSwiftHeaders.h */,
-				E626225C19E737770094957B /* ALTargetingData.h */,
-			);
-			path = headers;
-			sourceTree = "<group>";
-		};
-		E626227119E738DD0094957B /* VungleSDK.embeddedframework */ = {
-			isa = PBXGroup;
-			children = (
-				E626227219E738DD0094957B /* Resources */,
-				E626227919E738DD0094957B /* VungleSDK.framework */,
-			);
-			path = VungleSDK.embeddedframework;
-			sourceTree = "<group>";
-		};
-		E626227219E738DD0094957B /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				E626227319E738DD0094957B /* __vungle.db */,
-				E626227419E738DD0094957B /* vg_close.png */,
-				E626227519E738DD0094957B /* vg_cta.png */,
-				E626227619E738DD0094957B /* vg_mute_off.png */,
-				E626227719E738DD0094957B /* vg_mute_on.png */,
-				E626227819E738DD0094957B /* vg_timer.png */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1707,9 +1559,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5053521518F76550003C531E /* Build configuration list for PBXNativeTarget "MediationTestApp" */;
 			buildPhases = (
+				B1A49526A5AAF300587C1AE9 /* Check Pods Manifest.lock */,
 				505351EC18F76550003C531E /* Sources */,
 				505351F518F76550003C531E /* Frameworks */,
 				5053520D18F76550003C531E /* Resources */,
+				FB0DEFC40D7D92B6FBBD1334 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1784,7 +1638,7 @@
 		86B941931757FD6300B8EACE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0600;
 				ORGANIZATIONNAME = Heyzap;
 				TargetAttributes = {
 					504E9C9118C9322100402BC3 = {
@@ -1838,17 +1692,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E626226D19E737F00094957B /* UnityAds.bundle in Resources */,
 				5053520F18F76550003C531E /* InfoPlist.strings in Resources */,
-				E626227D19E738DD0094957B /* vg_mute_off.png in Resources */,
-				E626227E19E738DD0094957B /* vg_mute_on.png in Resources */,
-				E626227B19E738DD0094957B /* vg_close.png in Resources */,
 				5053521018F76550003C531E /* Default.png in Resources */,
-				E626227F19E738DD0094957B /* vg_timer.png in Resources */,
 				5053521118F76550003C531E /* Default@2x.png in Resources */,
 				5053521318F76550003C531E /* Default-568h@2x.png in Resources */,
-				E626227A19E738DD0094957B /* __vungle.db in Resources */,
-				E626227C19E738DD0094957B /* vg_cta.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1937,6 +1784,21 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Integration Tests/Pods-Integration Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		B1A49526A5AAF300587C1AE9 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		B7BA62A16F294B7BBBCC3D3F /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1950,6 +1812,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		FB0DEFC40D7D92B6FBBD1334 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MediationTestApp/Pods-MediationTestApp-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD8D34A21B7541BC9B7AA6A6 /* Check Pods Manifest.lock */ = {
@@ -2240,6 +2117,7 @@
 		};
 		5053521618F76550003C531E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 16019D1EEED87A2B518F178B /* Pods-MediationTestApp.debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
@@ -2258,10 +2136,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
 					"MEDIATION=1",
-					"DEBUG=1",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/HeyzapSDKTest-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/MediationTestApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2271,10 +2149,8 @@
 					"$(PROJECT_DIR)/MediationFrameworks/AdMob",
 					"$(PROJECT_DIR)/MediationFrameworks/AppLovin",
 				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-all_load",
-				);
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = MediationTestApp;
 				PROVISIONING_PROFILE = "E0F4A88C-BE47-4DBF-BEAE-218B295F8A26";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E0F4A88C-BE47-4DBF-BEAE-218B295F8A26";
@@ -2285,10 +2161,11 @@
 		};
 		5053521718F76550003C531E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4AC97BB61691E598ABE47CC3 /* Pods-MediationTestApp.release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: SMART BALLOON, INC.";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: SMART BALLOON, INC.";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
@@ -2302,8 +2179,11 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "MEDIATION=1";
-				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/HeyzapSDKTest-Info.plist";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"MEDIATION=1",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/MediationTestApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2313,11 +2193,8 @@
 					"$(PROJECT_DIR)/MediationFrameworks/AdMob",
 					"$(PROJECT_DIR)/MediationFrameworks/AppLovin",
 				);
-				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-all_load",
-				);
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = MediationTestApp;
 				PROVISIONING_PROFILE = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
@@ -2544,8 +2421,8 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Max Tagher (X49J6W55CT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Max Tagher (X49J6W55CT)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: SMART BALLOON, INC.";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: SMART BALLOON, INC.";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
