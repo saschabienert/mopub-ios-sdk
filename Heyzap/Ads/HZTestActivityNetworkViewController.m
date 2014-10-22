@@ -57,6 +57,8 @@
 
 @implementation HZTestActivityNetworkViewController
 
+#pragma mark - Initialization
+
 - (instancetype) initWithNetwork:(HZBaseAdapter *)network rootVC:(UIViewController *)rootVC available:(BOOL)available initialized:(BOOL)initialized enabled:(BOOL)enabled {
     self = [super init];
     self.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
@@ -78,6 +80,8 @@
     return self;
 }
 
+#pragma mark - View lifecycle methods
+
 - (void) viewDidLoad {
     [super viewDidLoad];
 
@@ -85,6 +89,8 @@
 
     [self.view addSubview:[self makeView]];
 }
+
+#pragma mark - UI action methods
 
 - (void) back {
     // reset this network adapter's delegate
@@ -196,6 +202,53 @@
         [[[UIAlertView alloc] initWithTitle:@"No ad available" message:@"Try fetching one first" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
     }
 }
+
+#pragma mark - HZMediationAdapterDelegate methods
+
+- (NSString *)countryCode{
+    return @"us";
+}
+
+- (void)adapterWasClicked:(HZBaseAdapter *)adapter {
+    
+}
+
+- (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {
+    if (![self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]] ||
+        [[self.network name] isEqualToString:@"admob"]) {
+        self.showButton.backgroundColor = [UIColor redColor];
+    } else {
+        self.showButton.backgroundColor = [UIColor greenColor];
+    }
+}
+
+- (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
+    if (![self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]] ||
+        [[self.network name] isEqualToString:@"admob"]) {
+        self.showButton.backgroundColor = [UIColor redColor];
+    } else {
+        self.showButton.backgroundColor = [UIColor greenColor];
+    }
+}
+
+- (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
+    if (![self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]] ||
+        [[self.network name] isEqualToString:@"admob"]) {
+        self.showButton.backgroundColor = [UIColor redColor];
+    } else {
+        self.showButton.backgroundColor = [UIColor greenColor];
+    }
+}
+
+- (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter {
+    
+}
+
+- (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter {
+    
+}
+
+#pragma mark - View creation utility methods
 
 - (UIView *) makeView {
     // top level view
@@ -365,6 +418,8 @@
     }
 }
 
+#pragma mark - General utility methods
+
 - (HZAdType) adTypeWithString:(NSString *)string {
     HZAdType adType = 0;
     
@@ -377,49 +432,6 @@
     }
     
     return adType;
-}
-
-- (NSString *)countryCode{
-    return @"us";
-}
-
-- (void)adapterWasClicked:(HZBaseAdapter *)adapter {
-    
-}
-
-- (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {
-    if (![self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]] ||
-        [[self.network name] isEqualToString:@"admob"]) {
-        self.showButton.backgroundColor = [UIColor redColor];
-    } else {
-        self.showButton.backgroundColor = [UIColor greenColor];
-    }
-}
-
-- (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
-    if (![self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]] ||
-        [[self.network name] isEqualToString:@"admob"]) {
-        self.showButton.backgroundColor = [UIColor redColor];
-    } else {
-        self.showButton.backgroundColor = [UIColor greenColor];
-    }
-}
-
-- (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
-    if (![self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]] ||
-        [[self.network name] isEqualToString:@"admob"]) {
-        self.showButton.backgroundColor = [UIColor redColor];
-    } else {
-        self.showButton.backgroundColor = [UIColor greenColor];
-    }
-}
-
-- (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter {
-    
-}
-
-- (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter {
-    
 }
 
 @end

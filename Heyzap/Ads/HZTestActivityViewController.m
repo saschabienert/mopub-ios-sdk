@@ -57,6 +57,8 @@
 
 @implementation HZTestActivityViewController
 
+#pragma mark - Test activity entry point
+
 + (void) show {
     NSLog(@"Showing test activity view controller");
 
@@ -89,15 +91,7 @@
     [vc.rootVC presentViewController:vc animated:YES completion:nil];
 }
 
-- (void) hide {
-    NSLog(@"Hiding test activity view controller");
-    
-    [self.rootVC dismissViewControllerAnimated:YES completion:^{
-        // reset the root view controller
-        [[[UIApplication sharedApplication] keyWindow] setRootViewController:self.rootVC];
-    }];
-    [[UIApplication sharedApplication] setStatusBarHidden:self.statusBarHidden];
-}
+#pragma mark - View lifecycle methods
 
 - (void) viewDidLoad {
     [super viewDidLoad];
@@ -113,6 +107,21 @@
     // check network info again, so that if we switch back to a network that has been refreshed we don't forget the new state
     [self checkNetworkInfo];
 }
+
+
+#pragma mark - UI action methods
+
+- (void) hide {
+    NSLog(@"Hiding test activity view controller");
+    
+    [self.rootVC dismissViewControllerAnimated:YES completion:^{
+        // reset the root view controller
+        [[[UIApplication sharedApplication] keyWindow] setRootViewController:self.rootVC];
+    }];
+    [[UIApplication sharedApplication] setStatusBarHidden:self.statusBarHidden];
+}
+
+#pragma mark - UITableViewDelegate and UITableViewDataSource methods
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [self.allNetworks count];
@@ -144,6 +153,8 @@
         [[[UIApplication sharedApplication] keyWindow] setRootViewController:networkVC];
     }];
 }
+
+#pragma mark - View creation utility methods
 
 - (UIView *) makeView {
     UIView *chooseNetworkView = [[UIView alloc] initWithFrame:self.view.frame];
@@ -198,6 +209,8 @@
     
     return chooseNetworkView;
 }
+
+#pragma mark - General utility methods
 
 - (void) checkNetworkInfo {
     // check available
