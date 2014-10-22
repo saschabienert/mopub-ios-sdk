@@ -149,43 +149,28 @@
     UIView *chooseNetworkView = [[UIView alloc] initWithFrame:self.view.frame];
     
     // header
-    UIView *headerView = ({
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, 60)];
-        view.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
-        UIView *border = [[UIView alloc] initWithFrame:CGRectMake(view.frame.origin.x, view.frame.origin.y + view.frame.size.height - 1, view.frame.size.width, 1.0)];
-        border.backgroundColor = [UIColor colorWithRed:125.0/255.0 green:125.0/255.0 blue:125.0/255.0 alpha:1.0];
-        [view addSubview:border];
-        view;
+    UINavigationBar *header = ({
+        UINavigationBar *nav = [[UINavigationBar alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x, chooseNetworkView.frame.origin.y,
+                                                                                 chooseNetworkView.frame.size.width, 44)];
+        nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
+        nav;
     });
+    [[UINavigationBar appearance] setTitleTextAttributes:@{ UITextAttributeFont: [UIFont systemFontOfSize:18] }];
     
-    // back button
-    UIButton *backButton = ({
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        button.frame = CGRectMake(10, 10, 50, 40);
-        button.backgroundColor = [UIColor lightGrayColor];
-        button.layer.cornerRadius = 3.0;
-        button;
+    // title and back button
+    UINavigationItem *headerTitle = ({
+        UINavigationItem *title = [[UINavigationItem alloc] initWithTitle:@"Heyzap Mediation Test"];
+        UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(hide)];
+        title.leftBarButtonItem = button;
+        title;
     });
-    [backButton setTitle:@"Back" forState:UIControlStateNormal];
-    [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [backButton addTarget:self action:@selector(hide) forControlEvents:UIControlEventTouchUpInside];
-    [headerView addSubview:backButton];
-    
-    // title
-    UILabel *headerLabel = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, headerView.frame.size.width - 60, 60)];
-        label.text = @"Heyzap Mediation Testing";
-        label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont systemFontOfSize:20];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        label;
-    });
-    [headerView addSubview:headerLabel];
-    [chooseNetworkView addSubview:headerView];
+    [header setItems:[NSArray arrayWithObject:headerTitle]];
+
+    [chooseNetworkView addSubview:header];
     
     // choose network label
     UILabel *chooseLabel = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x + 10, chooseNetworkView.frame.origin.y + headerView.frame.size.height,
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x + 10, chooseNetworkView.frame.origin.y + header.frame.size.height,
                                                                    chooseNetworkView.frame.size.width - 10, 32)];
         label.text = @"Choose a network:";
         label.backgroundColor = [UIColor clearColor];
@@ -198,7 +183,7 @@
     // networks table view
     UITableView *networksTableView = ({
         UITableView *table = [[UITableView alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x,
-                                                                           chooseNetworkView.frame.origin.y + headerView.frame.size.height + chooseLabel.frame.size.height,
+                                                                           chooseNetworkView.frame.origin.y + header.frame.size.height + chooseLabel.frame.size.height,
                                                                            chooseNetworkView.frame.size.width, chooseNetworkView.frame.size.height - chooseLabel.frame.size.height)
                                                           style:UITableViewStylePlain];
         table.backgroundColor = [UIColor clearColor];

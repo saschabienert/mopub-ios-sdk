@@ -207,56 +207,26 @@
     });
     
     // header
-    UIView *headerView = ({
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(currentNetworkView.frame.origin.x, currentNetworkView.frame.origin.y, self.view.frame.size.width, 60)];
-        view.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
-        UIView *border = [[UIView alloc] initWithFrame:CGRectMake(view.frame.origin.x, view.frame.origin.y + view.frame.size.height - 1, view.frame.size.width, 1.0)];
-        border.backgroundColor = [UIColor colorWithRed:125.0/255.0 green:125.0/255.0 blue:125.0/255.0 alpha:1.0];
-        [view addSubview:border];
-        view;
+    UINavigationBar *header = ({
+        UINavigationBar *nav = [[UINavigationBar alloc] initWithFrame:CGRectMake(currentNetworkView.frame.origin.x, currentNetworkView.frame.origin.y,
+                                                                                 currentNetworkView.frame.size.width, 44)];
+        nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
+        nav;
     });
+    [[UINavigationBar appearance] setTitleTextAttributes:@{ UITextAttributeFont: [UIFont systemFontOfSize:18] }];
     
-    // network label
-    UILabel *networkLabel = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(headerView.frame.origin.x + 70, headerView.frame.origin.y,
-                                                                   headerView.frame.size.width - 70, headerView.frame.size.height)];
-        label.text = [[self.network class] humanizedName];
-        label.textAlignment = NSTextAlignmentLeft;
-        label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont systemFontOfSize:20];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        [headerView addSubview:label];
-        label;
+    // title, back, and reload button
+    UINavigationItem *headerTitle = ({
+        UINavigationItem *title = [[UINavigationItem alloc] initWithTitle:[[self.network class] humanizedName]];
+        UIBarButtonItem *back = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(back)];
+        UIBarButtonItem *refresh = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh)];
+        title.leftBarButtonItem = back;
+        title.rightBarButtonItem = refresh;
+        title;
     });
-    [headerView addSubview:networkLabel];
+    [header setItems:[NSArray arrayWithObject:headerTitle]];
     
-    // back button
-    UIButton *closeButton = ({
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        button.frame = CGRectMake(headerView.frame.origin.x + 10, headerView.frame.origin.y + 10, 50, 40);
-        button.backgroundColor = [UIColor lightGrayColor];
-        button.layer.cornerRadius = 3.0;
-        button;
-    });
-    [closeButton setTitle:@"Back" forState:UIControlStateNormal];
-    [closeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [closeButton addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
-    [headerView addSubview:closeButton];
-    
-    // refresh button
-    UIButton *refreshButton = ({
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        button.frame = CGRectMake(headerView.frame.origin.x + headerView.frame.size.width - 90, headerView.frame.origin.y + 10, 80, 40);
-        button.backgroundColor = [UIColor darkGrayColor];
-        button.layer.cornerRadius = 3.0;
-        button;
-    });
-    [refreshButton setTitle:@"Refresh" forState:UIControlStateNormal];
-    [refreshButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [refreshButton addTarget:self action:@selector(refresh) forControlEvents:UIControlEventTouchUpInside];
-    [headerView addSubview:refreshButton];
-    
-    [currentNetworkView addSubview:headerView];
+    [currentNetworkView addSubview:header];
     
     // sdk available label
     UIView *availableView = [self makeStatusLabel:@"available" withStatus:self.available text:@"SDK Available" y:95];
