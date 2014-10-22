@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-               BuildableName = "Integration Tests.app"
-               BlueprintName = "Integration Tests"
+               BlueprintIdentifier = "505351E918F76550003C531E"
+               BuildableName = "MediationTestApp.app"
+               BlueprintName = "MediationTestApp"
                ReferencedContainer = "container:Heyzap.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Integration Tests.app"
-            BlueprintName = "Integration Tests"
+            BlueprintIdentifier = "505351E918F76550003C531E"
+            BuildableName = "MediationTestApp.app"
+            BlueprintName = "MediationTestApp"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -51,9 +51,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Integration Tests.app"
-            BlueprintName = "Integration Tests"
+            BlueprintIdentifier = "505351E918F76550003C531E"
+            BuildableName = "MediationTestApp.app"
+            BlueprintName = "MediationTestApp"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -64,14 +64,14 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Integration Tests.app"
-            BlueprintName = "Integration Tests"
+            BlueprintIdentifier = "505351E918F76550003C531E"
+            BuildableName = "MediationTestApp.app"
+            BlueprintName = "MediationTestApp"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

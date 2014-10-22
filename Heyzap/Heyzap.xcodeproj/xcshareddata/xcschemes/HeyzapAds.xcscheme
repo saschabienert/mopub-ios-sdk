@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-               BuildableName = "Integration Tests.app"
-               BlueprintName = "Integration Tests"
+               BlueprintIdentifier = "86B943AC1758220700B8EACE"
+               BuildableName = "HeyzapAds"
+               BlueprintName = "HeyzapAds"
                ReferencedContainer = "container:Heyzap.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,15 +29,6 @@
       buildConfiguration = "Debug">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Integration Tests.app"
-            BlueprintName = "Integration Tests"
-            ReferencedContainer = "container:Heyzap.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -48,15 +39,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Integration Tests.app"
-            BlueprintName = "Integration Tests"
+            BlueprintIdentifier = "86B943AC1758220700B8EACE"
+            BuildableName = "HeyzapAds"
+            BlueprintName = "HeyzapAds"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -64,17 +55,8 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Integration Tests.app"
-            BlueprintName = "Integration Tests"
-            ReferencedContainer = "container:Heyzap.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
