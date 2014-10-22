@@ -146,8 +146,7 @@
 }
 
 - (UIView *) makeView {
-    UIView *chooseNetworkView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y,
-                                                                         self.view.frame.size.width, self.view.frame.size.height)];
+    UIView *chooseNetworkView = [[UIView alloc] initWithFrame:self.view.frame];
     
     // header
     UIView *headerView = ({

@@ -147,8 +147,7 @@
     }];
 }
 
-- (void) switchAdFormat:(id)sender {
-    UISegmentedControl *adFormatControl = (UISegmentedControl *) sender;
+- (void) switchAdFormat:(UISegmentedControl *)adFormatControl {
     self.currentAdFormat = [[adFormatControl titleForSegmentAtIndex:adFormatControl.selectedSegmentIndex ] lowercaseString];
     self.currentAdType = [self adTypeWithString:self.currentAdFormat];
     NSLog(@"Current ad format: %@", self.currentAdFormat);
