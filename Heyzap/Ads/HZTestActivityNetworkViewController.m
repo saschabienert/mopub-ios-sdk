@@ -121,15 +121,23 @@
         // for whatever reason, sometimes /info doesn't always give disabled networks, in that case don't change anything
         if(thisNetworkArray.count == 1){
             NSDictionary *network = thisNetworkArray[0];
-            
+
             // check enabled
             self.enabled = [network[@"enabled"] boolValue];
-            
-            // check initialization
-            NSDictionary *networkInfo = network[@"data"];
-            NSError *credentialError = [[self.network class] enableWithCredentials:networkInfo];
-            self.initialized = !credentialError;
-            
+
+            // check original initialization succeeded
+            if (self.network.credentials) {
+                self.initialized = YES;
+            } else {
+                self.initialized = NO;
+            }
+
+            // if credentials have changed, pop an alert
+            if (![self.network.credentials isEqualToDictionary:network[@"data"]]) {
+                [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@ credentials have changed", [[self.network class] humanizedName]]
+                                            message:@"Reload the app to verify SDK initialization" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+            }
+
             NSLog(@"Available: %d", self.available);
             NSLog(@"Initialized: %d", self.initialized);
             NSLog(@"Enabled: %d", self.enabled);

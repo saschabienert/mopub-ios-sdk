@@ -42,8 +42,15 @@
     NSParameterAssert(credentials);
     
     NSError *error;
-    NSString *const adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:credentials error:&error];
+    NSString *adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:credentials error:&error];
     CHECK_CREDENTIALS_ERROR(error);
+    
+    HZAdMobAdapter *adapter = [self sharedInstance];
+    if (!adapter.credentials) {
+        adapter.credentials = credentials;
+    } else {
+        adUnitID = adapter.credentials[@"ad_unit_id"];
+    }
     
     [[self sharedInstance] setAdUnitID:adUnitID];
     

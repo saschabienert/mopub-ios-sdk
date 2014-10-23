@@ -103,8 +103,8 @@
     [self.view addSubview:[self makeView]];
 }
 
-- (void) viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+- (void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     
     // check network info again, so that if we switch back to a network that has been refreshed we don't forget the new state
     [self checkNetworkInfo];
@@ -245,25 +245,24 @@
         NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
         for (NSDictionary *mediator in networks) {
             NSString *mediatorName = mediator[@"name"];
-            Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
-            
-            // check enabled
-            if([mediator[@"enabled"] boolValue]){
-                [enabledNetworks addObject:[mediatorClass sharedInstance]];
-            }
-            
-            // check initialization
-            NSDictionary *mediatorInfo = mediator[@"data"];
-            if (mediatorClass && mediatorInfo && [mediatorClass isSDKAvailable]) {
-                NSError *credentialError = [mediatorClass enableWithCredentials:mediatorInfo];
-                if (!credentialError) {
-                    HZBaseAdapter *adapter = [mediatorClass sharedInstance];
+
+            if (![mediatorName isEqualToString:@"heyzap"]) {
+                Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
+                HZBaseAdapter *adapter = [mediatorClass sharedInstance];
+                
+                // check enabled
+                if([mediator[@"enabled"] boolValue]){
+                    [enabledNetworks addObject:adapter];
+                }
+                
+                // check original initialization succeeded
+                if (adapter.credentials) {
                     [initializedNetworks addObject:adapter];
                 }
-            }
 
-            // update the check/cross for this network
-            [self updateIntegrationStatus:[mediatorClass sharedInstance]];
+                // update the check/cross for this network
+                [self updateIntegrationStatus:[mediatorClass sharedInstance]];
+            }
         }
         self.enabledNetworks = enabledNetworks;
         self.initializedNetworks = initializedNetworks;

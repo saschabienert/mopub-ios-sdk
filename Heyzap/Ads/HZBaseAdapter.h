@@ -51,6 +51,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 @property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
 
+@property (nonatomic, strong) NSDictionary *credentials;
+
 
 + (instancetype)sharedInstance;
 
