@@ -135,7 +135,7 @@
             // if credentials have changed, pop an alert
             if (![self.network.credentials isEqualToDictionary:network[@"data"]]) {
                 [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@ credentials have changed", [[self.network class] humanizedName]]
-                                            message:@"Reload the app to verify SDK initialization" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                                            message:@"Restart the app to verify SDK initialization" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
             }
 
             NSLog(@"Available: %d", self.available);
@@ -171,44 +171,25 @@
 }
 
 - (void) fetchAd {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [self.network prefetchForType:self.currentAdType tag:[HeyzapAds defaultTagName]];
-        });
-        
-        __block BOOL fetchedWithinTimeout = NO;
-        hzWaitUntil(^BOOL{
-            fetchedWithinTimeout = [self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]];
-            if([self.network lastErrorForAdType:self.currentAdType]){
-                NSLog(@"Error fetching: %@", [self.network lastErrorForAdType:self.currentAdType]);
-            }
-            return [self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]] || [self.network lastErrorForAdType:self.currentAdType] != nil;
-        }, 10);
-        
-        if(fetchedWithinTimeout){
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                NSLog(@"Fetched within timeout");
-                self.showButton.backgroundColor = [UIColor greenColor];
-            });
-        } else {
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                NSLog(@"Could not fetch within timeout");
-                [[[UIAlertView alloc] initWithTitle:@"Fetch failed" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-                if([self.network lastErrorForAdType:self.currentAdType]){
-                    [self.network clearErrorForAdType:self.currentAdType];
-                    [self.network prefetchForType:self.currentAdType tag:[HeyzapAds defaultTagName]];
-                }
-            });
+    NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
+    [[HeyzapMediation sharedInstance] fetchForAdType:self.currentAdType tag:[HeyzapAds defaultTagName] additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
+        if (error) {
+            [[[UIAlertView alloc] initWithTitle:@"Fetch failed" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
         }
-    });
+
+        [self changeShowButtonColor];
+    }];
 }
 
 - (void) showAd {
-    if([self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]]){
-        [self.network showAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]];
-    } else {
-        [[[UIAlertView alloc] initWithTitle:@"No ad available" message:@"Try fetching one first" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-    }
+    NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
+    [[HeyzapMediation sharedInstance] showAdForAdUnitType:self.currentAdType tag:[HeyzapAds defaultTagName] additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
+        if (error) {
+            [[[UIAlertView alloc] initWithTitle:@"Show failed" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        }
+
+        [self changeShowButtonColor];
+    }];
 }
 
 #pragma mark - HZMediationAdapterDelegate methods
@@ -222,30 +203,15 @@
 }
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {
-    if (![self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]] ||
-        [[self.network name] isEqualToString:@"admob"]) {
-        self.showButton.backgroundColor = [UIColor redColor];
-    } else {
-        self.showButton.backgroundColor = [UIColor greenColor];
-    }
+    [self changeShowButtonColor];
 }
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
-    if (![self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]] ||
-        [[self.network name] isEqualToString:@"admob"]) {
-        self.showButton.backgroundColor = [UIColor redColor];
-    } else {
-        self.showButton.backgroundColor = [UIColor greenColor];
-    }
+    [self changeShowButtonColor];
 }
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
-    if (![self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]] ||
-        [[self.network name] isEqualToString:@"admob"]) {
-        self.showButton.backgroundColor = [UIColor redColor];
-    } else {
-        self.showButton.backgroundColor = [UIColor greenColor];
-    }
+    [self changeShowButtonColor];
 }
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter {
@@ -440,6 +406,14 @@
     }
     
     return adType;
+}
+
+- (void) changeShowButtonColor {
+    if ([self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]]) {
+        self.showButton.backgroundColor = [UIColor greenColor];
+    } else {
+        self.showButton.backgroundColor = [UIColor redColor];
+    }
 }
 
 @end

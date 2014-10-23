@@ -43,7 +43,7 @@
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapIncentivizedAd showForTag:tag auctionType:HZAuctionTypeMixed];
     } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:tag completion:nil];
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:tag additionalParams:nil completion:nil];
     }
 }
 
@@ -68,6 +68,7 @@
     } else {
         [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeIncentivized
                                                      tag:[HeyzapAds defaultTagName]
+                                        additionalParams:nil
                                               completion:completion];
     }
     

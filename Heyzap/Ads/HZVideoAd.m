@@ -44,7 +44,7 @@
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapVideoAd showForTag:tag auctionType:HZAuctionTypeMixed completion:completion];
     } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo tag:tag completion:completion];
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo tag:tag additionalParams:nil completion:completion];
     }
 }
 
@@ -71,7 +71,7 @@
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapVideoAd fetchForTag:tag auctionType:HZAuctionTypeMixed withCompletion:completion];
     } else {
-        [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeVideo tag:tag completion:completion];
+        [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeVideo tag:tag additionalParams:nil completion:completion];
     }
 }
 
