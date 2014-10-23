@@ -103,8 +103,8 @@
     [self.view addSubview:[self makeView]];
 }
 
-- (void) viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+- (void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     
     // check network info again, so that if we switch back to a network that has been refreshed we don't forget the new state
     [self checkNetworkInfo];
