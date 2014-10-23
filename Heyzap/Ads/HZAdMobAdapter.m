@@ -60,6 +60,10 @@
     return kHZAdapterAdMob;
 }
 
++ (NSString *)sdkVersion {
+    return [HZGADRequest sdkVersion];
+}
+
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
     return [self supportedAdFormats] & type && self.currentInterstitial.isReady;

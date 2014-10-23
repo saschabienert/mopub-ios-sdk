@@ -16,4 +16,6 @@
 
 + (HZGADRequest *)request;
 
++ (NSString *)sdkVersion;
+
 @end

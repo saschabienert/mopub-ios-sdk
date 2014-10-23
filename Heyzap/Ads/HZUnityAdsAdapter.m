@@ -54,6 +54,11 @@
     return kHZAdapterUnityAds;
 }
 
++ (NSString *)sdkVersion
+{
+    return [HZUnityAds getSDKVersion];
+}
+
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     NSParameterAssert(credentials);

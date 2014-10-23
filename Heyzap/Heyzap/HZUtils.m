@@ -253,4 +253,9 @@ BOOL hziOS8Plus(void) {
     return [[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0;
 }
 
+NSString *hzLookupStringConstant(NSString *constantName) {
+    void ** dataPtr = CFBundleGetDataPointerForName(CFBundleGetMainBundle(), (__bridge CFStringRef)constantName);
+    return (__bridge NSString *)(dataPtr ? *dataPtr : nil);
+}
+
 @end
