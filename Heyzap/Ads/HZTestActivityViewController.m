@@ -76,10 +76,7 @@
     }
 
     // get the list of all networks
-    NSSet *nonHeyzapNetworks = [[HZBaseAdapter allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
-        return ![adapterClass isHeyzapAdapter];
-    }]];
-    vc.allNetworks = [[nonHeyzapNetworks allObjects] sortedArrayUsingComparator:^NSComparisonResult(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
+    vc.allNetworks = [[[HeyzapMediation availableNonHeyzapAdapters] allObjects] sortedArrayUsingComparator:^NSComparisonResult(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
         return [[obj1 name] compare:[obj2 name]];
     }];
     NSLog(@"All networks: %@", vc.allNetworks);
@@ -190,7 +187,11 @@
     UILabel *chooseLabel = ({
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x + 10, chooseNetworkView.frame.origin.y + header.frame.size.height,
                                                                    chooseNetworkView.frame.size.width - 10, 32)];
-        label.text = @"Choose a network:";
+        if (self.availableNetworks.count == 0) {
+            label.text = @"No SDKs are available";
+        } else {
+            label.text = @"Choose a network:";
+        }
         label.backgroundColor = [UIColor clearColor];
         label.font = [UIFont systemFontOfSize:12];
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -248,6 +249,12 @@
 
             if (![mediatorName isEqualToString:@"heyzap"]) {
                 Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
+
+                // don't do anything if the sdk isn't available
+                if (![mediatorClass isSDKAvailable]) {
+                    continue;
+                }
+
                 HZBaseAdapter *adapter = [mediatorClass sharedInstance];
                 
                 // check enabled
