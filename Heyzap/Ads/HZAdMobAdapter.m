@@ -67,9 +67,14 @@
     return kHZAdapterAdMob;
 }
 
+
 + (NSString *)humanizedName
 {
     return kHZAdapterAdMobHumanized;
+}
+
++ (NSString *)sdkVersion {
+    return [HZGADRequest sdkVersion];
 }
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag

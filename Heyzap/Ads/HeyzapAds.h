@@ -140,7 +140,7 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
  *
  *  @param delegate An object conforing to the HZIncentivizedAdDelegate protocol
  */
-+ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate;
++ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate __attribute__((deprecated("Call `HZIncentivizedAd setDelegate:` instead.")));
 
 
 /**

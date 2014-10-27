@@ -87,6 +87,10 @@
     return kHZAdapterChartboostHumanized;
 }
 
++ (NSString *)sdkVersion {
+    return nil; // Chartboost doesn't provide the version.
+}
+
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
     switch (type) {

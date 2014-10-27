@@ -11,6 +11,7 @@
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
 #import "HZVungleSDK.h"
+#import "HZUtils.h"
 
 const NSString* HZVunglePlayAdOptionKeyIncentivized        = @"incentivized";
 const NSString* HZVunglePlayAdOptionKeyShowClose           = @"showClose";
@@ -92,9 +93,14 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     return kHZAdapterVungle;
 }
 
+
 + (NSString *)humanizedName
 {
     return kHZAdapterVungleHumanized;
+}
+
++ (NSString *)sdkVersion {
+    return hzLookupStringConstant(@"VungleSDKVersion");
 }
 
 - (void)startWithPubAppID:(NSString *)appID

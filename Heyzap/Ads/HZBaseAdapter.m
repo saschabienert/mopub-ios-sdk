@@ -45,7 +45,12 @@
     ABSTRACT_METHOD_ERROR();
 }
 
-+ (NSString *)humanizedName
+
++ (NSString *)humanizedName {
+    ABSTRACT_METHOD_ERROR();
+}
+
++ (NSString *)sdkVersion
 {
     ABSTRACT_METHOD_ERROR();
 }
@@ -71,6 +76,11 @@
 }
 
 #pragma mark - Inferred methods
+
+- (NSString *)sdkVersion
+{
+    return [[self class] sdkVersion];
+}
 
 - (NSString *)name
 {

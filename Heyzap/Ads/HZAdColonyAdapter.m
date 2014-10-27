@@ -51,6 +51,11 @@
     return kHZAdapterAdColonyHumanized;
 }
 
++ (NSString *)sdkVersion {
+    return nil; // AdColony doesn't provide the SDK version
+
+}
+
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     NSParameterAssert(credentials);

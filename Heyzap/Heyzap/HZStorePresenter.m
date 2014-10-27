@@ -64,6 +64,12 @@
         SKStoreProductViewController *storeController = [[SKStoreProductViewController alloc] init];
         storeController.delegate = delegate; // productViewControllerDidFinish
         
+        // Fixes a bug where, when the presenting view controller is portrait-only on iOS 8 iPads, it presenting the modal app store will cause it to rotate to landscape. Thanks to Arvind of ZeptoLabs for the suggested fix
+        // https://app.asana.com/0/12872086712148/18101846589214/f
+        if (hziOS8Plus() && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            storeController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+        }
+        
         static NSString * const kAffiliateKey = @"at";
         static NSString * const kAffiliateToken = @"10l74x";
         

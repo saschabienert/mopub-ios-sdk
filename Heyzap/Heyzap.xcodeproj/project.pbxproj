@@ -2215,6 +2215,10 @@
 		86B09B9A175988850045AA54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -2222,6 +2226,10 @@
 		86B09B9B175988850045AA54 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
 				COPY_PHASE_STRIP = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2409,6 +2417,10 @@
 		86B943491758108800B8EACE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
 				CLANG_ENABLE_MODULES = YES;
 				DSTROOT = /tmp/Ads.dst;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2432,6 +2444,10 @@
 		86B9434A1758108800B8EACE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
 				CLANG_ENABLE_MODULES = YES;
 				DSTROOT = /tmp/Ads.dst;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2455,6 +2471,10 @@
 		86B943AE1758220700B8EACE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = "armv7 armv7s";
 			};
@@ -2463,6 +2483,10 @@
 		86B943AF1758220700B8EACE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					armv7s,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = "armv7 armv7s";
 			};

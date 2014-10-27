@@ -24,6 +24,15 @@
 @property (nonatomic, strong) NSString *impressionID;
 @property (nonatomic, strong) NSOrderedSet *chosenAdapters;
 
+/**
+ *  Returns the SDK version if present, otherwise defaults to empty string.
+ *
+ *  @param version the version
+ *
+ *  @return Guaranteed non-nil string.
+ */
+NSString * sdkVersionOrDefault(NSString *const version);
+
 @end
 
 @implementation HZMediationSession
@@ -104,6 +113,7 @@ return nil; \
 
 NSString *const kHZImpressionIDKey = @"tracking_id";
 NSString *const kHZNetworkKey = @"network";
+NSString *const kHZNetworkVersionKey = @"network_version";
 /**
  *  The dictionary key for the position of a network within the list received from the server; for the list [chartboost, applovin], chartboost is 0.
  */
@@ -117,7 +127,13 @@ NSString *const kHZOrdinalKey = @"ordinal";
     
     [adapterList enumerateObjectsUsingBlock:^(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         NSNumber *const success = (adapter == [adapterList lastObject]) ? @1 : @0; // Last adapter was successful
-        [[HZMediationAPIClient sharedClient] post:@"fetch" withParams:@{@"success": success, kHZOrdinalKey : @(idx), kHZNetworkKey : [adapter name]} success:^(id json) {
+        [[HZMediationAPIClient sharedClient] post:@"fetch"
+                                       withParams:@{@"success": success,
+                                                    kHZOrdinalKey : @(idx),
+                                                    kHZNetworkKey : [adapter name],
+                                                    kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                                    }
+                                          success:^(id json) {
             HZDLog(@"Success reporting fetch");
         } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
             HZDLog(@"Error reporting fetch = %@",error);
@@ -131,7 +147,9 @@ NSString *const kHZOrdinalKey = @"ordinal";
     [[HZMediationAPIClient sharedClient] post:@"click"
                                  withParams:@{kHZImpressionIDKey: self.impressionID,
                                               kHZNetworkKey: [adapter name],
-                                              kHZOrdinalKey : @(ordinal)}
+                                              kHZOrdinalKey : @(ordinal),
+                                              kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                              }
                                     success:^(id json) {
         HZDLog(@"Success reporting click");
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
@@ -145,12 +163,18 @@ NSString *const kHZOrdinalKey = @"ordinal";
     [[HZMediationAPIClient sharedClient] post:@"impression"
                                  withParams:@{kHZImpressionIDKey: self.impressionID,
                                               kHZNetworkKey: [adapter name],
-                                              kHZOrdinalKey: @(ordinal)}
+                                              kHZOrdinalKey: @(ordinal),
+                                              kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                              }
                                     success:^(id json) {       
         HZDLog(@"Success reporting impression");
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         HZDLog(@"Error reporting impression = %@",error);
     }];
+}
+
+NSString * sdkVersionOrDefault(NSString *const version) {
+    return version ?: @"";
 }
 
 @end
