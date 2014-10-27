@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+@import UIKit;
 
 // This is a bitmasked parameter, but with the exception of the `supportedAdFormats` method, almost everything else should treat it as just an enum.
 typedef NS_OPTIONS(NSUInteger, HZAdType) {
@@ -25,6 +26,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
  *  @return A 2 letter country code
  */
 - (NSString *)countryCode;
+
+- (UIViewController *)viewControllerForPresentingAd;
 
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter;
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter;

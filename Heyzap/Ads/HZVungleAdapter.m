@@ -130,7 +130,8 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
     [self.delegate adapterWillPlayAudio:self];
-    UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+    
+    UIViewController *vc = [self.delegate viewControllerForPresentingAd];
     if (type == HZAdTypeVideo) {
         [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyShowClose: @1}];
     } else if (type == HZAdTypeIncentivized) {

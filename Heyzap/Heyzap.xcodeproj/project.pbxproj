@@ -324,15 +324,8 @@
 		E621820E19BE669B0099BE8C /* HZUnityAds.m in Sources */ = {isa = PBXBuildFile; fileRef = E621820C19BE669B0099BE8C /* HZUnityAds.m */; };
 		E621821119BE66A90099BE8C /* HZUnityAdsAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = E621820F19BE66A90099BE8C /* HZUnityAdsAdapter.h */; };
 		E621821219BE66A90099BE8C /* HZUnityAdsAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = E621821019BE66A90099BE8C /* HZUnityAdsAdapter.m */; };
-		E621821619BFAE720099BE8C /* UnityAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E621821419BFAE720099BE8C /* UnityAds.framework */; };
 		E626220919E707540094957B /* HZTestActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = E626220819E707540094957B /* HZTestActivityViewController.h */; };
 		E626220B19E7076A0094957B /* HZTestActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626220A19E7076A0094957B /* HZTestActivityViewController.m */; };
-		E626221219E736820094957B /* Chartboost.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E626221119E736820094957B /* Chartboost.framework */; };
-		E626221419E736AF0094957B /* libAppLovinSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E626221319E736AF0094957B /* libAppLovinSdk.a */; };
-		E626226A19E737BF0094957B /* libGoogleAdMobAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E626226919E737BF0094957B /* libGoogleAdMobAds.a */; };
-		E626226E19E737F00094957B /* UnityAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E626226C19E737F00094957B /* UnityAds.framework */; };
-		E626228019E738DD0094957B /* VungleSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E626227919E738DD0094957B /* VungleSDK.framework */; };
-		E626228419F08F930094957B /* AdColony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E626228319F08F930094957B /* AdColony.framework */; };
 		E626228619F5BAD40094957B /* HZTestActivityNetworkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */; };
 		E626228819F5BB6C0094957B /* HZTestActivityNetworkViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */; };
 /* End PBXBuildFile section */
@@ -654,12 +647,6 @@
 		E621821019BE66A90099BE8C /* HZUnityAdsAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZUnityAdsAdapter.m; sourceTree = "<group>"; };
 		E626220819E707540094957B /* HZTestActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZTestActivityViewController.h; sourceTree = "<group>"; };
 		E626220A19E7076A0094957B /* HZTestActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityViewController.m; sourceTree = "<group>"; };
-		E626221119E736820094957B /* Chartboost.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Chartboost.framework; sourceTree = "<group>"; };
-		E626221319E736AF0094957B /* libAppLovinSdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAppLovinSdk.a; sourceTree = "<group>"; };
-		E626226919E737BF0094957B /* libGoogleAdMobAds.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAdMobAds.a; sourceTree = "<group>"; };
-		E626226C19E737F00094957B /* UnityAds.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UnityAds.framework; sourceTree = "<group>"; };
-		E626227919E738DD0094957B /* VungleSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = VungleSDK.framework; sourceTree = "<group>"; };
-		E626228319F08F930094957B /* AdColony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdColony.framework; sourceTree = "<group>"; };
 		E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityNetworkViewController.m; sourceTree = "<group>"; };
 		E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZTestActivityNetworkViewController.h; sourceTree = "<group>"; };
 		F3F5764E2F27A103D8E719B4 /* Pods-Ads Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ads Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -700,8 +687,6 @@
 				E62181F919AFCEEE0099BE8C /* CoreData.framework in Frameworks */,
 				E62181B319AFB3CC0099BE8C /* libsqlite3.dylib in Frameworks */,
 				505351F618F76550003C531E /* CoreLocation.framework in Frameworks */,
-				E626221219E736820094957B /* Chartboost.framework in Frameworks */,
-				E626226E19E737F00094957B /* UnityAds.framework in Frameworks */,
 				505351F818F76550003C531E /* Social.framework in Frameworks */,
 				505351F918F76550003C531E /* EventKit.framework in Frameworks */,
 				505351FA18F76550003C531E /* EventKitUI.framework in Frameworks */,
@@ -713,17 +698,12 @@
 				5053520318F76550003C531E /* libz.dylib in Frameworks */,
 				5053520418F76550003C531E /* SystemConfiguration.framework in Frameworks */,
 				5053520518F76550003C531E /* libHeyzapAds.a in Frameworks */,
-				E626228419F08F930094957B /* AdColony.framework in Frameworks */,
-				E626226A19E737BF0094957B /* libGoogleAdMobAds.a in Frameworks */,
-				E626221419E736AF0094957B /* libAppLovinSdk.a in Frameworks */,
 				5053520618F76550003C531E /* CoreTelephony.framework in Frameworks */,
 				5053520718F76550003C531E /* StoreKit.framework in Frameworks */,
 				5053520818F76550003C531E /* MessageUI.framework in Frameworks */,
-				E626228019E738DD0094957B /* VungleSDK.framework in Frameworks */,
 				5053520918F76550003C531E /* UIKit.framework in Frameworks */,
 				5053520A18F76550003C531E /* QuartzCore.framework in Frameworks */,
 				5053520B18F76550003C531E /* Foundation.framework in Frameworks */,
-				E621821619BFAE720099BE8C /* UnityAds.framework in Frameworks */,
 				3FA7DE290B80ED14D265F344 /* libPods-MediationTestApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2125,10 +2105,6 @@
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/MediationFrameworks/AdColony",
-					"$(PROJECT_DIR)/MediationFrameworks/Vungle/VungleSDK.embeddedframework",
-					"$(PROJECT_DIR)/MediationFrameworks/UnityAds",
-					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
@@ -2141,9 +2117,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
-					"$(PROJECT_DIR)/MediationFrameworks/AdMob",
-					"$(PROJECT_DIR)/MediationFrameworks/AppLovin",
 				);
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
@@ -2166,10 +2139,6 @@
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/MediationFrameworks/AdColony",
-					"$(PROJECT_DIR)/MediationFrameworks/Vungle/VungleSDK.embeddedframework",
-					"$(PROJECT_DIR)/MediationFrameworks/UnityAds",
-					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
@@ -2182,9 +2151,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
-					"$(PROJECT_DIR)/MediationFrameworks/AdMob",
-					"$(PROJECT_DIR)/MediationFrameworks/AppLovin",
 				);
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";

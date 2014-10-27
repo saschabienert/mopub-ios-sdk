@@ -408,6 +408,10 @@ NSString * const kHZDataKey = @"data";
     }
 }
 
+- (UIViewController *)viewControllerForPresentingAd {
+    return [[[UIApplication sharedApplication] keyWindow] rootViewController];
+}
+
 #pragma mark - Incentivized Specific
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter

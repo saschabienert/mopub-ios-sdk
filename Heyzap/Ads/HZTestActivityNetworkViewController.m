@@ -101,10 +101,7 @@
         [[HZUnityAds sharedInstance] setViewController:self.rootVC];
     }
     
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
-        // reset the root view controller
-        [[[UIApplication sharedApplication] keyWindow] setRootViewController:self.rootVC];
-    }];
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) refresh {
@@ -220,6 +217,10 @@
 
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter {
     
+}
+
+- (UIViewController *)viewControllerForPresentingAd {
+    return self;
 }
 
 #pragma mark - View creation utility methods
