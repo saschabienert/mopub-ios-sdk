@@ -97,12 +97,9 @@
     HZAppLovinAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {
         adapter.credentials = credentials;
-    } else {
-        sdkKey = adapter.credentials[@"sdk_key"];
+       [[self sharedInstance] initializeSDKWithKey:sdkKey];
     }
-    
-    [[self sharedInstance] initializeSDKWithKey:sdkKey];
-    
+
     return nil;
 }
 
