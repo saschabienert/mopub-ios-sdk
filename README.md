@@ -48,3 +48,4 @@ This will generate 2 build products:
 
 * `HeyzapAds.framework`, which is recommended for iOS projects showing ads
 * `libHeyzap.a` (and associated headers), which is equivalent to `HeyzapAds.framework`, but is easier to integrate into 3rd party build processes (like Unity).
+
