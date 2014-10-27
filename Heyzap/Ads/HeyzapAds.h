@@ -161,8 +161,8 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
 + (NSString *) defaultTagName;
 
 /**
- * Starts a test activity that displays integration information and allows fetch/show testing
+ * Presents a view controller that displays integration information and allows fetch/show testing
  */
-+ (void) startTestActivity;
++ (void)presentMediationDebugViewController;
 
 @end

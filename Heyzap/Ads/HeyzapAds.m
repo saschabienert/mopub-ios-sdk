@@ -109,7 +109,7 @@
     return nil;
 }
 
-+ (void) startTestActivity {
++ (void)presentMediationDebugViewController {
     [HZTestActivityViewController show];
 }
 

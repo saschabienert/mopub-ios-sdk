@@ -527,7 +527,7 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void) showTestActivity {
-    [HeyzapAds startTestActivity];
+    [HeyzapAds presentMediationDebugViewController];
 }
 
 - (void)creativeIDEditingChanged:(UITextField *)sender
