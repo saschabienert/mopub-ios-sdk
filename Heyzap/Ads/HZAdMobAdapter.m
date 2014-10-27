@@ -105,8 +105,7 @@
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-    [self.currentInterstitial presentFromRootViewController:vc];
+    [self.currentInterstitial presentFromRootViewController:[self.delegate viewControllerForPresentingAd]];
 }
 
 #pragma mark - Delegate callbacks

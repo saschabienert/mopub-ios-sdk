@@ -113,10 +113,7 @@
 - (void) hide {
     NSLog(@"Hiding test activity view controller");
     
-    [self.rootVC dismissViewControllerAnimated:YES completion:^{
-        // reset the root view controller
-        [[[UIApplication sharedApplication] keyWindow] setRootViewController:self.rootVC];
-    }];
+    [self.rootVC dismissViewControllerAnimated:YES completion:nil];
     [[UIApplication sharedApplication] setStatusBarHidden:self.statusBarHidden];
 }
 
@@ -152,10 +149,7 @@
                                                                                                         available:[self.availableNetworks containsObject:network]
                                                                                                       initialized:[self.initializedNetworks containsObject:network]
                                                                                                           enabled:[self.enabledNetworks containsObject:network]];
-    [self presentViewController:networkVC animated:YES completion:^{
-        // some adapters (AdMob, Vungle) attempt to display their ads on the root view controller, so set it
-        [[[UIApplication sharedApplication] keyWindow] setRootViewController:networkVC];
-    }];
+    [self presentViewController:networkVC animated:YES completion:nil];
 }
 
 #pragma mark - View creation utility methods
