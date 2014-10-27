@@ -53,11 +53,19 @@
     NSParameterAssert(credentials);
     
     NSError *error;
-    NSString *const appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:credentials error:&error];
+    NSString *appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:credentials error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    NSString *const appSignature = [HZDictionaryUtils objectForKey:@"app_signature" ofClass:[NSString class] dict:credentials error:&error];
+    NSString *appSignature = [HZDictionaryUtils objectForKey:@"app_signature" ofClass:[NSString class] dict:credentials error:&error];
     CHECK_CREDENTIALS_ERROR(error);
+    
+    HZChartboostAdapter *adapter = [self sharedInstance];
+    if (!adapter.credentials) {
+        adapter.credentials = credentials;
+    } else {
+        appID = adapter.credentials[@"app_id"];
+        appSignature = adapter.credentials[@"app_signature"];
+    }
     
     [[self sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
     
@@ -72,6 +80,11 @@
 + (NSString *)name
 {
     return kHZAdapterChartboost;
+}
+
++ (NSString *)humanizedName
+{
+    return kHZAdapterChartboostHumanized;
 }
 
 + (NSString *)sdkVersion {

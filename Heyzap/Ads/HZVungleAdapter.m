@@ -68,8 +68,15 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 {
     NSParameterAssert(credentials);
     NSError *error;
-    NSString *const appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:credentials error:&error];
+    NSString *appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:credentials error:&error];
     CHECK_CREDENTIALS_ERROR(error);
+    
+    HZVungleAdapter *adapter = [self sharedInstance];
+    if (!adapter.credentials) {
+        adapter.credentials = credentials;
+    } else {
+        appID = adapter.credentials[@"app_id"];
+    }
     
     [[self sharedInstance] startWithPubAppID:appID];
     
@@ -84,6 +91,12 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 + (NSString *)name
 {
     return kHZAdapterVungle;
+}
+
+
++ (NSString *)humanizedName
+{
+    return kHZAdapterVungleHumanized;
 }
 
 + (NSString *)sdkVersion {
@@ -123,7 +136,8 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
     [self.delegate adapterWillPlayAudio:self];
-    UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+    
+    UIViewController *vc = [self.delegate viewControllerForPresentingAd];
     if (type == HZAdTypeVideo) {
         [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyShowClose: @1}];
     } else if (type == HZAdTypeIncentivized) {

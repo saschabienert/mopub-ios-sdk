@@ -54,6 +54,11 @@
     return kHZAdapterUnityAds;
 }
 
++ (NSString *) humanizedName
+{
+    return kHZAdapterUnityAdsHumanized;
+}
+
 + (NSString *)sdkVersion
 {
     return [HZUnityAds getSDKVersion];
@@ -69,19 +74,26 @@
                                                 error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    NSString *const incentivizedZoneID = [HZDictionaryUtils objectForKey:@"incentivized_placement_id"
+    NSString *incentivizedZoneID = [HZDictionaryUtils objectForKey:@"incentivized_placement_id"
                                                                  ofClass:[NSString class]
                                                                     dict:credentials
                                                                    error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    NSString *const videoZoneID = [HZDictionaryUtils objectForKey:@"video_placement_id"
+    NSString *videoZoneID = [HZDictionaryUtils objectForKey:@"video_placement_id"
                                                           ofClass:[NSString class]
                                                              dict:credentials
                                                             error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    
+    HZUnityAdsAdapter *adapter = [self sharedInstance];
+    if (!adapter.credentials) {
+        adapter.credentials = credentials;
+    } else {
+        appID = adapter.credentials[@"game_id"];
+        incentivizedZoneID = adapter.credentials[@"incentivized_placement_id"];
+        videoZoneID = adapter.credentials[@"video_placement_id"];
+    }
     
     [[self sharedInstance] setupUnityAdsWithAppID:appID
                                      videoZoneID:videoZoneID incentivizedZoneID:incentivizedZoneID];

@@ -160,4 +160,9 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
 + (void) setMediator: (NSString *) mediator;
 + (NSString *) defaultTagName;
 
+/**
+ * Presents a view controller that displays integration information and allows fetch/show testing
+ */
++ (void)presentMediationDebugViewController;
+
 @end

@@ -324,7 +324,10 @@
 		E621820E19BE669B0099BE8C /* HZUnityAds.m in Sources */ = {isa = PBXBuildFile; fileRef = E621820C19BE669B0099BE8C /* HZUnityAds.m */; };
 		E621821119BE66A90099BE8C /* HZUnityAdsAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = E621820F19BE66A90099BE8C /* HZUnityAdsAdapter.h */; };
 		E621821219BE66A90099BE8C /* HZUnityAdsAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = E621821019BE66A90099BE8C /* HZUnityAdsAdapter.m */; };
-		E621821619BFAE720099BE8C /* UnityAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E621821419BFAE720099BE8C /* UnityAds.framework */; };
+		E626220919E707540094957B /* HZTestActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = E626220819E707540094957B /* HZTestActivityViewController.h */; };
+		E626220B19E7076A0094957B /* HZTestActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626220A19E7076A0094957B /* HZTestActivityViewController.m */; };
+		E626228619F5BAD40094957B /* HZTestActivityNetworkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */; };
+		E626228819F5BB6C0094957B /* HZTestActivityNetworkViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -642,7 +645,10 @@
 		E621820C19BE669B0099BE8C /* HZUnityAds.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZUnityAds.m; sourceTree = "<group>"; };
 		E621820F19BE66A90099BE8C /* HZUnityAdsAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZUnityAdsAdapter.h; sourceTree = "<group>"; };
 		E621821019BE66A90099BE8C /* HZUnityAdsAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZUnityAdsAdapter.m; sourceTree = "<group>"; };
-		E621821419BFAE720099BE8C /* UnityAds.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UnityAds.framework; path = "../../../../../Downloads/unity-ads-sdk-master/UnityAds.framework"; sourceTree = "<group>"; };
+		E626220819E707540094957B /* HZTestActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZTestActivityViewController.h; sourceTree = "<group>"; };
+		E626220A19E7076A0094957B /* HZTestActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityViewController.m; sourceTree = "<group>"; };
+		E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityNetworkViewController.m; sourceTree = "<group>"; };
+		E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZTestActivityNetworkViewController.h; sourceTree = "<group>"; };
 		F3F5764E2F27A103D8E719B4 /* Pods-Ads Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ads Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -698,7 +704,6 @@
 				5053520918F76550003C531E /* UIKit.framework in Frameworks */,
 				5053520A18F76550003C531E /* QuartzCore.framework in Frameworks */,
 				5053520B18F76550003C531E /* Foundation.framework in Frameworks */,
-				E621821619BFAE720099BE8C /* UnityAds.framework in Frameworks */,
 				3FA7DE290B80ED14D265F344 /* libPods-MediationTestApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1148,6 +1153,10 @@
 				866E3A0F1851302C00B6E431 /* HZAdInterstitialViewController.m */,
 				86D0A9961851808200B3D870 /* HZAdVideoViewController.h */,
 				86D0A9971851808200B3D870 /* HZAdVideoViewController.m */,
+				E626220819E707540094957B /* HZTestActivityViewController.h */,
+				E626220A19E7076A0094957B /* HZTestActivityViewController.m */,
+				E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */,
+				E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1484,6 +1493,7 @@
 				509E8D3919B7A96E00ABF2D2 /* HZAdInfo.h in Headers */,
 				50B46B1518F87B2C005155B8 /* HZALInterstitialAd.h in Headers */,
 				860FD47E187CC056008A35FD /* HZAdFetchRequest.h in Headers */,
+				E626220919E707540094957B /* HZTestActivityViewController.h in Headers */,
 				505286E118E61BD90060C210 /* HZMediationAPIClient.h in Headers */,
 				866E3A101851302C00B6E431 /* HZAdInterstitialViewController.h in Headers */,
 				509E8D3E19B7F15300ABF2D2 /* HZCrossPromoAdapter.h in Headers */,
@@ -1497,6 +1507,7 @@
 				500F88E418E203A500E5D6F8 /* HZClassProxy.h in Headers */,
 				8680AC9B193ED2DC0078B5CF /* HZDelegateProxy.h in Headers */,
 				86FF907D185842D900BC48BF /* HZQueue.h in Headers */,
+				E626228819F5BB6C0094957B /* HZTestActivityNetworkViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1900,6 +1911,7 @@
 				86CD0ECC17C3F7B00005BD3D /* HZAdsAPIClient.m in Sources */,
 				86CD0E8B17BB0B940005BD3D /* HZAdsManager.m in Sources */,
 				5046CE8B18E3B0C3000395AA /* HZDispatch.m in Sources */,
+				E626228619F5BAD40094957B /* HZTestActivityNetworkViewController.m in Sources */,
 				86B09B8A1759743F0045AA54 /* HZRotatingView.m in Sources */,
 				5011CE5618DB9B7F00604B53 /* HZAdColonyAdapter.m in Sources */,
 				86B09B89175973E60045AA54 /* HeyzapAds.m in Sources */,
@@ -1915,6 +1927,7 @@
 				5011CE8A18DBBBF700604B53 /* HZAdMobAdapter.m in Sources */,
 				50AC60B318FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m in Sources */,
 				500F88F718E215DD00E5D6F8 /* HZGADRequest.m in Sources */,
+				E626220B19E7076A0094957B /* HZTestActivityViewController.m in Sources */,
 				86234AB118581B800071957B /* HZVideoControlView.m in Sources */,
 				5019224918EDFA6A002793A3 /* HZMediationSession.m in Sources */,
 				860FD47B187BB144008A35FD /* HZAdsFetchManager.m in Sources */,
@@ -2092,12 +2105,6 @@
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
 					"$(PROJECT_DIR)",
-					"\"$(SRCROOT)/../../../../Downloads/VungleSDK.embeddedframework\"",
-					2,
-					"$(PROJECT_DIR)/MediationFrameworks/AdColony",
-					"$(PROJECT_DIR)/MediationFrameworks/Vungle/VungleSDK.embeddedframework",
-					"$(PROJECT_DIR)/MediationFrameworks/UnityAds",
-					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
@@ -2110,10 +2117,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					/Users/Max/Downloads,
-					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
-					"$(PROJECT_DIR)/MediationFrameworks/AdMob",
-					"$(PROJECT_DIR)/MediationFrameworks/AppLovin",
 				);
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
@@ -2136,12 +2139,6 @@
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
 					"$(PROJECT_DIR)",
-					"\"$(SRCROOT)/../../../../Downloads/VungleSDK.embeddedframework\"",
-					2,
-					"$(PROJECT_DIR)/MediationFrameworks/AdColony",
-					"$(PROJECT_DIR)/MediationFrameworks/Vungle/VungleSDK.embeddedframework",
-					"$(PROJECT_DIR)/MediationFrameworks/UnityAds",
-					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
@@ -2154,10 +2151,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					/Users/Max/Downloads,
-					"$(PROJECT_DIR)/MediationFrameworks/Chartboost",
-					"$(PROJECT_DIR)/MediationFrameworks/AdMob",
-					"$(PROJECT_DIR)/MediationFrameworks/AppLovin",
 				);
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";

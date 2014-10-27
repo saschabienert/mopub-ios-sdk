@@ -38,6 +38,11 @@
     return kHZAdapterHeyzap;
 }
 
++ (NSString *)humanizedName
+{
+    return kHZAdapterHeyzapHumanized;
+}
+
 - (HZAuctionType)auctionType {
     return HZAuctionTypeMonetization;
 }

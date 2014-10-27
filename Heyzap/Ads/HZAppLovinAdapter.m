@@ -78,6 +78,11 @@
     return kHZAdapterAppLovin;
 }
 
++ (NSString *)humanizedName
+{
+    return kHZAdapterAppLovinHumanized;
+}
+
 + (NSString *)sdkVersion {
     return [HZALSdk version];
 }
@@ -86,8 +91,15 @@
 {
     NSParameterAssert(credentials);
     NSError *error;
-    NSString *const sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:credentials error:&error];
+    NSString *sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:credentials error:&error];
     CHECK_CREDENTIALS_ERROR(error);
+    
+    HZAppLovinAdapter *adapter = [self sharedInstance];
+    if (!adapter.credentials) {
+        adapter.credentials = credentials;
+    } else {
+        sdkKey = adapter.credentials[@"sdk_key"];
+    }
     
     [[self sharedInstance] initializeSDKWithKey:sdkKey];
     

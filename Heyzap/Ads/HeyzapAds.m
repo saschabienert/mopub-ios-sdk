@@ -37,6 +37,8 @@
 
 #import "HeyzapMediation.h"
 
+#import "HZTestActivityViewController.h"
+
 @implementation HeyzapAds
 
 #define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"
@@ -105,6 +107,10 @@
 + (id)alloc {
     [NSException raise:@"CannotInstantiateStaticClass" format:@"'HeyzapAds' is a static class and cannot be instantiated."];
     return nil;
+}
+
++ (void)presentMediationDebugViewController {
+    [HZTestActivityViewController show];
 }
 
 
