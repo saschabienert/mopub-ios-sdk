@@ -149,6 +149,7 @@
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
+    [[HZUnityAds sharedInstance] setViewController:[self.delegate viewControllerForPresentingAd]];
     if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
         [[HZUnityAds sharedInstance] setZone:self.incentivizedZoneID];
