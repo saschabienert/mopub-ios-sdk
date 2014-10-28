@@ -62,12 +62,8 @@
     HZChartboostAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {
         adapter.credentials = credentials;
-    } else {
-        appID = adapter.credentials[@"app_id"];
-        appSignature = adapter.credentials[@"app_signature"];
+        [[self sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
     }
-    
-    [[self sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
     
     return nil;
 }

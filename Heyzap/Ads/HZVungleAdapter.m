@@ -74,11 +74,8 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     HZVungleAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {
         adapter.credentials = credentials;
-    } else {
-        appID = adapter.credentials[@"app_id"];
+        [[self sharedInstance] startWithPubAppID:appID];
     }
-    
-    [[self sharedInstance] startWithPubAppID:appID];
     
     return nil;
 }

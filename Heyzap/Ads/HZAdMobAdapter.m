@@ -48,11 +48,8 @@
     HZAdMobAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {
         adapter.credentials = credentials;
-    } else {
-        adUnitID = adapter.credentials[@"ad_unit_id"];
+        [[self sharedInstance] setAdUnitID:adUnitID];
     }
-    
-    [[self sharedInstance] setAdUnitID:adUnitID];
     
     return nil;
 }
