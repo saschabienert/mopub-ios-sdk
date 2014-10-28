@@ -89,14 +89,9 @@
     HZUnityAdsAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {
         adapter.credentials = credentials;
-    } else {
-        appID = adapter.credentials[@"game_id"];
-        incentivizedZoneID = adapter.credentials[@"incentivized_placement_id"];
-        videoZoneID = adapter.credentials[@"video_placement_id"];
+        [[self sharedInstance] setupUnityAdsWithAppID:appID
+                                          videoZoneID:videoZoneID incentivizedZoneID:incentivizedZoneID];
     }
-    
-    [[self sharedInstance] setupUnityAdsWithAppID:appID
-                                     videoZoneID:videoZoneID incentivizedZoneID:incentivizedZoneID];
     
     return nil;
 }

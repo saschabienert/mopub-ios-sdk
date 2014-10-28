@@ -81,15 +81,10 @@
     HZAdColonyAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {
         adapter.credentials = credentials;
-    } else {
-        appID = adapter.credentials[@"app_id"];
-        interstitialZoneID = adapter.credentials[@"interstitial_zone_id"];
-        incentivizedZoneID = adapter.credentials[@"incentivized_zone_id"];
+        [[self sharedInstance] setupAdColonyWithAppID:appID
+                                   interstitialZoneID:interstitialZoneID
+                                   incentivizedZoneID:incentivizedZoneID];
     }
-
-    [[self sharedInstance] setupAdColonyWithAppID:appID
-                               interstitialZoneID:interstitialZoneID
-                               incentivizedZoneID:incentivizedZoneID];
     
     return nil;
 }
