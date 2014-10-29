@@ -156,12 +156,14 @@
 
 - (UIView *) makeView {
     UIView *chooseNetworkView = [[UIView alloc] initWithFrame:self.view.frame];
+    chooseNetworkView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     
     // header
     UINavigationBar *header = ({
         UINavigationBar *nav = [[UINavigationBar alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x, chooseNetworkView.frame.origin.y,
                                                                                  chooseNetworkView.frame.size.width, 44)];
         nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
+        nav.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         nav;
     });
     [[UINavigationBar appearance] setTitleTextAttributes:@{ UITextAttributeFont: [UIFont systemFontOfSize:18] }];
