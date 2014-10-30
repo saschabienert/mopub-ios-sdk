@@ -81,9 +81,8 @@
     }];
     HZDLog(@"All networks: %@", vc.allNetworks);
     
-    // get the networks' enabled status and credentials to build sets of enabled and initialized networks
+    // this will link network names to their labels, so we can update the check/cross if necessary
     vc.integrationStatusHash = [NSMutableDictionary dictionary];
-    [vc checkNetworkInfo];
 
     // take over the screen
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
@@ -243,7 +242,7 @@
         for (NSDictionary *mediator in networks) {
             NSString *mediatorName = mediator[@"name"];
 
-            if (![mediatorName isEqualToString:@"heyzap"]) {
+            if (![mediatorName isEqualToString:@"heyzap"] && ![mediatorName isEqualToString:@"heyzap_cross_promo"]) {
                 Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
 
                 // don't do anything if the sdk isn't available
@@ -262,18 +261,22 @@
                 if (adapter.credentials) {
                     [initializedNetworks addObject:adapter];
                 }
-
-                // update the check/cross for this network
-                [self updateIntegrationStatus:[mediatorClass sharedInstance]];
             }
         }
+
         self.enabledNetworks = enabledNetworks;
         self.initializedNetworks = initializedNetworks;
         HZDLog(@"Networks available: %@", self.availableNetworks);
         HZDLog(@"Networks initialized: %@", self.initializedNetworks);
         HZDLog(@"Networks enabled: %@", self.enabledNetworks);
+
+        // run through and update the check boxes on all the networks
+        for (NSDictionary *mediator in networks) {
+            HZBaseAdapter *adapter = [[HZBaseAdapter adapterClassForName:mediator[@"name"]] sharedInstance];
+            [self updateIntegrationStatus:adapter];
+        }
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        HZDLog(@"Error from /info: %@", error);
+        HZDLog(@"Error from /info: %@", error.localizedDescription);
     }];
 }
 

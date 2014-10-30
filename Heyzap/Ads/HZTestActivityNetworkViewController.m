@@ -155,7 +155,7 @@
             }
         }
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        HZDLog(@"Error from /info: %@", error);
+        HZDLog(@"Error from /info: %@", error.localizedDescription);
     }];
 }
 
@@ -437,7 +437,7 @@
 
 - (void) appendStringToDebugLog:(NSString *)string {
     self.debugLog.text = [NSString stringWithFormat:@"%@\n%@", self.debugLog.text, string];
-    NSRange bottom = NSMakeRange(self.debugLog.text.length - 1, 1);
+    NSRange bottom = NSMakeRange(self.debugLog.text.length, 0);
     [self.debugLog scrollRangeToVisible:bottom];
 }
 
