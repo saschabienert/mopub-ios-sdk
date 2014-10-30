@@ -61,7 +61,7 @@
 #pragma mark - Test activity entry point
 
 + (void) show {
-    NSLog(@"Showing test activity view controller");
+    HZDLog(@"Showing test activity view controller");
 
     HZTestActivityViewController *vc = [[self alloc] init];
     
@@ -71,7 +71,7 @@
     // check for a root view controller
     vc.rootVC = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     if (!vc.rootVC) {
-        NSLog(@"Heyzap requires a root view controller to display the test activity. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
+        HZDLog(@"Heyzap requires a root view controller to display the test activity. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
         return;
     }
 
@@ -79,7 +79,7 @@
     vc.allNetworks = [[[HeyzapMediation availableNonHeyzapAdapters] allObjects] sortedArrayUsingComparator:^NSComparisonResult(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
         return [[obj1 name] compare:[obj2 name]];
     }];
-    NSLog(@"All networks: %@", vc.allNetworks);
+    HZDLog(@"All networks: %@", vc.allNetworks);
     
     // get the networks' enabled status and credentials to build sets of enabled and initialized networks
     vc.integrationStatusHash = [NSMutableDictionary dictionary];
@@ -111,7 +111,7 @@
 #pragma mark - UI action methods
 
 - (void) hide {
-    NSLog(@"Hiding test activity view controller");
+    HZDLog(@"Hiding test activity view controller");
     
     [self.rootVC dismissViewControllerAnimated:YES completion:nil];
     [[UIApplication sharedApplication] setStatusBarHidden:self.statusBarHidden];
@@ -142,7 +142,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
     HZBaseAdapter *network = [[[self.allNetworks objectAtIndex:indexPath.row] class] sharedInstance];
-    NSLog(@"Current network adapter: %@", network);
+    HZDLog(@"Current network adapter: %@", network);
     
     HZTestActivityNetworkViewController *networkVC = [[HZTestActivityNetworkViewController alloc] initWithNetwork:network
                                                                                                            rootVC:self.rootVC
@@ -269,11 +269,11 @@
         }
         self.enabledNetworks = enabledNetworks;
         self.initializedNetworks = initializedNetworks;
-        NSLog(@"Networks available: %@", self.availableNetworks);
-        NSLog(@"Networks initialized: %@", self.initializedNetworks);
-        NSLog(@"Networks enabled: %@", self.enabledNetworks);
+        HZDLog(@"Networks available: %@", self.availableNetworks);
+        HZDLog(@"Networks initialized: %@", self.initializedNetworks);
+        HZDLog(@"Networks enabled: %@", self.enabledNetworks);
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error from /info: %@", error);
+        HZDLog(@"Error from /info: %@", error);
     }];
 }
 

@@ -52,6 +52,7 @@
 @property (nonatomic) UILabel *availableStatus;
 @property (nonatomic) UILabel *initializationStatus;
 @property (nonatomic) UILabel *enabledStatus;
+@property (nonatomic) UITextView *debugLog;
 
 @end
 
@@ -135,9 +136,9 @@
                                             message:@"Restart the app to verify SDK initialization" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
             }
 
-            NSLog(@"Available: %d", self.available);
-            NSLog(@"Initialized: %d", self.initialized);
-            NSLog(@"Enabled: %d", self.enabled);
+            HZDLog(@"Available: %d", self.available);
+            HZDLog(@"Initialized: %d", self.initialized);
+            HZDLog(@"Enabled: %d", self.enabled);
             
             // update the checks and crosses
             [self setStatusForLabel:self.availableStatus withBool:self.available];
@@ -154,24 +155,27 @@
             }
         }
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error from /info: %@", error);
+        HZDLog(@"Error from /info: %@", error);
     }];
 }
 
 - (void) switchAdFormat:(UISegmentedControl *)adFormatControl {
     self.currentAdFormat = [[adFormatControl titleForSegmentAtIndex:adFormatControl.selectedSegmentIndex ] lowercaseString];
     self.currentAdType = [self adTypeWithString:self.currentAdFormat];
-    NSLog(@"Current ad format: %@", self.currentAdFormat);
+    HZDLog(@"Current ad format: %@", self.currentAdFormat);
     if (![self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]]) {
         self.showButton.backgroundColor = [UIColor redColor];
     }
 }
 
 - (void) fetchAd {
+    [self appendStringToDebugLog:@"Fetching ad (may take up to 10 seconds)"];
     NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
     [[HeyzapMediation sharedInstance] fetchForAdType:self.currentAdType tag:[HeyzapAds defaultTagName] additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
         if (error) {
-            [[[UIAlertView alloc] initWithTitle:@"Fetch failed" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+            [self appendStringToDebugLog:@"Fetch failed"];
+        } else {
+            [self appendStringToDebugLog:@"Fetch succeeded"];
         }
 
         [self changeShowButtonColor];
@@ -179,10 +183,13 @@
 }
 
 - (void) showAd {
+    [self appendStringToDebugLog:@"Showing ad"];
     NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
     [[HeyzapMediation sharedInstance] showAdForAdUnitType:self.currentAdType tag:[HeyzapAds defaultTagName] additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
         if (error) {
-            [[[UIAlertView alloc] initWithTitle:@"Show failed" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+            [self appendStringToDebugLog:@"Show failed"];
+        } else {
+            [self appendStringToDebugLog:@"Show succeeded"];
         }
 
         [self changeShowButtonColor];
@@ -269,10 +276,20 @@
     UIView *enabledView = [self makeStatusLabel:@"enabled" withStatus:self.enabled text:@"Network enabled on dashboard" y:initializationView.frame.origin.y + 15];
     [currentNetworkView addSubview:enabledView];
     
-    // only show ad fetching/showing controls if the network was initialized correctly
+    // only show ad fetching/showing controls and debug log if the network was initialized correctly
     if(self.available && self.initialized){
         self.adControls = [self makeAdControls];
         [currentNetworkView addSubview:self.adControls];
+
+        // debug log
+        self.debugLog = ({
+            UITextView *text = [[UITextView alloc] initWithFrame:CGRectMake(self.adControls.frame.origin.x, self.adControls.frame.origin.y + self.adControls.frame.size.height,
+                                                                            self.adControls.frame.size.width, 210)];
+            text.editable = false;
+            text.text = @"Debug log:";
+            text;
+        });
+        [currentNetworkView addSubview:self.debugLog];
     }
     
     return currentNetworkView;
@@ -280,7 +297,7 @@
 
 - (UIView *) makeAdControls {
     UIView *adControls = ({
-        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 160, self.view.frame.size.width - 20, self.view.frame.size.height - 160)];
+        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 160, self.view.frame.size.width - 20, 100)];
         controls.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         controls;
     });
@@ -299,7 +316,7 @@
     }
     self.currentAdFormat = [[formats objectAtIndex:0] lowercaseString];
     self.currentAdType = [self adTypeWithString:self.currentAdFormat];
-    NSLog(@"Current ad format: %@", self.currentAdFormat);
+    HZDLog(@"Current ad format: %@", self.currentAdFormat);
     
     // segmented control for supported ad formats
     UISegmentedControl *adFormatControl = ({
@@ -416,6 +433,12 @@
     } else {
         self.showButton.backgroundColor = [UIColor redColor];
     }
+}
+
+- (void) appendStringToDebugLog:(NSString *)string {
+    self.debugLog.text = [NSString stringWithFormat:@"%@\n%@", self.debugLog.text, string];
+    NSRange bottom = NSMakeRange(self.debugLog.text.length - 1, 1);
+    [self.debugLog scrollRangeToVisible:bottom];
 }
 
 @end
