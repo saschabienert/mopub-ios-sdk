@@ -35,8 +35,6 @@
 @property (nonatomic, strong) HZAppLovinDelegate *interstitialDelegate;
 @property (nonatomic, strong) HZIncentivizedAppLovinDelegate *incentivizedDelegate;
 
-@property (nonatomic) BOOL incentivizedIsLoaded;
-
 @property (nonatomic, strong) NSError *interstitialError;
 @property (nonatomic, strong) NSError *incentivizedError;
 
@@ -145,8 +143,7 @@
             break;
         }
         case HZAdTypeIncentivized: {
-            return self.incentivizedIsLoaded;
-            break;
+            return self.currentIncentivizedAd.isReadyForDisplay;
         }
         case HZAdTypeVideo: {
             return NO;
@@ -175,7 +172,6 @@
     
     switch (type) {
         case HZAdTypeIncentivized: {
-            self.incentivizedIsLoaded = YES;
             self.incentivizedError = nil;
             break;
         }
@@ -193,7 +189,6 @@
 {
     switch (type) {
         case HZAdTypeIncentivized: {
-            self.incentivizedIsLoaded = NO;
             self.incentivizedDelegate = nil;
             self.currentIncentivizedAd = nil;
             self.incentivizedError = error;
@@ -222,16 +217,20 @@
 
 - (void)didCompleteIncentivized
 {
-    self.incentivizedIsLoaded = NO;
-    self.incentivizedDelegate = nil;
-    self.currentIncentivizedAd = nil;
-    self.incentivizedError = nil;
+    [self clearIncentivizedState];
     
     [self.delegate adapterDidCompleteIncentivizedAd:self];
 }
 - (void)didFailToCompleteIncentivized
 {
+    [self clearIncentivizedState];
     [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+}
+
+- (void)clearIncentivizedState {
+    self.incentivizedDelegate = nil;
+    self.currentIncentivizedAd = nil;
+    self.incentivizedError = nil;
 }
 
 - (void)willPlayAudio

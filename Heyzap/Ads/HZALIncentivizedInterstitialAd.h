@@ -19,6 +19,7 @@
 
 @property (strong, nonatomic) id<HZALAdDisplayDelegate> adDisplayDelegate;
 @property (strong, nonatomic) id<HZALAdVideoPlaybackDelegate> adVideoPlaybackDelegate;
+@property (readonly, atomic, getter=isReadyForDisplay) BOOL readyForDisplay;
 
 - (instancetype)initIncentivizedInterstitialWithSdk:(HZALSdk *)anSdk;
 
