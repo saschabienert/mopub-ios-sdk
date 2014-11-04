@@ -444,9 +444,14 @@ NSString * const kHZDataKey = @"data";
     return [adapterNames componentsJoinedByString:@","];
 }
 
+static BOOL forceOnlyHeyzapSDK = NO;
++ (void)forceOnlyHeyzapSDK {
+    forceOnlyHeyzapSDK = YES;
+}
+
 + (BOOL)isOnlyHeyzapSDK
 {
-    return [[self availableNonHeyzapAdapters] count] == 0;
+    return [[self availableNonHeyzapAdapters] count] == 0 || forceOnlyHeyzapSDK;
 }
 
 + (NSSet *)availableNonHeyzapAdapters

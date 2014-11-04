@@ -53,6 +53,9 @@
 }
 
 + (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options andFramework:(NSString *)framework {
+    if (options & HZAdOptionsDisableMedation) {
+        [HeyzapMediation forceOnlyHeyzapSDK];
+    }
     if (![HeyzapMediation isOnlyHeyzapSDK]) {
         [[HeyzapMediation sharedInstance] start];
     }
