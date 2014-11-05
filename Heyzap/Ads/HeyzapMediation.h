@@ -33,6 +33,12 @@
 
 + (BOOL)isOnlyHeyzapSDK;
 
+/**
+ *  Call this method to force `isOnlyHeyzapSDK` to always return `YES`.
+ */
++ (void)forceOnlyHeyzapSDK;
+
+
 + (NSSet *)availableNonHeyzapAdapters;
 
 + (NSString *)commaSeparatedAdapterList;
