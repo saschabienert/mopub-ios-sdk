@@ -12,6 +12,7 @@
 #import "HZAdsAPIClient.h"
 #import "HZLog.h"
 #import "HZStorePresenter.h"
+#import "HZNSURLUtils.h"
 @import StoreKit;
 
 NSString *const kHZNativeAdCategoryKey = @"category";
@@ -56,7 +57,11 @@ return nil; \
         _promotedGameAppStoreID = [HZDictionaryUtils hzObjectForKey:@"promoted_game_package" ofClass:[NSNumber class] withDict:dictionary];
         CHECK_NOT_NIL(_promotedGameAppStoreID,@"advertised game App Store ID");
         
-        _clickURL = [NSURL URLWithString:[HZDictionaryUtils hzObjectForKey:@"click_url" ofClass:[NSString class] withDict:dictionary]];
+        _clickURL = ({
+            NSString *clickURLString = [HZDictionaryUtils hzObjectForKey: @"click_url" ofClass: [NSString class] withDict: dictionary];
+            NSString *noPlaceHolderURL = [HZNSURLUtils substituteGetParams:clickURLString impressionID:_impressionID];
+            [NSURL URLWithString:noPlaceHolderURL];
+        });
         
         _tag = [HZDictionaryUtils hzObjectForKey:@"tag" ofClass:[NSString class] withDict:dictionary];
         
