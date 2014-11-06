@@ -10,6 +10,12 @@
 #import "HZNativeAd.h"
 #import "HZNativeAd_Private.h"
 
+@interface HZNativeAd (TestingExtensions)
+
+@property (nonatomic) NSURL *clickURL;
+
+@end
+
 
 SPEC_BEGIN(HZNativeAdSpec)
 
@@ -52,6 +58,21 @@ describe(@"HZNativeAd", ^{
             [[error.localizedFailureReason shouldNot] beNil];
         });
         
+    });
+    
+    context(@"Click URLs", ^{
+        it(@"Should replace values in the click URL", ^{
+            NSMutableDictionary *nativeAdJSON = [TestJSON nativeAdJSON];
+            NSString *const impressionID = nativeAdJSON[@"impression_id"];
+            nativeAdJSON[@"click_url"] = @"http://heyzap.com/impression_id={IMPRESSION_ID}";
+            NSError *error;
+            HZNativeAd *ad = [[HZNativeAd alloc] initWithDictionary:nativeAdJSON error:&error];
+            [[ad shouldNot] beNil];
+            [[error should] beNil];
+            
+            NSURL *correctURL = [NSURL URLWithString:[@"http://heyzap.com/impression_id=" stringByAppendingString:impressionID]];
+            [[ad.clickURL should] equal:correctURL];
+        });
     });
     
 });
