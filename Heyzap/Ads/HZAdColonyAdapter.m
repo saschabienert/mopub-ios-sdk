@@ -46,6 +46,16 @@
     return kHZAdapterAdColony;
 }
 
++ (NSString *)humanizedName
+{
+    return kHZAdapterAdColonyHumanized;
+}
+
++ (NSString *)sdkVersion {
+    return nil; // AdColony doesn't provide the SDK version
+
+}
+
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     NSParameterAssert(credentials);
@@ -56,22 +66,25 @@
                                                 error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    NSString *const interstitialZoneID = [HZDictionaryUtils objectForKey:@"interstitial_zone_id"
+    NSString *interstitialZoneID = [HZDictionaryUtils objectForKey:@"interstitial_zone_id"
                                                      ofClass:[NSString class]
                                                         dict:credentials
                                                        error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    NSString *const incentivizedZoneID = [HZDictionaryUtils objectForKey:@"incentivized_zone_id"
+    NSString *incentivizedZoneID = [HZDictionaryUtils objectForKey:@"incentivized_zone_id"
                                                                  ofClass:[NSString class]
                                                                     dict:credentials
                                                                    error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    
-    [[self sharedInstance] setupAdColonyWithAppID:appID
-                               interstitialZoneID:interstitialZoneID
-                               incentivizedZoneID:incentivizedZoneID];
+    HZAdColonyAdapter *adapter = [self sharedInstance];
+    if (!adapter.credentials) {
+        adapter.credentials = credentials;
+        [[self sharedInstance] setupAdColonyWithAppID:appID
+                                   interstitialZoneID:interstitialZoneID
+                                   incentivizedZoneID:incentivizedZoneID];
+    }
     
     return nil;
 }

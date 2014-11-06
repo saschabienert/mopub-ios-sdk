@@ -54,6 +54,16 @@
     return kHZAdapterUnityAds;
 }
 
++ (NSString *) humanizedName
+{
+    return kHZAdapterUnityAdsHumanized;
+}
+
++ (NSString *)sdkVersion
+{
+    return [HZUnityAds getSDKVersion];
+}
+
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     NSParameterAssert(credentials);
@@ -64,22 +74,24 @@
                                                 error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    NSString *const incentivizedZoneID = [HZDictionaryUtils objectForKey:@"incentivized_placement_id"
+    NSString *incentivizedZoneID = [HZDictionaryUtils objectForKey:@"incentivized_placement_id"
                                                                  ofClass:[NSString class]
                                                                     dict:credentials
                                                                    error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    NSString *const videoZoneID = [HZDictionaryUtils objectForKey:@"video_placement_id"
+    NSString *videoZoneID = [HZDictionaryUtils objectForKey:@"video_placement_id"
                                                           ofClass:[NSString class]
                                                              dict:credentials
                                                             error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    
-    
-    [[self sharedInstance] setupUnityAdsWithAppID:appID
-                                     videoZoneID:videoZoneID incentivizedZoneID:incentivizedZoneID];
+    HZUnityAdsAdapter *adapter = [self sharedInstance];
+    if (!adapter.credentials) {
+        adapter.credentials = credentials;
+        [[self sharedInstance] setupUnityAdsWithAppID:appID
+                                          videoZoneID:videoZoneID incentivizedZoneID:incentivizedZoneID];
+    }
     
     return nil;
 }
@@ -132,6 +144,7 @@
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
+    [[HZUnityAds sharedInstance] setViewController:[self.delegate viewControllerForPresentingAd]];
     if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
         [[HZUnityAds sharedInstance] setZone:self.incentivizedZoneID];

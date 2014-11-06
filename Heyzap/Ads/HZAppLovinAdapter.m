@@ -35,8 +35,6 @@
 @property (nonatomic, strong) HZAppLovinDelegate *interstitialDelegate;
 @property (nonatomic, strong) HZIncentivizedAppLovinDelegate *incentivizedDelegate;
 
-@property (nonatomic) BOOL incentivizedIsLoaded;
-
 @property (nonatomic, strong) NSError *interstitialError;
 @property (nonatomic, strong) NSError *incentivizedError;
 
@@ -78,15 +76,28 @@
     return kHZAdapterAppLovin;
 }
 
++ (NSString *)humanizedName
+{
+    return kHZAdapterAppLovinHumanized;
+}
+
++ (NSString *)sdkVersion {
+    return [HZALSdk version];
+}
+
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     NSParameterAssert(credentials);
     NSError *error;
-    NSString *const sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:credentials error:&error];
+    NSString *sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:credentials error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    [[self sharedInstance] initializeSDKWithKey:sdkKey];
-    
+    HZAppLovinAdapter *adapter = [self sharedInstance];
+    if (!adapter.credentials) {
+        adapter.credentials = credentials;
+       [[self sharedInstance] initializeSDKWithKey:sdkKey];
+    }
+
     return nil;
 }
 
@@ -132,8 +143,7 @@
             break;
         }
         case HZAdTypeIncentivized: {
-            return self.incentivizedIsLoaded;
-            break;
+            return self.currentIncentivizedAd.isReadyForDisplay;
         }
         case HZAdTypeVideo: {
             return NO;
@@ -162,7 +172,6 @@
     
     switch (type) {
         case HZAdTypeIncentivized: {
-            self.incentivizedIsLoaded = YES;
             self.incentivizedError = nil;
             break;
         }
@@ -180,7 +189,6 @@
 {
     switch (type) {
         case HZAdTypeIncentivized: {
-            self.incentivizedIsLoaded = NO;
             self.incentivizedDelegate = nil;
             self.currentIncentivizedAd = nil;
             self.incentivizedError = error;
@@ -209,16 +217,20 @@
 
 - (void)didCompleteIncentivized
 {
-    self.incentivizedIsLoaded = NO;
-    self.incentivizedDelegate = nil;
-    self.currentIncentivizedAd = nil;
-    self.incentivizedError = nil;
+    [self clearIncentivizedState];
     
     [self.delegate adapterDidCompleteIncentivizedAd:self];
 }
 - (void)didFailToCompleteIncentivized
 {
+    [self clearIncentivizedState];
     [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+}
+
+- (void)clearIncentivizedState {
+    self.incentivizedDelegate = nil;
+    self.currentIncentivizedAd = nil;
+    self.incentivizedError = nil;
 }
 
 - (void)willPlayAudio

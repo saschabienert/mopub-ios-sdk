@@ -19,6 +19,7 @@
 
 #import "HZAdsAPIClient.h"
 #import "HZUtils.h"
+#import "HZNSURLUtils.h"
 
 @interface HZAdModel()
 @property (nonatomic) NSMutableDictionary *additionalEventParams;
@@ -80,7 +81,12 @@
         _impressionID = [HZDictionaryUtils hzObjectForKey: @"impression_id" ofClass: [NSString class] default: @"" withDict: dict];
         _promotedGamePackage = [HZDictionaryUtils hzObjectForKey: @"promoted_game_package" ofClass: [NSNumber class] default: @(0) withDict: dict];
         _creativeType = [HZDictionaryUtils hzObjectForKey: @"creative_type" ofClass: [NSString class] default: @"" withDict: dict];
-        _clickURL = [NSURL URLWithString: [self substituteGetParams:[HZDictionaryUtils hzObjectForKey: @"click_url" ofClass: [NSString class] default: @"" withDict: dict]]];
+        
+        _clickURL = ({
+            NSString *clickURLString = [HZDictionaryUtils hzObjectForKey: @"click_url" ofClass: [NSString class] default: @"" withDict: dict];
+            NSString *noPlaceHolderURL = [HZNSURLUtils substituteGetParams:clickURLString impressionID:_impressionID];
+            [NSURL URLWithString:noPlaceHolderURL];
+        });
         _refreshTime = [HZDictionaryUtils hzObjectForKey: @"refresh_time" ofClass: [NSNumber class] default: @(0) withDict: dict];
         _adStrategy = [HZDictionaryUtils hzObjectForKey: @"ad_strategy" ofClass: [NSString class] default: @"" withDict: dict];
         _creativeID = [HZDictionaryUtils hzObjectForKey: @"creative_id" ofClass: [NSNumber class] default: @(0) withDict: dict];
@@ -217,19 +223,6 @@
 
 - (void) setEventCallbackParams: (NSMutableDictionary *) dict {
     self.additionalEventParams = dict;
-}
-
-- (NSString *)substituteGetParams:(NSString *)url {
-    NSString *result = [url stringByReplacingOccurrencesOfString:@"{MAC_ADDRESS_MD5}" withString:[[HZDevice currentDevice] HZmd5MacAddress]];
-    result = [result stringByReplacingOccurrencesOfString:@"{MAC_ADDRESS}" withString:[[HZDevice currentDevice] HZmacaddress]];
-    result = [result stringByReplacingOccurrencesOfString:@"{IDFA}" withString:[[HZDevice currentDevice] HZadvertisingIdentifier]];
-    result = [result stringByReplacingOccurrencesOfString:@"{IMPRESSION_ID}" withString:self.impressionID];
-    result = [result stringByReplacingOccurrencesOfString:@"{ODIN}" withString:@""]; // Deprecated
-    result = [result stringByReplacingOccurrencesOfString: @"{UDID}" withString: @""]; // Deprecated
-    result = [result stringByReplacingOccurrencesOfString: @"{OPEN_UDID}" withString: @""]; // Deprecated
-    result = [result stringByReplacingOccurrencesOfString: @"{IDFV}" withString: [[HZDevice currentDevice] HZvendorDeviceIdentity]];
-    
-    return result;
 }
 
 + (NSString *) normalizeTag:(NSString *)tag {

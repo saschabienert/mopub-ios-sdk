@@ -12,7 +12,7 @@
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
 
-@interface HeyzapMediation : NSObject
+@interface HeyzapMediation : NSObject <HZMediationAdapterDelegate>
 
 + (instancetype)sharedInstance;
 
@@ -22,9 +22,9 @@
 
 #pragma mark - Showing Ads
 
-- (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion;
+- (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
 
-- (void)showAdForAdUnitType:(HZAdType)adType tag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion;
+- (void)showAdForAdUnitType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
 
 - (BOOL)isAvailableForAdUnitType:(HZAdType)adType tag:(NSString *)tag;
 
@@ -32,6 +32,14 @@
 // We can handle the common scenarios by recursively finding the right view controller.
 
 + (BOOL)isOnlyHeyzapSDK;
+
+/**
+ *  Call this method to force `isOnlyHeyzapSDK` to always return `YES`.
+ */
++ (void)forceOnlyHeyzapSDK;
+
+
++ (NSSet *)availableNonHeyzapAdapters;
 
 + (NSString *)commaSeparatedAdapterList;
 

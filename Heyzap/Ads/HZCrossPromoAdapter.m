@@ -35,6 +35,11 @@
     return kHZAdapterCrossPromo;
 }
 
++ (NSString *)humanizedName
+{
+    return kHZAdapterCrossPromoHumanized;
+}
+
 - (HZAuctionType)auctionType {
     return HZAuctionTypeCrossPromo;
 }

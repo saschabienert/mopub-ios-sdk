@@ -42,10 +42,14 @@
     NSParameterAssert(credentials);
     
     NSError *error;
-    NSString *const adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:credentials error:&error];
+    NSString *adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:credentials error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
-    [[self sharedInstance] setAdUnitID:adUnitID];
+    HZAdMobAdapter *adapter = [self sharedInstance];
+    if (!adapter.credentials) {
+        adapter.credentials = credentials;
+        [[self sharedInstance] setAdUnitID:adUnitID];
+    }
     
     return nil;
 }
@@ -58,6 +62,16 @@
 + (NSString *)name
 {
     return kHZAdapterAdMob;
+}
+
+
++ (NSString *)humanizedName
+{
+    return kHZAdapterAdMobHumanized;
+}
+
++ (NSString *)sdkVersion {
+    return [HZGADRequest sdkVersion];
 }
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
@@ -93,8 +107,7 @@
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-    [self.currentInterstitial presentFromRootViewController:vc];
+    [self.currentInterstitial presentFromRootViewController:[self.delegate viewControllerForPresentingAd]];
 }
 
 #pragma mark - Delegate callbacks

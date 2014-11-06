@@ -28,7 +28,9 @@ NSString * const kHZMediationAPIBaseURLString = @"https://med.heyzap.com/";
 {
     NSMutableDictionary *defaults = [super defaultParamsWithDictionary:dictionary];
     defaults[@"external_package"] = [[NSBundle mainBundle] bundleIdentifier];
-    defaults[@"networks"] = [HeyzapMediation commaSeparatedAdapterList];
+    if (!defaults[@"networks"]) {
+        defaults[@"networks"] = [HeyzapMediation commaSeparatedAdapterList];
+    }
     
     return defaults;
 }

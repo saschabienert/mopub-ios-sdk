@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+@import UIKit;
 
 // This is a bitmasked parameter, but with the exception of the `supportedAdFormats` method, almost everything else should treat it as just an enum.
 typedef NS_OPTIONS(NSUInteger, HZAdType) {
@@ -25,6 +26,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
  *  @return A 2 letter country code
  */
 - (NSString *)countryCode;
+
+- (UIViewController *)viewControllerForPresentingAd;
 
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter;
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter;
@@ -51,6 +54,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 @property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
 
+@property (nonatomic, strong) NSDictionary *credentials;
+
 
 + (instancetype)sharedInstance;
 
@@ -70,11 +75,22 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 + (NSString *)name;
 
++ (NSString *)humanizedName;
+
+/**
+ *  The version of the SDK, if available.
+ *
+ *  @return The version string, or `nil` if it wasn't available.
+ */
++ (NSString *)sdkVersion;
+
 + (BOOL)isSDKAvailable;
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials;
 
 #pragma mark - Inferred methods
+
+- (NSString *)sdkVersion;
 
 - (NSString *)name;
 

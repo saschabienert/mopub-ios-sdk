@@ -35,7 +35,7 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
     HZMediationStartStatusSuccess,
 };
 
-@interface HeyzapMediation() <HZMediationAdapterDelegate>
+@interface HeyzapMediation()
 
 @property (nonatomic, strong) NSSet *setupMediators;
 
@@ -113,19 +113,19 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     }];
 }
 
-- (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion
+- (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion
 {
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
     if (self.startStatus == HZMediationStartStatusNotStarted) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self fetchForAdType:adType tag:tag completion:completion];
+            [self fetchForAdType:adType tag:tag additionalParams:additionalParams completion:completion];
         });
         return;
     }
     
     tag = tag ?: [HeyzapAds defaultTagName];
-    [self mediateForAdType:adType tag:tag showImmediately:NO fetchTimeout:10 completion:completion];
+    [self mediateForAdType:adType tag:tag showImmediately:NO fetchTimeout:10 additionalParams:additionalParams completion:completion];
 }
 
 - (void)autoFetchInterstitial
@@ -134,6 +134,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                        tag:nil
            showImmediately:NO
               fetchTimeout:10
+          additionalParams:nil
                 completion:nil];
 }
 
@@ -171,7 +172,7 @@ NSString * const kHZDataKey = @"data";
 
 #pragma mark - Ads
 
-- (void)showAdForAdUnitType:(HZAdType)adType tag:(NSString *)tag completion:(void (^)(BOOL, NSError *))completion
+- (void)showAdForAdUnitType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL, NSError *))completion
 {
     tag = tag ?: [HeyzapAds defaultTagName];
     
@@ -179,11 +180,12 @@ NSString * const kHZDataKey = @"data";
                        tag:tag
            showImmediately:YES
               fetchTimeout:2
+          additionalParams:additionalParams
                 completion:completion];
 }
 
 // `mediateForSessionKey` and this method looks up the session. 
-- (void)mediateForAdType:(HZAdType)adType tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout completion:(void (^)(BOOL result, NSError *error))completion
+- (void)mediateForAdType:(HZAdType)adType tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion
 {
     if (tag == nil) {
         tag = [HeyzapAds defaultTagName];
@@ -193,7 +195,7 @@ NSString * const kHZDataKey = @"data";
     // If we have an existing, matching session we don't need to make another call to /mediate.
     HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:tag];
     HZMediationSession *session = self.sessionDictionary[key];
-    if (session && showImmediately) {
+    if (session && showImmediately && !additionalParams) {
         [self fetchForSession:session showImmediately:YES fetchTimeout:timeout sessionKey:key completion:completion];
         return;
     }
@@ -202,7 +204,7 @@ NSString * const kHZDataKey = @"data";
                                                                          adUnit:adUnit
                                                                             tag:[HeyzapAds defaultTagName]
                                                                     auctionType:HZAuctionTypeMixed
-                                                            andAdditionalParams:nil];
+                                                            andAdditionalParams:additionalParams];
     
     
     
@@ -373,6 +375,7 @@ NSString * const kHZDataKey = @"data";
     if (key) {
         HZMediationSession *session = self.sessionDictionary[key];
         [session reportClickForAdapter:adapter];
+        [[self delegateForAdType:key.adType] didClickAdWithTag:key.tag];
     }
 }
 
@@ -406,6 +409,10 @@ NSString * const kHZDataKey = @"data";
     }
 }
 
+- (UIViewController *)viewControllerForPresentingAd {
+    return [[[UIApplication sharedApplication] keyWindow] rootViewController];
+}
+
 #pragma mark - Incentivized Specific
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter
@@ -437,12 +444,21 @@ NSString * const kHZDataKey = @"data";
     return [adapterNames componentsJoinedByString:@","];
 }
 
+static BOOL forceOnlyHeyzapSDK = NO;
++ (void)forceOnlyHeyzapSDK {
+    forceOnlyHeyzapSDK = YES;
+}
+
 + (BOOL)isOnlyHeyzapSDK
 {
-    NSSet *availableNonHeyzapAdapters = [[HZBaseAdapter allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
+    return [[self availableNonHeyzapAdapters] count] == 0 || forceOnlyHeyzapSDK;
+}
+
++ (NSSet *)availableNonHeyzapAdapters
+{
+    return [[HZBaseAdapter allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
         return ![adapterClass isHeyzapAdapter] && [adapterClass isSDKAvailable];
     }]];
-    return [availableNonHeyzapAdapters count] == 0;
 }
 
 #pragma mark - Setters/Getters for delegates

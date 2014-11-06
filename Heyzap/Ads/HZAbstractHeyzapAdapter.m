@@ -12,6 +12,7 @@
 #import "HZHeyzapVideoAd.h"
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
+#import "HeyzapAds.h"
 
 @implementation HZAbstractHeyzapAdapter
 
@@ -29,6 +30,10 @@
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
     return nil;
+}
+
++ (NSString *)sdkVersion {
+    return SDK_VERSION;
 }
 
 - (HZAdType)supportedAdFormats

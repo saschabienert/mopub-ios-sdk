@@ -53,6 +53,10 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsAdvertiserOnly = 1 << 1,
     HZAdOptionsAmazon = 1 << 2,
     HZAdOptionsInstallTrackingOnly = 1 << 1,
+    /**
+     *  Pass this to disable mediation. This is not required, but is recommended for developers not using mediation. If you're mediating Heyzap through someone (e.g. AdMob), it is *strongly* recommended that you disable Heyzap's mediation to prevent any potential conflicts.
+     */
+    HZAdOptionsDisableMedation = 1 << 3,
 };
 
 /** The `HZAdsDelegate` protocol provides global information about our ads. If you want to know if we had an ad to show after calling `showAd` (for example, to fallback to another ads provider). It is recommend using the `showAd:completion:` method instead. */
@@ -140,7 +144,7 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
  *
  *  @param delegate An object conforing to the HZIncentivizedAdDelegate protocol
  */
-+ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate;
++ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate __attribute__((deprecated("Call `HZIncentivizedAd setDelegate:` instead.")));
 
 
 /**
@@ -159,5 +163,10 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
 + (void) setFramework: (NSString *) framework;
 + (void) setMediator: (NSString *) mediator;
 + (NSString *) defaultTagName;
+
+/**
+ * Presents a view controller that displays integration information and allows fetch/show testing
+ */
++ (void)presentMediationDebugViewController;
 
 @end
