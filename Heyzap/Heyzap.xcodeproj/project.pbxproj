@@ -2428,6 +2428,7 @@
 					armv7s,
 				);
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_MODULES_AUTOLINK = NO;
 				DSTROOT = /tmp/Ads.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2455,6 +2456,7 @@
 					armv7s,
 				);
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_MODULES_AUTOLINK = NO;
 				DSTROOT = /tmp/Ads.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2481,6 +2483,7 @@
 					"$(ARCHS_STANDARD)",
 					armv7s,
 				);
+				CLANG_MODULES_AUTOLINK = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = "armv7 armv7s";
 			};
@@ -2493,6 +2496,7 @@
 					"$(ARCHS_STANDARD)",
 					armv7s,
 				);
+				CLANG_MODULES_AUTOLINK = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = "armv7 armv7s";
 			};
