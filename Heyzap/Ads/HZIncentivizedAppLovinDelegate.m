@@ -8,6 +8,7 @@
 
 #import "HZIncentivizedAppLovinDelegate.h"
 #import "HZAppLovinAdapter.h"
+#import "HZDispatch.h"
 
 @implementation HZIncentivizedAppLovinDelegate
 
@@ -15,7 +16,9 @@
 
 - (void)rewardValidationRequestForAd:(HZALAd *)ad didSucceedWithResponse:(NSDictionary *)response
 {
-    [self.delegate didCompleteIncentivized];
+    ensureMainQueue(^{
+        [self.delegate didCompleteIncentivized];
+    });
 }
 
 #pragma mark - Failure conditions
@@ -26,7 +29,9 @@
  */
 - (void)rewardValidationRequestForAd:(HZALAd *)ad didExceedQuotaWithResponse:(NSDictionary *)response
 {
-    [self.delegate didFailToCompleteIncentivized];
+    ensureMainQueue(^{
+        [self.delegate didFailToCompleteIncentivized];
+    });
 }
 
 /*
@@ -35,7 +40,9 @@
  */
 - (void)rewardValidationRequestForAd:(HZALAd *)ad wasRejectedWithResponse:(NSDictionary *)response
 {
-    [self.delegate didFailToCompleteIncentivized];
+    ensureMainQueue(^{
+        [self.delegate didFailToCompleteIncentivized];
+    });
 }
 
 /*
@@ -43,7 +50,10 @@
  */
 - (void)rewardValidationRequestForAd:(HZALAd *)ad didFailWithError:(NSInteger)responseCode
 {
-    [self.delegate didFailToCompleteIncentivized];
+    ensureMainQueue(^{
+       [self.delegate didFailToCompleteIncentivized];
+    });
+    
 }
 
 /*
@@ -51,7 +61,9 @@
  */
 - (void)userDeclinedToViewAd:(HZALAd *)ad
 {
-    [self.delegate didFailToCompleteIncentivized];
+    ensureMainQueue(^{
+        [self.delegate didFailToCompleteIncentivized];
+    });
 }
 
 @end
