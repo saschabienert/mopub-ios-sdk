@@ -32,28 +32,27 @@
     }
     
     const CFTimeInterval startTime = CACurrentMediaTime();
-    [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 tag:request.tag type:request.adUnit];
-    [[HZMetrics sharedInstance] logFetchTimeForTag:request.tag type:request.adUnit];
+    [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withObject:request];
+    [[HZMetrics sharedInstance] logFetchTimeWithObject:request];
     
     NSString *const connectivity = [[HZDevice currentDevice] HZConnectivityType];
     [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity"
                                           value:connectivity
-                                            tag:request.tag
-                                           type:request.adUnit];
+                                            withObject:request];
     
     [[HZAdsAPIClient sharedClient] loadRequest: request withCompletion: ^(HZAdFetchRequest *aRequest) {
         const CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
         const int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
-        [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elapsedMiliseconds) tag:aRequest.tag type:aRequest.adUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elapsedMiliseconds) withObject:aRequest];
         
         if (aRequest.lastError != nil) {
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", aRequest.lastError]];
-            [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 tag:aRequest.tag type:aRequest.adUnit];
+            [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 withObject:aRequest];
             if (aRequest.lastFailingStatusCode) {
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@(aRequest.lastFailingStatusCode) tag:request.tag type:request.adUnit];
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@(aRequest.lastFailingStatusCode) withObject:aRequest];
             } else if (!connectivity) {
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@"no-connectivity" tag:request.tag type:request.adUnit];
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@"no-connectivity" withObject:aRequest];
             }
             [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: request.tag];
             [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];

@@ -329,6 +329,8 @@
 		E626220B19E7076A0094957B /* HZTestActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626220A19E7076A0094957B /* HZTestActivityViewController.m */; };
 		E626228619F5BAD40094957B /* HZTestActivityNetworkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */; };
 		E626228819F5BB6C0094957B /* HZTestActivityNetworkViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */; };
+		E6A41BE91A1D78EB00C80718 /* HZMetricsAdStub.h in Headers */ = {isa = PBXBuildFile; fileRef = E6A41BE81A1D78EB00C80718 /* HZMetricsAdStub.h */; };
+		E6A41BEB1A1D7B1E00C80718 /* HZMetricsAdStub.m in Sources */ = {isa = PBXBuildFile; fileRef = E6A41BEA1A1D7B1E00C80718 /* HZMetricsAdStub.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -652,6 +654,8 @@
 		E626220A19E7076A0094957B /* HZTestActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityViewController.m; sourceTree = "<group>"; };
 		E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityNetworkViewController.m; sourceTree = "<group>"; };
 		E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZTestActivityNetworkViewController.h; sourceTree = "<group>"; };
+		E6A41BE81A1D78EB00C80718 /* HZMetricsAdStub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMetricsAdStub.h; sourceTree = "<group>"; };
+		E6A41BEA1A1D7B1E00C80718 /* HZMetricsAdStub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMetricsAdStub.m; sourceTree = "<group>"; };
 		F3F5764E2F27A103D8E719B4 /* Pods-Ads Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ads Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1079,6 +1083,8 @@
 				B304C4C1197EDC4A009ACC5D /* HZMetrics.m */,
 				50E76E1219A29FBA00FD2639 /* HZMetricsKey.h */,
 				50E76E1319A29FBA00FD2639 /* HZMetricsKey.m */,
+				E6A41BE81A1D78EB00C80718 /* HZMetricsAdStub.h */,
+				E6A41BEA1A1D7B1E00C80718 /* HZMetricsAdStub.m */,
 			);
 			name = Metrics;
 			sourceTree = "<group>";
@@ -1475,6 +1481,7 @@
 				50D1598F18F34B0900734ABB /* HZHeyzapVideoAd.h in Headers */,
 				50ECA1D218DB7373006284AB /* HZHeyzapAdapter.h in Headers */,
 				509E8D3519B79F8200ABF2D2 /* HZEnums.h in Headers */,
+				E6A41BE91A1D78EB00C80718 /* HZMetricsAdStub.h in Headers */,
 				5046CE8A18E3B0C3000395AA /* HZDispatch.h in Headers */,
 				50AC60B218FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.h in Headers */,
 				50B46B1918F88C2E005155B8 /* HZALAdService.h in Headers */,
@@ -1904,6 +1911,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6A41BEB1A1D7B1E00C80718 /* HZMetricsAdStub.m in Sources */,
 				50EB889A1A0AFBF20077A4D3 /* HZNSURLUtils.m in Sources */,
 				507A456319BE95B000C7AEEA /* HZStorePresenter.m in Sources */,
 				501EBDA919AFE30600CA80ED /* HZMetricsKey.m in Sources */,

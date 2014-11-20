@@ -117,44 +117,44 @@ NSString * metricFailureReason(NSDictionary *metric);
 NSString * const kMetricID = @"metricIdentifier";
 NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
 
-+ (NSDictionary *)baseMetricsForAdType:(NSString *)adType
++ (NSDictionary *)baseMetricsForAdUnit:(NSString *)adUnit
 {
     return @{
-             @"ad-unit": adType,
+             @"ad-unit": adUnit,
              kMetricID:[[self class] uniqueIdentifier],
             };
 }
 
-- (NSMutableDictionary *)getMetricsForTag:(NSString *)tag type:(NSString *)type {
+- (NSMutableDictionary *)getMetricsForTag:(NSString *)tag adUnit:(NSString *)adUnit {
     if (tag == nil ) tag = @"default";
-    NSParameterAssert(type);
-    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag type:type];
+    NSParameterAssert(adUnit);
+    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit];
     if (!self.metricsDict[key]) {
-        self.metricsDict[key] = [[[self class] baseMetricsForAdType:type] mutableCopy];
+        self.metricsDict[key] = [[[self class] baseMetricsForAdUnit:adUnit] mutableCopy];
     }
     return self.metricsDict[key];
 }
 
-- (void)finishUsingAdWithTag:(NSString *)tag type:(NSString *)type {
+- (void)finishUsingAdWithTag:(NSString *)tag adUnit:(NSString *)adUnit {
     if (tag == nil ) tag = @"default";
-    NSParameterAssert(type);
+    NSParameterAssert(adUnit);
     
-    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag type:type];
+    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit];
     NSDictionary *const metrics = self.metricsDict[key];
     [[self class] writeMetricToDisk:metrics];
     [self.metricsDict removeObjectForKey:key];
     
 }
 
-- (void) removeAdForTag:(NSString *)tag type:(NSString *)type {
-    [self finishUsingAdWithTag:tag type:type];
-//    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag type:type];
+- (void) removeAdWithObject:(id <HZMetricsProtocol>)object {
+    [self finishUsingAdWithTag:object.tag adUnit:object.adUnit];
+//    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:object.tag adUnit:object.adUnit];
 //    [self.metricsDict removeObjectForKey:key];
 }
 
 #pragma mark - Logging Metrics
 
-- (void) logMetricsEvent: (NSString *) eventName value:(id)value tag:(NSString *)tag type:(NSString *)type {
+- (void) logMetricsEvent: (NSString *) eventName value:(id)value withObject:(id <HZMetricsProtocol>)object {
     if (!value) {
         HZDLog(@"nil value for key %@",eventName);
         return;
@@ -163,66 +163,62 @@ NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
     BOOL validClass = [value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSString class]];
     NSParameterAssert(validClass);
     
-    NSMutableDictionary *d = [self getMetricsForTag:tag type:type];
+    NSMutableDictionary *d = [self getMetricsForTag:object.tag adUnit:object.adUnit];
     d[eventName] = value;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
                                                         object:nil
                                                       userInfo:nil];
 }
 
-- (void) logFetchTimeForTag: (NSString *) tag type:(NSString *) type {
+- (void) logFetchTimeWithObject:(id <HZMetricsProtocol>)object {
     self.fetchCalledTime = CACurrentMediaTime();
-    [self logMetricsEvent:@"fetch" value:@1 tag:tag type:type];
+    [self logMetricsEvent:@"fetch" value:@1 withObject:object];
 }
 
-- (void) logTimeSinceFetchFor:(NSString *)eventName tag:(NSString *)tag type:(NSString *)type{
+- (void) logTimeSinceFetchFor:(NSString *)eventName withObject:(id <HZMetricsProtocol>)object{
     CFTimeInterval currentTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceFetchMiliseconds = lround((currentTime - self.fetchCalledTime)*1000);
-    [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMiliseconds) tag:tag type:type];
+    [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMiliseconds) withObject:object];
 }
 
-- (void) logShowAdForTag:(NSString *)tag type:(NSString *)type{
-    [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad_called" value:@1 tag:tag type:type];
+- (void) logShowAdWithObject:(id <HZMetricsProtocol>)object{
+    [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad_called" value:@1 withObject:object];
     self.showAdCalledTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceShowMiliseconds = lround((self.showAdCalledTime - self.fetchCalledTime)*1000);
-    [self logMetricsEvent:kShowAdTimeSincePreviousRelevantFetchKey value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
+    [self logMetricsEvent:kShowAdTimeSincePreviousRelevantFetchKey value:@(elapsedtimeSinceShowMiliseconds) withObject:object];
 }
 
-- (void) logTimeSinceShowAdFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type{
+- (void) logTimeSinceShowAdFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object{
     CFTimeInterval currentTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceShowMiliseconds = lround((currentTime - self.showAdCalledTime)*1000);
-    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
+    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withObject:object];
 }
 
-- (void) logDownloadPercentageFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type{
-    NSNumber *downloadPercentage = [self getMetricsForTag:tag type:type][kMetricDownloadPercentageKey];
+- (void) logDownloadPercentageFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object{
+    NSNumber *downloadPercentage = [self getMetricsForTag:object.tag adUnit:object.adUnit][kMetricDownloadPercentageKey];
     if (downloadPercentage) { // If we aren't downloading a video, don't log anything
-        [self logMetricsEvent:eventname value:downloadPercentage tag:tag type:type];
+        [self logMetricsEvent:eventname value:downloadPercentage withObject:object];
     }
 }
 
-- (void) logTimeSinceStartFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type {
+- (void) logTimeSinceStartFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object {
     CFTimeInterval currentTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceShowMiliseconds = lround((currentTime - self.startTime)*1000);
-    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
+    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withObject:object];
 }
 
-- (void)logIsAvailable:(BOOL)isAvailable tag:(NSString *)tag type:(NSString *)type {
-    if (tag == nil ) tag = @"default";
-    NSParameterAssert(type);
-    
-    
+- (void)logIsAvailable:(BOOL)isAvailable withObject:(id <HZMetricsProtocol>)object {
     if (isAvailable) {
-        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableStatusKey value:@"is_available" tag:tag type:type];
+        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableStatusKey value:@"is_available" withObject:object];
     } else {
-        NSDictionary *const currentMetric = [self getMetricsForTag:tag type:type];
-        [self logMetricsEvent:kIsAvailableStatusKey value:metricFailureReason(currentMetric) tag:tag type:type];
+        NSDictionary *const currentMetric = [self getMetricsForTag:object.tag adUnit:object.adUnit];
+        [self logMetricsEvent:kIsAvailableStatusKey value:metricFailureReason(currentMetric) withObject:object];
     }
 }
 
 // This isn't actually a metric, but the metric dictionary is a useful place to store the current download percentage for that video ad.
-- (void)setDownloadPercentage:(int)downloadPercentage tag:(NSString *)tag type:(NSString *)type {
-    [self logMetricsEvent:kMetricDownloadPercentageKey value:@(downloadPercentage) tag:tag type:type];
+- (void)setDownloadPercentage:(int)downloadPercentage withObject:(id <HZMetricsProtocol>)object {
+    [self logMetricsEvent:kMetricDownloadPercentageKey value:@(downloadPercentage) withObject:object];
 }
 
 + (NSDictionary *) staticValuesDict {

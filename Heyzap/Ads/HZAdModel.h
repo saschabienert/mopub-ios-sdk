@@ -8,8 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "HZMetrics.h"
 
-@interface HZAdModel : NSObject <HZAdInfoProvider>
+@interface HZAdModel : NSObject <HZAdInfoProvider, HZMetricsProtocol>
 
 @property (nonatomic, readonly) NSString *impressionID;
 @property (nonatomic, readonly) NSNumber *promotedGamePackage;

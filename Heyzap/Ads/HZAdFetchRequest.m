@@ -13,6 +13,7 @@
 
 #import "HZDevice.h"
 #import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 #define kHZAdRetries 3
 
@@ -28,7 +29,7 @@
                  auctionType:(HZAuctionType)auctionType
          andAdditionalParams:(NSDictionary *)additionalParams {
     
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:adUnit tag:tag type:adUnit];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:adUnit withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:adUnit]];
     
     self = [super init];
     if (self) {

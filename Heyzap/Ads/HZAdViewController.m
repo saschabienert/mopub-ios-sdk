@@ -70,11 +70,11 @@
     [rootVC presentViewController:self animated:NO completion:nil];
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
     
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" tag:self.ad.tag type:self.ad.adUnit];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" withObject:self.ad];
 }
 
 - (void) hide {
-    [[HZMetrics sharedInstance] removeAdForTag:self.ad.tag type:self.ad.adUnit];
+    [[HZMetrics sharedInstance] removeAdWithObject:self.ad];
     
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     
@@ -104,11 +104,9 @@ static int totalImpressions = 0;
     totalImpressions++;
     [[HZMetrics sharedInstance] logMetricsEvent:@"nth_ad"
                                           value:@(totalImpressions)
-                                            tag:self.ad.tag
-                                           type:self.ad.adUnit];
+                                            withObject:self.ad];
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"time_from_fetch_to_impression"
-                                                 tag:self.ad.tag
-                                                type:self.ad.adUnit];
+                                                 withObject:self.ad];
     
     
     if ([self.ad onImpression]) {
@@ -119,7 +117,7 @@ static int totalImpressions = 0;
 
 - (void) didClickWithURL: (NSURL *) url {
     
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad-clicked" value:@1 tag:self.ad.tag type:self.ad.adUnit];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad-clicked" value:@1 withObject:self.ad];
     
     if ([self.ad onClick]) {
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didClickAdWithTag:self.ad.tag];

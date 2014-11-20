@@ -91,8 +91,8 @@
 - (void)logVideoMetrics {
     NSURL *videoURL = self.forceStreaming ? self.streamingURLs.firstObject : self.staticURLs.firstObject;
     if (videoURL) {
-        [[HZMetrics sharedInstance] logMetricsEvent:@"video_host" value:videoURL.host tag:self.tag type:self.adUnit];
-        [[HZMetrics sharedInstance] logMetricsEvent:@"video_path" value:videoURL.path tag:self.tag type:self.adUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"video_host" value:videoURL.host withObject:self];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"video_path" value:videoURL.path withObject:self];
     }
 }
 
@@ -144,13 +144,12 @@
             if (!result) {
                 [[HZMetrics sharedInstance] logMetricsEvent:@"video_download_failed"
                                                       value:@1
-                                                        tag:self.tag
-                                                       type:self.adUnit];
+                                                        withObject:self];
             }
                                                     
             CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startDownloadTime;
             int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
-            [[HZMetrics sharedInstance] logMetricsEvent:@"video_download_time" value:@(elapsedMiliseconds) tag:self.tag type:self.adUnit];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"video_download_time" value:@(elapsedMiliseconds) withObject:self];
             modelSelf.fileCached = result;
             if (![modelSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
                 if (modelSelf.allowFallbacktoStreaming) {
@@ -209,7 +208,7 @@
 - (void) onInterstitialFallback {
     [self cancelDownload];
     
-    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"video-not-downloaded-but-interstitial-shown" tag:self.tag type:self.adUnit];
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"video-not-downloaded-but-interstitial-shown" withObject:self];
     
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setObject: @"1" forKey: @"interstitial_fallback"];

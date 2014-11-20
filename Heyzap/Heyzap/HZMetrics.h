@@ -17,6 +17,12 @@ extern NSString *const kIsAvailablePercentDownloadedKey;
 extern NSString *const kIsAvailableTimeSincePreviousFetchKey;
 extern NSString *const kShowAdTimeSincePreviousRelevantFetchKey;
 
+@protocol HZMetricsProtocol <NSObject>
+
+@property (nonatomic, readonly) NSString *tag;
+@property (nonatomic, readonly) NSString *adUnit;
+
+@end
 
 @class HZAdModel;
 
@@ -27,19 +33,19 @@ extern NSString *const kShowAdTimeSincePreviousRelevantFetchKey;
 
 #pragma mark - Logging Metrics
 
-- (void) logMetricsEvent: (NSString *) eventName value:(id)value tag:(NSString *)tag type:(NSString *)type;
-- (void) logTimeSinceFetchFor: (NSString *) eventName tag:(NSString *)tag type:(NSString *)type;
-- (void) logFetchTimeForTag: (NSString *) tag type:(NSString *) type;
-- (void) logShowAdForTag: (NSString *) tag type: (NSString *) type;
-- (void) logTimeSinceShowAdFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type;
-- (void) logDownloadPercentageFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type;
-- (void) logTimeSinceStartFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type;
+- (void) logMetricsEvent: (NSString *) eventName value:(id)value withObject:(id <HZMetricsProtocol>)object;
+- (void) logTimeSinceFetchFor: (NSString *) eventName withObject:(id <HZMetricsProtocol>)object;
+- (void) logFetchTimeWithObject: (id <HZMetricsProtocol>)object;
+- (void) logShowAdWithObject: (id <HZMetricsProtocol>)object;
+- (void) logTimeSinceShowAdFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object;
+- (void) logDownloadPercentageFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object;
+- (void) logTimeSinceStartFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object;
 
-- (void)logIsAvailable:(BOOL)isAvailable tag:(NSString *)tag type:(NSString *)type;
+- (void)logIsAvailable:(BOOL)isAvailable withObject:(id <HZMetricsProtocol>)object;
 
 
 
-- (void) removeAdForTag:(NSString *)tag type:(NSString *)type;
+- (void) removeAdWithObject:(id <HZMetricsProtocol>)object;
 
 //- (void)logFetchResultsForTag:(HZAdModel *)ad error:(NSError *)error;
 
@@ -47,9 +53,8 @@ extern NSString *const kShowAdTimeSincePreviousRelevantFetchKey;
  *  Call this method when downloading a video to record current download progress.
  *
  *  @param downloadPercentage % completion for the download
- *  @param tag                the tag being downloaded for
- *  @param type               the ad unit being downloaded for
+ *  @param object             an object that has tag and adUnit properties
  */
-- (void)setDownloadPercentage:(int)downloadPercentage tag:(NSString *)tag type:(NSString *)type;
+- (void)setDownloadPercentage:(int)downloadPercentage withObject:(id <HZMetricsProtocol>)object;
 
 @end

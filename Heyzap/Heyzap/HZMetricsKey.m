@@ -11,21 +11,21 @@
 @interface HZMetricsKey()
 
 @property (nonatomic) NSString *tag;
-@property (nonatomic) NSString *adType;
+@property (nonatomic) NSString *adUnit;
 
 @end
 
 @implementation HZMetricsKey
 
-- (instancetype)initWithTag:(NSString *)tag type:(NSString *)adType
+- (instancetype)initWithTag:(NSString *)tag adUnit:(NSString *)adUnit
 {
     NSParameterAssert(tag);
-    NSParameterAssert(adType);
+    NSParameterAssert(adUnit);
     
     self = [super init];
     if (self) {
         _tag = tag;
-        _adType = adType;
+        _adUnit = adUnit;
     }
     return self;
 }
@@ -42,12 +42,12 @@
     }
     HZMetricsKey *other = object;
     return [other.tag isEqualToString:self.tag]
-        && [other.adType isEqualToString:self.adType];
+        && [other.adUnit isEqualToString:self.adUnit];
 }
 
 - (NSUInteger)hash
 {
-    return self.tag.hash ^ self.adType.hash;
+    return self.tag.hash ^ self.adUnit.hash;
 }
 
 - (instancetype)copyWithZone:(NSZone *)zone
@@ -59,8 +59,8 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"HZMetricsKey - tag = %@ adType = %@",
-            self.tag,self.adType];
+    return [NSString stringWithFormat:@"HZMetricsKey - tag = %@ adUnit = %@",
+            self.tag,self.adUnit];
 }
 
 @end

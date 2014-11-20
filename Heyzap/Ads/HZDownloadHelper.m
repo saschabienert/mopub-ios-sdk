@@ -10,6 +10,7 @@
 #import "HZAFNetworking.h"
 #import "HZLog.h"
 #import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccessNotification";
 
@@ -28,11 +29,12 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
     operation.outputStream = [NSOutputStream outputStreamToFileAtPath: filePath append:NO];
     __block BOOL loggedTotal = NO;
     [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead){
+        HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:type];
         float decimal = (float)totalBytesRead / (float)totalBytesExpectedToRead;
         int percent = (int) (decimal * 100);
-        [[HZMetrics sharedInstance] setDownloadPercentage:percent tag:tag type:type];
+        [[HZMetrics sharedInstance] setDownloadPercentage:percent withObject:stub];
         if (!loggedTotal){
-            [[HZMetrics sharedInstance] logMetricsEvent:@"video_size" value:@(totalBytesExpectedToRead) tag:tag type:type];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"video_size" value:@(totalBytesExpectedToRead) withObject:stub];
             loggedTotal = YES;
         }
     }];
