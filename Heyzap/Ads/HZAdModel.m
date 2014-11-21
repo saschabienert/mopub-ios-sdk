@@ -16,6 +16,7 @@
 #import "HZDevice.h"
 #import "HeyzapAds.h"
 #import "HZMetrics.h"
+#import "HZMediationConstants.h"
 
 #import "HZAdsAPIClient.h"
 #import "HZUtils.h"
@@ -118,7 +119,7 @@
 }
 
 - (void)sendInitializationMetrics {
-    [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:_impressionID withObject:self];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:_impressionID withObject:self network:kHZAdapterHeyzap];
 }
 
 
@@ -143,9 +144,9 @@
 
 - (BOOL) onClick {
     if (self.sentClick) return false;
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_clicked" value:@1 withObject:self];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_clicked" value:@1 withObject:self network:kHZAdapterHeyzap];
     long timeCLickedMiliseconds = lround([[NSDate date] timeIntervalSince1970] * 1000);
-    [[HZMetrics sharedInstance] logMetricsEvent:@"time_clicked" value:@(timeCLickedMiliseconds) withObject:self];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"time_clicked" value:@(timeCLickedMiliseconds) withObject:self network:kHZAdapterHeyzap];
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     

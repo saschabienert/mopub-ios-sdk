@@ -125,36 +125,36 @@ NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
             };
 }
 
-- (NSMutableDictionary *)getMetricsForTag:(NSString *)tag adUnit:(NSString *)adUnit {
+- (NSMutableDictionary *)getMetricsForTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network {
     if (tag == nil ) tag = @"default";
     NSParameterAssert(adUnit);
-    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit];
+    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:network];
     if (!self.metricsDict[key]) {
         self.metricsDict[key] = [[[self class] baseMetricsForAdUnit:adUnit] mutableCopy];
     }
     return self.metricsDict[key];
 }
 
-- (void)finishUsingAdWithTag:(NSString *)tag adUnit:(NSString *)adUnit {
+- (void)finishUsingAdWithTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network {
     if (tag == nil ) tag = @"default";
     NSParameterAssert(adUnit);
     
-    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit];
+    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:network];
     NSDictionary *const metrics = self.metricsDict[key];
     [[self class] writeMetricToDisk:metrics];
     [self.metricsDict removeObjectForKey:key];
     
 }
 
-- (void) removeAdWithObject:(id <HZMetricsProtocol>)object {
-    [self finishUsingAdWithTag:object.tag adUnit:object.adUnit];
-//    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:object.tag adUnit:object.adUnit];
+- (void) removeAdWithObject:(id <HZMetricsProtocol>)object network:(NSString *)network {
+    [self finishUsingAdWithTag:object.tag adUnit:object.adUnit network:network];
+//    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:object.tag adUnit:object.adUnit network:network];
 //    [self.metricsDict removeObjectForKey:key];
 }
 
 #pragma mark - Logging Metrics
 
-- (void) logMetricsEvent: (NSString *) eventName value:(id)value withObject:(id <HZMetricsProtocol>)object {
+- (void) logMetricsEvent: (NSString *) eventName value:(id)value withObject:(id <HZMetricsProtocol>)object network:(NSString *)network {
     if (!value) {
         HZDLog(@"nil value for key %@",eventName);
         return;
@@ -163,62 +163,62 @@ NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
     BOOL validClass = [value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSString class]];
     NSParameterAssert(validClass);
     
-    NSMutableDictionary *d = [self getMetricsForTag:object.tag adUnit:object.adUnit];
+    NSMutableDictionary *d = [self getMetricsForTag:object.tag adUnit:object.adUnit network:network];
     d[eventName] = value;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
                                                         object:nil
                                                       userInfo:nil];
 }
 
-- (void) logFetchTimeWithObject:(id <HZMetricsProtocol>)object {
+- (void) logFetchTimeWithObject:(id <HZMetricsProtocol>)object network:(NSString *)network {
     self.fetchCalledTime = CACurrentMediaTime();
-    [self logMetricsEvent:@"fetch" value:@1 withObject:object];
+    [self logMetricsEvent:@"fetch" value:@1 withObject:object network:network];
 }
 
-- (void) logTimeSinceFetchFor:(NSString *)eventName withObject:(id <HZMetricsProtocol>)object{
+- (void) logTimeSinceFetchFor:(NSString *)eventName withObject:(id <HZMetricsProtocol>)object network:(NSString *)network{
     CFTimeInterval currentTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceFetchMiliseconds = lround((currentTime - self.fetchCalledTime)*1000);
-    [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMiliseconds) withObject:object];
+    [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMiliseconds) withObject:object network:network];
 }
 
-- (void) logShowAdWithObject:(id <HZMetricsProtocol>)object{
-    [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad_called" value:@1 withObject:object];
+- (void) logShowAdWithObject:(id <HZMetricsProtocol>)object network:(NSString *)network{
+    [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad_called" value:@1 withObject:object network:network];
     self.showAdCalledTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceShowMiliseconds = lround((self.showAdCalledTime - self.fetchCalledTime)*1000);
-    [self logMetricsEvent:kShowAdTimeSincePreviousRelevantFetchKey value:@(elapsedtimeSinceShowMiliseconds) withObject:object];
+    [self logMetricsEvent:kShowAdTimeSincePreviousRelevantFetchKey value:@(elapsedtimeSinceShowMiliseconds) withObject:object network:network];
 }
 
-- (void) logTimeSinceShowAdFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object{
+- (void) logTimeSinceShowAdFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object network:(NSString *)network{
     CFTimeInterval currentTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceShowMiliseconds = lround((currentTime - self.showAdCalledTime)*1000);
-    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withObject:object];
+    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withObject:object network:network];
 }
 
-- (void) logDownloadPercentageFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object{
-    NSNumber *downloadPercentage = [self getMetricsForTag:object.tag adUnit:object.adUnit][kMetricDownloadPercentageKey];
+- (void) logDownloadPercentageFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object network:(NSString *)network{
+    NSNumber *downloadPercentage = [self getMetricsForTag:object.tag adUnit:object.adUnit network:network][kMetricDownloadPercentageKey];
     if (downloadPercentage) { // If we aren't downloading a video, don't log anything
-        [self logMetricsEvent:eventname value:downloadPercentage withObject:object];
+        [self logMetricsEvent:eventname value:downloadPercentage withObject:object network:network];
     }
 }
 
-- (void) logTimeSinceStartFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object {
+- (void) logTimeSinceStartFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object network:(NSString *)network {
     CFTimeInterval currentTime = CACurrentMediaTime();
     int64_t elapsedtimeSinceShowMiliseconds = lround((currentTime - self.startTime)*1000);
-    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withObject:object];
+    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withObject:object network:network];
 }
 
-- (void)logIsAvailable:(BOOL)isAvailable withObject:(id <HZMetricsProtocol>)object {
+- (void)logIsAvailable:(BOOL)isAvailable withObject:(id <HZMetricsProtocol>)object network:(NSString *)network {
     if (isAvailable) {
-        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableStatusKey value:@"is_available" withObject:object];
+        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableStatusKey value:@"is_available" withObject:object network:network];
     } else {
-        NSDictionary *const currentMetric = [self getMetricsForTag:object.tag adUnit:object.adUnit];
-        [self logMetricsEvent:kIsAvailableStatusKey value:metricFailureReason(currentMetric) withObject:object];
+        NSDictionary *const currentMetric = [self getMetricsForTag:object.tag adUnit:object.adUnit network:network];
+        [self logMetricsEvent:kIsAvailableStatusKey value:metricFailureReason(currentMetric) withObject:object network:network];
     }
 }
 
 // This isn't actually a metric, but the metric dictionary is a useful place to store the current download percentage for that video ad.
-- (void)setDownloadPercentage:(int)downloadPercentage withObject:(id <HZMetricsProtocol>)object {
-    [self logMetricsEvent:kMetricDownloadPercentageKey value:@(downloadPercentage) withObject:object];
+- (void)setDownloadPercentage:(int)downloadPercentage withObject:(id <HZMetricsProtocol>)object network:(NSString *)network {
+    [self logMetricsEvent:kMetricDownloadPercentageKey value:@(downloadPercentage) withObject:object network:network];
 }
 
 + (NSDictionary *) staticValuesDict {

@@ -14,6 +14,7 @@
 #import "HZAdsAPIClient.h"
 #import "HZLog.h"
 #import "HZMetrics.h"
+#import "HZMediationConstants.h"
 
 @interface HZVideoAdModel()<UIWebViewDelegate>
 @property (nonatomic, assign) BOOL sentComplete;
@@ -91,8 +92,8 @@
 - (void)logVideoMetrics {
     NSURL *videoURL = self.forceStreaming ? self.streamingURLs.firstObject : self.staticURLs.firstObject;
     if (videoURL) {
-        [[HZMetrics sharedInstance] logMetricsEvent:@"video_host" value:videoURL.host withObject:self];
-        [[HZMetrics sharedInstance] logMetricsEvent:@"video_path" value:videoURL.path withObject:self];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"video_host" value:videoURL.host withObject:self network:kHZAdapterHeyzap];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"video_path" value:videoURL.path withObject:self network:kHZAdapterHeyzap];
     }
 }
 
@@ -144,12 +145,13 @@
             if (!result) {
                 [[HZMetrics sharedInstance] logMetricsEvent:@"video_download_failed"
                                                       value:@1
-                                                        withObject:self];
+                                                 withObject:self
+                                                    network:kHZAdapterHeyzap];
             }
                                                     
             CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startDownloadTime;
             int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
-            [[HZMetrics sharedInstance] logMetricsEvent:@"video_download_time" value:@(elapsedMiliseconds) withObject:self];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"video_download_time" value:@(elapsedMiliseconds) withObject:self network:kHZAdapterHeyzap];
             modelSelf.fileCached = result;
             if (![modelSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
                 if (modelSelf.allowFallbacktoStreaming) {
@@ -208,7 +210,7 @@
 - (void) onInterstitialFallback {
     [self cancelDownload];
     
-    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"video-not-downloaded-but-interstitial-shown" withObject:self];
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"video-not-downloaded-but-interstitial-shown" withObject:self network:kHZAdapterHeyzap];
     
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setObject: @"1" forKey: @"interstitial_fallback"];

@@ -33,19 +33,19 @@ extern NSString *const kShowAdTimeSincePreviousRelevantFetchKey;
 
 #pragma mark - Logging Metrics
 
-- (void) logMetricsEvent: (NSString *) eventName value:(id)value withObject:(id <HZMetricsProtocol>)object;
-- (void) logTimeSinceFetchFor: (NSString *) eventName withObject:(id <HZMetricsProtocol>)object;
-- (void) logFetchTimeWithObject: (id <HZMetricsProtocol>)object;
-- (void) logShowAdWithObject: (id <HZMetricsProtocol>)object;
-- (void) logTimeSinceShowAdFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object;
-- (void) logDownloadPercentageFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object;
-- (void) logTimeSinceStartFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object;
+- (void) logMetricsEvent: (NSString *) eventName value:(id)value withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
+- (void) logTimeSinceFetchFor: (NSString *) eventName withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
+- (void) logFetchTimeWithObject: (id <HZMetricsProtocol>)object network:(NSString *)network;
+- (void) logShowAdWithObject: (id <HZMetricsProtocol>)object network:(NSString *)network;
+- (void) logTimeSinceShowAdFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
+- (void) logDownloadPercentageFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
+- (void) logTimeSinceStartFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
 
-- (void)logIsAvailable:(BOOL)isAvailable withObject:(id <HZMetricsProtocol>)object;
+- (void)logIsAvailable:(BOOL)isAvailable withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
 
 
 
-- (void) removeAdWithObject:(id <HZMetricsProtocol>)object;
+- (void) removeAdWithObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
 
 //- (void)logFetchResultsForTag:(HZAdModel *)ad error:(NSError *)error;
 
@@ -55,6 +55,6 @@ extern NSString *const kShowAdTimeSincePreviousRelevantFetchKey;
  *  @param downloadPercentage % completion for the download
  *  @param object             an object that has tag and adUnit properties
  */
-- (void)setDownloadPercentage:(int)downloadPercentage withObject:(id <HZMetricsProtocol>)object;
+- (void)setDownloadPercentage:(int)downloadPercentage withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
 
 @end

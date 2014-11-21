@@ -11,6 +11,7 @@
 #import "HZLog.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
+#import "HZMediationConstants.h"
 
 NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccessNotification";
 
@@ -32,9 +33,9 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
         HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:type];
         float decimal = (float)totalBytesRead / (float)totalBytesExpectedToRead;
         int percent = (int) (decimal * 100);
-        [[HZMetrics sharedInstance] setDownloadPercentage:percent withObject:stub];
+        [[HZMetrics sharedInstance] setDownloadPercentage:percent withObject:stub network:kHZAdapterHeyzap];
         if (!loggedTotal){
-            [[HZMetrics sharedInstance] logMetricsEvent:@"video_size" value:@(totalBytesExpectedToRead) withObject:stub];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"video_size" value:@(totalBytesExpectedToRead) withObject:stub network:kHZAdapterHeyzap];
             loggedTotal = YES;
         }
     }];

@@ -14,6 +14,7 @@
 #import "HZAdsAPIClient.h"
 #import "HZMetrics.h"
 #import "HZStorePresenter.h"
+#import "HZMediationConstants.h"
 
 @interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
 
@@ -70,11 +71,11 @@
     [rootVC presentViewController:self animated:NO completion:nil];
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
     
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" withObject:self.ad];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" withObject:self.ad network:kHZAdapterHeyzap];
 }
 
 - (void) hide {
-    [[HZMetrics sharedInstance] removeAdWithObject:self.ad];
+    [[HZMetrics sharedInstance] removeAdWithObject:self.ad network:kHZAdapterHeyzap];
     
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     
@@ -104,9 +105,11 @@ static int totalImpressions = 0;
     totalImpressions++;
     [[HZMetrics sharedInstance] logMetricsEvent:@"nth_ad"
                                           value:@(totalImpressions)
-                                            withObject:self.ad];
+                                     withObject:self.ad
+                                        network:kHZAdapterHeyzap];
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"time_from_fetch_to_impression"
-                                                 withObject:self.ad];
+                                          withObject:self.ad
+                                             network:kHZAdapterHeyzap];
     
     
     if ([self.ad onImpression]) {
@@ -117,7 +120,7 @@ static int totalImpressions = 0;
 
 - (void) didClickWithURL: (NSURL *) url {
     
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad-clicked" value:@1 withObject:self.ad];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad-clicked" value:@1 withObject:self.ad network:kHZAdapterHeyzap];
     
     if ([self.ad onClick]) {
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didClickAdWithTag:self.ad.tag];

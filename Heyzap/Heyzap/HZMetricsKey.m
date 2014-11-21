@@ -62,8 +62,8 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"HZMetricsKey - tag = %@ adUnit = %@",
-            self.tag,self.adUnit];
+    return [NSString stringWithFormat:@"HZMetricsKey - tag = %@ adUnit = %@ network = %@",
+            self.tag,self.adUnit,self.network];
 }
 
 @end
