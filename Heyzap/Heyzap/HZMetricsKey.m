@@ -17,15 +17,17 @@
 
 @implementation HZMetricsKey
 
-- (instancetype)initWithTag:(NSString *)tag adUnit:(NSString *)adUnit
+- (instancetype)initWithTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network
 {
     NSParameterAssert(tag);
     NSParameterAssert(adUnit);
+    NSParameterAssert(network);
     
     self = [super init];
     if (self) {
         _tag = tag;
         _adUnit = adUnit;
+        _network = network;
     }
     return self;
 }
@@ -42,12 +44,13 @@
     }
     HZMetricsKey *other = object;
     return [other.tag isEqualToString:self.tag]
-        && [other.adUnit isEqualToString:self.adUnit];
+        && [other.adUnit isEqualToString:self.adUnit]
+        && [other.network isEqualToString:self.network];
 }
 
 - (NSUInteger)hash
 {
-    return self.tag.hash ^ self.adUnit.hash;
+    return self.tag.hash ^ self.adUnit.hash ^ self.network.hash;
 }
 
 - (instancetype)copyWithZone:(NSZone *)zone
