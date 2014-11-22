@@ -12,9 +12,6 @@
 #import "HZAdsManager.h"
 
 #import "HZDevice.h"
-#import "HZMetrics.h"
-#import "HZMetricsAdStub.h"
-#import "HZMediationConstants.h"
 
 #define kHZAdRetries 3
 
@@ -29,8 +26,6 @@
                          tag:(NSString *)tag
                  auctionType:(HZAuctionType)auctionType
          andAdditionalParams:(NSDictionary *)additionalParams {
-    
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:adUnit withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:adUnit] network:kHZAdapterHeyzap];
     
     self = [super init];
     if (self) {

@@ -82,6 +82,8 @@
 }
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
+    tag = tag ?: [HeyzapAds defaultTagName];
+
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         return [HZHeyzapVideoAd isAvailableForTag:tag auctionType:HZAuctionTypeMixed];
     } else {

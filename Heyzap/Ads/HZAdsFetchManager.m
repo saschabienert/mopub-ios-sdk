@@ -33,6 +33,7 @@
     }
     
     const CFTimeInterval startTime = CACurrentMediaTime();
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:request.adUnit withObject:request network:kHZAdapterHeyzap];
     [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withObject:request network:kHZAdapterHeyzap];
     [[HZMetrics sharedInstance] logFetchTimeWithObject:request network:kHZAdapterHeyzap];
     
