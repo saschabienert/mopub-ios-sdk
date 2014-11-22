@@ -40,6 +40,7 @@
 }
 
 + (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
+    tag = tag ?: [HeyzapAds defaultTagName];
     
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapVideoAd showForTag:tag auctionType:HZAuctionTypeMixed completion:completion];
@@ -68,6 +69,8 @@
 }
 
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
+    tag = tag ?: [HeyzapAds defaultTagName];
+
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapVideoAd fetchForTag:tag auctionType:HZAuctionTypeMixed withCompletion:completion];
     } else {
