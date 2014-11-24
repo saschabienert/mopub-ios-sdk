@@ -249,6 +249,8 @@ NSString * const kHZDataKey = @"data";
     NSString *tag = session.tag;
     NSArray *preferredMediatorList = [session.chosenAdapters array];
     HZAdType type = session.adType;
+    NSString *connectivity = [[HZDevice currentDevice] HZConnectivityType];
+    HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
     HZDLog(@"Preferred mediator list = %@",preferredMediatorList);
     
     // Find the first SDK that has an ad, and use it
@@ -268,8 +270,7 @@ NSString * const kHZDataKey = @"data";
         BOOL successful = NO;
         for (HZBaseAdapter *adapter in preferredMediatorList) {
             NSString *network = [[adapter class] name];
-            NSString *connectivity = [[HZDevice currentDevice] HZConnectivityType];
-            HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+            __block CFTimeInterval startTime;
             
             dispatch_sync(dispatch_get_main_queue(), ^{
                 // start of fetch metrics
@@ -278,6 +279,7 @@ NSString * const kHZDataKey = @"data";
                 [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity" value:connectivity withObject:stub network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withObject:stub network:network];
                 [[HZMetrics sharedInstance] logFetchTimeWithObject:stub network:network];
+                startTime = CACurrentMediaTime();
 
                 [adapter prefetchForType:type tag:tag];
             });
@@ -290,7 +292,11 @@ NSString * const kHZDataKey = @"data";
                 }
                 return [adapter hasAdForType:type tag:tag] || [adapter lastErrorForAdType:type] != nil; // If it errored, exit early.
             }, timeout);
-            
+
+            CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
+            int64_t elaspsedMilliseconds = lround(elapsedSeconds*1000);
+            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elaspsedMilliseconds) withObject:stub network:network];
+
             if (fetchedWithinTimeout) {
                 NSLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
                 successful = YES;
