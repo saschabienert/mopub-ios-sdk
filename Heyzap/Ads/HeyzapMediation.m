@@ -29,6 +29,12 @@
 #import "HZMediationSessionKey.h"
 #import "HZMediationSession.h"
 
+// Metrics
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
+#import "HZMediationConstants.h"
+#import "HZDevice.h"
+
 typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
     HZMediationStartStatusNotStarted,
     HZMediationStartStatusFailure,
@@ -261,8 +267,18 @@ NSString * const kHZDataKey = @"data";
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         BOOL successful = NO;
         for (HZBaseAdapter *adapter in preferredMediatorList) {
+            NSString *network = [[adapter class] name];
+            NSString *connectivity = [[HZDevice currentDevice] HZConnectivityType];
+            HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
             
             dispatch_sync(dispatch_get_main_queue(), ^{
+                // start of fetch metrics
+                [[HZMetrics sharedInstance] logMetricsEvent:@"network" value:network withObject:stub network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:stub.adUnit withObject:stub network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity" value:connectivity withObject:stub network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withObject:stub network:network];
+                [[HZMetrics sharedInstance] logFetchTimeWithObject:stub network:network];
+
                 [adapter prefetchForType:type tag:tag];
             });
             
