@@ -317,11 +317,17 @@ NSString * const kHZDataKey = @"data";
                 // Send delegate notification about showing an ad.
             } else {
                 HZDLog(@"The mediator with name = %@ didn't have an ad",[[adapter class] name]);
+
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@(1) withObject:stub network:network];
+
                 // If the mediated SDK errored, reset it and try again. If there's no error, they're probably still busy fetching.
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if ([adapter lastErrorForAdType:type]) {
+                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:[adapter lastErrorForAdType:type].localizedDescription withObject:stub network:network];
                         [adapter clearErrorForAdType:type];
                         [adapter prefetchForType:type tag:tag];
+                    } else if (!connectivity){
+                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@"no-connectivity" withObject:stub network:network];
                     }
                 });
             }
