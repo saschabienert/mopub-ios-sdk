@@ -155,6 +155,7 @@
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
     if (type == HZAdTypeIncentivized) {
+        self.currentIncentivizedAd.adDisplayDelegate = self.interstitialDelegate;
         [self.currentIncentivizedAd showOver:[[UIApplication sharedApplication] keyWindow]
                                    andNotify:self.incentivizedDelegate];
     } else {
