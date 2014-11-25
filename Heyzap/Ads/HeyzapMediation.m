@@ -268,6 +268,7 @@ NSString * const kHZDataKey = @"data";
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         BOOL successful = NO;
+        int ordinal = 0;
         for (HZBaseAdapter *adapter in preferredMediatorList) {
             NSString *network = [[adapter class] name];
             __block CFTimeInterval startTime;
@@ -275,6 +276,7 @@ NSString * const kHZDataKey = @"data";
             dispatch_sync(dispatch_get_main_queue(), ^{
                 // start of fetch metrics
                 [[HZMetrics sharedInstance] logMetricsEvent:@"network" value:network withObject:stub network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:@"ordinal" value:@(ordinal) withObject:stub network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:stub.adUnit withObject:stub network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity" value:connectivity withObject:stub network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withObject:stub network:network];
@@ -323,7 +325,13 @@ NSString * const kHZDataKey = @"data";
                 // If the mediated SDK errored, reset it and try again. If there's no error, they're probably still busy fetching.
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if ([adapter lastErrorForAdType:type]) {
-                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:[adapter lastErrorForAdType:type].localizedDescription withObject:stub network:network];
+                        NSString *reason;
+                        if ([adapter lastErrorForAdType:type].userInfo && [adapter lastErrorForAdType:type].userInfo[NSUnderlyingErrorKey]) {
+                            reason = ((NSError *) [adapter lastErrorForAdType:type].userInfo[NSUnderlyingErrorKey]).localizedDescription;
+                        } else {
+                            reason = [adapter lastErrorForAdType:type].localizedDescription;
+                        }
+                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:reason withObject:stub network:network];
                         [adapter clearErrorForAdType:type];
                         [adapter prefetchForType:type tag:tag];
                     } else if (!connectivity){
@@ -331,6 +339,8 @@ NSString * const kHZDataKey = @"data";
                     }
                 });
             }
+
+            ordinal++;
         }
         if (!successful) {
             dispatch_sync(dispatch_get_main_queue(), ^{
