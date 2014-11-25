@@ -26,7 +26,11 @@
 
 -  (id)forwardingTargetForSelector:(SEL)aSelector
 {
-    NSAssert([NSThread isMainThread], @"Callbacks must be on the main thread");
+    if (![NSThread isMainThread]) {
+        NSLog(@"Callbacks must be sent on the main thread.");
+        NSLog(@"Current stack = %@",[NSThread callStackSymbols]);
+        NSAssert([NSThread isMainThread], @"Callbacks must be on the main thread");
+    }
     if ([self.forwardingTarget respondsToSelector:aSelector]) {
         return self.forwardingTarget;
     } else {

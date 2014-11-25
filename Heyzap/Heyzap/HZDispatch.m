@@ -36,4 +36,16 @@ BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
     }
 }
 
+void ensureMainQueue(void (^block)(void))
+{
+    NSCParameterAssert(block);
+    if ([NSThread isMainThread]) {
+        block();
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            block();
+        });
+    }
+}
+
 @end
