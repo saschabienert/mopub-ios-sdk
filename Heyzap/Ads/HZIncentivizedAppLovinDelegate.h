@@ -14,4 +14,6 @@
  */
 @interface HZIncentivizedAppLovinDelegate : HZAppLovinDelegate <HZALAdRewardDelegate>
 
+@property (nonatomic) BOOL rewardValidationSucceeded;
+
 @end

@@ -120,7 +120,7 @@ NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
 + (NSDictionary *)baseMetricsForAdType:(NSString *)adType
 {
     return @{
-             @"ad-unit": adType,
+             @"ad_unit": adType,
              kMetricID:[[self class] uniqueIdentifier],
             };
 }

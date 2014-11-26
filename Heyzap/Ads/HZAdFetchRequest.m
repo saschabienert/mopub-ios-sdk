@@ -28,8 +28,6 @@
                  auctionType:(HZAuctionType)auctionType
          andAdditionalParams:(NSDictionary *)additionalParams {
     
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:adUnit tag:tag type:adUnit];
-    
     self = [super init];
     if (self) {
         _requestID = [NSUUID UUID];

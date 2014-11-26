@@ -7,6 +7,7 @@
 //
 
 #import "HZAppLovinDelegate.h"
+#import "HZIncentivizedAppLovinDelegate.h"
 #import "HZBaseAdapter.h"
 #import "HZAppLovinAdapter.h"
 #import "HZMediationConstants.h"
@@ -90,6 +91,11 @@
 - (void)videoPlaybackEndedInAd:(HZALAd *)ad atPlaybackPercent:(NSNumber *)percentPlayed fullyWatched:(BOOL)wasFullyWatched
 {
     [self.delegate didFinishAudio];
+
+    // since applovin's only successful reward callback is called early, trigger incentive complete here
+    if ([self isKindOfClass:[HZIncentivizedAppLovinDelegate class]] && ((HZIncentivizedAppLovinDelegate *) self).rewardValidationSucceeded) {
+        [self.delegate didCompleteIncentivized];
+    }
 }
 
 @end
