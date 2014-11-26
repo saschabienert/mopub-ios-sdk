@@ -24,6 +24,7 @@
 // Util
 #import "HZDispatch.h"
 #import "HZDelegateProxy.h"
+#import "HZAdModel.h"
 
 // Session
 #import "HZMediationSessionKey.h"
@@ -187,9 +188,7 @@ NSString * const kHZDataKey = @"data";
 // `mediateForSessionKey` and this method looks up the session. 
 - (void)mediateForAdType:(HZAdType)adType tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion
 {
-    if (tag == nil) {
-        tag = [HeyzapAds defaultTagName];
-    }
+    tag = [HZAdModel normalizeTag:tag];
     NSString *adUnit = NSStringFromAdType(adType);
     
     // If we have an existing, matching session we don't need to make another call to /mediate.
