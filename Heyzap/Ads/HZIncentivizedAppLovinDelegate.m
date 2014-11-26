@@ -17,7 +17,7 @@
 - (void)rewardValidationRequestForAd:(HZALAd *)ad didSucceedWithResponse:(NSDictionary *)response
 {
     ensureMainQueue(^{
-        [self.delegate didCompleteIncentivized];
+        self.rewardValidationSucceeded = YES;
     });
 }
 
@@ -30,6 +30,7 @@
 - (void)rewardValidationRequestForAd:(HZALAd *)ad didExceedQuotaWithResponse:(NSDictionary *)response
 {
     ensureMainQueue(^{
+        self.rewardValidationSucceeded = NO;
         [self.delegate didFailToCompleteIncentivized];
     });
 }
@@ -41,6 +42,7 @@
 - (void)rewardValidationRequestForAd:(HZALAd *)ad wasRejectedWithResponse:(NSDictionary *)response
 {
     ensureMainQueue(^{
+        self.rewardValidationSucceeded = NO;
         [self.delegate didFailToCompleteIncentivized];
     });
 }
@@ -51,6 +53,7 @@
 - (void)rewardValidationRequestForAd:(HZALAd *)ad didFailWithError:(NSInteger)responseCode
 {
     ensureMainQueue(^{
+        self.rewardValidationSucceeded = NO;
        [self.delegate didFailToCompleteIncentivized];
     });
     
@@ -62,6 +65,7 @@
 - (void)userDeclinedToViewAd:(HZALAd *)ad
 {
     ensureMainQueue(^{
+        self.rewardValidationSucceeded = NO;
         [self.delegate didFailToCompleteIncentivized];
     });
 }
