@@ -275,7 +275,6 @@ NSString * const kHZDataKey = @"data";
             
             dispatch_sync(dispatch_get_main_queue(), ^{
                 // start of fetch metrics
-                [[HZMetrics sharedInstance] logMetricsEvent:@"network" value:network withObject:stub network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:@"ordinal" value:@(ordinal) withObject:stub network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:stub.adUnit withObject:stub network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity" value:connectivity withObject:stub network:network];

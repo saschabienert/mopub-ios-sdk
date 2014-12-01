@@ -117,9 +117,10 @@ NSString * metricFailureReason(NSDictionary *metric);
 NSString * const kMetricID = @"metricIdentifier";
 NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
 
-+ (NSDictionary *)baseMetricsForAdUnit:(NSString *)adUnit
++ (NSDictionary *)baseMetricsForAdUnit:(NSString *)adUnit andNetwork:(NSString *)network
 {
     return @{
+             @"network": network,
              @"ad-unit": adUnit,
              kMetricID:[[self class] uniqueIdentifier],
             };
@@ -130,7 +131,7 @@ NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
     NSParameterAssert(adUnit);
     HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:network];
     if (!self.metricsDict[key]) {
-        self.metricsDict[key] = [[[self class] baseMetricsForAdUnit:adUnit] mutableCopy];
+        self.metricsDict[key] = [[[self class] baseMetricsForAdUnit:adUnit andNetwork:network] mutableCopy];
     }
     return self.metricsDict[key];
 }
