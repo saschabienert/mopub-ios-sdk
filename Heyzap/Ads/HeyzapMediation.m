@@ -386,7 +386,16 @@ NSString * const kHZDataKey = @"data";
 {
     tag = tag ?: [HeyzapAds defaultTagName];
     NSSet *readyAdapters = [self.setupMediators objectsPassingTest:^BOOL(HZBaseAdapter * adapter, BOOL *stop) {
-        return [adapter hasAdForType:adType tag:tag];
+        BOOL available = [adapter hasAdForType:adType tag:tag];
+
+        NSString *network = [adapter name];
+        HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)];
+        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 withObject:stub network:network];
+        [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey withObject:stub network:network];
+        [[HZMetrics sharedInstance] logDownloadPercentageFor:kIsAvailablePercentDownloadedKey withObject:stub network:network];
+        [[HZMetrics sharedInstance] logIsAvailable:available withObject:stub network:network];
+
+        return available;
     }];
     return [readyAdapters count] != 0;
 }
