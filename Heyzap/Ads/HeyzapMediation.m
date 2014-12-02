@@ -353,6 +353,8 @@ NSString * const kHZDataKey = @"data";
     });
 }
 
+static int totalImpressions = 0;
+
 - (void)haveAdapter:(HZBaseAdapter *)adapter showAdForSession:(HZMediationSession *)session sessionKey:(HZMediationSessionKey *)key
 {
     [self.sessionDictionary removeObjectForKey:key];
@@ -360,6 +362,7 @@ NSString * const kHZDataKey = @"data";
     HZMediationSessionKey *showKey = [key sessionKeyAfterShowing];
     self.sessionDictionary[showKey] = session;
     
+    totalImpressions++;
     NSString *network = [adapter name];
     [[HZMetrics sharedInstance] logShowAdWithObject:session network:network];
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey withObject:session network:network];
@@ -369,6 +372,9 @@ NSString * const kHZDataKey = @"data";
     [adapter showAdForType:session.adType tag:session.tag];
     [session reportImpressionForAdapter:adapter];
     [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
+
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"time_from_fetch_to_impression" withObject:session network:network];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"nth_ad" value:@(totalImpressions) withObject:session network:network];
 }
 
 
