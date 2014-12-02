@@ -87,6 +87,9 @@
 		5020884219DA28DE005C3C1B /* HZNativeAdSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5020884119DA28DE005C3C1B /* HZNativeAdSpec.m */; };
 		5020884619DA2A87005C3C1B /* ValidNativeAd.json in Resources */ = {isa = PBXBuildFile; fileRef = 5020884419DA2A87005C3C1B /* ValidNativeAd.json */; };
 		502BE84F18CD530D00EB6415 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 502BE84E18CD530D00EB6415 /* TestUtilities.m */; };
+		50310F991A2E894F00FDC9BC /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50310F981A2E894F00FDC9BC /* Launch Screen.xib */; };
+		50310F9A1A2E894F00FDC9BC /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50310F981A2E894F00FDC9BC /* Launch Screen.xib */; };
+		50310F9B1A2E894F00FDC9BC /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50310F981A2E894F00FDC9BC /* Launch Screen.xib */; };
 		5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */; };
 		504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C518B592CE00E00E6C /* ServerSelectionViewController.m */; };
 		504514C918B5A59100E00E6C /* BaseTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C818B5A59100E00E6C /* BaseTestAppViewController.m */; };
@@ -431,6 +434,7 @@
 		50269FF219B65D9500CD7C88 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		502BE84D18CD530D00EB6415 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
 		502BE84E18CD530D00EB6415 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
+		50310F981A2E894F00FDC9BC /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		503CD2341901A86D00667C0D /* HZALAdVideoPlaybackDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZALAdVideoPlaybackDelegate.h; sourceTree = "<group>"; };
 		5045147D18B58C5A00E00E6C /* SDCSegmentedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCSegmentedViewController.h; sourceTree = "<group>"; };
 		5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCSegmentedViewController.m; sourceTree = "<group>"; };
@@ -969,6 +973,7 @@
 			isa = PBXGroup;
 			children = (
 				507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */,
+				50310F981A2E894F00FDC9BC /* Launch Screen.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1680,6 +1685,7 @@
 				5053521018F76550003C531E /* Default.png in Resources */,
 				5053521118F76550003C531E /* Default@2x.png in Resources */,
 				5053521318F76550003C531E /* Default-568h@2x.png in Resources */,
+				50310F9B1A2E894F00FDC9BC /* Launch Screen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1692,6 +1698,7 @@
 				50A36AE818C9405A00FA84F0 /* Default@2x.png in Resources */,
 				50A36AE918C9405A00FA84F0 /* Default-568h@2x.png in Resources */,
 				507A457119BF91ED00C7AEEA /* Storyboard.storyboard in Resources */,
+				50310F9A1A2E894F00FDC9BC /* Launch Screen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1704,6 +1711,7 @@
 				86B941F01758056B00B8EACE /* Default@2x.png in Resources */,
 				86B941F21758056B00B8EACE /* Default-568h@2x.png in Resources */,
 				507A457019BF91ED00C7AEEA /* Storyboard.storyboard in Resources */,
+				50310F991A2E894F00FDC9BC /* Launch Screen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
