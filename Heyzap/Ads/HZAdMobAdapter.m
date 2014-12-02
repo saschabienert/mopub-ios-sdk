@@ -12,6 +12,8 @@
 #import <UIKit/UIKit.h>
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
@@ -108,6 +110,10 @@
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
     [self.currentInterstitial presentFromRootViewController:[self.delegate viewControllerForPresentingAd]];
+
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed"
+                                           withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)]
+                                              network:[self name]];
 }
 
 #pragma mark - Delegate callbacks

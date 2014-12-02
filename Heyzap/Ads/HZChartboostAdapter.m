@@ -12,6 +12,8 @@
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
 #import "HZLog.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 @interface HZChartboostAdapter()
 
@@ -129,6 +131,10 @@
             // Unsupported
             break;
     }
+
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed"
+                                           withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)]
+                                              network:[self name]];
 }
 
 - (HZAdType)supportedAdFormats

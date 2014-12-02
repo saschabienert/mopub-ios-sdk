@@ -12,6 +12,8 @@
 #import "HZDictionaryUtils.h"
 #import "HZVungleSDK.h"
 #import "HZUtils.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 const NSString* HZVunglePlayAdOptionKeyIncentivized        = @"incentivized";
 const NSString* HZVunglePlayAdOptionKeyShowClose           = @"showClose";
@@ -141,6 +143,10 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
         self.isShowingIncentivized = YES;
         [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyIncentivized: @1}];
     }
+
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed"
+                                           withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)]
+                                              network:[self name]];
 }
 
 #pragma mark - Vungle Delegate

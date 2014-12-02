@@ -10,6 +10,8 @@
 #import "HZUnityAds.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 @interface HZUnityAdsAdapter() <HZUnityAdsDelegate>
 
@@ -153,6 +155,10 @@
         [[HZUnityAds sharedInstance] setZone:self.videoZoneID];
     }
     [[HZUnityAds sharedInstance] show];
+
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed"
+                                           withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)]
+                                              network:[self name]];
 }
 
 #pragma mark - AdColony Delegation

@@ -8,6 +8,8 @@
 
 #import "HZAppLovinAdapter.h"
 #import "HZMediationConstants.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 #import "HZDictionaryUtils.h"
 #import "HZAppLovinDelegate.h"
@@ -163,6 +165,10 @@
         interstitial.adVideoPlaybackDelegate = self.interstitialDelegate;
         [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
     }
+
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed"
+                                           withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)]
+                                              network:[self name]];
 }
 
 #pragma mark - AppLovinDelegateReceiver

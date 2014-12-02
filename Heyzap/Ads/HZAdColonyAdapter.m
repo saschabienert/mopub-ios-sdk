@@ -10,6 +10,8 @@
 #import "HZAdColony.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 #import <UIKit/UIKit.h>
 
@@ -148,6 +150,10 @@
     } else {
         [HZAdColony playVideoAdForZone:self.interstitialZoneID withDelegate:self];
     }
+
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed"
+                                           withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)]
+                                              network:[self name]];
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType
