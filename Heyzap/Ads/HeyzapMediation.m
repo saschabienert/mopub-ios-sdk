@@ -250,7 +250,6 @@ NSString * const kHZDataKey = @"data";
     NSArray *preferredMediatorList = [session.chosenAdapters array];
     HZAdType type = session.adType;
     NSString *connectivity = [[HZDevice currentDevice] HZConnectivityType];
-    HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
     HZDLog(@"Preferred mediator list = %@",preferredMediatorList);
     
     // Find the first SDK that has an ad, and use it
@@ -275,11 +274,11 @@ NSString * const kHZDataKey = @"data";
             
             dispatch_sync(dispatch_get_main_queue(), ^{
                 // start of fetch metrics
-                [[HZMetrics sharedInstance] logMetricsEvent:@"ordinal" value:@(ordinal) withObject:stub network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:stub.adUnit withObject:stub network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity" value:connectivity withObject:stub network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withObject:stub network:network];
-                [[HZMetrics sharedInstance] logFetchTimeWithObject:stub network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:@"ordinal" value:@(ordinal) withObject:session network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:session.adUnit withObject:session network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity" value:connectivity withObject:session network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withObject:session network:network];
+                [[HZMetrics sharedInstance] logFetchTimeWithObject:session network:network];
                 startTime = CACurrentMediaTime();
 
                 [adapter prefetchForType:type tag:tag];
@@ -296,7 +295,7 @@ NSString * const kHZDataKey = @"data";
 
             CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
             int64_t elaspsedMilliseconds = lround(elapsedSeconds*1000);
-            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elaspsedMilliseconds) withObject:stub network:network];
+            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elaspsedMilliseconds) withObject:session network:network];
 
             if (fetchedWithinTimeout) {
                 NSLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
@@ -319,7 +318,7 @@ NSString * const kHZDataKey = @"data";
             } else {
                 HZDLog(@"The mediator with name = %@ didn't have an ad",[[adapter class] name]);
 
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@(1) withObject:stub network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@(1) withObject:session network:network];
 
                 // If the mediated SDK errored, reset it and try again. If there's no error, they're probably still busy fetching.
                 dispatch_sync(dispatch_get_main_queue(), ^{
@@ -330,11 +329,11 @@ NSString * const kHZDataKey = @"data";
                         } else {
                             reason = [adapter lastErrorForAdType:type].localizedDescription;
                         }
-                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:reason withObject:stub network:network];
+                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:reason withObject:session network:network];
                         [adapter clearErrorForAdType:type];
                         [adapter prefetchForType:type tag:tag];
                     } else if (!connectivity){
-                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@"no-connectivity" withObject:stub network:network];
+                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@"no-connectivity" withObject:session network:network];
                     }
                 });
             }

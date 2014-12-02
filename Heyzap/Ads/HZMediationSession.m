@@ -109,6 +109,10 @@ return nil; \
     }
 }
 
+- (NSString *) adUnit {
+    return NSStringFromAdType(_adType);
+}
+
 #pragma mark - Reporting Events to the server
 
 NSString *const kHZImpressionIDKey = @"tracking_id";
