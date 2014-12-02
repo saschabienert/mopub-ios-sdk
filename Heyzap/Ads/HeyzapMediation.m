@@ -360,6 +360,12 @@ NSString * const kHZDataKey = @"data";
     HZMediationSessionKey *showKey = [key sessionKeyAfterShowing];
     self.sessionDictionary[showKey] = session;
     
+    NSString *network = [adapter name];
+    [[HZMetrics sharedInstance] logShowAdWithObject:session network:network];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey withObject:session network:network];
+    [[HZMetrics sharedInstance] logTimeSinceStartFor:@"time_from_start_to_show_ad" withObject:session network:network];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"show_ad_percentage_downloaded" withObject:session network:network];
+
     [adapter showAdForType:session.adType tag:session.tag];
     [session reportImpressionForAdapter:adapter];
     [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
