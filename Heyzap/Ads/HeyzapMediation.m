@@ -130,8 +130,6 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         return;
     }
 
-    [[HZMetrics sharedInstance] logFetchTimeWithObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)] network:nil];
-
     tag = tag ?: [HeyzapAds defaultTagName];
     [self mediateForAdType:adType tag:tag showImmediately:NO fetchTimeout:10 additionalParams:additionalParams completion:completion];
 }
@@ -285,6 +283,7 @@ NSString * const kHZDataKey = @"data";
                 [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:session.adUnit withObject:session network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity" value:connectivity withObject:session network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withObject:session network:network];
+                [[HZMetrics sharedInstance] logFetchTimeWithObject:session network:network];
                 startTime = CACurrentMediaTime();
 
                 [adapter prefetchForType:type tag:tag];
