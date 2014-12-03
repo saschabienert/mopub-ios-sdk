@@ -40,6 +40,8 @@
 @property (nonatomic, strong) NSError *interstitialError;
 @property (nonatomic, strong) NSError *incentivizedError;
 
+@property (nonatomic) HZMetricsAdStub *metricsStub;
+
 @end
 
 @implementation HZAppLovinAdapter
@@ -166,9 +168,8 @@
         [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
     }
 
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed"
-                                           withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)]
-                                              network:[self name]];
+    _metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" withObject:_metricsStub network:[self name]];
 }
 
 #pragma mark - AppLovinDelegateReceiver
@@ -214,10 +215,12 @@
 
 - (void)didClickAd
 {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_clicked" value:@1 withObject:_metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
 }
 - (void)didDismissAd
 {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"close_clicked" value:@1 withObject:_metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
 }
 

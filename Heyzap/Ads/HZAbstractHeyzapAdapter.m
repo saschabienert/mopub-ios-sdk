@@ -16,6 +16,12 @@
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
 
+@interface HZAbstractHeyzapAdapter()
+
+@property (nonatomic) HZMetricsAdStub *metricsStub;
+
+@end
+
 @implementation HZAbstractHeyzapAdapter
 
 #pragma mark - Adapter Protocol
@@ -92,9 +98,8 @@
         }
     }
 
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed"
-                                           withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)]
-                                              network:[self name]];
+    _metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" withObject:_metricsStub network:[self name]];
 }
 
 #pragma mark - NSNotificationCenter registering
@@ -185,11 +190,13 @@
 }
 - (void)didClickAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
+        [[HZMetrics sharedInstance] logMetricsEvent:@"ad_clicked" value:@1 withObject:_metricsStub network:[self name]];
         [self.delegate adapterWasClicked:self];
     }
 }
 - (void)didHideAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
+        [[HZMetrics sharedInstance] logMetricsEvent:@"close_clicked" value:@1 withObject:_metricsStub network:[self name]];
         [self.delegate adapterDidDismissAd:self];
     }
 }

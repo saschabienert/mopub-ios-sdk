@@ -21,6 +21,8 @@
 
 @property (nonatomic, strong) NSString *adUnitID;
 
+@property (nonatomic) HZMetricsAdStub *metricsStub;
+
 @end
 
 @implementation HZAdMobAdapter
@@ -111,9 +113,8 @@
 {
     [self.currentInterstitial presentFromRootViewController:[self.delegate viewControllerForPresentingAd]];
 
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed"
-                                           withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)]
-                                              network:[self name]];
+    _metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" withObject:_metricsStub network:[self name]];
 }
 
 #pragma mark - Delegate callbacks
@@ -138,6 +139,7 @@
 
 - (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
 {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"close_clicked" value:@1 withObject:_metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
     self.currentInterstitial = nil;
 }
@@ -145,6 +147,7 @@
 // As far as I can tell, this means a click.
 - (void)interstitialWillLeaveApplication:(HZGADInterstitial *)ad
 {
+    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_clicked" value:@1 withObject:_metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
 }
 

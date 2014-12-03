@@ -19,6 +19,7 @@
 
 @property (nonatomic, strong) NSString *interstitialZoneID;
 @property (nonatomic, strong) NSString *incentivizedZoneID;
+@property (nonatomic) HZMetricsAdStub *metricsStub;
 
 @end
 
@@ -151,9 +152,8 @@
         [HZAdColony playVideoAdForZone:self.interstitialZoneID withDelegate:self];
     }
 
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed"
-                                           withObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)]
-                                              network:[self name]];
+    _metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" withObject:_metricsStub network:[self name]];
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType
@@ -208,6 +208,7 @@
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
         }
     }
+    // unfortunately, adcolony doesn't tell us whether the ad was clicked or dismissed
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
 }
