@@ -35,6 +35,7 @@ NSString * const kSendMetricsUrl = @"/in_game_api/metrics/export";
 
 @interface HZMetrics()
 @property (nonatomic, strong) NSMutableDictionary *metricsDict;
+@property (nonatomic, strong) NSMutableDictionary *preMediateMetricsDict;
 @property (nonatomic) CFTimeInterval fetchCalledTime;
 @property (nonatomic) CFTimeInterval showAdCalledTime;
 @property (nonatomic) CFTimeInterval startTime;
@@ -92,6 +93,7 @@ NSString * metricFailureReason(NSDictionary *metric);
     self = [super init];
     if (self) {
         _metricsDict = [[NSMutableDictionary alloc] init];
+        _preMediateMetricsDict = [[NSMutableDictionary alloc] init];
 
         _startTime = CACurrentMediaTime();
         
@@ -116,6 +118,7 @@ NSString * metricFailureReason(NSDictionary *metric);
 
 NSString * const kMetricID = @"metricIdentifier";
 NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
+NSString * const kPreMediateNetwork = @"network-placeholder";
 
 + (NSDictionary *)baseMetricsForAdUnit:(NSString *)adUnit andNetwork:(NSString *)network
 {
@@ -129,11 +132,38 @@ NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
 - (NSMutableDictionary *)getMetricsForTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network {
     if (tag == nil ) tag = @"default";
     NSParameterAssert(adUnit);
+
+    // some timing metrics (e.g. time_from_start_to_show_ad) need to be saved before we have mediated a network
+    // they get their own temporary metrics dictionary
+    if (!network) {
+        return [self getPreMediateMetricsForTag:tag adUnit:adUnit];
+    }
+    NSParameterAssert(network);
+
     HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:network];
     if (!self.metricsDict[key]) {
         self.metricsDict[key] = [[[self class] baseMetricsForAdUnit:adUnit andNetwork:network] mutableCopy];
     }
+
+    // if there are any metrics saved before we mediated a network, roll them into this network's metrics now
+    HZMetricsKey *const preMediateKey = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:kPreMediateNetwork];
+    if (self.preMediateMetricsDict[preMediateKey]) {
+        [self.metricsDict[key] addEntriesFromDictionary:self.preMediateMetricsDict[preMediateKey]];
+        [self.preMediateMetricsDict removeObjectForKey:preMediateKey];
+    }
+
     return self.metricsDict[key];
+}
+
+- (NSMutableDictionary *)getPreMediateMetricsForTag:(NSString *)tag adUnit:(NSString *)adUnit {
+    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:kPreMediateNetwork];
+    if (!self.preMediateMetricsDict[key]) {
+        self.preMediateMetricsDict[key] = [@{
+                                             @"ad_unit": adUnit,
+                                             kMetricID: [[self class] uniqueIdentifier],
+                                             } mutableCopy];
+    }
+    return self.preMediateMetricsDict[key];
 }
 
 - (void)finishUsingAdWithTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network {

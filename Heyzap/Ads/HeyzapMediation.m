@@ -129,7 +129,9 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         });
         return;
     }
-    
+
+    [[HZMetrics sharedInstance] logFetchTimeWithObject:[[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)] network:nil];
+
     tag = tag ?: [HeyzapAds defaultTagName];
     [self mediateForAdType:adType tag:tag showImmediately:NO fetchTimeout:10 additionalParams:additionalParams completion:completion];
 }
@@ -181,7 +183,12 @@ NSString * const kHZDataKey = @"data";
 - (void)showAdForAdUnitType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL, NSError *))completion
 {
     tag = tag ?: [HeyzapAds defaultTagName];
-    
+
+    HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)];
+    [[HZMetrics sharedInstance] logShowAdWithObject:stub network:nil];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey withObject:stub network:nil];
+    [[HZMetrics sharedInstance] logTimeSinceStartFor:@"time_from_start_to_show_ad" withObject:stub network:nil];
+
     [self mediateForAdType:adType
                        tag:tag
            showImmediately:YES
@@ -278,7 +285,6 @@ NSString * const kHZDataKey = @"data";
                 [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:session.adUnit withObject:session network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity" value:connectivity withObject:session network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withObject:session network:network];
-                [[HZMetrics sharedInstance] logFetchTimeWithObject:session network:network];
                 startTime = CACurrentMediaTime();
 
                 [adapter prefetchForType:type tag:tag];
@@ -361,12 +367,8 @@ static int totalImpressions = 0;
     
     HZMediationSessionKey *showKey = [key sessionKeyAfterShowing];
     self.sessionDictionary[showKey] = session;
-    
-    totalImpressions++;
+
     NSString *network = [adapter name];
-    [[HZMetrics sharedInstance] logShowAdWithObject:session network:network];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey withObject:session network:network];
-    [[HZMetrics sharedInstance] logTimeSinceStartFor:@"time_from_start_to_show_ad" withObject:session network:network];
     [[HZMetrics sharedInstance] logDownloadPercentageFor:@"show_ad_percentage_downloaded" withObject:session network:network];
 
     [adapter showAdForType:session.adType tag:session.tag];
@@ -374,7 +376,7 @@ static int totalImpressions = 0;
     [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
 
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"time_from_fetch_to_impression" withObject:session network:network];
-    [[HZMetrics sharedInstance] logMetricsEvent:@"nth_ad" value:@(totalImpressions) withObject:session network:network];
+    [[HZMetrics sharedInstance] logMetricsEvent:@"nth_ad" value:@(++totalImpressions) withObject:session network:network];
 }
 
 
