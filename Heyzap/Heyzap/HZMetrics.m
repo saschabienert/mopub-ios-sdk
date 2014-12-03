@@ -74,7 +74,6 @@ NSString * metricFailureReason(NSDictionary *metric);
 // Instead of storing metrics in an NSMutableDictionary, store them in object with tons of properties like Android does.
 // This would make things more typesafe, though we'd have to write a bunch of annoying serialization code for it.
 // Another advantage is that we could return that object to set properties on it, which is nice when we're doing several metrics at once.
-// I'd also like to make a `metricProtocol` for objects that can provide a tag and adUnit. These objects would be passed to HZMetrics and it'd give back the proper metric instance. This would clean up the code has to do `self.ad.tag` and `self.ad.adUnit`
 
 
 #pragma mark Static Methods
