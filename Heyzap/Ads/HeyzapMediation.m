@@ -186,6 +186,7 @@ NSString * const kHZDataKey = @"data";
     [[HZMetrics sharedInstance] logShowAdWithObject:stub network:nil];
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey withObject:stub network:nil];
     [[HZMetrics sharedInstance] logTimeSinceStartFor:@"time_from_start_to_show_ad" withObject:stub network:nil];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"show_ad_percentage_downloaded" withObject:stub network:nil];
 
     [self mediateForAdType:adType
                        tag:tag
@@ -374,13 +375,11 @@ static int totalImpressions = 0;
     HZMediationSessionKey *showKey = [key sessionKeyAfterShowing];
     self.sessionDictionary[showKey] = session;
 
-    NSString *network = [adapter name];
-    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"show_ad_percentage_downloaded" withObject:session network:network];
-
     [adapter showAdForType:session.adType tag:session.tag];
     [session reportImpressionForAdapter:adapter];
     [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
 
+    NSString *network = [adapter name];
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"time_from_fetch_to_impression" withObject:session network:network];
     [[HZMetrics sharedInstance] logMetricsEvent:@"nth_ad" value:@(++totalImpressions) withObject:session network:network];
 }
