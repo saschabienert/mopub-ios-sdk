@@ -13,5 +13,8 @@
   },
   "applovin": {
     "frameworks": ["AdSupport","CoreTelephony","MediaPlayer","SystemConfiguration"]
+  },
+  "unityads": {
+    "frameworks": ["StoreKit", "AdSupport"]
   }
 }

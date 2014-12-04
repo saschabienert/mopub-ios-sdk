@@ -123,7 +123,7 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 {
     return @{
              @"network": network,
-             @"ad-unit": adUnit,
+             @"ad_unit": adUnit,
              kMetricID:[[self class] uniqueIdentifier],
             };
 }
