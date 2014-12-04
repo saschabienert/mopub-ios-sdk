@@ -300,10 +300,10 @@ NSString * const kHZDataKey = @"data";
 
             CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
             int64_t elaspsedMilliseconds = lround(elapsedSeconds*1000);
-            [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elaspsedMilliseconds) withObject:session network:network];
 
             if (fetchedWithinTimeout) {
                 NSLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
+                [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elaspsedMilliseconds) withObject:session network:network];
                 successful = YES;
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if (completion) { completion(YES,nil); }
@@ -311,6 +311,7 @@ NSString * const kHZDataKey = @"data";
                     [session reportSuccessfulFetchUpToAdapter:adapter];
                 });
                 if (showImmediately) {
+                    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"not-cached-and-attempted-fetch-success" withObject:session network:network];
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey];
                     });
@@ -324,6 +325,9 @@ NSString * const kHZDataKey = @"data";
                 HZDLog(@"The mediator with name = %@ didn't have an ad",[[adapter class] name]);
 
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@(1) withObject:session network:network];
+                if (showImmediately) {
+                    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"not-cached-and-attempted-fetch-failed" withObject:session network:network];
+                }
 
                 // If the mediated SDK errored, reset it and try again. If there's no error, they're probably still busy fetching.
                 dispatch_sync(dispatch_get_main_queue(), ^{
@@ -339,6 +343,9 @@ NSString * const kHZDataKey = @"data";
                         [adapter prefetchForType:type tag:tag];
                     } else if (!connectivity){
                         [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@"no-connectivity" withObject:session network:network];
+                        if (showImmediately) {
+                            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"no-connectivity" withObject:session network:network];
+                        }
                     }
                 });
             }

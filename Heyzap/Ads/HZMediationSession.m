@@ -99,7 +99,17 @@ return nil; \
     NSArray *preferredMediatorList = [self.chosenAdapters array];
     
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        return [adapter hasAdForType:self.adType tag:self.tag];
+        BOOL hasAd = [adapter hasAdForType:self.adType tag:self.tag];
+        if (!hasAd) {
+            if ([adapter supportedAdFormats] & self.adType) {
+                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"no-ad-available" withObject:self network:[adapter name]];
+            } else {
+                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"not-cached-and-not-a-fetchable-ad-unit" withObject:self network:[adapter name]];
+            }
+        } else {
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" withObject:self network:[adapter name]];
+        }
+        return hasAd;
     }];
     
     if (idx != NSNotFound) {
