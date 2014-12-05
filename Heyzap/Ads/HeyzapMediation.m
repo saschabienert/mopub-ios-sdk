@@ -186,7 +186,6 @@ NSString * const kHZDataKey = @"data";
     HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)];
     [[HZMetrics sharedInstance] logShowAdWithObject:stub network:nil];
     [[HZMetrics sharedInstance] logTimeSinceStartFor:@"time_from_start_to_show_ad" withObject:stub network:nil];
-    [[HZMetrics sharedInstance] logDownloadPercentageFor:@"show_ad_percentage_downloaded" withObject:stub network:nil];
 
     [self mediateForAdType:adType
                        tag:tag
@@ -408,7 +407,6 @@ static int totalImpressions = 0;
         HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)];
         [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 withObject:stub network:network];
         [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey withObject:stub network:network];
-        [[HZMetrics sharedInstance] logDownloadPercentageFor:kIsAvailablePercentDownloadedKey withObject:stub network:network];
         [[HZMetrics sharedInstance] logIsAvailable:available withObject:stub network:network];
 
         return available;
