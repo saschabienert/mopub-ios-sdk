@@ -228,7 +228,9 @@ NSString * const kHZDataKey = @"data";
                                        
                                        if (session) {
                                            self.sessionDictionary[key] = session;
-                                           
+
+                                           [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:session.impressionID withObject:session network:nil];
+
                                            [self fetchForSession:session
                                                  showImmediately:showImmediately
                                                     fetchTimeout:timeout
