@@ -279,6 +279,7 @@ NSString * const kHZDataKey = @"data";
             
             dispatch_sync(dispatch_get_main_queue(), ^{
                 // start of fetch metrics
+                [[HZMetrics sharedInstance] logMetricsEvent:@"network_version" value:adapter.sdkVersion withObject:session network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:@"ordinal" value:@(ordinal) withObject:session network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:session.adUnit withObject:session network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity" value:connectivity withObject:session network:network];
@@ -410,6 +411,7 @@ static int totalImpressions = 0;
         [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 withObject:stub network:network];
         [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey withObject:stub network:network];
         [[HZMetrics sharedInstance] logIsAvailable:available withObject:stub network:network];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"network_version" value:adapter.sdkVersion withObject:stub network:network];
 
         return available;
     }];
