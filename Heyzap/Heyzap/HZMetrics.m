@@ -15,6 +15,7 @@
 #import <CoreTelephony/CTCarrier.h>
 #import "HZDevice.h"
 #import "HZMetricsKey.h"
+#import "HZAdsManager.h"
 
 
 
@@ -124,6 +125,7 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
     return @{
              @"network": network,
              @"ad_unit": adUnit,
+             @"framework": [HZAdsManager sharedManager].framework ?: @"none",
              kMetricID:[[self class] uniqueIdentifier],
             };
 }
@@ -159,6 +161,7 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
     if (!self.preMediateMetricsDict[key]) {
         self.preMediateMetricsDict[key] = [@{
                                              @"ad_unit": adUnit,
+                                             @"framework": [HZAdsManager sharedManager].framework ?: @"none",
                                              kMetricID: [[self class] uniqueIdentifier],
                                              } mutableCopy];
     }
