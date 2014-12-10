@@ -24,6 +24,7 @@ extern NSString *const kConnectivityKey;
 extern NSString *const kFetchDownloadTimeKey;
 extern NSString *const kTimeFromStartToShowAdKey;
 extern NSString *const kShowAdTimeTillAdIsDisplayedKey;
+extern NSString *const kShowAdPercentageDownloadedKey;
 extern NSString *const kAdClickedKey;
 extern NSString *const kCloseClickedKey;
 extern NSString *const kTimeClickedKey;
@@ -37,13 +38,14 @@ extern NSString *const kVideoNotDownloadedButInterstitialShownValue;
 extern NSString *const kFullyCachedValue;
 extern NSString *const kNoConnectivityValue;
 extern NSString *const kNoAdAvailableValue;
+extern NSString *const kAdAlreadyDisplayedValue;
 extern NSString *const kNotCachedAndNotAFetchableAdUnitValue;
 extern NSString *const kNotCachedAndAttemptedFetchFailedValue;
 extern NSString *const kNotCachedAndAttemptedFetchSuccessValue;
 
 
 
-@protocol HZMetricsProtocol <NSObject>
+@protocol HZMetricsProvider <NSObject>
 
 @property (nonatomic, readonly) NSString *tag;
 @property (nonatomic, readonly) NSString *adUnit;
@@ -59,19 +61,19 @@ extern NSString *const kNotCachedAndAttemptedFetchSuccessValue;
 
 #pragma mark - Logging Metrics
 
-- (void) logMetricsEvent: (NSString *) eventName value:(id)value withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
-- (void) logTimeSinceFetchFor: (NSString *) eventName withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
-- (void) logFetchTimeWithObject: (id <HZMetricsProtocol>)object network:(NSString *)network;
-- (void) logShowAdWithObject: (id <HZMetricsProtocol>)object network:(NSString *)network;
-- (void) logTimeSinceShowAdFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
-- (void) logDownloadPercentageFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
-- (void) logTimeSinceStartFor:(NSString *)eventname withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
+- (void) logMetricsEvent: (NSString *) eventName value:(id)value withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network;
+- (void) logTimeSinceFetchFor: (NSString *) eventName withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network;
+- (void) logFetchTimeWithObject: (id <HZMetricsProvider>)provider network:(NSString *)network;
+- (void) logShowAdWithObject: (id <HZMetricsProvider>)provider network:(NSString *)network;
+- (void) logTimeSinceShowAdFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network;
+- (void) logDownloadPercentageFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network;
+- (void) logTimeSinceStartFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network;
 
-- (void)logIsAvailable:(BOOL)isAvailable withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
+- (void)logIsAvailable:(BOOL)isAvailable withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network;
 
 
 
-- (void) removeAdWithObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
+- (void) removeAdWithProvider:(id <HZMetricsProvider>)provider network:(NSString *)network;
 
 //- (void)logFetchResultsForTag:(HZAdModel *)ad error:(NSError *)error;
 
@@ -79,8 +81,8 @@ extern NSString *const kNotCachedAndAttemptedFetchSuccessValue;
  *  Call this method when downloading a video to record current download progress.
  *
  *  @param downloadPercentage % completion for the download
- *  @param object             an object that has tag and adUnit properties
+ *  @param provider           an object that has tag and adUnit properties
  */
-- (void)setDownloadPercentage:(int)downloadPercentage withObject:(id <HZMetricsProtocol>)object network:(NSString *)network;
+- (void)setDownloadPercentage:(int)downloadPercentage withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network;
 
 @end

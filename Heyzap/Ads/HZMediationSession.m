@@ -102,12 +102,12 @@ return nil; \
         BOOL hasAd = [adapter hasAdForType:self.adType tag:self.tag];
         if (!hasAd) {
             if ([adapter supportedAdFormats] & self.adType) {
-                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoAdAvailableValue withObject:self network:[adapter name]];
+                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoAdAvailableValue withProvider:self network:[adapter name]];
             } else {
-                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndNotAFetchableAdUnitValue withObject:self network:[adapter name]];
+                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndNotAFetchableAdUnitValue withProvider:self network:[adapter name]];
             }
         } else {
-            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withObject:self network:[adapter name]];
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:self network:[adapter name]];
         }
         return hasAd;
     }];

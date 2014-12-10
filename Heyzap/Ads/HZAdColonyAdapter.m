@@ -153,7 +153,7 @@
     }
 
     _metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withObject:_metricsStub network:[self name]];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:_metricsStub network:[self name]];
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType

@@ -33,9 +33,9 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
         HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:type];
         float decimal = (float)totalBytesRead / (float)totalBytesExpectedToRead;
         int percent = (int) (decimal * 100);
-        [[HZMetrics sharedInstance] setDownloadPercentage:percent withObject:stub network:kHZAdapterHeyzap];
+        [[HZMetrics sharedInstance] setDownloadPercentage:percent withProvider:stub network:kHZAdapterHeyzap];
         if (!loggedTotal){
-            [[HZMetrics sharedInstance] logMetricsEvent:kVideoSizeKey value:@(totalBytesExpectedToRead) withObject:stub network:kHZAdapterHeyzap];
+            [[HZMetrics sharedInstance] logMetricsEvent:kVideoSizeKey value:@(totalBytesExpectedToRead) withProvider:stub network:kHZAdapterHeyzap];
             loggedTotal = YES;
         }
     }];

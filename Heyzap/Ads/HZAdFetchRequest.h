@@ -11,7 +11,7 @@
 #import "HZAdInfo.h"
 #import "HZMetrics.h"
 
-@interface HZAdFetchRequest : NSObject <HZAdInfoProvider, HZMetricsProtocol>
+@interface HZAdFetchRequest : NSObject <HZAdInfoProvider, HZMetricsProvider>
 
 @property (nonatomic, readonly) NSUUID *requestID;
 @property (nonatomic, assign, readonly) int retriesRemaining;

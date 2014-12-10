@@ -185,7 +185,7 @@ NSString * const kHZDataKey = @"data";
 
     HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)];
     [[HZMetrics sharedInstance] logShowAdWithObject:stub network:nil];
-    [[HZMetrics sharedInstance] logTimeSinceStartFor:kTimeFromStartToShowAdKey withObject:stub network:nil];
+    [[HZMetrics sharedInstance] logTimeSinceStartFor:kTimeFromStartToShowAdKey withProvider:stub network:nil];
 
     [self mediateForAdType:adType
                        tag:tag
@@ -229,7 +229,7 @@ NSString * const kHZDataKey = @"data";
                                        if (session) {
                                            self.sessionDictionary[key] = session;
 
-                                           [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:session.impressionID withObject:session network:nil];
+                                           [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:session.impressionID withProvider:session network:nil];
 
                                            [self fetchForSession:session
                                                  showImmediately:showImmediately
@@ -279,11 +279,11 @@ NSString * const kHZDataKey = @"data";
             
             dispatch_sync(dispatch_get_main_queue(), ^{
                 // start of fetch metrics
-                [[HZMetrics sharedInstance] logMetricsEvent:kNetworkVersionKey value:adapter.sdkVersion withObject:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kOrdinalKey value:@(ordinal) withObject:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kAdUnitKey value:session.adUnit withObject:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kConnectivityKey value:connectivity withObject:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withObject:session network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:kNetworkVersionKey value:adapter.sdkVersion withProvider:session network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:kOrdinalKey value:@(ordinal) withProvider:session network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:kAdUnitKey value:session.adUnit withProvider:session network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:kConnectivityKey value:connectivity withProvider:session network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withProvider:session network:network];
                 [[HZMetrics sharedInstance] logFetchTimeWithObject:session network:network];
                 startTime = CACurrentMediaTime();
 
@@ -304,7 +304,7 @@ NSString * const kHZDataKey = @"data";
 
             if (fetchedWithinTimeout) {
                 NSLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchDownloadTimeKey value:@(elaspsedMilliseconds) withObject:session network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchDownloadTimeKey value:@(elaspsedMilliseconds) withProvider:session network:network];
                 successful = YES;
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if (completion) { completion(YES,nil); }
@@ -312,7 +312,7 @@ NSString * const kHZDataKey = @"data";
                     [session reportSuccessfulFetchUpToAdapter:adapter];
                 });
                 if (showImmediately) {
-                    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndAttemptedFetchSuccessValue withObject:session network:network];
+                    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndAttemptedFetchSuccessValue withProvider:session network:network];
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey];
                     });
@@ -325,9 +325,9 @@ NSString * const kHZDataKey = @"data";
             } else {
                 HZDLog(@"The mediator with name = %@ didn't have an ad",[[adapter class] name]);
 
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@(1) withObject:session network:network];
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@(1) withProvider:session network:network];
                 if (showImmediately) {
-                    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndAttemptedFetchFailedValue withObject:session network:network];
+                    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndAttemptedFetchFailedValue withProvider:session network:network];
                 }
 
                 // If the mediated SDK errored, reset it and try again. If there's no error, they're probably still busy fetching.
@@ -339,13 +339,13 @@ NSString * const kHZDataKey = @"data";
                         } else {
                             reason = [adapter lastErrorForAdType:type].localizedDescription;
                         }
-                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:reason withObject:session network:network];
+                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:reason withProvider:session network:network];
                         [adapter clearErrorForAdType:type];
                         [adapter prefetchForType:type tag:tag];
                     } else if (!connectivity){
-                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:kNoConnectivityValue withObject:session network:network];
+                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:kNoConnectivityValue withProvider:session network:network];
                         if (showImmediately) {
-                            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoConnectivityValue withObject:session network:network];
+                            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoConnectivityValue withProvider:session network:network];
                         }
                     }
                 });
@@ -380,8 +380,8 @@ static int totalImpressions = 0;
     [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
 
     NSString *network = [adapter name];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kTimeFromFetchToImpressionKey withObject:session network:network];
-    [[HZMetrics sharedInstance] logMetricsEvent:kNthAdKey value:@(++totalImpressions) withObject:session network:network];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kTimeFromFetchToImpressionKey withProvider:session network:network];
+    [[HZMetrics sharedInstance] logMetricsEvent:kNthAdKey value:@(++totalImpressions) withProvider:session network:network];
 }
 
 
@@ -408,10 +408,10 @@ static int totalImpressions = 0;
 
         NSString *network = [adapter name];
         HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)];
-        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 withObject:stub network:network];
-        [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey withObject:stub network:network];
-        [[HZMetrics sharedInstance] logIsAvailable:available withObject:stub network:network];
-        [[HZMetrics sharedInstance] logMetricsEvent:kNetworkVersionKey value:adapter.sdkVersion withObject:stub network:network];
+        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 withProvider:stub network:network];
+        [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey withProvider:stub network:network];
+        [[HZMetrics sharedInstance] logIsAvailable:available withProvider:stub network:network];
+        [[HZMetrics sharedInstance] logMetricsEvent:kNetworkVersionKey value:adapter.sdkVersion withProvider:stub network:network];
 
         return available;
     }];

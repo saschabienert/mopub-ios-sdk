@@ -32,7 +32,7 @@
         self.webview.actionDelegate = self;
         self.webview.backgroundColor = [UIColor clearColor];
         [self.webview setHTML: self.ad.HTMLContent];
-        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withObject:self.ad network:kHZAdapterHeyzap];
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:self.ad network:kHZAdapterHeyzap];
     }
     
     return self;
@@ -101,13 +101,13 @@
 - (void) onActionCompleted: (id) sender {}
 
 - (void) onActionError: (id) sender {
-    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue withObject:self.ad network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue withProvider:self.ad network:kHZAdapterHeyzap];
     
     [self hide];
 }
 
 - (void) onActionHide: (id) sender {
-    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withObject:self.ad network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.ad network:kHZAdapterHeyzap];
     [self hide];
 }
 

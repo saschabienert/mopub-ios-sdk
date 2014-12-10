@@ -135,7 +135,7 @@
     }
 
     _metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withObject:_metricsStub network:[self name]];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:_metricsStub network:[self name]];
 }
 
 - (HZAdType)supportedAdFormats
@@ -184,13 +184,13 @@
 }
 
 - (void)didClickRewardedVideo:(CBLocation)location {
-    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withObject:_metricsStub network:[self name]];
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:_metricsStub network:[self name]];
     [self.delegate adapterWasClicked: self];
 }
 
 - (void)didClickInterstitial:(CBLocation)location
 {
-    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withObject:_metricsStub network:[self name]];
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:_metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
 }
 
@@ -204,7 +204,7 @@
 }
 
 - (void)didDismissRewardedVideo:(CBLocation)location {
-    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withObject:_metricsStub network:[self name]];
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:_metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
 }
 
@@ -240,7 +240,7 @@
  * #Pro Tip: Use the delegate method below to immediately re-cache interstitials
  */
 - (void)didDismissInterstitial:(CBLocation)location {
-    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withObject:_metricsStub network:[self name]];
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:_metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
 }
 
