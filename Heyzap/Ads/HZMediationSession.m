@@ -120,7 +120,7 @@ return nil; \
 }
 
 - (NSString *) adUnit {
-    return NSStringFromAdType(_adType);
+    return NSStringFromAdType(self.adType);
 }
 
 #pragma mark - Reporting Events to the server
