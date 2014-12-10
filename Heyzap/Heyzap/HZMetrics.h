@@ -16,6 +16,32 @@ extern NSString *const kAdFailedToLoadValue;
 extern NSString *const kIsAvailablePercentDownloadedKey;
 extern NSString *const kIsAvailableTimeSincePreviousFetchKey;
 extern NSString *const kShowAdTimeSincePreviousRelevantFetchKey;
+extern NSString *const kNetworkKey;
+extern NSString *const kNetworkVersionKey;
+extern NSString *const kOrdinalKey;
+extern NSString *const kAdUnitKey;
+extern NSString *const kConnectivityKey;
+extern NSString *const kFetchDownloadTimeKey;
+extern NSString *const kTimeFromStartToShowAdKey;
+extern NSString *const kShowAdTimeTillAdIsDisplayedKey;
+extern NSString *const kAdClickedKey;
+extern NSString *const kCloseClickedKey;
+extern NSString *const kTimeClickedKey;
+extern NSString *const kNthAdKey;
+extern NSString *const kTimeFromFetchToImpressionKey;
+extern NSString *const kVideoSizeKey;
+extern NSString *const kVideoHostKey;
+extern NSString *const kVideoPathKey;
+extern NSString *const kVideoDownloadTimeKey;
+extern NSString *const kVideoNotDownloadedButInterstitialShownValue;
+extern NSString *const kFullyCachedValue;
+extern NSString *const kNoConnectivityValue;
+extern NSString *const kNoAdAvailableValue;
+extern NSString *const kNotCachedAndNotAFetchableAdUnitValue;
+extern NSString *const kNotCachedAndAttemptedFetchFailedValue;
+extern NSString *const kNotCachedAndAttemptedFetchSuccessValue;
+
+
 
 @protocol HZMetricsProtocol <NSObject>
 

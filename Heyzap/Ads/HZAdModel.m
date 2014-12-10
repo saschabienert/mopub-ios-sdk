@@ -144,9 +144,9 @@
 
 - (BOOL) onClick {
     if (self.sentClick) return false;
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_clicked" value:@1 withObject:self network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withObject:self network:kHZAdapterHeyzap];
     long timeCLickedMiliseconds = lround([[NSDate date] timeIntervalSince1970] * 1000);
-    [[HZMetrics sharedInstance] logMetricsEvent:@"time_clicked" value:@(timeCLickedMiliseconds) withObject:self network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kTimeClickedKey value:@(timeCLickedMiliseconds) withObject:self network:kHZAdapterHeyzap];
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     

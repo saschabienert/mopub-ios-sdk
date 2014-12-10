@@ -35,7 +35,7 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
         int percent = (int) (decimal * 100);
         [[HZMetrics sharedInstance] setDownloadPercentage:percent withObject:stub network:kHZAdapterHeyzap];
         if (!loggedTotal){
-            [[HZMetrics sharedInstance] logMetricsEvent:@"video_size" value:@(totalBytesExpectedToRead) withObject:stub network:kHZAdapterHeyzap];
+            [[HZMetrics sharedInstance] logMetricsEvent:kVideoSizeKey value:@(totalBytesExpectedToRead) withObject:stub network:kHZAdapterHeyzap];
             loggedTotal = YES;
         }
     }];

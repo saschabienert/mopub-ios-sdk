@@ -29,6 +29,30 @@ NSString *const kShowAdResultKey = @"show_ad_status";
 NSString *const kIsAvailablePercentDownloadedKey = @"is_available_percentage_downloaded";
 NSString *const kIsAvailableTimeSincePreviousFetchKey = @"is_available_time_since_previous_relevant_fetch";
 NSString *const kShowAdTimeSincePreviousRelevantFetchKey = @"show_ad_time_since_previous_relevant_fetch";
+NSString *const kNetworkKey = @"network";
+NSString *const kNetworkVersionKey = @"network_version";
+NSString *const kOrdinalKey = @"ordinal";
+NSString *const kAdUnitKey = @"ad_unit";
+NSString *const kConnectivityKey = @"connectivity";
+NSString *const kFetchDownloadTimeKey = @"fetch_download_time";
+NSString *const kTimeFromStartToShowAdKey = @"time_from_start_to_show_ad";
+NSString *const kShowAdTimeTillAdIsDisplayedKey = @"show_ad_time_till_ad_is_displayed";
+NSString *const kAdClickedKey = @"ad_clicked";
+NSString *const kCloseClickedKey = @"close_clicked";
+NSString *const kTimeClickedKey = @"time_clicked";
+NSString *const kNthAdKey = @"nth_ad";
+NSString *const kTimeFromFetchToImpressionKey = @"time_from_fetch_to_impression";
+NSString *const kVideoSizeKey = @"video_size";
+NSString *const kVideoHostKey = @"video_host";
+NSString *const kVideoPathKey = @"video_path";
+NSString *const kVideoDownloadTimeKey = @"video_download_time";
+NSString *const kVideoNotDownloadedButInterstitialShownValue = @"video-not-downloaded-but-interstitial-shown";
+NSString *const kFullyCachedValue = @"fully-cached";
+NSString *const kNoConnectivityValue = @"no-connectivity";
+NSString *const kNoAdAvailableValue = @"no-ad-available";
+NSString *const kNotCachedAndNotAFetchableAdUnitValue = @"not-cached-and-not-a-fetchable-ad-unit";
+NSString *const kNotCachedAndAttemptedFetchFailedValue = @"not-cached-and-attempted-fetch-failed";
+NSString *const kNotCachedAndAttemptedFetchSuccessValue = @"not-cached-and-attempted-fetch-success";
 
 NSString *const kAdFailedToLoadValue = @"failed-on-load";
 
@@ -123,7 +147,7 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 + (NSDictionary *)baseMetricsForAdUnit:(NSString *)adUnit andNetwork:(NSString *)network
 {
     return @{
-             @"network": network,
+             kNetworkKey: network,
              @"ad_unit": adUnit,
              @"framework": [HZAdsManager sharedManager].framework ?: @"none",
              kMetricID:[[self class] uniqueIdentifier],

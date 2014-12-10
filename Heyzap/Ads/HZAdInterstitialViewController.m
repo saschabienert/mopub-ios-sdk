@@ -32,7 +32,7 @@
         self.webview.actionDelegate = self;
         self.webview.backgroundColor = [UIColor clearColor];
         [self.webview setHTML: self.ad.HTMLContent];
-        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" withObject:self.ad network:kHZAdapterHeyzap];
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withObject:self.ad network:kHZAdapterHeyzap];
     }
     
     return self;
@@ -107,7 +107,7 @@
 }
 
 - (void) onActionHide: (id) sender {
-    [[HZMetrics sharedInstance] logMetricsEvent:@"close_clicked" value:@1 withObject:self.ad network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withObject:self.ad network:kHZAdapterHeyzap];
     [self hide];
 }
 

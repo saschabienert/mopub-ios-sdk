@@ -174,7 +174,7 @@
     HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:adUnit];
     [[HZMetrics sharedInstance] logShowAdWithObject:stub network:kHZAdapterHeyzap];
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey withObject:stub network:kHZAdapterHeyzap];
-    [[HZMetrics sharedInstance] logTimeSinceStartFor:@"time_from_start_to_show_ad" withObject:stub network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logTimeSinceStartFor:kTimeFromStartToShowAdKey withObject:stub network:kHZAdapterHeyzap];
     [[HZMetrics sharedInstance] logDownloadPercentageFor:@"show_ad_percentage_downloaded" withObject:stub network:kHZAdapterHeyzap];
     BOOL result = NO;
     NSError *error;
@@ -193,7 +193,7 @@
     }
     
     if (![[HZDevice currentDevice] HZConnectivityType]) {
-        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"no-connectivity" withObject:stub network:kHZAdapterHeyzap];
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoConnectivityValue withObject:stub network:kHZAdapterHeyzap];
         error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 1 userInfo: @{NSLocalizedDescriptionKey: @"No internet connection."}];
     } else {
         if (!tag) {
@@ -232,7 +232,7 @@
         }
         
         if (!result) {
-            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"no-ad-available" withObject:stub network:kHZAdapterHeyzap];
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoAdAvailableValue withObject:stub network:kHZAdapterHeyzap];
             error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 6 userInfo: @{NSLocalizedDescriptionKey: @"No ad available"}];
         }
     }
@@ -242,7 +242,7 @@
         [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag: tag andError: error];
         [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification tag:tag adUnit:adUnit auctionType:auctionType];
     } else {
-        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" withObject:stub network:kHZAdapterHeyzap];
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withObject:stub network:kHZAdapterHeyzap];
     }
     
     if (completion) {

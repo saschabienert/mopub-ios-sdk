@@ -71,7 +71,7 @@
     [rootVC presentViewController:self animated:NO completion:nil];
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
     
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" withObject:self.ad network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withObject:self.ad network:kHZAdapterHeyzap];
 }
 
 - (void) hide {
@@ -103,11 +103,11 @@ static int totalImpressions = 0;
 
 - (void) didImpression {
     totalImpressions++;
-    [[HZMetrics sharedInstance] logMetricsEvent:@"nth_ad"
+    [[HZMetrics sharedInstance] logMetricsEvent:kNthAdKey
                                           value:@(totalImpressions)
                                      withObject:self.ad
                                         network:kHZAdapterHeyzap];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:@"time_from_fetch_to_impression"
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kTimeFromFetchToImpressionKey
                                           withObject:self.ad
                                              network:kHZAdapterHeyzap];
     
@@ -120,7 +120,7 @@ static int totalImpressions = 0;
 
 - (void) didClickWithURL: (NSURL *) url {
     
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad-clicked" value:@1 withObject:self.ad network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withObject:self.ad network:kHZAdapterHeyzap];
     
     if ([self.ad onClick]) {
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didClickAdWithTag:self.ad.tag];

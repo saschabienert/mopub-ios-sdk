@@ -114,7 +114,7 @@
     [self.currentInterstitial presentFromRootViewController:[self.delegate viewControllerForPresentingAd]];
 
     _metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:@"show_ad_time_till_ad_is_displayed" withObject:_metricsStub network:[self name]];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withObject:_metricsStub network:[self name]];
 }
 
 #pragma mark - Delegate callbacks
@@ -139,7 +139,7 @@
 
 - (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
 {
-    [[HZMetrics sharedInstance] logMetricsEvent:@"close_clicked" value:@1 withObject:_metricsStub network:[self name]];
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withObject:_metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
     self.currentInterstitial = nil;
 }
@@ -147,7 +147,7 @@
 // As far as I can tell, this means a click.
 - (void)interstitialWillLeaveApplication:(HZGADInterstitial *)ad
 {
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_clicked" value:@1 withObject:_metricsStub network:[self name]];
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withObject:_metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
 }
 

@@ -33,14 +33,14 @@
     }
     
     const CFTimeInterval startTime = CACurrentMediaTime();
-    [[HZMetrics sharedInstance] logMetricsEvent:@"network" value:kHZAdapterHeyzap withObject:request network:kHZAdapterHeyzap];
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ordinal" value:@0 withObject:request network:kHZAdapterHeyzap];
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:request.adUnit withObject:request network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kNetworkKey value:kHZAdapterHeyzap withObject:request network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kOrdinalKey value:@0 withObject:request network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdUnitKey value:request.adUnit withObject:request network:kHZAdapterHeyzap];
     [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withObject:request network:kHZAdapterHeyzap];
     [[HZMetrics sharedInstance] logFetchTimeWithObject:request network:kHZAdapterHeyzap];
     
     NSString *const connectivity = [[HZDevice currentDevice] HZConnectivityType];
-    [[HZMetrics sharedInstance] logMetricsEvent:@"connectivity"
+    [[HZMetrics sharedInstance] logMetricsEvent:kConnectivityKey
                                           value:connectivity
                                      withObject:request
                                         network:kHZAdapterHeyzap];
@@ -48,7 +48,7 @@
     [[HZAdsAPIClient sharedClient] loadRequest: request withCompletion: ^(HZAdFetchRequest *aRequest) {
         const CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
         const int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
-        [[HZMetrics sharedInstance] logMetricsEvent:@"fetch_download_time" value:@(elapsedMiliseconds) withObject:aRequest network:kHZAdapterHeyzap];
+        [[HZMetrics sharedInstance] logMetricsEvent:kFetchDownloadTimeKey value:@(elapsedMiliseconds) withObject:aRequest network:kHZAdapterHeyzap];
         
         if (aRequest.lastError != nil) {
             
@@ -57,7 +57,7 @@
             if (aRequest.lastFailingStatusCode) {
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@(aRequest.lastFailingStatusCode) withObject:aRequest network:kHZAdapterHeyzap];
             } else if (!connectivity) {
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@"no-connectivity" withObject:aRequest network:kHZAdapterHeyzap];
+                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:kNoConnectivityValue withObject:aRequest network:kHZAdapterHeyzap];
             }
             [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: request.tag];
             [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
