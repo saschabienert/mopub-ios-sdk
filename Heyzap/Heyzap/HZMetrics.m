@@ -16,6 +16,7 @@
 #import "HZDevice.h"
 #import "HZMetricsKey.h"
 #import "HZAdsManager.h"
+#import "HZDispatch.h"
 
 
 
@@ -222,8 +223,11 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
     BOOL validClass = [value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSString class]];
     NSParameterAssert(validClass);
     
-    NSMutableDictionary *d = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network];
-    d[eventName] = value;
+    ensureMainQueue(^{
+        NSMutableDictionary *d = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network];
+        d[eventName] = value;
+    });
+
     [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
                                                         object:nil
                                                       userInfo:nil];
@@ -254,10 +258,12 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 }
 
 - (void) logDownloadPercentageFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
-    NSNumber *downloadPercentage = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network][kMetricDownloadPercentageKey];
-    if (downloadPercentage) { // If we aren't downloading a video, don't log anything
-        [self logMetricsEvent:eventname value:downloadPercentage withProvider:provider network:network];
-    }
+    ensureMainQueue(^{
+        NSNumber *downloadPercentage = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network][kMetricDownloadPercentageKey];
+        if (downloadPercentage) { // If we aren't downloading a video, don't log anything
+            [self logMetricsEvent:eventname value:downloadPercentage withProvider:provider network:network];
+        }
+    });
 }
 
 - (void) logTimeSinceStartFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
@@ -270,8 +276,10 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
     if (isAvailable) {
         [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableStatusKey value:@"is_available" withProvider:provider network:network];
     } else {
-        NSDictionary *const currentMetric = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network];
-        [self logMetricsEvent:kIsAvailableStatusKey value:metricFailureReason(currentMetric) withProvider:provider network:network];
+        ensureMainQueue(^{
+            NSDictionary *const currentMetric = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network];
+            [self logMetricsEvent:kIsAvailableStatusKey value:metricFailureReason(currentMetric) withProvider:provider network:network];
+        });
     }
 }
 
