@@ -19,7 +19,6 @@
 
 @property (nonatomic, strong) NSString *interstitialZoneID;
 @property (nonatomic, strong) NSString *incentivizedZoneID;
-@property (nonatomic) HZMetricsAdStub *metricsStub;
 
 @end
 
@@ -152,8 +151,8 @@
         [HZAdColony playVideoAdForZone:self.interstitialZoneID withDelegate:self];
     }
 
-    _metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:_metricsStub network:[self name]];
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType

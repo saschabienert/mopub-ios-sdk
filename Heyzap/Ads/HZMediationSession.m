@@ -74,7 +74,7 @@ return nil; \
             if (adapter
                 && [adapter isSDKAvailable]
                 && [setupMediators containsObject:[adapter sharedInstance]]
-                && [[adapter sharedInstance] supportsAdType:adType]) {
+                && [(HZBaseAdapter *)[adapter sharedInstance] supportsAdType:adType]) {
                 
                 [adapters addObject:[adapter sharedInstance]];
                 

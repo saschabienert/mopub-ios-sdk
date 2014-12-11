@@ -18,7 +18,6 @@
 @property (nonatomic, strong) NSString *videoZoneID;
 @property (nonatomic, strong) NSString *incentivizedZoneID;
 @property (nonatomic) BOOL isShowingIncentivized;
-@property (nonatomic) HZMetricsAdStub *metricsStub;
 
 @end
 
@@ -157,8 +156,8 @@
     }
     [[HZUnityAds sharedInstance] show];
 
-    _metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:_metricsStub network:[self name]];
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 #pragma mark - AdColony Delegation
@@ -186,12 +185,12 @@
 }
 
 - (void)unityAdsDidHide {
-    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:_metricsStub network:[self name]];
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
 }
 
 - (void)unityAdsWillLeaveApplication {
-    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:_metricsStub network:[self name]];
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
 }
 
