@@ -334,11 +334,12 @@ NSString * const kHZDataKey = @"data";
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if ([adapter lastErrorForAdType:type]) {
                         NSString *reason;
-                        if ([adapter lastErrorForAdType:type].userInfo && [adapter lastErrorForAdType:type].userInfo[NSUnderlyingErrorKey]) {
+                        if ([adapter lastErrorForAdType:type].userInfo[NSUnderlyingErrorKey]) {
                             reason = ((NSError *) [adapter lastErrorForAdType:type].userInfo[NSUnderlyingErrorKey]).localizedDescription;
                         } else {
                             reason = [adapter lastErrorForAdType:type].localizedDescription;
                         }
+                        reason = [reason substringToIndex:MIN([reason length], (unsigned) 25)]; // timecube column is varchar(25)
                         [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:reason withProvider:session network:network];
                         [adapter clearErrorForAdType:type];
                         [adapter prefetchForType:type tag:tag];
