@@ -258,4 +258,10 @@ NSString *hzLookupStringConstant(NSString *constantName) {
     return (__bridge NSString *)(dataPtr ? *dataPtr : nil);
 }
 
+int64_t millisecondsSinceCFTimeInterval(CFTimeInterval startTime) {
+    CFTimeInterval const currentTime = CACurrentMediaTime();
+    return lround((currentTime - startTime) * 1000);
+}
+
+
 @end

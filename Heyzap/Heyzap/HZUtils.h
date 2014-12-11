@@ -45,4 +45,6 @@ BOOL hziOS8Plus(void);
  */
 NSString *hzLookupStringConstant(NSString *constantName);
 
+int64_t millisecondsSinceCFTimeInterval(CFTimeInterval startTime);
+
 @end

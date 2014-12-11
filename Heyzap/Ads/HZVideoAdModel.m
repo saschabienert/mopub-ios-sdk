@@ -149,8 +149,7 @@
                                                     network:kHZAdapterHeyzap];
             }
                                                     
-            CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startDownloadTime;
-            int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
+            int64_t elapsedMiliseconds = millisecondsSinceCFTimeInterval(startDownloadTime);
             [[HZMetrics sharedInstance] logMetricsEvent:kVideoDownloadTimeKey value:@(elapsedMiliseconds) withProvider:self network:kHZAdapterHeyzap];
             modelSelf.fileCached = result;
             if (![modelSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {

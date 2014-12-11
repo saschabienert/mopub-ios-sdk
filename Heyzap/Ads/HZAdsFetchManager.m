@@ -18,6 +18,7 @@
 #import "HZDevice.h"
 #import "HZMetrics.h"
 #import "HZMediationConstants.h"
+#import "HZUtils.h"
 
 @implementation HZAdsFetchManager
 
@@ -46,8 +47,7 @@
                                         network:kHZAdapterHeyzap];
     
     [[HZAdsAPIClient sharedClient] loadRequest: request withCompletion: ^(HZAdFetchRequest *aRequest) {
-        const CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
-        const int64_t elapsedMiliseconds = lround(elapsedSeconds*1000);
+        const int64_t elapsedMiliseconds = millisecondsSinceCFTimeInterval(startTime);
         [[HZMetrics sharedInstance] logMetricsEvent:kFetchDownloadTimeKey value:@(elapsedMiliseconds) withProvider:aRequest network:kHZAdapterHeyzap];
         
         if (aRequest.lastError != nil) {

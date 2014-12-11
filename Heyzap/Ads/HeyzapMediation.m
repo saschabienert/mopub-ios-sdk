@@ -25,6 +25,7 @@
 #import "HZDispatch.h"
 #import "HZDelegateProxy.h"
 #import "HZAdModel.h"
+#import "HZUtils.h"
 
 // Session
 #import "HZMediationSessionKey.h"
@@ -298,8 +299,7 @@ NSString * const kHZDataKey = @"data";
                 return [adapter hasAdForType:type tag:tag] || [adapter lastErrorForAdType:type] != nil; // If it errored, exit early.
             }, timeout);
 
-            CFTimeInterval elapsedSeconds = CACurrentMediaTime() - startTime;
-            int64_t elaspsedMilliseconds = lround(elapsedSeconds*1000);
+            int64_t elaspsedMilliseconds = millisecondsSinceCFTimeInterval(startTime);
 
             if (fetchedWithinTimeout) {
                 NSLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
