@@ -275,7 +275,7 @@ NSString * const kHZDataKey = @"data";
         int ordinal = 0;
         for (HZBaseAdapter *adapter in preferredMediatorList) {
             NSString *network = [[adapter class] name];
-            __block CFTimeInterval startTime;
+            const CFTimeInterval startTime = CACurrentMediaTime();
             
             dispatch_sync(dispatch_get_main_queue(), ^{
                 // start of fetch metrics
@@ -285,7 +285,6 @@ NSString * const kHZDataKey = @"data";
                 [[HZMetrics sharedInstance] logMetricsEvent:kConnectivityKey value:connectivity withProvider:session network:network];
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withProvider:session network:network];
                 [[HZMetrics sharedInstance] logFetchTimeWithObject:session network:network];
-                startTime = CACurrentMediaTime();
 
                 [adapter prefetchForType:type tag:tag];
             });
