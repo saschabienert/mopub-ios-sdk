@@ -63,10 +63,16 @@ NSString * const kSendMetricsUrl = @"/in_game_api/metrics/export";
 
 @interface HZMetrics()
 @property (nonatomic, strong) NSMutableDictionary *metricsDict;
-@property (nonatomic, strong) NSMutableDictionary *preMediateMetricsDict;
 @property (nonatomic) CFTimeInterval fetchCalledTime;
 @property (nonatomic) CFTimeInterval showAdCalledTime;
 @property (nonatomic) CFTimeInterval startTime;
+
+// some useful metrics like time_from_start_to_show_ad need to be logged
+// before we hit /mediate, so we save them here and merge them into the
+// metrics for the mediated network after we figure out what the network
+// is in getMetricsForTag:adUnit:network:
+@property (nonatomic, strong) NSMutableDictionary *preMediateMetricsDict;
+
 @end
 
 NSString * metricFailureReason(NSDictionary *metric);
