@@ -40,7 +40,7 @@
     [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withProvider:request network:kHZAdapterHeyzap];
     [[HZMetrics sharedInstance] logFetchTimeWithObject:request network:kHZAdapterHeyzap];
     
-    NSString *const connectivity = [[HZDevice currentDevice] HZConnectivityType];
+    NSString *const connectivity = [HZUtils internetStatus];
     [[HZMetrics sharedInstance] logMetricsEvent:kConnectivityKey
                                           value:connectivity
                                      withProvider:request
@@ -56,7 +56,7 @@
             [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 withProvider:aRequest network:kHZAdapterHeyzap];
             if (aRequest.lastFailingStatusCode) {
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@(aRequest.lastFailingStatusCode) withProvider:aRequest network:kHZAdapterHeyzap];
-            } else if (!connectivity) {
+            } else if ([connectivity isEqualToString:@"no_internet"]) {
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:kNoConnectivityValue withProvider:aRequest network:kHZAdapterHeyzap];
             }
             [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: request.tag];

@@ -255,7 +255,7 @@ NSString * const kHZDataKey = @"data";
     NSString *tag = session.tag;
     NSArray *preferredMediatorList = [session.chosenAdapters array];
     HZAdType type = session.adType;
-    NSString *connectivity = [[HZDevice currentDevice] HZConnectivityType];
+    NSString *connectivity = [HZUtils internetStatus];
     HZDLog(@"Preferred mediator list = %@",preferredMediatorList);
     
     // Find the first SDK that has an ad, and use it
@@ -342,7 +342,7 @@ NSString * const kHZDataKey = @"data";
                         [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:reason withProvider:session network:network];
                         [adapter clearErrorForAdType:type];
                         [adapter prefetchForType:type tag:tag];
-                    } else if (!connectivity){
+                    } else if ([connectivity isEqualToString:@"no_internet"]){
                         [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:kNoConnectivityValue withProvider:session network:network];
                         if (showImmediately) {
                             [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoConnectivityValue withProvider:session network:network];

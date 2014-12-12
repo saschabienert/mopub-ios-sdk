@@ -241,6 +241,10 @@ char *HZNewBase64Encode(
 	return [HZUtils hzQueryStringToDictionary:[url query]];
 }
 
++ (NSString *)internetStatus {
+    return [[HZDevice currentDevice] HZConnectivityType] ?: @"no_internet";
+}
+
 NSArray *hzMap(NSArray *array, id (^block)(id object)) {
     NSMutableArray *newArray = [[NSMutableArray alloc] initWithCapacity:array.count];
     for (id obj in array) {

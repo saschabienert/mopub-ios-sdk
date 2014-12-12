@@ -31,6 +31,7 @@ char *HZNewBase64Encode(
 + (NSMutableDictionary *)hzQueryStringToDictionary:(NSString *)string;
 + (void) setPublisherID: (NSString *) publisherID;
 + (NSString *) publisherID;
++ (NSString *) internetStatus;
 
 NSArray *hzMap(NSArray *array, id (^block)(id object));
 

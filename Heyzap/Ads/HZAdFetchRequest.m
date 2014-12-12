@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "HeyzapAds.h"
 #import "HZAdsManager.h"
-
+#import "HZUtils.h"
 #import "HZDevice.h"
 
 #define kHZAdRetries 3
@@ -36,7 +36,7 @@
         _tag = tag != nil ? tag : [HeyzapAds defaultTagName];
         _retriesRemaining = kHZAdRetries;
         
-        NSString *internetStatus = [[HZDevice currentDevice] HZConnectivityType] ?: @"no_internet";
+        NSString *internetStatus = [HZUtils internetStatus];
         NSNumber *diskSpaceInBytes = [NSNumber numberWithUnsignedLongLong:[[HZDevice currentDevice] hzGetFreeDiskspace]];
         
         UIInterfaceOrientation deviceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
