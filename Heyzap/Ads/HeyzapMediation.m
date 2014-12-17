@@ -449,6 +449,9 @@ static int totalImpressions = 0;
     HZMediationSessionKey *key = [self currentShownSessionKey];
     
     if (key) {
+        HZMediationSession *session = [self.sessionDictionary objectForKey:key];
+        [[HZMetrics sharedInstance] removeAdWithProvider:session network:[adapter name]];
+
         [self.sessionDictionary removeObjectForKey:key];
         [[self delegateForAdType:key.adType] didHideAdWithTag:key.tag];
     }
