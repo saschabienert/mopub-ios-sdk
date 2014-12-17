@@ -123,7 +123,7 @@
 }
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    HZBaseAdapter *network = [[self.allNetworks objectAtIndex:indexPath.row] sharedInstance];
+    HZBaseAdapter *network = (HZBaseAdapter *)[[self.allNetworks objectAtIndex:indexPath.row] sharedInstance];
 
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
     if(cell == nil){
@@ -140,7 +140,7 @@
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
-    HZBaseAdapter *network = [[[self.allNetworks objectAtIndex:indexPath.row] class] sharedInstance];
+    HZBaseAdapter *network = (HZBaseAdapter *)[[[self.allNetworks objectAtIndex:indexPath.row] class] sharedInstance];
     HZDLog(@"Current network adapter: %@", network);
     
     HZTestActivityNetworkViewController *networkVC = [[HZTestActivityNetworkViewController alloc] initWithNetwork:network
@@ -250,7 +250,7 @@
                     continue;
                 }
 
-                HZBaseAdapter *adapter = [mediatorClass sharedInstance];
+                HZBaseAdapter *adapter = (HZBaseAdapter *)[mediatorClass sharedInstance];
                 
                 // check enabled
                 if([mediator[@"enabled"] boolValue]){
@@ -272,7 +272,7 @@
 
         // run through and update the check boxes on all the networks
         for (NSDictionary *mediator in networks) {
-            HZBaseAdapter *adapter = [[HZBaseAdapter adapterClassForName:mediator[@"name"]] sharedInstance];
+            HZBaseAdapter *adapter = (HZBaseAdapter *)[[HZBaseAdapter adapterClassForName:mediator[@"name"]] sharedInstance];
             [self updateIntegrationStatus:adapter];
         }
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
