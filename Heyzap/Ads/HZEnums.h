@@ -38,4 +38,13 @@ typedef NS_ENUM(NSUInteger, HZAuctionType) {
  */
 NSString * NSStringFromHZAuctionType(HZAuctionType auctionType);
 
+/**
+ *  Converts an HZAuctionType value into the string value of the Heyzap adapter for that auction type. i.e. HZAuctionTypeCrossPromo -> heyzap_cross_promo
+ *
+ *  @param auctionType The auction type
+ *
+ *  @return Either heyzap or heyzap_cross_promo, depending on auctionType
+ */
+NSString * HeyzapAdapterFromHZAuctionType(HZAuctionType auctionType);
+
 @end

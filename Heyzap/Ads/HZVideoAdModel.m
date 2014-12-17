@@ -14,7 +14,7 @@
 #import "HZAdsAPIClient.h"
 #import "HZLog.h"
 #import "HZMetrics.h"
-#import "HZMediationConstants.h"
+#import "HZEnums.h"
 
 @interface HZVideoAdModel()<UIWebViewDelegate>
 @property (nonatomic, assign) BOOL sentComplete;
@@ -92,8 +92,9 @@
 - (void)logVideoMetrics {
     NSURL *videoURL = self.forceStreaming ? self.streamingURLs.firstObject : self.staticURLs.firstObject;
     if (videoURL) {
-        [[HZMetrics sharedInstance] logMetricsEvent:kVideoHostKey value:videoURL.host withProvider:self network:kHZAdapterHeyzap];
-        [[HZMetrics sharedInstance] logMetricsEvent:kVideoPathKey value:videoURL.path withProvider:self network:kHZAdapterHeyzap];
+        NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(self.auctionType);
+        [[HZMetrics sharedInstance] logMetricsEvent:kVideoHostKey value:videoURL.host withProvider:self network:heyzapAdapter];
+        [[HZMetrics sharedInstance] logMetricsEvent:kVideoPathKey value:videoURL.path withProvider:self network:heyzapAdapter];
     }
 }
 
@@ -139,18 +140,20 @@
         self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload
                                                     toFilePath: [self filePathForCachedVideo]
                                                         forTag:self.tag
-                                                       andType:self.adUnit
+                                                        adUnit:self.adUnit
+                                                andAuctionType:self.auctionType
                                                 withCompletion:^(BOOL result) {
                                                     
+            NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(self.auctionType);
             if (!result) {
                 [[HZMetrics sharedInstance] logMetricsEvent:@"video_download_failed"
                                                       value:@1
                                                  withProvider:self
-                                                    network:kHZAdapterHeyzap];
+                                                    network:heyzapAdapter];
             }
                                                     
             int64_t elapsedMiliseconds = millisecondsSinceCFTimeInterval(startDownloadTime);
-            [[HZMetrics sharedInstance] logMetricsEvent:kVideoDownloadTimeKey value:@(elapsedMiliseconds) withProvider:self network:kHZAdapterHeyzap];
+            [[HZMetrics sharedInstance] logMetricsEvent:kVideoDownloadTimeKey value:@(elapsedMiliseconds) withProvider:self network:heyzapAdapter];
             modelSelf.fileCached = result;
             if (![modelSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
                 if (modelSelf.allowFallbacktoStreaming) {
@@ -209,7 +212,7 @@
 - (void) onInterstitialFallback {
     [self cancelDownload];
     
-    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kVideoNotDownloadedButInterstitialShownValue withProvider:self network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kVideoNotDownloadedButInterstitialShownValue withProvider:self network:HeyzapAdapterFromHZAuctionType(self.auctionType)];
     
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     [dict setObject: @"1" forKey: @"interstitial_fallback"];

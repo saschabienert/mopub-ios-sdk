@@ -21,7 +21,7 @@
 #import "HZDelegateProxy.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
-#import "HZMediationConstants.h"
+#import "HZEnums.h"
 
 #import "HZDelegateProxy.h"
 
@@ -158,12 +158,13 @@
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType
 {
     HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:adUnit];
-    [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 withProvider:stub network:kHZAdapterHeyzap];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey withProvider:stub network:kHZAdapterHeyzap];
-    [[HZMetrics sharedInstance] logDownloadPercentageFor:kIsAvailablePercentDownloadedKey withProvider:stub network:kHZAdapterHeyzap];
+    NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(auctionType);
+    [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 withProvider:stub network:heyzapAdapter];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey withProvider:stub network:heyzapAdapter];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:kIsAvailablePercentDownloadedKey withProvider:stub network:heyzapAdapter];
     
     const BOOL available =[[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:adUnit tag:tag auctionType:auctionType] != nil;
-    [[HZMetrics sharedInstance] logIsAvailable:available withProvider:stub network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logIsAvailable:available withProvider:stub network:heyzapAdapter];
     
     return available;
 }
@@ -172,10 +173,11 @@
 
 - (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion  {
     HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:adUnit];
-    [[HZMetrics sharedInstance] logShowAdWithObject:stub network:kHZAdapterHeyzap];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey withProvider:stub network:kHZAdapterHeyzap];
-    [[HZMetrics sharedInstance] logTimeSinceStartFor:kTimeFromStartToShowAdKey withProvider:stub network:kHZAdapterHeyzap];
-    [[HZMetrics sharedInstance] logDownloadPercentageFor:kShowAdPercentageDownloadedKey withProvider:stub network:kHZAdapterHeyzap];
+    NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(auctionType);
+    [[HZMetrics sharedInstance] logShowAdWithObject:stub network:heyzapAdapter];
+    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey withProvider:stub network:heyzapAdapter];
+    [[HZMetrics sharedInstance] logTimeSinceStartFor:kTimeFromStartToShowAdKey withProvider:stub network:heyzapAdapter];
+    [[HZMetrics sharedInstance] logDownloadPercentageFor:kShowAdPercentageDownloadedKey withProvider:stub network:heyzapAdapter];
     BOOL result = NO;
     NSError *error;
     
@@ -184,7 +186,7 @@
     }
     
     if ([self activeController] != nil) {
-        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdAlreadyDisplayedValue withProvider:stub network:kHZAdapterHeyzap];
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdAlreadyDisplayedValue withProvider:stub network:heyzapAdapter];
         if (completion) {
             completion(NO, [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 7 userInfo: @{NSLocalizedDescriptionKey: @"Another ad is currently displaying."}]);
         }
@@ -193,7 +195,7 @@
     }
     
     if (![[HZDevice currentDevice] HZConnectivityType]) {
-        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoConnectivityValue withProvider:stub network:kHZAdapterHeyzap];
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoConnectivityValue withProvider:stub network:heyzapAdapter];
         error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 1 userInfo: @{NSLocalizedDescriptionKey: @"No internet connection."}];
     } else {
         if (!tag) {
@@ -232,7 +234,7 @@
         }
         
         if (!result) {
-            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoAdAvailableValue withProvider:stub network:kHZAdapterHeyzap];
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoAdAvailableValue withProvider:stub network:heyzapAdapter];
             error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 6 userInfo: @{NSLocalizedDescriptionKey: @"No ad available"}];
         }
     }
@@ -242,7 +244,7 @@
         [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag: tag andError: error];
         [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification tag:tag adUnit:adUnit auctionType:auctionType];
     } else {
-        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:stub network:kHZAdapterHeyzap];
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:stub network:heyzapAdapter];
     }
     
     if (completion) {
@@ -252,7 +254,7 @@
 
 - (void) hideActiveAd {
     if ([self activeController] != nil) {
-        [[HZMetrics sharedInstance] logMetricsEvent:@"dev_hidden" value:@1 withProvider:[self activeController].ad network:kHZAdapterHeyzap];
+        [[HZMetrics sharedInstance] logMetricsEvent:@"dev_hidden" value:@1 withProvider:[self activeController].ad network:HeyzapAdapterFromHZAuctionType([self activeController].ad.auctionType)];
         [[self activeController] hide];
     }
 }

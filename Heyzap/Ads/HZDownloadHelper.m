@@ -11,13 +11,13 @@
 #import "HZLog.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
-#import "HZMediationConstants.h"
+#import "HZEnums.h"
 
 NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccessNotification";
 
 @implementation HZDownloadHelper
 
-+ (HZAFHTTPRequestOperation *) downloadURL: (NSURL *) url toFilePath: (NSString *) filePath forTag:(NSString *)tag andType:(NSString *)type withCompletion:(void (^)(BOOL result))completion {
++ (HZAFHTTPRequestOperation *) downloadURL: (NSURL *) url toFilePath: (NSString *) filePath forTag:(NSString *)tag adUnit:(NSString *)type andAuctionType:(HZAuctionType)auctionType withCompletion:(void (^)(BOOL result))completion {
 
     __block NSDate *startDownload = [NSDate date];
     
@@ -33,9 +33,10 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
         HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:type];
         float decimal = (float)totalBytesRead / (float)totalBytesExpectedToRead;
         int percent = (int) (decimal * 100);
-        [[HZMetrics sharedInstance] setDownloadPercentage:percent withProvider:stub network:kHZAdapterHeyzap];
+        NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(auctionType);
+        [[HZMetrics sharedInstance] setDownloadPercentage:percent withProvider:stub network:heyzapAdapter];
         if (!loggedTotal){
-            [[HZMetrics sharedInstance] logMetricsEvent:kVideoSizeKey value:@(totalBytesExpectedToRead) withProvider:stub network:kHZAdapterHeyzap];
+            [[HZMetrics sharedInstance] logMetricsEvent:kVideoSizeKey value:@(totalBytesExpectedToRead) withProvider:stub network:heyzapAdapter];
             loggedTotal = YES;
         }
     }];

@@ -14,7 +14,7 @@
 #import "HZAdsAPIClient.h"
 #import "HZMetrics.h"
 #import "HZStorePresenter.h"
-#import "HZMediationConstants.h"
+#import "HZEnums.h"
 
 @interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
 
@@ -71,11 +71,11 @@
     [rootVC presentViewController:self animated:NO completion:nil];
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
     
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.ad network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
 }
 
 - (void) hide {
-    [[HZMetrics sharedInstance] removeAdWithProvider:self.ad network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] removeAdWithProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
     
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     
@@ -103,13 +103,14 @@ static int totalImpressions = 0;
 
 - (void) didImpression {
     totalImpressions++;
+    NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(self.ad.auctionType);
     [[HZMetrics sharedInstance] logMetricsEvent:kNthAdKey
                                           value:@(totalImpressions)
                                      withProvider:self.ad
-                                        network:kHZAdapterHeyzap];
+                                        network:heyzapAdapter];
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:kTimeFromFetchToImpressionKey
                                           withProvider:self.ad
-                                             network:kHZAdapterHeyzap];
+                                             network:heyzapAdapter];
     
     
     if ([self.ad onImpression]) {
@@ -120,7 +121,7 @@ static int totalImpressions = 0;
 
 - (void) didClickWithURL: (NSURL *) url {
     
-    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.ad network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
     
     if ([self.ad onClick]) {
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didClickAdWithTag:self.ad.tag];

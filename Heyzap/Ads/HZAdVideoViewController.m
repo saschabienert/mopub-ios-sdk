@@ -13,7 +13,7 @@
 #import "HZAdsManager.h"
 #import "HZMetrics.h"
 #import "HZUtils.h"
-#import "HZMediationConstants.h"
+#import "HZEnums.h"
 
 #define kHZVideoViewTag 1
 #define kHZWebViewTag 2
@@ -37,7 +37,7 @@
         _videoView.tag = kHZVideoViewTag;
         
         if (ad.fileCached || ad.allowFallbacktoStreaming || ad.forceStreaming) {
-            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:self.ad network:kHZAdapterHeyzap];
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
             if (![_videoView setVideoURL: [self.ad URLForVideo]]) {
                 return nil;
             }
@@ -216,7 +216,7 @@
 #pragma mark - Callbacks
 
 - (void) onActionHide: (UIView *) sender {
-    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.ad network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
     switch (sender.tag) {
         case kHZVideoViewTag:
             if (self.didStartVideo) {
@@ -283,7 +283,7 @@
 
 
 - (void) onActionError: (UIView *) sender {
-    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue withProvider:self.ad network:kHZAdapterHeyzap];
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
     
     if (sender.tag == kHZVideoViewTag && self.didStartVideo) {
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didFinishAudio];
