@@ -188,13 +188,11 @@
 }
 - (void)didClickAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
-        [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
         [self.delegate adapterWasClicked:self];
     }
 }
 - (void)didHideAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
-        [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
         [self.delegate adapterDidDismissAd:self];
     }
 }
