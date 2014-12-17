@@ -11,6 +11,7 @@
 
 // Proxies
 #import "HZChartboostAdapter.h"
+#import "HZAbstractHeyzapAdapter.h"
 #import "HZHeyzapAdapter.h"
 #import "HZAdColonyAdapter.h"
 #import "HZVungleAdapter.h"
@@ -449,8 +450,12 @@ static int totalImpressions = 0;
     HZMediationSessionKey *key = [self currentShownSessionKey];
     
     if (key) {
-        HZMediationSession *session = [self.sessionDictionary objectForKey:key];
-        [[HZMetrics sharedInstance] removeAdWithProvider:session network:[adapter name]];
+        // removeAdWithProvider:network: is called for Heyzap ads inside HZAdViewController for both Heyzap only and mediation
+        // so only call it here if we are talking about a non-Heyzap adapter
+        if (![adapter isKindOfClass:[HZAbstractHeyzapAdapter class]]) {
+            HZMediationSession *session = [self.sessionDictionary objectForKey:key];
+            [[HZMetrics sharedInstance] removeAdWithProvider:session network:[adapter name]];
+        }
 
         [self.sessionDictionary removeObjectForKey:key];
         [[self delegateForAdType:key.adType] didHideAdWithTag:key.tag];
