@@ -53,6 +53,7 @@
 @property (nonatomic) NSSet *initializedNetworks;
 @property (nonatomic) NSSet *enabledNetworks;
 @property (nonatomic) NSMutableDictionary *integrationStatusHash;
+@property (nonatomic) UILabel *chooseLabel;
 
 @end
 
@@ -179,7 +180,7 @@
     [chooseNetworkView addSubview:header];
     
     // choose network label
-    UILabel *chooseLabel = ({
+    self.chooseLabel = ({
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x + 10, chooseNetworkView.frame.origin.y + header.frame.size.height,
                                                                    chooseNetworkView.frame.size.width - 10, 32)];
         if (self.availableNetworks.count == 0) {
@@ -192,13 +193,13 @@
         label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         label;
     });
-    [chooseNetworkView addSubview:chooseLabel];
+    [chooseNetworkView addSubview:self.chooseLabel];
     
     // networks table view
     UITableView *networksTableView = ({
         UITableView *table = [[UITableView alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x,
-                                                                           chooseNetworkView.frame.origin.y + header.frame.size.height + chooseLabel.frame.size.height,
-                                                                           chooseNetworkView.frame.size.width, chooseNetworkView.frame.size.height - chooseLabel.frame.size.height)
+                                                                           chooseNetworkView.frame.origin.y + header.frame.size.height + self.chooseLabel.frame.size.height,
+                                                                           chooseNetworkView.frame.size.width, chooseNetworkView.frame.size.height - self.chooseLabel.frame.size.height)
                                                           style:UITableViewStylePlain];
         table.backgroundColor = [UIColor clearColor];
         table.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
@@ -213,10 +214,10 @@
     return chooseNetworkView;
 }
 
-- (void) updateIntegrationStatus:(HZBaseAdapter *)network {
-    UITableViewCell *cell = self.integrationStatusHash[[[network class] name]];
+- (void) updateIntegrationStatus:(BOOL)status withName:(NSString *)name {
+    UITableViewCell *cell = self.integrationStatusHash[name];
 
-    if ([self.availableNetworks containsObject:network] && [self.initializedNetworks containsObject:network] && [self.enabledNetworks containsObject:network]) {
+    if (status) {
         cell.detailTextLabel.text = @"☑︎";
         cell.detailTextLabel.textColor = [UIColor greenColor];
     } else {
@@ -240,6 +241,9 @@
         NSMutableSet *initializedNetworks = [NSMutableSet set];
         NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
         for (NSDictionary *mediator in networks) {
+            BOOL available = NO;
+            BOOL enabled = NO;
+            BOOL initialized = NO;
             NSString *mediatorName = mediator[@"name"];
 
             if (![mediatorName isEqualToString:@"heyzap"] && ![mediatorName isEqualToString:@"heyzap_cross_promo"]) {
@@ -248,6 +252,8 @@
                 // don't do anything if the sdk isn't available
                 if (![mediatorClass isSDKAvailable]) {
                     continue;
+                } else {
+                    available = YES;
                 }
 
                 HZBaseAdapter *adapter = [mediatorClass sharedInstance];
@@ -255,12 +261,17 @@
                 // check enabled
                 if([mediator[@"enabled"] boolValue]){
                     [enabledNetworks addObject:adapter];
+                    enabled = YES;
                 }
                 
                 // check original initialization succeeded
                 if (adapter.credentials) {
                     [initializedNetworks addObject:adapter];
+                    initialized = YES;
                 }
+
+                // update the check box
+                [self updateIntegrationStatus:(available && enabled && initialized) withName:mediatorName];
             }
         }
 
@@ -270,11 +281,13 @@
         HZDLog(@"Networks initialized: %@", self.initializedNetworks);
         HZDLog(@"Networks enabled: %@", self.enabledNetworks);
 
-        // run through and update the check boxes on all the networks
-        for (NSDictionary *mediator in networks) {
-            HZBaseAdapter *adapter = [[HZBaseAdapter adapterClassForName:mediator[@"name"]] sharedInstance];
-            [self updateIntegrationStatus:adapter];
+        // update the message that either says "No SDKs are available" or says "Choose a network"
+        if (self.availableNetworks.count == 0) {
+            self.chooseLabel.text = @"No SDKs are available";
+        } else {
+            self.chooseLabel.text = @"Choose a network:";
         }
+
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         HZDLog(@"Error from /info: %@", error.localizedDescription);
     }];
