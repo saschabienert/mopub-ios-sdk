@@ -85,7 +85,7 @@
     
     // this will link network names to their labels, so we can update the check/cross if necessary
     vc.integrationStatuses = [NSMutableArray array];
-    for (unsigned long i = 0; i < [vc.allNetworks count]; i++) {
+    for (NSUInteger i = 0; i < [vc.allNetworks count]; i++) {
         [vc.integrationStatuses addObject:@NO];
     }
 
