@@ -9,6 +9,7 @@
 #import "HZUtils.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "HZDevice.h"
+#import "HZMetrics.h"
 
 
 static NSString *HZUtilsDeviceID;
@@ -242,7 +243,7 @@ char *HZNewBase64Encode(
 }
 
 + (NSString *)internetStatus {
-    return [[HZDevice currentDevice] HZConnectivityType] ?: @"no_internet";
+    return [[HZDevice currentDevice] HZConnectivityType] ?: kNoInternet;
 }
 
 NSArray *hzMap(NSArray *array, id (^block)(id object)) {

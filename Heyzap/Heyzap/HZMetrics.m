@@ -56,6 +56,7 @@ NSString *const kAdAlreadyDisplayedValue = @"ad-already-displayed";
 NSString *const kNotCachedAndNotAFetchableAdUnitValue = @"not-cached-and-not-a-fetchable-ad-unit";
 NSString *const kNotCachedAndAttemptedFetchFailedValue = @"not-cached-and-attempted-fetch-failed";
 NSString *const kNotCachedAndAttemptedFetchSuccessValue = @"not-cached-and-attempted-fetch-success";
+NSString *const kNoInternet = @"no_internet";
 
 NSString *const kAdFailedToLoadValue = @"failed-on-load";
 

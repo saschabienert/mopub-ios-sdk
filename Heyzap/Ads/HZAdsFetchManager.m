@@ -57,7 +57,7 @@
             [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 withProvider:aRequest network:heyzapAdapter];
             if (aRequest.lastFailingStatusCode) {
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@(aRequest.lastFailingStatusCode) withProvider:aRequest network:heyzapAdapter];
-            } else if ([connectivity isEqualToString:@"no_internet"]) {
+            } else if ([connectivity isEqualToString:kNoInternet]) {
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:kNoConnectivityValue withProvider:aRequest network:heyzapAdapter];
             }
             [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: request.tag];

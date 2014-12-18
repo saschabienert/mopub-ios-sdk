@@ -342,7 +342,7 @@ NSString * const kHZDataKey = @"data";
                         [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:reason withProvider:session network:network];
                         [adapter clearErrorForAdType:type];
                         [adapter prefetchForType:type tag:tag];
-                    } else if ([connectivity isEqualToString:@"no_internet"]){
+                    } else if ([connectivity isEqualToString:kNoInternet]){
                         [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:kNoConnectivityValue withProvider:session network:network];
                         if (showImmediately) {
                             [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoConnectivityValue withProvider:session network:network];

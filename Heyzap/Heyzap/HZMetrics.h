@@ -42,6 +42,7 @@ extern NSString *const kAdAlreadyDisplayedValue;
 extern NSString *const kNotCachedAndNotAFetchableAdUnitValue;
 extern NSString *const kNotCachedAndAttemptedFetchFailedValue;
 extern NSString *const kNotCachedAndAttemptedFetchSuccessValue;
+extern NSString *const kNoInternet;
 
 
 
