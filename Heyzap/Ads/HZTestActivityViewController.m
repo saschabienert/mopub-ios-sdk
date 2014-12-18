@@ -52,8 +52,9 @@
 @property (nonatomic) NSSet *availableNetworks;
 @property (nonatomic) NSSet *initializedNetworks;
 @property (nonatomic) NSSet *enabledNetworks;
-@property (nonatomic) NSMutableDictionary *integrationStatusHash;
+@property (nonatomic) NSMutableArray *integrationStatuses;
 @property (nonatomic) UILabel *chooseLabel;
+@property (nonatomic) UITableView *networksTableView;
 
 @end
 
@@ -83,7 +84,10 @@
     HZDLog(@"All networks: %@", vc.allNetworks);
     
     // this will link network names to their labels, so we can update the check/cross if necessary
-    vc.integrationStatusHash = [NSMutableDictionary dictionary];
+    vc.integrationStatuses = [NSMutableArray array];
+    for (unsigned long i = 0; i < [vc.allNetworks count]; i++) {
+        [vc.integrationStatuses addObject:@NO];
+    }
 
     // take over the screen
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
@@ -132,8 +136,13 @@
     }
     cell.textLabel.text = [[network class] humanizedName];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-
-    [self.integrationStatusHash setValue:cell forKey:[[network class] name]];
+    if ([self.integrationStatuses[indexPath.row] boolValue]) {
+        cell.detailTextLabel.text = @"☑︎";
+        cell.detailTextLabel.textColor = [UIColor greenColor];
+    } else {
+        cell.detailTextLabel.text = @"☒";
+        cell.detailTextLabel.textColor = [UIColor redColor];
+    }
 
     return cell;
 }
@@ -196,7 +205,7 @@
     [chooseNetworkView addSubview:self.chooseLabel];
     
     // networks table view
-    UITableView *networksTableView = ({
+    self.networksTableView = ({
         UITableView *table = [[UITableView alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x,
                                                                            chooseNetworkView.frame.origin.y + header.frame.size.height + self.chooseLabel.frame.size.height,
                                                                            chooseNetworkView.frame.size.width, chooseNetworkView.frame.size.height - self.chooseLabel.frame.size.height)
@@ -208,22 +217,10 @@
         table.dataSource = self;
         table;
     });
-    [networksTableView reloadData];
-    [chooseNetworkView addSubview:networksTableView];
+    [self.networksTableView reloadData];
+    [chooseNetworkView addSubview:self.networksTableView];
     
     return chooseNetworkView;
-}
-
-- (void) updateIntegrationStatus:(BOOL)status withName:(NSString *)name {
-    UITableViewCell *cell = self.integrationStatusHash[name];
-
-    if (status) {
-        cell.detailTextLabel.text = @"☑︎";
-        cell.detailTextLabel.textColor = [UIColor greenColor];
-    } else {
-        cell.detailTextLabel.text = @"☒";
-        cell.detailTextLabel.textColor = [UIColor redColor];
-    }
 }
 
 #pragma mark - General utility methods
@@ -270,8 +267,9 @@
                     initialized = YES;
                 }
 
-                // update the check box
-                [self updateIntegrationStatus:(available && enabled && initialized) withName:mediatorName];
+                // update this network's integration status
+                NSUInteger index = [self.allNetworks indexOfObject:mediatorClass];
+                self.integrationStatuses[index] = @(available && enabled && initialized);
             }
         }
 
@@ -280,6 +278,9 @@
         HZDLog(@"Networks available: %@", self.availableNetworks);
         HZDLog(@"Networks initialized: %@", self.initializedNetworks);
         HZDLog(@"Networks enabled: %@", self.enabledNetworks);
+
+        // update the table view, so that the checkboxes can change if necessary
+        [self.networksTableView reloadData];
 
         // update the message that either says "No SDKs are available" or says "Choose a network"
         if (self.availableNetworks.count == 0) {
