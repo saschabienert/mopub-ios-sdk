@@ -214,52 +214,62 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 }
 
 - (void) removeAdWithProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    [self finishUsingAdWithTag:provider.tag adUnit:provider.adUnit network:network];
-//    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:object.tag adUnit:object.adUnit network:network];
-//    [self.metricsDict removeObjectForKey:key];
+    ensureMainQueue(^{
+        [self finishUsingAdWithTag:provider.tag adUnit:provider.adUnit network:network];
+        //    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:object.tag adUnit:object.adUnit network:network];
+        //    [self.metricsDict removeObjectForKey:key];
+    });
 }
 
 #pragma mark - Logging Metrics
 
 - (void) logMetricsEvent: (NSString *) eventName value:(id)value withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    if (!value) {
-        HZDLog(@"nil value for key %@",eventName);
-        return;
-    }
-    
-    BOOL validClass = [value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSString class]];
-    NSParameterAssert(validClass);
-    
     ensureMainQueue(^{
+        if (!value) {
+            HZDLog(@"nil value for key %@",eventName);
+            return;
+        }
+
+        BOOL validClass = [value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSString class]];
+        NSParameterAssert(validClass);
+
         NSMutableDictionary *d = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network];
         d[eventName] = value;
-    });
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
-                                                        object:nil
-                                                      userInfo:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
+                                                            object:nil
+                                                          userInfo:nil];
+    });
 }
 
 - (void) logFetchTimeWithObject:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    self.fetchCalledTime = CACurrentMediaTime();
-    [self logMetricsEvent:@"fetch" value:@1 withProvider:provider network:network];
+    ensureMainQueue(^{
+        self.fetchCalledTime = CACurrentMediaTime();
+        [self logMetricsEvent:@"fetch" value:@1 withProvider:provider network:network];
+    });
 }
 
 - (void) logTimeSinceFetchFor:(NSString *)eventName withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
-    int64_t elapsedtimeSinceFetchMiliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
-    [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMiliseconds) withProvider:provider network:network];
+    ensureMainQueue(^{
+        int64_t elapsedtimeSinceFetchMiliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
+        [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMiliseconds) withProvider:provider network:network];
+    });
 }
 
 - (void) logShowAdWithObject:(id <HZMetricsProvider>)provider network:(NSString *)network{
-    [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad_called" value:@1 withProvider:provider network:network];
-    self.showAdCalledTime = CACurrentMediaTime();
-    int64_t elapsedtimeSinceShowMiliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
-    [self logMetricsEvent:kShowAdTimeSincePreviousRelevantFetchKey value:@(elapsedtimeSinceShowMiliseconds) withProvider:provider network:network];
+    ensureMainQueue(^{
+        [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad_called" value:@1 withProvider:provider network:network];
+        self.showAdCalledTime = CACurrentMediaTime();
+        int64_t elapsedtimeSinceShowMiliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
+        [self logMetricsEvent:kShowAdTimeSincePreviousRelevantFetchKey value:@(elapsedtimeSinceShowMiliseconds) withProvider:provider network:network];
+    });
 }
 
 - (void) logTimeSinceShowAdFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
-    int64_t elapsedtimeSinceShowMiliseconds = millisecondsSinceCFTimeInterval(self.showAdCalledTime);
-    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withProvider:provider network:network];
+    ensureMainQueue(^{
+        int64_t elapsedtimeSinceShowMiliseconds = millisecondsSinceCFTimeInterval(self.showAdCalledTime);
+        [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withProvider:provider network:network];
+    });
 }
 
 - (void) logDownloadPercentageFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
@@ -272,24 +282,28 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 }
 
 - (void) logTimeSinceStartFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    int64_t elapsedtimeSinceShowMiliseconds = millisecondsSinceCFTimeInterval(self.startTime);
-    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withProvider:provider network:network];
+    ensureMainQueue(^{
+        int64_t elapsedtimeSinceShowMiliseconds = millisecondsSinceCFTimeInterval(self.startTime);
+        [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withProvider:provider network:network];
+    });
 }
 
 - (void)logIsAvailable:(BOOL)isAvailable withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    if (isAvailable) {
-        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableStatusKey value:@"is_available" withProvider:provider network:network];
-    } else {
-        ensureMainQueue(^{
+    ensureMainQueue(^{
+        if (isAvailable) {
+            [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableStatusKey value:@"is_available" withProvider:provider network:network];
+        } else {
             NSDictionary *const currentMetric = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network];
             [self logMetricsEvent:kIsAvailableStatusKey value:metricFailureReason(currentMetric) withProvider:provider network:network];
-        });
-    }
+        }
+    });
 }
 
 // This isn't actually a metric, but the metric dictionary is a useful place to store the current download percentage for that video ad.
 - (void)setDownloadPercentage:(int)downloadPercentage withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    [self logMetricsEvent:kMetricDownloadPercentageKey value:@(downloadPercentage) withProvider:provider network:network];
+    ensureMainQueue(^{
+        [self logMetricsEvent:kMetricDownloadPercentageKey value:@(downloadPercentage) withProvider:provider network:network];
+    });
 }
 
 + (NSDictionary *) staticValuesDict {
