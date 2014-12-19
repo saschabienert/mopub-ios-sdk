@@ -35,6 +35,7 @@ extern NSString * const kHZAdapterHeyzap;
 extern NSString * const kHZAdapterCrossPromo;
 extern NSString * const kHZAdapterAppLovin;
 extern NSString * const kHZAdapterUnityAds;
+extern NSString * const kHZAdapterFacebook;
 
 // Humanized names for known mediators
 extern NSString * const kHZAdapterVungleHumanized;
@@ -45,6 +46,7 @@ extern NSString * const kHZAdapterHeyzapHumanized;
 extern NSString * const kHZAdapterCrossPromoHumanized;
 extern NSString * const kHZAdapterAppLovinHumanized;
 extern NSString * const kHZAdapterUnityAdsHumanized;
+extern NSString * const kHZAdapterFacebookHumanized;
 
 + (NSError *)errorWithAdapter:(NSString *)adapter
                        domain:(NSString *)domain
