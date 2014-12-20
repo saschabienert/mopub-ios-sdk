@@ -15,6 +15,8 @@
 #import <CoreTelephony/CTCarrier.h>
 #import "HZDevice.h"
 #import "HZMetricsKey.h"
+#import "HZAdsManager.h"
+#import "HZDispatch.h"
 
 
 
@@ -28,6 +30,33 @@ NSString *const kShowAdResultKey = @"show_ad_status";
 NSString *const kIsAvailablePercentDownloadedKey = @"is_available_percentage_downloaded";
 NSString *const kIsAvailableTimeSincePreviousFetchKey = @"is_available_time_since_previous_relevant_fetch";
 NSString *const kShowAdTimeSincePreviousRelevantFetchKey = @"show_ad_time_since_previous_relevant_fetch";
+NSString *const kNetworkKey = @"network";
+NSString *const kNetworkVersionKey = @"network_version";
+NSString *const kOrdinalKey = @"ordinal";
+NSString *const kAdUnitKey = @"ad_unit";
+NSString *const kConnectivityKey = @"connectivity";
+NSString *const kFetchDownloadTimeKey = @"fetch_download_time";
+NSString *const kTimeFromStartToShowAdKey = @"time_from_start_to_show_ad";
+NSString *const kShowAdTimeTillAdIsDisplayedKey = @"show_ad_time_till_ad_is_displayed";
+NSString *const kShowAdPercentageDownloadedKey = @"show_ad_percentage_downloaded";
+NSString *const kAdClickedKey = @"ad_clicked";
+NSString *const kCloseClickedKey = @"close_clicked";
+NSString *const kTimeClickedKey = @"time_clicked";
+NSString *const kNthAdKey = @"nth_ad";
+NSString *const kTimeFromFetchToImpressionKey = @"time_from_fetch_to_impression";
+NSString *const kVideoSizeKey = @"video_size";
+NSString *const kVideoHostKey = @"video_host";
+NSString *const kVideoPathKey = @"video_path";
+NSString *const kVideoDownloadTimeKey = @"video_download_time";
+NSString *const kVideoNotDownloadedButInterstitialShownValue = @"video-not-downloaded-but-interstitial-shown";
+NSString *const kFullyCachedValue = @"fully-cached";
+NSString *const kNoConnectivityValue = @"no-connectivity";
+NSString *const kNoAdAvailableValue = @"no-ad-available";
+NSString *const kAdAlreadyDisplayedValue = @"ad-already-displayed";
+NSString *const kNotCachedAndNotAFetchableAdUnitValue = @"not-cached-and-not-a-fetchable-ad-unit";
+NSString *const kNotCachedAndAttemptedFetchFailedValue = @"not-cached-and-attempted-fetch-failed";
+NSString *const kNotCachedAndAttemptedFetchSuccessValue = @"not-cached-and-attempted-fetch-success";
+NSString *const kNoInternet = @"no_internet";
 
 NSString *const kAdFailedToLoadValue = @"failed-on-load";
 
@@ -38,6 +67,13 @@ NSString * const kSendMetricsUrl = @"/in_game_api/metrics/export";
 @property (nonatomic) CFTimeInterval fetchCalledTime;
 @property (nonatomic) CFTimeInterval showAdCalledTime;
 @property (nonatomic) CFTimeInterval startTime;
+
+// some useful metrics like time_from_start_to_show_ad need to be logged
+// before we hit /mediate, so we save them here and merge them into the
+// metrics for the mediated network after we figure out what the network
+// is in getMetricsForTag:adUnit:network:
+@property (nonatomic, strong) NSMutableDictionary *preMediateMetricsDict;
+
 @end
 
 NSString * metricFailureReason(NSDictionary *metric);
@@ -73,7 +109,6 @@ NSString * metricFailureReason(NSDictionary *metric);
 // Instead of storing metrics in an NSMutableDictionary, store them in object with tons of properties like Android does.
 // This would make things more typesafe, though we'd have to write a bunch of annoying serialization code for it.
 // Another advantage is that we could return that object to set properties on it, which is nice when we're doing several metrics at once.
-// I'd also like to make a `metricProtocol` for objects that can provide a tag and adUnit. These objects would be passed to HZMetrics and it'd give back the proper metric instance. This would clean up the code has to do `self.ad.tag` and `self.ad.adUnit`
 
 
 #pragma mark Static Methods
@@ -92,6 +127,7 @@ NSString * metricFailureReason(NSDictionary *metric);
     self = [super init];
     if (self) {
         _metricsDict = [[NSMutableDictionary alloc] init];
+        _preMediateMetricsDict = [[NSMutableDictionary alloc] init];
 
         _startTime = CACurrentMediaTime();
         
@@ -116,113 +152,154 @@ NSString * metricFailureReason(NSDictionary *metric);
 
 NSString * const kMetricID = @"metricIdentifier";
 NSString * const kMetricDownloadPercentageKey = @"kCurrentDownloadPercentage";
+NSString * const kPreMediateNetwork = @"network-placeholder";
 
-+ (NSDictionary *)baseMetricsForAdType:(NSString *)adType
++ (NSDictionary *)baseMetricsForAdUnit:(NSString *)adUnit andNetwork:(NSString *)network
 {
     return @{
-             @"ad-unit": adType,
+             kNetworkKey: network,
+             @"ad_unit": adUnit,
+             @"framework": [HZAdsManager sharedManager].framework ?: @"none",
              kMetricID:[[self class] uniqueIdentifier],
             };
 }
 
-- (NSMutableDictionary *)getMetricsForTag:(NSString *)tag type:(NSString *)type {
+- (NSMutableDictionary *)getMetricsForTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network {
     if (tag == nil ) tag = @"default";
-    NSParameterAssert(type);
-    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag type:type];
-    if (!self.metricsDict[key]) {
-        self.metricsDict[key] = [[[self class] baseMetricsForAdType:type] mutableCopy];
+    NSParameterAssert(adUnit);
+
+    // some timing metrics (e.g. time_from_start_to_show_ad) need to be saved before we have mediated a network
+    // they get their own temporary metrics dictionary
+    if (!network) {
+        return [self getPreMediateMetricsForTag:tag adUnit:adUnit];
     }
+    NSParameterAssert(network);
+
+    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:network];
+    if (!self.metricsDict[key]) {
+        self.metricsDict[key] = [[[self class] baseMetricsForAdUnit:adUnit andNetwork:network] mutableCopy];
+    }
+
+    // if there are any metrics saved before we mediated a network, roll them into this network's metrics now
+    HZMetricsKey *const preMediateKey = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:kPreMediateNetwork];
+    if (self.preMediateMetricsDict[preMediateKey]) {
+        [self.metricsDict[key] addEntriesFromDictionary:self.preMediateMetricsDict[preMediateKey]];
+        [self.preMediateMetricsDict removeObjectForKey:preMediateKey];
+    }
+
     return self.metricsDict[key];
 }
 
-- (void)finishUsingAdWithTag:(NSString *)tag type:(NSString *)type {
+- (NSMutableDictionary *)getPreMediateMetricsForTag:(NSString *)tag adUnit:(NSString *)adUnit {
+    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:kPreMediateNetwork];
+    if (!self.preMediateMetricsDict[key]) {
+        self.preMediateMetricsDict[key] = [@{
+                                             @"ad_unit": adUnit,
+                                             @"framework": [HZAdsManager sharedManager].framework ?: @"none",
+                                             kMetricID: [[self class] uniqueIdentifier],
+                                             } mutableCopy];
+    }
+    return self.preMediateMetricsDict[key];
+}
+
+- (void)finishUsingAdWithTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network {
     if (tag == nil ) tag = @"default";
-    NSParameterAssert(type);
+    NSParameterAssert(adUnit);
     
-    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag type:type];
+    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:network];
     NSDictionary *const metrics = self.metricsDict[key];
     [[self class] writeMetricToDisk:metrics];
     [self.metricsDict removeObjectForKey:key];
     
 }
 
-- (void) removeAdForTag:(NSString *)tag type:(NSString *)type {
-    [self finishUsingAdWithTag:tag type:type];
-//    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag type:type];
-//    [self.metricsDict removeObjectForKey:key];
+- (void) removeAdWithProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
+    ensureMainQueue(^{
+        [self finishUsingAdWithTag:provider.tag adUnit:provider.adUnit network:network];
+        //    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:object.tag adUnit:object.adUnit network:network];
+        //    [self.metricsDict removeObjectForKey:key];
+    });
 }
 
 #pragma mark - Logging Metrics
 
-- (void) logMetricsEvent: (NSString *) eventName value:(id)value tag:(NSString *)tag type:(NSString *)type {
-    if (!value) {
-        HZDLog(@"nil value for key %@",eventName);
-        return;
-    }
-    
-    BOOL validClass = [value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSString class]];
-    NSParameterAssert(validClass);
-    
-    NSMutableDictionary *d = [self getMetricsForTag:tag type:type];
-    d[eventName] = value;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
-                                                        object:nil
-                                                      userInfo:nil];
+- (void) logMetricsEvent: (NSString *) eventName value:(id)value withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
+    ensureMainQueue(^{
+        if (!value) {
+            HZDLog(@"nil value for key %@",eventName);
+            return;
+        }
+
+        BOOL validClass = [value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSString class]];
+        NSParameterAssert(validClass);
+
+        NSMutableDictionary *d = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network];
+        d[eventName] = value;
+    });
 }
 
-- (void) logFetchTimeForTag: (NSString *) tag type:(NSString *) type {
-    self.fetchCalledTime = CACurrentMediaTime();
-    [self logMetricsEvent:@"fetch" value:@1 tag:tag type:type];
+- (void) logFetchTimeWithObject:(id <HZMetricsProvider>)provider network:(NSString *)network {
+    ensureMainQueue(^{
+        self.fetchCalledTime = CACurrentMediaTime();
+        [self logMetricsEvent:@"fetch" value:@1 withProvider:provider network:network];
+    });
 }
 
-- (void) logTimeSinceFetchFor:(NSString *)eventName tag:(NSString *)tag type:(NSString *)type{
-    CFTimeInterval currentTime = CACurrentMediaTime();
-    int64_t elapsedtimeSinceFetchMiliseconds = lround((currentTime - self.fetchCalledTime)*1000);
-    [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMiliseconds) tag:tag type:type];
+- (void) logTimeSinceFetchFor:(NSString *)eventName withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
+    ensureMainQueue(^{
+        int64_t elapsedtimeSinceFetchMilliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
+        [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMilliseconds) withProvider:provider network:network];
+    });
 }
 
-- (void) logShowAdForTag:(NSString *)tag type:(NSString *)type{
-    [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad_called" value:@1 tag:tag type:type];
-    self.showAdCalledTime = CACurrentMediaTime();
-    int64_t elapsedtimeSinceShowMiliseconds = lround((self.showAdCalledTime - self.fetchCalledTime)*1000);
-    [self logMetricsEvent:kShowAdTimeSincePreviousRelevantFetchKey value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
+- (void) logShowAdWithObject:(id <HZMetricsProvider>)provider network:(NSString *)network{
+    ensureMainQueue(^{
+        [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad_called" value:@1 withProvider:provider network:network];
+        self.showAdCalledTime = CACurrentMediaTime();
+        int64_t elapsedtimeSinceShowMilliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
+        [self logMetricsEvent:kShowAdTimeSincePreviousRelevantFetchKey value:@(elapsedtimeSinceShowMilliseconds) withProvider:provider network:network];
+    });
 }
 
-- (void) logTimeSinceShowAdFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type{
-    CFTimeInterval currentTime = CACurrentMediaTime();
-    int64_t elapsedtimeSinceShowMiliseconds = lround((currentTime - self.showAdCalledTime)*1000);
-    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
+- (void) logTimeSinceShowAdFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
+    ensureMainQueue(^{
+        int64_t elapsedtimeSinceShowMilliseconds = millisecondsSinceCFTimeInterval(self.showAdCalledTime);
+        [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMilliseconds) withProvider:provider network:network];
+    });
 }
 
-- (void) logDownloadPercentageFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type{
-    NSNumber *downloadPercentage = [self getMetricsForTag:tag type:type][kMetricDownloadPercentageKey];
-    if (downloadPercentage) { // If we aren't downloading a video, don't log anything
-        [self logMetricsEvent:eventname value:downloadPercentage tag:tag type:type];
-    }
+- (void) logDownloadPercentageFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
+    ensureMainQueue(^{
+        NSNumber *downloadPercentage = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network][kMetricDownloadPercentageKey];
+        if (downloadPercentage) { // If we aren't downloading a video, don't log anything
+            [self logMetricsEvent:eventname value:downloadPercentage withProvider:provider network:network];
+        }
+    });
 }
 
-- (void) logTimeSinceStartFor:(NSString *)eventname tag:(NSString *)tag type:(NSString *)type {
-    CFTimeInterval currentTime = CACurrentMediaTime();
-    int64_t elapsedtimeSinceShowMiliseconds = lround((currentTime - self.startTime)*1000);
-    [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) tag:tag type:type];
+- (void) logTimeSinceStartFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
+    ensureMainQueue(^{
+        int64_t elapsedtimeSinceShowMilliseconds = millisecondsSinceCFTimeInterval(self.startTime);
+        [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMilliseconds) withProvider:provider network:network];
+    });
 }
 
-- (void)logIsAvailable:(BOOL)isAvailable tag:(NSString *)tag type:(NSString *)type {
-    if (tag == nil ) tag = @"default";
-    NSParameterAssert(type);
-    
-    
-    if (isAvailable) {
-        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableStatusKey value:@"is_available" tag:tag type:type];
-    } else {
-        NSDictionary *const currentMetric = [self getMetricsForTag:tag type:type];
-        [self logMetricsEvent:kIsAvailableStatusKey value:metricFailureReason(currentMetric) tag:tag type:type];
-    }
+- (void)logIsAvailable:(BOOL)isAvailable withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
+    ensureMainQueue(^{
+        if (isAvailable) {
+            [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableStatusKey value:@"is_available" withProvider:provider network:network];
+        } else {
+            NSDictionary *const currentMetric = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network];
+            [self logMetricsEvent:kIsAvailableStatusKey value:metricFailureReason(currentMetric) withProvider:provider network:network];
+        }
+    });
 }
 
 // This isn't actually a metric, but the metric dictionary is a useful place to store the current download percentage for that video ad.
-- (void)setDownloadPercentage:(int)downloadPercentage tag:(NSString *)tag type:(NSString *)type {
-    [self logMetricsEvent:kMetricDownloadPercentageKey value:@(downloadPercentage) tag:tag type:type];
+- (void)setDownloadPercentage:(int)downloadPercentage withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
+    ensureMainQueue(^{
+        [self logMetricsEvent:kMetricDownloadPercentageKey value:@(downloadPercentage) withProvider:provider network:network];
+    });
 }
 
 + (NSDictionary *) staticValuesDict {

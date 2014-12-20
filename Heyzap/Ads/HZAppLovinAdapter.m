@@ -8,6 +8,8 @@
 
 #import "HZAppLovinAdapter.h"
 #import "HZMediationConstants.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 #import "HZDictionaryUtils.h"
 #import "HZAppLovinDelegate.h"
@@ -155,6 +157,7 @@
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
     if (type == HZAdTypeIncentivized) {
+        self.currentIncentivizedAd.adDisplayDelegate = self.incentivizedDelegate;
         [self.currentIncentivizedAd showOver:[[UIApplication sharedApplication] keyWindow]
                                    andNotify:self.incentivizedDelegate];
     } else {
@@ -163,6 +166,9 @@
         interstitial.adVideoPlaybackDelegate = self.interstitialDelegate;
         [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
     }
+
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 #pragma mark - AppLovinDelegateReceiver
@@ -208,10 +214,12 @@
 
 - (void)didClickAd
 {
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
 }
 - (void)didDismissAd
 {
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
 }
 

@@ -74,7 +74,7 @@ return nil; \
             if (adapter
                 && [adapter isSDKAvailable]
                 && [setupMediators containsObject:[adapter sharedInstance]]
-                && [[adapter sharedInstance] supportsAdType:adType]) {
+                && [(HZBaseAdapter *)[adapter sharedInstance] supportsAdType:adType]) {
                 
                 [adapters addObject:[adapter sharedInstance]];
                 
@@ -99,7 +99,17 @@ return nil; \
     NSArray *preferredMediatorList = [self.chosenAdapters array];
     
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        return [adapter hasAdForType:self.adType tag:self.tag];
+        BOOL hasAd = [adapter hasAdForType:self.adType tag:self.tag];
+        if (!hasAd) {
+            if ([adapter supportedAdFormats] & self.adType) {
+                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoAdAvailableValue withProvider:self network:[adapter name]];
+            } else {
+                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndNotAFetchableAdUnitValue withProvider:self network:[adapter name]];
+            }
+        } else {
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:self network:[adapter name]];
+        }
+        return hasAd;
     }];
     
     if (idx != NSNotFound) {
@@ -107,6 +117,10 @@ return nil; \
     } else {
         return nil;
     }
+}
+
+- (NSString *) adUnit {
+    return NSStringFromAdType(self.adType);
 }
 
 #pragma mark - Reporting Events to the server

@@ -11,21 +11,23 @@
 @interface HZMetricsKey()
 
 @property (nonatomic) NSString *tag;
-@property (nonatomic) NSString *adType;
+@property (nonatomic) NSString *adUnit;
 
 @end
 
 @implementation HZMetricsKey
 
-- (instancetype)initWithTag:(NSString *)tag type:(NSString *)adType
+- (instancetype)initWithTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network
 {
     NSParameterAssert(tag);
-    NSParameterAssert(adType);
+    NSParameterAssert(adUnit);
+    NSParameterAssert(network);
     
     self = [super init];
     if (self) {
         _tag = tag;
-        _adType = adType;
+        _adUnit = adUnit;
+        _network = network;
     }
     return self;
 }
@@ -42,12 +44,13 @@
     }
     HZMetricsKey *other = object;
     return [other.tag isEqualToString:self.tag]
-        && [other.adType isEqualToString:self.adType];
+        && [other.adUnit isEqualToString:self.adUnit]
+        && [other.network isEqualToString:self.network];
 }
 
 - (NSUInteger)hash
 {
-    return self.tag.hash ^ self.adType.hash;
+    return self.tag.hash ^ self.adUnit.hash ^ self.network.hash;
 }
 
 - (instancetype)copyWithZone:(NSZone *)zone
@@ -59,8 +62,8 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"HZMetricsKey - tag = %@ adType = %@",
-            self.tag,self.adType];
+    return [NSString stringWithFormat:@"HZMetricsKey - tag = %@ adUnit = %@ network = %@",
+            self.tag,self.adUnit,self.network];
 }
 
 @end

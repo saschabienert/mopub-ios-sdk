@@ -10,9 +10,8 @@
 #import <UIKit/UIKit.h>
 #import "HeyzapAds.h"
 #import "HZAdsManager.h"
-
+#import "HZUtils.h"
 #import "HZDevice.h"
-#import "HZMetrics.h"
 
 #define kHZAdRetries 3
 
@@ -28,8 +27,6 @@
                  auctionType:(HZAuctionType)auctionType
          andAdditionalParams:(NSDictionary *)additionalParams {
     
-    [[HZMetrics sharedInstance] logMetricsEvent:@"ad_unit" value:adUnit tag:tag type:adUnit];
-    
     self = [super init];
     if (self) {
         _requestID = [NSUUID UUID];
@@ -39,7 +36,7 @@
         _tag = tag != nil ? tag : [HeyzapAds defaultTagName];
         _retriesRemaining = kHZAdRetries;
         
-        NSString *internetStatus = [[HZDevice currentDevice] HZConnectivityType] ?: @"no_internet";
+        NSString *internetStatus = [HZUtils internetStatus];
         NSNumber *diskSpaceInBytes = [NSNumber numberWithUnsignedLongLong:[[HZDevice currentDevice] hzGetFreeDiskspace]];
         
         UIInterfaceOrientation deviceOrientation = [[UIApplication sharedApplication] statusBarOrientation];

@@ -13,6 +13,7 @@
 #import "HZInterstitialAd.h"
 #import "HZMetrics.h"
 #import "HZUtils.h"
+#import "HZEnums.h"
 
 @interface HZAdInterstitialViewController()
 
@@ -31,7 +32,7 @@
         self.webview.actionDelegate = self;
         self.webview.backgroundColor = [UIColor clearColor];
         [self.webview setHTML: self.ad.HTMLContent];
-        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:@"fully-cached" tag:self.ad.tag type:self.ad.adUnit];
+        [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
     }
     
     return self;
@@ -100,13 +101,13 @@
 - (void) onActionCompleted: (id) sender {}
 
 - (void) onActionError: (id) sender {
-    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue tag:self.ad.tag type:self.ad.adUnit];
+    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdFailedToLoadValue withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
     
     [self hide];
 }
 
 - (void) onActionHide: (id) sender {
-    [[HZMetrics sharedInstance] logMetricsEvent:@"close_clicked" value:@1 tag:self.ad.tag type:self.ad.adUnit];
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
     [self hide];
 }
 

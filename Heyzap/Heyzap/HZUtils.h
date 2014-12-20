@@ -31,6 +31,7 @@ char *HZNewBase64Encode(
 + (NSMutableDictionary *)hzQueryStringToDictionary:(NSString *)string;
 + (void) setPublisherID: (NSString *) publisherID;
 + (NSString *) publisherID;
++ (NSString *) internetStatus;
 
 NSArray *hzMap(NSArray *array, id (^block)(id object));
 
@@ -44,5 +45,7 @@ BOOL hziOS8Plus(void);
  *  @return The value of the string constant, if found, otherwise `nil`.
  */
 NSString *hzLookupStringConstant(NSString *constantName);
+
+int64_t millisecondsSinceCFTimeInterval(CFTimeInterval startTime);
 
 @end

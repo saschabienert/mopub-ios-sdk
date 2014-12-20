@@ -12,6 +12,8 @@
 #import "HZDictionaryUtils.h"
 #import "HZVungleSDK.h"
 #import "HZUtils.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 const NSString* HZVunglePlayAdOptionKeyIncentivized        = @"incentivized";
 const NSString* HZVunglePlayAdOptionKeyShowClose           = @"showClose";
@@ -141,6 +143,9 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
         self.isShowingIncentivized = YES;
         [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyIncentivized: @1}];
     }
+
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 #pragma mark - Vungle Delegate
@@ -152,8 +157,10 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     }
     
     if (willPresentProductSheet) {
+        [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
         [self.delegate adapterWasClicked:self];
     } else {
+        [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
         [self.delegate adapterDidFinishPlayingAudio:self];
         [self.delegate adapterDidDismissAd:self];
     }
@@ -163,6 +170,7 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 
 - (void)vungleSDKwillCloseProductSheet:(id)productSheet
 {
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
 }

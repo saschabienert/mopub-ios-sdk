@@ -9,6 +9,7 @@
 #import "HZUtils.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "HZDevice.h"
+#import "HZMetrics.h"
 
 
 static NSString *HZUtilsDeviceID;
@@ -241,6 +242,10 @@ char *HZNewBase64Encode(
 	return [HZUtils hzQueryStringToDictionary:[url query]];
 }
 
++ (NSString *)internetStatus {
+    return [[HZDevice currentDevice] HZConnectivityType] ?: kNoInternet;
+}
+
 NSArray *hzMap(NSArray *array, id (^block)(id object)) {
     NSMutableArray *newArray = [[NSMutableArray alloc] initWithCapacity:array.count];
     for (id obj in array) {
@@ -257,5 +262,11 @@ NSString *hzLookupStringConstant(NSString *constantName) {
     void ** dataPtr = CFBundleGetDataPointerForName(CFBundleGetMainBundle(), (__bridge CFStringRef)constantName);
     return (__bridge NSString *)(dataPtr ? *dataPtr : nil);
 }
+
+int64_t millisecondsSinceCFTimeInterval(CFTimeInterval startTime) {
+    CFTimeInterval const currentTime = CACurrentMediaTime();
+    return lround((currentTime - startTime) * 1000);
+}
+
 
 @end

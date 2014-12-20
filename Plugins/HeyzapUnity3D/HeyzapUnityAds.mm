@@ -173,4 +173,8 @@ extern "C" {
         NSString *userID = (identifier == "") ? nil : [NSString stringWithUTF8String: identifier];
         return [HZIncentivizedAd setUserIdentifier: userID];
      }
+
+     void hz_ads_show_mediation_debug_view_controller() {
+        [HeyzapAds presentMediationDebugViewController];
+     }
 }

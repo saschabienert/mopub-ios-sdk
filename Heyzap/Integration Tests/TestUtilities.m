@@ -8,6 +8,7 @@
 
 #import "TestUtilities.h"
 #import "SLLogger.h"
+#import "HZDispatch.h"
 
 @implementation TestUtilities
 
@@ -20,7 +21,7 @@ void waitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
     while (true) {
         
         __block BOOL waitCondition = NO;
-        dispatchSyncMainQueueIfNecessary(^{
+        ensureMainQueue(^{
             waitCondition = waitBlock();
         });
         
@@ -34,18 +35,6 @@ void waitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
             [NSThread sleepForTimeInterval:sleepInterval];
             timeWaited += sleepInterval;
         }
-    }
-}
-
-void dispatchSyncMainQueueIfNecessary(void (^block)(void))
-{
-    NSCParameterAssert(block);
-    if ([NSThread isMainThread]) {
-        block();
-    } else {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            block();
-        });
     }
 }
 

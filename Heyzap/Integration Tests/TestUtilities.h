@@ -18,11 +18,4 @@
  */
 void waitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout);
 
-/**
- *  If not on the main queue, executes the block on the main queue and waits for it to finish. If on the main queue, just executes the block.
- *
- *  @param block The block to execute. Must not be NULL.
- */
-void dispatchSyncMainQueueIfNecessary(void (^block)(void));
-
 @end

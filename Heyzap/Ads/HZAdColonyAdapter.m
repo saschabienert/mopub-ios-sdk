@@ -10,6 +10,8 @@
 #import "HZAdColony.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 #import <UIKit/UIKit.h>
 
@@ -148,6 +150,9 @@
     } else {
         [HZAdColony playVideoAdForZone:self.interstitialZoneID withDelegate:self];
     }
+
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType
@@ -202,6 +207,7 @@
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
         }
     }
+    // unfortunately, adcolony doesn't tell us whether the ad was clicked or dismissed
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
 }
