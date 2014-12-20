@@ -235,10 +235,6 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 
         NSMutableDictionary *d = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network];
         d[eventName] = value;
-
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"HZMetricsCached"
-                                                            object:nil
-                                                          userInfo:nil];
     });
 }
 
@@ -251,8 +247,8 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 
 - (void) logTimeSinceFetchFor:(NSString *)eventName withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
     ensureMainQueue(^{
-        int64_t elapsedtimeSinceFetchMiliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
-        [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMiliseconds) withProvider:provider network:network];
+        int64_t elapsedtimeSinceFetchMilliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
+        [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMilliseconds) withProvider:provider network:network];
     });
 }
 
@@ -260,15 +256,15 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
     ensureMainQueue(^{
         [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad_called" value:@1 withProvider:provider network:network];
         self.showAdCalledTime = CACurrentMediaTime();
-        int64_t elapsedtimeSinceShowMiliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
-        [self logMetricsEvent:kShowAdTimeSincePreviousRelevantFetchKey value:@(elapsedtimeSinceShowMiliseconds) withProvider:provider network:network];
+        int64_t elapsedtimeSinceShowMilliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
+        [self logMetricsEvent:kShowAdTimeSincePreviousRelevantFetchKey value:@(elapsedtimeSinceShowMilliseconds) withProvider:provider network:network];
     });
 }
 
 - (void) logTimeSinceShowAdFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
     ensureMainQueue(^{
-        int64_t elapsedtimeSinceShowMiliseconds = millisecondsSinceCFTimeInterval(self.showAdCalledTime);
-        [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withProvider:provider network:network];
+        int64_t elapsedtimeSinceShowMilliseconds = millisecondsSinceCFTimeInterval(self.showAdCalledTime);
+        [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMilliseconds) withProvider:provider network:network];
     });
 }
 
@@ -283,8 +279,8 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 
 - (void) logTimeSinceStartFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
     ensureMainQueue(^{
-        int64_t elapsedtimeSinceShowMiliseconds = millisecondsSinceCFTimeInterval(self.startTime);
-        [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMiliseconds) withProvider:provider network:network];
+        int64_t elapsedtimeSinceShowMilliseconds = millisecondsSinceCFTimeInterval(self.startTime);
+        [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMilliseconds) withProvider:provider network:network];
     });
 }
 
