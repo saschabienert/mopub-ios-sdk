@@ -111,7 +111,7 @@ return nil; \
 
 #pragma mark - Reporting Events to the server
 
-NSString *const kHZImpressionIDKey = @"tracking_id";
+NSString *const kHZImpressionIDKey = @"mediation_id";
 NSString *const kHZNetworkKey = @"network";
 NSString *const kHZNetworkVersionKey = @"network_version";
 /**
