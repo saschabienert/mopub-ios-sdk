@@ -129,6 +129,7 @@ NSString *const kHZOrdinalKey = @"ordinal";
         NSNumber *const success = (adapter == [adapterList lastObject]) ? @1 : @0; // Last adapter was successful
         [[HZMediationAPIClient sharedClient] post:@"fetch"
                                        withParams:@{@"success": success,
+                                                    kHZImpressionIDKey : self.impressionID,
                                                     kHZOrdinalKey : @(idx),
                                                     kHZNetworkKey : [adapter name],
                                                     kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
