@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Clear out the integrationTestResults folder
 rm -rf integrationTestResults/*
 

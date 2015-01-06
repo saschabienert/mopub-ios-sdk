@@ -1,3 +1,5 @@
+#!/bin/sh
+
 OS_VERSION=${1-"8.1"}
 
 echo "Using $OS_VERSION"
