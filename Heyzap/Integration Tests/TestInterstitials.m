@@ -104,8 +104,8 @@
     
     SLAssertNoThrow([verify(delegate) didShowAdWithTag:@"default"], @"Delegate should get didShowAdWithTag callback");
     
-    SLElement *closeButton = [SLElement elementWithAccessibilityLabel:@"Close Ad"];
-    [closeButton tap];
+    SLElement *closeButton = [self getCloseButton];
+    [UIAElement(closeButton) tap];
     
     [self wait:1]; // Wait for hide animation to complete.
     SLAssertNoThrow([verify(delegate) didHideAdWithTag:@"default"], @"Delegate should get didHideAd callback");
@@ -155,12 +155,28 @@
     SLElement *skipButton = [SLElement elementWithAccessibilityLabel:@"skip"]; // Need to give this a label.
     [UIAElement(skipButton) tap];
     
-    SLElement *closeButton = [SLElement elementWithAccessibilityLabel:@"Close Ad"];
-    [closeButton tap];
+    SLElement *closeButton = [self getCloseButton];
+    [UIAElement(closeButton) tap];
     
     [self wait:1]; // Wait for hide animation to complete.
     SLAssertNoThrow([verify(delegate) didHideAdWithTag:@"default"], @"Delegate should get didHideAd callback");
     SLAssertNoThrow([verify(delegate) didFinishAudio], @"Delegate should get didFinishAudio callback");
+}
+
+/**
+ *  Finds the one of the two types of close buttons in our ads
+ *
+ *  (The old ads use an <img> with alt attribute; the new ads use an icon font).
+ *
+ *  @return The SLElement for the close button.
+ */
+- (SLElement *)getCloseButton {
+    SLElement *test = [SLElement elementWithAccessibilityLabel:nil value:@"" traits:UIAccessibilityTraitLink];
+    if (test.isValid) {
+        return test;
+    } else {
+        return [SLElement elementWithAccessibilityLabel:@"Close Ad"];
+    }
 }
 
 
