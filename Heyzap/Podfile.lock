@@ -1,5 +1,5 @@
 PODS:
-  - AdColony (2.4.12)
+  - AdColony (2.4.13)
   - AppLovin (2.5.3)
   - ChartboostSDK (5.0.3)
   - Google-AdMob-Ads-SDK (6.12.2)
@@ -11,8 +11,8 @@ PODS:
     - OHHTTPStubs/Core (= 3.1.10)
   - OHHTTPStubs/Core (3.1.10)
   - Subliminal (1.1.0)
-  - UnityAds (1.3.8)
-  - VungleAdvertiserSDK (3.0.10)
+  - UnityAds (1.3.10)
+  - VungleAdvertiserSDK (3.0.11)
 
 DEPENDENCIES:
   - AdColony
@@ -32,7 +32,7 @@ EXTERNAL SOURCES:
     :git: https://github.com/inkling/Subliminal.git
 
 SPEC CHECKSUMS:
-  AdColony: e6d8397d198b9f2659059747261d554f251104cb
+  AdColony: 8deebb88fa526736ffc464810233a45287f1650a
   AppLovin: 72a74516437877d23615c9a32efdae1901fe44fb
   ChartboostSDK: b7ba4d09bbe76615f42317db5d9fd93fc3b37ebc
   Google-AdMob-Ads-SDK: 9776de20c7904bd29dc37f81e24707cdee9c706c
@@ -41,7 +41,7 @@ SPEC CHECKSUMS:
   OCMockito: 57b8c4bb54ff3a4a14eb2174f9e57faf9f56efb6
   OHHTTPStubs: 2038e929b6abb94881000524c1cb4aba0a1bb4a2
   Subliminal: 3fa4291de86aff7a60b799b8a1911311e513e396
-  UnityAds: 75f8b7da6f604d604323939cf470cfb90b0c91e9
-  VungleAdvertiserSDK: 28b0b599a406f093609f01f06da729fec7de4d82
+  UnityAds: f39d69424ff7d3269b6e21a6bce84acba376c1d1
+  VungleAdvertiserSDK: e48a6e1579d615c8d7d886dd0cc09d1fe2f10557
 
 COCOAPODS: 0.35.0
