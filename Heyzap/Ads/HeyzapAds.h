@@ -40,6 +40,7 @@
 #import "HZNativeAdController.h"
 #import "HZNativeAdCollection.h"
 #import "HZNativeAd.h"
+#import "HZNativeAdImage.h"
 
 #ifndef NS_ENUM
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
