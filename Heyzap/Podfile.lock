@@ -1,6 +1,6 @@
 PODS:
   - AdColony (2.4.13)
-  - AppLovin (2.5.3)
+  - AppLovin (2.5.4)
   - ChartboostSDK (5.0.3)
   - Google-AdMob-Ads-SDK (6.12.2)
   - Kiwi (2.3.1)
@@ -33,7 +33,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AdColony: 8deebb88fa526736ffc464810233a45287f1650a
-  AppLovin: 72a74516437877d23615c9a32efdae1901fe44fb
+  AppLovin: fdbeb15795c675c8c847b63876150d3c7806b484
   ChartboostSDK: b7ba4d09bbe76615f42317db5d9fd93fc3b37ebc
   Google-AdMob-Ads-SDK: 9776de20c7904bd29dc37f81e24707cdee9c706c
   Kiwi: 73e1400209055ee9c8ba78c6012b6b642d0fb9f7
