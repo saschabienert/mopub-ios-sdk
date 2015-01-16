@@ -98,6 +98,8 @@
     return nil;
 }
 
+NSString * const kHZNetworkName = @"mobile";
+
 - (void)setupUnityAdsWithAppID:(NSString *)appID
                     videoZoneID:(NSString *)videoZoneID
              incentivizedZoneID:(NSString *)incentivizedZoneID
@@ -110,6 +112,9 @@
     
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     
+    if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(setNetworks:)]) { // Asset Store version
+        [[HZUnityAds sharedInstance] setNetworks:kHZNetworkName];
+    }
     [[HZUnityAds sharedInstance] startWithGameId:appID andViewController:vc];
     
     //TODO: set view controller
@@ -133,7 +138,14 @@
             break;
         }
         default: {
-            return [[HZUnityAds sharedInstance] canShowAds];
+            if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(canShowAds)]) { // Regular SDK
+                return [[HZUnityAds sharedInstance] canShowAds];
+            } else if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(canShowAds:)]) { // Asset Store version
+                [[HZUnityAds sharedInstance] setNetwork:kHZNetworkName];
+                return [[HZUnityAds sharedInstance] canShowAds:kHZNetworkName];
+            } else {
+                 @throw [NSException exceptionWithName:@"UnsupportedSDKException" reason:@"This version of UnityAds doesn't respond to canShowAds or canShowAds:(NSString *)network and is not compatible with the Heyzap SDK." userInfo:nil];
+            }
             break;
         }
     }

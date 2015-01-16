@@ -39,11 +39,24 @@
 - (void)setDebugMode:(BOOL)debugMode;
 - (void)setTestMode:(BOOL)testModeEnabled;
 
+// UnityAds is currently distributing a separate version of their SDK from the Unity Asset Store
+// The Asset store version is based off their network-selection branch; see https://github.com/Applifier/unity-ads/tree/network-selection
+// (We need to support both to have a good installation UX)
+
+// **
+// REGULAR SDK ONLY functions
+- (BOOL)canShowAds;
+// ** ASSET STORE SDK ONLY functions
+- (BOOL)canShowAds:(NSString *)network;
+- (void)setNetworks:(NSString *)networks; // Comma separated list of networks
+- (void)setNetwork:(NSString *)network;
+// **
+
 - (BOOL)isDebugMode;
 - (BOOL)startWithGameId:(NSString *)gameId andViewController:(UIViewController *)viewController;
 - (BOOL)startWithGameId:(NSString *)gameId;
 - (BOOL)setViewController:(UIViewController *)viewController;
-- (BOOL)canShowAds;
+
 - (BOOL)canShow;
 - (BOOL)setZone:(NSString *)zoneId;
 - (BOOL)setZone:(NSString *)zoneId withRewardItem:(NSString *)rewardItemKey;
