@@ -141,15 +141,14 @@ char *HZNewBase64Encode(
     
     NSData *data = [string dataUsingEncoding: NSUTF8StringEncoding];
     
-	size_t outputLength;
+	size_t outputLength = 0;
 	char *outputBuffer =
     HZNewBase64Encode([data bytes], [data length], true, &outputLength);
 	
-	NSString *result =
-    [[NSString alloc]
-      initWithBytes:outputBuffer
-      length:outputLength
-      encoding:NSASCIIStringEncoding];
+    NSString *result = outputLength == 0 ? nil : [[NSString alloc]
+                                                  initWithBytes:outputBuffer
+                                                         length:outputLength
+                                                       encoding:NSASCIIStringEncoding];
 	free(outputBuffer);
 	return result;
 }
