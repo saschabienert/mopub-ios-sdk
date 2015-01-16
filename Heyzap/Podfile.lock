@@ -2,6 +2,7 @@ PODS:
   - AdColony (2.4.13)
   - AppLovin (2.5.4)
   - ChartboostSDK (5.0.3)
+  - FacebookAudienceNetwork (3.18.1)
   - Google-AdMob-Ads-SDK (6.12.2)
   - Kiwi (2.3.1)
   - OCHamcrest (4.0.1)
@@ -18,6 +19,7 @@ DEPENDENCIES:
   - AdColony
   - AppLovin
   - ChartboostSDK
+  - FacebookAudienceNetwork
   - Google-AdMob-Ads-SDK
   - Kiwi
   - OCMockito
@@ -35,6 +37,7 @@ SPEC CHECKSUMS:
   AdColony: 8deebb88fa526736ffc464810233a45287f1650a
   AppLovin: fdbeb15795c675c8c847b63876150d3c7806b484
   ChartboostSDK: b7ba4d09bbe76615f42317db5d9fd93fc3b37ebc
+  FacebookAudienceNetwork: 370e33a75dd2f599a52be20f66b717ecab6b1ff9
   Google-AdMob-Ads-SDK: 9776de20c7904bd29dc37f81e24707cdee9c706c
   Kiwi: 73e1400209055ee9c8ba78c6012b6b642d0fb9f7
   OCHamcrest: b464725bbb48d0f1cd9c6f4ec3cb35fe0c4f2b94

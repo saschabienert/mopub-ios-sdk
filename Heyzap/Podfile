@@ -13,6 +13,7 @@ target :MediationTestApp, :exclusive => true do
   pod 'VungleAdvertiserSDK' # In Cocoapods, but outdated. Vendored by Heyzap
   pod 'AppLovin' # Vendored by Heyzap
   pod 'UnityAds' # Vendored by Heyzap
+  pod 'FacebookAudienceNetwork' # Vendored by Heyzap
 end
 
 target :"Ads Tests", :exclusive => true do
