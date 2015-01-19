@@ -16,7 +16,6 @@
 #import "HZAppLovinAdapter.h"
 #import "HZUnityAdsAdapter.h"
 #import "HZCrossPromoAdapter.h"
-#import "HZFacebookAdapter.h"
 
 @implementation HZBaseAdapter
 
@@ -149,8 +148,6 @@
         return [HZCrossPromoAdapter class];
     } else if ([adapterName isEqualToString:kHZAdapterUnityAds]) {
         return [HZUnityAdsAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterFacebook]) {
-        return [HZFacebookAdapter class];
     } else {
         return nil;
     }
@@ -168,7 +165,6 @@
             [HZCrossPromoAdapter class],
             [HZUnityAdsAdapter class],
             [HZCrossPromoAdapter class],
-            [HZFacebookAdapter class],
             nil];
 }
 
