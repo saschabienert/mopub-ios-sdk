@@ -334,6 +334,8 @@
 		E626220B19E7076A0094957B /* HZTestActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626220A19E7076A0094957B /* HZTestActivityViewController.m */; };
 		E626228619F5BAD40094957B /* HZTestActivityNetworkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */; };
 		E626228819F5BB6C0094957B /* HZTestActivityNetworkViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */; };
+		E6A41BE91A1D78EB00C80718 /* HZMetricsAdStub.h in Headers */ = {isa = PBXBuildFile; fileRef = E6A41BE81A1D78EB00C80718 /* HZMetricsAdStub.h */; };
+		E6A41BEB1A1D7B1E00C80718 /* HZMetricsAdStub.m in Sources */ = {isa = PBXBuildFile; fileRef = E6A41BEA1A1D7B1E00C80718 /* HZMetricsAdStub.m */; };
 		E6DBD5FD1A44AA4F00D9999D /* HZFacebookAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = E6DBD5FB1A44AA4F00D9999D /* HZFacebookAdapter.h */; };
 		E6DBD5FE1A44AA4F00D9999D /* HZFacebookAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = E6DBD5FC1A44AA4F00D9999D /* HZFacebookAdapter.m */; };
 		E6DBD6051A44AAEA00D9999D /* HZFBInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = E6DBD6031A44AAEA00D9999D /* HZFBInterstitialAd.h */; };
@@ -666,6 +668,8 @@
 		E626220A19E7076A0094957B /* HZTestActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityViewController.m; sourceTree = "<group>"; };
 		E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityNetworkViewController.m; sourceTree = "<group>"; };
 		E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZTestActivityNetworkViewController.h; sourceTree = "<group>"; };
+		E6A41BE81A1D78EB00C80718 /* HZMetricsAdStub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMetricsAdStub.h; sourceTree = "<group>"; };
+		E6A41BEA1A1D7B1E00C80718 /* HZMetricsAdStub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMetricsAdStub.m; sourceTree = "<group>"; };
 		E6DBD5FB1A44AA4F00D9999D /* HZFacebookAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZFacebookAdapter.h; sourceTree = "<group>"; };
 		E6DBD5FC1A44AA4F00D9999D /* HZFacebookAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZFacebookAdapter.m; sourceTree = "<group>"; };
 		E6DBD6031A44AAEA00D9999D /* HZFBInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZFBInterstitialAd.h; sourceTree = "<group>"; };
