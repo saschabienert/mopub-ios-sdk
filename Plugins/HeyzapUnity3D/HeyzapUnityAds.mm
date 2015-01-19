@@ -89,88 +89,81 @@ static HeyzapUnityAdDelegate *HZIncentivizedDelegate = nil;
 static HeyzapUnityAdDelegate *HZVideoDelegate = nil;
 
 extern "C" {
-    void hz_ads_start(int flags) {
-        HeyzapUnityAdDelegate *delegate = [[HeyzapUnityAdDelegate alloc] init];
-        [HeyzapAds startWithOptions: flags andFramework: @"unity3d"];
-        [HeyzapAds setDebugLevel: HZDebugLevelVerbose];
-        [HeyzapAds setFramework: @"unity3d"];
-        [HZInterstitialAd setDelegate: delegate];
-        [HZVideoAd setDelegate: delegate];
-        [HZIncentivizedAd setDelegate: delegate];
-    }
-
-     void hz_ads_start_app(const char *publisher_id, int flags) {
+    void hz_ads_start_app(const char *publisher_id, int flags) {
         NSString *publisherID = [NSString stringWithUTF8String: publisher_id];
         
         [HeyzapAds startWithPublisherID: publisherID andOptions: flags andFramework: @"unity3d"];
         [HeyzapAds setDebugLevel: HZDebugLevelVerbose];
-
+        
         HZIncentivizedDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INCENTIVIZED_KLASS];
         [HZIncentivizedAd setDelegate: HZIncentivizedDelegate];
-
+        
         HZInterstitialDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INTERSTITIAL_KLASS];
         [HZInterstitialAd setDelegate: HZInterstitialDelegate];
         
         HZVideoDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_VIDEO_KLASS];
         [HZVideoAd setDelegate: HZVideoDelegate];
-     }
-
-     //Interstitial
-
-     void hz_ads_show_interstitial(const char *tag) {
-         [HZInterstitialAd showForTag: [NSString stringWithUTF8String: tag]];
-     }
-
-     void hz_ads_hide_interstitial(void) {
-         //[HZInterstitialAd hide];
-     }
-
-     void hz_ads_fetch_interstitial(const char *tag) {
-         [HZInterstitialAd fetchForTag: [NSString stringWithUTF8String: tag]];
-     }
-
-     bool hz_ads_interstitial_is_available(const char *tag) {
-         return [HZInterstitialAd isAvailableForTag: [NSString stringWithUTF8String: tag]];
-     }
-
-     // Video
-
-     void hz_ads_show_video(const char *tag) {
-         [HZVideoAd showForTag: [NSString stringWithUTF8String: tag]];
-     }
-
-     void hz_ads_hide_video(void) {
-         //[HZVideoAd hide];
-     }
-
-     void hz_ads_fetch_video(const char *tag) {
-         [HZVideoAd fetchForTag: [NSString stringWithUTF8String: tag]];
-     }
-
-     bool hz_ads_video_is_available(const char *tag) {
+    }
+    
+    //Interstitial
+    
+    void hz_ads_show_interstitial(const char *tag) {
+        [HZInterstitialAd showForTag: [NSString stringWithUTF8String: tag]];
+    }
+    
+    void hz_ads_hide_interstitial(void) {
+        //[HZInterstitialAd hide];
+    }
+    
+    void hz_ads_fetch_interstitial(const char *tag) {
+        [HZInterstitialAd fetchForTag: [NSString stringWithUTF8String: tag]];
+    }
+    
+    bool hz_ads_interstitial_is_available(const char *tag) {
+        return [HZInterstitialAd isAvailableForTag: [NSString stringWithUTF8String: tag]];
+    }
+    
+    // Video
+    
+    void hz_ads_show_video(const char *tag) {
+        [HZVideoAd showForTag: [NSString stringWithUTF8String: tag]];
+    }
+    
+    void hz_ads_hide_video(void) {
+        //[HZVideoAd hide];
+    }
+    
+    void hz_ads_fetch_video(const char *tag) {
+        [HZVideoAd fetchForTag: [NSString stringWithUTF8String: tag]];
+    }
+    
+    bool hz_ads_video_is_available(const char *tag) {
         return [HZVideoAd isAvailable];
-     }
-
-     // Incentivized
-
-     void hz_ads_show_incentivized(const char *tag) {
-         [HZIncentivizedAd showForTag: [NSString stringWithUTF8String: tag]];
-     }
-
-     void hz_ads_hide_incentivized() {
-         //[HZIncentivizedAd hide];
-     }
-
-     void hz_ads_fetch_incentivized(const char *tag) {
+    }
+    
+    // Incentivized
+    
+    void hz_ads_show_incentivized(const char *tag) {
+        [HZIncentivizedAd showForTag: [NSString stringWithUTF8String: tag]];
+    }
+    
+    void hz_ads_hide_incentivized() {
+        //[HZIncentivizedAd hide];
+    }
+    
+    void hz_ads_fetch_incentivized(const char *tag) {
         [HZIncentivizedAd fetchForTag: [NSString stringWithUTF8String: tag]];
-     }
-
-     bool hz_ads_incentivized_is_available(const char *tag) {
+    }
+    
+    bool hz_ads_incentivized_is_available(const char *tag) {
         return [HZIncentivizedAd isAvailableForTag: [NSString stringWithUTF8String: tag]];
-     }
-
-     void hz_ads_incentivized_set_user_identifier(const char *identifier) {
-        NSString *userID = (identifier == "") ? nil : [NSString stringWithUTF8String: identifier];
+    }
+    
+    void hz_ads_incentivized_set_user_identifier(const char *identifier) {
+        NSString *userID = [NSString stringWithUTF8String:identifier];
+        if ([userID isEqualToString:@""]) {
+            userID = nil;
+        }
         return [HZIncentivizedAd setUserIdentifier: userID];
      }
 
