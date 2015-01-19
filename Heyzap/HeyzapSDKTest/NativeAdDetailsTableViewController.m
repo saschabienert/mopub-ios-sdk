@@ -8,6 +8,8 @@
 
 #import "NativeAdDetailsTableViewController.h"
 #import "HZNativeAd.h"
+#import "HZImageView.h"
+#import "HZNativeAdImage.h"
 
 @interface NativeAdDetailsTableViewController () <SKStoreProductViewControllerDelegate>
 
@@ -16,6 +18,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *categoryLabel;
 @property (weak, nonatomic) IBOutlet UILabel *developerLabel;
 @property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;
+@property (weak, nonatomic) IBOutlet HZImageView *landscapeImageView;
+@property (weak, nonatomic) IBOutlet HZImageView *portraitImageView;
 
 
 @end
@@ -31,6 +35,9 @@
     self.categoryLabel.text = self.nativeAd.category;
     self.developerLabel.text = self.nativeAd.developerName;
     self.descriptionLabel.text = self.nativeAd.appDescription;
+    
+    [self.landscapeImageView HZsetImageWithURL:self.nativeAd.landscapeCreative.url];
+    [self.portraitImageView HZsetImageWithURL:self.nativeAd.portraitCreative.url];
 }
 
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {

@@ -13,6 +13,9 @@
 #import "HZLog.h"
 #import "HZStorePresenter.h"
 #import "HZNSURLUtils.h"
+#import "HZNativeAdImage.h"
+#import "HZNativeAdImage_Private.h"
+#import "HZInitMacros.h"
 @import StoreKit;
 
 NSString *const kHZNativeAdCategoryKey = @"category";
@@ -36,13 +39,6 @@ NSString *const kHZNativeAdRatingKey = @"rating";
 @end
 
 @implementation HZNativeAd
-
-#define CHECK_NOT_NIL(value,name) do { \
-if (value == nil) { \
-*error = [NSError errorWithDomain:@"heyzap" code:3 userInfo:@{NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat: @"Missing value: %@",name]}]; \
-return nil; \
-} \
-} while (0)
 
 // Errors *must* have an NSLocalizedFailureReasonKey
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary error:(NSError **)error {
@@ -76,8 +72,18 @@ return nil; \
         _iconURL = [NSURL URLWithString:[HZDictionaryUtils hzObjectForKey:kHZNativeAdIconURLKey ofClass:[NSString class] withDict:publicDictionary]];
         CHECK_NOT_NIL(_iconURL, @"icon URL");
         
+        /// Nullable properties
         
-        // Nullable properties
+        // Large creatives
+        NSError *error;
+        
+        NSDictionary *landscapeImageDict = [HZDictionaryUtils hzObjectForKey:@"landscape_image" ofClass:[NSDictionary class] withDict:publicDictionary];
+        _landscapeCreative = [[HZNativeAdImage alloc] initWithDictionary:landscapeImageDict error:&error];
+        
+        NSDictionary *portraitImageDict = [HZDictionaryUtils hzObjectForKey:@"portrait_image" ofClass:[NSDictionary class] withDict:publicDictionary];
+        _portraitCreative = [[HZNativeAdImage alloc] initWithDictionary:portraitImageDict error:&error];
+        
+        
         _rating = ({
             NSString *ratingString = [HZDictionaryUtils hzObjectForKey:kHZNativeAdRatingKey ofClass:[NSString class] withDict:publicDictionary];
             ratingString ? [NSNumber numberWithFloat:[ratingString floatValue]] : nil;

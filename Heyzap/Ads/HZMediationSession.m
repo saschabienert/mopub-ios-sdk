@@ -74,7 +74,7 @@ return nil; \
             if (adapter
                 && [adapter isSDKAvailable]
                 && [setupMediators containsObject:[adapter sharedInstance]]
-                && [[adapter sharedInstance] supportsAdType:adType]) {
+                && [(HZBaseAdapter *)[adapter sharedInstance] supportsAdType:adType]) {
                 
                 [adapters addObject:[adapter sharedInstance]];
                 
@@ -99,7 +99,17 @@ return nil; \
     NSArray *preferredMediatorList = [self.chosenAdapters array];
     
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        return [adapter hasAdForType:self.adType tag:self.tag];
+        BOOL hasAd = [adapter hasAdForType:self.adType tag:self.tag];
+        if (!hasAd) {
+            if ([adapter supportedAdFormats] & self.adType) {
+                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoAdAvailableValue withProvider:self network:[adapter name]];
+            } else {
+                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndNotAFetchableAdUnitValue withProvider:self network:[adapter name]];
+            }
+        } else {
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:self network:[adapter name]];
+        }
+        return hasAd;
     }];
     
     if (idx != NSNotFound) {
@@ -109,9 +119,13 @@ return nil; \
     }
 }
 
+- (NSString *) adUnit {
+    return NSStringFromAdType(self.adType);
+}
+
 #pragma mark - Reporting Events to the server
 
-NSString *const kHZImpressionIDKey = @"tracking_id";
+NSString *const kHZImpressionIDKey = @"mediation_id";
 NSString *const kHZNetworkKey = @"network";
 NSString *const kHZNetworkVersionKey = @"network_version";
 /**
@@ -129,6 +143,7 @@ NSString *const kHZOrdinalKey = @"ordinal";
         NSNumber *const success = (adapter == [adapterList lastObject]) ? @1 : @0; // Last adapter was successful
         [[HZMediationAPIClient sharedClient] post:@"fetch"
                                        withParams:@{@"success": success,
+                                                    kHZImpressionIDKey : self.impressionID,
                                                     kHZOrdinalKey : @(idx),
                                                     kHZNetworkKey : [adapter name],
                                                     kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
