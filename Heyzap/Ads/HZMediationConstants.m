@@ -24,6 +24,7 @@ NSString * const kHZAdapterHeyzap = @"heyzap";
 NSString * const kHZAdapterCrossPromo = @"heyzap_cross_promo";
 NSString * const kHZAdapterAppLovin = @"applovin";
 NSString * const kHZAdapterUnityAds = @"unityads";
+NSString * const kHZAdapterFacebook = @"facebook";
 
 // Humanized names for known mediators
 NSString * const kHZAdapterVungleHumanized = @"Vungle";
@@ -34,6 +35,7 @@ NSString * const kHZAdapterHeyzapHumanized = @"Heyzap";
 NSString * const kHZAdapterCrossPromoHumanized = @"Heyzap Cross Promotion";
 NSString * const kHZAdapterAppLovinHumanized = @"AppLovin";
 NSString * const kHZAdapterUnityAdsHumanized = @"UnityAds";
+NSString * const kHZAdapterFacebookHumanized = @"Facebook Audience Network";
 
 #define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
 #define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
