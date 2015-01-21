@@ -67,7 +67,7 @@
         [HZHeyzapIncentivizedAd fetchForTag: tag auctionType:HZAuctionTypeMixed completion:completion];
     } else {
         [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeIncentivized
-                                                     tag:[HeyzapAds defaultTagName]
+                                                     tag:tag
                                         additionalParams:nil
                                               completion:completion];
     }
