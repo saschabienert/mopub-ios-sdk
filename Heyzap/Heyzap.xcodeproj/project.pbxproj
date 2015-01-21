@@ -208,6 +208,10 @@
 		50AC60B318FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AC60B118FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m */; };
 		50AC611E18FDD3E70046EBC6 /* HZALAdSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 50AC611C18FDD3E70046EBC6 /* HZALAdSize.h */; };
 		50AC611F18FDD3E70046EBC6 /* HZALAdSize.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AC611D18FDD3E70046EBC6 /* HZALAdSize.m */; };
+		50B03A381A706C2B0086E444 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */; };
+		50B03A391A706C710086E444 /* NativeAdTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455819BE762900C7AEEA /* NativeAdTableViewController.m */; };
+		50B03A3A1A706C710086E444 /* NativeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455D19BE80E100C7AEEA /* NativeTableViewCell.m */; };
+		50B03A3B1A706C710086E444 /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
 		50B46B0D18F862B3005155B8 /* HZAppLovinAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B46B0B18F862B3005155B8 /* HZAppLovinAdapter.h */; };
 		50B46B0E18F862B3005155B8 /* HZAppLovinAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B46B0C18F862B3005155B8 /* HZAppLovinAdapter.m */; };
 		50B46B1118F862DA005155B8 /* HZALSdk.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B46B0F18F862DA005155B8 /* HZALSdk.h */; };
@@ -1726,6 +1730,7 @@
 				5053521118F76550003C531E /* Default@2x.png in Resources */,
 				5053521318F76550003C531E /* Default-568h@2x.png in Resources */,
 				50310F9B1A2E894F00FDC9BC /* Launch Screen.xib in Resources */,
+				50B03A381A706C2B0086E444 /* Storyboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1899,6 +1904,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50B03A391A706C710086E444 /* NativeAdTableViewController.m in Sources */,
+				50B03A3A1A706C710086E444 /* NativeTableViewCell.m in Sources */,
+				50B03A3B1A706C710086E444 /* NativeAdDetailsTableViewController.m in Sources */,
 				505351ED18F76550003C531E /* DeviceInfoViewController.m in Sources */,
 				505351EE18F76550003C531E /* main.m in Sources */,
 				505351EF18F76550003C531E /* NSArrayUtils.m in Sources */,
