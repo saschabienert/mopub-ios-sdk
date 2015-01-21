@@ -44,6 +44,11 @@ return nil; \
 } \
 } while (0)
 
+static CFTimeInterval lastInterstitialVideoShown = 0;
+
++ (void)usedVideoOnlyNetworkForInterstitial {
+    lastInterstitialVideoShown = CFAbsoluteTimeGetCurrent();
+}
 
 - (instancetype)initWithJSON:(NSDictionary *)json setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error
 {
@@ -60,6 +65,12 @@ return nil; \
         _impressionID = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] dict:json error:error];
         CHECK_NOT_NIL(_impressionID);
         
+        
+        const double interstitialVideoIntervalMillis = [[HZDictionaryUtils hzObjectForKey:@"interstitial_video_interval" ofClass:[NSNumber class] default:@(30 * 1000) withDict:json] doubleValue];
+        
+        
+        const CFTimeInterval secondsSinceLastInterstitial = CFAbsoluteTimeGetCurrent() - lastInterstitialVideoShown;
+        const BOOL withinInterval = (secondsSinceLastInterstitial * 1000) > interstitialVideoIntervalMillis || lastInterstitialVideoShown == 0;
             
         // Check error macro for impression ID being nil.
         
@@ -76,9 +87,10 @@ return nil; \
                 && [setupMediators containsObject:[adapter sharedInstance]]
                 && [(HZBaseAdapter *)[adapter sharedInstance] supportsAdType:adType]) {
                 
-                [adapters addObject:[adapter sharedInstance]];
-                
-                
+                const BOOL videoOnly = [(HZBaseAdapter *)[adapter sharedInstance] isVideoOnlyNetwork];
+                if (withinInterval || !videoOnly) {
+                    [adapters addObject:[adapter sharedInstance]];
+                }
             }
         }
         

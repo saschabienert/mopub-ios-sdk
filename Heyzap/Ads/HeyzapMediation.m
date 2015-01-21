@@ -374,6 +374,10 @@ static int totalImpressions = 0;
     
     HZMediationSessionKey *showKey = [key sessionKeyAfterShowing];
     self.sessionDictionary[showKey] = session;
+    
+    if ([adapter isVideoOnlyNetwork] && session.adType == HZAdTypeInterstitial) {
+        [HZMediationSession usedVideoOnlyNetworkForInterstitial];
+    }
 
     [adapter showAdForType:session.adType tag:session.tag];
     [session reportImpressionForAdapter:adapter];

@@ -122,7 +122,11 @@ NSString * const kHZNetworkName = @"mobile";
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeVideo | HZAdTypeIncentivized;
+    return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;
+}
+
+- (BOOL)isVideoOnlyNetwork {
+    return YES;
 }
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
@@ -132,22 +136,14 @@ NSString * const kHZNetworkName = @"mobile";
         NSLog(@"UnityAds reqires a root view controller on the keyWindow to show ads. Make sure [[[UIApplication sharedApplication] keyWindow] rootViewController] does not return `nil`.");
         return NO;
     }
-    switch (type) {
-        case HZAdTypeInterstitial: {
-            return NO;
-            break;
-        }
-        default: {
-            if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(canShowAds)]) { // Regular SDK
-                return [[HZUnityAds sharedInstance] canShowAds];
-            } else if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(canShowAds:)]) { // Asset Store version
-                [[HZUnityAds sharedInstance] setNetwork:kHZNetworkName];
-                return [[HZUnityAds sharedInstance] canShowAds:kHZNetworkName];
-            } else {
-                 @throw [NSException exceptionWithName:@"UnsupportedSDKException" reason:@"This version of UnityAds doesn't respond to canShowAds or canShowAds:(NSString *)network and is not compatible with the Heyzap SDK." userInfo:nil];
-            }
-            break;
-        }
+    
+    if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(canShowAds)]) { // Regular SDK
+        return [[HZUnityAds sharedInstance] canShowAds];
+    } else if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(canShowAds:)]) { // Asset Store version
+        [[HZUnityAds sharedInstance] setNetwork:kHZNetworkName];
+        return [[HZUnityAds sharedInstance] canShowAds:kHZNetworkName];
+    } else {
+        @throw [NSException exceptionWithName:@"UnsupportedSDKException" reason:@"This version of UnityAds doesn't respond to canShowAds or canShowAds:(NSString *)network and is not compatible with the Heyzap SDK." userInfo:nil];
     }
 }
 

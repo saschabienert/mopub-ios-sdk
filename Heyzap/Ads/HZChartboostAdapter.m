@@ -141,6 +141,10 @@
     return HZAdTypeInterstitial | HZAdTypeIncentivized;
 }
 
+- (BOOL)isVideoOnlyNetwork {
+    return NO;
+}
+
 #pragma mark - Chartboost Delegate
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol

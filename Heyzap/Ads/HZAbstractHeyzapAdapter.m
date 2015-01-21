@@ -47,6 +47,10 @@
     return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;
 }
 
+- (BOOL)isVideoOnlyNetwork {
+    return NO;
+}
+
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
     const HZAuctionType auctionType = [self auctionType];
