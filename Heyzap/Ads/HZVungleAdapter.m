@@ -109,7 +109,11 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeIncentivized | HZAdTypeVideo;
+    return HZAdTypeInterstitial | HZAdTypeIncentivized | HZAdTypeVideo;
+}
+
+- (BOOL)isVideoOnlyNetwork {
+    return YES;
 }
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
@@ -137,11 +141,11 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     [self.delegate adapterWillPlayAudio:self];
     
     UIViewController *vc = [self.delegate viewControllerForPresentingAd];
-    if (type == HZAdTypeVideo) {
-        [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyShowClose: @1}];
-    } else if (type == HZAdTypeIncentivized) {
+    if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
         [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyIncentivized: @1}];
+    } else {
+        [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyShowClose: @1}];
     }
 
     self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];

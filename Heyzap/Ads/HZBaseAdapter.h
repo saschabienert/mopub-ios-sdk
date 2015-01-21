@@ -78,6 +78,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 - (HZAdType)supportedAdFormats;
 
+- (BOOL)isVideoOnlyNetwork;
+
 + (NSString *)name;
 
 + (NSString *)humanizedName;

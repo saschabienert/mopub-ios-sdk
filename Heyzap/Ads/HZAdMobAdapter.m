@@ -86,6 +86,10 @@
     return HZAdTypeInterstitial;
 }
 
+- (BOOL)isVideoOnlyNetwork {
+    return NO;
+}
+
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
     NSAssert(self.adUnitID, @"Need an ad unit ID by this point");

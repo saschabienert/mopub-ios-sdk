@@ -36,6 +36,11 @@
 
 - (BOOL)hasAd;
 
+/**
+ *  Call this method when we use a video only network to show an interstitial.
+ */
++ (void)usedVideoOnlyNetworkForInterstitial;
+
 #pragma mark - Reporting Events to the server
 
 - (void)reportSuccessfulFetchUpToAdapter:(HZBaseAdapter *)chosenAdapter;

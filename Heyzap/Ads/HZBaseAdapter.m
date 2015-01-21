@@ -61,6 +61,12 @@
     ABSTRACT_METHOD_ERROR();
 }
 
+- (BOOL)isVideoOnlyNetwork
+{
+    // Return true for video-only networks like Vungle, whose interstitial support is faked via videos.
+    ABSTRACT_METHOD_ERROR();
+}
+
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
     ABSTRACT_METHOD_ERROR();

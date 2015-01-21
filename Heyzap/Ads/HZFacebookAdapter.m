@@ -71,6 +71,10 @@
     return HZAdTypeInterstitial;
 }
 
+- (BOOL)isVideoOnlyNetwork {
+    return NO;
+}
+
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag {
     return type == HZAdTypeInterstitial && self.interstitialAd && self.interstitialAd.isAdValid;
 }
