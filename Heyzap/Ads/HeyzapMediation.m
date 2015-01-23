@@ -320,7 +320,6 @@ NSString * const kHZDataKey = @"data";
             // This adds alot of complexity though, and it causes several minute wait periods for a fetch failure.
             // (This should rarely happen anyway since Heyzap isn't video rate limited).
             if (isRateLimited && fetchedWithinTimeout) {
-                NSLog(@"Not sending success callback because of the timeout");
                 continue;
             }
             
@@ -441,7 +440,7 @@ static int totalImpressions = 0;
 }
 
 - (NSOrderedSet *)availableAdaptersForAdType:(const HZAdType)adType tag:(NSString *)tag {
-    tag = tag ?: [HeyzapAds defaultTagName];
+    NSParameterAssert(tag);
     
     HZMediationSessionKey *const key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:tag];
     HZMediationSession *const session = self.sessionDictionary[key];
