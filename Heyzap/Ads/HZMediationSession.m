@@ -87,15 +87,10 @@ return nil; \
     return self;
 }
 
-- (BOOL)hasAd
-{
-    return [self firstAdapterWithAd] != nil;
-}
-
-- (HZBaseAdapter *)firstAdapterWithAd
+- (HZBaseAdapter *)firstAdapterWithAd:(NSDate *const)lastInterstitialVideoShown
 {
     
-    NSArray *preferredMediatorList = [self.chosenAdapters array];
+    NSArray *preferredMediatorList = [[self availableAdapters:lastInterstitialVideoShown] array];
     
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         BOOL hasAd = [adapter hasAdForType:self.adType tag:self.tag];

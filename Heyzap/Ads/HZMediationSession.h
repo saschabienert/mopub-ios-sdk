@@ -34,9 +34,7 @@
 
 // ** Querying the session **
 
-- (HZBaseAdapter *)firstAdapterWithAd;
-
-- (BOOL)hasAd;
+- (HZBaseAdapter *)firstAdapterWithAd:(NSDate *const)lastInterstitialVideoShown;
 
 /**
  *  Returns the available adapters, taking into account the last time an interstitial ad was served by a video-only network.

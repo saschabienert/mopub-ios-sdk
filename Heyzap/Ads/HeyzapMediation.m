@@ -273,7 +273,7 @@ NSString * const kHZDataKey = @"data";
     // Find the first SDK that has an ad, and use it
     // This means if e.g. the first 2 networks aren't working, we don't have to wait for a timeout to get to the third.
     if (showImmediately) {
-        HZBaseAdapter *adapter = [session firstAdapterWithAd];
+        HZBaseAdapter *adapter = [session firstAdapterWithAd:self.lastInterstitialVideoShownDate];
         if (adapter) {
             if (completion) { completion(YES,nil); }
             [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey];
