@@ -28,6 +28,9 @@
 
 - (BOOL)isAvailableForAdUnitType:(HZAdType)adType tag:(NSString *)tag;
 
+// For use with the test activity.
+- (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag network:(HZBaseAdapter *const)network;
+
 // Need Delegate API for getting the current view controller.
 // We can handle the common scenarios by recursively finding the right view controller.
 
