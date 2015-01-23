@@ -117,20 +117,31 @@ return nil; \
     return NSStringFromAdType(self.adType);
 }
 
+- (BOOL)withinInterval:(NSDate *const)lastInterstitialVideoShown {
+    if (!lastInterstitialVideoShown) {
+        return YES;
+    }
+    const NSTimeInterval secondsSinceLastInterstitial = [lastInterstitialVideoShown timeIntervalSinceDate:[NSDate date]];
+    return (secondsSinceLastInterstitial * 1000) > self.interstitialVideoIntervalMillis;
+}
+
 
 - (NSOrderedSet *)availableAdapters:(NSDate *const)lastInterstitialVideoShown {
     if (!lastInterstitialVideoShown || self.adType != HZAdTypeInterstitial) {
         return self.chosenAdapters;
     }
     
-    const NSTimeInterval secondsSinceLastInterstitial = [lastInterstitialVideoShown timeIntervalSinceDate:[NSDate date]];
-    const BOOL withinInterval = (secondsSinceLastInterstitial * 1000) > self.interstitialVideoIntervalMillis;
+    const BOOL withinInterval = [self withinInterval:lastInterstitialVideoShown];
     
     NSIndexSet *indexes = [self.chosenAdapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         return withinInterval || !adapter.isVideoOnlyNetwork;
     }];
     
     return [NSOrderedSet orderedSetWithArray:[self.chosenAdapters objectsAtIndexes:indexes]];
+}
+
+- (BOOL)adapterIsRateLimited:(HZBaseAdapter *const)adapter lastInterstitialVideoShown:(NSDate *const)lastInterstitialVideoShown {
+    return self.adType == HZAdTypeInterstitial && adapter.isVideoOnlyNetwork && ![self withinInterval:lastInterstitialVideoShown];
 }
 
 #pragma mark - Reporting Events to the server

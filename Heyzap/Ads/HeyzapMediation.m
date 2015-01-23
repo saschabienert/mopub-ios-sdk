@@ -310,7 +310,19 @@ NSString * const kHZDataKey = @"data";
                 }
                 return [adapter hasAdForType:type tag:tag] || [adapter lastErrorForAdType:type] != nil; // If it errored, exit early.
             }, timeout);
-
+            
+            __block BOOL isRateLimited = NO;
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                isRateLimited = [session adapterIsRateLimited:adapter lastInterstitialVideoShown:self.lastInterstitialVideoShownDate];
+            });
+            // Consider rate limited networks as failing
+            // Technically what we could do is, if no other networks succeed, wait until the rate limit is up and send a delegate callback + block callback then.
+            // This adds alot of complexity though, and it causes several minute wait periods for a fetch failure.
+            // (This should rarely happen anyway since Heyzap isn't video rate limited).
+            if (isRateLimited && fetchedWithinTimeout) {
+                continue;
+            }
+            
             int64_t elaspsedMilliseconds = millisecondsSinceCFTimeInterval(startTime);
 
             if (fetchedWithinTimeout) {
@@ -419,27 +431,39 @@ static int totalImpressions = 0;
 {
     tag = tag ?: [HeyzapAds defaultTagName];
     
+    return [[self availableAdaptersForAdType:adType tag:tag] count] != 0;
+}
+
+- (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag network:(HZBaseAdapter *const)network {
+    tag = tag ?: [HeyzapAds defaultTagName];
+    return [[self availableAdaptersForAdType:adType tag:tag] containsObject:network];
+}
+
+- (NSOrderedSet *)availableAdaptersForAdType:(const HZAdType)adType tag:(NSString *)tag {
+    NSParameterAssert(tag);
+    
     HZMediationSessionKey *const key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:tag];
     HZMediationSession *const session = self.sessionDictionary[key];
     if (!session) {
-        return NO;
+        return [NSOrderedSet orderedSet];
     }
-    
-    
-    NSIndexSet *const adapterIndexes = [[session availableAdapters:self.lastInterstitialVideoShownDate] indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter * adapter, NSUInteger idx, BOOL *stop) {
-        BOOL available = [adapter hasAdForType:adType tag:tag];
 
+    NSOrderedSet *const availableAdapters = [session availableAdapters:self.lastInterstitialVideoShownDate];
+    
+    NSIndexSet *const adapterIndexes = [availableAdapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter * adapter, NSUInteger idx, BOOL *stop) {
+        BOOL available = [adapter hasAdForType:adType tag:tag];
+        
         NSString *network = [adapter name];
         HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)];
         [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 withProvider:stub network:network];
         [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey withProvider:stub network:network];
         [[HZMetrics sharedInstance] logIsAvailable:available withProvider:stub network:network];
         [[HZMetrics sharedInstance] logMetricsEvent:kNetworkVersionKey value:adapter.sdkVersion withProvider:stub network:network];
-
+        
         return available;
     }];
     
-    return [adapterIndexes count] != 0;
+    return [NSOrderedSet orderedSetWithArray:[availableAdapters objectsAtIndexes:adapterIndexes]];
 }
 
 #pragma mark - Adapter Callbacks

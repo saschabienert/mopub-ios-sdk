@@ -45,6 +45,8 @@
  */
 - (NSOrderedSet *)availableAdapters:(NSDate *const)lastInterstitialVideoShown;
 
+- (BOOL)adapterIsRateLimited:(HZBaseAdapter *const)adapter lastInterstitialVideoShown:(NSDate *const)lastInterstitialVideoShown;
+
 #pragma mark - Reporting Events to the server
 
 - (void)reportSuccessfulFetchUpToAdapter:(HZBaseAdapter *)chosenAdapter;
