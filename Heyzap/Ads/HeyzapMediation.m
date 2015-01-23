@@ -54,6 +54,7 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 
 @property (nonatomic) BOOL startHasBeenCalled;
 @property (nonatomic) HZMediationStartStatus startStatus;
+@property (nonatomic, strong) NSDate *lastInterstitialVideoShownDate;
 
 @property (nonatomic, strong) HZDelegateProxy *interstitialDelegateProxy;
 @property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
@@ -254,7 +255,17 @@ NSString * const kHZDataKey = @"data";
 - (void)fetchForSession:(HZMediationSession *)session showImmediately:(BOOL)showImmediately fetchTimeout:(const NSTimeInterval)timeout sessionKey:(HZMediationSessionKey *)sessionKey completion:(void (^)(BOOL result, NSError *error))completion
 {
     NSString *tag = session.tag;
-    NSArray *preferredMediatorList = [session.chosenAdapters array];
+    
+    NSArray *const preferredMediatorList = ({
+        NSArray *mediatorList;
+        if (showImmediately) {
+            mediatorList = [[session availableAdapters:self.lastInterstitialVideoShownDate] array];
+        } else {
+            mediatorList = [session.chosenAdapters array]; // If we're not showing an ad right now, give all networks a chance to fetch (a network filtered out by interstitial rate limiting at fetch-time might be eligible at show-time)
+        }
+        mediatorList;
+    });
+    
     HZAdType type = session.adType;
     NSString *connectivity = [HZUtils internetStatus];
     HZDLog(@"Preferred mediator list = %@",preferredMediatorList);
@@ -262,7 +273,7 @@ NSString * const kHZDataKey = @"data";
     // Find the first SDK that has an ad, and use it
     // This means if e.g. the first 2 networks aren't working, we don't have to wait for a timeout to get to the third.
     if (showImmediately) {
-        HZBaseAdapter *adapter = [session firstAdapterWithAd];
+        HZBaseAdapter *adapter = [session firstAdapterWithAd:self.lastInterstitialVideoShownDate];
         if (adapter) {
             if (completion) { completion(YES,nil); }
             [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey];
@@ -376,7 +387,7 @@ static int totalImpressions = 0;
     self.sessionDictionary[showKey] = session;
     
     if ([adapter isVideoOnlyNetwork] && session.adType == HZAdTypeInterstitial) {
-        [HZMediationSession usedVideoOnlyNetworkForInterstitial];
+        self.lastInterstitialVideoShownDate = [NSDate date];
     }
 
     [adapter showAdForType:session.adType tag:session.tag];
@@ -404,10 +415,18 @@ static int totalImpressions = 0;
 
 #pragma mark - Querying adapters
 
-- (BOOL)isAvailableForAdUnitType:(HZAdType)adType tag:(NSString *)tag
+- (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag
 {
     tag = tag ?: [HeyzapAds defaultTagName];
-    NSSet *readyAdapters = [self.setupMediators objectsPassingTest:^BOOL(HZBaseAdapter * adapter, BOOL *stop) {
+    
+    HZMediationSessionKey *const key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:tag];
+    HZMediationSession *const session = self.sessionDictionary[key];
+    if (!session) {
+        return NO;
+    }
+    
+    
+    NSIndexSet *const adapterIndexes = [[session availableAdapters:self.lastInterstitialVideoShownDate] indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter * adapter, NSUInteger idx, BOOL *stop) {
         BOOL available = [adapter hasAdForType:adType tag:tag];
 
         NSString *network = [adapter name];
@@ -419,7 +438,8 @@ static int totalImpressions = 0;
 
         return available;
     }];
-    return [readyAdapters count] != 0;
+    
+    return [adapterIndexes count] != 0;
 }
 
 #pragma mark - Adapter Callbacks

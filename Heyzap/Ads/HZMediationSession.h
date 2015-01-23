@@ -32,14 +32,18 @@
  */
 - (instancetype)initWithJSON:(NSDictionary *)json setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error;
 
-- (HZBaseAdapter *)firstAdapterWithAd;
+// ** Querying the session **
 
-- (BOOL)hasAd;
+- (HZBaseAdapter *)firstAdapterWithAd:(NSDate *const)lastInterstitialVideoShown;
 
 /**
- *  Call this method when we use a video only network to show an interstitial.
+ *  Returns the available adapters, taking into account the last time an interstitial ad was served by a video-only network.
+ *
+ *  @param lastInterstitialVideoShown The date a video-only network served an interstitial, or `nil` if none has been shown.
+ *
+ *  @return The adapters.
  */
-+ (void)usedVideoOnlyNetworkForInterstitial;
+- (NSOrderedSet *)availableAdapters:(NSDate *const)lastInterstitialVideoShown;
 
 #pragma mark - Reporting Events to the server
 

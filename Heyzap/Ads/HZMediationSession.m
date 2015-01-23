@@ -23,6 +23,7 @@
 @property (nonatomic, strong) NSDictionary *originalJSON;
 @property (nonatomic, strong) NSString *impressionID;
 @property (nonatomic, strong) NSOrderedSet *chosenAdapters;
+@property (nonatomic) double interstitialVideoIntervalMillis;
 
 /**
  *  Returns the SDK version if present, otherwise defaults to empty string.
@@ -44,11 +45,6 @@ return nil; \
 } \
 } while (0)
 
-static CFTimeInterval lastInterstitialVideoShown = 0;
-
-+ (void)usedVideoOnlyNetworkForInterstitial {
-    lastInterstitialVideoShown = CFAbsoluteTimeGetCurrent();
-}
 
 - (instancetype)initWithJSON:(NSDictionary *)json setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error
 {
@@ -65,13 +61,8 @@ static CFTimeInterval lastInterstitialVideoShown = 0;
         _impressionID = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] dict:json error:error];
         CHECK_NOT_NIL(_impressionID);
         
+        _interstitialVideoIntervalMillis = [[HZDictionaryUtils hzObjectForKey:@"interstitial_video_interval" ofClass:[NSNumber class] default:@(30 * 1000) withDict:json] doubleValue];
         
-        const double interstitialVideoIntervalMillis = [[HZDictionaryUtils hzObjectForKey:@"interstitial_video_interval" ofClass:[NSNumber class] default:@(30 * 1000) withDict:json] doubleValue];
-        
-        
-        const CFTimeInterval secondsSinceLastInterstitial = CFAbsoluteTimeGetCurrent() - lastInterstitialVideoShown;
-        const BOOL withinInterval = (secondsSinceLastInterstitial * 1000) > interstitialVideoIntervalMillis || lastInterstitialVideoShown == 0;
-            
         // Check error macro for impression ID being nil.
         
         NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:json error:error];
@@ -86,29 +77,20 @@ static CFTimeInterval lastInterstitialVideoShown = 0;
                 && [adapter isSDKAvailable]
                 && [setupMediators containsObject:[adapter sharedInstance]]
                 && [(HZBaseAdapter *)[adapter sharedInstance] supportsAdType:adType]) {
-                
-                const BOOL videoOnly = [(HZBaseAdapter *)[adapter sharedInstance] isVideoOnlyNetwork];
-                if (withinInterval || !videoOnly) {
                     [adapters addObject:[adapter sharedInstance]];
-                }
             }
         }
         
         self.chosenAdapters = adapters;
-        HZDLog(@"Available SDKs for this fetch are = %@",self.chosenAdapters);
+        HZDLog(@"Available SDKs for this fetch (assuming no video rate limiting) are = %@",self.chosenAdapters);
     }
     return self;
 }
 
-- (BOOL)hasAd
-{
-    return [self firstAdapterWithAd] != nil;
-}
-
-- (HZBaseAdapter *)firstAdapterWithAd
+- (HZBaseAdapter *)firstAdapterWithAd:(NSDate *const)lastInterstitialVideoShown
 {
     
-    NSArray *preferredMediatorList = [self.chosenAdapters array];
+    NSArray *preferredMediatorList = [[self availableAdapters:lastInterstitialVideoShown] array];
     
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         BOOL hasAd = [adapter hasAdForType:self.adType tag:self.tag];
@@ -133,6 +115,22 @@ static CFTimeInterval lastInterstitialVideoShown = 0;
 
 - (NSString *) adUnit {
     return NSStringFromAdType(self.adType);
+}
+
+
+- (NSOrderedSet *)availableAdapters:(NSDate *const)lastInterstitialVideoShown {
+    if (!lastInterstitialVideoShown || self.adType != HZAdTypeInterstitial) {
+        return self.chosenAdapters;
+    }
+    
+    const NSTimeInterval secondsSinceLastInterstitial = [lastInterstitialVideoShown timeIntervalSinceDate:[NSDate date]];
+    const BOOL withinInterval = (secondsSinceLastInterstitial * 1000) > self.interstitialVideoIntervalMillis;
+    
+    NSIndexSet *indexes = [self.chosenAdapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
+        return withinInterval || !adapter.isVideoOnlyNetwork;
+    }];
+    
+    return [NSOrderedSet orderedSetWithArray:[self.chosenAdapters objectsAtIndexes:indexes]];
 }
 
 #pragma mark - Reporting Events to the server
