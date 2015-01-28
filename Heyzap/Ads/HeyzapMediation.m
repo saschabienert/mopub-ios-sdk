@@ -482,7 +482,6 @@ static int totalImpressions = 0;
  */
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter
 {
-    NSLog(@"<%@:%@:%d Chartboost was clicked ***",[self class],NSStringFromSelector(_cmd),__LINE__);
     HZMediationSessionKey *key = [self currentShownSessionKey];
     
     if (key) {

@@ -201,7 +201,7 @@
 }
 
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter {
-    NSLog(@"<%@:%@:%d Chartboost was clicked ***",[self class],NSStringFromSelector(_cmd),__LINE__);
+
 }
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {

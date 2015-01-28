@@ -186,14 +186,12 @@
 }
 
 - (void)didClickRewardedVideo:(CBLocation)location {
-    NSLog(@"<%@:%@:%d Chartboost rewarded was clicked ***",[self class],NSStringFromSelector(_cmd),__LINE__);
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked: self];
 }
 
 - (void)didClickInterstitial:(CBLocation)location
 {
-    NSLog(@"<%@:%@:%d Chartboost interstitial was clicked ***",[self class],NSStringFromSelector(_cmd),__LINE__);
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
 }
