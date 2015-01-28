@@ -157,7 +157,7 @@
 		507A457119BF91ED00C7AEEA /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */; };
 		507A457419BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
 		507A457519BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
-		509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 509B04351A44AA0300EC3ACF /* HZNativeAdImage.h */; };
+		509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 509B04351A44AA0300EC3ACF /* HZNativeAdImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		509B04381A44AA0300EC3ACF /* HZNativeAdImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B04361A44AA0300EC3ACF /* HZNativeAdImage.m */; };
 		509B5BE418C943B8003A7CB9 /* TestInterstitials.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE318C943B8003A7CB9 /* TestInterstitials.m */; };
 		509B5BE718C94490003A7CB9 /* UIViewController+IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE618C94490003A7CB9 /* UIViewController+IntegrationTests.m */; };
@@ -1498,6 +1498,7 @@
 				50AC611E18FDD3E70046EBC6 /* HZALAdSize.h in Headers */,
 				50B46B1D18F88C6B005155B8 /* HZALAd.h in Headers */,
 				5011CE5518DB9B7F00604B53 /* HZAdColonyAdapter.h in Headers */,
+				509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */,
 				50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */,
 				860FD47A187BB144008A35FD /* HZAdsFetchManager.h in Headers */,
 				86FF907918583FF100BC48BF /* HZAdLibrary.h in Headers */,
@@ -1535,7 +1536,6 @@
 				86B09B84175958A50045AA54 /* HZInterstitialAd.h in Headers */,
 				866E3A181851329500B6E431 /* HZWebView.h in Headers */,
 				866E39FF1850172100B6E431 /* HZInterstitialAdModel.h in Headers */,
-				509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */,
 				50B46B2118F89C58005155B8 /* HZAppLovinDelegate.h in Headers */,
 				509E8D4619B91B7000ABF2D2 /* HZAbstractHeyzapAdapter.h in Headers */,
 				5011CE8918DBBBF700604B53 /* HZAdMobAdapter.h in Headers */,
