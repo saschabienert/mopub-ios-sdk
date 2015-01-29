@@ -10,6 +10,8 @@
 #import "HZAdColony.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 #import <UIKit/UIKit.h>
 
@@ -106,7 +108,11 @@
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeVideo | HZAdTypeIncentivized;
+    return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;
+}
+
+- (BOOL)isVideoOnlyNetwork {
+    return YES;
 }
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
@@ -117,14 +123,11 @@
         return NO;
     }
     switch (type) {
-        case HZAdTypeInterstitial: {
-            return NO;
-            break;
-        }
         case HZAdTypeIncentivized: {
             return [HZAdColony isVirtualCurrencyRewardAvailableForZone:self.incentivizedZoneID];
             break;
         }
+        case HZAdTypeInterstitial:
         case HZAdTypeVideo: {
             return [HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_ACTIVE;
             break;
@@ -148,11 +151,15 @@
     } else {
         [HZAdColony playVideoAdForZone:self.interstitialZoneID withDelegate:self];
     }
+
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType
 {
     switch (adType) {
+        case HZAdTypeVideo:
         case HZAdTypeInterstitial: {
             if ([HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_OFF
                 || [HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_NO_ZONE) {
@@ -169,10 +176,6 @@
             } else {
                 return nil;
             }
-            break;
-        }
-        case HZAdTypeVideo: {
-            return nil;
             break;
         }
     }
@@ -202,6 +205,7 @@
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
         }
     }
+    // unfortunately, adcolony doesn't tell us whether the ad was clicked or dismissed
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
 }

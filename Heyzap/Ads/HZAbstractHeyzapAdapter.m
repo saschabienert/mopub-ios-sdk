@@ -13,6 +13,12 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HeyzapAds.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
+
+@interface HZAbstractHeyzapAdapter()
+
+@end
 
 @implementation HZAbstractHeyzapAdapter
 
@@ -39,6 +45,10 @@
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;
+}
+
+- (BOOL)isVideoOnlyNetwork {
+    return NO;
 }
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
@@ -89,6 +99,9 @@
             break;
         }
     }
+
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 #pragma mark - NSNotificationCenter registering

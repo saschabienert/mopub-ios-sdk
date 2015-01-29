@@ -7,6 +7,7 @@
 //
 
 #import "HZEnums.h"
+#import "HZMediationConstants.h"
 
 @implementation HZEnums
 
@@ -22,6 +23,23 @@ NSString * NSStringFromHZAuctionType(HZAuctionType auctionType) {
         }
         case HZAuctionTypeMonetization: {
             return @"monetization";
+            break;
+        }
+    }
+}
+
+NSString * HeyzapAdapterFromHZAuctionType(HZAuctionType auctionType) {
+    switch (auctionType) {
+        case HZAuctionTypeCrossPromo: {
+            return kHZAdapterCrossPromo;
+            break;
+        }
+        case HZAuctionTypeMixed: {
+            return kHZAdapterHeyzap;
+            break;
+        }
+        case HZAuctionTypeMonetization: {
+            return kHZAdapterHeyzap;
             break;
         }
     }

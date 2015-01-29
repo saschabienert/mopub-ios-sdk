@@ -23,6 +23,7 @@
 @property (nonatomic, strong) NSDictionary *originalJSON;
 @property (nonatomic, strong) NSString *impressionID;
 @property (nonatomic, strong) NSOrderedSet *chosenAdapters;
+@property (nonatomic) double interstitialVideoIntervalMillis;
 
 /**
  *  Returns the SDK version if present, otherwise defaults to empty string.
@@ -60,7 +61,8 @@ return nil; \
         _impressionID = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] dict:json error:error];
         CHECK_NOT_NIL(_impressionID);
         
-            
+        _interstitialVideoIntervalMillis = [[HZDictionaryUtils hzObjectForKey:@"interstitial_video_interval" ofClass:[NSNumber class] default:@(30 * 1000) withDict:json] doubleValue];
+        
         // Check error macro for impression ID being nil.
         
         NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:json error:error];
@@ -74,32 +76,34 @@ return nil; \
             if (adapter
                 && [adapter isSDKAvailable]
                 && [setupMediators containsObject:[adapter sharedInstance]]
-                && [[adapter sharedInstance] supportsAdType:adType]) {
-                
-                [adapters addObject:[adapter sharedInstance]];
-                
-                
+                && [(HZBaseAdapter *)[adapter sharedInstance] supportsAdType:adType]) {
+                    [adapters addObject:[adapter sharedInstance]];
             }
         }
         
         self.chosenAdapters = adapters;
-        HZDLog(@"Available SDKs for this fetch are = %@",self.chosenAdapters);
+        HZDLog(@"Available SDKs for this fetch (assuming no video rate limiting) are = %@",self.chosenAdapters);
     }
     return self;
 }
 
-- (BOOL)hasAd
-{
-    return [self firstAdapterWithAd] != nil;
-}
-
-- (HZBaseAdapter *)firstAdapterWithAd
+- (HZBaseAdapter *)firstAdapterWithAd:(NSDate *const)lastInterstitialVideoShown
 {
     
-    NSArray *preferredMediatorList = [self.chosenAdapters array];
+    NSArray *preferredMediatorList = [[self availableAdapters:lastInterstitialVideoShown] array];
     
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        return [adapter hasAdForType:self.adType tag:self.tag];
+        BOOL hasAd = [adapter hasAdForType:self.adType tag:self.tag];
+        if (!hasAd) {
+            if ([adapter supportedAdFormats] & self.adType) {
+                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoAdAvailableValue withProvider:self network:[adapter name]];
+            } else {
+                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndNotAFetchableAdUnitValue withProvider:self network:[adapter name]];
+            }
+        } else {
+            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:self network:[adapter name]];
+        }
+        return hasAd;
     }];
     
     if (idx != NSNotFound) {
@@ -109,9 +113,40 @@ return nil; \
     }
 }
 
+- (NSString *) adUnit {
+    return NSStringFromAdType(self.adType);
+}
+
+- (BOOL)withinInterval:(NSDate *const)lastInterstitialVideoShown {
+    if (!lastInterstitialVideoShown) {
+        return YES;
+    }
+    const NSTimeInterval secondsSinceLastInterstitial = [lastInterstitialVideoShown timeIntervalSinceDate:[NSDate date]];
+    return (secondsSinceLastInterstitial * 1000) > self.interstitialVideoIntervalMillis;
+}
+
+
+- (NSOrderedSet *)availableAdapters:(NSDate *const)lastInterstitialVideoShown {
+    if (!lastInterstitialVideoShown || self.adType != HZAdTypeInterstitial) {
+        return self.chosenAdapters;
+    }
+    
+    const BOOL withinInterval = [self withinInterval:lastInterstitialVideoShown];
+    
+    NSIndexSet *indexes = [self.chosenAdapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
+        return withinInterval || !adapter.isVideoOnlyNetwork;
+    }];
+    
+    return [NSOrderedSet orderedSetWithArray:[self.chosenAdapters objectsAtIndexes:indexes]];
+}
+
+- (BOOL)adapterIsRateLimited:(HZBaseAdapter *const)adapter lastInterstitialVideoShown:(NSDate *const)lastInterstitialVideoShown {
+    return self.adType == HZAdTypeInterstitial && adapter.isVideoOnlyNetwork && ![self withinInterval:lastInterstitialVideoShown];
+}
+
 #pragma mark - Reporting Events to the server
 
-NSString *const kHZImpressionIDKey = @"tracking_id";
+NSString *const kHZImpressionIDKey = @"mediation_id";
 NSString *const kHZNetworkKey = @"network";
 NSString *const kHZNetworkVersionKey = @"network_version";
 /**
@@ -129,6 +164,7 @@ NSString *const kHZOrdinalKey = @"ordinal";
         NSNumber *const success = (adapter == [adapterList lastObject]) ? @1 : @0; // Last adapter was successful
         [[HZMediationAPIClient sharedClient] post:@"fetch"
                                        withParams:@{@"success": success,
+                                                    kHZImpressionIDKey : self.impressionID,
                                                     kHZOrdinalKey : @(idx),
                                                     kHZNetworkKey : [adapter name],
                                                     kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),

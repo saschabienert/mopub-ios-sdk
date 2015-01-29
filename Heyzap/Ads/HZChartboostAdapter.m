@@ -12,6 +12,8 @@
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
 #import "HZLog.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 @interface HZChartboostAdapter()
 
@@ -129,11 +131,18 @@
             // Unsupported
             break;
     }
+
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeInterstitial | HZAdTypeIncentivized;
+}
+
+- (BOOL)isVideoOnlyNetwork {
+    return NO;
 }
 
 #pragma mark - Chartboost Delegate
@@ -177,11 +186,13 @@
 }
 
 - (void)didClickRewardedVideo:(CBLocation)location {
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked: self];
 }
 
 - (void)didClickInterstitial:(CBLocation)location
 {
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
 }
 
@@ -195,6 +206,7 @@
 }
 
 - (void)didDismissRewardedVideo:(CBLocation)location {
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
 }
 
@@ -230,6 +242,7 @@
  * #Pro Tip: Use the delegate method below to immediately re-cache interstitials
  */
 - (void)didDismissInterstitial:(CBLocation)location {
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
 }
 

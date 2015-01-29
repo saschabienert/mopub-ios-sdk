@@ -163,9 +163,7 @@
     self.currentAdFormat = [[adFormatControl titleForSegmentAtIndex:adFormatControl.selectedSegmentIndex ] lowercaseString];
     self.currentAdType = [self adTypeWithString:self.currentAdFormat];
     HZDLog(@"Current ad format: %@", self.currentAdFormat);
-    if (![self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]]) {
-        self.showButton.backgroundColor = [UIColor redColor];
-    }
+    [self changeShowButtonColor];
 }
 
 - (void) fetchAd {
@@ -203,7 +201,7 @@
 }
 
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter {
-    
+
 }
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {
@@ -428,7 +426,8 @@
 }
 
 - (void) changeShowButtonColor {
-    if ([self.network hasAdForType:self.currentAdType tag:[HeyzapAds defaultTagName]]) {
+    const BOOL available = [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:self.currentAdType tag:[HeyzapAds defaultTagName] network:self.network];
+    if (available) {
         self.showButton.backgroundColor = [UIColor greenColor];
     } else {
         self.showButton.backgroundColor = [UIColor redColor];

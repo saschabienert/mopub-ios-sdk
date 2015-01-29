@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <StoreKit/StoreKit.h>
+@class HZNativeAdImage;
 
 /**
  *  HZNativeAd represents an ad for a single game. It includes properties like the game's name and iconURL. 
@@ -25,6 +26,19 @@
  *  The URL of the game's icon. Images are 256x256 px PNGs. These images do not necessarily already have rounded corners, so you'll need to apply a mask or corner radius yourself. Guaranteed to be non-nil.
  */
 @property (nonatomic, readonly) NSURL *iconURL;
+
+/**
+ *  A large landscape image. Usually this will be non-nil, but this can't be guaranteed (for example, an advertiser might only upload portrait creatives).
+ */
+@property (nonatomic, readonly) HZNativeAdImage *landscapeCreative;
+
+/**
+ *  A large portrait image. Usually this will be non-nil, but this can't be guaranteed (for example, an advertiser might only upload landscape creatives).
+ *
+ *  @warning Currently these images are 640x620, so they're appropriately sized for the width of an iPhone 5 but are quite short. We're considering switching to true portrait image sizes. For forwards compatibility, try to accomodate different image sizes with something like `UIViewContentModeScaleAspectFit`.
+ */
+@property (nonatomic, readonly) HZNativeAdImage *portraitCreative;
+
 /**
  *  The rating of the game. This number is a value between 0 and 5, incremented in half-step increments (i.e. 0, 0.5, 1.0,... 5.0). May be nil.
  */

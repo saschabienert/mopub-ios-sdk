@@ -16,6 +16,7 @@
 #import "HZAppLovinAdapter.h"
 #import "HZUnityAdsAdapter.h"
 #import "HZCrossPromoAdapter.h"
+#import "HZFacebookAdapter.h"
 
 @implementation HZBaseAdapter
 
@@ -57,6 +58,12 @@
 
 - (HZAdType)supportedAdFormats
 {
+    ABSTRACT_METHOD_ERROR();
+}
+
+- (BOOL)isVideoOnlyNetwork
+{
+    // Return true for video-only networks like Vungle, whose interstitial support is faked via videos.
     ABSTRACT_METHOD_ERROR();
 }
 
@@ -148,6 +155,8 @@
         return [HZCrossPromoAdapter class];
     } else if ([adapterName isEqualToString:kHZAdapterUnityAds]) {
         return [HZUnityAdsAdapter class];
+    } else if ([adapterName isEqualToString:kHZAdapterFacebook]) {
+        return [HZFacebookAdapter class];
     } else {
         return nil;
     }
@@ -165,6 +174,7 @@
             [HZCrossPromoAdapter class],
             [HZUnityAdsAdapter class],
             [HZCrossPromoAdapter class],
+            [HZFacebookAdapter class],
             nil];
 }
 

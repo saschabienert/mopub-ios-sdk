@@ -10,6 +10,8 @@
 #import "HZUnityAds.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 @interface HZUnityAdsAdapter() <HZUnityAdsDelegate>
 
@@ -120,7 +122,11 @@ NSString * const kHZNetworkName = @"mobile";
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeVideo | HZAdTypeIncentivized;
+    return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;
+}
+
+- (BOOL)isVideoOnlyNetwork {
+    return YES;
 }
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
@@ -130,22 +136,14 @@ NSString * const kHZNetworkName = @"mobile";
         NSLog(@"UnityAds reqires a root view controller on the keyWindow to show ads. Make sure [[[UIApplication sharedApplication] keyWindow] rootViewController] does not return `nil`.");
         return NO;
     }
-    switch (type) {
-        case HZAdTypeInterstitial: {
-            return NO;
-            break;
-        }
-        default: {
-            if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(canShowAds)]) { // Regular SDK
-                return [[HZUnityAds sharedInstance] canShowAds];
-            } else if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(canShowAds:)]) { // Asset Store version
-                [[HZUnityAds sharedInstance] setNetwork:kHZNetworkName];
-                return [[HZUnityAds sharedInstance] canShowAds:kHZNetworkName];
-            } else {
-                 @throw [NSException exceptionWithName:@"UnsupportedSDKException" reason:@"This version of UnityAds doesn't respond to canShowAds or canShowAds:(NSString *)network and is not compatible with the Heyzap SDK." userInfo:nil];
-            }
-            break;
-        }
+    
+    if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(canShowAds)]) { // Regular SDK
+        return [[HZUnityAds sharedInstance] canShowAds];
+    } else if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(canShowAds:)]) { // Asset Store version
+        [[HZUnityAds sharedInstance] setNetwork:kHZNetworkName];
+        return [[HZUnityAds sharedInstance] canShowAds:kHZNetworkName];
+    } else {
+        @throw [NSException exceptionWithName:@"UnsupportedSDKException" reason:@"This version of UnityAds doesn't respond to canShowAds or canShowAds:(NSString *)network and is not compatible with the Heyzap SDK." userInfo:nil];
     }
 }
 
@@ -165,6 +163,9 @@ NSString * const kHZNetworkName = @"mobile";
         [[HZUnityAds sharedInstance] setZone:self.videoZoneID];
     }
     [[HZUnityAds sharedInstance] show];
+
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 #pragma mark - AdColony Delegation
@@ -192,10 +193,12 @@ NSString * const kHZNetworkName = @"mobile";
 }
 
 - (void)unityAdsDidHide {
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
 }
 
 - (void)unityAdsWillLeaveApplication {
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
 }
 

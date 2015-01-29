@@ -1,0 +1,7 @@
+dependencies:
+  override:
+    - "cd Heyzap && pod install"
+
+test:
+  override:
+    - ./runUnitTests.sh

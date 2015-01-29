@@ -20,16 +20,20 @@
 /**
  *  The type of the ad being shown (interstitial, incentivized, video). Guaranteed to be non-nil.
  */
-@property (nonatomic, readonly) NSString *adType;
+@property (nonatomic, readonly) NSString *adUnit;
+/**
+ *  The network showing the ad (e.g. admob or heyzap). Guaranteed to be non-nil.
+ */
+@property (nonatomic, readonly) NSString *network;
 
 /**
  *  Initializer.
  *
  *  @param tag    The tag of the ad; required property.
- *  @param adType The tag of the ad; required property.
+ *  @param adUnit The ad unit of the ad; required property.
  *
  *  @return The metrics key.
  */
-- (instancetype)initWithTag:(NSString *)tag type:(NSString *)adType;
+- (instancetype)initWithTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network;
 
 @end

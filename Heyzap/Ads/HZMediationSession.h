@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
+#import "HZMetrics.h"
 
-@interface HZMediationSession : NSObject
+@interface HZMediationSession : NSObject <HZMetricsProvider>
 
 @property (nonatomic, strong, readonly) NSOrderedSet *chosenAdapters;
 @property (nonatomic, readonly) HZAdType adType;
+@property (nonatomic, readonly) NSString *adUnit;
 @property (nonatomic, strong, readonly) NSString *tag;
 
 @property (nonatomic, strong, readonly) NSString *impressionID;
@@ -30,9 +32,20 @@
  */
 - (instancetype)initWithJSON:(NSDictionary *)json setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error;
 
-- (HZBaseAdapter *)firstAdapterWithAd;
+// ** Querying the session **
 
-- (BOOL)hasAd;
+- (HZBaseAdapter *)firstAdapterWithAd:(NSDate *const)lastInterstitialVideoShown;
+
+/**
+ *  Returns the available adapters, taking into account the last time an interstitial ad was served by a video-only network.
+ *
+ *  @param lastInterstitialVideoShown The date a video-only network served an interstitial, or `nil` if none has been shown.
+ *
+ *  @return The adapters.
+ */
+- (NSOrderedSet *)availableAdapters:(NSDate *const)lastInterstitialVideoShown;
+
+- (BOOL)adapterIsRateLimited:(HZBaseAdapter *const)adapter lastInterstitialVideoShown:(NSDate *const)lastInterstitialVideoShown;
 
 #pragma mark - Reporting Events to the server
 

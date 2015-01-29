@@ -30,6 +30,7 @@
         _webview.delegate = self;
         _webview.backgroundColor = [UIColor clearColor];
         _webview.allowsInlineMediaPlayback = YES;
+        _webview.mediaPlaybackRequiresUserAction = NO;
         if ([_webview respondsToSelector: @selector(scrollView)]) {
             _webview.scrollView.scrollEnabled = NO;
         }

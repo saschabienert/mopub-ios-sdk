@@ -12,6 +12,8 @@
 #import <UIKit/UIKit.h>
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZMetrics.h"
+#import "HZMetricsAdStub.h"
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
@@ -84,6 +86,10 @@
     return HZAdTypeInterstitial;
 }
 
+- (BOOL)isVideoOnlyNetwork {
+    return NO;
+}
+
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
     NSAssert(self.adUnitID, @"Need an ad unit ID by this point");
@@ -108,6 +114,9 @@
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
     [self.currentInterstitial presentFromRootViewController:[self.delegate viewControllerForPresentingAd]];
+
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 #pragma mark - Delegate callbacks
@@ -132,6 +141,7 @@
 
 - (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
 {
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
     self.currentInterstitial = nil;
 }
@@ -139,6 +149,7 @@
 // As far as I can tell, this means a click.
 - (void)interstitialWillLeaveApplication:(HZGADInterstitial *)ad
 {
+    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
 }
 

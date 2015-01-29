@@ -40,12 +40,13 @@
 #import "HZNativeAdController.h"
 #import "HZNativeAdCollection.h"
 #import "HZNativeAd.h"
+#import "HZNativeAdImage.h"
 
 #ifndef NS_ENUM
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif
 
-#define SDK_VERSION @"7.1.0"
+#define SDK_VERSION @"8.0.0"
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsNone = 0 << 0,
