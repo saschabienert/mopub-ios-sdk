@@ -18,7 +18,7 @@
 @property (nonatomic, readonly) NSURL *clickURL;
 
 @property (nonatomic, readonly) NSURL *launchURI;
-@property (nonatomic, assign, readonly) BOOL useModalAppStore;
+@property (nonatomic, readonly) BOOL useModalAppStore;
 @property (nonatomic) NSString *tag;
 @property (nonatomic) NSString *adUnit;
 @property (nonatomic, readonly) HZAuctionType auctionType;

@@ -18,7 +18,7 @@
 @interface HZAdInterstitialViewController()
 
 @property (nonatomic) HZWebView *webview;
-@property (nonatomic, assign) BOOL showOnReady;
+@property (nonatomic) BOOL showOnReady;
 
 @end
 

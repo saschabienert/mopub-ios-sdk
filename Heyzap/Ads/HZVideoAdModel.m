@@ -17,7 +17,7 @@
 #import "HZEnums.h"
 
 @interface HZVideoAdModel()<UIWebViewDelegate>
-@property (nonatomic, assign) BOOL sentComplete;
+@property (nonatomic) BOOL sentComplete;
 @property (nonatomic) HZAFHTTPRequestOperation *downloadOperation;
 @end
 

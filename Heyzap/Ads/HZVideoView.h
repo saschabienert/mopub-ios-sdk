@@ -12,12 +12,12 @@
 @interface HZVideoView : UIView<UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) id<HZAdPopupActionDelegate> actionDelegate;
-@property (nonatomic, assign) BOOL hideButton;
-@property (nonatomic, assign) NSTimeInterval skipButtonTimeInterval;
-@property (nonatomic, assign) BOOL skipButton;
+@property (nonatomic) BOOL hideButton;
+@property (nonatomic) NSTimeInterval skipButtonTimeInterval;
+@property (nonatomic) BOOL skipButton;
 // Longest time video was played for.
-@property (nonatomic, assign) NSTimeInterval playbackTime;
-@property (nonatomic, assign) NSTimeInterval videoDuration;
+@property (nonatomic) NSTimeInterval playbackTime;
+@property (nonatomic) NSTimeInterval videoDuration;
 
 - (BOOL) setVideoURL: (NSURL *) url;
 - (void) pause;
