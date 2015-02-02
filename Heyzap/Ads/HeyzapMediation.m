@@ -218,16 +218,16 @@ NSString * const kHZDataKey = @"data";
                                                                     auctionType:HZAuctionTypeMixed
                                                             andAdditionalParams:additionalParams];
     
-    
+    NSDictionary *const mediateParams = request.createParams;
     
     [[HZMediationAPIClient sharedClient] get:@"mediate"
-                                withParams:request.createParams
+                                withParams:mediateParams
                                    success:^(NSDictionary *json) {
                                        
                                        HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:tag];
       
                                        NSError *error;
-                                       HZMediationSession *session = [[HZMediationSession alloc] initWithJSON:json setupMediators:self.setupMediators adType:adType tag:tag error:&error];
+                                       HZMediationSession *session = [[HZMediationSession alloc] initWithJSON:json mediateParams:mediateParams setupMediators:self.setupMediators adType:adType tag:tag error:&error];
                                        
                                        if (session) {
                                            self.sessionDictionary[key] = session;
