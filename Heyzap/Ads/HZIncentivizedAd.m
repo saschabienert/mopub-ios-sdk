@@ -85,7 +85,7 @@
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         return [HZHeyzapIncentivizedAd isAvailableForTag:tag auctionType:HZAuctionTypeMixed];
     } else {
-        return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeIncentivized tag:[HeyzapAds defaultTagName]];
+        return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeIncentivized tag:tag];
     }
 }
 
