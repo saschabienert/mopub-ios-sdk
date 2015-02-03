@@ -21,6 +21,10 @@
 
 #pragma mark - Properties from the server
 @property (nonatomic, strong) NSDictionary *originalJSON;
+/**
+ *  The parameters we sent to /mediate. We all the parameters on every request, so it's less likely we're missing data.
+ */
+@property (nonatomic, strong) NSDictionary *mediateParams;
 @property (nonatomic, strong) NSString *impressionID;
 @property (nonatomic, strong) NSOrderedSet *chosenAdapters;
 @property (nonatomic) double interstitialVideoIntervalMillis;
@@ -46,9 +50,10 @@ return nil; \
 } while (0)
 
 
-- (instancetype)initWithJSON:(NSDictionary *)json setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error
+- (instancetype)initWithJSON:(NSDictionary *)json mediateParams:(NSDictionary *)mediateParams setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error
 {
     NSParameterAssert(error != NULL);
+    NSParameterAssert(mediateParams);
     
     self = [super init];
     if (self) {
@@ -57,6 +62,7 @@ return nil; \
         _adType = adType;
         _tag = tag;
         CHECK_NOT_NIL(_tag);
+        _mediateParams = mediateParams;
         
         _impressionID = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] dict:json error:error];
         CHECK_NOT_NIL(_impressionID);
@@ -162,13 +168,16 @@ NSString *const kHZOrdinalKey = @"ordinal";
     
     [adapterList enumerateObjectsUsingBlock:^(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         NSNumber *const success = (adapter == [adapterList lastObject]) ? @1 : @0; // Last adapter was successful
+        
+        NSDictionary *const params = [self addParametersToDefaults:@{@"success": success,
+                                       kHZImpressionIDKey : self.impressionID,
+                                       kHZOrdinalKey : @(idx),
+                                       kHZNetworkKey : [adapter name],
+                                       kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                        }];
+        
         [[HZMediationAPIClient sharedClient] post:@"fetch"
-                                       withParams:@{@"success": success,
-                                                    kHZImpressionIDKey : self.impressionID,
-                                                    kHZOrdinalKey : @(idx),
-                                                    kHZNetworkKey : [adapter name],
-                                                    kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
-                                                    }
+                                       withParams:params
                                           success:^(id json) {
             HZDLog(@"Success reporting fetch");
         } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
@@ -180,12 +189,15 @@ NSString *const kHZOrdinalKey = @"ordinal";
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter
 {
     const NSUInteger ordinal = [self.chosenAdapters indexOfObject:adapter];
+    NSDictionary *const params = [self addParametersToDefaults:
+                                  @{kHZImpressionIDKey: self.impressionID,
+                                    kHZNetworkKey: [adapter name],
+                                    kHZOrdinalKey : @(ordinal),
+                                    kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                    }];
+    
     [[HZMediationAPIClient sharedClient] post:@"click"
-                                 withParams:@{kHZImpressionIDKey: self.impressionID,
-                                              kHZNetworkKey: [adapter name],
-                                              kHZOrdinalKey : @(ordinal),
-                                              kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
-                                              }
+                                 withParams:params
                                     success:^(id json) {
         HZDLog(@"Success reporting click");
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
@@ -196,12 +208,16 @@ NSString *const kHZOrdinalKey = @"ordinal";
 - (void)reportImpressionForAdapter:(HZBaseAdapter *)adapter
 {
     const NSUInteger ordinal = [self.chosenAdapters indexOfObject:adapter];
+    NSDictionary *const params = [self addParametersToDefaults:
+                                  @{
+                                    kHZImpressionIDKey: self.impressionID,
+                                    kHZNetworkKey: [adapter name],
+                                    kHZOrdinalKey: @(ordinal),
+                                    kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                    }];
+    
     [[HZMediationAPIClient sharedClient] post:@"impression"
-                                 withParams:@{kHZImpressionIDKey: self.impressionID,
-                                              kHZNetworkKey: [adapter name],
-                                              kHZOrdinalKey: @(ordinal),
-                                              kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
-                                              }
+                                 withParams:params
                                     success:^(id json) {       
         HZDLog(@"Success reporting impression");
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
@@ -211,6 +227,12 @@ NSString *const kHZOrdinalKey = @"ordinal";
 
 NSString * sdkVersionOrDefault(NSString *const version) {
     return version ?: @"";
+}
+
+- (NSDictionary *)addParametersToDefaults:(NSDictionary *const)parameters {
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:self.mediateParams];
+    [dict addEntriesFromDictionary:parameters];
+    return dict;
 }
 
 @end
