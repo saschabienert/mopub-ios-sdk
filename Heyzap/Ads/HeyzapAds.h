@@ -48,6 +48,15 @@
 
 #define SDK_VERSION @"8.0.0"
 
+#if __has_feature(objc_modules)
+@import AdSupport;
+@import CoreGraphics;
+@import CoreTelephony;
+@import MediaPlayer;
+@import QuartzCore;
+@import StoreKit;
+#endif
+
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsNone = 0 << 0,
     HZAdOptionsDisableAutoPrefetching = 1 << 0,
