@@ -281,8 +281,6 @@ NSString * const kHZDataKey = @"data";
         }
     }
     
-    NSLog(@"Preferred mediator list = %@",preferredMediatorList);
-    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         BOOL successful = NO;
         int ordinal = 0;
@@ -326,7 +324,7 @@ NSString * const kHZDataKey = @"data";
             int64_t elaspsedMilliseconds = millisecondsSinceCFTimeInterval(startTime);
 
             if (fetchedWithinTimeout) {
-                NSLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
+                HZDLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchDownloadTimeKey value:@(elaspsedMilliseconds) withProvider:session network:network];
                 successful = YES;
                 dispatch_sync(dispatch_get_main_queue(), ^{
