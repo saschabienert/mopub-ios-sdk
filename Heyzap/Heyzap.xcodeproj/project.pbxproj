@@ -273,6 +273,7 @@
 		866E3A111851302C00B6E431 /* HZAdInterstitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 866E3A0F1851302C00B6E431 /* HZAdInterstitialViewController.m */; };
 		866E3A181851329500B6E431 /* HZWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = 866E3A161851329500B6E431 /* HZWebView.h */; };
 		866E3A191851329500B6E431 /* HZWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 866E3A171851329500B6E431 /* HZWebView.m */; };
+		867A6BA01AAFB0B200D63872 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86E439371AAA462500470E62 /* iAd.framework */; };
 		867DABD50F9C498EBEF03E87 /* libPods-Ads Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B1D5F5ECB01E4EDFA33DE9B0 /* libPods-Ads Tests.a */; };
 		8680AC9B193ED2DC0078B5CF /* HZDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 8680AC99193ED2DC0078B5CF /* HZDelegateProxy.h */; };
 		8680AC9C193ED2DC0078B5CF /* HZDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8680AC9A193ED2DC0078B5CF /* HZDelegateProxy.m */; };
@@ -749,6 +750,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				867A6BA01AAFB0B200D63872 /* iAd.framework in Frameworks */,
 				5011CE9F18DBF0AC00604B53 /* libz.dylib in Frameworks */,
 				5011CE9E18DBF09A00604B53 /* CoreLocation.framework in Frameworks */,
 				5011CE9D18DBF09000604B53 /* CoreMedia.framework in Frameworks */,

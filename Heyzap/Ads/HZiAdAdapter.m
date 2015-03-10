@@ -8,9 +8,7 @@
 
 #import "HZiAdAdapter.h"
 
-#if __has_feature(objc_modules)
 @import iAd;
-#endif
 
 #import "HZMediationConstants.h"
 
@@ -32,15 +30,6 @@
         adapter = [[HZiAdAdapter alloc] init];
     });
     return adapter;
-}
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-
-    }
-    return self;
 }
 
 #pragma mark - HZ methods
@@ -98,9 +87,12 @@
     }
     
     
-    BOOL success = [[self.delegate viewControllerForPresentingAd] requestInterstitialAdPresentation];
-    if (success) {
-    } else {
+    BOOL success = NO;
+    if ([[self.delegate viewControllerForPresentingAd] respondsToSelector: @selector(requestInterstitialAdPresentation)]) {
+        success = [[self.delegate viewControllerForPresentingAd] requestInterstitialAdPresentation];
+    }
+    
+    if (!success) {
         [self.interstitialAd presentFromViewController: [self.delegate viewControllerForPresentingAd]];
     }
 }
