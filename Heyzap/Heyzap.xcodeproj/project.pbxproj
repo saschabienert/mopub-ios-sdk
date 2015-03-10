@@ -179,6 +179,7 @@
 		509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 509F002F18EB6E2F0011EAB3 /* HZBaseAdapter.h */; };
 		509F003218EB6E2F0011EAB3 /* HZBaseAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F003018EB6E2F0011EAB3 /* HZBaseAdapter.m */; };
 		509F00C518ECF42E0011EAB3 /* HZMediationSessionKeySpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 509F00C418ECF42E0011EAB3 /* HZMediationSessionKeySpec.m */; };
+		50A289DD1AAFBA4A00951E16 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86E439371AAA462500470E62 /* iAd.framework */; };
 		50A36ACC18C93B9C00FA84F0 /* InterstitialSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */; };
 		50A36AD218C9405A00FA84F0 /* DeviceInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514CB18B68EF600E00E6C /* DeviceInfoViewController.m */; };
 		50A36AD418C9405A00FA84F0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B941E71758056B00B8EACE /* main.m */; };
@@ -694,6 +695,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50A289DD1AAFBA4A00951E16 /* iAd.framework in Frameworks */,
 				5011CE6B18DBAEED00604B53 /* libz.1.2.5.dylib in Frameworks */,
 				5011CE6918DBAEDD00604B53 /* Social.framework in Frameworks */,
 				5011CE6718DBAED300604B53 /* CoreMedia.framework in Frameworks */,
