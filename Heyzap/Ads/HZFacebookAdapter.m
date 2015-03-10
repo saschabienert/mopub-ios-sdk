@@ -10,10 +10,18 @@
 #import "HZFBInterstitialAd.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZBannerAdWrapper.h"
+#import "HZFBAdView.h"
+#import "HZFBBannerAdapter.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
 @property (nonatomic, strong) HZFBInterstitialAd *interstitialAd;
+
+HZFBAdSize *hzlookupFBAdSizeConstant(NSString *constantName);
+HZFBAdSize *hzFBAdSize50(void);
+HZFBAdSize *hzFBAdSize90(void);
+
 @end
 
 @implementation HZFacebookAdapter
@@ -32,7 +40,10 @@
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable {
-    return [HZFBInterstitialAd hzProxiedClassIsAvailable];
+    return [HZFBInterstitialAd hzProxiedClassIsAvailable]
+    && [HZFBAdView hzProxiedClassIsAvailable]
+    && hzFBAdSize50() != NULL
+    && hzFBAdSize90() != NULL;
 }
 
 + (NSString *)name {
@@ -80,6 +91,7 @@
 }
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag {
+    
     NSAssert(self.placementID, @"Need a Placement ID by this point");
     
     if (type != HZAdTypeInterstitial) {
@@ -144,5 +156,40 @@
 
 - (void)interstitialAdWillLogImpression:(HZFBInterstitialAd *)interstitialAd {
 }
+
+- (HZBannerAdapter *)fetchBannerWithRootViewController:(UIViewController *const)controller {
+    HZFBAdView *view = [[HZFBAdView alloc] initWithPlacementID:@"500413400097719_538033529669039" adSize:*hzFBAdSize90() rootViewController:controller];
+    
+    return [[HZFBBannerAdapter alloc] initWithHZFBAdView:view];
+}
+
+HZFBAdSize *hzFBAdSize50(void) {
+    return hzlookupFBAdSizeConstant(@"kFBAdSizeHeight50Banner");
+}
+
+HZFBAdSize *hzFBAdSize90(void) {
+    return hzlookupFBAdSizeConstant(@"kFBAdSizeHeight90Banner");
+}
+
+HZFBAdSize *hzlookupFBAdSizeConstant(NSString *const constantName) {
+    return CFBundleGetDataPointerForName(CFBundleGetMainBundle(), (__bridge CFStringRef)constantName);
+}
+
+//- (HZFBAdSize *)foo {
+//    void * dataPtr = CFBundleGetDataPointerForName(CFBundleGetMainBundle(), (__bridge CFStringRef)@"kFBAdSize320x50f");
+//    if (dataPtr) {
+//        NSLog(@"Data ptr was present");
+//    } else {
+//        NSLog(@"Data ptr missing");
+//        return NULL;
+//    }
+//    //    NSLog(@"dataPtr = %@",*dataPtr);
+//    HZFBAdSize *x = dataPtr;
+//    //    FBAdSize *x = (FBAdSize *)(dataPtr ? *dataPtr : nil);
+//    CGSize size = x->size;
+//    NSLog(@"Size = %@",NSStringFromCGSize(size));
+//    
+//    return x;
+//}
 
 @end

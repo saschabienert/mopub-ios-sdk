@@ -16,6 +16,7 @@
 #import "HZAdColonyAdapter.h"
 #import "HZVungleAdapter.h"
 #import "HZAdMobAdapter.h"
+#import "HZFacebookAdapter.h"
 #import "HZMediationAPIClient.h"
 #import "HZDictionaryUtils.h"
 #import "HZMediationConstants.h"
@@ -614,6 +615,11 @@ static BOOL forceOnlyHeyzapSDK = NO;
             break;
         }
     }
+}
+
+- (void)getBannerWithRootViewController:(UIViewController *const)viewController {
+//    HZBannerAdapter *adapter = [[HZFacebookAdapter sharedInstance] fetchBannerWithRootViewController:viewController];
+//    HZBann
 }
 
 @end

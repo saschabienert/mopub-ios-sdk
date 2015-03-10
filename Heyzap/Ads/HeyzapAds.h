@@ -57,6 +57,7 @@
 @import MediaPlayer;
 @import QuartzCore;
 @import StoreKit;
+@import iAd;
 #endif
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {

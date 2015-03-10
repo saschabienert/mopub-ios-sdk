@@ -19,6 +19,7 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 };
 
 @class HZBaseAdapter;
+@class HZBannerAdapter;
 
 @protocol HZMediationAdapterDelegate <NSObject>
 
@@ -93,6 +94,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 + (BOOL)isSDKAvailable;
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials;
+
+- (HZBannerAdapter *)fetchBannerWithRootViewController:(UIViewController *const)controller;
 
 #pragma mark - Inferred methods
 

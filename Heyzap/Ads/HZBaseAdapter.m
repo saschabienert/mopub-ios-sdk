@@ -18,6 +18,7 @@
 #import "HZCrossPromoAdapter.h"
 #import "HZFacebookAdapter.h"
 #import "HZiAdAdapter.h"
+#import "HZBannerAdapter.h"
 
 @implementation HZBaseAdapter
 
@@ -81,6 +82,10 @@
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
     ABSTRACT_METHOD_ERROR();
+}
+
+- (HZBannerAdapter *)fetchBannerWithRootViewController:(UIViewController *const)controller {
+    return nil;
 }
 
 #pragma mark - Inferred methods
