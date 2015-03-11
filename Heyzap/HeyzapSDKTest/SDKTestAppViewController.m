@@ -22,6 +22,7 @@
 #import "HZNativeAdCollection.h"
 #import "HZNativeAd.h"
 #import "NativeAdTableViewController.h"
+#import "HZBannerAdWrapper.h"
 
 //#import <FBAudienceNetwork/FBAudienceNetwork.h>
 //#import "GADBannerView.h"
@@ -61,6 +62,8 @@ typedef enum {
 @property (nonatomic, strong) UIButton *showButton;
 
 @property (nonatomic, strong) NSURL *lastFetchURL;
+
+@property (nonatomic, strong) HZBannerAdWrapper *wrapper;
 
 
 @end
@@ -439,6 +442,12 @@ const CGFloat kLeftMargin = 10;
 
 - (void)addBannersStuff {
     
+    self.wrapper = [HZBannerAdWrapper getWrapperForViewController:self];
+    NSLog(@"Wrapper = %@",self.wrapper);
+    UIView *banner = self.wrapper.mediatedBanner;
+    NSLog(@"Banner = %@",banner);
+    [self.view addSubview:banner];
+    
 //    void * dataPtr = CFBundleGetDataPointerForName(CFBundleGetMainBundle(), (__bridge CFStringRef)@"kFBAdSize320x50");
 //    if (dataPtr) {
 //        NSLog(@"Data ptr was present");
@@ -461,8 +470,8 @@ const CGFloat kLeftMargin = 10;
 //    [bannerView loadRequest:nil];
 //    [self.view addSubview:bannerView];
 //    
-//    ADBannerView *iAd = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
-//    [self.view addSubview:iAd];
+    ADBannerView *iAd = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
+    [self.view addSubview:iAd];
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{

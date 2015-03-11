@@ -22,6 +22,7 @@
     self = [super init];
     if (self) {
         _adView = adView;
+        [_adView loadAd];
     }
     return self;
 }
@@ -42,6 +43,10 @@
 }
 - (void)adViewWillLogImpression:(HZFBAdView *)adView {
     
+}
+
+- (UIView *)mediatedBanner {
+    return (UIView *)self.adView;
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol {

@@ -58,9 +58,13 @@
  */
 @interface HZBannerAdWrapper : NSObject
 
++ (instancetype)getWrapperForViewController:(UIViewController *)controller;
+
 
 @property (nonatomic, strong, readonly) UIView *mediatedBanner;
 @property (nonatomic, weak) id<HZBannerAdDelegate> delegate;
+
+@property (nonatomic, readonly) BOOL isLoaded;
 
 /**
  *  An identifier of the ad network.

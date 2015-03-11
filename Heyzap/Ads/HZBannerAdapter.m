@@ -8,10 +8,12 @@
 
 #import "HZBannerAdapter.h"
 
+#define ABSTRACT_METHOD_ERROR() @throw [NSException exceptionWithName:@"AbstractMethodException" reason:@"Subclasses should override this method" userInfo:nil];
+
 @implementation HZBannerAdapter
 
-//- (UIView *)mediatedBanner {
-//    
-//}
+- (UIView *)mediatedBanner {
+    ABSTRACT_METHOD_ERROR();
+}
 
 @end

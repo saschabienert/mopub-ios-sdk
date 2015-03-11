@@ -15,7 +15,7 @@
 
 + (NSString *)hzProxiedClassName
 {
-    return @"FBInterstitialAd";
+    return @"FBAdView";
 }
 
 - (UIView *)viewProxy {

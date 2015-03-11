@@ -8,16 +8,29 @@
 
 #import "HZBannerAdWrapper.h"
 #import "HZMediationConstants.h"
+#import "HeyzapMediation.h"
+#import "HZBannerAdapter.h"
+
+@interface HZBannerAdWrapper()
+
+@property (nonatomic, strong, readonly) HZBannerAdapter *adapter;
+
+@end
 
 @implementation HZBannerAdWrapper
-
+///
 - (instancetype)initWithBanner:(HZBannerAdapter *)adapter network:(NSString *const)network {
     self = [super init];
     if (self) {
-//        _mediatedBanner = banner;
+        _adapter = adapter;
         _mediatedNetwork = network;
     }
     return self;
+}
+
++ (instancetype)getWrapperForViewController:(UIViewController *)controller {
+    HZBannerAdapter *adapter = [[HeyzapMediation sharedInstance] getBannerWithRootViewController:controller];
+    return [[self alloc] initWithBanner:adapter network:@"facebook"];
 }
 
 - (NSString *)description {
@@ -48,6 +61,10 @@
 
 - (void)willLeaveApplication {
     [self.delegate willLeaveApplication];
+}
+
+- (UIView *)mediatedBanner {
+    return self.adapter.mediatedBanner;
 }
 
 @end
