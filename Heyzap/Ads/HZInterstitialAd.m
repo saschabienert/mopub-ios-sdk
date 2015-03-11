@@ -20,7 +20,7 @@
 @implementation HZInterstitialAd
 
 + (void) setDelegate: (id<HZAdsDelegate>) delegate {
-    HZVersionCheck
+    HZVersionCheck()
 
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapInterstitialAd setDelegate:delegate];
@@ -40,7 +40,7 @@
 }
 
 + (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
-    HZVersionCheck
+    HZVersionCheck()
 
     tag = tag ?: [HeyzapAds defaultTagName];
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
@@ -65,7 +65,7 @@
 }
 
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
-    HZVersionCheck
+    HZVersionCheck()
 
     tag = tag ?: [HeyzapAds defaultTagName];
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
@@ -80,7 +80,7 @@
 }
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
-    HZVersionCheckBool
+    HZVersionCheckBool()
 
     tag = tag ?: [HeyzapAds defaultTagName];
     
@@ -94,14 +94,14 @@
 #pragma mark - Private API
 
 + (void) setCreativeID:(int)creativeID {
-    HZVersionCheck
+    HZVersionCheck()
 
     [HZHeyzapInterstitialAd setCreativeID:creativeID];
 }
 
 + (void)forceTestCreative:(BOOL)forceTestCreative
 {
-    HZVersionCheck
+    HZVersionCheck()
 
     [HZHeyzapInterstitialAd forceTestCreative:forceTestCreative];
 }

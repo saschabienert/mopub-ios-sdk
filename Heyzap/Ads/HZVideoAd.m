@@ -22,7 +22,7 @@
 
 + (void)setDelegate:(id<HZAdsDelegate>)delegate
 {
-    HZVersionCheck
+    HZVersionCheck()
 
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [[HZAdsManager sharedManager] setVideoDelegate: delegate];
@@ -42,7 +42,7 @@
 }
 
 + (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
-    HZVersionCheck
+    HZVersionCheck()
 
     tag = tag ?: [HeyzapAds defaultTagName];
     
@@ -73,7 +73,7 @@
 }
 
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
-    HZVersionCheck
+    HZVersionCheck()
 
     tag = tag ?: [HeyzapAds defaultTagName];
 
@@ -91,7 +91,7 @@
 }
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
-    HZVersionCheckBool
+    HZVersionCheckBool()
 
     tag = tag ?: [HeyzapAds defaultTagName];
 
@@ -105,7 +105,7 @@
 #pragma mark - Heyzap Only
 
 + (void) setCreativeID:(int)creativeID {
-    HZVersionCheck
+    HZVersionCheck()
 
     [HZHeyzapVideoAd setCreativeID:creativeID];
 }

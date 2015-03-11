@@ -33,7 +33,7 @@
 }
 
 - (void)reportImpressionOnAllAds {
-    HZVersionCheck
+    HZVersionCheck()
 
     if (self.sentImpressions) {
         return;

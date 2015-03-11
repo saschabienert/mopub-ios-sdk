@@ -25,7 +25,7 @@
 
 + (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate
 {
-    HZVersionCheck
+    HZVersionCheck()
 
     if ([HeyzapMediation isOnlyHeyzapSDK]){
         [HZHeyzapIncentivizedAd setDelegate:delegate];
@@ -42,7 +42,7 @@
 
 + (void)showForTag:(NSString *)tag
 {
-    HZVersionCheck
+    HZVersionCheck()
 
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapIncentivizedAd showForTag:tag auctionType:HZAuctionTypeMixed];
@@ -67,7 +67,7 @@
 
 + (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion
 {
-    HZVersionCheck
+    HZVersionCheck()
 
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapIncentivizedAd fetchForTag: tag auctionType:HZAuctionTypeMixed completion:completion];
@@ -88,7 +88,7 @@
 
 + (BOOL)isAvailableForTag:(NSString *)tag
 {
-    HZVersionCheckBool
+    HZVersionCheckBool()
 
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         return [HZHeyzapIncentivizedAd isAvailableForTag:tag auctionType:HZAuctionTypeMixed];
@@ -100,13 +100,13 @@
 #pragma mark - Heyzap specific
 
 + (void) setUserIdentifier: (NSString *) userIdentifier {
-    HZVersionCheck
+    HZVersionCheck()
 
     [HZHeyzapIncentivizedAd setUserIdentifier:userIdentifier];
 }
 
 + (void) setCreativeID:(int)creativeID {
-    HZVersionCheck
+    HZVersionCheck()
 
     [HZHeyzapIncentivizedAd setCreativeID:creativeID];
 }

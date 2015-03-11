@@ -24,7 +24,7 @@
 + (void)fetchAds:(const NSUInteger)numberOfAds
              tag:(NSString *)tag
       completion:(void (^)(NSError *error, HZNativeAdCollection *collection))completion {
-    HZVersionCheck
+    HZVersionCheck()
 
     NSParameterAssert(numberOfAds > 0);
     NSParameterAssert(completion);
@@ -78,7 +78,7 @@
 }
 
 + (void)reportErrors:(NSArray *)errors {
-    HZVersionCheck
+    HZVersionCheck()
 
     if ([errors count]) {
         NSArray *reasons = hzMap(errors, ^NSString *(NSError *error) {

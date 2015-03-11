@@ -104,7 +104,7 @@ NSString *const kHZNativeAdRatingKey = @"rating";
 }
 
 - (void)reportImpression {
-    HZVersionCheck
+    HZVersionCheck()
 
     if (self.sentImpression) {
         return;
@@ -123,7 +123,7 @@ NSString *const kHZNativeAdRatingKey = @"rating";
                             storeDelegate:(id<SKStoreProductViewControllerDelegate>)storeDelegate
                                completion:(void (^)(BOOL result, NSError *error))completion {
     
-    HZVersionCheck
+    HZVersionCheck()
 
     if (!self.sentClick) {
         [[HZAdsAPIClient sharedClient] post: kHZRegisterClickEndpoint withParams:[self eventParams] success:^(id JSON) {
