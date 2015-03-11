@@ -89,7 +89,7 @@ static HeyzapUnityAdDelegate *HZIncentivizedDelegate = nil;
 static HeyzapUnityAdDelegate *HZVideoDelegate = nil;
 
 extern "C" {
-    void hz_ads_start_app(const char *publisher_id, int flags) {
+    void hz_ads_start_app(const char *publisher_id, HZAdOptions flags) {
         NSString *publisherID = [NSString stringWithUTF8String: publisher_id];
         
         [HeyzapAds startWithPublisherID: publisherID andOptions: flags andFramework: @"unity3d"];
