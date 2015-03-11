@@ -153,6 +153,10 @@
     return NO;
 }
 
++ (BOOL) isVersionSupported {
+    return ![HZDevice hzSystemVersionIsLessThan:@"6.0.0"];
+}
+
 #pragma mark - Is Available
 
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType

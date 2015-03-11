@@ -13,6 +13,7 @@
 #import "HZNativeAd.h"
 #import "HZNativeAdCollection.h"
 #import "HeyzapAds.h"
+#import "HZAdsManager.h"
 
 #import "HZNativeAdCollection_Private.h"
 #import "HZNativeAd_Private.h"
@@ -23,6 +24,8 @@
 + (void)fetchAds:(const NSUInteger)numberOfAds
              tag:(NSString *)tag
       completion:(void (^)(NSError *error, HZNativeAdCollection *collection))completion {
+    HZVersionCheck()
+
     NSParameterAssert(numberOfAds > 0);
     NSParameterAssert(completion);
     if (!tag) {
@@ -75,6 +78,8 @@
 }
 
 + (void)reportErrors:(NSArray *)errors {
+    HZVersionCheck()
+
     if ([errors count]) {
         NSArray *reasons = hzMap(errors, ^NSString *(NSError *error) {
             return error.localizedFailureReason;

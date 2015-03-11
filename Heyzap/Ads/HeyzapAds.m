@@ -53,6 +53,8 @@
 }
 
 + (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options andFramework:(NSString *)framework {
+    HZVersionCheck()
+
     if (options & HZAdOptionsDisableMedation) {
         [HeyzapMediation forceOnlyHeyzapSDK];
     }
@@ -71,35 +73,51 @@
 }
 
 + (BOOL) isStarted {
+    HZVersionCheckBool()
+
     return [HZAdsManager isEnabled];
 }
 
 + (void) setDebugLevel:(HZDebugLevel)debugLevel {
+    HZVersionCheck()
+
     [HZLog setDebugLevel: debugLevel];
 }
 
 + (void) setDebug:(BOOL)choice {
+    HZVersionCheck()
+
     [[HZAdsManager sharedManager] setIsDebuggable: choice];
 }
 
 + (void) setOptions: (HZAdOptions) options {
+    HZVersionCheck()
+
     [[HZAdsManager sharedManager] setOptions: options];
 }
 
 + (void) setDelegate: (id<HZAdsDelegate>) delegate {
+    HZVersionCheck()
+
     [[HZAdsManager sharedManager] setInterstitialDelegate: delegate];
     [[HZAdsManager sharedManager] setVideoDelegate: delegate];
 }
 
 + (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate {
+    HZVersionCheck()
+
     [[HZAdsManager sharedManager] setIncentivizedDelegate: delegate];
 }
 
 + (void) setFramework: (NSString *) framework {
+    HZVersionCheck()
+
     [[HZAdsManager sharedManager] setFramework: framework];
 }
 
 + (void) setMediator: (NSString *) mediator {
+    HZVersionCheck()
+
     [[HZAdsManager sharedManager] setMediator: mediator];
 }
 
@@ -113,6 +131,8 @@
 }
 
 + (void)presentMediationDebugViewController {
+    HZVersionCheck()
+
     [HZTestActivityViewController show];
 }
 

@@ -10,6 +10,7 @@
 #import "HZUtils.h"
 #import "HZAdsAPIClient.h"
 #import "HZLog.h"
+#import "HZAdsManager.h"
 
 @interface HZNativeAdCollection()
 
@@ -32,6 +33,8 @@
 }
 
 - (void)reportImpressionOnAllAds {
+    HZVersionCheck()
+
     if (self.sentImpressions) {
         return;
     }

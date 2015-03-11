@@ -38,6 +38,7 @@
 + (HZAdsManager *)sharedManager;
 - (void) onStart;
 + (BOOL) isEnabled;
++ (BOOL) isVersionSupported;
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
 
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
@@ -52,4 +53,13 @@
 
 + (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider;
 
+#define HZVersionCheck()     if(![HZAdsManager isVersionSupported]){                \
+                               HZDLog(@"Heyzap only supports iOS 6.0.0 and above"); \
+                               return;                                              \
+                             }
+
+#define HZVersionCheckBool() if(![HZAdsManager isVersionSupported]){                \
+                               HZDLog(@"Heyzap only supports iOS 6.0.0 and above"); \
+                               return NO;                                           \
+                             }
 @end
