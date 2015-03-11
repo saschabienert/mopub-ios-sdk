@@ -16,6 +16,8 @@
 #import "HZNativeAdImage.h"
 #import "HZNativeAdImage_Private.h"
 #import "HZInitMacros.h"
+#import "HZAdsManager.h"
+
 @import StoreKit;
 
 NSString *const kHZNativeAdCategoryKey = @"category";
@@ -102,6 +104,8 @@ NSString *const kHZNativeAdRatingKey = @"rating";
 }
 
 - (void)reportImpression {
+    HZVersionCheck
+
     if (self.sentImpression) {
         return;
     }
@@ -119,6 +123,8 @@ NSString *const kHZNativeAdRatingKey = @"rating";
                             storeDelegate:(id<SKStoreProductViewControllerDelegate>)storeDelegate
                                completion:(void (^)(BOOL result, NSError *error))completion {
     
+    HZVersionCheck
+
     if (!self.sentClick) {
         [[HZAdsAPIClient sharedClient] post: kHZRegisterClickEndpoint withParams:[self eventParams] success:^(id JSON) {
             self.sentClick = YES;

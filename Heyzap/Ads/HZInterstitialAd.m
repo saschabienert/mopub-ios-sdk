@@ -20,6 +20,8 @@
 @implementation HZInterstitialAd
 
 + (void) setDelegate: (id<HZAdsDelegate>) delegate {
+    HZVersionCheck
+
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapInterstitialAd setDelegate:delegate];
     } else {
@@ -38,6 +40,8 @@
 }
 
 + (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
+    HZVersionCheck
+
     tag = tag ?: [HeyzapAds defaultTagName];
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapInterstitialAd showForTag:tag auctionType:HZAuctionTypeMixed completion:completion];
@@ -61,6 +65,8 @@
 }
 
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
+    HZVersionCheck
+
     tag = tag ?: [HeyzapAds defaultTagName];
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapInterstitialAd fetchForTag:tag auctionType:HZAuctionTypeMixed withCompletion:completion];
@@ -74,6 +80,8 @@
 }
 
 + (BOOL) isAvailableForTag: (NSString *) tag {
+    HZVersionCheckBool
+
     tag = tag ?: [HeyzapAds defaultTagName];
     
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
@@ -86,11 +94,15 @@
 #pragma mark - Private API
 
 + (void) setCreativeID:(int)creativeID {
+    HZVersionCheck
+
     [HZHeyzapInterstitialAd setCreativeID:creativeID];
 }
 
 + (void)forceTestCreative:(BOOL)forceTestCreative
 {
+    HZVersionCheck
+
     [HZHeyzapInterstitialAd forceTestCreative:forceTestCreative];
 }
 

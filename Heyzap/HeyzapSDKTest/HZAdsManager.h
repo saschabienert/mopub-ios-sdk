@@ -28,8 +28,8 @@
 //@property (nonatomic, weak) id<HZAdsDelegate> statusDelegate;
 //@property (nonatomic, weak) id<HZIncentivizedAdDelegate> incentivizedDelegate;
 
-@property (nonatomic, assign, readonly) BOOL isEnabled;
 @property (nonatomic, assign) HZAdOptions options;
+@property (nonatomic) BOOL isStarted;
 
 #pragma mark - Framework/Mediators
 @property (nonatomic) NSString *framework;
@@ -52,4 +52,12 @@
 
 + (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider;
 
+#define HZVersionCheck if(![HZAdsManager isEnabled]){                           \
+                           HZDLog(@"Heyzap only supports iOS 6.0.0 and above"); \
+                           return;                                              \
+                       }
+#define HZVersionCheckBool if(![HZAdsManager isEnabled]){                           \
+                               HZDLog(@"Heyzap only supports iOS 6.0.0 and above"); \
+                               return NO;                                           \
+                           }
 @end
