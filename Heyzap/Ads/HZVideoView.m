@@ -268,6 +268,13 @@
 
 - (CGRect) calculateNaturalFrameFromMovie: (MPMoviePlayerController *) controller withFrame: (CGRect) frame {
     CGSize naturalFrame = controller.naturalSize;
+
+    // naturalSize can return 0 values in certain cases (e.g. part of the video is audio-only).
+    // This prevents divide by zero https://app.asana.com/0/25787840548210/25833056427326
+    if (naturalFrame.width == 0 || naturalFrame.height == 0) {
+        return frame;
+    }
+
     float originalAspectRatio = naturalFrame.width / naturalFrame.height;
 	float maxAspectRatio = frame.size.width / frame.size.height;
     
