@@ -75,7 +75,7 @@
 + (BOOL) isStarted {
     HZVersionCheckBool
 
-    return [[HZAdsManager sharedManager] isStarted];
+    return [HZAdsManager isEnabled];
 }
 
 + (void) setDebugLevel:(HZDebugLevel)debugLevel {

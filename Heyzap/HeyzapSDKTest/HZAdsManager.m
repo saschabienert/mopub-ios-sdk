@@ -39,10 +39,10 @@
 - (id) init {
     self = [super init];
     if (self) {
+        _isEnabled = YES;
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
-        _isStarted = NO;
 
         [[self class] runInitialTasks];
     }
@@ -62,8 +62,6 @@
         && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
         [HZInterstitialAd fetch];
     }
-
-    self.isStarted = YES;
 }
 
 + (void) runInitialTasks {
@@ -152,6 +150,10 @@
 #pragma mark - Enabled
 
 + (BOOL) isEnabled {
+    return NO;
+}
+
++ (BOOL) isVersionSupported {
     return ![HZDevice hzSystemVersionIsLessThan:@"6.0.0"];
 }
 

@@ -28,8 +28,8 @@
 //@property (nonatomic, weak) id<HZAdsDelegate> statusDelegate;
 //@property (nonatomic, weak) id<HZIncentivizedAdDelegate> incentivizedDelegate;
 
+@property (nonatomic, assign, readonly) BOOL isEnabled;
 @property (nonatomic, assign) HZAdOptions options;
-@property (nonatomic) BOOL isStarted;
 
 #pragma mark - Framework/Mediators
 @property (nonatomic) NSString *framework;
@@ -38,6 +38,7 @@
 + (HZAdsManager *)sharedManager;
 - (void) onStart;
 + (BOOL) isEnabled;
++ (BOOL) isVersionSupported;
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
 
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
@@ -52,11 +53,12 @@
 
 + (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider;
 
-#define HZVersionCheck if(![HZAdsManager isEnabled]){                           \
-                           HZDLog(@"Heyzap only supports iOS 6.0.0 and above"); \
-                           return;                                              \
-                       }
-#define HZVersionCheckBool if(![HZAdsManager isEnabled]){                           \
+#define HZVersionCheck     if(![HZAdsManager isVersionSupported]){                  \
+                               HZDLog(@"Heyzap only supports iOS 6.0.0 and above"); \
+                               return;                                              \
+                           }
+
+#define HZVersionCheckBool if(![HZAdsManager isVersionSupported]){                  \
                                HZDLog(@"Heyzap only supports iOS 6.0.0 and above"); \
                                return NO;                                           \
                            }
