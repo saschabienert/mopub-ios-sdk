@@ -37,6 +37,7 @@
 #import "HZDictionaryUtils.h"
 #import "HZDispatch.h"
 #import "HZUnityAds.h"
+#import "HZDevice.h"
 
 @interface HZTestActivityNetworkViewController() <HZMediationAdapterDelegate>
 
@@ -243,7 +244,9 @@
     UINavigationBar *header = ({
         UINavigationBar *nav = [[UINavigationBar alloc] initWithFrame:CGRectMake(currentNetworkView.frame.origin.x, currentNetworkView.frame.origin.y,
                                                                                  currentNetworkView.frame.size.width, 44)];
-        nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
+        if([nav respondsToSelector:@selector(barTintColor)]){
+            nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
+        }
         nav.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         nav;
     });
