@@ -10,6 +10,7 @@
 #import "HZMediationConstants.h"
 #import "HeyzapMediation.h"
 #import "HZBannerAdapter.h"
+#import "HZBannerAdOptions.h"
 
 @interface HZBannerAdWrapper()
 
@@ -24,13 +25,17 @@
     if (self) {
         _adapter = adapter;
         _mediatedNetwork = network;
+        adapter.reportingDelegate = self;
     }
     return self;
 }
 
 + (instancetype)getWrapperForViewController:(UIViewController *)controller {
-    HZBannerAdapter *adapter = [[HeyzapMediation sharedInstance] getBannerWithRootViewController:controller];
-    return [[self alloc] initWithBanner:adapter network:@"facebook"];
+    
+//    @{kHZAdapterFacebook:kHZFacebookBanner};
+    
+    HZBannerAdapter *adapter = [[HeyzapMediation sharedInstance] getBannerWithRootViewController:controller sizeOptions:(NSDictionary *)sizeOptions];
+    return [[self alloc] initWithBanner:adapter network:adapter.networkName];
 }
 
 - (NSString *)description {
@@ -39,28 +44,29 @@
 
 
 - (void)didReceiveAd {
-    [self.delegate didReceiveAd];
+    [self.delegate bannerDidReceiveAd];
 }
 
 - (void)didFailToReceiveAd:(NSError *)error {
     NSDictionary *const userInfo = error ? @{NSUnderlyingErrorKey: error} : nil;
-    return [self.delegate didFailToReceiveAd:[[NSError alloc] initWithDomain:kHZMediationDomain code:1 userInfo:userInfo]];
+    return [self.delegate bannerDidFailToReceiveAd:[[NSError alloc] initWithDomain:kHZMediationDomain code:1 userInfo:userInfo]];
 }
 
 - (void)userDidClick {
-    [self.delegate userDidClick];
+    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+    [self.delegate bannerWasClicked];
 }
 
 - (void)willPresentModalView {
-    [self.delegate willPresentModalView];
+    [self.delegate bannerWillPresentModalView];
 }
 
 - (void)didDismissModalView {
-    [self.delegate didDismissModalView];
+    [self.delegate bannerDidDismissModalView];
 }
 
 - (void)willLeaveApplication {
-    [self.delegate willLeaveApplication];
+    [self.delegate bannerWillLeaveApplication];
 }
 
 - (UIView *)mediatedBanner {

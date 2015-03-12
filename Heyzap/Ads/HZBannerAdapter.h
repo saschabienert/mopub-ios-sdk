@@ -13,8 +13,7 @@
 
 @property (nonatomic, weak) id<HZBannerAdWrapperReporter> reportingDelegate;
 
-@property (nonatomic, strong, readonly) NSString *networkName;
-
+- (NSString *)networkName;
 - (UIView *)mediatedBanner;
 
 @end

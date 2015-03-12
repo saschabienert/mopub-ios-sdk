@@ -617,7 +617,7 @@ static BOOL forceOnlyHeyzapSDK = NO;
     }
 }
 
-- (HZBannerAdapter *)getBannerWithRootViewController:(UIViewController *const)viewController {
+- (HZBannerAdapter *)getBannerWithRootViewController:(UIViewController *const)viewController sizeOptions:(NSDictionary *const)sizeOptions {
     HZBannerAdapter *adapter = [[HZFacebookAdapter sharedInstance] fetchBannerWithRootViewController:viewController];
     return adapter;
 }

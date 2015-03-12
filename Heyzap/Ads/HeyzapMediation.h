@@ -52,6 +52,6 @@
 HZAdType hzAdTypeFromString(NSString *adUnit);
 NSString * NSStringFromAdType(HZAdType type);
 
-- (HZBannerAdapter *)getBannerWithRootViewController:(UIViewController *const)viewController;
+- (HZBannerAdapter *)getBannerWithRootViewController:(UIViewController *const)viewController sizeOptions:(NSDictionary *)sizeOptions;
 
 @end

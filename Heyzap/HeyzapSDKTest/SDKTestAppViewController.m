@@ -37,7 +37,7 @@ typedef enum {
     kAdUnitSegmentIncentivized
 } kAdUnitSegement;
 
-@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate>
+@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, HZBannerAdDelegate>
 
 @property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl1;
 @property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl2;
@@ -443,6 +443,7 @@ const CGFloat kLeftMargin = 10;
 - (void)addBannersStuff {
     
     self.wrapper = [HZBannerAdWrapper getWrapperForViewController:self];
+    self.wrapper.delegate = self;
     NSLog(@"Wrapper = %@",self.wrapper);
     UIView *banner = self.wrapper.mediatedBanner;
     NSLog(@"Banner = %@",banner);
@@ -470,8 +471,8 @@ const CGFloat kLeftMargin = 10;
 //    [bannerView loadRequest:nil];
 //    [self.view addSubview:bannerView];
 //    
-    ADBannerView *iAd = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
-    [self.view addSubview:iAd];
+//    ADBannerView *iAd = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
+//    [self.view addSubview:iAd];
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{
@@ -680,6 +681,30 @@ const CGFloat kLeftMargin = 10;
 }
 
 #undef APPEND_METHOD_NAME_TO_CONSOLE
+
+- (void)bannerDidReceiveAd {
+    NSLog(@"bannerDidReceiveAd");
+}
+
+- (void)bannerDidFailToReceiveAd:(NSError *)error {
+    NSLog(@"bannerDidFailtoReceiveAd:%@",error);
+}
+
+- (void)bannerWasClicked {
+    NSLog(@"bannerWasClicked");
+}
+
+- (void)bannerWillPresentModalView {
+    NSLog(@"bannerWillPresentModalView");
+}
+
+- (void)bannerDidDismissModalView {
+    NSLog(@"bannerDidDismissModalView");
+}
+
+- (void)bannerWillLeaveApplication {
+    NSLog(@"bannerWillLeaveApplication");
+}
 
 
 @end

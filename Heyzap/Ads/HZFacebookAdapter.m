@@ -13,6 +13,7 @@
 #import "HZBannerAdWrapper.h"
 #import "HZFBAdView.h"
 #import "HZFBBannerAdapter.h"
+#import "HZBannerAdOptions.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
@@ -21,6 +22,7 @@
 HZFBAdSize *hzlookupFBAdSizeConstant(NSString *constantName);
 HZFBAdSize *hzFBAdSize50(void);
 HZFBAdSize *hzFBAdSize90(void);
+HZFBAdSize *hzFBAdSize320x50(void);
 
 @end
 
@@ -43,7 +45,8 @@ HZFBAdSize *hzFBAdSize90(void);
     return [HZFBInterstitialAd hzProxiedClassIsAvailable]
     && [HZFBAdView hzProxiedClassIsAvailable]
     && hzFBAdSize50() != NULL
-    && hzFBAdSize90() != NULL;
+    && hzFBAdSize90() != NULL
+    && hzFBAdSize320x50() != NULL;
 }
 
 + (NSString *)name {
@@ -157,8 +160,25 @@ HZFBAdSize *hzFBAdSize90(void);
 - (void)interstitialAdWillLogImpression:(HZFBInterstitialAd *)interstitialAd {
 }
 
-- (HZBannerAdapter *)fetchBannerWithRootViewController:(UIViewController *const)controller {
-    HZFBAdView *view = [[HZFBAdView alloc] initWithPlacementID:@"500413400097719_538033529669039" adSize:*hzFBAdSize90() rootViewController:controller];
+- (HZBannerAdapter *)fetchBannerWithRootViewController:(UIViewController *const)controller sizeOptions:(NSDictionary *const)sizeOptions {
+    
+    NSString *const sizeOption = sizeOptions[kHZBannerNetworkFacebook];
+    const HZFBAdSize size = ({
+        HZFBAdSize size;
+        if ([sizeOption isEqualToString:kHZFacebookBannerSize320x50]) {
+            size = *hzFBAdSize320x50();
+        } else if ([sizeOption isEqualToString:kHZFacebookBannerSizeHeight50FlexibleWidth]) {
+            size = *hzFBAdSize50();
+        } else if ([sizeOption isEqualToString:kHZFacebookBannerSizeHeight90FlexibleWidth]) {
+            size = *hzFBAdSize90();
+        } else {
+            NSLog(@"Unrecognized size option for facebook banner. Provided size was = %@. Defaulting to kHZFacebookBannerSizeHeight50FlexibleWidth",sizeOption);
+            size = *hzFBAdSize50();
+        }
+        size;
+    });
+    
+    HZFBAdView *view = [[HZFBAdView alloc] initWithPlacementID:@"500413400097719_538033529669039" adSize:size rootViewController:controller];
     
     return [[HZFBBannerAdapter alloc] initWithHZFBAdView:view];
 }
@@ -169,6 +189,10 @@ HZFBAdSize *hzFBAdSize50(void) {
 
 HZFBAdSize *hzFBAdSize90(void) {
     return hzlookupFBAdSizeConstant(@"kFBAdSizeHeight90Banner");
+}
+
+HZFBAdSize *hzFBAdSize320x50(void) {
+    return hzlookupFBAdSizeConstant(@"kFBAdSize320x50");
 }
 
 HZFBAdSize *hzlookupFBAdSizeConstant(NSString *const constantName) {

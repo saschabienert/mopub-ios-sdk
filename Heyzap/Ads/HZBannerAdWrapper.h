@@ -11,7 +11,7 @@
 
 @protocol HZBannerAdDelegate <NSObject>
 
-@optional
+//@optional
 
 /// @name Ad Request Notifications
 #pragma mark - Ad Request Notifications
@@ -19,7 +19,7 @@
 /**
  *  Called when the banner ad is loaded.
  */
-- (void)didReceiveAd;
+- (void)bannerDidReceiveAd;
 
 /**
  *  Called when the banner ad fails to load.
@@ -29,7 +29,7 @@
  *  If the underlying ad network provided an `NSError` object, it will be accessible in the `userInfo` dictionary
  *  with the `NSUnderlyingErrorKey`.
  */
-- (void)didFailToReceiveAd:(NSError *)error;
+- (void)bannerDidFailToReceiveAd:(NSError *)error;
 
 /// @name Click-time Notifications
 #pragma mark - Click-time Notifications
@@ -37,19 +37,19 @@
 /**
  *  Called when the user clicks the banner ad.
  */
-- (void)userDidClick;
+- (void)bannerWasClicked;
 /**
  *  Called when the banner ad will present a modal view controller, after the user clicks the ad.
  */
-- (void)willPresentModalView;
+- (void)bannerWillPresentModalView;
 /**
  *  Called when a presented modal view controller is dismissed by the user.
  */
-- (void)didDismissModalView;
+- (void)bannerDidDismissModalView;
 /**
  *  Called when a user clicks a banner ad that causes them to leave the application.
  */
-- (void)willLeaveApplication;
+- (void)bannerWillLeaveApplication;
 
 @end
 

@@ -14,29 +14,23 @@ extern NSString * const kHZBannerNetworkFacebook;
 extern NSString * const kHZBannerNetworkAdMob;
 extern NSString * const kHZBannerNetworkiAds;
 
+/**
+ *  @name Facebook Banner Sizes
+ */
 
+/**
+ *  A fixed size 320x50 pt banner. Corresponds to kFBAdSize320x50.
+ */
 extern NSString * const kHZFacebookBannerSize320x50;
 
-
+/**
+ *  A banner 50 pts in height whose width expands to fill its containing view. Corresponds to kFBAdSizeHeight50Banner.
+ */
 extern NSString * const kHZFacebookBannerSizeHeight50FlexibleWidth;
 
+/**
+ *  A banner 90 pts in height whose width expands to fill its containing view. Corresponds to kFBAdSizeHeight90Banner.
+ */
 extern NSString * const kHZFacebookBannerSizeHeight90FlexibleWidth;
-//
-///*!
-// @abstract Represents the fixed banner ad size - 320pt by 50pt.
-// */
-//extern FBAdSize const kFBAdSize320x50;
-//
-///*!
-// @abstract Represents the flexible banner ad size, where banner width depends on
-// its container width, and banner height is fixed as 50pt.
-// */
-//extern FBAdSize const kFBAdSizeHeight50Banner;
-//
-///*!
-// @abstract Represents the flexible banner ad size, where banner width depends on
-// its container width, and banner height is fixed as 90pt.
-// */
-//extern FBAdSize const kFBAdSizeHeight90Banner;
 
 @end

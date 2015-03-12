@@ -8,6 +8,7 @@
 
 #import "HZFBBannerAdapter.h"
 #import "HZFBAdView.h"
+#import "HZMediationConstants.h"
 
 @interface HZFBBannerAdapter()
 
@@ -22,6 +23,7 @@
     self = [super init];
     if (self) {
         _adView = adView;
+        _adView.delegate = self;
         [_adView loadAd];
     }
     return self;
@@ -55,6 +57,10 @@
     } else {
         return [super conformsToProtocol:aProtocol];
     }
+}
+
+- (NSString *)networkName {
+    return kHZAdapterFacebook;
 }
 
 @end
