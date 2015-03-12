@@ -172,7 +172,7 @@
     UINavigationBar *header = ({
         UINavigationBar *nav = [[UINavigationBar alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x, chooseNetworkView.frame.origin.y,
                                                                                  chooseNetworkView.frame.size.width, 44)];
-        if(![HZDevice hzSystemVersionIsLessThan:@"7.0"]){
+        if([nav respondsToSelector:@selector(barTintColor)]){
             nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
         }
         nav.autoresizingMask = UIViewAutoresizingFlexibleWidth;
