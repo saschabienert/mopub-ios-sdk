@@ -15,6 +15,7 @@
 #import "HZMetrics.h"
 #import "HZStorePresenter.h"
 #import "HZEnums.h"
+#import "HZTestActivityViewController.m"
 
 @interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
 
@@ -68,7 +69,13 @@
         [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification infoProvider:self.ad];
         return;
     }
-    [rootVC presentViewController:self animated:NO completion:nil];
+
+    if (rootVC.presentedViewController && rootVC.presentedViewController.class == [HZTestActivityViewController class]) {
+        [rootVC.presentedViewController.presentedViewController presentViewController:self animated:NO completion:nil];
+    } else {
+        [rootVC presentViewController:self animated:NO completion:nil];
+    }
+
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
     
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];

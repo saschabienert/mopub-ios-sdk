@@ -571,11 +571,17 @@ static BOOL forceOnlyHeyzapSDK = NO;
     return [[self availableNonHeyzapAdapters] count] == 0 || forceOnlyHeyzapSDK;
 }
 
-+ (NSSet *)availableNonHeyzapAdapters
+
++ (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap
 {
     return [[HZBaseAdapter allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
-        return ![adapterClass isHeyzapAdapter] && [adapterClass isSDKAvailable];
+        return (includeHeyzap || ![adapterClass isHeyzapAdapter]) && [adapterClass isSDKAvailable];
     }]];
+}
+
++ (NSSet *)availableNonHeyzapAdapters
+{
+    return [self availableAdaptersWithHeyzap:NO];
 }
 
 #pragma mark - Setters/Getters for delegates

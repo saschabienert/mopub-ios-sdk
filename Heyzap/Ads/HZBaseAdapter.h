@@ -117,6 +117,7 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 + (Class)adapterClassForName:(NSString *)adapterName;
 
 + (NSSet *)allAdapterClasses;
++ (NSArray *)testActivityAdapters;
 
 + (BOOL)isHeyzapAdapter;
 

@@ -41,7 +41,7 @@
  */
 + (void)forceOnlyHeyzapSDK;
 
-
++ (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap;
 + (NSSet *)availableNonHeyzapAdapters;
 
 + (NSString *)commaSeparatedAdapterList;

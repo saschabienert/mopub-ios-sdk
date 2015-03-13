@@ -35,6 +35,8 @@
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
+    HZAbstractHeyzapAdapter *adapter = [self sharedInstance];
+    adapter.credentials = credentials;
     return nil;
 }
 
