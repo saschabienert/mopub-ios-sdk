@@ -28,6 +28,7 @@
 @property (nonatomic, strong) NSString *impressionID;
 @property (nonatomic, strong) NSOrderedSet *chosenAdapters;
 @property (nonatomic) double interstitialVideoIntervalMillis;
+@property (nonatomic) BOOL interstitialVideoEnabled;
 
 /**
  *  Returns the SDK version if present, otherwise defaults to empty string.
@@ -69,6 +70,8 @@ return nil; \
         
         _interstitialVideoIntervalMillis = [[HZDictionaryUtils hzObjectForKey:@"interstitial_video_interval" ofClass:[NSNumber class] default:@(30 * 1000) withDict:json] doubleValue];
         
+        _interstitialVideoEnabled = [[HZDictionaryUtils hzObjectForKey:@"interstitial_video_enabled" ofClass:[NSNumber class] default:@1 withDict:json] boolValue];
+        
         // Check error macro for impression ID being nil.
         
         NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:json error:error];
@@ -83,7 +86,11 @@ return nil; \
                 && [adapter isSDKAvailable]
                 && [setupMediators containsObject:[adapter sharedInstance]]
                 && [(HZBaseAdapter *)[adapter sharedInstance] supportsAdType:adType]) {
+                
+                HZBaseAdapter *instance = (HZBaseAdapter *)[adapter sharedInstance];
+                if (_interstitialVideoEnabled || !instance.isVideoOnlyNetwork) {
                     [adapters addObject:[adapter sharedInstance]];
+                }
             }
         }
         
