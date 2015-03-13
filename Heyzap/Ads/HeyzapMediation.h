@@ -12,6 +12,7 @@
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
+@class HZBannerAdOptions;
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate>
 
@@ -52,6 +53,6 @@
 HZAdType hzAdTypeFromString(NSString *adUnit);
 NSString * NSStringFromAdType(HZAdType type);
 
-- (HZBannerAdapter *)getBannerWithRootViewController:(UIViewController *const)viewController sizeOptions:(NSDictionary *)sizeOptions;
+- (HZBannerAdapter *)getBannerWithRootViewController:(UIViewController *const)viewController options:(HZBannerAdOptions *)options;
 
 @end

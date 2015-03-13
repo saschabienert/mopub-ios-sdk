@@ -237,6 +237,7 @@
 		50B46B2818F8B241005155B8 /* HZALIncentivizedInterstitialAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B46B2618F8B241005155B8 /* HZALIncentivizedInterstitialAd.m */; };
 		50BDD00118B8183200265212 /* HZDictionaryUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B942491758086300B8EACE /* HZDictionaryUtils.h */; };
 		50BDD00218B819D600265212 /* libHeyzapAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9432A1758108700B8EACE /* libHeyzapAds.a */; };
+		50CE4B3B1AB39F4B007B6949 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50CE4B3A1AB39F4B007B6949 /* WebKit.framework */; };
 		50D1598F18F34B0900734ABB /* HZHeyzapVideoAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1598D18F34B0900734ABB /* HZHeyzapVideoAd.h */; };
 		50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */; };
 		50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */; };
@@ -568,6 +569,8 @@
 		50B46B2018F89C58005155B8 /* HZAppLovinDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAppLovinDelegate.m; sourceTree = "<group>"; };
 		50B46B2518F8B241005155B8 /* HZALIncentivizedInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZALIncentivizedInterstitialAd.h; sourceTree = "<group>"; };
 		50B46B2618F8B241005155B8 /* HZALIncentivizedInterstitialAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZALIncentivizedInterstitialAd.m; sourceTree = "<group>"; };
+		50CE4B391AB39DD8007B6949 /* HZBannerAdOptions_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZBannerAdOptions_Private.h; sourceTree = "<group>"; };
+		50CE4B3A1AB39F4B007B6949 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		50D1598D18F34B0900734ABB /* HZHeyzapVideoAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapVideoAd.h; sourceTree = "<group>"; };
 		50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapVideoAd.m; sourceTree = "<group>"; };
 		50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapInterstitialAd.h; sourceTree = "<group>"; };
@@ -973,6 +976,7 @@
 				504D82531AAA6507004695C8 /* HZBannerAdWrapper_Private.h */,
 				50DB884B1AB0C0D9003C5758 /* HZBannerAdOptions.h */,
 				50DB884C1AB0C0D9003C5758 /* HZBannerAdOptions.m */,
+				50CE4B391AB39DD8007B6949 /* HZBannerAdOptions_Private.h */,
 			);
 			name = Banners;
 			sourceTree = "<group>";
