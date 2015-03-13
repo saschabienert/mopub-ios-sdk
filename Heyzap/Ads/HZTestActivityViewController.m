@@ -44,7 +44,6 @@
 #import "HZUnityAds.h"
 #import "HZDictionaryUtils.h"
 #import "HZDevice.h"
-#import "HZCrossPromoAdapter.h"
 
 @interface HZTestActivityViewController() <UITableViewDelegate, UITableViewDataSource>
 
