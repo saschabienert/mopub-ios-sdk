@@ -11,13 +11,14 @@
 
 @implementation HZBannerAdOptions
 
-NSString * const kHZBannerNetworkFacebook = @"facebook";
-NSString * const kHZBannerNetworkAdMob = @"admob";
-NSString * const kHZBannerNetworkiAds = @"iads";
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _facebookBannerSize = HZFacebookBannerSizeHeight50FlexibleWidth;
+        _admobBannerSize = HZAdMobBannerSizeFlexibleWidthPortrait;
+    }
+    return self;
+}
 
-
-NSString * const kHZFacebookBannerSize320x50 = @"kHZFacebookBannerSize320x50";
-NSString * const kHZFacebookBannerSizeHeight50FlexibleWidth = @"kHZFacebookBannerSizeHeight50FlexibleWidth";
-NSString * const kHZFacebookBannerSizeHeight90FlexibleWidth = @"kHZFacebookBannerSizeHeight90FlexibleWidth";
 
 @end

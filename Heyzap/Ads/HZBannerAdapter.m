@@ -16,4 +16,8 @@
     ABSTRACT_METHOD_ERROR();
 }
 
+- (NSString *)networkName {
+    ABSTRACT_METHOD_ERROR();
+}
+
 @end

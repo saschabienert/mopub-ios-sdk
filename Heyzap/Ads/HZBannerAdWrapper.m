@@ -34,8 +34,9 @@
     
 //    @{kHZAdapterFacebook:kHZFacebookBanner};
     
-    HZBannerAdapter *adapter = [[HeyzapMediation sharedInstance] getBannerWithRootViewController:controller sizeOptions:(NSDictionary *)sizeOptions];
-    return [[self alloc] initWithBanner:adapter network:adapter.networkName];
+//    HZBannerAdapter *adapter = [[HeyzapMediation sharedInstance] getBannerWithRootViewController:controller];
+//    return [[self alloc] initWithBanner:adapter network:adapter.networkName];
+    return nil;
 }
 
 - (NSString *)description {

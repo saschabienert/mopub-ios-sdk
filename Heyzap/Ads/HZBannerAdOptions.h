@@ -8,29 +8,70 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * The size to use for Facebook banners
+ */
+typedef NS_ENUM(NSUInteger, HZFacebookBannerSize) {
+    /**
+     *  A fixed size 320x50 pt banner. Corresponds to kFBAdSize320x50.
+     */
+    HZFacebookBannerSize320x50,
+    /**
+     *  A banner 50 pts in height whose width expands to fill its containing view. Corresponds to kFBAdSizeHeight50Banner.
+     *  **Default value** for Facebook banners.
+     */
+    HZFacebookBannerSizeHeight50FlexibleWidth,
+    /**
+     *  A banner 90 pts in height whose width expands to fill its containing view. Corresponds to kFBAdSizeHeight90Banner.
+     */
+    HZFacebookBannerSizeHeight90FlexibleWidth,
+};
+
+/**
+ *  The size to use for AdMob banners. NB: Some of AdMob's banner heights vary by iPad/iPhone.
+ */
+typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
+    /**
+     *  An ad size that spans the full width of the application in portrait orientation. The height is
+     *  typically 50 pixels on an iPhone/iPod UI, and 90 pixels tall on an iPad UI. Corresponds to kGADAdSizeSmartBannerPortrait.
+     *
+     *  This is the **default size**
+     */
+    HZAdMobBannerSizeFlexibleWidthPortrait,
+    /**
+     *  An ad size that spans the full width of the application in landscape orientation. The height is
+     *  typically 32 pixels on an iPhone/iPod UI, and 90 pixels tall on an iPad UI. Corresponds to
+     */
+    HZAdMobBannerSizeFlexibleWidthLandscape,
+    /**
+     *  iPhone and iPod Touch sized banner. Typically 320x50. Corresponds to kGADAdSizeBanner.
+     */
+    HZAdMobBannerSizeBanner,
+    /**
+     *  Taller version of HZAdMobBannerSizeBanner. Typically 320x100. Corresponds to kGADAdSizeLargeBanner.
+     */
+    HZAdMobBannerSizeLargeBanner,
+    /**
+     *  Leaderboard size for the iPad. Typically 728x90. Corresponds to kGADAdSizeLeaderboard.
+     */
+    HZAdMobBannerSizeLeaderboard,
+    /**
+     *  Full Banner size for the iPad (especially in a UIPopoverController or in
+     *  UIModalPresentationFormSheet). Typically 468x60. Corresponds to kGADAdSizeFullBanner.
+     */
+    HZAdMobBannerSizeFullBanner,
+};
+
 @interface HZBannerAdOptions : NSObject
 
-extern NSString * const kHZBannerNetworkFacebook;
-extern NSString * const kHZBannerNetworkAdMob;
-extern NSString * const kHZBannerNetworkiAds;
-
 /**
- *  @name Facebook Banner Sizes
+ *  The size to use for Facebook Audience Network banners. Defaults to 
  */
-
+@property (nonatomic) HZFacebookBannerSize facebookBannerSize;
 /**
- *  A fixed size 320x50 pt banner. Corresponds to kFBAdSize320x50.
+ *  The size to use for Admob banners.
  */
-extern NSString * const kHZFacebookBannerSize320x50;
+@property (nonatomic) HZAdMobBannerSize admobBannerSize;
 
-/**
- *  A banner 50 pts in height whose width expands to fill its containing view. Corresponds to kFBAdSizeHeight50Banner.
- */
-extern NSString * const kHZFacebookBannerSizeHeight50FlexibleWidth;
-
-/**
- *  A banner 90 pts in height whose width expands to fill its containing view. Corresponds to kFBAdSizeHeight90Banner.
- */
-extern NSString * const kHZFacebookBannerSizeHeight90FlexibleWidth;
 
 @end

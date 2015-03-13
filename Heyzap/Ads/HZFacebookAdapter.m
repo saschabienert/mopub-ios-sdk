@@ -162,23 +162,23 @@ HZFBAdSize *hzFBAdSize320x50(void);
 
 - (HZBannerAdapter *)fetchBannerWithRootViewController:(UIViewController *const)controller sizeOptions:(NSDictionary *const)sizeOptions {
     
-    NSString *const sizeOption = sizeOptions[kHZBannerNetworkFacebook];
-    const HZFBAdSize size = ({
-        HZFBAdSize size;
-        if ([sizeOption isEqualToString:kHZFacebookBannerSize320x50]) {
-            size = *hzFBAdSize320x50();
-        } else if ([sizeOption isEqualToString:kHZFacebookBannerSizeHeight50FlexibleWidth]) {
-            size = *hzFBAdSize50();
-        } else if ([sizeOption isEqualToString:kHZFacebookBannerSizeHeight90FlexibleWidth]) {
-            size = *hzFBAdSize90();
-        } else {
-            NSLog(@"Unrecognized size option for facebook banner. Provided size was = %@. Defaulting to kHZFacebookBannerSizeHeight50FlexibleWidth",sizeOption);
-            size = *hzFBAdSize50();
-        }
-        size;
-    });
+//    NSString *const sizeOption = sizeOptions[kHZBannerNetworkFacebook];
+//    const HZFBAdSize size = ({
+//        HZFBAdSize size;
+//        if ([sizeOption isEqualToString:kHZFacebookBannerSize320x50]) {
+//            size = *hzFBAdSize320x50();
+//        } else if ([sizeOption isEqualToString:kHZFacebookBannerSizeHeight50FlexibleWidth]) {
+//            size = *hzFBAdSize50();
+//        } else if ([sizeOption isEqualToString:kHZFacebookBannerSizeHeight90FlexibleWidth]) {
+//            size = *hzFBAdSize90();
+//        } else {
+//            NSLog(@"Unrecognized size option for facebook banner. Provided size was = %@. Defaulting to kHZFacebookBannerSizeHeight50FlexibleWidth",sizeOption);
+//            size = *hzFBAdSize50();
+//        }
+//        size;
+//    });
     
-    HZFBAdView *view = [[HZFBAdView alloc] initWithPlacementID:@"500413400097719_538033529669039" adSize:size rootViewController:controller];
+    HZFBAdView *view = [[HZFBAdView alloc] initWithPlacementID:@"500413400097719_538033529669039" adSize:*hzFBAdSize50() rootViewController:controller];
     
     return [[HZFBBannerAdapter alloc] initWithHZFBAdView:view];
 }
