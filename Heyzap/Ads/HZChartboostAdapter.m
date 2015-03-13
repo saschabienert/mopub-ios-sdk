@@ -37,7 +37,6 @@
 {
     self = [super init];
     if (self) {
-        [HZChartboost setShouldDisplayLoadingViewForMoreApps:NO];
         [HZChartboost setShouldPrefetchVideoContent:YES];
     }
     return self;
