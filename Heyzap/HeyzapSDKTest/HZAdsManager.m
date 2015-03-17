@@ -176,6 +176,10 @@
 #pragma mark - Show
 
 - (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion  {
+    [self showForAdUnit:adUnit andTag:tag auctionType:auctionType options:nil withCompletion:completion];
+}
+
+- (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options withCompletion: (void (^)(BOOL result, NSError *error))completion  {
     HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:adUnit];
     NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(auctionType);
     [[HZMetrics sharedInstance] logShowAdWithObject:stub network:heyzapAdapter];
@@ -220,7 +224,7 @@
                 if (!controller) {
                     result = NO;
                 } else {
-                    [controller show];
+                    [controller showWithOptions:options];
                     self.activeController = controller;
                     result = YES;
                 }
@@ -230,7 +234,7 @@
                 if (!controller) {
                     result = NO;
                 } else {
-                    [controller show];
+                    [controller showWithOptions:options];
                     self.activeController = controller;
                     result = YES;
                 }

@@ -86,18 +86,21 @@
 
 - (void)showAdForType:(HZAdType)type tag:(NSString *)tag
 {
+    HZShowOptions *options = [[HZShowOptions alloc] init];
+    options.viewController = [[self delegate] viewControllerForPresentingAd];
+
     const HZAuctionType auctionType = [self auctionType];
     switch (type) {
         case HZAdTypeInterstitial: {
-            [HZHeyzapInterstitialAd showForTag:tag auctionType:auctionType completion:nil];
+            [HZHeyzapInterstitialAd showForTag:tag auctionType:auctionType options:options completion:nil];
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZHeyzapIncentivizedAd showForTag:tag auctionType:auctionType];
+            [HZHeyzapIncentivizedAd showForTag:tag auctionType:auctionType options:options];
             break;
         }
         case HZAdTypeVideo: {
-            [HZHeyzapVideoAd showForTag:tag auctionType:auctionType completion:nil];
+            [HZHeyzapVideoAd showForTag:tag auctionType:auctionType options:options completion:nil];
             break;
         }
     }

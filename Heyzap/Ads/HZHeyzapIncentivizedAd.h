@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HZShowOptions.h"
 
 @protocol HZIncentivizedAdDelegate;
 
@@ -19,6 +20,8 @@
  * @param tag Tag name describing the location or context for the ad to be shown.
  */
 + (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
+
++ (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options;
 
 /**
  *  Fetches an incentivized video ad from Heyzap.

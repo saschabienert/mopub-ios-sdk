@@ -57,6 +57,10 @@
 }
 
 - (void) show {
+    [self showWithOptions:nil];
+}
+
+- (void) showWithOptions:(HZShowOptions *)options {
     
     self.statusBarHidden = [UIApplication sharedApplication].statusBarHidden;
     
@@ -70,8 +74,8 @@
         return;
     }
 
-    if (rootVC.presentedViewController && rootVC.presentedViewController.class == [HZTestActivityViewController class]) {
-        [rootVC.presentedViewController.presentedViewController presentViewController:self animated:NO completion:nil];
+    if (options && options.viewController) {
+        [options.viewController presentViewController:self animated:NO completion:nil];
     } else {
         [rootVC presentViewController:self animated:NO completion:nil];
     }

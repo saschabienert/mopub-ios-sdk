@@ -23,8 +23,12 @@ static int HZVideoAdCreativeIDPin = 0;
 
 
 + (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion {
+    [self showForTag:tag auctionType:auctionType options:nil completion:completion];
+}
+
++ (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options completion:(void (^)(BOOL result, NSError *error))completion {
     if (![[HZAdsManager sharedManager] isEnabled]) return;
-    [[HZAdsManager sharedManager] showForAdUnit: HZVideoAdUnit andTag: tag auctionType:auctionType withCompletion: completion];
+    [[HZAdsManager sharedManager] showForAdUnit: HZVideoAdUnit andTag: tag auctionType:auctionType options:options withCompletion: completion];
 }
 
 + (void) hide {

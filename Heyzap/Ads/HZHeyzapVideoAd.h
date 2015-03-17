@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HZShowOptions.h"
 
 @protocol HZAdsDelegate;
 
@@ -19,6 +20,8 @@
  *  @param completion A block called when the video is shown or fails to show. `result` states whether the show was sucessful; the error object describes the issue, if there was one.
  */
 + (void) showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion;
+
++ (void) showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options completion:(void (^)(BOOL result, NSError *error))completion;
 
 
 /**

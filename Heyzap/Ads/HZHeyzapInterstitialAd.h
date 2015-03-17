@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HZShowOptions.h"
 
 @protocol HZAdsDelegate;
 
@@ -19,6 +20,8 @@
  *  @param completion A block called when the ad is shown or failed to show. result contains whether or not the fetch was successful, and if not, error contains the reason why.
  */
 + (void) showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion;
+
++ (void) showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options completion:(void (^)(BOOL result, NSError *error))completion;
 
 #pragma mark - Callbacks
 

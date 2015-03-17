@@ -30,11 +30,16 @@ static int HZIncentivizedCreativeIDPin = 0;
 
 + (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType
 {
+    [self showForTag:tag auctionType:auctionType options:nil];
+}
+
++ (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options
+{
     if (![[HZAdsManager sharedManager] isEnabled]) {
         return;
     }
     
-    [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag:tag auctionType:auctionType withCompletion: nil];
+    [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag:tag auctionType:auctionType options:options withCompletion: nil];
 }
 
 + (void)fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion {
