@@ -74,7 +74,7 @@
         return;
     }
 
-    if (options && options.viewController) {
+    if (options.viewController) {
         [options.viewController presentViewController:self animated:NO completion:nil];
     } else {
         [rootVC presentViewController:self animated:NO completion:nil];
