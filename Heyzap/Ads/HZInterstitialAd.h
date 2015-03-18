@@ -31,7 +31,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "HZShowOptions.h"
 
 @protocol HZAdsDelegate;
 
@@ -53,36 +53,17 @@
 /**
  *  Shows an interstitial ad for a given tag, if available.
  *
- * @param vc The UIViewController that should present the ad
- */
-+ (void) showWithViewController: (UIViewController *) vc;
-
-/**
- *  Shows an interstitial ad for a given tag, if available, on the given UIViewController.
- *
- *  @param tag An identifier for the location of the ad which you can use to disable the ad from your dashboard.
- *  @param vc The UIViewController that should present the ad
- */
-+ (void) showForTag: (NSString *) tag withViewController: (UIViewController *) vc;
-
-/**
- *  Shows an interstitial ad for a given tag, if available.
- *
  *  @param tag An identifier for the location/context of the ad which you can use to disable the ad from your dashboard.
  *  @param completion A block called when the ad is shown or failed to show. result contains whether 
  *         or not the fetch was successful, and if not, error contains the reason why.
  */
 + (void) showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion;
 
-/**
- *  Shows an interstitial ad for a given tag, if available, on the given UIViewController.
+/** Shows an interstitial ad with the given options.
  *
- *  @param tag An identifier for the location/context of the ad which you can use to disable the ad from your dashboard.
- *  @param vc The UIViewController that should present the ad
- *  @param completion A block called when the ad is shown or failed to show. result contains whether 
- *         or not the fetch was successful, and if not, error contains the reason why.
+ * @param options HZShowOptions object containing properties for configuring how the ad is shown.
  */
-+ (void) showForTag:(NSString *)tag withViewController:(UIViewController *)vc completion:(void (^)(BOOL result, NSError *error))completion;
++ (void) showWithOptions: (HZShowOptions *) options;
 
 #pragma mark - Callbacks
 

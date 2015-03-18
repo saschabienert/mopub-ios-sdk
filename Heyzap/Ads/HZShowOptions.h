@@ -9,8 +9,22 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+/** HZShowOptions allows you to pass options to configure how ads are shown */
 @interface HZShowOptions : NSObject
 
+/**
+ *  @discussion A UIViewController that should present the ad being shown.
+ */
 @property (nonatomic, weak) UIViewController *viewController;
+
+/**
+ *  @discussion An identifier for the location of the ad, which you can use to disable the ad from your dashboard.
+ */
+@property (nonatomic, weak) NSString *tag;
+
+/**
+ *  @discussion A block called when the ad is shown or fails to show. `result` states whether the show was successful; the error object describes the issue, if there was one.
+ */
+@property (nonatomic, copy) void (^completion)(BOOL result, NSError *error);
 
 @end

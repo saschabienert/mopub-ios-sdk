@@ -41,20 +41,19 @@
 }
 
 + (void)showForTag:(NSString *)tag {
-    [self showForTag:tag withViewController:nil];
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = tag;
+
+    [self showWithOptions:options];
 }
 
-+ (void)showWithViewController:(UIViewController *)vc {
-    [self showForTag:nil withViewController:vc];
-}
-
-+ (void)showForTag:(NSString *)tag withViewController:(UIViewController *)vc {
++ (void)showWithOptions:(HZShowOptions *)options {
     HZVersionCheck()
 
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapIncentivizedAd showForTag:tag auctionType:HZAuctionTypeMixed];
+        [HZHeyzapIncentivizedAd showForTag:options.tag auctionType:HZAuctionTypeMixed];
     } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:tag additionalParams:nil viewController:vc completion:nil];
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:options.tag additionalParams:nil viewController:options.viewController completion:nil];
     }
 }
 

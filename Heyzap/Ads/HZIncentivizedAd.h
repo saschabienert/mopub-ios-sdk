@@ -34,6 +34,7 @@
 
 #import <Foundation/Foundation.h>
 #import "HeyzapAds.h"
+#import "HZShowOptions.h"
 
 /** HZIncentivizedAd is responsible for fetching and showing incentivized video ads. */
 @interface HZIncentivizedAd : NSObject
@@ -49,18 +50,11 @@
   */
 + (void) showForTag: (NSString *) tag;
 
-/** Shows an incentivized video ad on the given UIViewController.
-  *
-  * @param vc The UIViewController that should present the ad
-  */
-+ (void) showWithViewController: (UIViewController *) vc;
-
-/** Shows an incentivized video ad if one with the particlar tag is available, on the given UIViewController.
+/** Shows an incentivized video with the given options.
  *
- * @param tag Tag name describing the location or context for the ad to be shown.
- * @param vc The UIViewController that should present the ad
+ * @param options HZShowOptions object containing properties for configuring how the ad is shown.
  */
-+ (void) showForTag: (NSString *) tag withViewController: (UIViewController *) vc;
++ (void) showWithOptions: (HZShowOptions *) options;
 
 /** Fetches an incentivized video ad from Heyzap. */
 + (void) fetch;

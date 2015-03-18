@@ -53,21 +53,6 @@
 + (void) showForTag: (NSString *) tag;
 
 /**
- *  Shows a video ad on the given UIViewController.
- *
- *  @param vc The UIViewController that should present the ad
- */
-+ (void) showWithViewController: (UIViewController *) vc;
-
-/**
- *  Shows a video ad for a given tag, if available, on the given UIViewController.
- *
- *  @param tag An identifier for the location of the ad which you can use to disable the ad from your dashboard.
- *  @param vc  The UIViewController that should present the ad
- */
-+ (void) showForTag: (NSString *) tag withViewController:(UIViewController *) vc;
-
-/**
  *  Shows a video for a given tag, if available.
  *
  *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
@@ -75,14 +60,11 @@
  */
 + (void) showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion;
 
-/**
- *  Shows a video for a given tag, if available, on the given UIViewController.
+/** Shows a video with the given options.
  *
- *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
- *  @param vc         The UIViewController that should present the ad
- *  @param completion A block called when the video is shown or fails to show. `result` states whether the show was sucessful; the error object describes the issue, if there was one.
+ * @param options HZShowOptions object containing properties for configuring how the ad is shown.
  */
-+ (void) showForTag:(NSString *)tag withViewController:(UIViewController *)vc completion:(void (^)(BOOL result, NSError *error))completion;
++ (void) showWithOptions: (HZShowOptions *) options;
 
 /**
  *  Fetches a video ad from Heyzap.
