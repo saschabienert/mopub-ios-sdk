@@ -111,9 +111,9 @@
     [self.currentInterstitial loadRequest:[HZGADRequest request]];
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc
 {
-    [self.currentInterstitial presentFromRootViewController:[self.delegate viewControllerForPresentingAd]];
+    [self.currentInterstitial presentFromRootViewController:vc];
 
     self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];

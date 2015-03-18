@@ -39,7 +39,19 @@
     [self showForTag:tag completion:nil];
 }
 
++ (void) showWithViewController:(UIViewController *)vc {
+    [self showForTag:nil withViewController:vc];
+}
+
++ (void) showForTag:(NSString *)tag withViewController:(UIViewController *)vc {
+    [self showForTag:tag withViewController:vc completion:nil];
+}
+
 + (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
+    [self showForTag:tag withViewController:nil completion:completion];
+}
+
++ (void)showForTag:(NSString *)tag withViewController:(UIViewController *)vc completion:(void (^)(BOOL result, NSError *error))completion {
     HZVersionCheck()
 
     tag = tag ?: [HeyzapAds defaultTagName];

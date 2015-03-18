@@ -84,10 +84,10 @@
     }
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc
 {
     HZShowOptions *options = [[HZShowOptions alloc] init];
-    options.viewController = [[self delegate] viewControllerForPresentingAd];
+    options.viewController = vc;
 
     const HZAuctionType auctionType = [self auctionType];
     switch (type) {

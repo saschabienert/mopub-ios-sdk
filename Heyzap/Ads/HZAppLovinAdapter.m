@@ -158,7 +158,7 @@
     }
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc
 {
     if (type == HZAdTypeIncentivized) {
         self.currentIncentivizedAd.adDisplayDelegate = self.incentivizedDelegate;

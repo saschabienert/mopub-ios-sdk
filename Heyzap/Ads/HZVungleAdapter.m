@@ -136,11 +136,10 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     self.lastError = nil;
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc
 {
     [self.delegate adapterWillPlayAudio:self];
     
-    UIViewController *vc = [self.delegate viewControllerForPresentingAd];
     if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
         [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyIncentivized: @1}];

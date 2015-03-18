@@ -77,7 +77,7 @@
     ABSTRACT_METHOD_ERROR();
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc
 {
     ABSTRACT_METHOD_ERROR();
 }

@@ -119,7 +119,7 @@
     }
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag {
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc {
     switch (type) {
         case HZAdTypeInterstitial:
             [HZChartboost showInterstitial: [self.delegate countryCode]];

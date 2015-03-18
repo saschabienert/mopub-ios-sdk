@@ -152,9 +152,9 @@ NSString * const kHZNetworkName = @"mobile";
     // AdColony auto-prefetches
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc
 {
-    [[HZUnityAds sharedInstance] setViewController:[self.delegate viewControllerForPresentingAd]];
+    [[HZUnityAds sharedInstance] setViewController:vc];
     if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
         [[HZUnityAds sharedInstance] setZone:self.incentivizedZoneID];

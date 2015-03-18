@@ -24,7 +24,7 @@
 
 - (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
 
-- (void)showAdForAdUnitType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
+- (void)showAdForAdUnitType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams viewController:(UIViewController *)vc completion:(void (^)(BOOL result, NSError *error))completion;
 
 - (BOOL)isAvailableForAdUnitType:(HZAdType)adType tag:(NSString *)tag;
 

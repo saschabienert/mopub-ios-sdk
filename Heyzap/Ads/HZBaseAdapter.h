@@ -74,7 +74,7 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
  *  @param type The type of ad (video, incentivized, interstitial) to show
  *  @param tag  The tag to show for. All adapters except Heyzap should ignore the tag.
  */
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag;
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc;
 
 - (HZAdType)supportedAdFormats;
 

@@ -140,7 +140,7 @@
     // AdColony auto-prefetches
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc
 {
     [self.delegate adapterWillPlayAudio:self];
     if (type == HZAdTypeIncentivized) {
