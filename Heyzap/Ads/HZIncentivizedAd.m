@@ -40,14 +40,21 @@
     [[self class] showForTag:[HeyzapAds defaultTagName]];
 }
 
-+ (void)showForTag:(NSString *)tag
-{
++ (void)showForTag:(NSString *)tag {
+    [self showForTag:tag withViewController:nil];
+}
+
++ (void)showWithViewController:(UIViewController *)vc {
+    [self showForTag:nil withViewController:vc];
+}
+
++ (void)showForTag:(NSString *)tag withViewController:(UIViewController *)vc {
     HZVersionCheck()
 
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapIncentivizedAd showForTag:tag auctionType:HZAuctionTypeMixed];
     } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:tag additionalParams:nil completion:nil];
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:tag additionalParams:nil viewController:vc completion:nil];
     }
 }
 

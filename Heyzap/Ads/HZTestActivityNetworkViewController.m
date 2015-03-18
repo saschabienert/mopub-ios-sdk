@@ -184,7 +184,7 @@
 - (void) showAd {
     [self appendStringToDebugLog:@"Showing ad"];
     NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
-    [[HeyzapMediation sharedInstance] showAdForAdUnitType:self.currentAdType tag:[HeyzapAds defaultTagName] additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
+    [[HeyzapMediation sharedInstance] showAdForAdUnitType:self.currentAdType tag:[HeyzapAds defaultTagName] additionalParams:additionalParams viewController:nil completion:^(BOOL result, NSError *error) {
         if (error) {
             [self appendStringToDebugLog:@"Show failed"];
         } else {

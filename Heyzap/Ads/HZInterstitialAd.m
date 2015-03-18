@@ -58,7 +58,7 @@
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapInterstitialAd showForTag:tag auctionType:HZAuctionTypeMixed completion:completion];
     } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeInterstitial tag:tag additionalParams:nil completion:completion];
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeInterstitial tag:tag additionalParams:nil viewController:vc completion:completion];
     }
 }
 

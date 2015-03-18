@@ -40,14 +40,27 @@
 
 + (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate;
 
-/** Shows an incentivized video ad if one is available */
+/** Shows an incentivized video ad if one is available. */
 + (void) show;
 
-/** Shows an incentivized video ad if one with the particlar tag is available
+/** Shows an incentivized video ad if one with the particlar tag is available.
   *
   * @param tag Tag name describing the location or context for the ad to be shown.
   */
 + (void) showForTag: (NSString *) tag;
+
+/** Shows an incentivized video ad on the given UIViewController.
+  *
+  * @param vc The UIViewController that should present the ad
+  */
++ (void) showWithViewController: (UIViewController *) vc;
+
+/** Shows an incentivized video ad if one with the particlar tag is available, on the given UIViewController.
+ *
+ * @param tag Tag name describing the location or context for the ad to be shown.
+ * @param vc The UIViewController that should present the ad
+ */
++ (void) showForTag: (NSString *) tag withViewController: (UIViewController *) vc;
 
 /** Fetches an incentivized video ad from Heyzap. */
 + (void) fetch;
