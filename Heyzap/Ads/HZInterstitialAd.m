@@ -54,8 +54,6 @@
         options = [HZShowOptions new];
     }
 
-    options.tag = options.tag ?: [HeyzapAds defaultTagName];
-
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapInterstitialAd showForAuctionType:HZAuctionTypeMixed options:options];
     } else {

@@ -10,4 +10,20 @@
 
 @implementation HZShowOptions
 
+- (NSString *)tag {
+    if (_tag == nil) {
+        _tag = [HeyzapAds defaultTagName];
+    }
+
+    return _tag;
+}
+
+- (UIViewController *)viewController {
+    if (_viewController == nil) {
+        _viewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+    }
+
+    return _viewController;
+}
+
 @end

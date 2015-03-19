@@ -8,17 +8,18 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "HeyzapAds.h"
 
 /** HZShowOptions allows you to pass options to configure how ads are shown */
 @interface HZShowOptions : NSObject
 
 /**
- *  @discussion A UIViewController that should present the ad being shown.
+ *  @discussion A UIViewController that should present the ad being shown. If not specified the application's key window's root view controller is used.
  */
 @property (nonatomic, weak) UIViewController *viewController;
 
 /**
- *  @discussion An identifier for the location of the ad, which you can use to disable the ad from your dashboard.
+ *  @discussion An identifier for the location of the ad, which you can use to disable the ad from your dashboard. If not specified the tag "default" is always used.
  */
 @property (nonatomic, weak) NSString *tag;
 

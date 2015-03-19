@@ -86,18 +86,23 @@
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
+    // mediation has already called the completion block, so pass along the other options but not the block
+    HZShowOptions *newOptions = [HZShowOptions new];
+    newOptions.tag = options.tag;
+    newOptions.viewController = options.viewController;
+
     const HZAuctionType auctionType = [self auctionType];
     switch (type) {
         case HZAdTypeInterstitial: {
-            [HZHeyzapInterstitialAd showForAuctionType:auctionType options:options];
+            [HZHeyzapInterstitialAd showForAuctionType:auctionType options:newOptions];
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZHeyzapIncentivizedAd showForAuctionType:auctionType options:options];
+            [HZHeyzapIncentivizedAd showForAuctionType:auctionType options:newOptions];
             break;
         }
         case HZAdTypeVideo: {
-            [HZHeyzapVideoAd showForAuctionType:auctionType options:options];
+            [HZHeyzapVideoAd showForAuctionType:auctionType options:newOptions];
             break;
         }
     }

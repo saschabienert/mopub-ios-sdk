@@ -29,8 +29,6 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
  */
 - (NSString *)countryCode;
 
-- (UIViewController *)viewControllerForPresentingAd;
-
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter;
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter;
 

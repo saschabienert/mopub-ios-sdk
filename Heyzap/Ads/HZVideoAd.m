@@ -52,8 +52,6 @@
 + (void) showWithOptions:(HZShowOptions *)options {
     HZVersionCheck()
 
-    options.tag = options.tag ?: [HeyzapAds defaultTagName];
-    
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapVideoAd showForAuctionType:HZAuctionTypeMixed options:options];
     } else {

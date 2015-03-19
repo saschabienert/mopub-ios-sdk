@@ -134,8 +134,6 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         return;
     }
 
-    tag = tag ?: [HeyzapAds defaultTagName];
-
     HZShowOptions *options = [HZShowOptions new];
     options.tag = tag;
     options.completion = completion;
@@ -190,8 +188,6 @@ NSString * const kHZDataKey = @"data";
 
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
-    options.tag = options.tag ?: [HeyzapAds defaultTagName];
-
     HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(adType)];
     [[HZMetrics sharedInstance] logShowAdWithObject:stub network:nil];
     [[HZMetrics sharedInstance] logTimeSinceStartFor:kTimeFromStartToShowAdKey withProvider:stub network:nil];
@@ -404,11 +400,6 @@ static int totalImpressions = 0;
         self.lastInterstitialVideoShownDate = [NSDate date];
     }
 
-    if (!options.viewController) {
-        options.viewController = [[adapter delegate] viewControllerForPresentingAd];
-    }
-
-    options.tag = session.tag;
     [adapter showAdForType:session.adType options:options];
     [session reportImpressionForAdapter:adapter];
     [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
@@ -532,10 +523,6 @@ static int totalImpressions = 0;
     if (key) {
         [[self delegateForAdType:key.adType] didFinishAudio];
     }
-}
-
-- (UIViewController *)viewControllerForPresentingAd {
-    return [[[UIApplication sharedApplication] keyWindow] rootViewController];
 }
 
 #pragma mark - Incentivized Specific

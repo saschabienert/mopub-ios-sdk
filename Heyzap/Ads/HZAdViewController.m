@@ -15,7 +15,6 @@
 #import "HZMetrics.h"
 #import "HZStorePresenter.h"
 #import "HZEnums.h"
-#import "HZTestActivityViewController.m"
 
 @interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
 
@@ -64,8 +63,7 @@
     
     self.statusBarHidden = [UIApplication sharedApplication].statusBarHidden;
     
-    UIViewController *rootVC = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-    if (!rootVC) {
+    if (!options.viewController) {
         NSLog(@"Heyzap requires a root view controller to display an ad. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
         
         NSError *const error = [NSError errorWithDomain:@"Heyzap" code:10 userInfo:@{NSLocalizedFailureReasonErrorKey:@"There was no root view controller to display the ad."}];
@@ -74,11 +72,7 @@
         return;
     }
 
-    if (options.viewController) {
-        [options.viewController presentViewController:self animated:NO completion:nil];
-    } else {
-        [rootVC presentViewController:self animated:NO completion:nil];
-    }
+    [options.viewController presentViewController:self animated:NO completion:nil];
 
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
     

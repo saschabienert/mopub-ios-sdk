@@ -34,10 +34,6 @@ static BOOL HZInterstitialForceTestCreative = NO;
         return;
     }
     
-    if (options.tag == nil) {
-        options.tag = [HeyzapAds defaultTagName];
-    }
-    
     if (![self isAvailableForTag:options.tag auctionType:auctionType]) {
         HZAdFetchRequest *request = [self requestWithTag:options.tag auctionType:auctionType andVideo:NO];
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {

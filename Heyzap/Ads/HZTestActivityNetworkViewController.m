@@ -186,7 +186,7 @@
     NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
 
     HZShowOptions *options = [HZShowOptions new];
-    options.tag = [HeyzapAds defaultTagName];
+    options.viewController = self;
     options.completion = ^(BOOL result, NSError *error) {
         if (error) {
             [self appendStringToDebugLog:@"Show failed"];
@@ -228,10 +228,6 @@
 
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter {
     
-}
-
-- (UIViewController *)viewControllerForPresentingAd {
-    return self;
 }
 
 #pragma mark - View creation utility methods

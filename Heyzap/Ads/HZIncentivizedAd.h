@@ -36,6 +36,8 @@
 #import "HeyzapAds.h"
 #import "HZShowOptions.h"
 
+@class HZShowOptions;
+
 /** HZIncentivizedAd is responsible for fetching and showing incentivized video ads. */
 @interface HZIncentivizedAd : NSObject
 

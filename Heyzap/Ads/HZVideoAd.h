@@ -32,6 +32,9 @@
 
 #import <Foundation/Foundation.h>
 #import "HeyzapAds.h"
+#import "HZShowOptions.h"
+
+@class HZShowOptions;
 
 @protocol HZAdsDelegate;
 

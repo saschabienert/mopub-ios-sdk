@@ -185,10 +185,6 @@
     BOOL result = NO;
     NSError *error;
     
-    if (options.tag == nil) {
-        options.tag = [HeyzapAds defaultTagName];
-    }
-    
     if ([self activeController] != nil) {
         [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdAlreadyDisplayedValue withProvider:stub network:heyzapAdapter];
         if (options.completion) {
@@ -202,10 +198,6 @@
         [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoConnectivityValue withProvider:stub network:heyzapAdapter];
         error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 1 userInfo: @{NSLocalizedDescriptionKey: @"No internet connection."}];
     } else {
-        if (!options.tag) {
-            options.tag = [HeyzapAds defaultTagName];
-        }
-        
         HZAdModel *ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:options.tag auctionType:auctionType];
         while (ad != nil && [ad isExpired]) {
             ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:options.tag auctionType:auctionType];
