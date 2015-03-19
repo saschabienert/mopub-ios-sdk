@@ -44,6 +44,7 @@
 #import "HZUnityAds.h"
 #import "HZDictionaryUtils.h"
 #import "HZDevice.h"
+#import "HZAbstractHeyzapAdapter.h"
 
 @interface HZTestActivityViewController() <UITableViewDelegate, UITableViewDataSource>
 
@@ -127,7 +128,7 @@
 }
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    HZBaseAdapter *network = (HZBaseAdapter *)[[self.allNetworks objectAtIndex:indexPath.row] sharedInstance];
+    HZBaseAdapter *network = [self.allNetworks objectAtIndex:indexPath.row];
 
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
     if(cell == nil){
@@ -262,7 +263,7 @@
             }
 
             // check original initialization succeeded
-            if (adapter.credentials) {
+            if (adapter.credentials || [adapter isKindOfClass:[HZAbstractHeyzapAdapter class]]) {
                 [initializedNetworks addObject:adapter];
                 initialized = YES;
             }
