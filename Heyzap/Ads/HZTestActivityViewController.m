@@ -67,6 +67,8 @@
 + (void) show {
     HZDLog(@"Showing test activity view controller");
 
+    [[HeyzapMediation sharedInstance] start];
+
     HZTestActivityViewController *vc = [[self alloc] init];
     
     // save whether the status bar is hidden

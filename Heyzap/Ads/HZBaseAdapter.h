@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "HZMetricsAdStub.h"
+#import "HZShowOptions.h"
 @import UIKit;
 
 // This is a bitmasked parameter, but with the exception of the `supportedAdFormats` method, almost everything else should treat it as just an enum.
@@ -72,9 +73,9 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
  *  The adapter should show an ad for the given ad type.
  *
  *  @param type The type of ad (video, incentivized, interstitial) to show
- *  @param tag  The tag to show for. All adapters except Heyzap should ignore the tag.
+ *  @param options Options to configure showing the ad
  */
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc;
+- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options;
 
 - (HZAdType)supportedAdFormats;
 

@@ -22,13 +22,12 @@ static int HZVideoAdCreativeIDPin = 0;
 @implementation HZHeyzapVideoAd
 
 
-+ (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion {
-    [self showForTag:tag auctionType:auctionType options:nil completion:completion];
-}
++ (void)showForAuctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options {
+    if (![[HZAdsManager sharedManager] isEnabled]) {
+        return;
+    }
 
-+ (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options completion:(void (^)(BOOL result, NSError *error))completion {
-    if (![[HZAdsManager sharedManager] isEnabled]) return;
-    [[HZAdsManager sharedManager] showForAdUnit: HZVideoAdUnit andTag: tag auctionType:auctionType options:options withCompletion: completion];
+    [[HZAdsManager sharedManager] showForAdUnit:HZVideoAdUnit auctionType:auctionType options:options];
 }
 
 + (void) hide {

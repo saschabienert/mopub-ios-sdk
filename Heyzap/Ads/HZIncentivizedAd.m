@@ -50,10 +50,16 @@
 + (void)showWithOptions:(HZShowOptions *)options {
     HZVersionCheck()
 
+    if (!options) {
+        options = [HZShowOptions new];
+    }
+
+    options.tag = options.tag ?: [HeyzapAds defaultTagName];
+
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapIncentivizedAd showForTag:options.tag auctionType:HZAuctionTypeMixed];
+        [HZHeyzapIncentivizedAd showForAuctionType:HZAuctionTypeMixed options:options];
     } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:options.tag additionalParams:nil viewController:options.viewController completion:nil];
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized additionalParams:nil options:options];
     }
 }
 

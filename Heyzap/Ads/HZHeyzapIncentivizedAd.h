@@ -15,13 +15,12 @@
 
 + (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate;
 
-/** Shows an incentivized video ad if one with the particlar tag is available
+/** Shows an incentivized video ad configured with the given options
  *
- * @param tag Tag name describing the location or context for the ad to be shown.
+ * @param auctionType Heyzap auction type for this show
+ * @param options HZShowOptions object containing configuration
  */
-+ (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
-
-+ (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options;
++ (void)showForAuctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options;
 
 /**
  *  Fetches an incentivized video ad from Heyzap.

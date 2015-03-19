@@ -184,7 +184,10 @@
 - (void) showAd {
     [self appendStringToDebugLog:@"Showing ad"];
     NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
-    [[HeyzapMediation sharedInstance] showAdForAdUnitType:self.currentAdType tag:[HeyzapAds defaultTagName] additionalParams:additionalParams viewController:nil completion:^(BOOL result, NSError *error) {
+
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = [HeyzapAds defaultTagName];
+    options.completion = ^(BOOL result, NSError *error) {
         if (error) {
             [self appendStringToDebugLog:@"Show failed"];
         } else {
@@ -192,7 +195,9 @@
         }
 
         [self changeShowButtonColor];
-    }];
+    };
+
+    [[HeyzapMediation sharedInstance] showAdForAdUnitType:self.currentAdType additionalParams:additionalParams options:options];
 }
 
 #pragma mark - HZMediationAdapterDelegate methods

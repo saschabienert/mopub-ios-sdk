@@ -158,7 +158,7 @@
     }
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc
+- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
     if (type == HZAdTypeIncentivized) {
         self.currentIncentivizedAd.adDisplayDelegate = self.incentivizedDelegate;
@@ -171,7 +171,7 @@
         [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
     }
 
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 

@@ -84,28 +84,25 @@
     }
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc
+- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
-    HZShowOptions *options = [[HZShowOptions alloc] init];
-    options.viewController = vc;
-
     const HZAuctionType auctionType = [self auctionType];
     switch (type) {
         case HZAdTypeInterstitial: {
-            [HZHeyzapInterstitialAd showForTag:tag auctionType:auctionType options:options completion:nil];
+            [HZHeyzapInterstitialAd showForAuctionType:auctionType options:options];
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZHeyzapIncentivizedAd showForTag:tag auctionType:auctionType options:options];
+            [HZHeyzapIncentivizedAd showForAuctionType:auctionType options:options];
             break;
         }
         case HZAdTypeVideo: {
-            [HZHeyzapVideoAd showForTag:tag auctionType:auctionType options:options completion:nil];
+            [HZHeyzapVideoAd showForAuctionType:auctionType options:options];
             break;
         }
     }
 
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 

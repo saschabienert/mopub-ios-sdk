@@ -52,12 +52,12 @@
 + (void) showWithOptions:(HZShowOptions *)options {
     HZVersionCheck()
 
-    NSString *tag = options.tag ?: [HeyzapAds defaultTagName];
+    options.tag = options.tag ?: [HeyzapAds defaultTagName];
     
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapVideoAd showForTag:tag auctionType:HZAuctionTypeMixed completion:options.completion];
+        [HZHeyzapVideoAd showForAuctionType:HZAuctionTypeMixed options:options];
     } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo tag:tag additionalParams:nil viewController:options.viewController completion:options.completion];
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo additionalParams:nil options:options];
     }
 }
 

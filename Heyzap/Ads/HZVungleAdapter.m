@@ -136,18 +136,18 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     self.lastError = nil;
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc
+- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
     [self.delegate adapterWillPlayAudio:self];
     
     if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
-        [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyIncentivized: @1}];
+        [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:@{HZVunglePlayAdOptionKeyIncentivized: @1}];
     } else {
-        [[HZVungleSDK sharedSDK] playAd:vc withOptions:@{HZVunglePlayAdOptionKeyShowClose: @1}];
+        [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:@{HZVunglePlayAdOptionKeyShowClose: @1}];
     }
 
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 

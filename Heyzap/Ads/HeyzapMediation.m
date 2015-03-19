@@ -135,18 +135,23 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     }
 
     tag = tag ?: [HeyzapAds defaultTagName];
-    [self mediateForAdType:adType tag:tag showImmediately:NO fetchTimeout:10 additionalParams:additionalParams viewController:nil completion:completion];
+
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = tag;
+    options.completion = completion;
+
+    [self mediateForAdType:adType showImmediately:NO fetchTimeout:10 additionalParams:additionalParams options:options];
 }
 
 - (void)autoFetchInterstitial
 {
+    HZShowOptions *options = [HZShowOptions new];
+
     [self mediateForAdType:HZAdTypeInterstitial
-                       tag:nil
            showImmediately:NO
               fetchTimeout:10
           additionalParams:nil
-            viewController:nil
-                completion:nil];
+                   options:options];
 }
 
 // Dictionary keys
@@ -183,40 +188,38 @@ NSString * const kHZDataKey = @"data";
 
 #pragma mark - Ads
 
-- (void)showAdForAdUnitType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams viewController:(UIViewController *)vc completion:(void (^)(BOOL, NSError *))completion
+- (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
-    tag = tag ?: [HeyzapAds defaultTagName];
+    options.tag = options.tag ?: [HeyzapAds defaultTagName];
 
-    HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)];
+    HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(adType)];
     [[HZMetrics sharedInstance] logShowAdWithObject:stub network:nil];
     [[HZMetrics sharedInstance] logTimeSinceStartFor:kTimeFromStartToShowAdKey withProvider:stub network:nil];
 
     [self mediateForAdType:adType
-                       tag:tag
            showImmediately:YES
               fetchTimeout:2
           additionalParams:additionalParams
-            viewController:vc
-                completion:completion];
+                   options:options];
 }
 
 // `mediateForSessionKey` and this method looks up the session.
-- (void)mediateForAdType:(HZAdType)adType tag:(NSString *)tag showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout additionalParams:(NSDictionary *)additionalParams viewController:(UIViewController *)vc completion:(void (^)(BOOL result, NSError *error))completion
+- (void)mediateForAdType:(HZAdType)adType showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
-    tag = [HZAdModel normalizeTag:tag];
+    options.tag = [HZAdModel normalizeTag:options.tag];
     NSString *adUnit = NSStringFromAdType(adType);
     
     // If we have an existing, matching session we don't need to make another call to /mediate.
-    HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:tag];
+    HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:options.tag];
     HZMediationSession *session = self.sessionDictionary[key];
     if (session && showImmediately && !additionalParams) {
-        [self fetchForSession:session showImmediately:YES fetchTimeout:timeout sessionKey:key viewController:vc completion:completion];
+        [self fetchForSession:session showImmediately:YES fetchTimeout:timeout sessionKey:key options:options];
         return;
     }
     
     HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[HZMediationConstants creativeTypesForAdType:adType]
                                                                          adUnit:adUnit
-                                                                            tag:tag
+                                                                            tag:options.tag
                                                                     auctionType:HZAuctionTypeMixed
                                                             andAdditionalParams:additionalParams];
     
@@ -226,10 +229,10 @@ NSString * const kHZDataKey = @"data";
                                 withParams:mediateParams
                                    success:^(NSDictionary *json) {
                                        
-                                       HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:tag];
+                                       HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:options.tag];
       
                                        NSError *error;
-                                       HZMediationSession *session = [[HZMediationSession alloc] initWithJSON:json mediateParams:mediateParams setupMediators:self.setupMediators adType:adType tag:tag error:&error];
+                                       HZMediationSession *session = [[HZMediationSession alloc] initWithJSON:json mediateParams:mediateParams setupMediators:self.setupMediators adType:adType tag:options.tag error:&error];
                                        
                                        if (session) {
                                            self.sessionDictionary[key] = session;
@@ -240,22 +243,21 @@ NSString * const kHZDataKey = @"data";
                                                  showImmediately:showImmediately
                                                     fetchTimeout:timeout
                                                       sessionKey:key
-                                                  viewController:vc
-                                                      completion:completion];
+                                                         options:options];
                                        } else {
-                                           [self sendFailureMessagesForTag:tag adType:adType wasAttemptingToShow:showImmediately completionBlock:completion underlyingError:error];
+                                           [self sendFailureMessagesForAdType:adType wasAttemptingToShow:showImmediately underlyingError:error options:options];
                                        }
         
                                        
                                    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-                                       [self sendFailureMessagesForTag:tag adType:adType wasAttemptingToShow:showImmediately completionBlock:completion underlyingError:error];
+                                       [self sendFailureMessagesForAdType:adType wasAttemptingToShow:showImmediately underlyingError:error options:options];
                                        HZELog(@"Error! Failed to get the list of networks to mediate from Heyzap. Mediation won't be possible. Error = %@,",error);
                                    }];
 }
 
 
 
-- (void)fetchForSession:(HZMediationSession *)session showImmediately:(BOOL)showImmediately fetchTimeout:(const NSTimeInterval)timeout sessionKey:(HZMediationSessionKey *)sessionKey viewController:(UIViewController *)vc completion:(void (^)(BOOL result, NSError *error))completion
+- (void)fetchForSession:(HZMediationSession *)session showImmediately:(BOOL)showImmediately fetchTimeout:(const NSTimeInterval)timeout sessionKey:(HZMediationSessionKey *)sessionKey options:(HZShowOptions *)options
 {
     NSString *tag = session.tag;
     
@@ -278,8 +280,8 @@ NSString * const kHZDataKey = @"data";
     if (showImmediately) {
         HZBaseAdapter *adapter = [session firstAdapterWithAd:self.lastInterstitialVideoShownDate];
         if (adapter) {
-            if (completion) { completion(YES,nil); }
-            [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey viewController:vc];
+            if (options.completion) { options.completion(YES,nil); }
+            [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey options:options];
             return;
         }
     }
@@ -331,14 +333,14 @@ NSString * const kHZDataKey = @"data";
                 [[HZMetrics sharedInstance] logMetricsEvent:kFetchDownloadTimeKey value:@(elaspsedMilliseconds) withProvider:session network:network];
                 successful = YES;
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    if (completion) { completion(YES,nil); }
+                    if (options.completion) { options.completion(YES,nil); }
                     [[self delegateForAdType:type] didReceiveAdWithTag:tag];
                     [session reportSuccessfulFetchUpToAdapter:adapter];
                 });
                 if (showImmediately) {
                     [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndAttemptedFetchSuccessValue withProvider:session network:network];
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey viewController:vc];
+                        [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey options:options];
                     });
                     HZDLog(@"Mediator %@ is showing an ad",[[adapter class] name]);
                 }
@@ -380,11 +382,10 @@ NSString * const kHZDataKey = @"data";
         if (!successful) {
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self.sessionDictionary removeObjectForKey:sessionKey];
-                [self sendFailureMessagesForTag:tag
-                                         adType:type
+                [self sendFailureMessagesForAdType:type
                             wasAttemptingToShow:showImmediately
-                                completionBlock:completion
-                                underlyingError:nil];
+                                underlyingError:nil
+                                        options:options];
             });
         }
     });
@@ -392,7 +393,7 @@ NSString * const kHZDataKey = @"data";
 
 static int totalImpressions = 0;
 
-- (void)haveAdapter:(HZBaseAdapter *)adapter showAdForSession:(HZMediationSession *)session sessionKey:(HZMediationSessionKey *)key viewController:(UIViewController *)vc
+- (void)haveAdapter:(HZBaseAdapter *)adapter showAdForSession:(HZMediationSession *)session sessionKey:(HZMediationSessionKey *)key options:(HZShowOptions *)options
 {
     [self.sessionDictionary removeObjectForKey:key];
     
@@ -403,11 +404,12 @@ static int totalImpressions = 0;
         self.lastInterstitialVideoShownDate = [NSDate date];
     }
 
-    if (!vc) {
-        vc = [[adapter delegate] viewControllerForPresentingAd];
+    if (!options.viewController) {
+        options.viewController = [[adapter delegate] viewControllerForPresentingAd];
     }
 
-    [adapter showAdForType:session.adType tag:session.tag viewController:vc];
+    options.tag = session.tag;
+    [adapter showAdForType:session.adType options:options];
     [session reportImpressionForAdapter:adapter];
     [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
 
@@ -417,16 +419,15 @@ static int totalImpressions = 0;
 }
 
 
-- (void)sendFailureMessagesForTag:(NSString *)tag adType:(HZAdType)adType wasAttemptingToShow:(BOOL)tryingToShow completionBlock:(void (^)(BOOL result, NSError *error))completion underlyingError:(NSError *)underlyingError
+- (void)sendFailureMessagesForAdType:(HZAdType)adType wasAttemptingToShow:(BOOL)tryingToShow underlyingError:(NSError *)underlyingError options:(HZShowOptions *)options
 {
     NSDictionary *userInfo = underlyingError ? @{NSUnderlyingErrorKey: underlyingError} : nil;
     NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
     
-    [[self delegateForAdType:adType] didFailToReceiveAdWithTag:tag];
-    if (completion) { completion(NO,error); }
+    [[self delegateForAdType:adType] didFailToReceiveAdWithTag:options.tag];
+    if (options.completion) { options.completion(NO,error); }
     if (tryingToShow) {
-        [[self delegateForAdType:adType] didFailToShowAdWithTag:tag
-                                                       andError:error];
+        [[self delegateForAdType:adType] didFailToShowAdWithTag:options.tag andError:error];
     }
 }
 

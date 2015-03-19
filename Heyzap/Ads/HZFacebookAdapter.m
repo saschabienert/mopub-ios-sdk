@@ -98,13 +98,13 @@
     [self.interstitialAd loadAd];
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag viewController:(UIViewController *)vc {
+- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options {
     if (type != HZAdTypeInterstitial) {
         //can only show interstitials
         return;
     }
     
-    [self.interstitialAd showAdFromRootViewController:vc];
+    [self.interstitialAd showAdFromRootViewController:options.viewController];
 }
 
 #pragma mark - Facebook Delegation
