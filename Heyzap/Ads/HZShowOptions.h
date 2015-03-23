@@ -11,7 +11,7 @@
 #import "HeyzapAds.h"
 
 /** HZShowOptions allows you to pass options to configure how ads are shown */
-@interface HZShowOptions : NSObject
+@interface HZShowOptions : NSObject <NSCopying>
 
 /**
  *  @discussion A UIViewController that should present the ad being shown. If not specified the application's key window's root view controller is used.

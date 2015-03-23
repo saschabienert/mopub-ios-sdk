@@ -10,6 +10,13 @@
 
 @implementation HZShowOptions
 
+- (HZShowOptions *)copyWithZone:(NSZone *)zone {
+    HZShowOptions *options = [[[self class] allocWithZone:zone] init];
+    [options setTag:[self tag]];
+    [options setViewController:[self viewController]];
+    return options;
+}
+
 - (NSString *)tag {
     if (_tag == nil) {
         _tag = [HeyzapAds defaultTagName];

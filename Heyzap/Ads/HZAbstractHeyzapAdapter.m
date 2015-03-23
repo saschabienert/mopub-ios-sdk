@@ -86,10 +86,8 @@
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
-    // mediation has already called the completion block, so pass along the other options but not the block
-    HZShowOptions *newOptions = [HZShowOptions new];
-    newOptions.tag = options.tag;
-    newOptions.viewController = options.viewController;
+    // mediation has already called the completion block, so copy the options, excluding the block
+    HZShowOptions *newOptions = [options copy];
 
     const HZAuctionType auctionType = [self auctionType];
     switch (type) {
