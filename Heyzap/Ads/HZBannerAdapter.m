@@ -20,4 +20,8 @@
     ABSTRACT_METHOD_ERROR();
 }
 
+- (BOOL)isAvailable {
+    ABSTRACT_METHOD_ERROR();
+}
+
 @end

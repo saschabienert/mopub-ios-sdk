@@ -39,6 +39,8 @@
 #import "HZMediationConstants.h"
 #import "HZDevice.h"
 
+#import "HZiAdBannerAdapter.h"
+
 typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
     HZMediationStartStatusNotStarted,
     HZMediationStartStatusFailure,
@@ -553,6 +555,7 @@ static int totalImpressions = 0;
             [adapterNames addObject:[adapterClass name]];
         }
     }
+    [adapterNames addObject:@"iad"];
     return [adapterNames componentsJoinedByString:@","];
 }
 
@@ -617,9 +620,89 @@ static BOOL forceOnlyHeyzapSDK = NO;
     }
 }
 
-- (HZBannerAdapter *)getBannerWithRootViewController:(UIViewController *const)viewController options:(HZBannerAdOptions *)options {
-    HZBannerAdapter *adapter = [[HZFacebookAdapter sharedInstance] fetchBannerWithRootViewController:viewController options:options];
-    return adapter;
+- (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion {
+    NSParameterAssert(options);
+    NSParameterAssert(completion);
+    // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
+    // This feels pretty hacky..
+    if (self.startStatus == HZMediationStartStatusNotStarted) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self requestBannerWithOptions:options completion:completion];
+        });
+        return;
+    }
+    
+    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:@[@"banner"]
+                                                                         adUnit:@"banner"
+                                                                            tag:[HeyzapAds defaultTagName]
+                                                                    auctionType:HZAuctionTypeMixed
+                                                            andAdditionalParams:@{}];
+    
+    NSDictionary *const mediateParams = request.createParams;
+    
+    NSArray *const bannerNetworks = @[[HZFacebookAdapter sharedInstance], [HZAdMobAdapter sharedInstance]];
+    
+    [[HZMediationAPIClient sharedClient] get:@"mediate" withParams:mediateParams success:^(NSDictionary *json) {
+        NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] default:@[] withDict:json];
+        for (NSDictionary *network in networks) {
+            NSArray *creativeTypes = [HZDictionaryUtils hzObjectForKey:@"creative_types" ofClass:[NSArray class] default:@[] withDict:network];
+            if ([creativeTypes containsObject:@"BANNER"]) {
+                
+            }
+        }
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+        
+    }];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        for (HZBaseAdapter *baseAdapter in bannerNetworks) {
+            NSLog(@"Base adapter = %@",baseAdapter);
+            __block HZBannerAdapter *bannerAdapter;
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                bannerAdapter = [baseAdapter fetchBannerWithOptions:options];
+            });
+            
+            __block BOOL isAvailable = NO;
+            hzWaitUntil(^BOOL{
+                isAvailable = [bannerAdapter isAvailable];
+                if (bannerAdapter.lastError) {
+                    HZELog(@"Ad Network %@ had an error loading a banner: %@",bannerAdapter.networkName, bannerAdapter.lastError);
+                }
+                return isAvailable || bannerAdapter.lastError;
+            }, 8);
+            
+            if (isAvailable) {
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    completion(nil, bannerAdapter);
+                });
+                // Report success up to adapter
+                
+                break;
+            } else if (baseAdapter == [bannerNetworks lastObject]) {
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    NSError *fetchFailedError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey:@"None of the mediated ad networks had a banner available"}];
+                    completion(fetchFailedError, nil);
+                });
+                
+                // Report failure to server.
+            }
+            
+        }
+    });
+    
+    
+    // Make HTTP request to get waterfall (if necessary), get the list of networks
+    // Iterate through them, creating an `HZBannerAdapter` and waiting until one is available
+    
+}
+
+- (HZBannerAdapter *)getBannerWithOptions:(HZBannerAdOptions *)options {
+    
+    
+//    return [[HZFacebookAdapter sharedInstance] fetchBannerOptions:options];
+    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+//    return [[HZAdMobAdapter sharedInstance] fetchBannerOptions:options];
+    return [[HZiAdBannerAdapter alloc] init];
 }
 
 @end

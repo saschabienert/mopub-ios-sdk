@@ -8,9 +8,13 @@
 
 #import "HZBannerAdOptions.h"
 #import "HZFBAdView.h"
+#import "HZGADBannerView.h"
 
 @interface HZBannerAdOptions()
 
 - (HZFBAdSize)internalFacebookAdSize;
++ (BOOL)facebookBannerSizesAvailable;
+
+- (HZGADAdSize)internalAdMobSize;
 
 @end

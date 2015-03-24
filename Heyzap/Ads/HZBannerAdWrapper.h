@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 @import UIKit;
+@class HZBannerAdOptions;
 
 @protocol HZBannerAdDelegate <NSObject>
 
@@ -58,7 +59,8 @@
  */
 @interface HZBannerAdWrapper : NSObject
 
-+ (instancetype)getWrapperForViewController:(UIViewController *)controller;
++ (instancetype)getWrapperForViewController:(UIViewController *)controller options:(HZBannerAdOptions *)options;
++ (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion;
 
 
 @property (nonatomic, strong, readonly) UIView *mediatedBanner;

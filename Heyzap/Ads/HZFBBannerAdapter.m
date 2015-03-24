@@ -9,24 +9,29 @@
 #import "HZFBBannerAdapter.h"
 #import "HZFBAdView.h"
 #import "HZMediationConstants.h"
+#import "HZBannerAdOptions_Private.h"
 
 @interface HZFBBannerAdapter()
 
 @property (nonatomic, strong) HZFBAdView *adView;
+@property (nonatomic) BOOL isLoaded;
 
 @end
 
 @implementation HZFBBannerAdapter
 
-- (instancetype)initWithHZFBAdView:(HZFBAdView *)adView {
-    NSParameterAssert(adView);
+- (instancetype)initWithAdUnitId:(NSString *)adUnitId options:(HZBannerAdOptions *)options {
     self = [super init];
     if (self) {
-        _adView = adView;
+        _adView = [[HZFBAdView alloc] initWithPlacementID:adUnitId adSize:options.internalFacebookAdSize rootViewController:options.presentingViewController];
         _adView.delegate = self;
         [_adView loadAd];
     }
     return self;
+}
+
+- (BOOL)isAvailable {
+    return self.isLoaded;
 }
 
 #pragma mark - HBFBAdViewDelegate Protocol
@@ -38,9 +43,13 @@
     [self.reportingDelegate didDismissModalView];
 }
 - (void)adViewDidLoad:(HZFBAdView *)adView {
+    NSLog(@"Facebook loaded a banner!");
+    self.isLoaded = YES;
     [self.reportingDelegate didReceiveAd];
 }
 - (void)adView:(HZFBAdView *)adView didFailWithError:(NSError *)error {
+    self.isLoaded = NO;
+    self.lastError = error;
     [self.reportingDelegate didFailToReceiveAd:error];
 }
 - (void)adViewWillLogImpression:(HZFBAdView *)adView {

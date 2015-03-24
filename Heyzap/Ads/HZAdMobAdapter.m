@@ -14,6 +14,7 @@
 #import "HZDictionaryUtils.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
+#import "HZAdMobBannerAdapter.h"
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
@@ -156,6 +157,10 @@
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
     self.lastInterstitialError = nil;
+}
+
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options {
+    return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:@"ca-app-pub-3430397061265646/1348694216" options:options];
 }
 
 @end

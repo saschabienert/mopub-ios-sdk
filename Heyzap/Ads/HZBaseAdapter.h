@@ -96,7 +96,9 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials;
 
-- (HZBannerAdapter *)fetchBannerWithRootViewController:(UIViewController *const)controller options:(HZBannerAdOptions *)options;
+#pragma mark - Banners
+
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options;
 
 #pragma mark - Inferred methods
 

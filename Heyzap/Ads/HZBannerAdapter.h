@@ -12,8 +12,13 @@
 @interface HZBannerAdapter : NSObject
 
 @property (nonatomic, weak) id<HZBannerAdWrapperReporter> reportingDelegate;
+@property (nonatomic, strong) NSError *lastError;
+
+// initWithReportingDelegate
+// createView
 
 - (NSString *)networkName;
 - (UIView *)mediatedBanner;
+- (BOOL)isAvailable;
 
 @end

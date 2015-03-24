@@ -21,22 +21,46 @@
 @implementation HZBannerAdWrapper
 ///
 - (instancetype)initWithBanner:(HZBannerAdapter *)adapter network:(NSString *const)network {
+    NSParameterAssert(adapter);
+    NSParameterAssert(network);
     self = [super init];
     if (self) {
         _adapter = adapter;
-        _mediatedNetwork = network;
+        _mediatedNetwork = network; // Maybe remove this property and just call out to the underlying adapter
         adapter.reportingDelegate = self;
     }
     return self;
 }
 
-+ (instancetype)getWrapperForViewController:(UIViewController *)controller {
++ (instancetype)getWrapperForViewController:(UIViewController *)controller options:(HZBannerAdOptions *)options {
+    if (!options) {
+        options = [[HZBannerAdOptions alloc] init];
+    }
     
-//    @{kHZAdapterFacebook:kHZFacebookBanner};
+    [[HeyzapMediation sharedInstance] requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdapter *adapter) {
+        
+    }];
     
-    
-    HZBannerAdapter *adapter = [[HeyzapMediation sharedInstance] getBannerWithRootViewController:controller options:[[HZBannerAdOptions alloc] init]];
+    HZBannerAdapter *adapter = [[HeyzapMediation sharedInstance] getBannerWithOptions:options];
     return [[self alloc] initWithBanner:adapter network:adapter.networkName];
+}
+
++ (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion {
+    if (!options) {
+        options = [[HZBannerAdOptions alloc] init];
+    }
+    NSParameterAssert(completion);
+    
+    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+    [[HeyzapMediation sharedInstance] requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdapter *adapter) {
+        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+        if (error) {
+            completion(error, nil);
+        } else if (adapter) {
+            HZBannerAdWrapper *wrapper = [[HZBannerAdWrapper alloc] initWithBanner:adapter network:adapter.networkName];
+            completion(nil, wrapper);
+        }
+    }];
 }
 
 - (NSString *)description {
@@ -54,7 +78,6 @@
 }
 
 - (void)userDidClick {
-    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
     [self.delegate bannerWasClicked];
 }
 

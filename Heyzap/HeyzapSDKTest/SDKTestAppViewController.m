@@ -436,43 +436,26 @@ const CGFloat kLeftMargin = 10;
         subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
     }
     self.scrollView.contentSize = (CGSize) { CGRectGetWidth(self.view.frame), subviewContainingRect.size.height + 80 };
- 
+
     [self addBannersStuff];
 }
 
 - (void)addBannersStuff {
+    HZBannerAdOptions *options = [[HZBannerAdOptions alloc] init];
+    options.facebookBannerSize = HZFacebookBannerSizeFlexibleWidthHeight50;
+    options.admobBannerSize = HZAdMobBannerSizeFlexibleWidthPortrait;
     
-    self.wrapper = [HZBannerAdWrapper getWrapperForViewController:self];
-    self.wrapper.delegate = self;
-    NSLog(@"Wrapper = %@",self.wrapper);
-    UIView *banner = self.wrapper.mediatedBanner;
-    NSLog(@"Banner = %@",banner);
-    [self.view addSubview:banner];
+    [HZBannerAdWrapper requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdWrapper *wrapper) {
+        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+        if (error) {
+            NSLog(@"Error fetching banner!!!");
+        } else {
+            self.wrapper = wrapper;
+            self.wrapper.delegate = self;
+            [self.view addSubview:self.wrapper.mediatedBanner];
+        }
+    }];
     
-//    void * dataPtr = CFBundleGetDataPointerForName(CFBundleGetMainBundle(), (__bridge CFStringRef)@"kFBAdSize320x50");
-//    if (dataPtr) {
-//        NSLog(@"Data ptr was present");
-//    } else {
-//        NSLog(@"Data ptr missing");
-//    }
-//    NSLog(@"dataPtr = %@",*dataPtr);
-//    FBAdSize *x = dataPtr;
-//    FBAdSize *x = (FBAdSize *)(dataPtr ? *dataPtr : nil);
-//    CGSize size = x->size;
-//    NSLog(@"Size = %@",NSStringFromCGSize(size));
-    
-//    FBAdView *view = [[FBAdView alloc] initWithPlacementID:@"500413400097719_538033529669039" adSize:kFBAdSizeHeight90Banner rootViewController:self];
-//    [view loadAd];
-//    [self.view addSubview:view];
-//    
-//    GADBannerView *bannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerPortrait origin:CGPointMake(0, 200)];
-//    bannerView.adUnitID = @"ca-app-pub-3430397061265646/1348694216";
-//    bannerView.rootViewController = self.parentViewController;
-//    [bannerView loadRequest:nil];
-//    [self.view addSubview:bannerView];
-//    
-//    ADBannerView *iAd = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
-//    [self.view addSubview:iAd];
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{

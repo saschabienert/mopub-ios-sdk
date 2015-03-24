@@ -84,7 +84,7 @@
     ABSTRACT_METHOD_ERROR();
 }
 
-- (HZBannerAdapter *)fetchBannerWithRootViewController:(UIViewController *const)controller options:(HZBannerAdOptions *)options {
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options {
     return nil;
 }
 

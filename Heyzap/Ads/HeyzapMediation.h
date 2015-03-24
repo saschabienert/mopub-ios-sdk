@@ -53,6 +53,7 @@
 HZAdType hzAdTypeFromString(NSString *adUnit);
 NSString * NSStringFromAdType(HZAdType type);
 
-- (HZBannerAdapter *)getBannerWithRootViewController:(UIViewController *const)viewController options:(HZBannerAdOptions *)options;
+- (HZBannerAdapter *)getBannerWithOptions:(HZBannerAdOptions *)options;
+- (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion;
 
 @end

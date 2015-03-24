@@ -39,7 +39,8 @@
 
 + (BOOL)isSDKAvailable {
     return [HZFBInterstitialAd hzProxiedClassIsAvailable]
-    && [HZFBAdView hzProxiedClassIsAvailable];
+    && [HZFBAdView hzProxiedClassIsAvailable]
+    && [HZBannerAdOptions facebookBannerSizesAvailable];
 }
 
 + (NSString *)name {
@@ -150,30 +151,16 @@
     self.interstitialAd = nil;
 }
 
+static int facebookImpressions = 0;
+
 - (void)interstitialAdWillLogImpression:(HZFBInterstitialAd *)interstitialAd {
+    facebookImpressions++;
+    NSLog(@"Total facebook impressions = %i",facebookImpressions);
+    NSLog(@"Facebook will log impression");
 }
 
-- (HZBannerAdapter *)fetchBannerWithRootViewController:(UIViewController *const)controller options:(HZBannerAdOptions *)options {
-    HZFBAdView *view = [[HZFBAdView alloc] initWithPlacementID:@"500413400097719_538033529669039" adSize:options.internalFacebookAdSize rootViewController:controller];
-    
-    return [[HZFBBannerAdapter alloc] initWithHZFBAdView:view];
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options {
+    return [[HZFBBannerAdapter alloc] initWithAdUnitId:@"500413400097719_538033529669039" options:options];
 }
-
-//- (HZFBAdSize *)foo {
-//    void * dataPtr = CFBundleGetDataPointerForName(CFBundleGetMainBundle(), (__bridge CFStringRef)@"kFBAdSize320x50f");
-//    if (dataPtr) {
-//        NSLog(@"Data ptr was present");
-//    } else {
-//        NSLog(@"Data ptr missing");
-//        return NULL;
-//    }
-//    //    NSLog(@"dataPtr = %@",*dataPtr);
-//    HZFBAdSize *x = dataPtr;
-//    //    FBAdSize *x = (FBAdSize *)(dataPtr ? *dataPtr : nil);
-//    CGSize size = x->size;
-//    NSLog(@"Size = %@",NSStringFromCGSize(size));
-//    
-//    return x;
-//}
 
 @end

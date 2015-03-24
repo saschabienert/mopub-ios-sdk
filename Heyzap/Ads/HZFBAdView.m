@@ -18,8 +18,4 @@
     return @"FBAdView";
 }
 
-- (UIView *)viewProxy {
-    return (UIView *)self;
-}
-
 @end

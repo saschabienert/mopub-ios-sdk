@@ -76,8 +76,11 @@
         //register this game as installed, if we haven't done so already
         if (![[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY]) {
             [[HZAdsAPIClient sharedClient] post:@"register_new_game_install" withParams:@{} success:^(id JSON) {
+                NSLog(@"register new game success");
                 [[HZUserDefaults sharedDefaults] setObject:@YES forKey:HAS_REPORTED_INSTALL_KEY];
-            } failure:nil];
+            } failure:^(HZAFHTTPRequestOperation *op, NSError *error) {
+                NSLog(@"register new game Error = %@",error);
+            }];
         }
     });
     

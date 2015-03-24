@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Heyzap. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import UIKit;
 
 /**
  * The size to use for Facebook banners
@@ -20,11 +20,11 @@ typedef NS_ENUM(NSUInteger, HZFacebookBannerSize) {
      *  A banner 50 pts in height whose width expands to fill its containing view. Corresponds to kFBAdSizeHeight50Banner.
      *  **Default value** for Facebook banners.
      */
-    HZFacebookBannerSizeHeight50FlexibleWidth,
+    HZFacebookBannerSizeFlexibleWidthHeight50,
     /**
      *  A banner 90 pts in height whose width expands to fill its containing view. Corresponds to kFBAdSizeHeight90Banner.
      */
-    HZFacebookBannerSizeHeight90FlexibleWidth,
+    HZFacebookBannerSizeFlexibleWidthHeight90,
 };
 
 /**
@@ -40,7 +40,7 @@ typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
     HZAdMobBannerSizeFlexibleWidthPortrait,
     /**
      *  An ad size that spans the full width of the application in landscape orientation. The height is
-     *  typically 32 pixels on an iPhone/iPod UI, and 90 pixels tall on an iPad UI. Corresponds to
+     *  typically 32 pixels on an iPhone/iPod UI, and 90 pixels tall on an iPad UI. Corresponds to kGADAdSizeSmartBannerLandscape.
      */
     HZAdMobBannerSizeFlexibleWidthLandscape,
     /**
@@ -72,6 +72,15 @@ typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
  *  The size to use for Admob banners.
  */
 @property (nonatomic) HZAdMobBannerSize admobBannerSize;
+
+// iAds does not offer sizing options. Please refer to the `ADBannerView` documentation for information on ad sizes.
+
+/**
+ *  The view controller to present the ad from. 
+ *
+ *  This property is optional. If not set, it defaults to the root view controller of the application.
+ */
+@property (nonatomic, weak) UIViewController *presentingViewController;
 
 
 @end
