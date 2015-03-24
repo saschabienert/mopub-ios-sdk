@@ -152,9 +152,9 @@ NSString * const kHZNetworkName = @"mobile";
     // AdColony auto-prefetches
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
-    [[HZUnityAds sharedInstance] setViewController:[self.delegate viewControllerForPresentingAd]];
+    [[HZUnityAds sharedInstance] setViewController:options.viewController];
     if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
         [[HZUnityAds sharedInstance] setZone:self.incentivizedZoneID];
@@ -164,7 +164,7 @@ NSString * const kHZNetworkName = @"mobile";
     }
     [[HZUnityAds sharedInstance] show];
 
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 

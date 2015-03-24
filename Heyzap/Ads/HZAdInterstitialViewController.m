@@ -43,6 +43,10 @@
     [super show];
 }
 
+- (void) showWithOptions:(HZShowOptions *)options {
+    [super showWithOptions:options];
+}
+
 - (void) hide {
     [super hide];
 }

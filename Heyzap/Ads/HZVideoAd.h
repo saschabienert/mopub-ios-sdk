@@ -32,6 +32,9 @@
 
 #import <Foundation/Foundation.h>
 #import "HeyzapAds.h"
+#import "HZShowOptions.h"
+
+@class HZShowOptions;
 
 @protocol HZAdsDelegate;
 
@@ -60,6 +63,11 @@
  */
 + (void) showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion;
 
+/** Shows a video with the given options.
+ *
+ * @param options HZShowOptions object containing properties for configuring how the ad is shown.
+ */
++ (void) showWithOptions: (HZShowOptions *) options;
 
 /**
  *  Fetches a video ad from Heyzap.

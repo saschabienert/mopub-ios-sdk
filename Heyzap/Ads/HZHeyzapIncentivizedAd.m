@@ -28,13 +28,13 @@ static int HZIncentivizedCreativeIDPin = 0;
     }
 }
 
-+ (void)showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType
++ (void)showForAuctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options
 {
     if (![[HZAdsManager sharedManager] isEnabled]) {
         return;
     }
     
-    [[HZAdsManager sharedManager] showForAdUnit: HZIncentivizedAdUnit andTag:tag auctionType:auctionType withCompletion: nil];
+    [[HZAdsManager sharedManager] showForAdUnit:HZIncentivizedAdUnit auctionType:auctionType options:options];
 }
 
 + (void)fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion {
