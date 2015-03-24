@@ -63,6 +63,10 @@
     
     self.statusBarHidden = [UIApplication sharedApplication].statusBarHidden;
     
+    if (!options) {
+        options = [HZShowOptions new];
+    }
+
     if (!options.viewController) {
         NSLog(@"Heyzap requires a root view controller to display an ad. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
         
