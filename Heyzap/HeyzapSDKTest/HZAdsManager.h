@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "HeyzapAds.h"
+#import "HZShowOptions.h"
 
 @class HZAdModel;
 @class HZAdViewController;
@@ -38,10 +39,11 @@
 + (HZAdsManager *)sharedManager;
 - (void) onStart;
 + (BOOL) isEnabled;
++ (BOOL) isVersionSupported;
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
 
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
-- (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion;
+- (void) showForAdUnit: (NSString *) adUnit auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options;
 - (void) hideActiveAd;
 
 - (void)setInterstitialDelegate:(id<HZAdsDelegate>)delegate;
@@ -52,4 +54,13 @@
 
 + (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider;
 
+#define HZVersionCheck()     if(![HZAdsManager isVersionSupported]){                \
+                               HZDLog(@"Heyzap only supports iOS 6.0.0 and above"); \
+                               return;                                              \
+                             }
+
+#define HZVersionCheckBool() if(![HZAdsManager isVersionSupported]){                \
+                               HZDLog(@"Heyzap only supports iOS 6.0.0 and above"); \
+                               return NO;                                           \
+                             }
 @end

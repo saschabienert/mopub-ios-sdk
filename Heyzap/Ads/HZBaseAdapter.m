@@ -78,7 +78,7 @@
     ABSTRACT_METHOD_ERROR();
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
     ABSTRACT_METHOD_ERROR();
 }
@@ -180,6 +180,21 @@
             [HZFacebookAdapter class],
             [HZiAdAdapter class],
             nil];
+}
+
++ (NSArray *)testActivityAdapters
+{
+    NSSet *filteredAdapters = [[self allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^
+        BOOL(HZBaseAdapter *adapter, NSDictionary *bindings) {
+        return [adapter class] != [HZCrossPromoAdapter class];
+    }]];
+
+    NSArray *sortedAdapters = [[filteredAdapters allObjects] sortedArrayUsingComparator:^
+        NSComparisonResult(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
+        return [[obj1 name] compare:[obj2 name]];
+    }];
+
+    return sortedAdapters;
 }
 
 + (BOOL)isHeyzapAdapter {

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HZShowOptions.h"
 
 @protocol HZAdsDelegate;
 
@@ -15,11 +16,10 @@
 /**
  *  Shows a video for a given tag, if available.
  *
- *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
- *  @param completion A block called when the video is shown or fails to show. `result` states whether the show was sucessful; the error object describes the issue, if there was one.
+ * @param auctionType Heyzap auction type for this show
+ * @param options HZShowOptions object containing configuration
  */
-+ (void) showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion;
-
++ (void) showForAuctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options;
 
 /**
  *  Fetches a new ad for the given tag.

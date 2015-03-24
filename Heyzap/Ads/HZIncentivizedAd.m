@@ -25,6 +25,8 @@
 
 + (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate
 {
+    HZVersionCheck()
+
     if ([HeyzapMediation isOnlyHeyzapSDK]){
         [HZHeyzapIncentivizedAd setDelegate:delegate];
     } else {
@@ -38,12 +40,24 @@
     [[self class] showForTag:[HeyzapAds defaultTagName]];
 }
 
-+ (void)showForTag:(NSString *)tag
-{
++ (void)showForTag:(NSString *)tag {
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = tag;
+
+    [self showWithOptions:options];
+}
+
++ (void)showWithOptions:(HZShowOptions *)options {
+    HZVersionCheck()
+
+    if (!options) {
+        options = [HZShowOptions new];
+    }
+
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapIncentivizedAd showForTag:tag auctionType:HZAuctionTypeMixed];
+        [HZHeyzapIncentivizedAd showForAuctionType:HZAuctionTypeMixed options:options];
     } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized tag:tag additionalParams:nil completion:nil];
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized additionalParams:nil options:options];
     }
 }
 
@@ -63,6 +77,8 @@
 
 + (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion
 {
+    HZVersionCheck()
+
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapIncentivizedAd fetchForTag: tag auctionType:HZAuctionTypeMixed completion:completion];
     } else {
@@ -82,6 +98,8 @@
 
 + (BOOL)isAvailableForTag:(NSString *)tag
 {
+    HZVersionCheckBool()
+
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         return [HZHeyzapIncentivizedAd isAvailableForTag:tag auctionType:HZAuctionTypeMixed];
     } else {
@@ -92,10 +110,14 @@
 #pragma mark - Heyzap specific
 
 + (void) setUserIdentifier: (NSString *) userIdentifier {
+    HZVersionCheck()
+
     [HZHeyzapIncentivizedAd setUserIdentifier:userIdentifier];
 }
 
 + (void) setCreativeID:(int)creativeID {
+    HZVersionCheck()
+
     [HZHeyzapIncentivizedAd setCreativeID:creativeID];
 }
 

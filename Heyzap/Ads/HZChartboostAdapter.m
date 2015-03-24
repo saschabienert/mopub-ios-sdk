@@ -37,7 +37,6 @@
 {
     self = [super init];
     if (self) {
-        [HZChartboost setShouldDisplayLoadingViewForMoreApps:NO];
         [HZChartboost setShouldPrefetchVideoContent:YES];
     }
     return self;
@@ -119,7 +118,8 @@
     }
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag {
+- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
+{
     switch (type) {
         case HZAdTypeInterstitial:
             [HZChartboost showInterstitial: [self.delegate countryCode]];
@@ -132,7 +132,7 @@
             break;
     }
 
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 

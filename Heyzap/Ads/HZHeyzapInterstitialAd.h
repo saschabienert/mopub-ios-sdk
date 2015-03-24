@@ -7,18 +7,19 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HZShowOptions.h"
 
 @protocol HZAdsDelegate;
 
 @interface HZHeyzapInterstitialAd : NSObject
 
 /**
- *  Shows an interstitial ad for a given tag, if available.
+ *  Shows an interstitial ad configured with the given options
  *
- *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
- *  @param completion A block called when the ad is shown or failed to show. result contains whether or not the fetch was successful, and if not, error contains the reason why.
+ * @param auctionType Heyzap auction type for this show
+ * @param options HZShowOptions object containing configuration
  */
-+ (void) showForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion;
++ (void) showForAuctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options;
 
 #pragma mark - Callbacks
 

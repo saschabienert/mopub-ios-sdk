@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
+#import "HZShowOptions.h"
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
@@ -24,7 +25,7 @@
 
 - (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
 
-- (void)showAdForAdUnitType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
+- (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options;
 
 - (BOOL)isAvailableForAdUnitType:(HZAdType)adType tag:(NSString *)tag;
 
@@ -41,7 +42,7 @@
  */
 + (void)forceOnlyHeyzapSDK;
 
-
++ (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap;
 + (NSSet *)availableNonHeyzapAdapters;
 
 + (NSString *)commaSeparatedAdapterList;

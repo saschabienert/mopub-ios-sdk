@@ -82,6 +82,10 @@
     [super show];
 }
 
+- (void) showWithOptions:(HZShowOptions *)options {
+    [super showWithOptions:options];
+}
+
 - (void) hide {
     [self.ad onCompleteWithViewDuration: self.videoView.playbackTime andTotalDuration: self.videoView.videoDuration andFinished: self.didFinishVideo];
     

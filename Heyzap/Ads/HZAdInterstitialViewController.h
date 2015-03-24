@@ -15,4 +15,6 @@
 
 - (id) initWithAd:(HZInterstitialAdModel *)ad;
 
+- (void) showWithOptions:(HZShowOptions *)options;
+
 @end

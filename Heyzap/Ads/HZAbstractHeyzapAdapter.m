@@ -35,6 +35,8 @@
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
+    HZAbstractHeyzapAdapter *adapter = [self sharedInstance];
+    adapter.credentials = credentials;
     return nil;
 }
 
@@ -82,25 +84,28 @@
     }
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
+    // mediation has already called the completion block, so copy the options, excluding the block
+    HZShowOptions *newOptions = [options copy];
+
     const HZAuctionType auctionType = [self auctionType];
     switch (type) {
         case HZAdTypeInterstitial: {
-            [HZHeyzapInterstitialAd showForTag:tag auctionType:auctionType completion:nil];
+            [HZHeyzapInterstitialAd showForAuctionType:auctionType options:newOptions];
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZHeyzapIncentivizedAd showForTag:tag auctionType:auctionType];
+            [HZHeyzapIncentivizedAd showForAuctionType:auctionType options:newOptions];
             break;
         }
         case HZAdTypeVideo: {
-            [HZHeyzapVideoAd showForTag:tag auctionType:auctionType completion:nil];
+            [HZHeyzapVideoAd showForAuctionType:auctionType options:newOptions];
             break;
         }
     }
 
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 

@@ -37,6 +37,7 @@
 #import "HZDictionaryUtils.h"
 #import "HZDispatch.h"
 #import "HZUnityAds.h"
+#import "HZDevice.h"
 
 @interface HZTestActivityNetworkViewController() <HZMediationAdapterDelegate>
 
@@ -183,7 +184,10 @@
 - (void) showAd {
     [self appendStringToDebugLog:@"Showing ad"];
     NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
-    [[HeyzapMediation sharedInstance] showAdForAdUnitType:self.currentAdType tag:[HeyzapAds defaultTagName] additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
+
+    HZShowOptions *options = [HZShowOptions new];
+    options.viewController = self;
+    options.completion = ^(BOOL result, NSError *error) {
         if (error) {
             [self appendStringToDebugLog:@"Show failed"];
         } else {
@@ -191,7 +195,9 @@
         }
 
         [self changeShowButtonColor];
-    }];
+    };
+
+    [[HeyzapMediation sharedInstance] showAdForAdUnitType:self.currentAdType additionalParams:additionalParams options:options];
 }
 
 #pragma mark - HZMediationAdapterDelegate methods
@@ -224,10 +230,6 @@
     
 }
 
-- (UIViewController *)viewControllerForPresentingAd {
-    return self;
-}
-
 #pragma mark - View creation utility methods
 
 - (UIView *) makeView {
@@ -243,7 +245,9 @@
     UINavigationBar *header = ({
         UINavigationBar *nav = [[UINavigationBar alloc] initWithFrame:CGRectMake(currentNetworkView.frame.origin.x, currentNetworkView.frame.origin.y,
                                                                                  currentNetworkView.frame.size.width, 44)];
-        nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
+        if([nav respondsToSelector:@selector(barTintColor)]){
+            nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
+        }
         nav.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         nav;
     });

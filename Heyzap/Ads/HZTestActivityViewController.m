@@ -43,6 +43,8 @@
 #import "HZDispatch.h"
 #import "HZUnityAds.h"
 #import "HZDictionaryUtils.h"
+#import "HZDevice.h"
+#import "HZAbstractHeyzapAdapter.h"
 
 @interface HZTestActivityViewController() <UITableViewDelegate, UITableViewDataSource>
 
@@ -65,6 +67,8 @@
 + (void) show {
     HZDLog(@"Showing test activity view controller");
 
+    [[HeyzapMediation sharedInstance] start];
+
     HZTestActivityViewController *vc = [[self alloc] init];
     
     // save whether the status bar is hidden
@@ -78,9 +82,7 @@
     }
 
     // get the list of all networks
-    vc.allNetworks = [[[HeyzapMediation availableNonHeyzapAdapters] allObjects] sortedArrayUsingComparator:^NSComparisonResult(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
-        return [[obj1 name] compare:[obj2 name]];
-    }];
+    vc.allNetworks = [HZBaseAdapter testActivityAdapters];
     HZDLog(@"All networks: %@", vc.allNetworks);
     
     // this will link network names to their labels, so we can update the check/cross if necessary
@@ -128,7 +130,7 @@
 }
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    HZBaseAdapter *network = (HZBaseAdapter *)[[self.allNetworks objectAtIndex:indexPath.row] sharedInstance];
+    HZBaseAdapter *network = [self.allNetworks objectAtIndex:indexPath.row];
 
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
     if(cell == nil){
@@ -171,7 +173,9 @@
     UINavigationBar *header = ({
         UINavigationBar *nav = [[UINavigationBar alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x, chooseNetworkView.frame.origin.y,
                                                                                  chooseNetworkView.frame.size.width, 44)];
-        nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
+        if([nav respondsToSelector:@selector(barTintColor)]){
+            nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
+        }
         nav.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         nav;
     });
@@ -228,7 +232,7 @@
 - (void) checkNetworkInfo {
     // check available
     NSMutableSet *availableNetworks = [NSMutableSet set];
-    for (HZBaseAdapter *adapter in [HeyzapMediation availableNonHeyzapAdapters]) {
+    for (HZBaseAdapter *adapter in [HeyzapMediation availableAdaptersWithHeyzap:YES]) {
         [availableNetworks addObject:[[adapter class] sharedInstance]];
     }
     self.availableNetworks = availableNetworks;
@@ -243,34 +247,32 @@
             BOOL initialized = NO;
             NSString *mediatorName = mediator[@"name"];
 
-            if (![mediatorName isEqualToString:@"heyzap"] && ![mediatorName isEqualToString:@"heyzap_cross_promo"]) {
-                Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
+            Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
 
-                // don't do anything if the sdk isn't available
-                if (![mediatorClass isSDKAvailable]) {
-                    continue;
-                } else {
-                    available = YES;
-                }
-
-                HZBaseAdapter *adapter = (HZBaseAdapter *)[mediatorClass sharedInstance];
-                
-                // check enabled
-                if([mediator[@"enabled"] boolValue]){
-                    [enabledNetworks addObject:adapter];
-                    enabled = YES;
-                }
-                
-                // check original initialization succeeded
-                if (adapter.credentials) {
-                    [initializedNetworks addObject:adapter];
-                    initialized = YES;
-                }
-
-                // update this network's integration status
-                NSUInteger index = [self.allNetworks indexOfObject:mediatorClass];
-                self.integrationStatuses[index] = @(available && enabled && initialized);
+            // don't do anything if the sdk isn't available
+            if (![mediatorClass isSDKAvailable]) {
+                continue;
+            } else {
+                available = YES;
             }
+
+            HZBaseAdapter *adapter = (HZBaseAdapter *)[mediatorClass sharedInstance];
+
+            // check enabled
+            if([mediator[@"enabled"] boolValue]){
+                [enabledNetworks addObject:adapter];
+                enabled = YES;
+            }
+
+            // check original initialization succeeded
+            if (adapter.credentials || [adapter isKindOfClass:[HZAbstractHeyzapAdapter class]]) {
+                [initializedNetworks addObject:adapter];
+                initialized = YES;
+            }
+
+            // update this network's integration status
+            NSUInteger index = [self.allNetworks indexOfObject:mediatorClass];
+            self.integrationStatuses[index] = @(available && enabled && initialized);
         }
 
         self.enabledNetworks = enabledNetworks;

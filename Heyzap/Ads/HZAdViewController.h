@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import "HZAdModel.h"
+#import "HZShowOptions.h"
 
 @protocol HZAdPopupActionDelegate<NSObject>
 
@@ -29,6 +30,7 @@
 
 - (id) initWithAd: (HZAdModel *) ad;
 - (void) show;
+- (void) showWithOptions:(HZShowOptions *)options;
 - (void) hide;
 
 - (void) didClickWithURL: (NSURL *) url;

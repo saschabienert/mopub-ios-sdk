@@ -1,19 +1,19 @@
 PODS:
-  - AdColony (2.4.13)
+  - AdColony (2.5.0)
   - AppLovin (2.5.4)
-  - ChartboostSDK (5.0.3)
-  - FacebookAudienceNetwork (3.18.1)
-  - Google-AdMob-Ads-SDK (6.12.2)
+  - ChartboostSDK (5.1.3)
+  - FacebookAudienceNetwork (3.23.1)
+  - Google-AdMob-Ads-SDK (7.0.0)
   - Kiwi (2.3.1)
-  - OCHamcrest (4.0.1)
-  - OCMockito (1.3.1):
+  - OCHamcrest (4.1.1)
+  - OCMockito (1.4.0):
     - OCHamcrest (~> 4.0)
   - OHHTTPStubs (3.1.10):
     - OHHTTPStubs/Core (= 3.1.10)
   - OHHTTPStubs/Core (3.1.10)
   - Subliminal (1.1.0)
-  - UnityAds (1.3.10)
-  - VungleAdvertiserSDK (3.0.11)
+  - UnityAds (1.3.12)
+  - VungleAdvertiserSDK (3.0.12)
 
 DEPENDENCIES:
   - AdColony
@@ -33,18 +33,23 @@ EXTERNAL SOURCES:
     :branch: shared/Xcode6
     :git: https://github.com/inkling/Subliminal.git
 
+CHECKOUT OPTIONS:
+  Subliminal:
+    :commit: d99fef42529589373adc1948aede98aed0fbe9de
+    :git: https://github.com/inkling/Subliminal.git
+
 SPEC CHECKSUMS:
-  AdColony: 8deebb88fa526736ffc464810233a45287f1650a
+  AdColony: b9073b4c2944f95049c7e3f916b956de0ec67136
   AppLovin: fdbeb15795c675c8c847b63876150d3c7806b484
-  ChartboostSDK: b7ba4d09bbe76615f42317db5d9fd93fc3b37ebc
-  FacebookAudienceNetwork: 370e33a75dd2f599a52be20f66b717ecab6b1ff9
-  Google-AdMob-Ads-SDK: 9776de20c7904bd29dc37f81e24707cdee9c706c
+  ChartboostSDK: e95583e0948f9873ed1aaa59189c2e6a3a16d0fc
+  FacebookAudienceNetwork: 758fa2fc175ed6e0d52c2aca51be21bbcd6fb444
+  Google-AdMob-Ads-SDK: 8439d31b89ec4d34e8f3ff3a83c53316d1bb4113
   Kiwi: 73e1400209055ee9c8ba78c6012b6b642d0fb9f7
-  OCHamcrest: b464725bbb48d0f1cd9c6f4ec3cb35fe0c4f2b94
-  OCMockito: 57b8c4bb54ff3a4a14eb2174f9e57faf9f56efb6
+  OCHamcrest: af1c7c5ea345de69ea6c9c2958f65f3044e5c420
+  OCMockito: 991936bb775cc4c27f063d38f5e17b9161fbd21c
   OHHTTPStubs: 2038e929b6abb94881000524c1cb4aba0a1bb4a2
   Subliminal: 3fa4291de86aff7a60b799b8a1911311e513e396
-  UnityAds: f39d69424ff7d3269b6e21a6bce84acba376c1d1
-  VungleAdvertiserSDK: e48a6e1579d615c8d7d886dd0cc09d1fe2f10557
+  UnityAds: f570b20497c56d7f4aac2b1c60e4e6962598ab58
+  VungleAdvertiserSDK: 609e82e96bb15959887f5fea72859cabe1d8032a
 
 COCOAPODS: 0.35.0

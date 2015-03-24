@@ -56,11 +56,18 @@
 }
 
 - (void) show {
+    [self showWithOptions:nil];
+}
+
+- (void) showWithOptions:(HZShowOptions *)options {
     
     self.statusBarHidden = [UIApplication sharedApplication].statusBarHidden;
     
-    UIViewController *rootVC = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-    if (!rootVC) {
+    if (!options) {
+        options = [HZShowOptions new];
+    }
+
+    if (!options.viewController) {
         NSLog(@"Heyzap requires a root view controller to display an ad. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
         
         NSError *const error = [NSError errorWithDomain:@"Heyzap" code:10 userInfo:@{NSLocalizedFailureReasonErrorKey:@"There was no root view controller to display the ad."}];
@@ -68,7 +75,9 @@
         [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification infoProvider:self.ad];
         return;
     }
-    [rootVC presentViewController:self animated:NO completion:nil];
+
+    [options.viewController presentViewController:self animated:NO completion:nil];
+
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
     
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];

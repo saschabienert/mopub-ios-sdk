@@ -153,6 +153,10 @@
     return NO;
 }
 
++ (BOOL) isVersionSupported {
+    return ![HZDevice hzSystemVersionIsLessThan:@"6.0.0"];
+}
+
 #pragma mark - Is Available
 
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType
@@ -171,8 +175,8 @@
 
 #pragma mark - Show
 
-- (void) showForAdUnit: (NSString *) adUnit andTag: (NSString *) tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion  {
-    HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:adUnit];
+- (void) showForAdUnit: (NSString *) adUnit auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options  {
+    HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:adUnit];
     NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(auctionType);
     [[HZMetrics sharedInstance] logShowAdWithObject:stub network:heyzapAdapter];
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:kShowAdTimeSincePreviousRelevantFetchKey withProvider:stub network:heyzapAdapter];
@@ -181,14 +185,10 @@
     BOOL result = NO;
     NSError *error;
     
-    if (tag == nil) {
-        tag = [HeyzapAds defaultTagName];
-    }
-    
     if ([self activeController] != nil) {
         [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kAdAlreadyDisplayedValue withProvider:stub network:heyzapAdapter];
-        if (completion) {
-            completion(NO, [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 7 userInfo: @{NSLocalizedDescriptionKey: @"Another ad is currently displaying."}]);
+        if (options.completion) {
+            options.completion(NO, [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 7 userInfo: @{NSLocalizedDescriptionKey: @"Another ad is currently displaying."}]);
         }
         
         return;
@@ -198,13 +198,9 @@
         [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoConnectivityValue withProvider:stub network:heyzapAdapter];
         error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 1 userInfo: @{NSLocalizedDescriptionKey: @"No internet connection."}];
     } else {
-        if (!tag) {
-            tag = [HeyzapAds defaultTagName];
-        }
-        
-        HZAdModel *ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:tag auctionType:auctionType];
+        HZAdModel *ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:options.tag auctionType:auctionType];
         while (ad != nil && [ad isExpired]) {
-            ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:tag auctionType:auctionType];
+            ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:options.tag auctionType:auctionType];
         }
         
         if (ad != nil) {
@@ -216,7 +212,7 @@
                 if (!controller) {
                     result = NO;
                 } else {
-                    [controller show];
+                    [controller showWithOptions:options];
                     self.activeController = controller;
                     result = YES;
                 }
@@ -226,7 +222,7 @@
                 if (!controller) {
                     result = NO;
                 } else {
-                    [controller show];
+                    [controller showWithOptions:options];
                     self.activeController = controller;
                     result = YES;
                 }
@@ -241,14 +237,14 @@
     
     if (!result || error) {
         // Not using the standard method here.
-        [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag: tag andError: error];
-        [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification tag:tag adUnit:adUnit auctionType:auctionType];
+        [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag:options.tag andError: error];
+        [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification tag:options.tag adUnit:adUnit auctionType:auctionType];
     } else {
         [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:stub network:heyzapAdapter];
     }
     
-    if (completion) {
-        completion(result, error);
+    if (options.completion) {
+        options.completion(result, error);
     }
 }
 
