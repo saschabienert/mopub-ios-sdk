@@ -81,19 +81,19 @@
     return NO;
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag {
+- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options {
     if (type != HZAdTypeInterstitial) {
         return;
     }
     
-    
     BOOL success = NO;
-    if ([[self.delegate viewControllerForPresentingAd] respondsToSelector: @selector(requestInterstitialAdPresentation)]) {
-        success = [[self.delegate viewControllerForPresentingAd] requestInterstitialAdPresentation];
+    
+    if ([options.viewController respondsToSelector:@selector(requestInterstitialAdPresentation)]) {
+        success = [options.viewController requestInterstitialAdPresentation];
     }
     
     if (!success) {
-        [self.interstitialAd presentFromViewController: [self.delegate viewControllerForPresentingAd]];
+        [self.interstitialAd presentFromViewController:options.viewController];
     }
 }
 
