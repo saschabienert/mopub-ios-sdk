@@ -7,6 +7,7 @@
 //
 
 #import "HZShowOptions.h"
+#import "HZAdModel.h"
 
 @implementation HZShowOptions
 
@@ -17,12 +18,18 @@
     return options;
 }
 
+@synthesize tag = _tag;
+
 - (NSString *)tag {
     if (_tag == nil) {
         _tag = [HeyzapAds defaultTagName];
     }
 
     return _tag;
+}
+
+- (void)setTag:(NSString *)tag {
+    _tag = [HZAdModel normalizeTag:tag];
 }
 
 - (UIViewController *)viewController {

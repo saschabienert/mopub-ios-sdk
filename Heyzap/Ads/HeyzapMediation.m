@@ -202,7 +202,6 @@ NSString * const kHZDataKey = @"data";
 // `mediateForSessionKey` and this method looks up the session.
 - (void)mediateForAdType:(HZAdType)adType showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
-    options.tag = [HZAdModel normalizeTag:options.tag];
     NSString *adUnit = NSStringFromAdType(adType);
     
     // If we have an existing, matching session we don't need to make another call to /mediate.
