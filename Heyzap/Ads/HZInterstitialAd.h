@@ -31,6 +31,10 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "HZShowOptions.h"
+#import "HZShowOptions.h"
+
+@class HZShowOptions;
 
 @protocol HZAdsDelegate;
 
@@ -57,6 +61,12 @@
  *         or not the fetch was successful, and if not, error contains the reason why.
  */
 + (void) showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion;
+
+/** Shows an interstitial ad with the given options.
+ *
+ * @param options HZShowOptions object containing properties for configuring how the ad is shown.
+ */
++ (void) showWithOptions: (HZShowOptions *) options;
 
 #pragma mark - Callbacks
 

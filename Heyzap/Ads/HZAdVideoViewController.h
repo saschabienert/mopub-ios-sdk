@@ -14,6 +14,7 @@
 @property (nonatomic) HZVideoAdModel *ad;
 
 - (void) show;
+- (void) showWithOptions:(HZShowOptions *)options;
 - (void) hide;
 
 @end

@@ -42,14 +42,24 @@
 }
 
 + (void)showForTag:(NSString *)tag completion:(void (^)(BOOL result, NSError *error))completion {
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = tag;
+    options.completion = completion;
+
+    [self showWithOptions:options];
+}
+
++ (void) showWithOptions:(HZShowOptions *)options {
     HZVersionCheck()
 
-    tag = tag ?: [HeyzapAds defaultTagName];
-    
+    if (!options) {
+        options = [HZShowOptions new];
+    }
+
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapVideoAd showForTag:tag auctionType:HZAuctionTypeMixed completion:completion];
+        [HZHeyzapVideoAd showForAuctionType:HZAuctionTypeMixed options:options];
     } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo tag:tag additionalParams:nil completion:completion];
+        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo additionalParams:nil options:options];
     }
 }
 

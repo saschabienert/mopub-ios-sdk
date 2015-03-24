@@ -140,7 +140,7 @@
     // AdColony auto-prefetches
 }
 
-- (void)showAdForType:(HZAdType)type tag:(NSString *)tag
+- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
     [self.delegate adapterWillPlayAudio:self];
     if (type == HZAdTypeIncentivized) {
@@ -152,7 +152,7 @@
         [HZAdColony playVideoAdForZone:self.interstitialZoneID withDelegate:self];
     }
 
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(type)];
+    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
