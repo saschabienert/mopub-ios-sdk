@@ -52,6 +52,10 @@
 + (void) showWithOptions:(HZShowOptions *)options {
     HZVersionCheck()
 
+    if (!options) {
+        options = [HZShowOptions new];
+    }
+
     if ([HeyzapMediation isOnlyHeyzapSDK]) {
         [HZHeyzapVideoAd showForAuctionType:HZAuctionTypeMixed options:options];
     } else {
