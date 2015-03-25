@@ -42,6 +42,7 @@ NSString * const kHZAdapteriAdHumanized = @"iAd";
 #define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
 #define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
 #define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
+#define HZBannerAdCreativeTypes @[@"banner"]
 
 + (NSError *)errorWithAdapter:(NSString *)adapter
                        domain:(NSString *)domain
@@ -76,6 +77,9 @@ NSString * NSStringFromAdType(HZAdType type)
             return @"video";
             break;
         }
+        case HZAdTypeBanner: {
+            return @"banner";
+        }
     }
 }
 
@@ -103,6 +107,9 @@ HZAdType hzAdTypeFromString(NSString *adUnit) {
         case HZAdTypeVideo: {
             return HZVideoAdCreativeTypes;
             break;
+        }
+        case HZAdTypeBanner: {
+            return HZBannerAdCreativeTypes;
         }
     }
 }

@@ -1031,6 +1031,7 @@
 		504E9C9618C9322100402BC3 /* Ads Tests */ = {
 			isa = PBXGroup;
 			children = (
+				50A36ACD18C9402200FA84F0 /* Integration Tests */,
 				5020883E19DA255D005C3C1B /* Native Ads */,
 				50AA624618CBF5720018A0B6 /* Categories */,
 				509B5BED18C96CEA003A7CB9 /* Ads JSON */,
@@ -1152,7 +1153,8 @@
 				502BE84D18CD530D00EB6415 /* TestUtilities.h */,
 				502BE84E18CD530D00EB6415 /* TestUtilities.m */,
 			);
-			path = "Integration Tests";
+			name = "Integration Tests";
+			path = "../Integration Tests";
 			sourceTree = "<group>";
 		};
 		50AA624618CBF5720018A0B6 /* Categories */ = {
@@ -1246,7 +1248,6 @@
 			isa = PBXGroup;
 			children = (
 				86181B871AA7CD19007939F8 /* iAd */,
-				50ED56471AC0BC550016F9FE /* iAds */,
 				E6DBD5FA1A44AA4000D9999D /* Facebook */,
 				E621821719BFC75B0099BE8C /* UnityAds */,
 				500F88E118E2039A00E5D6F8 /* Common */,
@@ -1271,14 +1272,6 @@
 				50ED56421AC0942D0016F9FE /* HZHZAdMobBannerSupport.m */,
 			);
 			name = Banners;
-			sourceTree = "<group>";
-		};
-		50ED56471AC0BC550016F9FE /* iAds */ = {
-			isa = PBXGroup;
-			children = (
-				50ED56481AC0BC5C0016F9FE /* Banners */,
-			);
-			name = iAds;
 			sourceTree = "<group>";
 		};
 		50ED56481AC0BC5C0016F9FE /* Banners */ = {
@@ -1323,6 +1316,7 @@
 			children = (
 				86E439331AA7DCE400470E62 /* HZiAdAdapter.h */,
 				86E439341AA7DCE400470E62 /* HZiAdAdapter.m */,
+				50ED56481AC0BC5C0016F9FE /* Banners */,
 			);
 			name = iAd;
 			sourceTree = "<group>";
@@ -1391,7 +1385,6 @@
 				86B941E11758056B00B8EACE /* SDK Test App */,
 				86B9432C1758108700B8EACE /* Ads */,
 				504E9C9618C9322100402BC3 /* Ads Tests */,
-				50A36ACD18C9402200FA84F0 /* Integration Tests */,
 				86B9419D1757FD6300B8EACE /* Frameworks */,
 				86B9419C1757FD6300B8EACE /* Products */,
 				0A84FE9B0634B91D44D83A4A /* Pods */,

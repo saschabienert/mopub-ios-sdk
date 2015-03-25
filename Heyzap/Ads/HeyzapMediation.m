@@ -40,6 +40,7 @@
 #import "HZDevice.h"
 
 #import "HZiAdBannerAdapter.h"
+#import "HZiAdAdapter.h"
 
 typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
     HZMediationStartStatusNotStarted,
@@ -599,6 +600,9 @@ static BOOL forceOnlyHeyzapSDK = NO;
             self.videoDelegateProxy.forwardingTarget = delegate;
             break;
         }
+        case HZAdTypeBanner: {
+            // Ignored; banners have a different delegate system.
+        }
     }
 }
 
@@ -616,6 +620,10 @@ static BOOL forceOnlyHeyzapSDK = NO;
         case HZAdTypeVideo: {
             return self.videoDelegateProxy;
             break;
+        }
+        case HZAdTypeBanner: {
+            // Banners use a different delegate system.
+            return nil;
         }
     }
 }
@@ -653,6 +661,11 @@ static BOOL forceOnlyHeyzapSDK = NO;
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         
     }];
+    
+    // Do a /mediate, but instead of going into the fetch method, have a completion block I can use to run the banner fetch stuff. Additional bannerCompletionBlock parameter?
+    
+    // Session gets attached to what? To the adapter?
+    // Maybe to the wrapper?
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         for (HZBaseAdapter *baseAdapter in bannerNetworks) {

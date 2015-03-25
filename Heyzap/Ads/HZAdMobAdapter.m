@@ -84,7 +84,7 @@
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeInterstitial;
+    return HZAdTypeInterstitial | HZAdTypeBanner;
 }
 
 - (BOOL)isVideoOnlyNetwork {

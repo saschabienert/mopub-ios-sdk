@@ -99,6 +99,7 @@
             [HZChartboost cacheRewardedVideo:[self.delegate countryCode]];
             break;
         }
+        case HZAdTypeBanner:
         case HZAdTypeVideo: {
             // Unsupported
         }
@@ -113,6 +114,7 @@
         }
         case HZAdTypeInterstitial:
             return [HZChartboost hasInterstitial: [self.delegate countryCode]];
+        case HZAdTypeBanner:
         case HZAdTypeVideo:
             return NO;
     }
@@ -127,6 +129,7 @@
         case HZAdTypeIncentivized:
             [HZChartboost showRewardedVideo: [self.delegate countryCode]];
             break;
+        case HZAdTypeBanner:
         case HZAdTypeVideo:
             // Unsupported
             break;

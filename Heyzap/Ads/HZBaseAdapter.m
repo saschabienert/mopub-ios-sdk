@@ -120,6 +120,10 @@
             return self.lastVideoError;
             break;
         }
+        case HZAdTypeBanner: {
+            // ignored
+            return nil;
+        }
     }
 }
 
@@ -136,6 +140,10 @@
         }
         case HZAdTypeVideo: {
             self.lastVideoError = nil;
+            break;
+        }
+        case HZAdTypeBanner: {
+            // ignored for now
             break;
         }
     }

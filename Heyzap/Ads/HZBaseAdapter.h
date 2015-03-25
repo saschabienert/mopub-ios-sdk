@@ -16,6 +16,8 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
     HZAdTypeInterstitial = 1 << 0,
     HZAdTypeVideo = 1 << 1,
     HZAdTypeIncentivized = 1 << 2,
+    // placeholder for moreapps
+    HZAdTypeBanner = 1 << 4,
 };
 
 @class HZBaseAdapter;

@@ -69,6 +69,10 @@
             [HZHeyzapVideoAd fetchForTag:tag auctionType:auctionType withCompletion:nil];
             break;
         }
+        case HZAdTypeBanner: {
+            // Ignored; Heyzap doesn't support banners
+            break;
+        }
     }
 }
 
@@ -101,6 +105,10 @@
         }
         case HZAdTypeVideo: {
             [HZHeyzapVideoAd showForAuctionType:auctionType options:newOptions];
+            break;
+        }
+        case HZAdTypeBanner: {
+            // Ignored; Heyzap doesn't support banners.
             break;
         }
     }
@@ -171,6 +179,10 @@
                 self.lastVideoError = nil;
                 break;
             }
+            case HZAdTypeBanner: {
+                // Ignored
+                break;
+            }
         }
     }
 }
@@ -190,6 +202,10 @@
             }
             case HZAdTypeVideo: {
                 self.lastVideoError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
+                break;
+            }
+            case HZAdTypeBanner: {
+                // Ignored
                 break;
             }
         }
