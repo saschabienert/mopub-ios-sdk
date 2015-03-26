@@ -88,7 +88,7 @@ return nil; \
                 && [(HZBaseAdapter *)[adapter sharedInstance] supportsAdType:adType]) {
                 
                 HZBaseAdapter *instance = (HZBaseAdapter *)[adapter sharedInstance];
-                if (_interstitialVideoEnabled || !instance.isVideoOnlyNetwork) {
+                if (adType != HZAdTypeInterstitial || _interstitialVideoEnabled || !instance.isVideoOnlyNetwork) {
                     [adapters addObject:[adapter sharedInstance]];
                 }
             }
