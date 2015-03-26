@@ -10,6 +10,11 @@
 @import UIKit;
 @class HZBannerAdOptions;
 
+typedef NS_ENUM(NSUInteger, HZBannerPosition) {
+    HZBannerPositionTop,
+    HZBannerPositionBottom,
+};
+
 @protocol HZBannerAdDelegate <NSObject>
 
 //@optional
@@ -59,7 +64,6 @@
  */
 @interface HZBannerAdWrapper : NSObject
 
-+ (instancetype)getWrapperForViewController:(UIViewController *)controller options:(HZBannerAdOptions *)options;
 + (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion;
 
 
@@ -74,5 +78,15 @@
  *  Current values: "facebook", "admob", "iads"
  */
 @property (nonatomic, strong, readonly) NSString *mediatedNetwork;
+
+/**
+ *  The height of the underlying banner. This method is implemented as `mediatedBanner.frame.size.height`. 
+ */
+@property (nonatomic, readonly) CGFloat adHeight;
+
++ (void)placeBannerInView:(UIView *)view
+                 position:(HZBannerPosition)position
+                  options:(HZBannerAdOptions *)options
+               completion:(void (^)(NSError *error))completion; //Completion should probably return banner wrapper.
 
 @end

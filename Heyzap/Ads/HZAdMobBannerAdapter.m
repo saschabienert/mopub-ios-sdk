@@ -43,26 +43,30 @@
 
 - (void)adViewDidReceiveAd:(HZGADBannerView *)view {
     NSLog(@"AdMob loaded a banner!");
+    [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
     self.isLoaded = YES;
-    [self.reportingDelegate didReceiveAd];
+    [self.bannerInteractionDelegate didReceiveAd];
 }
 - (void)adView:(HZGADBannerView *)view didFailToReceiveAdWithError:(HZGADRequestError *)error {
-    self.isLoaded = NO;
     self.lastError = (NSError *)error;
-    [self.reportingDelegate didFailToReceiveAd:(NSError *)error];
+    [self.bannerInteractionDelegate didFailToReceiveAd:(NSError *)error];
 }
 - (void)adViewWillPresentScreen:(HZGADBannerView *)adView {
-    [self.reportingDelegate willPresentModalView];
+    [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
+    [self.bannerInteractionDelegate userDidClick];
+    [self.bannerInteractionDelegate willPresentModalView];
 }
 - (void)adViewWillDismissScreen:(HZGADBannerView *)adView {
     // Not reporting this because other FAN doesn't also report it
     // (And its pretty much covered by `didDismissScreen`)
 }
 - (void)adViewDidDismissScreen:(HZGADBannerView *)adView {
-    [self.reportingDelegate didDismissModalView];
+    [self.bannerInteractionDelegate didDismissModalView];
 }
 - (void)adViewWillLeaveApplication:(HZGADBannerView *)adView {
-    [self.reportingDelegate willLeaveApplication];
+    [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
+    [self.bannerInteractionDelegate userDidClick];
+    [self.bannerInteractionDelegate willLeaveApplication];
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol {
@@ -74,7 +78,6 @@
 }
 
 - (BOOL)isAvailable {
-    return NO;
     return self.isLoaded;
 }
 

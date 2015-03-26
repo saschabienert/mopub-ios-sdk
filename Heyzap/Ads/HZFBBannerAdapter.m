@@ -23,7 +23,12 @@
 - (instancetype)initWithAdUnitId:(NSString *)adUnitId options:(HZBannerAdOptions *)options {
     self = [super init];
     if (self) {
+        
+        
         _adView = [[HZFBAdView alloc] initWithPlacementID:adUnitId adSize:options.internalFacebookAdSize rootViewController:options.presentingViewController];
+        
+        [(UIView *)_adView addObserver:self forKeyPath:@"superview" options:NSKeyValueObservingOptionNew context:NULL];
+        
         _adView.delegate = self;
         [_adView loadAd];
     }
@@ -36,24 +41,28 @@
 
 #pragma mark - HBFBAdViewDelegate Protocol
 - (void)adViewDidClick:(HZFBAdView *)adView {
-    [self.reportingDelegate userDidClick];
-    [self.reportingDelegate willPresentModalView];
+    // Report click
+    [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
+    [self.bannerInteractionDelegate userDidClick];
+    [self.bannerInteractionDelegate willPresentModalView];
 }
 - (void)adViewDidFinishHandlingClick:(HZFBAdView *)adView {
-    [self.reportingDelegate didDismissModalView];
+    [self.bannerInteractionDelegate didDismissModalView];
 }
 - (void)adViewDidLoad:(HZFBAdView *)adView {
     NSLog(@"Facebook loaded a banner!");
+    // if on screen, then register impression
+    // else monitor view for superview
     self.isLoaded = YES;
-    [self.reportingDelegate didReceiveAd];
+    [self.bannerInteractionDelegate didReceiveAd];
 }
 - (void)adView:(HZFBAdView *)adView didFailWithError:(NSError *)error {
     self.isLoaded = NO;
     self.lastError = error;
-    [self.reportingDelegate didFailToReceiveAd:error];
+    [self.bannerInteractionDelegate didFailToReceiveAd:error];
 }
 - (void)adViewWillLogImpression:(HZFBAdView *)adView {
-    
+    [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
 }
 
 - (UIView *)mediatedBanner {

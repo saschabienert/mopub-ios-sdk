@@ -445,16 +445,18 @@ const CGFloat kLeftMargin = 10;
     options.facebookBannerSize = HZFacebookBannerSizeFlexibleWidthHeight50;
     options.admobBannerSize = HZAdMobBannerSizeFlexibleWidthPortrait;
     
-    [HZBannerAdWrapper requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdWrapper *wrapper) {
-        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-        if (error) {
-            NSLog(@"Error fetching banner!!!");
-        } else {
-            self.wrapper = wrapper;
-            self.wrapper.delegate = self;
-            [self.view addSubview:self.wrapper.mediatedBanner];
-        }
-    }];
+//    [HZBannerAdWrapper requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdWrapper *wrapper) {
+//        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+//        if (error) {
+//            NSLog(@"Error fetching banner!!!");
+//        } else {
+//            self.wrapper = wrapper;
+//            self.wrapper.delegate = self;
+//            [self.view addSubview:self.wrapper.mediatedBanner];
+//        }
+//    }];
+    
+    [HZBannerAdWrapper placeBannerInView:self.view position:HZBannerPositionBottom options:options completion:nil];
     
 }
 

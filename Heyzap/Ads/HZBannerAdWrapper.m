@@ -18,7 +18,16 @@
 
 @end
 
+static NSMutableArray *allWrappers;
+
 @implementation HZBannerAdWrapper
+
++ (void)initialize {
+    if (self == [HZBannerAdWrapper class]) {
+        allWrappers = [NSMutableArray array];
+    }
+}
+
 ///
 - (instancetype)initWithBanner:(HZBannerAdapter *)adapter network:(NSString *const)network {
     NSParameterAssert(adapter);
@@ -27,22 +36,9 @@
     if (self) {
         _adapter = adapter;
         _mediatedNetwork = network; // Maybe remove this property and just call out to the underlying adapter
-        adapter.reportingDelegate = self;
+        adapter.bannerInteractionDelegate = self;
     }
     return self;
-}
-
-+ (instancetype)getWrapperForViewController:(UIViewController *)controller options:(HZBannerAdOptions *)options {
-    if (!options) {
-        options = [[HZBannerAdOptions alloc] init];
-    }
-    
-    [[HeyzapMediation sharedInstance] requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdapter *adapter) {
-        
-    }];
-    
-    HZBannerAdapter *adapter = [[HeyzapMediation sharedInstance] getBannerWithOptions:options];
-    return [[self alloc] initWithBanner:adapter network:adapter.networkName];
 }
 
 + (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion {
@@ -51,13 +47,13 @@
     }
     NSParameterAssert(completion);
     
-    NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
+    
     [[HeyzapMediation sharedInstance] requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdapter *adapter) {
-        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
         if (error) {
             completion(error, nil);
         } else if (adapter) {
             HZBannerAdWrapper *wrapper = [[HZBannerAdWrapper alloc] initWithBanner:adapter network:adapter.networkName];
+            [allWrappers addObject:wrapper];
             completion(nil, wrapper);
         }
     }];
@@ -95,6 +91,60 @@
 
 - (UIView *)mediatedBanner {
     return self.adapter.mediatedBanner;
+}
+
++ (void)placeBannerInView:(UIView *)view
+                 position:(HZBannerPosition)position
+                  options:(HZBannerAdOptions *)options
+               completion:(void (^)(NSError *error))completion {
+    if (!view) {
+        view = [[[[UIApplication sharedApplication] keyWindow] rootViewController] view];
+        if (!view) {
+            NSString *const errorMessage = [NSString stringWithFormat:@"No view provided to %@, and couldn't find a rootViewController. Please specify the view to place the banner in.",NSStringFromSelector(_cmd)];
+            NSLog(@"%@",errorMessage);
+            @throw [NSException exceptionWithName:@"NoViewForBanner" reason:errorMessage userInfo:nil];
+        }
+    }
+    
+    if (!options) {
+        options = [[HZBannerAdOptions alloc] init];
+    }
+    
+    [self requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdWrapper *wrapper) {
+        if (error) {
+            NSLog(@"Error loading banner! %@",error);
+            if (completion) { completion(error); }
+        } else {
+            switch (position) {
+                case HZBannerPositionTop: {
+                    [view addSubview:wrapper.mediatedBanner];
+                    break;
+                }
+                case HZBannerPositionBottom: {
+                    const CGFloat viewHeight = CGRectGetMaxY(view.frame);
+                    const CGFloat bannerHeight = wrapper.mediatedBanner.frame.size.height;
+                    
+                    if (viewHeight < bannerHeight) {
+                        NSLog(@"WARNING: %@ is placing a banner in a view whose height (%f) is less than that of the banner (%f). Is your view configured correctly?",NSStringFromSelector(_cmd), viewHeight, bannerHeight);
+                    }
+                    
+                    CGRect tmpFramp = wrapper.mediatedBanner.frame;
+                    tmpFramp.origin.y = viewHeight - bannerHeight;
+                    
+                    wrapper.mediatedBanner.frame = tmpFramp;
+                    [view addSubview:wrapper.mediatedBanner];
+                    break;
+                }
+            }
+            if (completion) { completion(nil); }
+            
+        }
+    }];
+}
+
+- (CGFloat)adHeight {
+    UIView *view = (UIView *) self.mediatedBanner;
+    return view.frame.size.height;
 }
 
 @end

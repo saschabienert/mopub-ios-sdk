@@ -38,32 +38,35 @@
 }
 
 - (void)bannerViewDidLoadAd:(ADBannerView *)banner {
-    [self.reportingDelegate didReceiveAd];
+    [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+    [self.bannerInteractionDelegate didReceiveAd];
 }
 
 - (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error {
     self.lastError = error;
-    [self.reportingDelegate didFailToReceiveAd:error];
+    [self.bannerInteractionDelegate didFailToReceiveAd:error];
 }
 
 
 - (BOOL)bannerViewActionShouldBegin:(ADBannerView *)banner willLeaveApplication:(BOOL)willLeave {
-    [self.reportingDelegate userDidClick];
+    [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
+    [self.bannerInteractionDelegate userDidClick];
     
     if (willLeave) {
-        [self.reportingDelegate willLeaveApplication];
+        [self.bannerInteractionDelegate willLeaveApplication];
     } else {
-        [self.reportingDelegate willPresentModalView];
+        [self.bannerInteractionDelegate willPresentModalView];
     }
     
     return YES;
 }
 
 - (void)bannerViewActionDidFinish:(ADBannerView *)banner {
-    [self.reportingDelegate didDismissModalView];
+    [self.bannerInteractionDelegate didDismissModalView];
 }
 
 - (BOOL)isAvailable {
+    return NO;
     return self.banner.isBannerLoaded;
 }
 
