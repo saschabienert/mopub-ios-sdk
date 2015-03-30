@@ -96,7 +96,7 @@ static NSMutableArray *allWrappers;
 + (void)placeBannerInView:(UIView *)view
                  position:(HZBannerPosition)position
                   options:(HZBannerAdOptions *)options
-               completion:(void (^)(NSError *error))completion {
+               completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion {
     if (!view) {
         view = [[[[UIApplication sharedApplication] keyWindow] rootViewController] view];
         if (!view) {
@@ -113,7 +113,7 @@ static NSMutableArray *allWrappers;
     [self requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdWrapper *wrapper) {
         if (error) {
             NSLog(@"Error loading banner! %@",error);
-            if (completion) { completion(error); }
+            if (completion) { completion(error, nil); }
         } else {
             switch (position) {
                 case HZBannerPositionTop: {
@@ -136,7 +136,7 @@ static NSMutableArray *allWrappers;
                     break;
                 }
             }
-            if (completion) { completion(nil); }
+            if (completion) { completion(nil, wrapper); }
             
         }
     }];
@@ -145,6 +145,11 @@ static NSMutableArray *allWrappers;
 - (CGFloat)adHeight {
     UIView *view = (UIView *) self.mediatedBanner;
     return view.frame.size.height;
+}
+
+- (void)finishUsingBanner {
+    [self.mediatedBanner removeFromSuperview];
+    [allWrappers removeObjectIdenticalTo:self];
 }
 
 @end

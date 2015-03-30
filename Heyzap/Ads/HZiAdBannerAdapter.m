@@ -66,7 +66,6 @@
 }
 
 - (BOOL)isAvailable {
-    return NO;
     return self.banner.isBannerLoaded;
 }
 

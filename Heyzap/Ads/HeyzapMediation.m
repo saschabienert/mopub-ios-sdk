@@ -41,6 +41,7 @@
 
 #import "HZiAdBannerAdapter.h"
 #import "HZiAdAdapter.h"
+#import "HZBannerAdOptions_Private.h"
 
 typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
     HZMediationStartStatusNotStarted,
@@ -649,7 +650,7 @@ const NSTimeInterval bannerTimeout = 16;
                                                                          adUnit:@"banner"
                                                                             tag:[HeyzapAds defaultTagName]
                                                                     auctionType:HZAuctionTypeMixed
-                                                            andAdditionalParams:@{}];
+                                                            andAdditionalParams:(options.networkName ? @{@"networks" : options.networkName} : @{})];
     
     NSDictionary *const mediateParams = request.createParams;
     

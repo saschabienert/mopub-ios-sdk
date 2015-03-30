@@ -87,6 +87,8 @@ typedef NS_ENUM(NSUInteger, HZBannerPosition) {
 + (void)placeBannerInView:(UIView *)view
                  position:(HZBannerPosition)position
                   options:(HZBannerAdOptions *)options
-               completion:(void (^)(NSError *error))completion; //Completion should probably return banner wrapper.
+               completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion;
+
+- (void)finishUsingBanner;
 
 @end
