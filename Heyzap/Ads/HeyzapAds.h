@@ -43,7 +43,7 @@
 #import "HZNativeAdImage.h"
 
 #import "HZShowOptions.h"
-#import "HZBannerAdWrapper.h"
+#import "HZBannerAd.h"
 #import "HZBannerAdOptions.h"
 
 #ifndef NS_ENUM

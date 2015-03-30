@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZBannerAdWrapper_Private.h"
+#import "HZBannerAd_Private.h"
 #import "HZBaseAdapter.h"
 
 @class HZMediationSession;

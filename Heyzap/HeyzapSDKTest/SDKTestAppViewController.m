@@ -22,7 +22,7 @@
 #import "HZNativeAdCollection.h"
 #import "HZNativeAd.h"
 #import "NativeAdTableViewController.h"
-#import "HZBannerAdWrapper.h"
+#import "HZBannerAd.h"
 
 //#import <FBAudienceNetwork/FBAudienceNetwork.h>
 //#import "GADBannerView.h"
@@ -63,7 +63,7 @@ typedef enum {
 
 @property (nonatomic, strong) NSURL *lastFetchURL;
 
-@property (nonatomic, strong) HZBannerAdWrapper *wrapper;
+@property (nonatomic, strong) HZBannerAd *wrapper;
 
 
 @end
@@ -457,7 +457,7 @@ const CGFloat kLeftMargin = 10;
 //        }
 //    }];
     
-    [HZBannerAdWrapper placeBannerInView:self.view position:HZBannerPositionBottom options:options completion:nil];
+    [HZBannerAd placeBannerInView:self.view position:HZBannerPositionBottom options:options completion:nil];
     
 }
 

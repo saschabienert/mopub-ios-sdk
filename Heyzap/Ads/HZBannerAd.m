@@ -6,13 +6,13 @@
 //  Copyright (c) 2015 Heyzap. All rights reserved.
 //
 
-#import "HZBannerAdWrapper.h"
+#import "HZBannerAd.h"
 #import "HZMediationConstants.h"
 #import "HeyzapMediation.h"
 #import "HZBannerAdapter.h"
 #import "HZBannerAdOptions.h"
 
-@interface HZBannerAdWrapper()
+@interface HZBannerAd()
 
 @property (nonatomic, strong, readonly) HZBannerAdapter *adapter;
 
@@ -20,10 +20,10 @@
 
 static NSMutableArray *allWrappers;
 
-@implementation HZBannerAdWrapper
+@implementation HZBannerAd
 
 + (void)initialize {
-    if (self == [HZBannerAdWrapper class]) {
+    if (self == [HZBannerAd class]) {
         allWrappers = [NSMutableArray array];
     }
 }
@@ -44,7 +44,7 @@ static NSMutableArray *allWrappers;
 }
 
 
-+ (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion {
++ (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAd *wrapper))completion {
     if (!options) {
         options = [[HZBannerAdOptions alloc] init];
     }
@@ -55,7 +55,7 @@ static NSMutableArray *allWrappers;
         if (error) {
             completion(error, nil);
         } else if (adapter) {
-            HZBannerAdWrapper *wrapper = [[HZBannerAdWrapper alloc] initWithBanner:adapter];
+            HZBannerAd *wrapper = [[HZBannerAd alloc] initWithBanner:adapter];
             [allWrappers addObject:wrapper];
             completion(nil, wrapper);
         }
@@ -99,7 +99,7 @@ static NSMutableArray *allWrappers;
 + (void)placeBannerInView:(UIView *)view
                  position:(HZBannerPosition)position
                   options:(HZBannerAdOptions *)options
-               completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion {
+               completion:(void (^)(NSError *error, HZBannerAd *wrapper))completion {
     if (!view) {
         view = [[[[UIApplication sharedApplication] keyWindow] rootViewController] view];
         if (!view) {
@@ -113,7 +113,7 @@ static NSMutableArray *allWrappers;
         options = [[HZBannerAdOptions alloc] init];
     }
     
-    [self requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdWrapper *wrapper) {
+    [self requestBannerWithOptions:options completion:^(NSError *error, HZBannerAd *wrapper) {
         if (error) {
             NSLog(@"Error loading banner! %@",error);
             if (completion) { completion(error, nil); }

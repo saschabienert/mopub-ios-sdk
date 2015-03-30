@@ -38,11 +38,11 @@
 #import "HZDispatch.h"
 #import "HZUnityAds.h"
 #import "HZDevice.h"
-#import "HZBannerAdWrapper.h"
+#import "HZBannerAd.h"
 #import "HZMediationConstants.h"
 #import "HZBannerAdOptions_Private.h"
 #import "HZNoCaretTextField.h"
-#import "HZBannerAdWrapper.h"
+#import "HZBannerAd.h"
 
 @interface HZTestActivityNetworkViewController() <HZMediationAdapterDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, HZBannerAdDelegate>
 
@@ -75,7 +75,7 @@
 @property (nonatomic) NSArray *nonBannerControls;
 @property (nonatomic) NSArray *bannerControls;
 
-@property (nonatomic) HZBannerAdWrapper *bannerWrapper;
+@property (nonatomic) HZBannerAd *bannerWrapper;
 
 NSValue *hzBannerPositionValue(HZBannerPosition position);
 HZBannerPosition hzBannerPositionFromNSValue(NSValue *value);
@@ -728,10 +728,10 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     
     [self appendStringToDebugLog:@"Requesting Banner..."];
     
-    [HZBannerAdWrapper placeBannerInView:self.view
+    [HZBannerAd placeBannerInView:self.view
                                 position:self.chosenBannerPosition
                                  options:[self bannerOptions]
-                              completion:^(NSError *error, HZBannerAdWrapper *wrapper) {
+                              completion:^(NSError *error, HZBannerAd *wrapper) {
         if (error) {
             sender.enabled = YES;
             [self appendStringToDebugLog:@"Error getting banner!"];

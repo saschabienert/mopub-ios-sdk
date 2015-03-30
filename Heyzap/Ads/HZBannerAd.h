@@ -62,9 +62,9 @@ typedef NS_ENUM(NSUInteger, HZBannerPosition) {
 /**
  *  A wrapper around a mediated banner ad. This wrapper provides a unified interface to 
  */
-@interface HZBannerAdWrapper : NSObject
+@interface HZBannerAd : NSObject
 
-+ (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion;
++ (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAd *wrapper))completion;
 
 
 @property (nonatomic, strong, readonly) UIView *mediatedBanner;
@@ -87,7 +87,7 @@ typedef NS_ENUM(NSUInteger, HZBannerPosition) {
 + (void)placeBannerInView:(UIView *)view
                  position:(HZBannerPosition)position
                   options:(HZBannerAdOptions *)options
-               completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion;
+               completion:(void (^)(NSError *error, HZBannerAd *wrapper))completion;
 
 /**
  *  You must call this method when you're completely finished with the banner. Internally, our SDK keeps a strong reference to the `HZBannerAdWrapper` and we remove this reference when you call this method.
