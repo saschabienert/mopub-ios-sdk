@@ -75,7 +75,7 @@ typedef NS_ENUM(NSUInteger, HZBannerPosition) {
 /**
  *  An identifier of the ad network.
  * 
- *  Current values: "facebook", "admob", "iads"
+ *  Current values: "facebook", "admob", "iad"
  */
 @property (nonatomic, strong, readonly) NSString *mediatedNetwork;
 
@@ -89,6 +89,10 @@ typedef NS_ENUM(NSUInteger, HZBannerPosition) {
                   options:(HZBannerAdOptions *)options
                completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion;
 
+/**
+ *  You must call this method when you're completely finished with the banner. Internally, our SDK keeps a strong reference to the `HZBannerAdWrapper` and we remove this reference when you call this method.
+ *  This also calls `removeFromSuperview` on `mediatedBanner`.
+ */
 - (void)finishUsingBanner;
 
 @end

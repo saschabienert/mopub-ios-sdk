@@ -70,8 +70,9 @@
         [self setupCachingDirectory];
         
         // Set cache size to big
-        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:100000000 diskCapacity: 1000000000 diskPath:nil];
-        [NSURLCache setSharedURLCache:sharedCache];
+        // Do we really need a 100 MB memory cache, and a full gig of disk cache???
+//        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:100000000 diskCapacity: 1000000000 diskPath:nil];
+//        [NSURLCache setSharedURLCache:sharedCache];
         
         //register this game as installed, if we haven't done so already
         if (![[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY]) {

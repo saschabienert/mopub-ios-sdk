@@ -444,6 +444,7 @@ const CGFloat kLeftMargin = 10;
     HZBannerAdOptions *options = [[HZBannerAdOptions alloc] init];
     options.facebookBannerSize = HZFacebookBannerSizeFlexibleWidthHeight50;
     options.admobBannerSize = HZAdMobBannerSizeFlexibleWidthPortrait;
+    options.presentingViewController = self;
     
 //    [HZBannerAdWrapper requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdWrapper *wrapper) {
 //        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);

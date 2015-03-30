@@ -21,9 +21,12 @@
 
 @implementation HZAdMobBannerAdapter
 
-- (instancetype)initWithAdUnitID:(NSString *)adUnitID options:(HZBannerAdOptions *)options {
+- (instancetype)initWithAdUnitID:(NSString *)adUnitID options:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter {
     self = [super init];
     if (self) {
+        self.parentAdapter = parentAdapter;
+        self.bannerReportingDelegate = reportingDelegate;
+        
         _banner = [[HZGADBannerView alloc] initWithAdSize:options.internalAdMobSize];
         _banner.adUnitID = adUnitID;
         _banner.rootViewController = options.presentingViewController;
@@ -37,15 +40,16 @@
     return (UIView *) self.banner;
 }
 
-- (NSString *)networkName {
-    return kHZAdapterAdMob;
-}
-
 - (void)adViewDidReceiveAd:(HZGADBannerView *)view {
-    NSLog(@"AdMob loaded a banner!");
-    [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
     self.isLoaded = YES;
     [self.bannerInteractionDelegate didReceiveAd];
+    
+    UIView *bannerView = (UIView *)self.banner;
+    if (bannerView.superview) {
+        [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+    } else {
+        [self startMonitoringForImpression];
+    }
 }
 - (void)adView:(HZGADBannerView *)view didFailToReceiveAdWithError:(HZGADRequestError *)error {
     self.lastError = (NSError *)error;

@@ -18,6 +18,7 @@
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
+@property (nonatomic, strong) NSString *bannerPlacementID;
 @property (nonatomic, strong) HZFBInterstitialAd *interstitialAd;
 
 @end
@@ -66,10 +67,16 @@
                              error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
+    // Nullable
+    NSString *const bannerPlacementID = [HZDictionaryUtils hzObjectForKey:@"banner_placement_id"
+                                                                  ofClass:[NSString class]
+                                                                 withDict:credentials];
+    
     HZFacebookAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         adapter.placementID = placementID;
+        adapter.bannerPlacementID = bannerPlacementID;
     }
     
     return nil;
@@ -159,8 +166,12 @@ static int facebookImpressions = 0;
     NSLog(@"Facebook will log impression");
 }
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options {
-    return [[HZFBBannerAdapter alloc] initWithAdUnitId:@"500413400097719_538033529669039" options:options];
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return [[HZFBBannerAdapter alloc] initWithAdUnitId:@"500413400097719_538033529669039" options:options reportingDelegate:reportingDelegate parentAdapter:self];
+}
+
+- (BOOL)hasBannerCredentials {
+    return self.bannerPlacementID != nil;
 }
 
 @end

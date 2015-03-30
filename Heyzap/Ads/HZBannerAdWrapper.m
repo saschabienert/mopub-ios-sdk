@@ -29,17 +29,20 @@ static NSMutableArray *allWrappers;
 }
 
 ///
-- (instancetype)initWithBanner:(HZBannerAdapter *)adapter network:(NSString *const)network {
+- (instancetype)initWithBanner:(HZBannerAdapter *)adapter {
     NSParameterAssert(adapter);
-    NSParameterAssert(network);
     self = [super init];
     if (self) {
         _adapter = adapter;
-        _mediatedNetwork = network; // Maybe remove this property and just call out to the underlying adapter
         adapter.bannerInteractionDelegate = self;
     }
     return self;
 }
+
+- (NSString *)mediatedNetwork {
+    return self.adapter.parentAdapter.name;
+}
+
 
 + (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdWrapper *wrapper))completion {
     if (!options) {
@@ -52,7 +55,7 @@ static NSMutableArray *allWrappers;
         if (error) {
             completion(error, nil);
         } else if (adapter) {
-            HZBannerAdWrapper *wrapper = [[HZBannerAdWrapper alloc] initWithBanner:adapter network:adapter.networkName];
+            HZBannerAdWrapper *wrapper = [[HZBannerAdWrapper alloc] initWithBanner:adapter];
             [allWrappers addObject:wrapper];
             completion(nil, wrapper);
         }

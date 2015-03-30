@@ -44,7 +44,7 @@
 #import "HZNoCaretTextField.h"
 #import "HZBannerAdWrapper.h"
 
-@interface HZTestActivityNetworkViewController() <HZMediationAdapterDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate>
+@interface HZTestActivityNetworkViewController() <HZMediationAdapterDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, HZBannerAdDelegate>
 
 @property (nonatomic) HZBaseAdapter *network;
 @property (nonatomic) UIViewController *rootVC;
@@ -736,8 +736,10 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
             sender.enabled = YES;
             [self appendStringToDebugLog:@"Error getting banner!"];
         } else {
+            [self appendStringToDebugLog:@"Showing banner"];
             self.hideBannerButton.enabled = YES;
             self.bannerWrapper = wrapper;
+            self.bannerWrapper.delegate = self;
         }
         
         
@@ -759,6 +761,31 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 
 - (void)dealloc {
     [self.bannerWrapper finishUsingBanner];
+}
+
+#pragma mark - Banner Ad Delegate
+
+- (void)bannerDidReceiveAd {
+    [self logBannerCallback:_cmd];
+}
+- (void)bannerDidFailToReceiveAd:(NSError *)error {
+    [self logBannerCallback:_cmd];
+}
+- (void)bannerWasClicked {
+    [self logBannerCallback:_cmd];
+}
+- (void)bannerWillPresentModalView {
+    [self logBannerCallback:_cmd];
+}
+- (void)bannerDidDismissModalView {
+    [self logBannerCallback:_cmd];
+}
+- (void)bannerWillLeaveApplication {
+    [self logBannerCallback:_cmd];
+}
+
+- (void)logBannerCallback:(SEL)selector {
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Banner Callback: %@",NSStringFromSelector(selector)]];
 }
 
 @end

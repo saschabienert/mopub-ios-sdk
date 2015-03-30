@@ -632,7 +632,7 @@ static BOOL forceOnlyHeyzapSDK = NO;
     }
 }
 
-const NSTimeInterval bannerTimeout = 16;
+const NSTimeInterval bannerTimeout = 10;
 
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion {
     NSParameterAssert(options);
@@ -656,8 +656,13 @@ const NSTimeInterval bannerTimeout = 16;
     
     [[HZMediationAPIClient sharedClient] get:@"mediate" withParams:mediateParams success:^(NSDictionary *json) {
         
+        // This should be factored out into a general way of saying "does the ad network have credentials for X ad format?
+        NSSet *const setupBannerMediators = [self.setupMediators objectsPassingTest:^BOOL(HZBaseAdapter *adapter, BOOL *stop) {
+            return [adapter hasBannerCredentials];
+        }];
+        
         NSError *error;
-        HZMediationSession *const session = [[HZMediationSession alloc] initWithJSON:json mediateParams:mediateParams setupMediators:self.setupMediators adType:HZAdTypeBanner tag:request.tag error:&error];
+        HZMediationSession *const session = [[HZMediationSession alloc] initWithJSON:json mediateParams:mediateParams setupMediators:setupBannerMediators adType:HZAdTypeBanner tag:request.tag error:&error];
         if (error) {
             NSError *mediationError = [[self class] bannerErrorWithDescription:@"Couldn't create HZMediationSession" underlyingError:error];
             completion(mediationError, nil);
@@ -671,23 +676,27 @@ const NSTimeInterval bannerTimeout = 16;
                 NSLog(@"Base adapter = %@",baseAdapter);
                 __block HZBannerAdapter *bannerAdapter;
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    bannerAdapter = [baseAdapter fetchBannerWithOptions:options];
+                    bannerAdapter = [baseAdapter fetchBannerWithOptions:options reportingDelegate:self];
                 });
                 
                 __block BOOL isAvailable = NO;
                 hzWaitUntil(^BOOL{
                     isAvailable = [bannerAdapter isAvailable];
                     if (bannerAdapter.lastError) {
-                        HZELog(@"Ad Network %@ had an error loading a banner: %@",bannerAdapter.networkName, bannerAdapter.lastError);
+                        HZELog(@"Ad Network %@ had an error loading a banner: %@",baseAdapter.name, bannerAdapter.lastError);
                     }
                     return isAvailable || (bannerAdapter.lastError != nil);
                 }, bannerTimeout);
                 
+                if (!isAvailable) {
+                    // Notify the adapter that we're not trying to load from it anymore, so it can release timers and such.
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                       [bannerAdapter stopTryingToLoadBanner];
+                    });
+                }
+                
                 if (isAvailable) {
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        // This is going to miss the first impression because we wait for it to be loaded before setting the banner reporting delegate property. 
-                        bannerAdapter.parentAdapter = baseAdapter;
-                        bannerAdapter.bannerReportingDelegate = self;
                         bannerAdapter.session = session;
                         [session reportSuccessfulFetchUpToAdapter:baseAdapter];
                         completion(nil, bannerAdapter);

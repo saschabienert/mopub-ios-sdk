@@ -30,11 +30,17 @@
 @property (nonatomic, weak) id<HZBannerReportingDelegate> bannerReportingDelegate;
 @property (nonatomic, weak) HZBaseAdapter *parentAdapter;
 
-// initWithReportingDelegate
-// createView
-
-- (NSString *)networkName;
 - (UIView *)mediatedBanner;
 - (BOOL)isAvailable;
+
+/**
+ *  Only subclasses should call this method. Call this method to start an `NSTimer` that checks the `superview` property of the `mediatedBanner`.
+ */
+- (void)startMonitoringForImpression;
+
+/**
+ *  This method should be called when the banner adapter is no longer in consideration in the waterfall.
+ */
+- (void)stopTryingToLoadBanner;
 
 @end

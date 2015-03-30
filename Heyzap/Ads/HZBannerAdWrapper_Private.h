@@ -52,6 +52,6 @@
 @interface HZBannerAdWrapper() <HZBannerAdWrapperReporter>
 
 
-- (instancetype)initWithBanner:(HZBannerAdapter *)adapter network:(NSString *const)network;
+- (instancetype)initWithBanner:(HZBannerAdapter *)adapter;
 
 @end

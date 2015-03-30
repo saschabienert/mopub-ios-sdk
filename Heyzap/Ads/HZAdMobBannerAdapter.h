@@ -11,6 +11,6 @@
 
 @interface HZAdMobBannerAdapter : HZBannerAdapter
 
-- (instancetype)initWithAdUnitID:(NSString *)adUnitID options:(HZBannerAdOptions *)options;
+- (instancetype)initWithAdUnitID:(NSString *)adUnitID options:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter;
 
 @end

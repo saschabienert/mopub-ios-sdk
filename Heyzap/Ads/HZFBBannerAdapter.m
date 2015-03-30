@@ -20,14 +20,13 @@
 
 @implementation HZFBBannerAdapter
 
-- (instancetype)initWithAdUnitId:(NSString *)adUnitId options:(HZBannerAdOptions *)options {
+- (instancetype)initWithAdUnitId:(NSString *)adUnitId options:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter {
     self = [super init];
     if (self) {
-        
+        self.parentAdapter = parentAdapter;
+        self.bannerReportingDelegate = reportingDelegate;
         
         _adView = [[HZFBAdView alloc] initWithPlacementID:adUnitId adSize:options.internalFacebookAdSize rootViewController:options.presentingViewController];
-        
-        [(UIView *)_adView addObserver:self forKeyPath:@"superview" options:NSKeyValueObservingOptionNew context:NULL];
         
         _adView.delegate = self;
         [_adView loadAd];
@@ -50,7 +49,6 @@
     [self.bannerInteractionDelegate didDismissModalView];
 }
 - (void)adViewDidLoad:(HZFBAdView *)adView {
-    NSLog(@"Facebook loaded a banner!");
     // if on screen, then register impression
     // else monitor view for superview
     self.isLoaded = YES;
@@ -75,10 +73,6 @@
     } else {
         return [super conformsToProtocol:aProtocol];
     }
-}
-
-- (NSString *)networkName {
-    return kHZAdapterFacebook;
 }
 
 @end

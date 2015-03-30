@@ -21,6 +21,7 @@
 @property (nonatomic, strong) HZGADInterstitial *currentInterstitial;
 
 @property (nonatomic, strong) NSString *adUnitID;
+@property (nonatomic, strong) NSString *bannerAdUnitID;
 
 @end
 
@@ -48,10 +49,14 @@
     NSString *adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:credentials error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
+    // Nullable property.
+    NSString *bannerAdUnitId = [HZDictionaryUtils hzObjectForKey:@"banner_ad_unit_id" ofClass:[NSString class] withDict:credentials];
+    
     HZAdMobAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         [[self sharedInstance] setAdUnitID:adUnitID];
+        [[self sharedInstance] setBannerAdUnitID:bannerAdUnitId];
     }
     
     return nil;
@@ -159,8 +164,12 @@
     self.lastInterstitialError = nil;
 }
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options {
-    return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:@"ca-app-pub-3430397061265646/1348694216" options:options];
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:self.bannerAdUnitID options:options reportingDelegate:reportingDelegate parentAdapter:self];
+}
+
+- (BOOL)hasBannerCredentials {
+    return self.bannerAdUnitID != nil;
 }
 
 @end

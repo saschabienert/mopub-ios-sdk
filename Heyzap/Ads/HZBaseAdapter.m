@@ -84,8 +84,11 @@
     ABSTRACT_METHOD_ERROR();
 }
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options {
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return nil;
+}
+- (BOOL)hasBannerCredentials {
+    return NO;
 }
 
 #pragma mark - Inferred methods

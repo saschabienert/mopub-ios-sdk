@@ -17,18 +17,18 @@
 
 @implementation HZiAdBannerAdapter
 
-- (instancetype)init {
+- (instancetype)initWithReportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter {
     self = [super init];
     if (self) {
+        self.parentAdapter = parentAdapter;
+        self.bannerReportingDelegate = reportingDelegate;
+        
         _banner = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
         _banner.delegate = self;
     }
     return self;
 }
 
-- (NSString *)networkName {
-    return @"iads"; // TODO, return constant.
-}
 - (UIView *)mediatedBanner {
     return self.banner;
 }
@@ -38,7 +38,12 @@
 }
 
 - (void)bannerViewDidLoadAd:(ADBannerView *)banner {
-    [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+    if (banner.superview) {
+        [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+    } else {
+        [self startMonitoringForImpression];
+    }
+    
     [self.bannerInteractionDelegate didReceiveAd];
 }
 

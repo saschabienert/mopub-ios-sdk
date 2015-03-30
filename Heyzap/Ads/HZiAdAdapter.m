@@ -143,8 +143,12 @@
     self.interstitialAd = nil;
 }
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options {
-    return [[HZiAdBannerAdapter alloc] init];
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return [[HZiAdBannerAdapter alloc] initWithReportingDelegate:reportingDelegate parentAdapter:self];
+}
+
+- (BOOL)hasBannerCredentials {
+    return YES;
 }
 
 @end

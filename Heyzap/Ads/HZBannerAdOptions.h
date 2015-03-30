@@ -65,7 +65,7 @@ typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
 @interface HZBannerAdOptions : NSObject
 
 /**
- *  The size to use for Facebook Audience Network banners. Defaults to 
+ *  The size to use for Facebook Audience Network banners. Defaults to HZFacebookBannerSizeFlexibleWidthHeight50.
  */
 @property (nonatomic) HZFacebookBannerSize facebookBannerSize;
 /**
@@ -79,6 +79,8 @@ typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
  *  The view controller to present the ad from. 
  *
  *  This property is optional. If not set, it defaults to the root view controller of the application.
+ *
+ *  Note: Setting this property doesn't change where the actual banner (a `UIView`) is placed.
  */
 @property (nonatomic, weak) UIViewController *presentingViewController;
 

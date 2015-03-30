@@ -10,4 +10,6 @@
 
 @interface HZiAdBannerAdapter : HZBannerAdapter
 
+- (instancetype)initWithReportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter;
+
 @end
