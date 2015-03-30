@@ -134,7 +134,7 @@ return nil; \
     if (!lastInterstitialVideoShown) {
         return YES;
     }
-    const NSTimeInterval secondsSinceLastInterstitial = [lastInterstitialVideoShown timeIntervalSinceDate:[NSDate date]];
+    const NSTimeInterval secondsSinceLastInterstitial = [[NSDate date] timeIntervalSinceDate:lastInterstitialVideoShown];
     return (secondsSinceLastInterstitial * 1000) > self.interstitialVideoIntervalMillis;
 }
 
