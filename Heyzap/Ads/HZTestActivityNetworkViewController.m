@@ -121,12 +121,6 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     
     [self.view addSubview:[self makeView]];
     [self showOrHideBannerControls];
-    
-    if ([self showBanners]) {
-        self.chosenBannerPosition = HZBannerPositionTop;
-        self.chosenBannerSize = [self bannerSizes].firstObject;
-    }
-
 }
 
 - (void)setChosenBannerPosition:(HZBannerPosition)chosenBannerPosition {
@@ -205,6 +199,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             } else {
                 [self.adControls removeFromSuperview];
             }
+            [self showOrHideBannerControls];
         }
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         HZDLog(@"Error from /info: %@", error.localizedDescription);
@@ -487,6 +482,11 @@ NSString *hzBannerPositionName(HZBannerPosition position);
         
         
         self.bannerControls = @[self.hideBannerButton, self.showBannerButton, self.bannerPositionTextField, self.bannerSizeTextField];
+    }
+    
+    if ([self showBanners]) {
+        self.chosenBannerPosition = HZBannerPositionTop;
+        self.chosenBannerSize = [self bannerSizes].firstObject;
     }
     
     return adControls;
