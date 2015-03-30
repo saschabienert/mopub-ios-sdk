@@ -88,7 +88,11 @@
     [super viewDidLoad];
 
     self.view.backgroundColor = [UIColor whiteColor];
-
+    
+    self.title = [[self.network class] humanizedName];
+    UIBarButtonItem *refresh = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh)];
+    [self.navigationItem setRightBarButtonItem:refresh];
+    
     [self.view addSubview:[self makeView]];
 }
 
@@ -240,31 +244,6 @@
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         view;
     });
-    
-    // header
-    UINavigationBar *header = ({
-        UINavigationBar *nav = [[UINavigationBar alloc] initWithFrame:CGRectMake(currentNetworkView.frame.origin.x, currentNetworkView.frame.origin.y,
-                                                                                 currentNetworkView.frame.size.width, 44)];
-        if([nav respondsToSelector:@selector(barTintColor)]){
-            nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
-        }
-        nav.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        nav;
-    });
-    [[UINavigationBar appearance] setTitleTextAttributes:@{ UITextAttributeFont: [UIFont systemFontOfSize:18] }];
-    
-    // title, back, and reload button
-    UINavigationItem *headerTitle = ({
-        UINavigationItem *title = [[UINavigationItem alloc] initWithTitle:[[self.network class] humanizedName]];
-        UIBarButtonItem *back = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(back)];
-        UIBarButtonItem *refresh = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh)];
-        title.leftBarButtonItem = back;
-        title.rightBarButtonItem = refresh;
-        title;
-    });
-    [header setItems:[NSArray arrayWithObject:headerTitle]];
-    
-    [currentNetworkView addSubview:header];
     
     // sdk available label
     UIView *availableView = [self makeStatusLabel:@"available" withStatus:self.available text:@"SDK Available" y:95];
