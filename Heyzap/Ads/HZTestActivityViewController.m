@@ -93,13 +93,28 @@
 
     // take over the screen
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
-    [vc.rootVC presentViewController:vc animated:YES completion:nil];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    [vc.rootVC presentViewController:nav animated:YES completion:nil];
 }
 
 #pragma mark - View lifecycle methods
 
 - (void) viewDidLoad {
     [super viewDidLoad];
+    
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
+        self.edgesForExtendedLayout = UIRectEdgeNone;
+    }
+    
+    if([self.navigationController.navigationBar respondsToSelector:@selector(barTintColor)]){
+        self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
+    }
+    
+    self.title = @"Heyzap Mediation Test";
+    UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(hide)];
+    [self.navigationItem setLeftBarButtonItem:button animated:NO];
+    
+    self.navigationController.navigationBar.titleTextAttributes = nil;
 
     self.view.backgroundColor = [UIColor whiteColor];
  
@@ -160,41 +175,18 @@
                                                                                                         available:[self.availableNetworks containsObject:network]
                                                                                                       initialized:[self.initializedNetworks containsObject:network]
                                                                                                           enabled:[self.enabledNetworks containsObject:network]];
-    [self presentViewController:networkVC animated:YES completion:nil];
+    
+    [self.navigationController pushViewController:networkVC animated:YES];
 }
 
 #pragma mark - View creation utility methods
 
 - (UIView *) makeView {
-    UIView *chooseNetworkView = [[UIView alloc] initWithFrame:self.view.frame];
-    chooseNetworkView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    
-    // header
-    UINavigationBar *header = ({
-        UINavigationBar *nav = [[UINavigationBar alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x, chooseNetworkView.frame.origin.y,
-                                                                                 chooseNetworkView.frame.size.width, 44)];
-        if([nav respondsToSelector:@selector(barTintColor)]){
-            nav.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
-        }
-        nav.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        nav;
-    });
-    [[UINavigationBar appearance] setTitleTextAttributes:@{ UITextAttributeFont: [UIFont systemFontOfSize:18] }];
-    
-    // title and back button
-    UINavigationItem *headerTitle = ({
-        UINavigationItem *title = [[UINavigationItem alloc] initWithTitle:@"Heyzap Mediation Test"];
-        UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(hide)];
-        title.leftBarButtonItem = button;
-        title;
-    });
-    [header setItems:[NSArray arrayWithObject:headerTitle]];
-
-    [chooseNetworkView addSubview:header];
+    UIView *chooseNetworkView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds))];
     
     // choose network label
     self.chooseLabel = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x + 10, chooseNetworkView.frame.origin.y + header.frame.size.height,
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x + 10, chooseNetworkView.frame.origin.y,
                                                                    chooseNetworkView.frame.size.width - 10, 32)];
         if (self.availableNetworks.count == 0) {
             label.text = @"No SDKs are available";
@@ -211,7 +203,7 @@
     // networks table view
     self.networksTableView = ({
         UITableView *table = [[UITableView alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x,
-                                                                           chooseNetworkView.frame.origin.y + header.frame.size.height + self.chooseLabel.frame.size.height,
+                                                                           chooseNetworkView.frame.origin.y + self.chooseLabel.frame.size.height,
                                                                            chooseNetworkView.frame.size.width, chooseNetworkView.frame.size.height - self.chooseLabel.frame.size.height)
                                                           style:UITableViewStylePlain];
         table.backgroundColor = [UIColor clearColor];
