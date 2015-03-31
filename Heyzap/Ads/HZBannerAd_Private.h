@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Heyzap. All rights reserved.
 //
 
-#import "HZBannerAdWrapper.h"
+#import "HZBannerAd.h"
 
 @class HZBannerAdapter;
 
@@ -49,7 +49,7 @@
 
 @end
 
-@interface HZBannerAdWrapper() <HZBannerAdWrapperReporter>
+@interface HZBannerAd() <HZBannerAdWrapperReporter>
 
 
 - (instancetype)initWithBanner:(HZBannerAdapter *)adapter;

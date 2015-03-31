@@ -10,7 +10,7 @@
 #import "HZFBInterstitialAd.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
-#import "HZBannerAdWrapper.h"
+#import "HZBannerAd.h"
 #import "HZFBAdView.h"
 #import "HZFBBannerAdapter.h"
 #import "HZBannerAdOptions.h"
