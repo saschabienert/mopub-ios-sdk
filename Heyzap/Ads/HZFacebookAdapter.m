@@ -158,12 +158,7 @@
     self.interstitialAd = nil;
 }
 
-static int facebookImpressions = 0;
-
 - (void)interstitialAdWillLogImpression:(HZFBInterstitialAd *)interstitialAd {
-    facebookImpressions++;
-    NSLog(@"Total facebook impressions = %i",facebookImpressions);
-    NSLog(@"Facebook will log impression");
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

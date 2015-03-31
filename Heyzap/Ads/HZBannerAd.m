@@ -115,7 +115,7 @@ static NSMutableArray *allWrappers;
     
     [self requestBannerWithOptions:options completion:^(NSError *error, HZBannerAd *wrapper) {
         if (error) {
-            NSLog(@"Error loading banner! %@",error);
+            HZELog(@"Error loading banner! %@",error);
             if (completion) { completion(error, nil); }
         } else {
             switch (position) {
