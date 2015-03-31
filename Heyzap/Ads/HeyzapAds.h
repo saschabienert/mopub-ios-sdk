@@ -43,12 +43,14 @@
 #import "HZNativeAdImage.h"
 
 #import "HZShowOptions.h"
+#import "HZBannerAd.h"
+#import "HZBannerAdOptions.h"
 
 #ifndef NS_ENUM
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif
 
-#define SDK_VERSION @"8.0.0"
+#define SDK_VERSION @"8.1.0"
 
 #if __has_feature(objc_modules)
 @import AdSupport;
@@ -57,6 +59,7 @@
 @import MediaPlayer;
 @import QuartzCore;
 @import StoreKit;
+@import iAd;
 #endif
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {

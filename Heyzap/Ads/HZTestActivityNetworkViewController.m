@@ -38,8 +38,13 @@
 #import "HZDispatch.h"
 #import "HZUnityAds.h"
 #import "HZDevice.h"
+#import "HZBannerAd.h"
+#import "HZMediationConstants.h"
+#import "HZBannerAdOptions_Private.h"
+#import "HZNoCaretTextField.h"
+#import "HZBannerAd.h"
 
-@interface HZTestActivityNetworkViewController() <HZMediationAdapterDelegate>
+@interface HZTestActivityNetworkViewController() <HZMediationAdapterDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, HZBannerAdDelegate>
 
 @property (nonatomic) HZBaseAdapter *network;
 @property (nonatomic) UIViewController *rootVC;
@@ -55,6 +60,27 @@
 @property (nonatomic) UILabel *enabledStatus;
 @property (nonatomic) UITextView *debugLog;
 
+@property (nonatomic) UIButton *showBannerButton;
+@property (nonatomic) UIButton *hideBannerButton;
+
+@property (nonatomic) UIPickerView *bannerPositionPickerView;
+@property (nonatomic) UIPickerView *bannerSizePickerView;
+
+@property (nonatomic) UITextField *bannerPositionTextField;
+@property (nonatomic) UITextField *bannerSizeTextField;
+
+@property (nonatomic) HZBannerPosition chosenBannerPosition;
+@property (nonatomic) NSValue *chosenBannerSize;
+
+@property (nonatomic) NSArray *nonBannerControls;
+@property (nonatomic) NSArray *bannerControls;
+
+@property (nonatomic) HZBannerAd *bannerWrapper;
+
+NSValue *hzBannerPositionValue(HZBannerPosition position);
+HZBannerPosition hzBannerPositionFromNSValue(NSValue *value);
+NSString *hzBannerPositionName(HZBannerPosition position);
+
 @end
 
 @implementation HZTestActivityNetworkViewController
@@ -63,7 +89,6 @@
 
 - (instancetype) initWithNetwork:(HZBaseAdapter *)network rootVC:(UIViewController *)rootVC available:(BOOL)available initialized:(BOOL)initialized enabled:(BOOL)enabled {
     self = [super init];
-    self.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 
     self.network = network;
     self.rootVC = rootVC;
@@ -86,6 +111,10 @@
 
 - (void) viewDidLoad {
     [super viewDidLoad];
+    
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
+        self.edgesForExtendedLayout = UIRectEdgeTop;
+    }
 
     self.view.backgroundColor = [UIColor whiteColor];
     
@@ -94,6 +123,18 @@
     [self.navigationItem setRightBarButtonItem:refresh];
     
     [self.view addSubview:[self makeView]];
+    [self showOrHideBannerControls];
+}
+
+- (void)setChosenBannerPosition:(HZBannerPosition)chosenBannerPosition {
+    _chosenBannerPosition = chosenBannerPosition;
+    
+    self.bannerPositionTextField.text = [@"Position: " stringByAppendingString:hzBannerPositionName(chosenBannerPosition)];
+}
+
+- (void)setChosenBannerSize:(NSValue *)chosenBannerSize {
+    _chosenBannerSize = chosenBannerSize;
+    self.bannerSizeTextField.text = [@"Size: " stringByAppendingString:[self bannerSizeDescription:chosenBannerSize]];
 }
 
 #pragma mark - UI action methods
@@ -152,12 +193,16 @@
             
             // display or remove the ad controls
             if (self.available && self.initialized) {
+                
+                [self hideBanner];
+                
                 [self.adControls removeFromSuperview];
                 self.adControls = [self makeAdControls];
                 [self.view addSubview:self.adControls];
             } else {
                 [self.adControls removeFromSuperview];
             }
+            [self showOrHideBannerControls];
         }
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         HZDLog(@"Error from /info: %@", error.localizedDescription);
@@ -168,7 +213,22 @@
     self.currentAdFormat = [[adFormatControl titleForSegmentAtIndex:adFormatControl.selectedSegmentIndex ] lowercaseString];
     self.currentAdType = [self adTypeWithString:self.currentAdFormat];
     HZDLog(@"Current ad format: %@", self.currentAdFormat);
-    [self changeShowButtonColor];
+    
+    [self showOrHideBannerControls];
+    
+    if (self.currentAdType != HZAdTypeBanner) {
+        [self changeShowButtonColor];
+        [self hideBanner];
+    }
+}
+
+- (void)showOrHideBannerControls {
+    [self.bannerControls setValue:@(self.currentAdType != HZAdTypeBanner) forKey:@"hidden"];
+    [self.nonBannerControls setValue:@(self.currentAdType == HZAdTypeBanner) forKey:@"hidden"];
+    
+    if ([[self bannerSizes] count] == 0) {
+        self.bannerSizeTextField.hidden = YES;
+    }
 }
 
 - (void) fetchAd {
@@ -239,8 +299,8 @@
 - (UIView *) makeView {
     // top level view
     UIView *currentNetworkView = ({
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y,
-                                                                self.view.frame.size.width, self.view.frame.size.height - 45)];
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0,30,
+                                                                CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds))];
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         view;
     });
@@ -278,12 +338,12 @@
 
 - (UIView *) makeAdControls {
     UIView *adControls = ({
-        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 160, self.view.frame.size.width - 20, 100)];
+        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 160, self.view.frame.size.width - 20, 190)];
         controls.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         controls;
     });
     
-    // setup currentAdFormat and currentAdTyp
+    // setup currentAdFormat and currentAdType
     HZAdType supportedAdFormats = [self.network supportedAdFormats];
     NSMutableArray *formats = [[NSMutableArray alloc] init];
     if(supportedAdFormats & HZAdTypeInterstitial){
@@ -294,6 +354,9 @@
     }
     if(supportedAdFormats & HZAdTypeIncentivized){
         [formats addObject:@"Incentivized"];
+    }
+    if (supportedAdFormats & HZAdTypeBanner) {
+        [formats addObject:@"Banner"];
     }
     self.currentAdFormat = [[formats objectAtIndex:0] lowercaseString];
     self.currentAdType = [self adTypeWithString:self.currentAdFormat];
@@ -309,34 +372,135 @@
     [adFormatControl addTarget:self action:@selector(switchAdFormat:) forControlEvents:UIControlEventValueChanged];
     [adControls addSubview:adFormatControl];
     
+    const CGFloat buttonWidth = adFormatControl.frame.size.width / 2.0 - 5;
+    const CGRect leftButtonFrame = CGRectMake(adFormatControl.frame.origin.x, adFormatControl.frame.origin.y + adFormatControl.frame.size.height + 10, buttonWidth, 40);
+    const CGRect rightButtonFrame = CGRectMake(CGRectGetMaxX(leftButtonFrame) + 10, leftButtonFrame.origin.y, buttonWidth, 40);
+    
     // buttons for fetch and show
     UIButton *fetchButton = ({
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        button.frame = CGRectMake(adFormatControl.frame.origin.x, adFormatControl.frame.origin.y + adFormatControl.frame.size.height + 10,
-                                  adFormatControl.frame.size.width / 2.0 - 5, 40);
-        button.backgroundColor = [UIColor darkGrayColor];
-        button.layer.cornerRadius = 3.0;
+        UIButton *button = [[self class] buttonWithBackgroundColor:[UIColor darkGrayColor]];
+        button.frame = leftButtonFrame;
+        [button setTitle:@"Fetch" forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(fetchAd) forControlEvents:UIControlEventTouchUpInside];
         button;
     });
-    [fetchButton setTitle:@"Fetch" forState:UIControlStateNormal];
-    [fetchButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [fetchButton addTarget:self action:@selector(fetchAd) forControlEvents:UIControlEventTouchUpInside];
     [adControls addSubview:fetchButton];
     
     self.showButton = ({
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        button.frame = CGRectMake(fetchButton.frame.origin.x + fetchButton.frame.size.width + 10, fetchButton.frame.origin.y,
-                                  adFormatControl.frame.size.width / 2.0 - 5, 40);
-        button.backgroundColor = [UIColor redColor];
+        UIButton *button = [[self class] buttonWithBackgroundColor:[UIColor redColor]];
+        button.frame = rightButtonFrame;
+        [button setTitle:@"Show" forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(showAd) forControlEvents:UIControlEventTouchUpInside];
         button;
     });
-    self.showButton.layer.cornerRadius = 3.0;
-    [self.showButton setTitle:@"Show" forState:UIControlStateNormal];
-    [self.showButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [self.showButton addTarget:self action:@selector(showAd) forControlEvents:UIControlEventTouchUpInside];
     [adControls addSubview:self.showButton];
     
+    self.nonBannerControls = @[fetchButton, self.showButton];
+    
+    if ([self showBanners]) {
+        
+        self.hideBannerButton = ({
+            UIButton *button = [[self class] buttonWithBackgroundColor:[UIColor darkGrayColor]];
+            button.enabled = NO;
+            button.frame = leftButtonFrame;
+            [button setTitle:@"Hide" forState:UIControlStateNormal];
+            [button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+            [button addTarget:self action:@selector(hideBanner:) forControlEvents:UIControlEventTouchUpInside];
+            button;
+        });
+        [adControls addSubview:self.hideBannerButton];
+        
+        self.showBannerButton = ({
+            UIButton *button = [[self class] buttonWithBackgroundColor:[UIColor darkGrayColor]];
+            button.frame = rightButtonFrame;
+            [button setTitle:@"Show" forState:UIControlStateNormal];
+            [button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+            [button addTarget:self action:@selector(showBanner:) forControlEvents:UIControlEventTouchUpInside];
+            button;
+        });
+        [adControls addSubview:self.showBannerButton];
+        
+        
+        const CGFloat positionY = CGRectGetMaxY(fetchButton.frame) + 10;
+        
+        self.bannerPositionTextField = ({
+            HZNoCaretTextField *textField = [[HZNoCaretTextField alloc] initWithFrame:CGRectMake(adFormatControl.frame.origin.x, positionY, buttonWidth, 40)];
+            textField.delegate = self;
+            textField.borderStyle = UITextBorderStyleRoundedRect;
+            textField.textAlignment = NSTextAlignmentCenter;
+            
+            textField.inputAccessoryView = ({
+                UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+                UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                                                               target:nil
+                                                                                               action:NULL];
+                toolbar.items = @[flexibleSpace, [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                                       target:self
+                                                                                                       action:@selector(bannerPositionPickerDone:)]];
+                toolbar;
+            });
+            
+            UIPickerView *picker = ({
+                UIPickerView *picker = [[UIPickerView alloc] init];
+                picker.delegate = self;
+                picker;
+            });
+            textField.inputView = picker;
+            self.bannerPositionPickerView = picker;
+            
+            textField;
+        });
+        
+        self.bannerSizeTextField = ({
+            HZNoCaretTextField *textField = [[HZNoCaretTextField alloc] initWithFrame:CGRectMake(CGRectGetMinX(self.showButton.frame), positionY, buttonWidth, 40)];
+            textField.delegate = self;
+            textField.borderStyle = UITextBorderStyleRoundedRect;
+            textField.textAlignment = NSTextAlignmentCenter;
+            
+            textField.inputAccessoryView = ({
+                UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+                UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                                                               target:nil
+                                                                                               action:NULL];
+                toolbar.items = @[flexibleSpace, [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                               target:self
+                                                                                               action:@selector(bannerSizePickerDone:)]];
+                toolbar;
+            });
+            
+            UIPickerView *picker = ({
+                UIPickerView *picker = [[UIPickerView alloc] init];
+                picker.delegate = self;
+                picker;
+            });
+            textField.inputView = picker;
+            self.bannerSizePickerView = picker;
+            
+            textField;
+        });
+        
+        
+        [adControls addSubview:self.bannerPositionTextField];
+        [adControls addSubview:self.bannerSizeTextField];
+        
+        
+        self.bannerControls = @[self.hideBannerButton, self.showBannerButton, self.bannerPositionTextField, self.bannerSizeTextField];
+    }
+    
+    if ([self showBanners]) {
+        self.chosenBannerPosition = HZBannerPositionTop;
+        self.chosenBannerSize = [self bannerSizes].firstObject;
+    }
+    
     return adControls;
+}
+
++ (UIButton *)buttonWithBackgroundColor:(UIColor *)color {
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    button.backgroundColor = color;
+    button.layer.cornerRadius = 3.0;
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    return button;
 }
 
 - (UIView *) makeStatusLabel:(NSString *)type withStatus:(BOOL)status text:(NSString *)text y:(CGFloat)y {
@@ -403,6 +567,8 @@
         adType = HZAdTypeVideo;
     } else if([string isEqualToString:@"incentivized"]){
         adType = HZAdTypeIncentivized;
+    } else if ([string isEqualToString:@"banner"]) {
+        adType = HZAdTypeBanner;
     }
     
     return adType;
@@ -421,6 +587,208 @@
     self.debugLog.text = [NSString stringWithFormat:@"%@\n%@", self.debugLog.text, string];
     NSRange bottom = NSMakeRange(self.debugLog.text.length, 0);
     [self.debugLog scrollRangeToVisible:bottom];
+}
+
+#pragma mark - UIPickerViewDelegate (Banners)
+
+// returns the number of 'columns' to display.
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 1;
+}
+
+// returns the # of rows in each component..
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    if (pickerView == self.bannerPositionPickerView) {
+        return 2;
+    } else if (pickerView == self.bannerSizePickerView) {
+        NSLog(@"banner sizes are = %@",[self bannerSizes]);
+        return [[self bannerSizes] count];
+    } else {
+        NSLog(@"Unknown picker view!!");
+        return 0;
+    }
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    if (pickerView == self.bannerPositionPickerView) {
+        
+        return [[self class] bannerPositionNames][row];
+        
+    } else if (pickerView == self.bannerSizePickerView) {
+        
+        NSValue *value = [self bannerSizes][row];
+        return [self bannerSizeDescription:value];
+        
+    } else {
+        NSLog(@"Unknown picker view!!");
+        return nil;
+    }
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    if (pickerView == self.bannerPositionPickerView) {
+        
+        
+        NSValue *value = [[self class] bannerPositions][row];
+        self.chosenBannerPosition = hzBannerPositionFromNSValue(value);
+        
+    } else if (pickerView == self.bannerSizePickerView) {
+        self.chosenBannerSize = [self bannerSizes][row];
+    }
+}
+
+- (void)bannerPositionPickerDone:(UIBarButtonItem *)sender {
+    NSLog(@"Banner position done");
+    NSLog(@"Banner position text field = %@",self.bannerPositionTextField);
+    [self.bannerPositionTextField resignFirstResponder];
+}
+
+- (void)bannerSizePickerDone:(UIBarButtonItem *)sender {
+    [self.bannerSizeTextField resignFirstResponder];
+}
+
++ (NSArray *)bannerPositionNames {
+    return @[
+             hzBannerPositionName(HZBannerPositionTop),
+             hzBannerPositionName(HZBannerPositionBottom),
+             ];
+}
+
+NSString *hzBannerPositionName(HZBannerPosition position) {
+    switch (position) {
+        case HZBannerPositionTop: {
+            return @"Top";
+        }
+        case HZBannerPositionBottom: {
+            return @"Bottom";
+        }
+    }
+}
+
++ (NSArray *)bannerPositions {
+    return @[
+             hzBannerPositionValue(HZBannerPositionTop),
+             hzBannerPositionValue(HZBannerPositionBottom),
+             ];
+    
+}
+
+NSValue *hzBannerPositionValue(HZBannerPosition position) {
+    return [NSValue valueWithBytes:&position objCType:@encode(HZBannerPosition)];
+}
+
+HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
+    HZBannerPosition position;
+    [value getValue:&position];
+    return position;
+}
+
+- (NSString *)bannerSizeDescription:(NSValue *)value {
+    if ([self.network.name isEqualToString:kHZAdapterFacebook]) {
+        HZFacebookBannerSize size = hzFacebookBannerSizeFromValue(value);
+        return hzFacebookBannerSizeDescription(size);
+    } else if ([self.network.name isEqualToString:kHZAdapterAdMob]) {
+        HZAdMobBannerSize size = hzAdMobBannerSizeFromValue(value);
+        return hzAdMobBannerSizeDescription(size);
+    } else {
+        return @"n/a";
+    }
+}
+
+- (NSArray *)bannerSizes {
+    NSString *name = [self.network name];
+    if ([name isEqualToString:kHZAdapterFacebook]) {
+        return [HZBannerAdOptions facebookBannerSizes];
+    } else if ([name isEqualToString:kHZAdapterAdMob]) {
+        return [HZBannerAdOptions admobBannerSizes];
+    } else {
+        return @[];
+    }
+}
+
+- (BOOL)showBanners {
+    return [self.network supportsAdType:HZAdTypeBanner];
+}
+
+- (HZBannerAdOptions *)bannerOptions {
+    HZBannerAdOptions *opts = [[HZBannerAdOptions alloc] init];
+    
+    opts.networkName = self.network.name;
+    
+    opts.presentingViewController = self;
+    
+    if ([self.network.name isEqualToString:kHZAdapterFacebook]) {
+        opts.facebookBannerSize = hzFacebookBannerSizeFromValue(self.chosenBannerSize);
+    } else if ([self.network.name isEqualToString:kHZAdapterAdMob]) {
+        opts.admobBannerSize = hzAdMobBannerSizeFromValue(self.chosenBannerSize);
+    }
+    
+    return opts;
+}
+
+- (void)showBanner:(UIButton *)sender {
+    sender.enabled = NO;
+    
+    [self appendStringToDebugLog:@"Requesting Banner..."];
+    
+    [HZBannerAd placeBannerInView:self.view
+                                position:self.chosenBannerPosition
+                                 options:[self bannerOptions]
+                              completion:^(NSError *error, HZBannerAd *wrapper) {
+        if (error) {
+            sender.enabled = YES;
+            [self appendStringToDebugLog:@"Error getting banner!"];
+        } else {
+            [self appendStringToDebugLog:@"Showing banner"];
+            self.hideBannerButton.enabled = YES;
+            self.bannerWrapper = wrapper;
+            self.bannerWrapper.delegate = self;
+        }
+        
+        
+    }];
+}
+
+- (void)hideBanner:(UIButton *)sender {
+    [self hideBanner];
+}
+
+- (void)hideBanner {
+    [self.bannerWrapper finishUsingBanner];
+    self.bannerWrapper = nil;
+    
+    self.hideBannerButton.enabled = NO;
+    self.showBannerButton.enabled = YES;
+}
+
+
+- (void)dealloc {
+    [self.bannerWrapper finishUsingBanner];
+}
+
+#pragma mark - Banner Ad Delegate
+
+- (void)bannerDidReceiveAd {
+    [self logBannerCallback:_cmd];
+}
+- (void)bannerDidFailToReceiveAd:(NSError *)error {
+    [self logBannerCallback:_cmd];
+}
+- (void)bannerWasClicked {
+    [self logBannerCallback:_cmd];
+}
+- (void)bannerWillPresentModalView {
+    [self logBannerCallback:_cmd];
+}
+- (void)bannerDidDismissModalView {
+    [self logBannerCallback:_cmd];
+}
+- (void)bannerWillLeaveApplication {
+    [self logBannerCallback:_cmd];
+}
+
+- (void)logBannerCallback:(SEL)selector {
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Banner Callback: %@",NSStringFromSelector(selector)]];
 }
 
 @end

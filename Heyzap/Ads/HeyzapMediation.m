@@ -16,6 +16,7 @@
 #import "HZAdColonyAdapter.h"
 #import "HZVungleAdapter.h"
 #import "HZAdMobAdapter.h"
+#import "HZFacebookAdapter.h"
 #import "HZMediationAPIClient.h"
 #import "HZDictionaryUtils.h"
 #import "HZMediationConstants.h"
@@ -37,6 +38,10 @@
 #import "HZMetricsAdStub.h"
 #import "HZMediationConstants.h"
 #import "HZDevice.h"
+
+#import "HZiAdBannerAdapter.h"
+#import "HZiAdAdapter.h"
+#import "HZBannerAdOptions_Private.h"
 
 typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
     HZMediationStartStatusNotStarted,
@@ -552,6 +557,7 @@ static int totalImpressions = 0;
             [adapterNames addObject:[adapterClass name]];
         }
     }
+    [adapterNames addObject:@"iad"];
     return [adapterNames componentsJoinedByString:@","];
 }
 
@@ -595,6 +601,9 @@ static BOOL forceOnlyHeyzapSDK = NO;
             self.videoDelegateProxy.forwardingTarget = delegate;
             break;
         }
+        case HZAdTypeBanner: {
+            // Ignored; banners have a different delegate system.
+        }
     }
 }
 
@@ -613,7 +622,122 @@ static BOOL forceOnlyHeyzapSDK = NO;
             return self.videoDelegateProxy;
             break;
         }
+        case HZAdTypeBanner: {
+            // Banners use a different delegate system.
+            return nil;
+        }
     }
+}
+
+const NSTimeInterval bannerTimeout = 10;
+
+- (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion {
+    NSParameterAssert(options);
+    NSParameterAssert(completion);
+    // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
+    // This feels pretty hacky..
+    if (self.startStatus == HZMediationStartStatusNotStarted) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self requestBannerWithOptions:options completion:completion];
+        });
+        return;
+    }
+    
+    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:@[@"banner"]
+                                                                         adUnit:@"banner"
+                                                                            tag:[HeyzapAds defaultTagName]
+                                                                    auctionType:HZAuctionTypeMixed
+                                                            andAdditionalParams:(options.networkName ? @{@"networks" : options.networkName} : @{})];
+    
+    NSDictionary *const mediateParams = request.createParams;
+    
+    [[HZMediationAPIClient sharedClient] get:@"mediate" withParams:mediateParams success:^(NSDictionary *json) {
+        
+        // This should be factored out into a general way of saying "does the ad network have credentials for X ad format?
+        NSSet *const setupBannerMediators = [self.setupMediators objectsPassingTest:^BOOL(HZBaseAdapter *adapter, BOOL *stop) {
+            return [adapter hasBannerCredentials];
+        }];
+        
+        NSError *error;
+        HZMediationSession *const session = [[HZMediationSession alloc] initWithJSON:json mediateParams:mediateParams setupMediators:setupBannerMediators adType:HZAdTypeBanner tag:request.tag error:&error];
+        if (error) {
+            NSError *mediationError = [[self class] bannerErrorWithDescription:@"Couldn't create HZMediationSession" underlyingError:error];
+            completion(mediationError, nil);
+            return;
+        }
+        
+        NSLog(@"Chosen adapters for banners = %@",session.chosenAdapters);
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            for (HZBaseAdapter *baseAdapter in session.chosenAdapters) {
+                NSLog(@"Base adapter = %@",baseAdapter);
+                __block HZBannerAdapter *bannerAdapter;
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    bannerAdapter = [baseAdapter fetchBannerWithOptions:options reportingDelegate:self];
+                });
+                
+                __block BOOL isAvailable = NO;
+                hzWaitUntil(^BOOL{
+                    isAvailable = [bannerAdapter isAvailable];
+                    if (bannerAdapter.lastError) {
+                        HZELog(@"Ad Network %@ had an error loading a banner: %@",baseAdapter.name, bannerAdapter.lastError);
+                    }
+                    return isAvailable || (bannerAdapter.lastError != nil);
+                }, bannerTimeout);
+                
+                if (!isAvailable) {
+                    // Notify the adapter that we're not trying to load from it anymore, so it can release timers and such.
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                       [bannerAdapter stopTryingToLoadBanner];
+                    });
+                }
+                
+                if (isAvailable) {
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        bannerAdapter.session = session;
+                        [session reportSuccessfulFetchUpToAdapter:baseAdapter];
+                        completion(nil, bannerAdapter);
+                    });
+                    
+                    break;
+                } else if (baseAdapter == [session.chosenAdapters lastObject]) {
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        completion([[self class] bannerErrorWithDescription:@"None of the mediated ad networks had a banner available" underlyingError:nil], nil);
+                    });
+                }
+                
+            }
+        });
+        
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+        NSError *mediationError = [[self class] bannerErrorWithDescription:@"Error communicating with Heyzap's servers" underlyingError:error];
+        completion(mediationError, nil);
+    }];
+    
+    // Session gets attached to what? To the adapter?
+    // Maybe to the wrapper?
+    
+}
+
++ (NSError *)bannerErrorWithDescription:(NSString *)description underlyingError:(NSError *)underlyingError {
+    NSParameterAssert(description);
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    userInfo[NSLocalizedDescriptionKey] = description;
+    if (underlyingError) {
+        userInfo[NSUnderlyingErrorKey] = underlyingError;
+    }
+    
+    return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
+}
+
+// TODO *** need to implement functionality so that the ad loading only counts as an impression after it is added to the screen, which is mildly tricky (best I have so far is an NStimer to check the superview property).
+
+- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter hadImpressionForSession:(HZMediationSession *)session {
+    [session reportImpressionForAdapter:bannerAdapter.parentAdapter];
+}
+- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter wasClickedForSession:(HZMediationSession *)session {
+    [session reportClickForAdapter:bannerAdapter.parentAdapter];
 }
 
 @end

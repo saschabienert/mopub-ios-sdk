@@ -10,9 +10,15 @@
 #import "HZFBInterstitialAd.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZBannerAd.h"
+#import "HZFBAdView.h"
+#import "HZFBBannerAdapter.h"
+#import "HZBannerAdOptions.h"
+#import "HZBannerAdOptions_Private.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
+@property (nonatomic, strong) NSString *bannerPlacementID;
 @property (nonatomic, strong) HZFBInterstitialAd *interstitialAd;
 @end
 
@@ -32,7 +38,9 @@
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable {
-    return [HZFBInterstitialAd hzProxiedClassIsAvailable];
+    return [HZFBInterstitialAd hzProxiedClassIsAvailable]
+    && [HZFBAdView hzProxiedClassIsAvailable]
+    && [HZBannerAdOptions facebookBannerSizesAvailable];
 }
 
 + (NSString *)name {
@@ -58,17 +66,23 @@
                              error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
+    // Nullable
+    NSString *const bannerPlacementID = [HZDictionaryUtils hzObjectForKey:@"banner_placement_id"
+                                                                  ofClass:[NSString class]
+                                                                 withDict:credentials];
+    
     HZFacebookAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         adapter.placementID = placementID;
+        adapter.bannerPlacementID = bannerPlacementID;
     }
     
     return nil;
 }
 
 - (HZAdType)supportedAdFormats {
-    return HZAdTypeInterstitial;
+    return HZAdTypeInterstitial | HZAdTypeBanner;
 }
 
 - (BOOL)isVideoOnlyNetwork {
@@ -143,6 +157,14 @@
 }
 
 - (void)interstitialAdWillLogImpression:(HZFBInterstitialAd *)interstitialAd {
+}
+
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return [[HZFBBannerAdapter alloc] initWithAdUnitId:@"500413400097719_538033529669039" options:options reportingDelegate:reportingDelegate parentAdapter:self];
+}
+
+- (BOOL)hasBannerCredentials {
+    return self.bannerPlacementID != nil;
 }
 
 @end

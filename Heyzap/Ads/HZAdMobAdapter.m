@@ -14,12 +14,14 @@
 #import "HZDictionaryUtils.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
+#import "HZAdMobBannerAdapter.h"
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
 @property (nonatomic, strong) HZGADInterstitial *currentInterstitial;
 
 @property (nonatomic, strong) NSString *adUnitID;
+@property (nonatomic, strong) NSString *bannerAdUnitID;
 
 @end
 
@@ -47,10 +49,14 @@
     NSString *adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:credentials error:&error];
     CHECK_CREDENTIALS_ERROR(error);
     
+    // Nullable property.
+    NSString *bannerAdUnitId = [HZDictionaryUtils hzObjectForKey:@"banner_ad_unit_id" ofClass:[NSString class] withDict:credentials];
+    
     HZAdMobAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         [[self sharedInstance] setAdUnitID:adUnitID];
+        [[self sharedInstance] setBannerAdUnitID:bannerAdUnitId];
     }
     
     return nil;
@@ -83,7 +89,7 @@
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeInterstitial;
+    return HZAdTypeInterstitial | HZAdTypeBanner;
 }
 
 - (BOOL)isVideoOnlyNetwork {
@@ -156,6 +162,14 @@
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
     self.lastInterstitialError = nil;
+}
+
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:self.bannerAdUnitID options:options reportingDelegate:reportingDelegate parentAdapter:self];
+}
+
+- (BOOL)hasBannerCredentials {
+    return self.bannerAdUnitID != nil;
 }
 
 @end

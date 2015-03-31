@@ -22,6 +22,7 @@
 #import "HZNativeAdCollection.h"
 #import "HZNativeAd.h"
 #import "NativeAdTableViewController.h"
+#import "HZBannerAd.h"
 
 #define kTagCreativeIDField 4393
 
@@ -31,7 +32,7 @@ typedef enum {
     kAdUnitSegmentIncentivized
 } kAdUnitSegement;
 
-@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate>
+@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, HZBannerAdDelegate>
 
 @property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl1;
 @property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl2;
@@ -56,6 +57,8 @@ typedef enum {
 @property (nonatomic, strong) UIButton *showButton;
 
 @property (nonatomic, strong) NSURL *lastFetchURL;
+
+@property (nonatomic, strong) HZBannerAd *wrapper;
 
 
 @end
@@ -428,7 +431,6 @@ const CGFloat kLeftMargin = 10;
         subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
     }
     self.scrollView.contentSize = (CGSize) { CGRectGetWidth(self.view.frame), subviewContainingRect.size.height + 80 };
-    
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{
@@ -637,6 +639,30 @@ const CGFloat kLeftMargin = 10;
 }
 
 #undef APPEND_METHOD_NAME_TO_CONSOLE
+
+- (void)bannerDidReceiveAd {
+    NSLog(@"bannerDidReceiveAd");
+}
+
+- (void)bannerDidFailToReceiveAd:(NSError *)error {
+    NSLog(@"bannerDidFailtoReceiveAd:%@",error);
+}
+
+- (void)bannerWasClicked {
+    NSLog(@"bannerWasClicked");
+}
+
+- (void)bannerWillPresentModalView {
+    NSLog(@"bannerWillPresentModalView");
+}
+
+- (void)bannerDidDismissModalView {
+    NSLog(@"bannerDidDismissModalView");
+}
+
+- (void)bannerWillLeaveApplication {
+    NSLog(@"bannerWillLeaveApplication");
+}
 
 
 @end

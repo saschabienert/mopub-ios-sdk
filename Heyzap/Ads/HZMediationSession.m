@@ -88,7 +88,7 @@ return nil; \
                 && [(HZBaseAdapter *)[adapter sharedInstance] supportsAdType:adType]) {
                 
                 HZBaseAdapter *instance = (HZBaseAdapter *)[adapter sharedInstance];
-                if (_interstitialVideoEnabled || !instance.isVideoOnlyNetwork) {
+                if (adType != HZAdTypeInterstitial || _interstitialVideoEnabled || !instance.isVideoOnlyNetwork) {
                     [adapters addObject:[adapter sharedInstance]];
                 }
             }
@@ -132,9 +132,14 @@ return nil; \
 
 - (BOOL)withinInterval:(NSDate *const)lastInterstitialVideoShown {
     if (!lastInterstitialVideoShown) {
+        NSLog(@"Last interstitial video shown is nil; its within interval");
         return YES;
     }
-    const NSTimeInterval secondsSinceLastInterstitial = [lastInterstitialVideoShown timeIntervalSinceDate:[NSDate date]];
+    const NSTimeInterval secondsSinceLastInterstitial = [[NSDate date] timeIntervalSinceDate:lastInterstitialVideoShown];
+    NSLog(@"Seconds since last interstitial = %f",secondsSinceLastInterstitial);
+    double millisecondsSinceLastInterstitial = secondsSinceLastInterstitial * 1000;
+    NSLog(@"milliseconds since last = %g",millisecondsSinceLastInterstitial);
+    NSLog(@"interstitial video millis = %g",self.interstitialVideoIntervalMillis);
     return (secondsSinceLastInterstitial * 1000) > self.interstitialVideoIntervalMillis;
 }
 
