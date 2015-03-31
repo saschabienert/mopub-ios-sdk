@@ -134,6 +134,7 @@
             
             break;
         }
+        case HZAdTypeBanner:
         case HZAdTypeVideo: {
             // Not supported——I believe AppLovin shows videos as part of interstitials, like us.
             break;
@@ -151,6 +152,8 @@
         case HZAdTypeIncentivized: {
             return self.currentIncentivizedAd.isReadyForDisplay;
         }
+            
+        case HZAdTypeBanner:
         case HZAdTypeVideo: {
             return NO;
             break;
@@ -189,6 +192,8 @@
             self.interstitialError = nil;
             break;
         }
+            
+        case HZAdTypeBanner:
         case HZAdTypeVideo: {
             // Ignored
             break;
@@ -209,6 +214,8 @@
             self.interstitialError = error;
             break;
         }
+            
+        case HZAdTypeBanner:
         case HZAdTypeVideo: {
             // Ignored
             break;

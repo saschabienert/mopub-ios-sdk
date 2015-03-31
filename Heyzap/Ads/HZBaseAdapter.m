@@ -18,6 +18,7 @@
 #import "HZCrossPromoAdapter.h"
 #import "HZFacebookAdapter.h"
 #import "HZiAdAdapter.h"
+#import "HZBannerAdapter.h"
 
 @implementation HZBaseAdapter
 
@@ -83,6 +84,13 @@
     ABSTRACT_METHOD_ERROR();
 }
 
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return nil;
+}
+- (BOOL)hasBannerCredentials {
+    return NO;
+}
+
 #pragma mark - Inferred methods
 
 - (NSString *)sdkVersion
@@ -115,6 +123,10 @@
             return self.lastVideoError;
             break;
         }
+        case HZAdTypeBanner: {
+            // ignored
+            return nil;
+        }
     }
 }
 
@@ -131,6 +143,10 @@
         }
         case HZAdTypeVideo: {
             self.lastVideoError = nil;
+            break;
+        }
+        case HZAdTypeBanner: {
+            // ignored for now
             break;
         }
     }

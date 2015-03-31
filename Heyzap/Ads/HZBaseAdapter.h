@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "HZMetricsAdStub.h"
 #import "HZShowOptions.h"
+#import "HZBannerAdapter.h"
 @import UIKit;
 
 // This is a bitmasked parameter, but with the exception of the `supportedAdFormats` method, almost everything else should treat it as just an enum.
@@ -16,9 +17,14 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
     HZAdTypeInterstitial = 1 << 0,
     HZAdTypeVideo = 1 << 1,
     HZAdTypeIncentivized = 1 << 2,
+    // placeholder for moreapps
+    HZAdTypeBanner = 1 << 4,
 };
 
 @class HZBaseAdapter;
+@class HZBannerAdapter;
+@class HZBannerAdOptions;
+@protocol HZBannerReportingDelegate;
 
 @protocol HZMediationAdapterDelegate <NSObject>
 
@@ -93,6 +99,11 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 + (BOOL)isSDKAvailable;
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials;
+
+#pragma mark - Banners
+
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate;
+- (BOOL)hasBannerCredentials;
 
 #pragma mark - Inferred methods
 

@@ -132,6 +132,9 @@
             return [HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_ACTIVE;
             break;
         }
+        case HZAdTypeBanner: {
+            return NO;
+        }
     }
 }
 
@@ -177,6 +180,9 @@
                 return nil;
             }
             break;
+        }
+        case HZAdTypeBanner: {
+            return nil;
         }
     }
 }

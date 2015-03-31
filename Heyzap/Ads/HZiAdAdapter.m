@@ -11,6 +11,7 @@
 @import iAd;
 
 #import "HZMediationConstants.h"
+#import "HZiAdBannerAdapter.h"
 
 @interface HZiAdAdapter()<ADInterstitialAdDelegate>
 
@@ -28,6 +29,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         adapter = [[HZiAdAdapter alloc] init];
+        adapter.credentials = @{};
     });
     return adapter;
 }
@@ -99,7 +101,7 @@
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeInterstitial;
+    return HZAdTypeInterstitial | HZAdTypeBanner;
 }
 
 - (BOOL)isVideoOnlyNetwork {
@@ -141,6 +143,12 @@
     self.interstitialAd = nil;
 }
 
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return [[HZiAdBannerAdapter alloc] initWithReportingDelegate:reportingDelegate parentAdapter:self];
+}
 
+- (BOOL)hasBannerCredentials {
+    return YES;
+}
 
 @end
