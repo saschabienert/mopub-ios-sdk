@@ -89,7 +89,6 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (instancetype) initWithNetwork:(HZBaseAdapter *)network rootVC:(UIViewController *)rootVC available:(BOOL)available initialized:(BOOL)initialized enabled:(BOOL)enabled {
     self = [super init];
-    self.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 
     self.network = network;
     self.rootVC = rootVC;
@@ -112,6 +111,10 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void) viewDidLoad {
     [super viewDidLoad];
+    
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
+        self.edgesForExtendedLayout = UIRectEdgeTop;
+    }
 
     self.view.backgroundColor = [UIColor whiteColor];
     
@@ -296,8 +299,8 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 - (UIView *) makeView {
     // top level view
     UIView *currentNetworkView = ({
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y,
-                                                                self.view.frame.size.width, self.view.frame.size.height - 45)];
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0,30,
+                                                                CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds))];
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         view;
     });
@@ -335,7 +338,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (UIView *) makeAdControls {
     UIView *adControls = ({
-        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 160, self.view.frame.size.width - 20, 150)];
+        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 160, self.view.frame.size.width - 20, 190)];
         controls.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         controls;
     });

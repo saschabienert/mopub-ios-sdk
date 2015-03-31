@@ -84,6 +84,14 @@ typedef NS_ENUM(NSUInteger, HZBannerPosition) {
  */
 @property (nonatomic, readonly) CGFloat adHeight;
 
+/**
+ *  Fetches a banner and places it in the view.
+ *
+ *  @param view       The view to place the banner in. If `view == options.presentingViewController.view`, the view controller's top/bottom layout guides are taken into consideration when placing the view.
+ *  @param position   The position, either top or bottom, to place the view in.
+ *  @param options    Configuration options to use for the banner.
+ *  @param completion A block called when the banner fetch either succeeds or fails.
+ */
 + (void)placeBannerInView:(UIView *)view
                  position:(HZBannerPosition)position
                   options:(HZBannerAdOptions *)options

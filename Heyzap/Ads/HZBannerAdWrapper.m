@@ -120,6 +120,14 @@ static NSMutableArray *allWrappers;
         } else {
             switch (position) {
                 case HZBannerPositionTop: {
+                    CGRect tmpFrame = wrapper.mediatedBanner.frame;
+                    
+                    if ([options.presentingViewController respondsToSelector:@selector(topLayoutGuide)]
+                        && options.presentingViewController.view == view) {
+                        tmpFrame.origin.y += options.presentingViewController.topLayoutGuide.length;
+                    }
+                    
+                    wrapper.mediatedBanner.frame = tmpFrame;
                     [view addSubview:wrapper.mediatedBanner];
                     break;
                 }
@@ -131,10 +139,15 @@ static NSMutableArray *allWrappers;
                         NSLog(@"WARNING: %@ is placing a banner in a view whose height (%f) is less than that of the banner (%f). Is your view configured correctly?",NSStringFromSelector(_cmd), viewHeight, bannerHeight);
                     }
                     
-                    CGRect tmpFramp = wrapper.mediatedBanner.frame;
-                    tmpFramp.origin.y = viewHeight - bannerHeight;
+                    CGRect tmpFrame = wrapper.mediatedBanner.frame;
+                    tmpFrame.origin.y = viewHeight - bannerHeight;
                     
-                    wrapper.mediatedBanner.frame = tmpFramp;
+                    if ([options.presentingViewController respondsToSelector:@selector(bottomLayoutGuide)]
+                        && options.presentingViewController.view == view) {
+                        tmpFrame.origin.y -= options.presentingViewController.bottomLayoutGuide.length;
+                    }
+                    
+                    wrapper.mediatedBanner.frame = tmpFrame;
                     [view addSubview:wrapper.mediatedBanner];
                     break;
                 }
