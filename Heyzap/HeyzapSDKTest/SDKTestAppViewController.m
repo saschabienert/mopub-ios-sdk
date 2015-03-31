@@ -24,11 +24,6 @@
 #import "NativeAdTableViewController.h"
 #import "HZBannerAd.h"
 
-//#import <FBAudienceNetwork/FBAudienceNetwork.h>
-//#import "GADBannerView.h"
-
-@import iAd;
-
 #define kTagCreativeIDField 4393
 
 typedef enum {
@@ -436,29 +431,6 @@ const CGFloat kLeftMargin = 10;
         subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
     }
     self.scrollView.contentSize = (CGSize) { CGRectGetWidth(self.view.frame), subviewContainingRect.size.height + 80 };
-
-    [self addBannersStuff];
-}
-
-- (void)addBannersStuff {
-    HZBannerAdOptions *options = [[HZBannerAdOptions alloc] init];
-    options.facebookBannerSize = HZFacebookBannerSizeFlexibleWidthHeight50;
-    options.admobBannerSize = HZAdMobBannerSizeFlexibleWidthPortrait;
-    options.presentingViewController = self;
-    
-//    [HZBannerAdWrapper requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdWrapper *wrapper) {
-//        NSLog(@"<%@:%@:%d",[self class],NSStringFromSelector(_cmd),__LINE__);
-//        if (error) {
-//            NSLog(@"Error fetching banner!!!");
-//        } else {
-//            self.wrapper = wrapper;
-//            self.wrapper.delegate = self;
-//            [self.view addSubview:self.wrapper.mediatedBanner];
-//        }
-//    }];
-    
-    [HZBannerAd placeBannerInView:self.view position:HZBannerPositionBottom options:options completion:nil];
-    
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{

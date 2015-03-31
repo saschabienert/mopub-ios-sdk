@@ -20,7 +20,6 @@
 @property (nonatomic, strong) NSString *placementID;
 @property (nonatomic, strong) NSString *bannerPlacementID;
 @property (nonatomic, strong) HZFBInterstitialAd *interstitialAd;
-
 @end
 
 @implementation HZFacebookAdapter
@@ -95,7 +94,6 @@
 }
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag {
-    
     NSAssert(self.placementID, @"Need a Placement ID by this point");
     
     if (type != HZAdTypeInterstitial) {

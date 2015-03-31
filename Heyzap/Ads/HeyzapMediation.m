@@ -65,8 +65,6 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
-@property (nonatomic, strong) NSMutableArray *bannerAdapters;
-
 @end
 
 @implementation HeyzapMediation
@@ -95,7 +93,6 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
-        _bannerAdapters = [NSMutableArray array];
     }
     return self;
 }
