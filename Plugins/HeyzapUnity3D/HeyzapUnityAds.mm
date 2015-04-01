@@ -29,6 +29,7 @@
 #import "HZInterstitialAd.h"
 #import "HZVideoAd.h"
 #import "HZIncentivizedAd.h"
+#import "HZBannerAd.h"
 
 extern void UnitySendMessage(const char *, const char *, const char *);
 
@@ -124,8 +125,6 @@ extern "C" {
         HZBannerDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_BANNER_KLASS];
     }
 
-    #pragma mark Interstitial
-
     void hz_ads_show_interstitial(const char *tag) {
         [HZInterstitialAd showForTag: [NSString stringWithUTF8String: tag]];
     }
@@ -142,8 +141,6 @@ extern "C" {
         return [HZInterstitialAd isAvailableForTag: [NSString stringWithUTF8String: tag]];
     }
 
-    #pragma mark Video
-
     void hz_ads_show_video(const char *tag) {
         [HZVideoAd showForTag: [NSString stringWithUTF8String: tag]];
     }
@@ -159,8 +156,6 @@ extern "C" {
     bool hz_ads_video_is_available(const char *tag) {
         return [HZVideoAd isAvailable];
     }
-
-    #pragma mark Incentivized
 
     void hz_ads_show_incentivized(const char *tag) {
         [HZIncentivizedAd showForTag: [NSString stringWithUTF8String: tag]];
@@ -185,8 +180,6 @@ extern "C" {
         }
         return [HZIncentivizedAd setUserIdentifier: userID];
     }
-
-    #pragma mark Banners
 
     void hz_ads_show_banner(const char *position, const char *tag) {
         
@@ -213,8 +206,6 @@ extern "C" {
             HZCurrentBannerAd = nil;
         }
     }
-
-    #pragma mark Mediation Debug Suite
 
     void hz_ads_show_mediation_debug_view_controller(void) {
         [HeyzapAds presentMediationDebugViewController];
