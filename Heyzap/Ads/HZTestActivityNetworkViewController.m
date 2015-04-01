@@ -727,6 +727,7 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 }
 
 - (void)showBanner:(UIButton *)sender {
+    [self.view endEditing:YES];
     sender.enabled = NO;
     
     [self appendStringToDebugLog:@"Requesting Banner..."];
@@ -750,6 +751,7 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 }
 
 - (void)hideBanner:(UIButton *)sender {
+    [self.view endEditing:YES];
     [self hideBanner];
 }
 
