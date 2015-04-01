@@ -29,8 +29,9 @@
 typedef enum {
     kAdUnitSegmentInterstitial,
     kAdUnitSegmentVideo,
-    kAdUnitSegmentIncentivized
-} kAdUnitSegement;
+    kAdUnitSegmentIncentivized,
+    kAdUnitSegmentBanner,
+} kAdUnitSegment;
 
 @interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, HZBannerAdDelegate>
 
@@ -59,6 +60,12 @@ typedef enum {
 @property (nonatomic, strong) NSURL *lastFetchURL;
 
 @property (nonatomic, strong) HZBannerAd *wrapper;
+
+@property (nonatomic) UIButton *showBannerButton;
+@property (nonatomic) UIButton *hideBannerButton;
+
+@property (nonatomic) NSArray *bannerControls;
+@property (nonatomic) NSArray *nonBannerControls;
 
 
 @end
@@ -141,6 +148,10 @@ typedef enum {
 }
 
 - (void) changeColorOfShowButton {
+    
+    [self.bannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex != kAdUnitSegmentBanner) forKey:@"hidden"];
+    [self.nonBannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex == kAdUnitSegmentBanner) forKey:@"hidden"];
+    
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
             [self setShowButtonOn:[HZInterstitialAd isAvailable]];
@@ -222,6 +233,22 @@ const CGFloat kLeftMargin = 10;
     [self.showButton addTarget: self action: @selector(showAd:) forControlEvents: UIControlEventTouchUpInside];
     [self.scrollView addSubview: self.showButton];
     
+    self.showBannerButton = ({
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        button.frame = self.showButton.frame;
+        button.backgroundColor = [UIColor darkGrayColor];
+        button.layer.cornerRadius = 4;
+        [button setTitle:@"Show" forState:UIControlStateNormal];
+        [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
+        
+        button;
+    });
+    [self.showBannerButton addTarget:self
+                              action:@selector(showBannerButtonPressed:)
+                    forControlEvents:UIControlEventTouchUpInside];
+    [self.scrollView addSubview:self.showBannerButton];
+    
     [self changeColorOfShowButton];
     
     UIButton *fetchButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
@@ -232,6 +259,25 @@ const CGFloat kLeftMargin = 10;
     [fetchButton setTitle: @"Fetch" forState: UIControlStateNormal];
     [fetchButton addTarget: self action: @selector(fetchAd:) forControlEvents: UIControlEventTouchUpInside];
     [self.scrollView addSubview: fetchButton];
+    
+    self.hideBannerButton = ({
+        UIButton *button = [UIButton buttonWithType: UIButtonTypeRoundedRect];
+        button.frame = fetchButton.frame;
+        button.backgroundColor = [UIColor darkGrayColor];
+        button.layer.cornerRadius = 4.0;
+        [button setTitle: @"Hide" forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
+        button.enabled = NO;
+        button;
+    });
+    [self.hideBannerButton addTarget: self action: @selector(hideBannerButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
+    [self.scrollView addSubview: self.hideBannerButton];
+    
+    // Keep references to banner/non-banner controls so we can flip between them when the segmented control changes.
+    [self.bannerControls setValue:@YES forKey:@"hidden"];
+    self.bannerControls = @[self.showBannerButton,self.hideBannerButton];
+    self.nonBannerControls = @[self.showButton, fetchButton];
     
     self.adsTextField = [[UITextField alloc]initWithFrame:CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, 10.0, 110.0, 25.5)];
     self.adsTextField.delegate = self;
@@ -262,7 +308,7 @@ const CGFloat kLeftMargin = 10;
     [testActivityButton addTarget:self action:@selector(showTestActivity) forControlEvents:UIControlEventTouchUpInside];
     [self.scrollView addSubview:testActivityButton];
 
-    self.adUnitSegmentedControl = [[UISegmentedControl alloc] initWithItems: @[@"Interstitial", @"Video", @"Incentivized"]];
+    self.adUnitSegmentedControl = [[UISegmentedControl alloc] initWithItems: @[@"Interstitial", @"Video", @"Incentivized", @"Banner"]];
     self.adUnitSegmentedControl.frame = CGRectMake(10, CGRectGetMaxY(nativeAdsButton.frame)+10, self.view.frame.size.width-20, 44);
     self.adUnitSegmentedControl.tag = 3203;
     self.adUnitSegmentedControl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -510,6 +556,33 @@ const CGFloat kLeftMargin = 10;
         default:
             break;
     }
+}
+
+- (void)showBannerButtonPressed:(UIControl *)sender {
+    self.showBannerButton.enabled = NO;
+    
+    [self.view endEditing:YES];
+    HZBannerAdOptions *opts = [[HZBannerAdOptions alloc] init];
+    opts.presentingViewController = self;
+    [HZBannerAd placeBannerInView:self.view
+                         position:HZBannerPositionBottom
+                          options:opts
+                       completion:^(NSError *error, HZBannerAd *wrapper) {
+                           if (error) {
+                               self.showBannerButton.enabled = YES;
+                           } else {
+                               self.hideBannerButton.enabled = YES;
+                           }
+                           self.wrapper = wrapper;
+                       }];
+}
+
+- (void)hideBannerButtonPressed:(id)sender {
+    [self.view endEditing:YES];
+    [self.wrapper finishUsingBanner];
+    
+    self.hideBannerButton.enabled = NO;
+    self.showBannerButton.enabled = YES;
 }
 
 #pragma mark - Target-Action
