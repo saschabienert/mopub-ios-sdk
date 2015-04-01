@@ -167,7 +167,7 @@
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
-    Class networkClass = [[self.allNetworks objectAtIndex:indexPath.row] class];
+    Class networkClass = [self.allNetworks objectAtIndex:indexPath.row];
     if (![networkClass isSDKAvailable]) {
         [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@ SDK is not available", [networkClass humanizedName]]
                                     message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
