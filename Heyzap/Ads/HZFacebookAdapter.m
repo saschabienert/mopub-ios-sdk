@@ -31,6 +31,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         proxy = [[HZFacebookAdapter alloc] init];
+        proxy.forwardingDelegate = [HZAdapterDelegate new];
+        proxy.forwardingDelegate.adapter = proxy;
     });
     return proxy;
 }
@@ -49,6 +51,10 @@
 
 + (NSString *) humanizedName {
     return kHZAdapterFacebookHumanized;
+}
+
+- (HZNetwork)network {
+    return HZNetworkFacebook;
 }
 
 + (NSString *)sdkVersion {
@@ -108,7 +114,7 @@
     }
     
     self.interstitialAd = [[HZFBInterstitialAd alloc] initWithPlacementID:self.placementID];
-    self.interstitialAd.delegate = self;
+    self.interstitialAd.delegate = self.forwardingDelegate;
     [self.interstitialAd loadAd];
 }
 

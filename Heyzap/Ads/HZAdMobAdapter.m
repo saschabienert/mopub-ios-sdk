@@ -35,6 +35,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         proxy = [[HZAdMobAdapter alloc] init];
+        proxy.forwardingDelegate = [HZAdapterDelegate new];
+        proxy.forwardingDelegate.adapter = proxy;
     });
     return proxy;
 }
@@ -78,6 +80,10 @@
     return kHZAdapterAdMobHumanized;
 }
 
+- (HZNetwork)network {
+    return HZNetworkAdMob;
+}
+
 + (NSString *)sdkVersion {
     return [HZGADRequest sdkVersion];
 }
@@ -108,7 +114,7 @@
     
     self.currentInterstitial = [[HZGADInterstitial alloc] init];
     self.currentInterstitial.adUnitID = self.adUnitID;
-    self.currentInterstitial.delegate = self;
+    self.currentInterstitial.delegate = self.forwardingDelegate;
     
     HZGADRequest *request = [HZGADRequest request];
     

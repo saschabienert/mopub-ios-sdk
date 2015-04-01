@@ -65,6 +65,8 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
+@property (nonatomic, strong) NSMutableDictionary *networkListeners;
+
 @end
 
 @implementation HeyzapMediation
@@ -738,6 +740,17 @@ const NSTimeInterval bannerTimeout = 10;
 }
 - (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter wasClickedForSession:(HZMediationSession *)session {
     [session reportClickForAdapter:bannerAdapter.parentAdapter];
+}
+
+- (void)setDelegate:(id)delegate forNetwork:(HZNetwork)network {
+    [self.networkListeners setObject:delegate forKey:[NSNumber numberWithUnsignedInteger:network]];
+}
+
+- (void)forwardInvocation:(NSInvocation *)invocation forNetwork:(HZNetwork)network {
+    id delegate = [self.networkListeners objectForKey:[NSNumber numberWithUnsignedInteger:network]];
+    if ([delegate respondsToSelector:[invocation selector]]) {
+        [invocation invokeWithTarget:delegate];
+    }
 }
 
 @end

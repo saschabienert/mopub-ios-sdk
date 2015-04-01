@@ -7,24 +7,7 @@
 //
 
 #import "HZBaseAdapter.h"
-
-// AppLovin uses the same delegate selectors for incentivized/interstitial, so we need separate objects to break down the messages by ad types.
-@protocol HZAppLovinDelegateReceiver <NSObject>
-
-- (void)didLoadAdOfType:(HZAdType)type;
-- (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error;
-
-- (void)didClickAd;
-- (void)didDismissAd;
-
-- (void)willPlayAudio;
-- (void)didFinishAudio;
-
-- (void)didCompleteIncentivized;
-- (void)didFailToCompleteIncentivized;
-
-
-@end
+#import "HZAppLovinDelegateReceiver.h"
 
 @interface HZAppLovinAdapter : HZBaseAdapter <HZAppLovinDelegateReceiver>
 

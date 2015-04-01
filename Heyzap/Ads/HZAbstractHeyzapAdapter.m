@@ -44,6 +44,10 @@
     return SDK_VERSION;
 }
 
+- (HZNetwork)network {
+    return HZNetworkHeyzap;
+}
+
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;

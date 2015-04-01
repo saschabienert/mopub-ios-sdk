@@ -52,6 +52,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         adapter = [[HZAppLovinAdapter alloc] init];
+        adapter.forwardingDelegate = [HZAdapterDelegate new];
+        adapter.forwardingDelegate.adapter = adapter;
     });
     return adapter;
 }
@@ -81,6 +83,10 @@
 + (NSString *)humanizedName
 {
     return kHZAdapterAppLovinHumanized;
+}
+
+- (HZNetwork)network {
+    return HZNetworkAppLovin;
 }
 
 + (NSString *)sdkVersion {
@@ -118,7 +124,7 @@
     
     switch (type) {
         case HZAdTypeInterstitial: {
-            self.interstitialDelegate = [[HZAppLovinDelegate alloc] initWithAdType:HZAdTypeInterstitial delegate:self];
+            self.interstitialDelegate = [[HZAppLovinDelegate alloc] initWithAdType:HZAdTypeInterstitial delegate:self.forwardingDelegate];
             [[self.sdk adService] loadNextAd:[HZALAdSize sizeInterstitial]
                                    andNotify:self.interstitialDelegate];
             break;
@@ -128,7 +134,7 @@
                 return;
             }
             self.currentIncentivizedAd = [[HZALIncentivizedInterstitialAd alloc] initIncentivizedInterstitialWithSdk:self.sdk];
-            self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithAdType:HZAdTypeIncentivized delegate:self];
+            self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithAdType:HZAdTypeIncentivized delegate:self.forwardingDelegate];
             [self.currentIncentivizedAd preloadAndNotify:self.incentivizedDelegate];
             self.currentIncentivizedAd.adVideoPlaybackDelegate = self.incentivizedDelegate;
             

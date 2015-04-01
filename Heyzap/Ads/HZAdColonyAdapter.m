@@ -32,6 +32,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         proxy = [[HZAdColonyAdapter alloc] init];
+        proxy.forwardingDelegate = [HZAdapterDelegate new];
+        proxy.forwardingDelegate.adapter = proxy;
     });
     return proxy;
 }
@@ -51,6 +53,10 @@
 + (NSString *)humanizedName
 {
     return kHZAdapterAdColonyHumanized;
+}
+
+- (HZNetwork)network {
+    return HZNetworkAdColony;
 }
 
 + (NSString *)sdkVersion {
@@ -102,7 +108,7 @@
     self.incentivizedZoneID = incentivizedZoneID;
     [HZAdColony configureWithAppID:appID
                            zoneIDs:@[interstitialZoneID,incentivizedZoneID]
-                          delegate:self
+                          delegate:self.forwardingDelegate
                            logging:NO];
 }
 

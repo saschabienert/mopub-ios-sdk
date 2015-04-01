@@ -121,6 +121,18 @@
     [[HZAdsManager sharedManager] setMediator: mediator];
 }
 
++ (void)setDelegate:(id)delegate forNetwork:(HZNetwork)network {
+    HZVersionCheck()
+    
+    if (![HeyzapMediation isOnlyHeyzapSDK]) {
+        
+    }
+}
+
++ (void) whenNetworkIsInitialized:(HZNetwork)network invokeCallback:(void(^)(void))callback {
+    HZVersionCheck()
+}
+
 + (NSString *) defaultTagName {
     return kHZDefaultTagName;
 }

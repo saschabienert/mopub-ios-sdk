@@ -74,6 +74,18 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsDisableMedation = 1 << 3,
 };
 
+typedef NS_ENUM(NSUInteger, HZNetwork) {
+    HZNetworkIAd =        1 << 0,
+    HZNetworkFacebook =   1 << 1,
+    HZNetworkUnityAds =   1 << 2,
+    HZNetworkAppLovin =   1 << 3,
+    HZNetworkVungle =     1 << 4,
+    HZNetworkChartboost = 1 << 5,
+    HZNetworkAdColony =   1 << 6,
+    HZNetworkAdMob =      1 << 7,
+    HZNetworkHeyzap =     1 << 8,
+};
+
 /** The `HZAdsDelegate` protocol provides global information about our ads. If you want to know if we had an ad to show after calling `showAd` (for example, to fallback to another ads provider). It is recommend using the `showAd:completion:` method instead. */
 @protocol HZAdsDelegate<NSObject>
 
@@ -160,6 +172,22 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
  *  @param delegate An object conforing to the HZIncentivizedAdDelegate protocol
  */
 + (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate __attribute__((deprecated("Call `HZIncentivizedAd setDelegate:` instead.")));
+
+/**
+ *  Sets an object to be forwarded all callbacks sent by the specified network.
+ *
+ *  @param delegate An object that can respond to the callbacks that the network sends.
+ *  @param network  A member of the HZNetwork enum, which identifies the network to listen to.
+ */
++ (void) setDelegate:(id)delegate forNetwork:(HZNetwork)network;
+
+/**
+ *  If the network is initialized, the callback is invoked immediately. Otherwise, wait for the network to be initialized and then invoke the callback.
+ *
+ *  @param network  A member of the HZNetwork enum, which identifies the network to check initialization on.
+ *  @param callback A block that will be invoked as soon as the network is determined to be initialized.
+ */
++ (void) whenNetworkIsInitialized:(HZNetwork)network invokeCallback:(void(^)(void))callback;
 
 
 /**

@@ -30,6 +30,8 @@
     dispatch_once(&onceToken, ^{
         adapter = [[HZiAdAdapter alloc] init];
         adapter.credentials = @{};
+        adapter.forwardingDelegate = [HZAdapterDelegate new];
+        adapter.forwardingDelegate.adapter = adapter;
     });
     return adapter;
 }
@@ -55,6 +57,10 @@
     return kHZAdapteriAdHumanized;
 }
 
+- (HZNetwork)network {
+    return HZNetworkIAd;
+}
+
 + (NSString *)sdkVersion {
     return [NSString stringWithFormat: @"%@", [UIDevice currentDevice].systemVersion];
 }
@@ -66,7 +72,7 @@
     
     if (self.interstitialAd == nil) {
         self.interstitialAd = [[ADInterstitialAd alloc] init];
-        self.interstitialAd.delegate = self;
+        self.interstitialAd.delegate = self.forwardingDelegate;
     }
 }
 

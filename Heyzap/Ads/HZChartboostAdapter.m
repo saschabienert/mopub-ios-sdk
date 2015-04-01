@@ -29,6 +29,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         adapter = [[HZChartboostAdapter alloc] init];
+        adapter.forwardingDelegate = [HZAdapterDelegate new];
+        adapter.forwardingDelegate.adapter = adapter;
     });
     return adapter;
 }
@@ -71,7 +73,7 @@
 
 - (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature
 {
-    [HZChartboost startWithAppId:appID appSignature:appSignature delegate:self];
+    [HZChartboost startWithAppId:appID appSignature:appSignature delegate:self.forwardingDelegate];
 }
 
 + (NSString *)name
@@ -82,6 +84,10 @@
 + (NSString *)humanizedName
 {
     return kHZAdapterChartboostHumanized;
+}
+
+- (HZNetwork)network {
+    return HZNetworkChartboost;
 }
 
 + (NSString *)sdkVersion {

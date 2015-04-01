@@ -40,7 +40,9 @@
 {
     self = [super init];
     if (self) {
-        [[HZUnityAds sharedInstance] setDelegate:self];
+        self.forwardingDelegate = [HZAdapterDelegate new];
+        self.forwardingDelegate.adapter = self;
+        [[HZUnityAds sharedInstance] setDelegate:self.forwardingDelegate];
     }
     return self;
 }
@@ -60,6 +62,10 @@
 + (NSString *) humanizedName
 {
     return kHZAdapterUnityAdsHumanized;
+}
+
+- (HZNetwork)network {
+    return HZNetworkUnityAds;
 }
 
 + (NSString *)sdkVersion

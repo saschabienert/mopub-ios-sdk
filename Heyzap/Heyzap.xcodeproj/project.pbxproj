@@ -355,6 +355,10 @@
 		996D9AA5BB144F82A96FC8B0 /* libPods-Integration Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */; };
 		B304C4C2197EDC4A009ACC5D /* HZMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = B304C4C0197EDC4A009ACC5D /* HZMetrics.h */; };
 		B304C4C3197EDC4A009ACC5D /* HZMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = B304C4C1197EDC4A009ACC5D /* HZMetrics.m */; };
+		E600E20D1ACB5715006CE286 /* HZAdapterDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = E600E20C1ACB5715006CE286 /* HZAdapterDelegate.h */; };
+		E600E20F1ACB5764006CE286 /* HZAdapterDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E600E20E1ACB5764006CE286 /* HZAdapterDelegate.m */; };
+		E600E2121ACB765B006CE286 /* HZAppLovinDelegateReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = E600E2111ACB7659006CE286 /* HZAppLovinDelegateReceiver.h */; };
+		E600E2141ACB7852006CE286 /* HZAdType.h in Headers */ = {isa = PBXBuildFile; fileRef = E600E2131ACB781C006CE286 /* HZAdType.h */; };
 		E62181B319AFB3CC0099BE8C /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E62181B219AFB3CC0099BE8C /* libsqlite3.dylib */; };
 		E62181B819AFBF520099BE8C /* HZVungleSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = E62181B619AFBF520099BE8C /* HZVungleSDK.h */; };
 		E62181B919AFBF520099BE8C /* HZVungleSDK.m in Sources */ = {isa = PBXBuildFile; fileRef = E62181B719AFBF520099BE8C /* HZVungleSDK.m */; };
@@ -731,6 +735,10 @@
 		B304C4C0197EDC4A009ACC5D /* HZMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMetrics.h; sourceTree = "<group>"; };
 		B304C4C1197EDC4A009ACC5D /* HZMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HZMetrics.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B9241C359E50B2D9005581FE /* Pods-Integration Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integration Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Integration Tests/Pods-Integration Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		E600E20C1ACB5715006CE286 /* HZAdapterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdapterDelegate.h; sourceTree = "<group>"; };
+		E600E20E1ACB5764006CE286 /* HZAdapterDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdapterDelegate.m; sourceTree = "<group>"; };
+		E600E2111ACB7659006CE286 /* HZAppLovinDelegateReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZAppLovinDelegateReceiver.h; sourceTree = "<group>"; };
+		E600E2131ACB781C006CE286 /* HZAdType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZAdType.h; sourceTree = "<group>"; };
 		E62181B219AFB3CC0099BE8C /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		E62181B619AFBF520099BE8C /* HZVungleSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVungleSDK.h; sourceTree = "<group>"; };
 		E62181B719AFBF520099BE8C /* HZVungleSDK.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVungleSDK.m; sourceTree = "<group>"; };
@@ -921,6 +929,9 @@
 				500F88E318E203A500E5D6F8 /* HZClassProxy.m */,
 				504D824B1AAA64A4004695C8 /* HZBannerAdapter.h */,
 				504D824C1AAA64A4004695C8 /* HZBannerAdapter.m */,
+				E600E20C1ACB5715006CE286 /* HZAdapterDelegate.h */,
+				E600E20E1ACB5764006CE286 /* HZAdapterDelegate.m */,
+				E600E2131ACB781C006CE286 /* HZAdType.h */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -1188,6 +1199,7 @@
 				50B46B2018F89C58005155B8 /* HZAppLovinDelegate.m */,
 				50AC60B018FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.h */,
 				50AC60B118FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m */,
+				E600E2111ACB7659006CE286 /* HZAppLovinDelegateReceiver.h */,
 			);
 			name = Adapter;
 			sourceTree = "<group>";
@@ -1643,6 +1655,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				50B46B1118F862DA005155B8 /* HZALSdk.h in Headers */,
+				E600E2141ACB7852006CE286 /* HZAdType.h in Headers */,
 				50B46B0D18F862B3005155B8 /* HZAppLovinAdapter.h in Headers */,
 				509F002D18EB62BC0011EAB3 /* HZMediationSessionKey.h in Headers */,
 				509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */,
@@ -1699,6 +1712,7 @@
 				504D82491AAA48CB004695C8 /* HZFBAdView.h in Headers */,
 				5011CE8918DBBBF700604B53 /* HZAdMobAdapter.h in Headers */,
 				500F88F218E215D000E5D6F8 /* HZGADInterstitial.h in Headers */,
+				E600E20D1ACB5715006CE286 /* HZAdapterDelegate.h in Headers */,
 				86B09B92175975C80045AA54 /* HZLog.h in Headers */,
 				500F88D918E0F9BE00E5D6F8 /* HZChartboost.h in Headers */,
 				509E8D4219B9065500ABF2D2 /* HZNotifications.h in Headers */,
@@ -1716,6 +1730,7 @@
 				86234AB018581B800071957B /* HZVideoControlView.h in Headers */,
 				B304C4C2197EDC4A009ACC5D /* HZMetrics.h in Headers */,
 				504D82441AAA26B3004695C8 /* HZBannerAd.h in Headers */,
+				E600E2121ACB765B006CE286 /* HZAppLovinDelegateReceiver.h in Headers */,
 				50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */,
 				86CD0E8E17BB0C070005BD3D /* HZAdsAPIClient.h in Headers */,
 				86234AA918568EEA0071957B /* HZVideoView.h in Headers */,
@@ -2211,6 +2226,7 @@
 				509E8D4719B91B7000ABF2D2 /* HZAbstractHeyzapAdapter.m in Sources */,
 				50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */,
 				500F88E518E203A500E5D6F8 /* HZClassProxy.m in Sources */,
+				E600E20F1ACB5764006CE286 /* HZAdapterDelegate.m in Sources */,
 				86FF907A18583FF100BC48BF /* HZAdLibrary.m in Sources */,
 				50B46B2218F89C58005155B8 /* HZAppLovinDelegate.m in Sources */,
 				866E3A001850172100B6E431 /* HZInterstitialAdModel.m in Sources */,

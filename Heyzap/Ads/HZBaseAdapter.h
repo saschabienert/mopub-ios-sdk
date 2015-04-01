@@ -10,20 +10,14 @@
 #import "HZMetricsAdStub.h"
 #import "HZShowOptions.h"
 #import "HZBannerAdapter.h"
+#import "HZAdapterDelegate.h"
+#import "HZAdType.h"
 @import UIKit;
-
-// This is a bitmasked parameter, but with the exception of the `supportedAdFormats` method, almost everything else should treat it as just an enum.
-typedef NS_OPTIONS(NSUInteger, HZAdType) {
-    HZAdTypeInterstitial = 1 << 0,
-    HZAdTypeVideo = 1 << 1,
-    HZAdTypeIncentivized = 1 << 2,
-    // placeholder for moreapps
-    HZAdTypeBanner = 1 << 4,
-};
 
 @class HZBaseAdapter;
 @class HZBannerAdapter;
 @class HZBannerAdOptions;
+@class HZAdapterDelegate;
 @protocol HZBannerReportingDelegate;
 
 @protocol HZMediationAdapterDelegate <NSObject>
@@ -66,6 +60,9 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
  *  Subclasses to use this to store tag and adUnit for metrics
  */
 @property (nonatomic, strong) HZMetricsAdStub *metricsStub;
+
+@property (nonatomic) HZNetwork network;
+@property (nonatomic, strong) HZAdapterDelegate *forwardingDelegate;
 
 + (instancetype)sharedInstance;
 

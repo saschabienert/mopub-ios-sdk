@@ -52,6 +52,9 @@
 
 - (void)setDelegate:(id<HZAdsDelegate>)delegate forAdType:(HZAdType)adType;
 
+- (void)setDelegate:(id)delegate forNetwork:(HZNetwork)network;
+- (void)forwardInvocation:(NSInvocation *)invocation forNetwork:(HZNetwork)network;
+
 HZAdType hzAdTypeFromString(NSString *adUnit);
 NSString * NSStringFromAdType(HZAdType type);
 

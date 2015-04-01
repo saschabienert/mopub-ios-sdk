@@ -59,7 +59,9 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 {
     self = [super init];
     if (self) {
-        [[HZVungleSDK sharedSDK] setDelegate:self];
+        self.forwardingDelegate = [HZAdapterDelegate new];
+        self.forwardingDelegate.adapter = self;
+        [[HZVungleSDK sharedSDK] setDelegate:self.forwardingDelegate];
     }
     return self;
 }
@@ -96,6 +98,10 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 + (NSString *)humanizedName
 {
     return kHZAdapterVungleHumanized;
+}
+
+- (HZNetwork)network {
+    return HZNetworkVungle;
 }
 
 + (NSString *)sdkVersion {
