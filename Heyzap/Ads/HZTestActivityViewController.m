@@ -240,6 +240,10 @@
             NSString *mediatorName = mediator[@"name"];
 
             Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
+            
+            if ([self.allNetworks indexOfObjectIdenticalTo:mediatorClass] == NSNotFound) {
+                continue;
+            }
 
             // don't do anything if the sdk isn't available
             if (![mediatorClass isSDKAvailable]) {
