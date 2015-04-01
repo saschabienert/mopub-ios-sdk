@@ -13,7 +13,9 @@
 @implementation HZAdapterDelegate
 
 - (BOOL)respondsToSelector:(SEL)selector {
-    return [self.adapter respondsToSelector:selector] || [[[HeyzapMediation sharedInstance] getDelegateForNetwork:self.adapter.network] respondsToSelector:selector];
+    BOOL adapterResponds = [self.adapter respondsToSelector:selector];
+    BOOL delegateResponds = [[[HeyzapMediation sharedInstance] getDelegateForNetwork:self.adapter.network] respondsToSelector:selector];
+    return adapterResponds || delegateResponds;
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)selector {
