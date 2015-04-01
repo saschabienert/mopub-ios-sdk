@@ -645,7 +645,7 @@ const NSTimeInterval bannerTimeout = 10;
     
     HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:@[@"banner"]
                                                                          adUnit:@"banner"
-                                                                            tag:[HeyzapAds defaultTagName]
+                                                                            tag:options.tag
                                                                     auctionType:HZAuctionTypeMixed
                                                             andAdditionalParams:(options.networkName ? @{@"networks" : options.networkName} : @{})];
     
