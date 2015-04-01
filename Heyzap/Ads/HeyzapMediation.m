@@ -746,11 +746,8 @@ const NSTimeInterval bannerTimeout = 10;
     [self.networkListeners setObject:delegate forKey:[NSNumber numberWithUnsignedInteger:network]];
 }
 
-- (void)forwardInvocation:(NSInvocation *)invocation forNetwork:(HZNetwork)network {
-    id delegate = [self.networkListeners objectForKey:[NSNumber numberWithUnsignedInteger:network]];
-    if ([delegate respondsToSelector:[invocation selector]]) {
-        [invocation invokeWithTarget:delegate];
-    }
+- (id)getDelegateForNetwork:(HZNetwork)network {
+    return [self.networkListeners objectForKey:[NSNumber numberWithUnsignedInteger:network]];
 }
 
 @end

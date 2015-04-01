@@ -12,16 +12,29 @@
 #pragma clang diagnostic ignored "-Wprotocol"
 @implementation HZAdapterDelegate
 
+- (BOOL)respondsToSelector:(SEL)selector {
+    return [self.adapter respondsToSelector:selector] || [[[HeyzapMediation sharedInstance] getDelegateForNetwork:self.adapter.network] respondsToSelector:selector];
+}
+
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)selector {
-    return [HZAdapterDelegate instanceMethodSignatureForSelector:selector];
+    NSMethodSignature *signature = [self.adapter.class instanceMethodSignatureForSelector:selector];
+    if (!signature) {
+        signature = [[[[HeyzapMediation sharedInstance] getDelegateForNetwork:self.adapter.network] class] instanceMethodSignatureForSelector:selector];
+    }
+    return signature;
 }
 
 - (void)forwardInvocation:(NSInvocation *)invocation {
-    if ([self.adapter respondsToSelector:[invocation selector]]) {
+    SEL selector = [invocation selector];
+
+    if ([self.adapter respondsToSelector:selector]) {
         [invocation invokeWithTarget:self.adapter];
     }
     
-    [[HeyzapMediation sharedInstance] forwardInvocation:invocation forNetwork:self.adapter.network];
+    id delegate = [[HeyzapMediation sharedInstance] getDelegateForNetwork:self.adapter.network];
+    if ([delegate respondsToSelector:selector]) {
+        [invocation invokeWithTarget:delegate];
+    }
 }
 
 @end
