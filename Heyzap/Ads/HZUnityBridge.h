@@ -30,27 +30,30 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __Heyzap__UnityBridge__
+#define __Heyzap__UnityBridge__
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#include <stdio.h>
 #import "HeyzapAds.h"
 
-/** HZShowOptions allows you to pass options to configure how ads are shown */
-@interface HZShowOptions : NSObject <NSCopying>
+extern "C" {
+    void hz_ads_start_app(const char *publisher_id, HZAdOptions flags);
+    void hz_ads_show_interstitial(const char *tag);
+    void hz_ads_hide_interstitial(void);
+    void hz_ads_fetch_interstitial(const char *tag);
+    bool hz_ads_interstitial_is_available(const char *tag);
+    void hz_ads_show_video(const char *tag);
+    void hz_ads_hide_video(void);
+    void hz_ads_fetch_video(const char *tag);
+    bool hz_ads_video_is_available(const char *tag);
+    void hz_ads_show_incentivized(const char *tag);
+    void hz_ads_hide_incentivized();
+    void hz_ads_fetch_incentivized(const char *tag);
+    bool hz_ads_incentivized_is_available(const char *tag);
+    void hz_ads_incentivized_set_user_identifier(const char *identifier);
+    void hz_ads_show_banner(const char *tag, const char *position);
+    void hz_ads_hide_banner();
+    void hz_ads_show_mediation_debug_view_controller();
+}
 
-/**
- *  @discussion A UIViewController that should present the ad being shown. If not specified the application's key window's root view controller is used.
- */
-@property (nonatomic, weak) UIViewController *viewController;
-
-/**
- *  @discussion An identifier for the location of the ad, which you can use to disable the ad from your dashboard. If not specified the tag "default" is always used.
- */
-@property (nonatomic, weak) NSString *tag;
-
-/**
- *  @discussion A block called when the ad is shown or fails to show. `result` states whether the show was successful; the error object describes the issue, if there was one.
- */
-@property (nonatomic, copy) void (^completion)(BOOL result, NSError *error);
-
-@end
+#endif /* defined(__Heyzap__UnityBridge__) */
