@@ -229,6 +229,10 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     if ([[self bannerSizes] count] == 0) {
         self.bannerSizeTextField.hidden = YES;
     }
+    
+    if (self.currentAdType != HZAdTypeBanner) {
+        [self.view endEditing:YES]; // Dismisses picker views when you change to a non-banner format.
+    }
 }
 
 - (void) fetchAd {
@@ -727,6 +731,7 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 }
 
 - (void)showBanner:(UIButton *)sender {
+    [self.view endEditing:YES];
     sender.enabled = NO;
     
     [self appendStringToDebugLog:@"Requesting Banner..."];
@@ -750,6 +755,7 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 }
 
 - (void)hideBanner:(UIButton *)sender {
+    [self.view endEditing:YES];
     [self hideBanner];
 }
 

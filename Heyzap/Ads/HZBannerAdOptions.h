@@ -84,5 +84,9 @@ typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
  */
 @property (nonatomic, weak) UIViewController *presentingViewController;
 
+/**
+ *  An identifier for the location of the ad, which you can use to disable the ad from your dashboard. If not specified the tag "default" is always used.
+ */
+@property (nonatomic, strong) NSString *tag;
 
 @end

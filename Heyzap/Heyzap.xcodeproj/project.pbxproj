@@ -98,6 +98,7 @@
 		5046CE8718E3545E000395AA /* HZMediationConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5046CE8518E3545E000395AA /* HZMediationConstants.m */; };
 		5046CE8A18E3B0C3000395AA /* HZDispatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5046CE8818E3B0C3000395AA /* HZDispatch.h */; };
 		5046CE8B18E3B0C3000395AA /* HZDispatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5046CE8918E3B0C3000395AA /* HZDispatch.m */; };
+		504D82441AAA26B3004695C8 /* HZBannerAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 504D82421AAA26B3004695C8 /* HZBannerAd.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		504D82451AAA26B3004695C8 /* HZBannerAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 504D82431AAA26B3004695C8 /* HZBannerAd.m */; };
 		504D82491AAA48CB004695C8 /* HZFBAdView.h in Headers */ = {isa = PBXBuildFile; fileRef = 504D82471AAA48CB004695C8 /* HZFBAdView.h */; };
 		504D824A1AAA48CB004695C8 /* HZFBAdView.m in Sources */ = {isa = PBXBuildFile; fileRef = 504D82481AAA48CB004695C8 /* HZFBAdView.m */; };
@@ -1668,6 +1669,8 @@
 				50DB884D1AB0C0D9003C5758 /* HZBannerAdOptions.h in Headers */,
 				500F88D918E0F9BE00E5D6F8 /* HZChartboost.h in Headers */,
 				5011CE5518DB9B7F00604B53 /* HZAdColonyAdapter.h in Headers */,
+				504D82441AAA26B3004695C8 /* HZBannerAd.h in Headers */,
+				50DB884D1AB0C0D9003C5758 /* HZBannerAdOptions.h in Headers */,
 				509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */,
 				50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */,
 				860FD47A187BB144008A35FD /* HZAdsFetchManager.h in Headers */,

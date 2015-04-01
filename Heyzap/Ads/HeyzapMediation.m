@@ -566,7 +566,6 @@ static int totalImpressions = 0;
             [adapterNames addObject:[adapterClass name]];
         }
     }
-    [adapterNames addObject:@"iad"];
     return [adapterNames componentsJoinedByString:@","];
 }
 
@@ -654,7 +653,7 @@ const NSTimeInterval bannerTimeout = 10;
     
     HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:@[@"banner"]
                                                                          adUnit:@"banner"
-                                                                            tag:[HeyzapAds defaultTagName]
+                                                                            tag:options.tag
                                                                     auctionType:HZAuctionTypeMixed
                                                             andAdditionalParams:(options.networkName ? @{@"networks" : options.networkName} : @{})];
     

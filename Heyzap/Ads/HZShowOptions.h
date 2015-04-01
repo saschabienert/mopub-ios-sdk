@@ -21,7 +21,7 @@
 /**
  *  @discussion An identifier for the location of the ad, which you can use to disable the ad from your dashboard. If not specified the tag "default" is always used.
  */
-@property (nonatomic, weak) NSString *tag;
+@property (nonatomic, strong) NSString *tag;
 
 /**
  *  @discussion A block called when the ad is shown or fails to show. `result` states whether the show was successful; the error object describes the issue, if there was one.
