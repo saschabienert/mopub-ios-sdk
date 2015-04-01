@@ -97,6 +97,8 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
+        _networkListeners = [[NSMutableDictionary alloc] init];
+        _initializationListeners = [[NSMutableDictionary alloc] init];
     }
     return self;
 }

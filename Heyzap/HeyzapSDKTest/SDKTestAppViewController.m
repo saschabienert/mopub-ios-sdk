@@ -29,7 +29,8 @@
 typedef enum {
     kAdUnitSegmentInterstitial,
     kAdUnitSegmentVideo,
-    kAdUnitSegmentIncentivized
+    kAdUnitSegmentIncentivized,
+    kAdUnitSegmentMoreApps
 } kAdUnitSegement;
 
 @interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, HZBannerAdDelegate>
@@ -151,6 +152,12 @@ typedef enum {
         case kAdUnitSegmentIncentivized:
             [self setShowButtonOn:[HZIncentivizedAd isAvailable]];
             break;
+        case kAdUnitSegmentMoreApps: {
+            [HeyzapAds whenNetworkIsInitialized:HZNetworkChartboost invokeCallback:^{
+                [self setShowButtonOn:[Chartboost hasMoreApps:[HeyzapAds defaultTagName]]];
+            }];
+            break;
+        }
         default:
             break;
     }
@@ -178,6 +185,21 @@ typedef enum {
         NSAssert([[NSThread currentThread] isMainThread], @"Response not from main thread");
         [self logToConsole:[NSString stringWithFormat:@"%@: %@",title,logText]];
     }
+}
+
+- (void)didDismissMoreApps:(CBLocation)location {
+    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
+    [self changeColorOfShowButton];
+}
+
+- (void)didCacheMoreApps:(CBLocation)location {
+    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
+    [self changeColorOfShowButton];
+}
+
+- (void)didFailToLoadMoreApps:(CBLocation)location withError:(CBLoadError)error {
+    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
+    [self changeColorOfShowButton];
 }
 
 
@@ -262,7 +284,7 @@ const CGFloat kLeftMargin = 10;
     [testActivityButton addTarget:self action:@selector(showTestActivity) forControlEvents:UIControlEventTouchUpInside];
     [self.scrollView addSubview:testActivityButton];
 
-    self.adUnitSegmentedControl = [[UISegmentedControl alloc] initWithItems: @[@"Interstitial", @"Video", @"Incentivized"]];
+    self.adUnitSegmentedControl = [[UISegmentedControl alloc] initWithItems: @[@"Interstitial", @"Video", @"Incentivized", @"More Apps"]];
     self.adUnitSegmentedControl.frame = CGRectMake(10, CGRectGetMaxY(nativeAdsButton.frame)+10, self.view.frame.size.width-20, 44);
     self.adUnitSegmentedControl.tag = 3203;
     self.adUnitSegmentedControl.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -486,6 +508,11 @@ const CGFloat kLeftMargin = 10;
         case kAdUnitSegmentIncentivized:
             [HZIncentivizedAd fetch];
             break;
+        case kAdUnitSegmentMoreApps: {
+            [HeyzapAds whenNetworkIsInitialized:HZNetworkChartboost invokeCallback:^{
+                [Chartboost cacheMoreApps:[HeyzapAds defaultTagName]];
+            }];
+        }
         default:
             break;
     }
@@ -507,6 +534,12 @@ const CGFloat kLeftMargin = 10;
             NSLog(@"Showing Incentivized");
             [HZIncentivizedAd show];
             break;
+        case kAdUnitSegmentMoreApps: {
+            [HeyzapAds whenNetworkIsInitialized:HZNetworkChartboost invokeCallback:^{
+                NSLog(@"Showing More Apps");
+                [Chartboost showMoreApps:[HeyzapAds defaultTagName]];
+            }];
+        }
         default:
             break;
     }

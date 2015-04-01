@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "BaseTestAppViewController.h"
 #import "HeyzapAds.h"
+#import "Chartboost.h"
 
-@interface SDKTestAppViewController : BaseTestAppViewController <HZAdsDelegate,UITextFieldDelegate, HZIncentivizedAdDelegate>
+@interface SDKTestAppViewController : BaseTestAppViewController <HZAdsDelegate,UITextFieldDelegate, HZIncentivizedAdDelegate, ChartboostDelegate>
 
 extern NSString * const kCreativeIDTextFieldAccessibilityLabel;
 extern NSString * const kShowAdButtonAccessibilityLabel;
