@@ -557,7 +557,6 @@ static int totalImpressions = 0;
             [adapterNames addObject:[adapterClass name]];
         }
     }
-    [adapterNames addObject:@"iad"];
     return [adapterNames componentsJoinedByString:@","];
 }
 
