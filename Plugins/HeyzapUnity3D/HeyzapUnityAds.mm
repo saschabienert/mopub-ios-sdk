@@ -188,7 +188,7 @@ extern "C" {
 
     #pragma mark Banners
 
-    void hz_ads_show_banner(const char *tag, const char *position) {
+    void hz_ads_show_banner(const char *position, const char *tag) {
         
         if (HZCurrentBannerAd == nil) {
             HZBannerPosition pos = HZBannerPositionBottom;
