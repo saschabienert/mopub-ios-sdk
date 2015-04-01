@@ -275,9 +275,9 @@ const CGFloat kLeftMargin = 10;
     [self.scrollView addSubview: self.hideBannerButton];
     
     // Keep references to banner/non-banner controls so we can flip between them when the segmented control changes.
-    [self.bannerControls setValue:@YES forKey:@"hidden"];
     self.bannerControls = @[self.showBannerButton,self.hideBannerButton];
     self.nonBannerControls = @[self.showButton, fetchButton];
+    [self.bannerControls setValue:@YES forKey:@"hidden"];
     
     self.adsTextField = [[UITextField alloc]initWithFrame:CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, 10.0, 110.0, 25.5)];
     self.adsTextField.delegate = self;
