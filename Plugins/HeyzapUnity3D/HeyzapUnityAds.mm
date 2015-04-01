@@ -108,7 +108,7 @@ static HeyzapUnityAdDelegate *HZBannerDelegate = nil;
 static HZBannerAd *HZCurrentBannerAd = nil;
 
 extern "C" {
-    void hz_ads_start_app(const char *publisher_id, enum HZAdOptions flags) {
+    void hz_ads_start_app(const char *publisher_id, HZAdOptions flags) {
         NSString *publisherID = [NSString stringWithUTF8String: publisher_id];
         
         [HeyzapAds startWithPublisherID: publisherID andOptions: flags andFramework: HZ_FRAMEWORK_NAME];
