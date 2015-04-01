@@ -17,7 +17,7 @@
 
 @implementation HZiAdBannerAdapter
 
-- (instancetype)initWithReportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter {
+- (instancetype)initWithReportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter options:(HZBannerAdOptions *)options {
     self = [super init];
     if (self) {
         self.parentAdapter = parentAdapter;
@@ -25,6 +25,11 @@
         
         _banner = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
         _banner.delegate = self;
+        
+        const CGSize sizeThatFits = [_banner sizeThatFits:options.presentingViewController.view.bounds.size];
+        CGRect frame = _banner.frame;
+        frame.size = sizeThatFits;
+        _banner.frame = frame;
     }
     return self;
 }
