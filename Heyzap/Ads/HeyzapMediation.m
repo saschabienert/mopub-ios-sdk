@@ -771,10 +771,12 @@ const NSTimeInterval bannerTimeout = 10;
 }
 
 - (void) invokeInitializationListeners:(HZNetwork)network {
-    NSMutableArray *array = [self.initializationListeners objectForKey:[NSNumber numberWithUnsignedInteger:network]];
+    NSNumber *key = [NSNumber numberWithUnsignedInteger:network];
+    NSMutableArray *array = [self.initializationListeners objectForKey:key];
     for (void(^callback)(void) in array) {
         callback();
     }
+    [self.initializationListeners removeObjectForKey:key];
 }
 
 @end
