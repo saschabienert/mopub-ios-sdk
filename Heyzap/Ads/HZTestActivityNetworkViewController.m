@@ -229,6 +229,10 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     if ([[self bannerSizes] count] == 0) {
         self.bannerSizeTextField.hidden = YES;
     }
+    
+    if (self.currentAdType != HZAdTypeBanner) {
+        [self.view endEditing:YES]; // Dismisses picker views when you change to a non-banner format.
+    }
 }
 
 - (void) fetchAd {
