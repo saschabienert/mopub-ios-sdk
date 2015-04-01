@@ -279,7 +279,7 @@ const CGFloat kLeftMargin = 10;
     self.nonBannerControls = @[self.showButton, fetchButton];
     [self.bannerControls setValue:@YES forKey:@"hidden"];
     
-    self.adsTextField = [[UITextField alloc]initWithFrame:CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, 10.0, 110.0, 25.5)];
+    self.adsTextField = [[UITextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, 10.0, 110.0, 25.5)];
     self.adsTextField.delegate = self;
     self.adsTextField.borderStyle = UITextBorderStyleRoundedRect;
     self.adsTextField.keyboardType = UIKeyboardTypeNumberPad;
