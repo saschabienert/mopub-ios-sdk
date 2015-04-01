@@ -80,13 +80,13 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 
 - (void) didFinishAudio { [self sendMessageForKlass: self.klassName withMessage:  @"audio_finished" andTag:  @""]; }
 
-- (void)bannerDidReceiveAd { }
+- (void)bannerDidReceiveAd { [self sendMessageForKlass: self.klassName withMessage:  @"loaded" andTag:  @""]; }
 
 - (void)bannerDidFailToReceiveAd:(NSError *)error { [self sendMessageForKlass: self.klassName withMessage:  @"error" andTag:  @""]; }
 
 - (void)bannerWasClicked { [self sendMessageForKlass: self.klassName withMessage:  @"click" andTag:  @""]; }
 
-- (void)bannerWillPresentModalView { [self sendMessageForKlass: self.klassName withMessage:  @"loaded" andTag:  @""]; }
+- (void)bannerWillPresentModalView { }
 
 - (void)bannerDidDismissModalView { }
 
