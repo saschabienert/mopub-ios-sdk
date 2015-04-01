@@ -339,8 +339,6 @@
 		86BDB4E917585A0100D85F29 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B941DF1758056B00B8EACE /* CoreGraphics.framework */; };
 		86BDB4EA17585A0500D85F29 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B8175830A700B8EACE /* QuartzCore.framework */; };
 		86BDB4EB17585A9000D85F29 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943BF1758347300B8EACE /* UIKit.framework */; };
-		86C6E9731ACB216B006A8F33 /* HZUnityBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86C6E9711ACB216B006A8F33 /* HZUnityBridge.mm */; };
-		86C6E9741ACB216B006A8F33 /* HZUnityBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C6E9721ACB216B006A8F33 /* HZUnityBridge.h */; };
 		86CD0E8B17BB0B940005BD3D /* HZAdsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8646A8A217B071D700316453 /* HZAdsManager.m */; };
 		86CD0E8E17BB0C070005BD3D /* HZAdsAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CD0E8C17BB0C070005BD3D /* HZAdsAPIClient.h */; };
 		86CD0ECC17C3F7B00005BD3D /* HZAdsAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 86CD0E8D17BB0C070005BD3D /* HZAdsAPIClient.m */; };
@@ -717,8 +715,6 @@
 		86B943B7175830A600B8EACE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		86B943B8175830A700B8EACE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		86B943BF1758347300B8EACE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		86C6E9711ACB216B006A8F33 /* HZUnityBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HZUnityBridge.mm; sourceTree = "<group>"; };
-		86C6E9721ACB216B006A8F33 /* HZUnityBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZUnityBridge.h; sourceTree = "<group>"; };
 		86CD0E8C17BB0C070005BD3D /* HZAdsAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdsAPIClient.h; sourceTree = "<group>"; };
 		86CD0E8D17BB0C070005BD3D /* HZAdsAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdsAPIClient.m; sourceTree = "<group>"; };
 		86D0A9961851808200B3D870 /* HZAdVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdVideoViewController.h; sourceTree = "<group>"; };
@@ -1622,6 +1618,7 @@
 		86C6E96F1ACB0F29006A8F33 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				86C6E9751ACB849D006A8F33 /* Air */,
 				86C6E9701ACB0F52006A8F33 /* Unity */,
 			);
 			name = Extensions;
@@ -1630,10 +1627,15 @@
 		86C6E9701ACB0F52006A8F33 /* Unity */ = {
 			isa = PBXGroup;
 			children = (
-				86C6E9711ACB216B006A8F33 /* HZUnityBridge.mm */,
-				86C6E9721ACB216B006A8F33 /* HZUnityBridge.h */,
 			);
 			name = Unity;
+			sourceTree = "<group>";
+		};
+		86C6E9751ACB849D006A8F33 /* Air */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Air;
 			sourceTree = "<group>";
 		};
 		E621821719BFC75B0099BE8C /* UnityAds */ = {
@@ -1689,7 +1691,6 @@
 				866E39F31850089C00B6E431 /* HZIncentivizedAd.h in Headers */,
 				507A454D19BE318200C7AEEA /* HZNativeAd.h in Headers */,
 				507A455119BE4E5100C7AEEA /* HZNativeAdCollection.h in Headers */,
-				86C6E9741ACB216B006A8F33 /* HZUnityBridge.h in Headers */,
 				507A454819BE29CC00C7AEEA /* HZNativeAdController.h in Headers */,
 				501EBDA819AFE22600CA80ED /* HZMetricsKey.h in Headers */,
 				507A456219BE95B000C7AEEA /* HZStorePresenter.h in Headers */,
@@ -2162,7 +2163,6 @@
 				507A456319BE95B000C7AEEA /* HZStorePresenter.m in Sources */,
 				501EBDA919AFE30600CA80ED /* HZMetricsKey.m in Sources */,
 				8641E1F018ADE0FE00CAAEE0 /* HZDevice.m in Sources */,
-				86C6E9731ACB216B006A8F33 /* HZUnityBridge.mm in Sources */,
 				509E8D3A19B7A96E00ABF2D2 /* HZAdInfo.m in Sources */,
 				8641E1F218ADE0FE00CAAEE0 /* HZImageView.m in Sources */,
 				500F88EB18E210D400E5D6F8 /* HZAdColony.m in Sources */,
@@ -2730,6 +2730,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Heyzap$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -2759,6 +2760,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Heyzap$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -2774,6 +2776,7 @@
 					"$(ARCHS_STANDARD)",
 					armv7s,
 				);
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_MODULES_AUTOLINK = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -2788,6 +2791,7 @@
 					"$(ARCHS_STANDARD)",
 					armv7s,
 				);
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_MODULES_AUTOLINK = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
