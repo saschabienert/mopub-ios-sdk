@@ -208,9 +208,13 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
     
     HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:network];
     NSDictionary *const metrics = self.metricsDict[key];
-    [[self class] writeMetricToDisk:metrics];
-    [self.metricsDict removeObjectForKey:key];
-    
+    if (metrics) {
+        [[self class] writeMetricToDisk:metrics];
+        [self.metricsDict removeObjectForKey:key];
+    } else {
+        // Not sure what causes this case, but want to prevent it from causing a crash. See https://app.asana.com/0/25787840548210/30669907596307/f for details and stack trace.
+        HZDLog(@"(internal debug message) Couldn't find metric for key %@",key);
+    }
 }
 
 - (void) removeAdWithProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
