@@ -55,6 +55,8 @@
 - (void)setDelegate:(id)delegate forNetwork:(HZNetwork)network;
 - (id)getDelegateForNetwork:(HZNetwork)network;
 
+- (void) whenNetworkIsInitialized:(HZNetwork)network invokeCallback:(void(^)(void))callback;
+
 HZAdType hzAdTypeFromString(NSString *adUnit);
 NSString * NSStringFromAdType(HZAdType type);
 

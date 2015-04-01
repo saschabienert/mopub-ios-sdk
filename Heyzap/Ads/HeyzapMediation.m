@@ -52,6 +52,7 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @interface HeyzapMediation()
 
 @property (nonatomic, strong) NSSet *setupMediators;
+@property (nonatomic) HZNetwork setupNetworks;
 
 @property (nonatomic, strong) NSMutableDictionary *sessionDictionary;
 
@@ -66,6 +67,7 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
 @property (nonatomic, strong) NSMutableDictionary *networkListeners;
+@property (nonatomic, strong) NSMutableDictionary *initializationListeners;
 
 @end
 
@@ -166,6 +168,7 @@ NSString * const kHZDataKey = @"data";
 - (void)setupMediators:(NSArray *)mediatorJSON
 {
     NSMutableSet *setupMediators = [NSMutableSet set];
+    self.setupNetworks = 0;
     for (NSDictionary *mediator in mediatorJSON) {
         NSString *mediatorName = mediator[kHZAdapterKey];
         Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
@@ -176,6 +179,8 @@ NSString * const kHZDataKey = @"data";
                 HZBaseAdapter *adapter = [mediatorClass sharedInstance];
                 adapter.delegate = self;
                 [setupMediators addObject:adapter];
+                self.setupNetworks |= adapter.network;
+                [self invokeInitializationListeners:adapter.network];
             } else {
                 HZELog(@"Error setting up 3rd-party SDK. Error = %@",credentialError);
             }
@@ -748,6 +753,26 @@ const NSTimeInterval bannerTimeout = 10;
 
 - (id)getDelegateForNetwork:(HZNetwork)network {
     return [self.networkListeners objectForKey:[NSNumber numberWithUnsignedInteger:network]];
+}
+
+- (void) whenNetworkIsInitialized:(HZNetwork)network invokeCallback:(void(^)(void))callback {
+    if (self.setupNetworks & network) {
+        callback();
+    } else {
+        NSMutableArray *array = [self.initializationListeners objectForKey:[NSNumber numberWithUnsignedInteger:network]];
+        if (!array) {
+            array = [NSMutableArray new];
+        }
+        [array addObject:callback];
+        [self.initializationListeners setObject:array forKey:[NSNumber numberWithUnsignedInteger:network]];
+    }
+}
+
+- (void) invokeInitializationListeners:(HZNetwork)network {
+    NSMutableArray *array = [self.initializationListeners objectForKey:[NSNumber numberWithUnsignedInteger:network]];
+    for (void(^callback)(void) in array) {
+        callback();
+    }
 }
 
 @end

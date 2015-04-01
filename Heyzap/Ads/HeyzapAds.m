@@ -125,12 +125,16 @@
     HZVersionCheck()
     
     if (![HeyzapMediation isOnlyHeyzapSDK]) {
-        
+        [[HeyzapMediation sharedInstance] setDelegate:delegate forNetwork:network];
     }
 }
 
 + (void) whenNetworkIsInitialized:(HZNetwork)network invokeCallback:(void(^)(void))callback {
     HZVersionCheck()
+
+    if (![HeyzapMediation isOnlyHeyzapSDK]) {
+        [[HeyzapMediation sharedInstance] whenNetworkIsInitialized:network invokeCallback:callback];
+    }
 }
 
 + (NSString *) defaultTagName {
