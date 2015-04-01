@@ -155,8 +155,12 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 
 - (void)vungleSDKwillCloseAdWithViewInfo:(NSDictionary*)viewInfo willPresentProductSheet:(BOOL)willPresentProductSheet
 {
-    if (self.isShowingIncentivized && viewInfo[@"completedView"]) {
-        [self.delegate adapterDidCompleteIncentivizedAd:self];
+    if (self.isShowingIncentivized) {
+        if ([viewInfo[@"completedView"] boolValue]) {
+            [self.delegate adapterDidCompleteIncentivizedAd:self];
+        } else {
+            [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+        }
     }
     
     if (willPresentProductSheet) {
