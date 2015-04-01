@@ -33,6 +33,14 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
 
 @implementation HZBannerAdOptions
 
+- (NSString *)tag {
+    if (_tag == nil) {
+        _tag = [HeyzapAds defaultTagName];
+    }
+    
+    return _tag;
+}
+
 - (instancetype)init {
     self = [super init];
     if (self) {
