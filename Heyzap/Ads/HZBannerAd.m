@@ -66,20 +66,21 @@
 }
 
 
-+ (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAd *wrapper))completion {
++ (void)requestBannerWithOptions:(HZBannerAdOptions *)options
+                         success:(void (^)(HZBannerAd *banner))success
+                         failure:(void (^)(NSError *error))failure {
     if (!options) {
         options = [[HZBannerAdOptions alloc] init];
     }
-    NSParameterAssert(completion);
+    NSParameterAssert(success);
     
     
     [[HeyzapMediation sharedInstance] requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdapter *adapter) {
-        if (error) {
-            completion(error, nil);
+        if (error && failure) {
+            failure(error);
         } else if (adapter) {
-            
             HZBannerAd *wrapper = [[HZBannerAd alloc] initWithBanner:adapter options:options];
-            completion(nil, wrapper);
+            success(wrapper);
         }
     }];
 }
@@ -151,7 +152,8 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
 + (void)placeBannerInView:(UIView *)view
                  position:(HZBannerPosition)position
                   options:(HZBannerAdOptions *)options
-               completion:(void (^)(NSError *error, HZBannerAd *wrapper))completion {
+                  success:(void (^)(HZBannerAd *banner))success
+                  failure:(void (^)(NSError *error))failure {
     if (!view) {
         view = [[[[UIApplication sharedApplication] keyWindow] rootViewController] view];
         if (!view) {
@@ -165,48 +167,44 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
         options = [[HZBannerAdOptions alloc] init];
     }
     
-    [self requestBannerWithOptions:options completion:^(NSError *error, HZBannerAd *wrapper) {
-        if (error) {
-            HZELog(@"Error loading banner! %@",error);
-            if (completion) { completion(error, nil); }
-        } else {
-            switch (position) {
-                case HZBannerPositionTop: {
-                    CGRect tmpFrame = wrapper.frame;
-                    
-                    if ([options.presentingViewController respondsToSelector:@selector(topLayoutGuide)]
-                        && options.presentingViewController.view == view) {
-                        tmpFrame.origin.y += options.presentingViewController.topLayoutGuide.length;
-                    }
-                    
-                    wrapper.frame = tmpFrame;
-                    [view addSubview:wrapper];
-                    break;
+    [self requestBannerWithOptions:options success:^(HZBannerAd *wrapper) {
+        switch (position) {
+            case HZBannerPositionTop: {
+                CGRect tmpFrame = wrapper.frame;
+                
+                if ([options.presentingViewController respondsToSelector:@selector(topLayoutGuide)]
+                    && options.presentingViewController.view == view) {
+                    tmpFrame.origin.y += options.presentingViewController.topLayoutGuide.length;
                 }
-                case HZBannerPositionBottom: {
-                    const CGFloat viewHeight = CGRectGetMaxY(view.frame);
-                    const CGFloat bannerHeight = wrapper.frame.size.height;
-                    
-                    if (viewHeight < bannerHeight) {
-                        NSLog(@"WARNING: %@ is placing a banner in a view whose height (%f) is less than that of the banner (%f). Is your view configured correctly?",NSStringFromSelector(_cmd), viewHeight, bannerHeight);
-                    }
-                    
-                    CGRect tmpFrame = wrapper.frame;
-                    tmpFrame.origin.y = viewHeight - bannerHeight;
-                    
-                    if ([options.presentingViewController respondsToSelector:@selector(bottomLayoutGuide)]
-                        && options.presentingViewController.view == view) {
-                        tmpFrame.origin.y -= options.presentingViewController.bottomLayoutGuide.length;
-                    }
-                    
-                    wrapper.frame = tmpFrame;
-                    [view addSubview:wrapper];
-                    break;
-                }
+                
+                wrapper.frame = tmpFrame;
+                [view addSubview:wrapper];
+                break;
             }
-            if (completion) { completion(nil, wrapper); }
-            
+            case HZBannerPositionBottom: {
+                const CGFloat viewHeight = CGRectGetMaxY(view.frame);
+                const CGFloat bannerHeight = wrapper.frame.size.height;
+                
+                if (viewHeight < bannerHeight) {
+                    NSLog(@"WARNING: %@ is placing a banner in a view whose height (%f) is less than that of the banner (%f). Is your view configured correctly?",NSStringFromSelector(_cmd), viewHeight, bannerHeight);
+                }
+                
+                CGRect tmpFrame = wrapper.frame;
+                tmpFrame.origin.y = viewHeight - bannerHeight;
+                
+                if ([options.presentingViewController respondsToSelector:@selector(bottomLayoutGuide)]
+                    && options.presentingViewController.view == view) {
+                    tmpFrame.origin.y -= options.presentingViewController.bottomLayoutGuide.length;
+                }
+                
+                wrapper.frame = tmpFrame;
+                [view addSubview:wrapper];
+                break;
+            }
         }
+    } failure:^(NSError *error) {
+        HZELog(@"Error loading banner! %@",error);
+        if (failure) { failure(error); }
     }];
 }
 
