@@ -10,8 +10,19 @@
 @import UIKit;
 @class HZBannerAdOptions;
 
-typedef NS_ENUM(NSUInteger, HZBannerPosition) {
+/**
+ *  Locations where Heyzap can automatically place the banner.
+ *
+ *  See `placeBannerInView:position:options:success:failure:` for details on how this interacts with top/bottom layout guides in iOS 7+.
+ */
+typedef NS_ENUM(NSUInteger, HZBannerPosition){
+    /**
+     *  Option for placing the banner at the top of the view.
+     */
     HZBannerPositionTop,
+    /**
+     *  Option for placing the banner at the bottom of the view.
+     */
     HZBannerPositionBottom,
 };
 
@@ -82,15 +93,40 @@ extern NSString * const kHZBannerAdNotificationErrorKey;
 @end
 
 /**
- *  A wrapper around a mediated banner ad. This wrapper provides a unified interface to 
+ *  A view containing a mediated banner ad.
  */
 @interface HZBannerAd : UIView
 
-+ (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAd *wrapper))completion;
+/**
+ *  Fetches a banner and places it in the view. This is the simplest way to use banners.
+ *
+ *  @param view       The view to place the banner in. If `view == options.presentingViewController.view`, the view controller's top/bottom layout guides are taken into consideration when placing the view.
+ *  @param position   The position, either top or bottom, to place the view in.
+ *  @param options    Configuration options to use for the banner.
+ *  @param success    A block called if we fetch a banner.
+ *  @param failure    A block called if we fail to fetch a banner.
+ */
++ (void)placeBannerInView:(UIView *)view
+                 position:(HZBannerPosition)position
+                  options:(HZBannerAdOptions *)options
+                  success:(void (^)(HZBannerAd *banner))success
+                  failure:(void (^)(NSError *error))failure;
 
+/**
+ *  Fetches a banner and returns it in the `success` callback. You can add the `banner` as a subview from the callback, or keep a strong reference to it and add it to the screen later.
+ *
+ *  @param options Configuration options to use for the banner.
+ *  @param success A block called if we fetch a banner.
+ *  @param failure A block called if we fail to fetch a banner.
+ */
++ (void)requestBannerWithOptions:(HZBannerAdOptions *)options
+                         success:(void (^)(HZBannerAd *banner))success
+                         failure:(void (^)(NSError *error))failure;
+
+/**
+ *  The delegate for the banner ad.
+ */
 @property (nonatomic, weak) id<HZBannerAdDelegate> delegate;
-
-@property (nonatomic, readonly) BOOL isLoaded;
 
 /**
  *  The options used to create the banner ad. You can use this property to access things like the `tag` or `presentingViewController` for the banner.
@@ -103,18 +139,5 @@ extern NSString * const kHZBannerAdNotificationErrorKey;
  *  Current values: "facebook", "admob", "iad"
  */
 @property (nonatomic, strong, readonly) NSString *mediatedNetwork;
-
-/**
- *  Fetches a banner and places it in the view.
- *
- *  @param view       The view to place the banner in. If `view == options.presentingViewController.view`, the view controller's top/bottom layout guides are taken into consideration when placing the view.
- *  @param position   The position, either top or bottom, to place the view in.
- *  @param options    Configuration options to use for the banner.
- *  @param completion A block called when the banner fetch either succeeds or fails.
- */
-+ (void)placeBannerInView:(UIView *)view
-                 position:(HZBannerPosition)position
-                  options:(HZBannerAdOptions *)options
-               completion:(void (^)(NSError *error, HZBannerAd *wrapper))completion;
 
 @end

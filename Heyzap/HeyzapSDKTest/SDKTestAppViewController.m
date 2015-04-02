@@ -214,14 +214,6 @@ const CGFloat kLeftMargin = 10;
     [HZVideoAd setDelegate:self];
     [HZIncentivizedAd setDelegate:self];
     
-//    [HZBannerAd requestBannerWithOptions:nil completion:^(NSError *error, HZBannerAd *wrapper) {
-//        [self.view addSubview:wrapper];
-//    }];
-    
-    CGSize size = CGSizeFromGADAdSize(kGADAdSizeSmartBannerPortrait);
-    NSLog(@"Size = %@",NSStringFromCGSize(size));
-    NSLog(@"View size = %@",NSStringFromCGRect(self.view.frame));
-    
     self.view.accessibilityLabel = kViewAccessibilityLabel;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestNotification:) name:kHZAPIClientDidSendRequestNotification object:nil];
@@ -575,14 +567,12 @@ const CGFloat kLeftMargin = 10;
     [HZBannerAd placeBannerInView:self.view
                          position:HZBannerPositionBottom
                           options:opts
-                       completion:^(NSError *error, HZBannerAd *wrapper) {
-                           if (error) {
-                               self.showBannerButton.enabled = YES;
-                           } else {
-                               self.hideBannerButton.enabled = YES;
-                           }
-                           self.wrapper = wrapper;
-                       }];
+     success:^(HZBannerAd *banner) {
+         self.hideBannerButton.enabled = YES;
+         self.wrapper = banner;
+     } failure:^(NSError *error) {
+         self.showBannerButton.enabled = YES;
+     }];
 }
 
 - (void)hideBannerButtonPressed:(id)sender {

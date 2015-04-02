@@ -739,19 +739,16 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     [HZBannerAd placeBannerInView:self.view
                                 position:self.chosenBannerPosition
                                  options:[self bannerOptions]
-                              completion:^(NSError *error, HZBannerAd *wrapper) {
-        if (error) {
-            sender.enabled = YES;
-            [self appendStringToDebugLog:@"Error getting banner!"];
-        } else {
-            [self appendStringToDebugLog:@"Showing banner"];
-            self.hideBannerButton.enabled = YES;
-            self.bannerWrapper = wrapper;
-            self.bannerWrapper.delegate = self;
-        }
-        
-        
-    }];
+     success:^(HZBannerAd *banner) {
+         [self appendStringToDebugLog:@"Showing banner"];
+         self.hideBannerButton.enabled = YES;
+         self.bannerWrapper = banner;
+         self.bannerWrapper.delegate = self;
+     } failure:^(NSError *error) {
+         sender.enabled = YES;
+         [self appendStringToDebugLog:@"Error getting banner!"];
+     }];
+     
 }
 
 - (void)hideBanner:(UIButton *)sender {
