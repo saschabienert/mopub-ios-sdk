@@ -3,14 +3,14 @@ PODS:
   - AppLovin (2.5.4)
   - ChartboostSDK (5.1.3)
   - FacebookAudienceNetwork (3.23.2)
-  - Google-AdMob-Ads-SDK (7.0.0)
+  - Google-AdMob-Ads-SDK (7.1.0)
   - Kiwi (2.3.1)
   - OCHamcrest (4.1.1)
   - OCMockito (1.4.0):
     - OCHamcrest (~> 4.0)
-  - OHHTTPStubs (3.1.10):
-    - OHHTTPStubs/Core (= 3.1.10)
-  - OHHTTPStubs/Core (3.1.10)
+  - OHHTTPStubs (3.1.11):
+    - OHHTTPStubs/Core (= 3.1.11)
+  - OHHTTPStubs/Core (3.1.11)
   - Subliminal (1.1.0)
   - UnityAds (1.3.12)
   - VungleAdvertiserSDK (3.0.12)
@@ -43,11 +43,11 @@ SPEC CHECKSUMS:
   AppLovin: fdbeb15795c675c8c847b63876150d3c7806b484
   ChartboostSDK: 34443f45448fc7e7bee8626db3511e5cc56757b3
   FacebookAudienceNetwork: 6caa1672935f5d8159bac3954a41300d5e5997ae
-  Google-AdMob-Ads-SDK: 8439d31b89ec4d34e8f3ff3a83c53316d1bb4113
+  Google-AdMob-Ads-SDK: 2d66466c2026fde6f066fa0b9e609af14eb901a7
   Kiwi: f038a6c61f7a9e4d7766bff5717aa3b3fdb75f55
   OCHamcrest: 6f03ffa81d12feab872638490a44ab0a6d3aca10
   OCMockito: 4981140c9a9ec06c31af40f636e3c0f25f27e6b2
-  OHHTTPStubs: 00152a63400246fcbc4b772a2a547ea34c97cbd6
+  OHHTTPStubs: 5624a5d20d97d46d47e15a68ca8808b59ccf0512
   Subliminal: 5d9b445e84343d602fad3ce6ac14cff91e9bd618
   UnityAds: f570b20497c56d7f4aac2b1c60e4e6962598ab58
   VungleAdvertiserSDK: 609e82e96bb15959887f5fea72859cabe1d8032a
