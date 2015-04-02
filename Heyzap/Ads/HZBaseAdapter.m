@@ -181,6 +181,31 @@
     }
 }
 
++ (HZNetwork)networkForName:(NSString *)network
+{
+    if ([network isEqualToString:kHZAdapterVungle]) {
+        return HZNetworkVungle;
+    } else if ([network isEqualToString:kHZAdapterChartboost]) {
+        return HZNetworkChartboost;
+    } else if ([network isEqualToString:kHZAdapterAdColony]) {
+        return HZNetworkAdColony;
+    } else if ([network isEqualToString:kHZAdapterAdMob]) {
+        return HZNetworkAdMob;
+    } else if ([network isEqualToString:kHZAdapterHeyzap]) {
+        return HZNetworkHeyzap;
+    } else if ([network isEqualToString:kHZAdapterAppLovin]) {
+        return HZNetworkAppLovin;
+    } else if ([network isEqualToString:kHZAdapterUnityAds]) {
+        return HZNetworkUnityAds;
+    } else if ([network isEqualToString:kHZAdapterFacebook]) {
+        return HZNetworkFacebook;
+    } else if ([network isEqualToString:kHZAdapteriAd]) {
+        return HZNetworkIAd;
+    } else {
+        return -1;
+    }
+}
+
 + (NSSet *)allAdapterClasses
 {
     return [NSSet setWithObjects:

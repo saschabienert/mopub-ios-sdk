@@ -143,6 +143,10 @@
     return kHZDefaultTagName;
 }
 
++ (HZNetwork) networkForName:(NSString *)network {
+    return [HZBaseAdapter networkForName:network];
+}
+
 + (id)alloc {
     [NSException raise:@"CannotInstantiateStaticClass" format:@"'HeyzapAds' is a static class and cannot be instantiated."];
     return nil;

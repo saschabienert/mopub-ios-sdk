@@ -122,6 +122,7 @@
 #pragma mark - Implemented methods
 
 + (Class)adapterClassForName:(NSString *)adapterName;
++ (HZNetwork)networkForName:(NSString *)network;
 
 + (NSSet *)allAdapterClasses;
 + (NSArray *)testActivityAdapters;

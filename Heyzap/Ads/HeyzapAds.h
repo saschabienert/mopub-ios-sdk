@@ -205,6 +205,7 @@ typedef NS_ENUM(NSUInteger, HZNetwork) {
 + (void) setFramework: (NSString *) framework;
 + (void) setMediator: (NSString *) mediator;
 + (NSString *) defaultTagName;
++ (HZNetwork) networkForName: (NSString *)network;
 
 /**
  * Presents a view controller that displays integration information and allows fetch/show testing
