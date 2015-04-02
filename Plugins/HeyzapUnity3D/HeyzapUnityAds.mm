@@ -30,17 +30,11 @@
 #import "HZVideoAd.h"
 #import "HZIncentivizedAd.h"
 
-// for more apps
-#if __has_include("Chartboost.h")
-#import "Chartboost.h"
-#endif
-
 extern void UnitySendMessage(const char *, const char *, const char *);
 
 #define HZ_VIDEO_KLASS @"HZVideoAd"
 #define HZ_INTERSTITIAL_KLASS @"HZInterstitialAd"
 #define HZ_INCENTIVIZED_KLASS @"HZIncentivizedAd"
-#define HZ_MORE_APPS_KLASS @"HZChartboostMoreApps"
 
 @interface HeyzapUnityAdDelegate : NSObject<HZAdsDelegate,HZIncentivizedAdDelegate>
 
@@ -82,12 +76,6 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 
 - (void) didFinishAudio { [self sendMessageForKlass: self.klassName withMessage:  @"audio_finished" andTag:  @""]; }
 
-- (void) didDisplayMoreApps: (NSString *)location { [self sendMessageForKlass: self.klassName withMessage: @"more_apps_show" andTag: @""]; }
-
-- (void) didFailToLoadMoreApps: (NSString *)location { [self sendMessageForKlass: self.klassName withMessage: @"more_apps_fetch_failed" andTag: @""]; }
-
-- (void) didCacheMoreApps: (NSString *)location { [self sendMessageForKlass: self.klassName withMessage: @"more_apps_fetch_success" andTag: @""]; }
-
 - (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *) message andTag: (NSString *) tag {
     NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", message, tag];
     UnitySendMessage("HeyzapAds", "setDisplayState", [unityMessage UTF8String]);
@@ -99,7 +87,6 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 static HeyzapUnityAdDelegate *HZInterstitialDelegate = nil;
 static HeyzapUnityAdDelegate *HZIncentivizedDelegate = nil;
 static HeyzapUnityAdDelegate *HZVideoDelegate = nil;
-static HeyzapUnityAdDelegate *HZMoreAppsDelegate = nil;
 
 extern "C" {
     void hz_ads_start_app(const char *publisher_id, HZAdOptions flags) {
@@ -182,32 +169,8 @@ extern "C" {
         return [HZIncentivizedAd setUserIdentifier: userID];
      }
 
-    // More Apps
-
-    void hz_ads_show_more_apps() {
-#if __has_include("Chartboost.h")
-        [HeyzapAds whenNetworkIsInitialized:HZNetworkChartboost invokeCallback:^{
-            [Chartboost showMoreApps:CBLocationDefault];
-        }];
-#endif
-    }
-
-    void hz_ads_fetch_more_apps() {
-#if __has_include("Chartboost.h")
-        [HeyzapAds whenNetworkIsInitialized:HZNetworkChartboost invokeCallback:^{
-            [Chartboost cacheMoreApps:CBLocationDefault];
-        }];
-#endif
-    }
-
-    void hz_ads_more_apps_is_available() {
-#if __has_include("Chartboost.h")
-        [HeyzapAds whenNetworkIsInitialized:HZNetworkChartboost invokeCallback:^{
-            [Chartboost hasMoreApps:CBLocationDefault];
-        }];
-#endif
-    }
-
+    // availability and abstract listener
+    
     void hz_ads_show_mediation_debug_view_controller() {
         [HeyzapAds presentMediationDebugViewController];
      }
