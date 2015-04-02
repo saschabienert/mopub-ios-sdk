@@ -261,11 +261,9 @@
 		50ED56311AB8E048009D7504 /* HZGADBannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ED562F1AB8E048009D7504 /* HZGADBannerView.m */; };
 		50ED56341AB8E392009D7504 /* HZGADRequestError.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ED56321AB8E392009D7504 /* HZGADRequestError.h */; };
 		50ED56351AB8E392009D7504 /* HZGADRequestError.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ED56331AB8E392009D7504 /* HZGADRequestError.m */; };
-		50ED56401AC088B70016F9FE /* HZAdMobBannerSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ED563F1AC088B70016F9FE /* HZAdMobBannerSupport.m */; };
 		50ED56431AC0942D0016F9FE /* HZHZAdMobBannerSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ED56411AC0942D0016F9FE /* HZHZAdMobBannerSupport.h */; };
 		50ED56441AC0942D0016F9FE /* HZHZAdMobBannerSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ED56421AC0942D0016F9FE /* HZHZAdMobBannerSupport.m */; };
 		50ED56451AC097D80016F9FE /* HZAdMobBannerSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ED563F1AC088B70016F9FE /* HZAdMobBannerSupport.m */; };
-		50ED56461AC097DA0016F9FE /* HZAdMobBannerSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ED563F1AC088B70016F9FE /* HZAdMobBannerSupport.m */; };
 		50ED564B1AC0BC910016F9FE /* HZiAdBannerAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ED56491AC0BC910016F9FE /* HZiAdBannerAdapter.h */; };
 		50ED564C1AC0BC910016F9FE /* HZiAdBannerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ED564A1AC0BC910016F9FE /* HZiAdBannerAdapter.m */; };
 		72A18C05178B64E600536547 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A18C04178B64E600536547 /* MessageUI.framework */; };
@@ -2123,7 +2121,6 @@
 				509B5BE718C94490003A7CB9 /* UIViewController+IntegrationTests.m in Sources */,
 				507A455A19BE762900C7AEEA /* NativeAdTableViewController.m in Sources */,
 				50A36AD518C9405A00FA84F0 /* ServerSelectionViewController.m in Sources */,
-				50ED56461AC097DA0016F9FE /* HZAdMobBannerSupport.m in Sources */,
 				502BE84F18CD530D00EB6415 /* TestUtilities.m in Sources */,
 				50A36AD618C9405A00FA84F0 /* AppDelegate.m in Sources */,
 				509B5BE418C943B8003A7CB9 /* TestInterstitials.m in Sources */,
@@ -2140,7 +2137,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				504514CC18B68EF600E00E6C /* DeviceInfoViewController.m in Sources */,
-				50ED56401AC088B70016F9FE /* HZAdMobBannerSupport.m in Sources */,
 				507A455E19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */,
 				86B941E81758056B00B8EACE /* main.m in Sources */,
 				509F000718EA17970011EAB3 /* NSArrayUtils.m in Sources */,
@@ -2419,8 +2415,8 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
@@ -2445,8 +2441,8 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = MediationTestApp;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -2682,8 +2678,8 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: SMART BALLOON, INC.";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: SMART BALLOON, INC.";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
@@ -2701,8 +2697,8 @@
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;

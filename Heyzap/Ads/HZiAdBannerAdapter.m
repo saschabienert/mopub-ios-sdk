@@ -17,7 +17,7 @@
 
 @implementation HZiAdBannerAdapter
 
-- (instancetype)initWithReportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter {
+- (instancetype)initWithReportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter options:(HZBannerAdOptions *)options {
     self = [super init];
     if (self) {
         self.parentAdapter = parentAdapter;

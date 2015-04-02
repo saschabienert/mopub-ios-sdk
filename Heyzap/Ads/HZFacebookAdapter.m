@@ -20,7 +20,6 @@
 @property (nonatomic, strong) NSString *placementID;
 @property (nonatomic, strong) NSString *bannerPlacementID;
 @property (nonatomic, strong) HZFBInterstitialAd *interstitialAd;
-
 @end
 
 @implementation HZFacebookAdapter
@@ -95,7 +94,6 @@
 }
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag {
-    
     NSAssert(self.placementID, @"Need a Placement ID by this point");
     
     if (type != HZAdTypeInterstitial) {
@@ -158,12 +156,7 @@
     self.interstitialAd = nil;
 }
 
-static int facebookImpressions = 0;
-
 - (void)interstitialAdWillLogImpression:(HZFBInterstitialAd *)interstitialAd {
-    facebookImpressions++;
-    NSLog(@"Total facebook impressions = %i",facebookImpressions);
-    NSLog(@"Facebook will log impression");
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

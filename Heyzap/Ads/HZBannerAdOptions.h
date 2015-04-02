@@ -62,7 +62,7 @@ typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
     HZAdMobBannerSizeFullBanner,
 };
 
-@interface HZBannerAdOptions : NSObject
+@interface HZBannerAdOptions : NSObject <NSCopying>
 
 /**
  *  The size to use for Facebook Audience Network banners. Defaults to HZFacebookBannerSizeFlexibleWidthHeight50.
@@ -84,5 +84,9 @@ typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
  */
 @property (nonatomic, weak) UIViewController *presentingViewController;
 
+/**
+ *  An identifier for the location of the ad, which you can use to disable the ad from your dashboard. If not specified the tag "default" is always used.
+ */
+@property (nonatomic, strong) NSString *tag;
 
 @end

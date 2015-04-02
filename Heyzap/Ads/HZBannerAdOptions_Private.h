@@ -33,4 +33,6 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
  */
 @property (nonatomic, strong) NSString *networkName;
 
+- (BOOL)isFlexibleWidthForNetwork:(NSString *const)networkConstant;
+
 @end

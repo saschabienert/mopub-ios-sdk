@@ -89,7 +89,6 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (instancetype) initWithNetwork:(HZBaseAdapter *)network rootVC:(UIViewController *)rootVC available:(BOOL)available initialized:(BOOL)initialized enabled:(BOOL)enabled {
     self = [super init];
-    self.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 
     self.network = network;
     self.rootVC = rootVC;
@@ -112,6 +111,10 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void) viewDidLoad {
     [super viewDidLoad];
+    
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
+        self.edgesForExtendedLayout = UIRectEdgeTop;
+    }
 
     self.view.backgroundColor = [UIColor whiteColor];
     
@@ -226,6 +229,10 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     if ([[self bannerSizes] count] == 0) {
         self.bannerSizeTextField.hidden = YES;
     }
+    
+    if (self.currentAdType != HZAdTypeBanner) {
+        [self.view endEditing:YES]; // Dismisses picker views when you change to a non-banner format.
+    }
 }
 
 - (void) fetchAd {
@@ -296,8 +303,8 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 - (UIView *) makeView {
     // top level view
     UIView *currentNetworkView = ({
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y,
-                                                                self.view.frame.size.width, self.view.frame.size.height - 45)];
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0,30,
+                                                                CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds))];
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         view;
     });
@@ -335,7 +342,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (UIView *) makeAdControls {
     UIView *adControls = ({
-        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 160, self.view.frame.size.width - 20, 150)];
+        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 160, self.view.frame.size.width - 20, 190)];
         controls.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         controls;
     });
@@ -724,6 +731,7 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 }
 
 - (void)showBanner:(UIButton *)sender {
+    [self.view endEditing:YES];
     sender.enabled = NO;
     
     [self appendStringToDebugLog:@"Requesting Banner..."];
@@ -731,56 +739,49 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     [HZBannerAd placeBannerInView:self.view
                                 position:self.chosenBannerPosition
                                  options:[self bannerOptions]
-                              completion:^(NSError *error, HZBannerAd *wrapper) {
-        if (error) {
-            sender.enabled = YES;
-            [self appendStringToDebugLog:@"Error getting banner!"];
-        } else {
-            [self appendStringToDebugLog:@"Showing banner"];
-            self.hideBannerButton.enabled = YES;
-            self.bannerWrapper = wrapper;
-            self.bannerWrapper.delegate = self;
-        }
-        
-        
-    }];
+     success:^(HZBannerAd *banner) {
+         [self appendStringToDebugLog:@"Showing banner"];
+         self.hideBannerButton.enabled = YES;
+         self.bannerWrapper = banner;
+         self.bannerWrapper.delegate = self;
+     } failure:^(NSError *error) {
+         sender.enabled = YES;
+         [self appendStringToDebugLog:@"Error getting banner!"];
+     }];
+     
 }
 
 - (void)hideBanner:(UIButton *)sender {
+    [self.view endEditing:YES];
     [self hideBanner];
 }
 
 - (void)hideBanner {
-    [self.bannerWrapper finishUsingBanner];
+    [self.bannerWrapper removeFromSuperview];
     self.bannerWrapper = nil;
     
     self.hideBannerButton.enabled = NO;
     self.showBannerButton.enabled = YES;
 }
 
-
-- (void)dealloc {
-    [self.bannerWrapper finishUsingBanner];
-}
-
 #pragma mark - Banner Ad Delegate
 
-- (void)bannerDidReceiveAd {
+- (void)bannerDidReceiveAd:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerDidFailToReceiveAd:(NSError *)error {
+- (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerWasClicked {
+- (void)bannerWasClicked:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerWillPresentModalView {
+- (void)bannerWillPresentModalView:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerDidDismissModalView {
+- (void)bannerDidDismissModalView:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerWillLeaveApplication {
+- (void)bannerWillLeaveApplication:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
 

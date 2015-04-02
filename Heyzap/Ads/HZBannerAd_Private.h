@@ -52,6 +52,4 @@
 @interface HZBannerAd() <HZBannerAdWrapperReporter>
 
 
-- (instancetype)initWithBanner:(HZBannerAdapter *)adapter;
-
 @end

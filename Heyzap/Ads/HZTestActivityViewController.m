@@ -167,7 +167,14 @@
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
-    HZBaseAdapter *network = (HZBaseAdapter *)[[[self.allNetworks objectAtIndex:indexPath.row] class] sharedInstance];
+    Class networkClass = [self.allNetworks objectAtIndex:indexPath.row];
+    if (![networkClass isSDKAvailable]) {
+        [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@ SDK is not available", [networkClass humanizedName]]
+                                    message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        return;
+    }
+
+    HZBaseAdapter *network = (HZBaseAdapter *)[networkClass sharedInstance];
     HZDLog(@"Current network adapter: %@", network);
     
     HZTestActivityNetworkViewController *networkVC = [[HZTestActivityNetworkViewController alloc] initWithNetwork:network
@@ -240,6 +247,10 @@
             NSString *mediatorName = mediator[@"name"];
 
             Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
+            
+            if ([self.allNetworks indexOfObjectIdenticalTo:mediatorClass] == NSNotFound) {
+                continue;
+            }
 
             // don't do anything if the sdk isn't available
             if (![mediatorClass isSDKAvailable]) {
