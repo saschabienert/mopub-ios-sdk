@@ -11,30 +11,52 @@
 #import "HeyzapMediation.h"
 #import "HZBannerAdapter.h"
 #import "HZBannerAdOptions.h"
+#import "HZBannerAdOptions_Private.h"
+@import iAd;
 
 @interface HZBannerAd()
 
 @property (nonatomic, strong, readonly) HZBannerAdapter *adapter;
+@property (nonatomic, copy) HZBannerAdOptions *options;
 
 @end
 
-static NSMutableArray *allWrappers;
-
 @implementation HZBannerAd
-
-+ (void)initialize {
-    if (self == [HZBannerAd class]) {
-        allWrappers = [NSMutableArray array];
-    }
-}
-
 ///
-- (instancetype)initWithBanner:(HZBannerAdapter *)adapter {
+- (instancetype)initWithBanner:(HZBannerAdapter *)adapter options:(HZBannerAdOptions *)options {
     NSParameterAssert(adapter);
     self = [super init];
     if (self) {
         _adapter = adapter;
+        _options = options;
         adapter.bannerInteractionDelegate = self;
+        
+        
+        CGRect rect = { .origin = CGPointZero, .size =options.presentingViewController.view.frame.size };
+        self.frame = rect;
+        
+        if ([adapter.mediatedBanner isKindOfClass:[ADBannerView class]]) {
+            ADBannerView *iad = (ADBannerView *) adapter.mediatedBanner;
+            const CGSize sizeThatFits = [iad sizeThatFits:self.bounds.size];
+            CGRect frame = iad.frame;
+            frame.size = sizeThatFits;
+            iad.frame = frame;
+        }
+        
+        [self addSubview:adapter.mediatedBanner];
+        
+        const CGFloat bannerHeight = CGRectGetHeight(adapter.mediatedBanner.frame);
+        rect.size.height = bannerHeight;
+        self.frame = rect;
+        
+        
+        if ([self isFlexibleWidth]) { // is flex
+            // Do nothing, and take width of our superview in willMoveToSuperview:
+        } else {
+            // If not flex, take the width of the banner.
+            rect.size.width = adapter.mediatedBanner.frame.size.width;
+            self.frame = rect;
+        }
     }
     return self;
 }
@@ -55,8 +77,8 @@ static NSMutableArray *allWrappers;
         if (error) {
             completion(error, nil);
         } else if (adapter) {
-            HZBannerAd *wrapper = [[HZBannerAd alloc] initWithBanner:adapter];
-            [allWrappers addObject:wrapper];
+            
+            HZBannerAd *wrapper = [[HZBannerAd alloc] initWithBanner:adapter options:options];
             completion(nil, wrapper);
         }
     }];
@@ -66,30 +88,60 @@ static NSMutableArray *allWrappers;
     return [NSString stringWithFormat:@"<%@: %p, mediatedNetwork: %@, mediatedBanner: %@>", NSStringFromClass([self class]), self, self.mediatedNetwork, self.mediatedBanner];
 }
 
+NSString * const kHZBannerAdDidReceiveAdNotification = @"kHZBannerAdDidReceiveAdNotification";
+NSString * const kHZBannerAdDidFailToReceiveAdNotification = @"kHZBannerAdDidFailToReceiveAdNotification";
+NSString * const kHZBannerAdWasClickedNotification = @"kHZBannerAdWasClickedNotification";
+NSString * const kHZBannerAdWillPresentModalViewNotification = @"kHZBannerAdWillPresentModalViewNotification";
+NSString * const kHZBannerAdDidDismissModalViewNotification = @"kHZBannerAdDidDismissModalViewNotification";
+NSString * const kHZBannerAdWillLeaveApplicationNotification = @"kHZBannerAdWillLeaveApplicationNotification";
 
-- (void)didReceiveAd {
-    [self.delegate bannerDidReceiveAd];
+NSString * const kHZBannerAdNotificationTagKey = @"kHZBannerAdNotificationTagKey";
+NSString * const kHZBannerAdNetworkNameKey = @"kHZBannerAdNetworkNameKey";
+NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErrorKey";
+
+- (void)postNotification:(NSString *)notification {
+    [self postNotification:notification userInfo:nil];
 }
 
-- (void)didFailToReceiveAd:(NSError *)error {
-    NSDictionary *const userInfo = error ? @{NSUnderlyingErrorKey: error} : nil;
-    return [self.delegate bannerDidFailToReceiveAd:[[NSError alloc] initWithDomain:kHZMediationDomain code:1 userInfo:userInfo]];
+- (void)postNotification:(NSString *)notification userInfo:(NSDictionary *)userInfo {
+    NSMutableDictionary *mutableInfo = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+    mutableInfo[kHZBannerAdNotificationTagKey] = self.options.tag;
+    mutableInfo[kHZBannerAdNetworkNameKey] = self.mediatedNetwork;
+    [[NSNotificationCenter defaultCenter] postNotificationName:notification object:self userInfo:mutableInfo];
+}
+
+- (void)didReceiveAd {
+    [self postNotification:kHZBannerAdDidReceiveAdNotification];
+    [self.delegate bannerDidReceiveAd:self];
+}
+
+- (void)didFailToReceiveAd:(NSError *)networkError {
+    NSDictionary *const userInfo = networkError ? @{NSUnderlyingErrorKey: networkError} : nil;
+    NSError *const error = [[NSError alloc] initWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
+    
+    [self.delegate bannerDidFailToReceiveAd:self error:error];
+    [self postNotification:kHZBannerAdDidFailToReceiveAdNotification
+                  userInfo:@{kHZBannerAdNotificationErrorKey: error}];
 }
 
 - (void)userDidClick {
-    [self.delegate bannerWasClicked];
+    [self.delegate bannerWasClicked:self];
+    [self postNotification:kHZBannerAdWasClickedNotification];
 }
 
 - (void)willPresentModalView {
-    [self.delegate bannerWillPresentModalView];
+    [self.delegate bannerWillPresentModalView:self];
+    [self postNotification:kHZBannerAdWillPresentModalViewNotification];
 }
 
 - (void)didDismissModalView {
-    [self.delegate bannerDidDismissModalView];
+    [self.delegate bannerDidDismissModalView:self];
+    [self postNotification:kHZBannerAdDidDismissModalViewNotification];
 }
 
 - (void)willLeaveApplication {
-    [self.delegate bannerWillLeaveApplication];
+    [self.delegate bannerWillLeaveApplication:self];
+    [self postNotification:kHZBannerAdWillLeaveApplicationNotification];
 }
 
 - (UIView *)mediatedBanner {
@@ -120,26 +172,26 @@ static NSMutableArray *allWrappers;
         } else {
             switch (position) {
                 case HZBannerPositionTop: {
-                    CGRect tmpFrame = wrapper.mediatedBanner.frame;
+                    CGRect tmpFrame = wrapper.frame;
                     
                     if ([options.presentingViewController respondsToSelector:@selector(topLayoutGuide)]
                         && options.presentingViewController.view == view) {
                         tmpFrame.origin.y += options.presentingViewController.topLayoutGuide.length;
                     }
                     
-                    wrapper.mediatedBanner.frame = tmpFrame;
-                    [view addSubview:wrapper.mediatedBanner];
+                    wrapper.frame = tmpFrame;
+                    [view addSubview:wrapper];
                     break;
                 }
                 case HZBannerPositionBottom: {
                     const CGFloat viewHeight = CGRectGetMaxY(view.frame);
-                    const CGFloat bannerHeight = wrapper.mediatedBanner.frame.size.height;
+                    const CGFloat bannerHeight = wrapper.frame.size.height;
                     
                     if (viewHeight < bannerHeight) {
                         NSLog(@"WARNING: %@ is placing a banner in a view whose height (%f) is less than that of the banner (%f). Is your view configured correctly?",NSStringFromSelector(_cmd), viewHeight, bannerHeight);
                     }
                     
-                    CGRect tmpFrame = wrapper.mediatedBanner.frame;
+                    CGRect tmpFrame = wrapper.frame;
                     tmpFrame.origin.y = viewHeight - bannerHeight;
                     
                     if ([options.presentingViewController respondsToSelector:@selector(bottomLayoutGuide)]
@@ -147,8 +199,8 @@ static NSMutableArray *allWrappers;
                         tmpFrame.origin.y -= options.presentingViewController.bottomLayoutGuide.length;
                     }
                     
-                    wrapper.mediatedBanner.frame = tmpFrame;
-                    [view addSubview:wrapper.mediatedBanner];
+                    wrapper.frame = tmpFrame;
+                    [view addSubview:wrapper];
                     break;
                 }
             }
@@ -158,14 +210,17 @@ static NSMutableArray *allWrappers;
     }];
 }
 
-- (CGFloat)adHeight {
-    UIView *view = (UIView *) self.mediatedBanner;
-    return view.frame.size.height;
+- (void)willMoveToSuperview:(UIView *)newSuperview {
+    [super willMoveToSuperview:newSuperview];
+    if ([self isFlexibleWidth]) {
+        CGRect frame = self.frame;
+        frame.size.width = newSuperview.bounds.size.width;
+        self.frame = frame;
+    }
 }
 
-- (void)finishUsingBanner {
-    [self.mediatedBanner removeFromSuperview];
-    [allWrappers removeObjectIdenticalTo:self];
+- (BOOL)isFlexibleWidth {
+    return [self.options isFlexibleWidthForNetwork:self.adapter.parentAdapter.name];
 }
 
 @end
