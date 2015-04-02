@@ -102,9 +102,6 @@ extern "C" {
         
         HZVideoDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_VIDEO_KLASS];
         [HZVideoAd setDelegate: HZVideoDelegate];
-
-        HZMoreAppsDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_MORE_APPS_KLASS];
-        [HeyzapAds setDelegate:HZMoreAppsDelegate forNetwork:HZNetworkChartboost];
     }
     
     //Interstitial
