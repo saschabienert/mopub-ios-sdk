@@ -129,11 +129,13 @@
     }
 }
 
-+ (void) whenNetworkIsInitialized:(HZNetwork)network invokeCallback:(void(^)(void))callback {
-    HZVersionCheck()
++ (BOOL) isNetworkInitialized:(HZNetwork)network {
+    HZVersionCheckBool()
 
     if (![HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HeyzapMediation sharedInstance] whenNetworkIsInitialized:network invokeCallback:callback];
+        return [[HeyzapMediation sharedInstance] isNetworkInitialized:network];
+    } else {
+        return NO;
     }
 }
 

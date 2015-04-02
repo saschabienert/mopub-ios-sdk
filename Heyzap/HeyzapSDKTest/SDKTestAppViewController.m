@@ -164,9 +164,9 @@ typedef enum {
             [self setShowButtonOn:[HZIncentivizedAd isAvailable]];
             break;
         case kAdUnitSegmentMoreApps: {
-            [HeyzapAds whenNetworkIsInitialized:HZNetworkChartboost invokeCallback:^{
+            if ([HeyzapAds isNetworkInitialized:HZNetworkChartboost]) {
                 [self setShowButtonOn:[Chartboost hasMoreApps:[HeyzapAds defaultTagName]]];
-            }];
+            }
             break;
         }
         default:
@@ -555,9 +555,9 @@ const CGFloat kLeftMargin = 10;
             [HZIncentivizedAd fetch];
             break;
         case kAdUnitSegmentMoreApps: {
-            [HeyzapAds whenNetworkIsInitialized:HZNetworkChartboost invokeCallback:^{
+            if ([HeyzapAds isNetworkInitialized:HZNetworkChartboost]) {
                 [Chartboost cacheMoreApps:[HeyzapAds defaultTagName]];
-            }];
+            }
         }
         default:
             break;
@@ -581,10 +581,10 @@ const CGFloat kLeftMargin = 10;
             [HZIncentivizedAd show];
             break;
         case kAdUnitSegmentMoreApps: {
-            [HeyzapAds whenNetworkIsInitialized:HZNetworkChartboost invokeCallback:^{
+            if ([HeyzapAds isNetworkInitialized:HZNetworkChartboost]) {
                 NSLog(@"Showing More Apps");
                 [Chartboost showMoreApps:[HeyzapAds defaultTagName]];
-            }];
+            }
         }
         default:
             break;

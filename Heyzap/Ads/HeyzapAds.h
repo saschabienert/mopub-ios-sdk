@@ -182,12 +182,11 @@ typedef NS_ENUM(NSUInteger, HZNetwork) {
 + (void) setDelegate:(id)delegate forNetwork:(HZNetwork)network;
 
 /**
- *  If the network is initialized, the callback is invoked immediately. Otherwise, wait for the network to be initialized and then invoke the callback.
+ *  Returns YES if the network's SDK is initialized and can be called directly
  *
  *  @param network  A member of the HZNetwork enum, which identifies the network to check initialization on.
- *  @param callback A block that will be invoked as soon as the network is determined to be initialized.
  */
-+ (void) whenNetworkIsInitialized:(HZNetwork)network invokeCallback:(void(^)(void))callback;
++ (BOOL) isNetworkInitialized:(HZNetwork)network;
 
 
 /**

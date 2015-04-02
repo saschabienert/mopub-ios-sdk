@@ -67,7 +67,6 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
 @property (nonatomic, strong) NSMutableDictionary *networkListeners;
-@property (nonatomic, strong) NSMutableDictionary *initializationListeners;
 
 @end
 
@@ -98,7 +97,6 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
         _networkListeners = [[NSMutableDictionary alloc] init];
-        _initializationListeners = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -182,7 +180,6 @@ NSString * const kHZDataKey = @"data";
                 adapter.delegate = self;
                 [setupMediators addObject:adapter];
                 self.setupNetworks |= adapter.network;
-                [self invokeInitializationListeners:adapter.network];
             } else {
                 HZELog(@"Error setting up 3rd-party SDK. Error = %@",credentialError);
             }
@@ -756,26 +753,8 @@ const NSTimeInterval bannerTimeout = 10;
     return [self.networkListeners objectForKey:[NSNumber numberWithUnsignedInteger:network]];
 }
 
-- (void) whenNetworkIsInitialized:(HZNetwork)network invokeCallback:(void(^)(void))callback {
-    if (self.setupNetworks & network) {
-        callback();
-    } else {
-        NSMutableArray *array = [self.initializationListeners objectForKey:[NSNumber numberWithUnsignedInteger:network]];
-        if (!array) {
-            array = [NSMutableArray new];
-        }
-        [array addObject:callback];
-        [self.initializationListeners setObject:array forKey:[NSNumber numberWithUnsignedInteger:network]];
-    }
-}
-
-- (void) invokeInitializationListeners:(HZNetwork)network {
-    NSNumber *key = [NSNumber numberWithUnsignedInteger:network];
-    NSMutableArray *array = [self.initializationListeners objectForKey:key];
-    for (void(^callback)(void) in array) {
-        callback();
-    }
-    [self.initializationListeners removeObjectForKey:key];
+- (BOOL) isNetworkInitialized:(HZNetwork)network {
+    return self.setupNetworks & network;
 }
 
 @end
