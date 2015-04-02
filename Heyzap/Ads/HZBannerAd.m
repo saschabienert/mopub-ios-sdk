@@ -112,36 +112,49 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
 }
 
 - (void)didReceiveAd {
+    if ([self.delegate respondsToSelector:@selector(bannerDidReceiveAd:)]) {
+        [self.delegate bannerDidReceiveAd:self];
+    }
     [self postNotification:kHZBannerAdDidReceiveAdNotification];
-    [self.delegate bannerDidReceiveAd:self];
 }
 
 - (void)didFailToReceiveAd:(NSError *)networkError {
     NSDictionary *const userInfo = networkError ? @{NSUnderlyingErrorKey: networkError} : nil;
     NSError *const error = [[NSError alloc] initWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
     
-    [self.delegate bannerDidFailToReceiveAd:self error:error];
+    if ([self.delegate respondsToSelector:@selector(bannerDidFailToReceiveAd:error:)]) {
+        [self.delegate bannerDidFailToReceiveAd:self error:error];
+    }
+    
     [self postNotification:kHZBannerAdDidFailToReceiveAdNotification
                   userInfo:@{kHZBannerAdNotificationErrorKey: error}];
 }
 
 - (void)userDidClick {
-    [self.delegate bannerWasClicked:self];
+    if ([self.delegate respondsToSelector:@selector(bannerWasClicked:)]) {
+        [self.delegate bannerWasClicked:self];
+    }
     [self postNotification:kHZBannerAdWasClickedNotification];
 }
 
 - (void)willPresentModalView {
-    [self.delegate bannerWillPresentModalView:self];
+    if ([self.delegate respondsToSelector:@selector(bannerWillPresentModalView:)]) {
+        [self.delegate bannerWillPresentModalView:self];
+    }
     [self postNotification:kHZBannerAdWillPresentModalViewNotification];
 }
 
 - (void)didDismissModalView {
-    [self.delegate bannerDidDismissModalView:self];
+    if ([self.delegate respondsToSelector:@selector(bannerDidDismissModalView:)]) {
+        [self.delegate bannerDidDismissModalView:self];
+    }
     [self postNotification:kHZBannerAdDidDismissModalViewNotification];
 }
 
 - (void)willLeaveApplication {
-    [self.delegate bannerWillLeaveApplication:self];
+    if ([self.delegate respondsToSelector: @selector(bannerWillLeaveApplication:)]) {
+        [self.delegate bannerWillLeaveApplication:self];
+    }
     [self postNotification:kHZBannerAdWillLeaveApplicationNotification];
 }
 
