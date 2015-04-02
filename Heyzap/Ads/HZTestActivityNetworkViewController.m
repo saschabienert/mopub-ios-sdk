@@ -760,36 +760,31 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 }
 
 - (void)hideBanner {
-    [self.bannerWrapper finishUsingBanner];
+    [self.bannerWrapper removeFromSuperview];
     self.bannerWrapper = nil;
     
     self.hideBannerButton.enabled = NO;
     self.showBannerButton.enabled = YES;
 }
 
-
-- (void)dealloc {
-    [self.bannerWrapper finishUsingBanner];
-}
-
 #pragma mark - Banner Ad Delegate
 
-- (void)bannerDidReceiveAd {
+- (void)bannerDidReceiveAd:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerDidFailToReceiveAd:(NSError *)error {
+- (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerWasClicked {
+- (void)bannerWasClicked:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerWillPresentModalView {
+- (void)bannerWillPresentModalView:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerDidDismissModalView {
+- (void)bannerDidDismissModalView:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerWillLeaveApplication {
+- (void)bannerWillLeaveApplication:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
 

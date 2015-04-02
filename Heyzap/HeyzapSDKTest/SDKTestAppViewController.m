@@ -214,6 +214,14 @@ const CGFloat kLeftMargin = 10;
     [HZVideoAd setDelegate:self];
     [HZIncentivizedAd setDelegate:self];
     
+//    [HZBannerAd requestBannerWithOptions:nil completion:^(NSError *error, HZBannerAd *wrapper) {
+//        [self.view addSubview:wrapper];
+//    }];
+    
+    CGSize size = CGSizeFromGADAdSize(kGADAdSizeSmartBannerPortrait);
+    NSLog(@"Size = %@",NSStringFromCGSize(size));
+    NSLog(@"View size = %@",NSStringFromCGRect(self.view.frame));
+    
     self.view.accessibilityLabel = kViewAccessibilityLabel;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestNotification:) name:kHZAPIClientDidSendRequestNotification object:nil];
@@ -579,7 +587,7 @@ const CGFloat kLeftMargin = 10;
 
 - (void)hideBannerButtonPressed:(id)sender {
     [self.view endEditing:YES];
-    [self.wrapper finishUsingBanner];
+    [self.wrapper removeFromSuperview];
     
     self.hideBannerButton.enabled = NO;
     self.showBannerButton.enabled = YES;
@@ -713,27 +721,27 @@ const CGFloat kLeftMargin = 10;
 
 #undef APPEND_METHOD_NAME_TO_CONSOLE
 
-- (void)bannerDidReceiveAd {
+- (void)bannerDidReceiveAd:(HZBannerAd *)banner {
     NSLog(@"bannerDidReceiveAd");
 }
 
-- (void)bannerDidFailToReceiveAd:(NSError *)error {
+- (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
     NSLog(@"bannerDidFailtoReceiveAd:%@",error);
 }
 
-- (void)bannerWasClicked {
+- (void)bannerWasClicked:(HZBannerAd *)banner {
     NSLog(@"bannerWasClicked");
 }
 
-- (void)bannerWillPresentModalView {
+- (void)bannerWillPresentModalView:(HZBannerAd *)banner {
     NSLog(@"bannerWillPresentModalView");
 }
 
-- (void)bannerDidDismissModalView {
+- (void)bannerDidDismissModalView:(HZBannerAd *)banner {
     NSLog(@"bannerDidDismissModalView");
 }
 
-- (void)bannerWillLeaveApplication {
+- (void)bannerWillLeaveApplication:(HZBannerAd *)banner {
     NSLog(@"bannerWillLeaveApplication");
 }
 
