@@ -69,8 +69,7 @@
     dispatch_once(&onceToken, ^{
         [self setupCachingDirectory];
         
-        // Set cache size to big
-        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:100000000 diskCapacity: 1000000000 diskPath:nil];
+        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:(10 * 1024 * 1024) diskCapacity: (30 * 1024 * 1024) diskPath:nil];
         [NSURLCache setSharedURLCache:sharedCache];
         
         //register this game as installed, if we haven't done so already

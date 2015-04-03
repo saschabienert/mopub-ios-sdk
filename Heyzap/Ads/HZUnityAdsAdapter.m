@@ -18,6 +18,7 @@
 @property (nonatomic, strong) NSString *videoZoneID;
 @property (nonatomic, strong) NSString *incentivizedZoneID;
 @property (nonatomic) BOOL isShowingIncentivized;
+@property (nonatomic) BOOL didSkipIncentivized;
 
 @end
 
@@ -180,21 +181,22 @@ NSString * const kHZNetworkName = @"mobile";
 }
 
 - (void)unityAdsVideoCompleted:(NSString *)rewardItemKey skipped:(BOOL)skipped {
-    
     [self.delegate adapterDidFinishPlayingAudio:self];
+    self.didSkipIncentivized = skipped;
+}
+
+- (void)unityAdsDidHide {
     if (self.isShowingIncentivized) {
-        if (skipped) {
+        if (self.didSkipIncentivized) {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
         } else {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
         }
     }
     self.isShowingIncentivized = NO;
-}
-
-- (void)unityAdsDidHide {
-    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
+    self.didSkipIncentivized = NO;
     [self.delegate adapterDidDismissAd:self];
+    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
 }
 
 - (void)unityAdsWillLeaveApplication {
