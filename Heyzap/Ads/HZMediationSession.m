@@ -132,14 +132,9 @@ return nil; \
 
 - (BOOL)withinInterval:(NSDate *const)lastInterstitialVideoShown {
     if (!lastInterstitialVideoShown) {
-        NSLog(@"Last interstitial video shown is nil; its within interval");
         return YES;
     }
     const NSTimeInterval secondsSinceLastInterstitial = [[NSDate date] timeIntervalSinceDate:lastInterstitialVideoShown];
-    NSLog(@"Seconds since last interstitial = %f",secondsSinceLastInterstitial);
-    double millisecondsSinceLastInterstitial = secondsSinceLastInterstitial * 1000;
-    NSLog(@"milliseconds since last = %g",millisecondsSinceLastInterstitial);
-    NSLog(@"interstitial video millis = %g",self.interstitialVideoIntervalMillis);
     return (secondsSinceLastInterstitial * 1000) > self.interstitialVideoIntervalMillis;
 }
 
