@@ -20,7 +20,6 @@ DEPENDENCIES:
   - AppLovin
   - ChartboostSDK
   - FacebookAudienceNetwork
-  - Google-AdMob-Ads-SDK
   - Kiwi
   - OCMockito
   - OHHTTPStubs

@@ -51,6 +51,7 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 
 @interface HeyzapMediation()
 
+@property (nonatomic) NSTimeInterval retryStartDelay;
 @property (nonatomic, strong) NSSet *setupMediators;
 
 @property (nonatomic, strong) NSMutableDictionary *sessionDictionary;
@@ -84,6 +85,9 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     return mediator;
 }
 
+const NSTimeInterval initialStartDelay = 10;
+const NSTimeInterval maxStartDelay     = 300;
+
 - (instancetype)init
 {
     self = [super init];
@@ -93,8 +97,13 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
+        _retryStartDelay = initialStartDelay;
     }
     return self;
+}
+
+- (void)setRetryStartDelay:(NSTimeInterval)retryStartDelay {
+    _retryStartDelay = MIN(retryStartDelay, maxStartDelay);
 }
 
 #pragma mark - Setup
@@ -106,8 +115,13 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         return;
     }
     self.startHasBeenCalled = YES;
+    HZILog(@"The following SDKs have been detected = %@",[[self class] commaSeparatedAdapterList]);
     
-    HZDLog(@"The following SDKs have been detected = %@",[[self class] commaSeparatedAdapterList]);
+    [self retriableStart];
+}
+
+// This method should only be called by `start`.
+- (void)retriableStart {
     
     [[HZMediationAPIClient sharedClient] get:@"start" withParams:nil success:^(NSDictionary *json) {
         self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
@@ -124,7 +138,11 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         self.startStatus = [self.setupMediators count] == 0 ? HZMediationStartStatusFailure : HZMediationStartStatusSuccess;
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         self.startStatus = HZMediationStartStatusFailure;
-        HZDLog(@"Error! Failed to get networks from Heyzap. Mediation won't be possible. Error = %@,",error);
+        HZELog(@"Error! Failed to get networks from Heyzap. Retrying in %g seconds. Error = %@,",self.retryStartDelay, error);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.retryStartDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            self.retryStartDelay *= 2;
+            [self retriableStart];
+        });
     }];
 }
 
