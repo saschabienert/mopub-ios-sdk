@@ -12,6 +12,7 @@
 
 #import "HZMediationConstants.h"
 #import "HZiAdBannerAdapter.h"
+#import "HZUnityAbstractAdapter.h"
 
 @interface HZiAdAdapter()<ADInterstitialAdDelegate>
 
@@ -122,20 +123,24 @@
 
 - (void)interstitialAdDidLoad:(ADInterstitialAd *)interstitialAd {
     self.lastInterstitialError = nil;
+    [HZUnityAbstractAdapter sendMessage:@"available" fromNetwork:kHZAdapteriAd];
 }
 
 - (void)interstitialAdDidUnload:(ADInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd: self];
+    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapteriAd];
 }
 
 - (BOOL)interstitialAdActionShouldBegin:(ADInterstitialAd *)interstitialAd
                    willLeaveApplication:(BOOL)willLeave {
     [self.delegate adapterWasClicked: self];
+    [HZUnityAbstractAdapter sendMessage:@"click" fromNetwork:kHZAdapteriAd];
     return YES;
 }
 
 - (void)interstitialAdActionDidFinish:(ADInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd:self];
+    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapteriAd];
 }
 
 - (void)interstitialAd:(ADInterstitialAd *)interstitialAd
@@ -147,6 +152,7 @@
                                                  userInfo:@{kHZMediatorNameKey: @"iAd",
                                                             NSUnderlyingErrorKey: error}];
     self.interstitialAd = nil;
+    [HZUnityAbstractAdapter sendMessage:@"fetch_failed" fromNetwork:kHZAdapteriAd];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

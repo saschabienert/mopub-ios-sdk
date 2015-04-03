@@ -15,6 +15,7 @@
 #import "HZFBBannerAdapter.h"
 #import "HZBannerAdOptions.h"
 #import "HZBannerAdOptions_Private.h"
+#import "HZUnityAbstractAdapter.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
@@ -139,11 +140,13 @@
 
 - (void)interstitialAdDidClick:(HZFBInterstitialAd *)interstitialAd {
     [self.delegate adapterWasClicked:self];
+    [HZUnityAbstractAdapter sendMessage:@"click" fromNetwork:kHZAdapterFacebook];
 }
 
 - (void)interstitialAdDidClose:(HZFBInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd:self];
     self.interstitialAd = nil;
+    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterFacebook];
 }
 
 - (void)interstitialAdWillClose:(HZFBInterstitialAd *)interstitialAd {
@@ -152,6 +155,7 @@
 
 - (void)interstitialAdDidLoad:(HZFBInterstitialAd *)interstitialAd {
     self.lastInterstitialError = nil;
+    [HZUnityAbstractAdapter sendMessage:@"available" fromNetwork:kHZAdapterFacebook];
 }
 
 - (void)interstitialAd:(HZFBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
@@ -160,9 +164,11 @@
                                                  userInfo:@{kHZMediatorNameKey: @"Facebook",
                                                             NSUnderlyingErrorKey: error}];
     self.interstitialAd = nil;
+    [HZUnityAbstractAdapter sendMessage:@"fetch_failed" fromNetwork:kHZAdapterFacebook];
 }
 
 - (void)interstitialAdWillLogImpression:(HZFBInterstitialAd *)interstitialAd {
+    [HZUnityAbstractAdapter sendMessage:@"logging_impression" fromNetwork:kHZAdapterFacebook];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

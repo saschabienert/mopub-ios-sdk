@@ -12,6 +12,7 @@
 #import "HZDictionaryUtils.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
+#import "HZUnityAbstractAdapter.h"
 
 @interface HZUnityAdsAdapter() <HZUnityAdsDelegate>
 
@@ -195,23 +196,28 @@ NSString * const kHZNetworkName = @"mobile";
     if (self.isShowingIncentivized) {
         if (self.didSkipIncentivized) {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+            [HZUnityAbstractAdapter sendMessage:@"incentivized_result_incomplete" fromNetwork:kHZAdapterUnityAds];
         } else {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
+            [HZUnityAbstractAdapter sendMessage:@"incentivized_result_complete" fromNetwork:kHZAdapterUnityAds];
         }
     }
     self.isShowingIncentivized = NO;
     self.didSkipIncentivized = NO;
     [self.delegate adapterDidDismissAd:self];
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
+    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterUnityAds];
 }
 
 - (void)unityAdsWillLeaveApplication {
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
+    [HZUnityAbstractAdapter sendMessage:@"click" fromNetwork:kHZAdapterUnityAds];
 }
 
 - (void)unityAdsVideoStarted {
     [self.delegate adapterWillPlayAudio:self];
+    [HZUnityAbstractAdapter sendMessage:@"audio_starting" fromNetwork:kHZAdapterUnityAds];
 }
 
 @end

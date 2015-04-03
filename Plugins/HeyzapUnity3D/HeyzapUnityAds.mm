@@ -29,6 +29,7 @@
 #import "HZInterstitialAd.h"
 #import "HZVideoAd.h"
 #import "HZIncentivizedAd.h"
+#import "HZUnityAbstractAdapter.h"
 
 extern void UnitySendMessage(const char *, const char *, const char *);
 
@@ -166,7 +167,7 @@ extern "C" {
         return [HZIncentivizedAd setUserIdentifier: userID];
      }
 
-    // availability and abstract listener
+    // Initialization
     bool hz_ads_is_network_initialized(const char *network) {
         NSString *networkName = [NSString stringWithUTF8String:network];
         HZNetwork networkEnum = [HeyzapAds networkForName:networkName];

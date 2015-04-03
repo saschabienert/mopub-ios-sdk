@@ -15,6 +15,7 @@
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
 #import "HZAdMobBannerAdapter.h"
+#import "HZUnityAbstractAdapter.h"
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
@@ -149,6 +150,7 @@
                                      userInfo:@{kHZMediatorNameKey: @"AdMob",
                                                 NSUnderlyingErrorKey: error}];
     self.currentInterstitial = nil;
+    [HZUnityAbstractAdapter sendMessage:@"fetch_failed" fromNetwork:kHZAdapterAdMob];
 }
 
 - (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
@@ -156,6 +158,7 @@
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
     self.currentInterstitial = nil;
+    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterAdMob];
 }
 
 // As far as I can tell, this means a click.
@@ -163,11 +166,13 @@
 {
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
+    [HZUnityAbstractAdapter sendMessage:@"click" fromNetwork:kHZAdapterAdMob];
 }
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
     self.lastInterstitialError = nil;
+    [HZUnityAbstractAdapter sendMessage:@"available" fromNetwork:kHZAdapterAdMob];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

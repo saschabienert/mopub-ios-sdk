@@ -14,6 +14,7 @@
 #import "HZLog.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
+#import "HZUnityAbstractAdapter.h"
 
 @interface HZChartboostAdapter()
 
@@ -180,29 +181,34 @@
 - (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
     [[self class] logError:error];
     self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Chartboost"}];
-    
+    [HZUnityAbstractAdapter sendMessage:@"did_fail_to_load_interstitial" fromNetwork:kHZAdapterChartboost];
+
 }
 
 - (void)didFailToLoadRewardedVideo:(CBLocation)location
                          withError:(CBLoadError)error {
     [[self class] logError:error];
     self.lastIncentivizedError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey:@"Chartboost"}];
-    
+    [HZUnityAbstractAdapter sendMessage:@"did_fail_to_load_rewarded_video" fromNetwork:kHZAdapterChartboost];
+
 }
 
 - (void)didCacheRewardedVideo:(CBLocation)location {
     self.lastIncentivizedError = nil;
+    [HZUnityAbstractAdapter sendMessage:@"did_cache_rewarded_video" fromNetwork:kHZAdapterChartboost];
 }
 
 - (void)didClickRewardedVideo:(CBLocation)location {
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked: self];
+    [HZUnityAbstractAdapter sendMessage:@"did_click_rewarded_video" fromNetwork:kHZAdapterChartboost];
 }
 
 - (void)didClickInterstitial:(CBLocation)location
 {
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
+    [HZUnityAbstractAdapter sendMessage:@"did_click_interstitial" fromNetwork:kHZAdapterChartboost];
 }
 
 - (BOOL)shouldRequestInterstitial:(CBLocation)location {
@@ -212,11 +218,13 @@
 - (void)didCompleteRewardedVideo:(CBLocation)location
                       withReward:(int)reward {
     [self.delegate adapterDidCompleteIncentivizedAd: self];
+    [HZUnityAbstractAdapter sendMessage:@"did_complete_rewarded_video" fromNetwork:kHZAdapterChartboost];
 }
 
 - (void)didDismissRewardedVideo:(CBLocation)location {
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
+    [HZUnityAbstractAdapter sendMessage:@"did_dismiss_rewarded_video" fromNetwork:kHZAdapterChartboost];
 }
 
 
@@ -237,6 +245,7 @@
 
 - (void)didCacheInterstitial:(CBLocation)location {
     self.lastInterstitialError = nil;
+    [HZUnityAbstractAdapter sendMessage:@"did_cache_interstitial" fromNetwork:kHZAdapterChartboost];
 }
 
 /*
@@ -253,7 +262,36 @@
 - (void)didDismissInterstitial:(CBLocation)location {
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
+    [HZUnityAbstractAdapter sendMessage:@"did_dismiss_interstitial" fromNetwork:kHZAdapterChartboost];
 }
+
+/**
+ *  More Apps
+ */
+- (void)didFailToLoadMoreApps:(CBLocation)location withError:(CBLoadError)error {
+    [HZUnityAbstractAdapter sendMessage:@"did_fail_to_load_more_apps" fromNetwork:kHZAdapterChartboost];
+}
+
+- (void)didCacheMoreApps:(CBLocation)location {
+    [HZUnityAbstractAdapter sendMessage:@"did_cache_more_apps" fromNetwork:kHZAdapterChartboost];
+}
+
+- (void)didDismissMoreApps:(CBLocation)location {
+    [HZUnityAbstractAdapter sendMessage:@"did_dismiss_more_apps" fromNetwork:kHZAdapterChartboost];
+}
+
+- (void)didCloseMoreApps:(CBLocation)location {
+    [HZUnityAbstractAdapter sendMessage:@"did_close_more_apps" fromNetwork:kHZAdapterChartboost];
+}
+
+- (void)didClickMoreApps:(CBLocation)location {
+    [HZUnityAbstractAdapter sendMessage:@"did_click_more_apps" fromNetwork:kHZAdapterChartboost];
+}
+
+- (void)didDisplayMoreApps:(CBLocation)location {
+    [HZUnityAbstractAdapter sendMessage:@"did_display_more_apps" fromNetwork:kHZAdapterChartboost];
+}
+
 
 /*
  * shouldRequestInterstitialsInFirstSession

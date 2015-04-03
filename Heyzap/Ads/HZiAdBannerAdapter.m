@@ -7,6 +7,8 @@
 //
 
 #import "HZiAdBannerAdapter.h"
+#import "HZUnityAbstractAdapter.h"
+#import "HZMediationConstants.h"
 @import iAd;
 
 @interface HZiAdBannerAdapter() <ADBannerViewDelegate>
@@ -50,17 +52,20 @@
     }
     
     [self.bannerInteractionDelegate didReceiveAd];
+    [HZUnityAbstractAdapter sendMessage:@"banner-loaded" fromNetwork:kHZAdapteriAd];
 }
 
 - (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error {
     self.lastError = error;
     [self.bannerInteractionDelegate didFailToReceiveAd:error];
+    [HZUnityAbstractAdapter sendMessage:@"banner-fetch_failed" fromNetwork:kHZAdapteriAd];
 }
 
 
 - (BOOL)bannerViewActionShouldBegin:(ADBannerView *)banner willLeaveApplication:(BOOL)willLeave {
     [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
     [self.bannerInteractionDelegate userDidClick];
+    [HZUnityAbstractAdapter sendMessage:@"banner-click" fromNetwork:kHZAdapteriAd];
     
     if (willLeave) {
         [self.bannerInteractionDelegate willLeaveApplication];
@@ -73,6 +78,7 @@
 
 - (void)bannerViewActionDidFinish:(ADBannerView *)banner {
     [self.bannerInteractionDelegate didDismissModalView];
+    [HZUnityAbstractAdapter sendMessage:@"banner-hide" fromNetwork:kHZAdapteriAd];
 }
 
 - (BOOL)isAvailable {

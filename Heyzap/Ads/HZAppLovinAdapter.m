@@ -22,6 +22,8 @@
 #import "HZALAdSize.h"
 #import "HZIncentivizedAppLovinDelegate.h"
 
+#import "HZUnityAbstractAdapter.h"
+
 /**
  *  AppLovin's SDK is split between using (singletons+class methods) vs instances. Inexplicably, the former group is only available when you store the SDK Key in your info.plist file, so we need to use the instance methods.
  */
@@ -205,6 +207,8 @@
             break;
         }
     }
+    
+    [HZUnityAbstractAdapter sendMessage:@"available" fromNetwork:kHZAdapterAppLovin];
 }
 - (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error
 {
@@ -227,17 +231,21 @@
             break;
         }
     }
+
+    [HZUnityAbstractAdapter sendMessage:@"fetch_failed" fromNetwork:kHZAdapterAppLovin];
 }
 
 - (void)didClickAd
 {
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
+    [HZUnityAbstractAdapter sendMessage:@"click" fromNetwork:kHZAdapterAppLovin];
 }
 - (void)didDismissAd
 {
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
+    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterAppLovin];
 }
 
 - (void)didCompleteIncentivized
@@ -245,11 +253,13 @@
     [self clearIncentivizedState];
     
     [self.delegate adapterDidCompleteIncentivizedAd:self];
+    [HZUnityAbstractAdapter sendMessage:@"incentivized_result_complete" fromNetwork:kHZAdapterAppLovin];
 }
 - (void)didFailToCompleteIncentivized
 {
     [self clearIncentivizedState];
     [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+    [HZUnityAbstractAdapter sendMessage:@"incentivized_result_incomplete" fromNetwork:kHZAdapterAppLovin];
 }
 
 - (void)clearIncentivizedState {
@@ -261,10 +271,12 @@
 - (void)willPlayAudio
 {
     [self.delegate adapterWillPlayAudio:self];
+    [HZUnityAbstractAdapter sendMessage:@"audio_starting" fromNetwork:kHZAdapterAppLovin];
 }
 - (void)didFinishAudio
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
+    [HZUnityAbstractAdapter sendMessage:@"audio_finished" fromNetwork:kHZAdapterAppLovin];
 }
 
 

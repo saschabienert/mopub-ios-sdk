@@ -14,6 +14,7 @@
 #import "HZUtils.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
+#import "HZUnityAbstractAdapter.h"
 
 const NSString* HZVunglePlayAdOptionKeyIncentivized        = @"incentivized";
 const NSString* HZVunglePlayAdOptionKeyShowClose           = @"showClose";
@@ -164,18 +165,22 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     if (self.isShowingIncentivized) {
         if ([viewInfo[@"completedView"] boolValue]) {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
+            [HZUnityAbstractAdapter sendMessage:@"incentivized_result_complete" fromNetwork:kHZAdapterVungle];
         } else {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+            [HZUnityAbstractAdapter sendMessage:@"incentivized_result_incomplete" fromNetwork:kHZAdapterVungle];
         }
     }
     
     if (willPresentProductSheet) {
         [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
         [self.delegate adapterWasClicked:self];
+        [HZUnityAbstractAdapter sendMessage:@"click" fromNetwork:kHZAdapterVungle];
     } else {
         [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
         [self.delegate adapterDidFinishPlayingAudio:self];
         [self.delegate adapterDidDismissAd:self];
+        [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterVungle];
     }
     
     self.isShowingIncentivized = NO;
@@ -186,6 +191,7 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
+    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterVungle];
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol

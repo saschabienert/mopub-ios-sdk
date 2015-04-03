@@ -10,6 +10,7 @@
 #import "HZFBAdView.h"
 #import "HZMediationConstants.h"
 #import "HZBannerAdOptions_Private.h"
+#import "HZUnityAbstractAdapter.h"
 
 @interface HZFBBannerAdapter()
 
@@ -44,23 +45,28 @@
     [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
     [self.bannerInteractionDelegate userDidClick];
     [self.bannerInteractionDelegate willPresentModalView];
+    [HZUnityAbstractAdapter sendMessage:@"banner-click" fromNetwork:kHZAdapterFacebook];
 }
 - (void)adViewDidFinishHandlingClick:(HZFBAdView *)adView {
     [self.bannerInteractionDelegate didDismissModalView];
+    [HZUnityAbstractAdapter sendMessage:@"banner-hide" fromNetwork:kHZAdapterFacebook];
 }
 - (void)adViewDidLoad:(HZFBAdView *)adView {
     // if on screen, then register impression
     // else monitor view for superview
     self.isLoaded = YES;
     [self.bannerInteractionDelegate didReceiveAd];
+    [HZUnityAbstractAdapter sendMessage:@"banner-available" fromNetwork:kHZAdapterFacebook];
 }
 - (void)adView:(HZFBAdView *)adView didFailWithError:(NSError *)error {
     self.isLoaded = NO;
     self.lastError = error;
     [self.bannerInteractionDelegate didFailToReceiveAd:error];
+    [HZUnityAbstractAdapter sendMessage:@"banner-fetch_failed" fromNetwork:kHZAdapterFacebook];
 }
 - (void)adViewWillLogImpression:(HZFBAdView *)adView {
     [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+    [HZUnityAbstractAdapter sendMessage:@"banner-logging_impression" fromNetwork:kHZAdapterFacebook];
 }
 
 - (UIView *)mediatedBanner {

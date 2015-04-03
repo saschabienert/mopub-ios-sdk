@@ -12,6 +12,7 @@
 #import "HZDictionaryUtils.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
+#import "HZUnityAbstractAdapter.h"
 
 #import <UIKit/UIKit.h>
 
@@ -213,13 +214,16 @@
     if ([zoneID isEqualToString:self.incentivizedZoneID]) {
         if (shown) {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
+            [HZUnityAbstractAdapter sendMessage:@"incentivized_result_complete" fromNetwork:kHZAdapterAdColony];
         } else {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+            [HZUnityAbstractAdapter sendMessage:@"incentivized_result_incomplete" fromNetwork:kHZAdapterAdColony];
         }
     }
     // unfortunately, adcolony doesn't tell us whether the ad was clicked or dismissed
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
+    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterAdColony];
 }
 
 @end
