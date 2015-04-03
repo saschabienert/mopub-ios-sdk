@@ -28,6 +28,7 @@
 #import "HZDelegateProxy.h"
 #import "HZAdModel.h"
 #import "HZUtils.h"
+#import "HZAdsManager.h"
 
 // Session
 #import "HZMediationSessionKey.h"
@@ -166,13 +167,15 @@ const NSTimeInterval maxStartDelay     = 300;
 
 - (void)autoFetchInterstitial
 {
-    HZShowOptions *options = [HZShowOptions new];
-
-    [self mediateForAdType:HZAdTypeInterstitial
-           showImmediately:NO
-              fetchTimeout:10
-          additionalParams:nil
-                   options:options];
+    if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
+        HZShowOptions *options = [HZShowOptions new];
+        
+        [self mediateForAdType:HZAdTypeInterstitial
+               showImmediately:NO
+                  fetchTimeout:10
+              additionalParams:nil
+                       options:options];
+    }
 }
 
 // Dictionary keys
