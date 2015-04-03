@@ -684,13 +684,6 @@ const NSTimeInterval bannerTimeout = 10;
                     return isAvailable || (bannerAdapter.lastError != nil);
                 }, bannerTimeout);
                 
-                if (!isAvailable) {
-                    // Notify the adapter that we're not trying to load from it anymore, so it can release timers and such.
-                    dispatch_sync(dispatch_get_main_queue(), ^{
-                       [bannerAdapter stopTryingToLoadBanner];
-                    });
-                }
-                
                 if (isAvailable) {
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         bannerAdapter.session = session;

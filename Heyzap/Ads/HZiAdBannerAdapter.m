@@ -12,6 +12,7 @@
 @interface HZiAdBannerAdapter() <ADBannerViewDelegate>
 
 @property (nonatomic, strong) ADBannerView *banner;
+@property (nonatomic) BOOL waitingToBeAddedToScreen;
 
 @end
 
@@ -41,7 +42,7 @@
     if (banner.superview) {
         [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
     } else {
-        [self startMonitoringForImpression];
+        self.waitingToBeAddedToScreen = YES;
     }
     
     [self.bannerInteractionDelegate didReceiveAd];
@@ -72,6 +73,13 @@
 
 - (BOOL)isAvailable {
     return self.banner.isBannerLoaded;
+}
+
+- (void)bannerWasAddedToView {
+    if (self.waitingToBeAddedToScreen) {
+        [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+        self.waitingToBeAddedToScreen = NO;
+    }
 }
 
 @end

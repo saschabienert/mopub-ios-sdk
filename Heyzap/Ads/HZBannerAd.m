@@ -222,6 +222,8 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
+    [self.adapter bannerWasAddedToView];
+    
     [super willMoveToSuperview:newSuperview];
     if ([self isFlexibleWidth]) {
         CGRect frame = self.frame;
