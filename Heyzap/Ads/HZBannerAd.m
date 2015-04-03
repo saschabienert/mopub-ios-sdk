@@ -22,7 +22,22 @@
 @end
 
 @implementation HZBannerAd
-///
+
+#pragma mark - Constants
+
+NSString * const kHZBannerAdDidReceiveAdNotification = @"kHZBannerAdDidReceiveAdNotification";
+NSString * const kHZBannerAdDidFailToReceiveAdNotification = @"kHZBannerAdDidFailToReceiveAdNotification";
+NSString * const kHZBannerAdWasClickedNotification = @"kHZBannerAdWasClickedNotification";
+NSString * const kHZBannerAdWillPresentModalViewNotification = @"kHZBannerAdWillPresentModalViewNotification";
+NSString * const kHZBannerAdDidDismissModalViewNotification = @"kHZBannerAdDidDismissModalViewNotification";
+NSString * const kHZBannerAdWillLeaveApplicationNotification = @"kHZBannerAdWillLeaveApplicationNotification";
+
+NSString * const kHZBannerAdNotificationTagKey = @"kHZBannerAdNotificationTagKey";
+NSString * const kHZBannerAdNetworkNameKey = @"kHZBannerAdNetworkNameKey";
+NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErrorKey";
+
+#pragma mark - Initialization
+
 - (instancetype)initWithBanner:(HZBannerAdapter *)adapter options:(HZBannerAdOptions *)options {
     NSParameterAssert(adapter);
     self = [super init];
@@ -61,9 +76,25 @@
     return self;
 }
 
+#pragma mark - Properties
+
 - (NSString *)mediatedNetwork {
     return self.adapter.parentAdapter.name;
 }
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p, mediatedNetwork: %@, mediatedBanner: %@>", NSStringFromClass([self class]), self, self.mediatedNetwork, self.mediatedBanner];
+}
+
+- (UIView *)mediatedBanner {
+    return self.adapter.mediatedBanner;
+}
+
+- (BOOL)isFlexibleWidth {
+    return [self.options isFlexibleWidthForNetwork:self.adapter.parentAdapter.name];
+}
+
+#pragma mark - Requesting Ads
 
 
 + (void)requestBannerWithOptions:(HZBannerAdOptions *)options
@@ -83,83 +114,6 @@
             success(wrapper);
         }
     }];
-}
-
-- (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p, mediatedNetwork: %@, mediatedBanner: %@>", NSStringFromClass([self class]), self, self.mediatedNetwork, self.mediatedBanner];
-}
-
-NSString * const kHZBannerAdDidReceiveAdNotification = @"kHZBannerAdDidReceiveAdNotification";
-NSString * const kHZBannerAdDidFailToReceiveAdNotification = @"kHZBannerAdDidFailToReceiveAdNotification";
-NSString * const kHZBannerAdWasClickedNotification = @"kHZBannerAdWasClickedNotification";
-NSString * const kHZBannerAdWillPresentModalViewNotification = @"kHZBannerAdWillPresentModalViewNotification";
-NSString * const kHZBannerAdDidDismissModalViewNotification = @"kHZBannerAdDidDismissModalViewNotification";
-NSString * const kHZBannerAdWillLeaveApplicationNotification = @"kHZBannerAdWillLeaveApplicationNotification";
-
-NSString * const kHZBannerAdNotificationTagKey = @"kHZBannerAdNotificationTagKey";
-NSString * const kHZBannerAdNetworkNameKey = @"kHZBannerAdNetworkNameKey";
-NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErrorKey";
-
-- (void)postNotification:(NSString *)notification {
-    [self postNotification:notification userInfo:nil];
-}
-
-- (void)postNotification:(NSString *)notification userInfo:(NSDictionary *)userInfo {
-    NSMutableDictionary *mutableInfo = [NSMutableDictionary dictionaryWithDictionary:userInfo];
-    mutableInfo[kHZBannerAdNotificationTagKey] = self.options.tag;
-    mutableInfo[kHZBannerAdNetworkNameKey] = self.mediatedNetwork;
-    [[NSNotificationCenter defaultCenter] postNotificationName:notification object:self userInfo:mutableInfo];
-}
-
-- (void)didReceiveAd {
-    if ([self.delegate respondsToSelector:@selector(bannerDidReceiveAd:)]) {
-        [self.delegate bannerDidReceiveAd:self];
-    }
-    [self postNotification:kHZBannerAdDidReceiveAdNotification];
-}
-
-- (void)didFailToReceiveAd:(NSError *)networkError {
-    NSDictionary *const userInfo = networkError ? @{NSUnderlyingErrorKey: networkError} : nil;
-    NSError *const error = [[NSError alloc] initWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
-    
-    if ([self.delegate respondsToSelector:@selector(bannerDidFailToReceiveAd:error:)]) {
-        [self.delegate bannerDidFailToReceiveAd:self error:error];
-    }
-    
-    [self postNotification:kHZBannerAdDidFailToReceiveAdNotification
-                  userInfo:@{kHZBannerAdNotificationErrorKey: error}];
-}
-
-- (void)userDidClick {
-    if ([self.delegate respondsToSelector:@selector(bannerWasClicked:)]) {
-        [self.delegate bannerWasClicked:self];
-    }
-    [self postNotification:kHZBannerAdWasClickedNotification];
-}
-
-- (void)willPresentModalView {
-    if ([self.delegate respondsToSelector:@selector(bannerWillPresentModalView:)]) {
-        [self.delegate bannerWillPresentModalView:self];
-    }
-    [self postNotification:kHZBannerAdWillPresentModalViewNotification];
-}
-
-- (void)didDismissModalView {
-    if ([self.delegate respondsToSelector:@selector(bannerDidDismissModalView:)]) {
-        [self.delegate bannerDidDismissModalView:self];
-    }
-    [self postNotification:kHZBannerAdDidDismissModalViewNotification];
-}
-
-- (void)willLeaveApplication {
-    if ([self.delegate respondsToSelector: @selector(bannerWillLeaveApplication:)]) {
-        [self.delegate bannerWillLeaveApplication:self];
-    }
-    [self postNotification:kHZBannerAdWillLeaveApplicationNotification];
-}
-
-- (UIView *)mediatedBanner {
-    return self.adapter.mediatedBanner;
 }
 
 + (void)placeBannerInView:(UIView *)view
@@ -221,6 +175,8 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
     }];
 }
 
+#pragma mark - UIView methods
+
 - (void)willMoveToSuperview:(UIView *)newSuperview {
     [self.adapter bannerWasAddedToView];
     
@@ -232,8 +188,64 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
     }
 }
 
-- (BOOL)isFlexibleWidth {
-    return [self.options isFlexibleWidthForNetwork:self.adapter.parentAdapter.name];
+#pragma mark - Delegate / Notifications
+
+- (void)postNotification:(NSString *)notification {
+    [self postNotification:notification userInfo:nil];
+}
+
+- (void)postNotification:(NSString *)notification userInfo:(NSDictionary *)userInfo {
+    NSMutableDictionary *mutableInfo = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+    mutableInfo[kHZBannerAdNotificationTagKey] = self.options.tag;
+    mutableInfo[kHZBannerAdNetworkNameKey] = self.mediatedNetwork;
+    [[NSNotificationCenter defaultCenter] postNotificationName:notification object:self userInfo:mutableInfo];
+}
+
+- (void)didReceiveAd {
+    if ([self.delegate respondsToSelector:@selector(bannerDidReceiveAd:)]) {
+        [self.delegate bannerDidReceiveAd:self];
+    }
+    [self postNotification:kHZBannerAdDidReceiveAdNotification];
+}
+
+- (void)didFailToReceiveAd:(NSError *)networkError {
+    NSDictionary *const userInfo = networkError ? @{NSUnderlyingErrorKey: networkError} : nil;
+    NSError *const error = [[NSError alloc] initWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
+    
+    if ([self.delegate respondsToSelector:@selector(bannerDidFailToReceiveAd:error:)]) {
+        [self.delegate bannerDidFailToReceiveAd:self error:error];
+    }
+    
+    [self postNotification:kHZBannerAdDidFailToReceiveAdNotification
+                  userInfo:@{kHZBannerAdNotificationErrorKey: error}];
+}
+
+- (void)userDidClick {
+    if ([self.delegate respondsToSelector:@selector(bannerWasClicked:)]) {
+        [self.delegate bannerWasClicked:self];
+    }
+    [self postNotification:kHZBannerAdWasClickedNotification];
+}
+
+- (void)willPresentModalView {
+    if ([self.delegate respondsToSelector:@selector(bannerWillPresentModalView:)]) {
+        [self.delegate bannerWillPresentModalView:self];
+    }
+    [self postNotification:kHZBannerAdWillPresentModalViewNotification];
+}
+
+- (void)didDismissModalView {
+    if ([self.delegate respondsToSelector:@selector(bannerDidDismissModalView:)]) {
+        [self.delegate bannerDidDismissModalView:self];
+    }
+    [self postNotification:kHZBannerAdDidDismissModalViewNotification];
+}
+
+- (void)willLeaveApplication {
+    if ([self.delegate respondsToSelector: @selector(bannerWillLeaveApplication:)]) {
+        [self.delegate bannerWillLeaveApplication:self];
+    }
+    [self postNotification:kHZBannerAdWillLeaveApplicationNotification];
 }
 
 @end
