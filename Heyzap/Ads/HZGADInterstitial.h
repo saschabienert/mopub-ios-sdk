@@ -17,7 +17,7 @@
 @property(nonatomic, readonly, assign) BOOL isReady;
 @property(nonatomic, readonly, assign) BOOL hasBeenUsed;
 
-@property(nonatomic, assign) NSObject<HZGADInterstitialDelegate> *delegate;
+@property(nonatomic, weak) NSObject<HZGADInterstitialDelegate> *delegate;
 
 - (id)init;
 

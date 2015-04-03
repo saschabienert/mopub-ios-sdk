@@ -14,7 +14,7 @@
 @interface HZAdFetchRequest : NSObject <HZAdInfoProvider, HZMetricsProvider>
 
 @property (nonatomic, readonly) NSUUID *requestID;
-@property (nonatomic, assign, readonly) int retriesRemaining;
+@property (nonatomic, readonly) int retriesRemaining;
 
 @property (nonatomic, readonly) NSArray *creativeTypes;
 @property (nonatomic, readonly) NSString *adUnit;
