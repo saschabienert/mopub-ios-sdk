@@ -169,6 +169,7 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
                 break;
             }
         }
+        if (success) { success(wrapper); }
     } failure:^(NSError *error) {
         HZELog(@"Error loading banner! %@",error);
         if (failure) { failure(error); }
