@@ -8,7 +8,7 @@ target :MediationTestApp, :exclusive => true do
   pod 'ChartboostSDK' # Maintained by Chartboost
   pod 'AdColony' # Maintained by AdColony
 
-  pod 'Google-AdMob-Ads-SDK' # Maintained by 3rd parties, not AdMob
+  # pod 'Google-AdMob-Ads-SDK' # Maintained by 3rd parties, not AdMob
 
   pod 'VungleAdvertiserSDK' # In Cocoapods, but outdated. Vendored by Heyzap
   pod 'AppLovin' # Vendored by Heyzap
