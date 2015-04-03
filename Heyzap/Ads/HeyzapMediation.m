@@ -92,7 +92,7 @@ const NSTimeInterval maxStartDelay     = 300;
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
-        _retryStartDelay = 10;
+        _retryStartDelay = initialStartDelay;
     }
     return self;
 }
