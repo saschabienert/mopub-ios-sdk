@@ -88,7 +88,7 @@
 
 - (void)bannerWasAddedToView {
     if (self.waitingToBeAddedToScreen) {
-        [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
+        [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
         self.waitingToBeAddedToScreen = NO;
     }
 }
