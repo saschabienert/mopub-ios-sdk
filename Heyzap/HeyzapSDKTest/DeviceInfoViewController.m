@@ -9,6 +9,7 @@
 #import "DeviceInfoViewController.h"
 #import <MessageUI/MessageUI.h>
 #import "HZDevice.h"
+#import "PersistentTestAppConfiguration.h"
 
 @interface DeviceInfoViewController () <MFMailComposeViewControllerDelegate>
 
@@ -20,7 +21,7 @@
 {
     self = [super init];
     if (self) {
-        self.title = @"Device Info";
+        self.title = @"Misc";
     }
     return self;
 }
@@ -56,19 +57,44 @@
     [self.scrollView addSubview: appBundleID];
     
     
+    UILabel *const autoPrefetchLabel = ({
+        UILabel *label = [self defaultLabelWithFrameY:CGRectGetMaxY(appBundleID.frame)+15];
+        [label setText:@"Auto-Prefetch:"];
+        [label sizeToFit];
+        label;
+    });
+    [self.scrollView addSubview:autoPrefetchLabel];
+    
+    UISwitch *const autoPrefetchSwitch = ({
+        UISwitch *aSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(CGRectGetMaxX(autoPrefetchLabel.frame) + 5, CGRectGetMinY(autoPrefetchLabel.frame), 0, 0)];
+        aSwitch.on = [PersistentTestAppConfiguration sharedConfiguration].autoPrefetch;
+        [aSwitch addTarget:self
+                               action:@selector(autoPrefetchSwitchToggled:)
+                     forControlEvents:UIControlEventValueChanged];
+        aSwitch;
+    });
+    [self.scrollView addSubview:autoPrefetchSwitch];
+    
+    
+}
+
+- (UILabel *)defaultLabelWithFrameY:(CGFloat)y
+{
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(5, y, CGRectGetWidth(self.view.bounds)-5, 25)];
+    label.font = [UIFont boldSystemFontOfSize: 13.0];;
+    label.textColor = [UIColor colorWithRed: 54.0/255.0 green: 68.0/255.0 blue: 88.0/255.0 alpha: 1.0];
+    label.backgroundColor = [UIColor clearColor];
+    label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    label.adjustsFontSizeToFitWidth = YES;
+    return label;
 }
 
 - (UILabel *)deviceInformationLabelWithFrameY:(CGFloat)y
                                       keyText:(NSString *)keyText
                                     valueText:(NSString *)valueText
 {
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(5, y, CGRectGetWidth(self.view.bounds)-5, 25)];
-    label.font = [UIFont boldSystemFontOfSize: 13.0];;
-    label.textColor = [UIColor colorWithRed: 54.0/255.0 green: 68.0/255.0 blue: 88.0/255.0 alpha: 1.0];
-    label.backgroundColor = [UIColor clearColor];
+    UILabel *label = [self defaultLabelWithFrameY:y];
     label.text = [[keyText stringByAppendingString:@": "] stringByAppendingString:valueText];
-    label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    label.adjustsFontSizeToFitWidth = YES;
     return label;
 }
 
@@ -93,6 +119,10 @@
                           cancelButtonTitle:@"Ok"
                           otherButtonTitles:nil, nil] show];
     }
+}
+
+- (void)autoPrefetchSwitchToggled:(UISwitch *)sender {
+    [PersistentTestAppConfiguration sharedConfiguration].autoPrefetch = sender.isOn;
 }
 
 #pragma mark - MFMailComposeDelegate
