@@ -30,6 +30,13 @@
 @property (nonatomic) double interstitialVideoIntervalMillis;
 @property (nonatomic) BOOL interstitialVideoEnabled;
 
+#pragma mark - Stateful properties
+
+/**
+ *  The number of banner impressions we've reported to the server.
+ */
+@property (nonatomic) NSUInteger bannerImpressionCount;
+
 /**
  *  Returns the SDK version if present, otherwise defaults to empty string.
  *
@@ -162,6 +169,7 @@ return nil; \
 NSString *const kHZImpressionIDKey = @"mediation_id";
 NSString *const kHZNetworkKey = @"network";
 NSString *const kHZNetworkVersionKey = @"network_version";
+NSString *const kHZBannerOrdinalKey = @"banner_ordinal";
 /**
  *  The dictionary key for the position of a network within the list received from the server; for the list [chartboost, applovin], chartboost is 0.
  */
@@ -196,12 +204,16 @@ NSString *const kHZOrdinalKey = @"ordinal";
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter
 {
     const NSUInteger ordinal = [self.chosenAdapters indexOfObject:adapter];
-    NSDictionary *const params = [self addParametersToDefaults:
+    NSMutableDictionary *const params = [self addParametersToDefaults:
                                   @{kHZImpressionIDKey: self.impressionID,
                                     kHZNetworkKey: [adapter name],
                                     kHZOrdinalKey : @(ordinal),
                                     kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
-                                    }];
+                                    }].mutableCopy;
+    
+    if (self.adType == HZAdTypeBanner) {
+        params[kHZBannerOrdinalKey] = @(self.bannerImpressionCount);
+    }
     
     [[HZMediationAPIClient sharedClient] post:@"click"
                                  withParams:params
@@ -215,13 +227,17 @@ NSString *const kHZOrdinalKey = @"ordinal";
 - (void)reportImpressionForAdapter:(HZBaseAdapter *)adapter
 {
     const NSUInteger ordinal = [self.chosenAdapters indexOfObject:adapter];
-    NSDictionary *const params = [self addParametersToDefaults:
+    NSMutableDictionary *const params = [self addParametersToDefaults:
                                   @{
                                     kHZImpressionIDKey: self.impressionID,
                                     kHZNetworkKey: [adapter name],
                                     kHZOrdinalKey: @(ordinal),
                                     kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
-                                    }];
+                                    }].mutableCopy;
+    
+    if (self.adType == HZAdTypeBanner) {
+        params[kHZBannerOrdinalKey] = @(self.bannerImpressionCount);
+    }
     
     [[HZMediationAPIClient sharedClient] post:@"impression"
                                  withParams:params
@@ -230,6 +246,10 @@ NSString *const kHZOrdinalKey = @"ordinal";
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         HZDLog(@"Error reporting impression = %@",error);
     }];
+    
+    if (self.adType == HZAdTypeBanner) {
+        self.bannerImpressionCount += 1;
+    }
 }
 
 NSString * sdkVersionOrDefault(NSString *const version) {
