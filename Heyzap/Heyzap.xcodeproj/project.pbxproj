@@ -149,6 +149,9 @@
 		5053521018F76550003C531E /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941ED1758056B00B8EACE /* Default.png */; };
 		5053521118F76550003C531E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941EF1758056B00B8EACE /* Default@2x.png */; };
 		5053521318F76550003C531E /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941F11758056B00B8EACE /* Default-568h@2x.png */; };
+		50759D261AD3359E00AECC2B /* PersistentTestAppConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AE54441AD333860099358E /* PersistentTestAppConfiguration.m */; };
+		50759D271AD3359E00AECC2B /* PersistentTestAppConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AE54441AD333860099358E /* PersistentTestAppConfiguration.m */; };
+		50759D281AD3359F00AECC2B /* PersistentTestAppConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AE54441AD333860099358E /* PersistentTestAppConfiguration.m */; };
 		5079F3CB1AC4B672008AB46B /* HZNoCaretTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = 5079F3C91AC4B672008AB46B /* HZNoCaretTextField.h */; };
 		5079F3CC1AC4B672008AB46B /* HZNoCaretTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5079F3CA1AC4B672008AB46B /* HZNoCaretTextField.m */; };
 		507A454819BE29CC00C7AEEA /* HZNativeAdController.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A454619BE29CC00C7AEEA /* HZNativeAdController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -579,6 +582,8 @@
 		50AC60B118FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZIncentivizedAppLovinDelegate.m; sourceTree = "<group>"; };
 		50AC611C18FDD3E70046EBC6 /* HZALAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZALAdSize.h; sourceTree = "<group>"; };
 		50AC611D18FDD3E70046EBC6 /* HZALAdSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZALAdSize.m; sourceTree = "<group>"; };
+		50AE54431AD333860099358E /* PersistentTestAppConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentTestAppConfiguration.h; sourceTree = "<group>"; };
+		50AE54441AD333860099358E /* PersistentTestAppConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistentTestAppConfiguration.m; sourceTree = "<group>"; };
 		50B46B0B18F862B3005155B8 /* HZAppLovinAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAppLovinAdapter.h; sourceTree = "<group>"; };
 		50B46B0C18F862B3005155B8 /* HZAppLovinAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAppLovinAdapter.m; sourceTree = "<group>"; };
 		50B46B0F18F862DA005155B8 /* HZALSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZALSdk.h; sourceTree = "<group>"; };
@@ -1461,6 +1466,8 @@
 				50ED563E1AC088B70016F9FE /* HZAdMobBannerSupport.h */,
 				50ED563F1AC088B70016F9FE /* HZAdMobBannerSupport.m */,
 				86B941E21758056B00B8EACE /* Supporting Files */,
+				50AE54431AD333860099358E /* PersistentTestAppConfiguration.h */,
+				50AE54441AD333860099358E /* PersistentTestAppConfiguration.m */,
 			);
 			name = "SDK Test App";
 			path = HeyzapSDKTest;
@@ -2081,6 +2088,7 @@
 				50ED56451AC097D80016F9FE /* HZAdMobBannerSupport.m in Sources */,
 				505351EF18F76550003C531E /* NSArrayUtils.m in Sources */,
 				505351F018F76550003C531E /* ServerSelectionViewController.m in Sources */,
+				50759D261AD3359E00AECC2B /* PersistentTestAppConfiguration.m in Sources */,
 				505351F118F76550003C531E /* AppDelegate.m in Sources */,
 				505351F218F76550003C531E /* SDCSegmentedViewController.m in Sources */,
 				505351F318F76550003C531E /* BaseTestAppViewController.m in Sources */,
@@ -2104,6 +2112,7 @@
 				507A457519BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */,
 				50A36AD818C9405A00FA84F0 /* BaseTestAppViewController.m in Sources */,
 				507A455F19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */,
+				50759D271AD3359E00AECC2B /* PersistentTestAppConfiguration.m in Sources */,
 				50A36AD918C9405A00FA84F0 /* SDKTestAppViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2118,6 +2127,7 @@
 				509F000718EA17970011EAB3 /* NSArrayUtils.m in Sources */,
 				504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */,
 				507A455919BE762900C7AEEA /* NativeAdTableViewController.m in Sources */,
+				50759D281AD3359F00AECC2B /* PersistentTestAppConfiguration.m in Sources */,
 				86B941EC1758056B00B8EACE /* AppDelegate.m in Sources */,
 				507A457419BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */,
 				5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */,
