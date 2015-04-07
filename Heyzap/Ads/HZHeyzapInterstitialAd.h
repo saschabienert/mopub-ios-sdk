@@ -55,6 +55,7 @@
 
 + (void) setCreativeID:(int)creativeID;
 + (void)forceTestCreative:(BOOL)forceTestCreative;
++ (void)setCreativeType:(NSString *)creativeType;
 
 + (void)showAdWithOptions:(NSDictionary *)options;
 

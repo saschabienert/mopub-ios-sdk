@@ -121,5 +121,6 @@
 
 + (void) setCreativeID:(int)creativeID;
 + (void)forceTestCreative:(BOOL)forceTestCreative;
++ (void)setCreativeType:(NSString *)creativeType;
 
 @end

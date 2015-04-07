@@ -23,6 +23,7 @@
 #import "HZNativeAd.h"
 #import "NativeAdTableViewController.h"
 #import "HZBannerAd.h"
+#import "HZNoCaretTextField.h"
 
 #define kTagCreativeIDField 4393
 
@@ -33,7 +34,7 @@ typedef enum {
     kAdUnitSegmentBanner,
 } kAdUnitSegment;
 
-@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, HZBannerAdDelegate>
+@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, HZBannerAdDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
 
 @property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl1;
 @property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl2;
@@ -66,6 +67,8 @@ typedef enum {
 
 @property (nonatomic) NSArray *bannerControls;
 @property (nonatomic) NSArray *nonBannerControls;
+
+@property (nonatomic) UITextField *creativeTypeTextField;
 
 
 @end
@@ -292,8 +295,37 @@ const CGFloat kLeftMargin = 10;
                 forControlEvents:UIControlEventEditingChanged];
     [self.scrollView addSubview:self.adsTextField];
     
+    self.creativeTypeTextField = ({
+        UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.showButton.frame) + 5, 320, 35)];
+        tf.delegate = self;
+        tf.borderStyle = UITextBorderStyleRoundedRect;
+        tf.textAlignment = NSTextAlignmentCenter;
+        
+        tf.inputAccessoryView = ({
+            UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+            UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                                                           target:nil
+                                                                                           action:NULL];
+            toolbar.items = @[flexibleSpace, [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                           target:self
+                                                                                           action:@selector(creativeTypeDone:)]];
+            toolbar;
+        });
+        
+        UIPickerView *picker = ({
+            UIPickerView *picker = [[UIPickerView alloc] init];
+            picker.delegate = self;
+            picker;
+        });
+        tf.inputView = picker;
+        
+        tf;
+    });
+    [self setCreativeTypeTextFieldToNone];
+    [self.scrollView addSubview:self.creativeTypeTextField];
+    
     UIButton *nativeAdsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    nativeAdsButton.frame = CGRectMake(10.0, CGRectGetMaxY(self.showButton.frame) + 10, 120.0, 25.0);
+    nativeAdsButton.frame = CGRectMake(10.0, CGRectGetMaxY(self.creativeTypeTextField.frame) + 10, 120.0, 25.0);
     nativeAdsButton.layer.cornerRadius = 4.0;
     nativeAdsButton.backgroundColor = [UIColor lightTextColor];
     [nativeAdsButton setTitle:@"Show Native Ad" forState:UIControlStateNormal];
@@ -301,7 +333,7 @@ const CGFloat kLeftMargin = 10;
     [self.scrollView addSubview:nativeAdsButton];
     
     UIButton *testActivityButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    testActivityButton.frame = CGRectMake(CGRectGetMaxX(nativeAdsButton.frame) + 10, CGRectGetMaxY(self.showButton.frame) + 10, 167.0, 25.0);
+    testActivityButton.frame = CGRectMake(CGRectGetMaxX(nativeAdsButton.frame) + 10, CGRectGetMinY(nativeAdsButton.frame), 167.0, 25.0);
     testActivityButton.layer.cornerRadius = 4.0;
     testActivityButton.backgroundColor = [UIColor lightTextColor];
     [testActivityButton setTitle:@"Start Test Activity" forState:UIControlStateNormal];
@@ -462,7 +494,7 @@ const CGFloat kLeftMargin = 10;
     [debugSwitch addTarget: self action: @selector(toggleDebuggable:) forControlEvents: UIControlEventValueChanged];
     [self.scrollView addSubview: debugSwitch];
 
-    self.logRequestsSwitch.on = self.logCallbacksSwitch.on = self.logResponsesSwitch.on = self.scrollSwitch.on = YES;
+    self.logCallbacksSwitch.on = self.scrollSwitch.on = YES;
     self.logHTMLSwitch.on = NO;
     
     UIButton *openLastFetchButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
@@ -693,12 +725,12 @@ const CGFloat kLeftMargin = 10;
 
 - (void)logToConsole:(NSString *)consoleString
 {
-//    NSDateFormatter * format = [[NSDateFormatter alloc]init];
-//    [format setDateFormat:@"[h:mm:ss a]"];
-//    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[format stringFromDate:[NSDate date]],consoleString];
-//    if (self.scrollSwitch.isOn) {
-//        [self.consoleTextView scrollRangeToVisible:NSMakeRange(self.consoleTextView.text.length, 0)];
-//    }
+    NSDateFormatter * format = [[NSDateFormatter alloc]init];
+    [format setDateFormat:@"[h:mm:ss a]"];
+    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[format stringFromDate:[NSDate date]],consoleString];
+    if (self.scrollSwitch.isOn) {
+        [self.consoleTextView scrollRangeToVisible:NSMakeRange(self.consoleTextView.text.length, 0)];
+    }
 }
 
 
@@ -733,6 +765,59 @@ const CGFloat kLeftMargin = 10;
 
 - (void)bannerWillLeaveApplication:(HZBannerAd *)banner {
     NSLog(@"bannerWillLeaveApplication");
+}
+
+
+#pragma mark - Creative Type support
+
+- (NSArray *)humanizedCreativeTypes {
+    return @[@"None",
+             @"FullScreenInterstitialCreative",
+             @"InterstitialVideoCreative",
+             @"LandscapeFullscreenCleanCreative",
+             @"LandscapeMultiSwipableCreative",
+             @"PortraitCleanCreative",
+             @"PortraitFullScreenInterstitialCreative",
+             @"PortraitMultiSwipableCreative",
+             @"PortraitScreenshotsFullscreenCreative",
+             @"ScreenshotsFullscreenCreative",
+             ];
+}
+
+- (void)creativeTypeDone:(id)sender {
+    [self.view endEditing:YES];
+}
+
+// returns the number of 'columns' to display.
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 1;
+}
+
+// returns the # of rows in each component..
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    return [self humanizedCreativeTypes].count;
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    return [self humanizedCreativeTypes][row];
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    if (row != 0) {
+        self.creativeTypeTextField.font = [UIFont systemFontOfSize:18];
+        self.creativeTypeTextField.textColor = [UIColor blackColor];
+        self.creativeTypeTextField.text = [self humanizedCreativeTypes][row];
+    } else {
+        [self setCreativeTypeTextFieldToNone];
+    }
+    
+    [HZInterstitialAd setCreativeType: row == 0 ? nil : [self humanizedCreativeTypes][row]];
+}
+
+- (void)setCreativeTypeTextFieldToNone {
+    self.creativeTypeTextField.font = [UIFont italicSystemFontOfSize:18];
+    self.creativeTypeTextField.textColor = [UIColor lightGrayColor];
+    self.creativeTypeTextField.text = @"No creative type chosen";
 }
 
 
