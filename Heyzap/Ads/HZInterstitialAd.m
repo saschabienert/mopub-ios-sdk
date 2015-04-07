@@ -110,6 +110,12 @@
     [HZHeyzapInterstitialAd setCreativeID:creativeID];
 }
 
++ (void)setCreativeType:(NSString *)creativeType {
+    HZVersionCheck();
+    
+    [HZHeyzapInterstitialAd setCreativeType:creativeType];
+}
+
 + (void)forceTestCreative:(BOOL)forceTestCreative
 {
     HZVersionCheck()
