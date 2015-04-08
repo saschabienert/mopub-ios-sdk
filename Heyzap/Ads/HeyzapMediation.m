@@ -65,8 +65,6 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
-@property (nonatomic, strong) NSMutableArray *bannerAdapters;
-
 @end
 
 @implementation HeyzapMediation
@@ -95,7 +93,6 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
-        _bannerAdapters = [NSMutableArray array];
     }
     return self;
 }
@@ -560,7 +557,6 @@ static int totalImpressions = 0;
             [adapterNames addObject:[adapterClass name]];
         }
     }
-    [adapterNames addObject:@"iad"];
     return [adapterNames componentsJoinedByString:@","];
 }
 
@@ -648,7 +644,7 @@ const NSTimeInterval bannerTimeout = 10;
     
     HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:@[@"banner"]
                                                                          adUnit:@"banner"
-                                                                            tag:[HeyzapAds defaultTagName]
+                                                                            tag:options.tag
                                                                     auctionType:HZAuctionTypeMixed
                                                             andAdditionalParams:(options.networkName ? @{@"networks" : options.networkName} : @{})];
     

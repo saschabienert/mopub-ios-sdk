@@ -80,17 +80,17 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 
 - (void) didFinishAudio { [self sendMessageForKlass: self.klassName withMessage:  @"audio_finished" andTag:  @""]; }
 
-- (void)bannerDidReceiveAd { [self sendMessageForKlass: self.klassName withMessage:  @"loaded" andTag:  @""]; }
+- (void)bannerDidReceiveAd:(HZBannerAd *)banner {
+    [self sendMessageForKlass:self.klassName withMessage:@"loaded" andTag:banner.options.tag];
+}
 
-- (void)bannerDidFailToReceiveAd:(NSError *)error { [self sendMessageForKlass: self.klassName withMessage:  @"error" andTag:  @""]; }
+- (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
+    [self sendMessageForKlass:self.klassName withMessage:@"error" andTag:banner.options.tag];
+}
 
-- (void)bannerWasClicked { [self sendMessageForKlass: self.klassName withMessage:  @"click" andTag:  @""]; }
-
-- (void)bannerWillPresentModalView { }
-
-- (void)bannerDidDismissModalView { }
-
-- (void)bannerWillLeaveApplication { }
+- (void)bannerWasClicked:(HZBannerAd *)banner {
+    [self sendMessageForKlass:self.klassName withMessage:@"click" andTag:banner.options.tag];
+}
 
 - (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *) message andTag: (NSString *) tag {
     NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", message, tag];
@@ -124,55 +124,55 @@ extern "C" {
         
         HZBannerDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_BANNER_KLASS];
     }
-
+    
     void hz_ads_show_interstitial(const char *tag) {
         [HZInterstitialAd showForTag: [NSString stringWithUTF8String: tag]];
     }
-
+    
     void hz_ads_hide_interstitial(void) {
         //[HZInterstitialAd hide];
     }
-
+    
     void hz_ads_fetch_interstitial(const char *tag) {
         [HZInterstitialAd fetchForTag: [NSString stringWithUTF8String: tag]];
     }
-
+    
     bool hz_ads_interstitial_is_available(const char *tag) {
         return [HZInterstitialAd isAvailableForTag: [NSString stringWithUTF8String: tag]];
     }
-
+    
     void hz_ads_show_video(const char *tag) {
         [HZVideoAd showForTag: [NSString stringWithUTF8String: tag]];
     }
-
+    
     void hz_ads_hide_video(void) {
         //[HZVideoAd hide];
     }
-
+    
     void hz_ads_fetch_video(const char *tag) {
         [HZVideoAd fetchForTag: [NSString stringWithUTF8String: tag]];
     }
-
+    
     bool hz_ads_video_is_available(const char *tag) {
         return [HZVideoAd isAvailable];
     }
-
+    
     void hz_ads_show_incentivized(const char *tag) {
         [HZIncentivizedAd showForTag: [NSString stringWithUTF8String: tag]];
     }
-
+    
     void hz_ads_hide_incentivized() {
         //[HZIncentivizedAd hide];
     }
-
+    
     void hz_ads_fetch_incentivized(const char *tag) {
         [HZIncentivizedAd fetchForTag: [NSString stringWithUTF8String: tag]];
     }
-
+    
     bool hz_ads_incentivized_is_available(const char *tag) {
         return [HZIncentivizedAd isAvailableForTag: [NSString stringWithUTF8String: tag]];
     }
-
+    
     void hz_ads_incentivized_set_user_identifier(const char *identifier) {
         NSString *userID = [NSString stringWithUTF8String:identifier];
         if ([userID isEqualToString:@""]) {
@@ -180,7 +180,7 @@ extern "C" {
         }
         return [HZIncentivizedAd setUserIdentifier: userID];
     }
-
+    
     void hz_ads_show_banner(const char *position, const char *tag) {
         
         if (HZCurrentBannerAd == nil) {
@@ -190,23 +190,24 @@ extern "C" {
                 pos = HZBannerPositionTop;
             }
             
-            UIView *rootView = [[[[UIApplication sharedApplication] keyWindow] rootViewController] view];
-            
             HZBannerAdOptions *options = [[HZBannerAdOptions alloc] init];
-            [HZBannerAd placeBannerInView: rootView position: pos options: options completion:^(NSError *error, HZBannerAd *ad) {
-                HZCurrentBannerAd = ad;
+            options.tag = [NSString stringWithUTF8String:tag];
+            [HZBannerAd placeBannerInView:nil position:pos options:options success:^(HZBannerAd *banner) {
+                HZCurrentBannerAd = banner;
                 [HZCurrentBannerAd setDelegate: HZBannerDelegate];
+            } failure:^(NSError *error) {
+                NSLog(@"Error fetching banner; error = %@",error);
             }];
         }
     }
-
+    
     void hz_ads_hide_banner(void) {
         if (HZCurrentBannerAd  != nil) {
-            [HZCurrentBannerAd finishUsingBanner];
+            [HZCurrentBannerAd removeFromSuperview];
             HZCurrentBannerAd = nil;
         }
     }
-
+    
     void hz_ads_show_mediation_debug_view_controller(void) {
         [HeyzapAds presentMediationDebugViewController];
     }
