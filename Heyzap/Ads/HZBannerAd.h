@@ -141,9 +141,4 @@ extern NSString * const kHZBannerAdNotificationErrorKey;
  */
 @property (nonatomic, strong, readonly) NSString *mediatedNetwork;
 
-/**
- *  The height of the underlying banner. This method is implemented as `mediatedBanner.frame.size.height`. 
- */
-@property (nonatomic, readonly) CGFloat adHeight;
-
 @end
