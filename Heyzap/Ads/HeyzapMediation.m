@@ -356,7 +356,7 @@ NSString * const kHZDataKey = @"data";
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if (options.completion) { options.completion(YES,nil); }
                     [[self delegateForAdType:type] didReceiveAdWithTag:tag];
-                    [session reportSuccessfulFetchUpToAdapter:adapter];
+                    [session reportFetchWithSuccessfulAdapter:adapter];
                 });
                 if (showImmediately) {
                     [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndAttemptedFetchSuccessValue withProvider:session network:network];
@@ -402,6 +402,7 @@ NSString * const kHZDataKey = @"data";
         }
         if (!successful) {
             dispatch_sync(dispatch_get_main_queue(), ^{
+                [session reportFetchWithSuccessfulAdapter:nil];
                 [self.sessionDictionary removeObjectForKey:sessionKey];
                 [self sendFailureMessagesForAdType:type
                             wasAttemptingToShow:showImmediately
@@ -708,13 +709,14 @@ const NSTimeInterval bannerTimeout = 10;
                 if (isAvailable) {
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         bannerAdapter.session = session;
-                        [session reportSuccessfulFetchUpToAdapter:baseAdapter];
+                        [session reportFetchWithSuccessfulAdapter:baseAdapter];
                         completion(nil, bannerAdapter);
                     });
                     
                     break;
                 } else if (baseAdapter == [session.chosenAdapters lastObject]) {
                     dispatch_sync(dispatch_get_main_queue(), ^{
+                        [session reportFetchWithSuccessfulAdapter:nil];
                         completion([[self class] bannerErrorWithDescription:@"None of the mediated ad networks had a banner available" underlyingError:nil], nil);
                     });
                 }

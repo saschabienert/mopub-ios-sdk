@@ -175,14 +175,15 @@ NSString *const kHZBannerOrdinalKey = @"banner_ordinal";
  */
 NSString *const kHZOrdinalKey = @"ordinal";
 
-- (void)reportSuccessfulFetchUpToAdapter:(HZBaseAdapter *)chosenAdapter
+- (void)reportFetchWithSuccessfulAdapter:(HZBaseAdapter *)chosenAdapter
 {
-    
-    const NSUInteger chosenIndex = [self.chosenAdapters indexOfObject:chosenAdapter];
-    NSArray *adapterList = [self.chosenAdapters objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, chosenIndex+1)]];
-    
-    [adapterList enumerateObjectsUsingBlock:^(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        NSNumber *const success = (adapter == [adapterList lastObject]) ? @1 : @0; // Last adapter was successful
+    [self.chosenAdapters enumerateObjectsUsingBlock:^(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
+        // If we got up to the successful adapter, don't report anything for the remaining adapters
+        // If the chosenAdapter is `nil`, this condition will never be true.
+        if (adapter == chosenAdapter) {
+            *stop = YES;
+        }
+        NSNumber *const success = @(adapter == chosenAdapter);
         
         NSDictionary *const params = [self addParametersToDefaults:@{@"success": success,
                                        kHZImpressionIDKey : self.impressionID,
