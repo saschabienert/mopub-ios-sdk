@@ -26,8 +26,8 @@
       completion:(void (^)(NSError *error, HZNativeAdCollection *collection))completion {
     HZVersionCheck()
 
-    NSParameterAssert(numberOfAds > 0);
-    NSParameterAssert(completion);
+    HZParameterAssert(numberOfAds > 0);
+    HZParameterAssert(completion);
     if (!tag) {
         tag = [HeyzapAds defaultTagName];
     }

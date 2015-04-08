@@ -110,7 +110,7 @@ static NSString *HZInterstitialForcedCreativeType = nil;
 
 + (void)showAdWithOptions:(NSDictionary *)options
 {
-    NSParameterAssert(options);
+    HZParameterAssert(options);
     if ([[HZAdsManager sharedManager] isEnabled]) {
         
     }

@@ -462,7 +462,7 @@ static int totalImpressions = 0;
 }
 
 - (NSOrderedSet *)availableAdaptersForAdType:(const HZAdType)adType tag:(NSString *)tag {
-    NSParameterAssert(tag);
+    HZParameterAssert(tag);
     
     HZMediationSessionKey *const key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:tag];
     HZMediationSession *const session = self.sessionDictionary[key];
@@ -652,8 +652,8 @@ static BOOL forceOnlyHeyzapSDK = NO;
 const NSTimeInterval bannerTimeout = 10;
 
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion {
-    NSParameterAssert(options);
-    NSParameterAssert(completion);
+    HZParameterAssert(options);
+    HZParameterAssert(completion);
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
     if (self.startStatus == HZMediationStartStatusNotStarted) {
@@ -733,7 +733,7 @@ const NSTimeInterval bannerTimeout = 10;
 }
 
 + (NSError *)bannerErrorWithDescription:(NSString *)description underlyingError:(NSError *)underlyingError {
-    NSParameterAssert(description);
+    HZParameterAssert(description);
     
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     userInfo[NSLocalizedDescriptionKey] = description;

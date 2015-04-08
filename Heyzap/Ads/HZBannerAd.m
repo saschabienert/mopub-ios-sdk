@@ -39,7 +39,7 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
 #pragma mark - Initialization
 
 - (instancetype)initWithBanner:(HZBannerAdapter *)adapter options:(HZBannerAdOptions *)options {
-    NSParameterAssert(adapter);
+    HZParameterAssert(adapter);
     self = [super init];
     if (self) {
         _adapter = adapter;
@@ -103,7 +103,7 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
     if (!options) {
         options = [[HZBannerAdOptions alloc] init];
     }
-    NSParameterAssert(success);
+    HZParameterAssert(success);
     
     
     [[HeyzapMediation sharedInstance] requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdapter *adapter) {

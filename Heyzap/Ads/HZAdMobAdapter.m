@@ -43,7 +43,7 @@
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
-    NSParameterAssert(credentials);
+    HZParameterAssert(credentials);
     
     NSError *error;
     NSString *adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:credentials error:&error];
@@ -98,7 +98,7 @@
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
-    NSAssert(self.adUnitID, @"Need an ad unit ID by this point");
+    HZAssert(self.adUnitID, @"Need an ad unit ID by this point");
     if (self.currentInterstitial
         && !self.currentInterstitial.hasBeenUsed
         && !self.lastInterstitialError) {

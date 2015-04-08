@@ -166,14 +166,14 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 
 - (NSMutableDictionary *)getMetricsForTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network {
     if (tag == nil ) tag = @"default";
-    NSParameterAssert(adUnit);
+    HZParameterAssert(adUnit);
 
     // some timing metrics (e.g. time_from_start_to_show_ad) need to be saved before we have mediated a network
     // they get their own temporary metrics dictionary
     if (!network) {
         return [self getPreMediateMetricsForTag:tag adUnit:adUnit];
     }
-    NSParameterAssert(network);
+    HZParameterAssert(network);
 
     HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:network];
     if (!self.metricsDict[key]) {
@@ -204,7 +204,7 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 
 - (void)finishUsingAdWithTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network {
     if (tag == nil ) tag = @"default";
-    NSParameterAssert(adUnit);
+    HZParameterAssert(adUnit);
     
     HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:network];
     NSDictionary *const metrics = self.metricsDict[key];
@@ -235,7 +235,7 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
         }
 
         BOOL validClass = [value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSString class]];
-        NSParameterAssert(validClass);
+        HZParameterAssert(validClass);
 
         NSMutableDictionary *d = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network];
         d[eventName] = value;
