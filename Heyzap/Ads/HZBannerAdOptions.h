@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Heyzap. All rights reserved.
 //
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 /**
  * The size to use for Facebook banners
