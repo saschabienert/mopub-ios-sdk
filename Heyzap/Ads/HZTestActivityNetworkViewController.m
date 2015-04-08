@@ -153,7 +153,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void) refresh {
     // check available
-    self.available = [[self.network class] isSDKAvailable] && ![[self.network class] isHeyzapAdapter];
+    self.available = [[self.network class] isSDKAvailable];
     
     // hit the /info endpoint for enabled status and initialization credentials
     [[HZMediationAPIClient sharedClient] get:@"info" withParams:nil success:^(NSDictionary *json) {
@@ -196,9 +196,11 @@ NSString *hzBannerPositionName(HZBannerPosition position);
                 
                 [self hideBanner];
                 
+                UIView *const previousSuperview = self.adControls.superview;
+                
                 [self.adControls removeFromSuperview];
                 self.adControls = [self makeAdControls];
-                [self.view addSubview:self.adControls];
+                [previousSuperview addSubview:self.adControls];
             } else {
                 [self.adControls removeFromSuperview];
             }
