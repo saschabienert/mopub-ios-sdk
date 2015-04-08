@@ -17,8 +17,8 @@
 // Designated Initializer
 - (instancetype)initWithTag:(NSString *)tag adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType
 {
-    NSParameterAssert(tag);
-    NSParameterAssert(adUnit);
+    HZParameterAssert(tag);
+    HZParameterAssert(adUnit);
     
     self = [super init];
     if (self) {

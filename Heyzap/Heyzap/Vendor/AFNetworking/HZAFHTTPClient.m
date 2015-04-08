@@ -230,7 +230,7 @@ static NSString * HZAFPropertyListStringFromParameters(NSDictionary *parameters)
 // No idea if it's reliable to change the baseURL from a readonly to readwrite property.
 - (void)setBaseURL:(NSURL *)baseURL
 {
-    NSParameterAssert(baseURL);
+    HZParameterAssert(baseURL);
     // Ensure terminal slash for baseURL path, so that NSURL +URLWithString:relativeToURL: works as expected
     if ([[baseURL path] length] > 0 && ![[baseURL absoluteString] hasSuffix:@"/"]) {
         baseURL = [baseURL URLByAppendingPathComponent:@""];
