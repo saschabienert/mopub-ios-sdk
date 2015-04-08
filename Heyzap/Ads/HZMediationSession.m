@@ -60,8 +60,8 @@ return nil; \
 
 - (instancetype)initWithJSON:(NSDictionary *)json mediateParams:(NSDictionary *)mediateParams setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error
 {
-    NSParameterAssert(error != NULL);
-    NSParameterAssert(mediateParams);
+    HZParameterAssert(error != NULL);
+    HZParameterAssert(mediateParams);
     
     self = [super init];
     if (self) {

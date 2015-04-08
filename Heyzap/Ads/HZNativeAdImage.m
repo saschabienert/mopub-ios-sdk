@@ -18,7 +18,7 @@ NSString * const kHZImageHeightKey = @"height";
 @implementation HZNativeAdImage
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary error:(NSError **)error {
-    NSParameterAssert(error != NULL);
+    HZParameterAssert(error != NULL);
     self = [super init];
     if (self) {
         _url = [NSURL URLWithString:[HZDictionaryUtils hzObjectForKey:kHZImageURLKey ofClass:[NSString class] withDict:dictionary]];

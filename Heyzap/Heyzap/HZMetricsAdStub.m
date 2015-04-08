@@ -4,8 +4,8 @@
 @implementation HZMetricsAdStub
 
 - (HZMetricsAdStub *)initWithTag:(NSString *)tag adUnit:(NSString *)adUnit {
-    NSParameterAssert(tag);
-    NSParameterAssert(adUnit);
+    HZParameterAssert(tag);
+    HZParameterAssert(adUnit);
     self = [super init];
     if (self) {
         _tag = tag;
