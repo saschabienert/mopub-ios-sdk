@@ -594,8 +594,13 @@ const CGFloat kLeftMargin = 10;
     self.showBannerButton.enabled = NO;
     
     [self.view endEditing:YES];
+    
     HZBannerAdOptions *opts = [[HZBannerAdOptions alloc] init];
     opts.presentingViewController = self;
+    if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+        opts.admobBannerSize = HZAdMobBannerSizeFlexibleWidthLandscape;
+    }
+    
     [HZBannerAd placeBannerInView:self.view
                          position:HZBannerPositionBottom
                           options:opts
