@@ -49,7 +49,7 @@
 
 #pragma mark - Reporting Events to the server
 
-- (void)reportSuccessfulFetchUpToAdapter:(HZBaseAdapter *)chosenAdapter;
+- (void)reportFetchWithSuccessfulAdapter:(HZBaseAdapter *)chosenAdapter;
 
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter;
 
