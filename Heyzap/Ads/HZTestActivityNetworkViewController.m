@@ -336,6 +336,17 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             text.text = @"Debug log:";
             text;
         });
+        UIView *debugLogShadow = ({
+            UIView *view = [[UIView alloc] initWithFrame:self.debugLog.frame];
+            view.layer.shadowColor = [UIColor grayColor].CGColor;
+            view.layer.shadowOffset = CGSizeMake(0, 1);
+            view.layer.shadowOpacity = 1;
+            view.layer.shadowRadius = 1;
+            view.layer.masksToBounds = NO;
+            view.backgroundColor = [UIColor whiteColor];
+            view;
+        });
+        [currentNetworkView addSubview:debugLogShadow];
         [currentNetworkView addSubview:self.debugLog];
     }
     
