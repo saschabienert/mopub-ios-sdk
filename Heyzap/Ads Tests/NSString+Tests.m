@@ -12,7 +12,7 @@
 
 - (BOOL)containsString:(NSString *)string
 {
-    HZParameterAssert(string);
+    NSParameterAssert(string);
     return [string rangeOfString:string].location != NSNotFound;
 }
 
