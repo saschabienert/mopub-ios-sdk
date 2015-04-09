@@ -28,6 +28,10 @@
 
 @implementation HZAdVideoViewController
 
+// The superclass implements the storage for this property;
+// @dynamic is needed to subclass `ad` to `HZVideoAdModel`
+@dynamic ad;
+
 - (id) initWithAd:(HZVideoAdModel *)ad {
     self = [super initWithAd: ad];
     if (self) {

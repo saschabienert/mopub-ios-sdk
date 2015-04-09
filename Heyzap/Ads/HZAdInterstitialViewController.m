@@ -24,6 +24,10 @@
 
 @implementation HZAdInterstitialViewController
 
+// The superclass implements the storage for this property;
+// @dynamic is needed to subclass `ad` to `HZInterstitialAdModel`
+@dynamic ad;
+
 - (id) initWithAd:(HZInterstitialAdModel *)ad {
     self = [super initWithAd: ad];
     if (self) {

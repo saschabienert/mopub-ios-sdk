@@ -61,7 +61,7 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
 + (BOOL)facebookBannerSizesAvailable {
     return hzFBAdSize50() != NULL
     && hzFBAdSize90() != NULL
-    && hzFBAdSize320x50 != NULL;
+    && hzFBAdSize320x50() != NULL;
 }
 
 HZFBAdSize *hzFBAdSize50(void) {
