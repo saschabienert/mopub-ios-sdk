@@ -1,6 +1,9 @@
 PODS:
   - AdColony (2.5.0)
   - AppLovin (2.5.4)
+  - Bugsnag (4.0.4):
+    - Bugsnag/no-arc (= 4.0.4)
+  - Bugsnag/no-arc (4.0.4)
   - ChartboostSDK (5.1.3)
   - FacebookAudienceNetwork (4.0.1)
   - Google-AdMob-Ads-SDK (7.1.0)
@@ -18,6 +21,7 @@ PODS:
 DEPENDENCIES:
   - AdColony
   - AppLovin
+  - Bugsnag (from `https://github.com/bugsnag/bugsnag-cocoa.git`)
   - ChartboostSDK
   - FacebookAudienceNetwork
   - Google-AdMob-Ads-SDK
@@ -29,11 +33,16 @@ DEPENDENCIES:
   - VungleAdvertiserSDK
 
 EXTERNAL SOURCES:
+  Bugsnag:
+    :git: https://github.com/bugsnag/bugsnag-cocoa.git
   Subliminal:
     :branch: shared/Xcode6
     :git: https://github.com/inkling/Subliminal.git
 
 CHECKOUT OPTIONS:
+  Bugsnag:
+    :commit: 9da3b58e09c3e76cca943f49ef31056aec17a8e2
+    :git: https://github.com/bugsnag/bugsnag-cocoa.git
   Subliminal:
     :commit: d99fef42529589373adc1948aede98aed0fbe9de
     :git: https://github.com/inkling/Subliminal.git
@@ -41,6 +50,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AdColony: 64af6f0a58571bb396a85729424cb5989fce74b8
   AppLovin: fdbeb15795c675c8c847b63876150d3c7806b484
+  Bugsnag: b46b04fb27c40ff635b3f950e1ee06d8cdf0eae8
   ChartboostSDK: 34443f45448fc7e7bee8626db3511e5cc56757b3
   FacebookAudienceNetwork: 329d7c9cb0ef71ad3668e2b807d53a6947585d2f
   Google-AdMob-Ads-SDK: 2d66466c2026fde6f066fa0b9e609af14eb901a7
