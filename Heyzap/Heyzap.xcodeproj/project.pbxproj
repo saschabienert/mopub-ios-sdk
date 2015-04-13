@@ -379,6 +379,7 @@
 		E6DBD5FE1A44AA4F00D9999D /* HZFacebookAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = E6DBD5FC1A44AA4F00D9999D /* HZFacebookAdapter.m */; };
 		E6DBD6051A44AAEA00D9999D /* HZFBInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = E6DBD6031A44AAEA00D9999D /* HZFBInterstitialAd.h */; };
 		E6DBD6061A44AAEA00D9999D /* HZFBInterstitialAd.m in Sources */ = {isa = PBXBuildFile; fileRef = E6DBD6041A44AAEA00D9999D /* HZFBInterstitialAd.m */; };
+		F4E5E35BFDC9CF400260FF2A /* libPods-HeyzapSDKTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 107574B6049A6F4A219A0B18 /* libPods-HeyzapSDKTest.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -450,8 +451,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		107574B6049A6F4A219A0B18 /* libPods-HeyzapSDKTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HeyzapSDKTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		16019D1EEED87A2B518F178B /* Pods-MediationTestApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediationTestApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MediationTestApp/Pods-MediationTestApp.debug.xcconfig"; sourceTree = "<group>"; };
 		3A4D105EBBFD2834D2AD2D00 /* libPods-MediationTestApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MediationTestApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		465A0B5D52E509FBADC510AD /* Pods-HeyzapSDKTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeyzapSDKTest.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HeyzapSDKTest/Pods-HeyzapSDKTest.debug.xcconfig"; sourceTree = "<group>"; };
 		4AC97BB61691E598ABE47CC3 /* Pods-MediationTestApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediationTestApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-MediationTestApp/Pods-MediationTestApp.release.xcconfig"; sourceTree = "<group>"; };
 		500F88D718E0F9BE00E5D6F8 /* HZChartboost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZChartboost.h; sourceTree = "<group>"; };
 		500F88D818E0F9BE00E5D6F8 /* HZChartboost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZChartboost.m; sourceTree = "<group>"; };
@@ -628,6 +631,7 @@
 		50ED56421AC0942D0016F9FE /* HZHZAdMobBannerSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHZAdMobBannerSupport.m; sourceTree = "<group>"; };
 		50ED56491AC0BC910016F9FE /* HZiAdBannerAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZiAdBannerAdapter.h; sourceTree = "<group>"; };
 		50ED564A1AC0BC910016F9FE /* HZiAdBannerAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZiAdBannerAdapter.m; sourceTree = "<group>"; };
+		58C6B54C3EE10808E4BA228E /* Pods-HeyzapSDKTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeyzapSDKTest.release.xcconfig"; path = "Pods/Target Support Files/Pods-HeyzapSDKTest/Pods-HeyzapSDKTest.release.xcconfig"; sourceTree = "<group>"; };
 		5B32B52129AEF7895DFB6A17 /* Pods-Ads Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ads Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests.release.xcconfig"; sourceTree = "<group>"; };
 		604FF60355743B39E9AD975E /* Pods-Integration Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integration Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Integration Tests/Pods-Integration Tests.release.xcconfig"; sourceTree = "<group>"; };
 		72A18C04178B64E600536547 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
@@ -872,6 +876,7 @@
 				86BDB4EB17585A9000D85F29 /* UIKit.framework in Frameworks */,
 				86B943BB175830AA00B8EACE /* QuartzCore.framework in Frameworks */,
 				86B941DE1758056B00B8EACE /* Foundation.framework in Frameworks */,
+				F4E5E35BFDC9CF400260FF2A /* libPods-HeyzapSDKTest.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -900,6 +905,8 @@
 				604FF60355743B39E9AD975E /* Pods-Integration Tests.release.xcconfig */,
 				16019D1EEED87A2B518F178B /* Pods-MediationTestApp.debug.xcconfig */,
 				4AC97BB61691E598ABE47CC3 /* Pods-MediationTestApp.release.xcconfig */,
+				465A0B5D52E509FBADC510AD /* Pods-HeyzapSDKTest.debug.xcconfig */,
+				58C6B54C3EE10808E4BA228E /* Pods-HeyzapSDKTest.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1453,6 +1460,7 @@
 				B1D5F5ECB01E4EDFA33DE9B0 /* libPods-Ads Tests.a */,
 				9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */,
 				3A4D105EBBFD2834D2AD2D00 /* libPods-MediationTestApp.a */,
+				107574B6049A6F4A219A0B18 /* libPods-HeyzapSDKTest.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1782,6 +1790,7 @@
 				504E9C8F18C9322100402BC3 /* Frameworks */,
 				504E9C9018C9322100402BC3 /* Resources */,
 				772E3B0BDD914296B2558664 /* Copy Pods Resources */,
+				DF1A72313AC449E0DE4816BD /* Upload Bugsnag dSYM */,
 			);
 			buildRules = (
 			);
@@ -1803,6 +1812,7 @@
 				5053520D18F76550003C531E /* Resources */,
 				FB0DEFC40D7D92B6FBBD1334 /* Copy Pods Resources */,
 				5035598C1ABB893D0029EBAB /* Embed Frameworks */,
+				D545AFB6BA6704775073AD3F /* Upload Bugsnag dSYM */,
 			);
 			buildRules = (
 			);
@@ -1823,6 +1833,7 @@
 				50A36ADA18C9405A00FA84F0 /* Frameworks */,
 				50A36AE518C9405A00FA84F0 /* Resources */,
 				A6B341C0C9F8424385290773 /* Copy Pods Resources */,
+				77F1BED1A3C4A4E2C9DD55FB /* Upload Bugsnag dSYM */,
 			);
 			buildRules = (
 			);
@@ -1838,9 +1849,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 86B942071758056B00B8EACE /* Build configuration list for PBXNativeTarget "HeyzapSDKTest" */;
 			buildPhases = (
+				BBA031DEA78CD8C4810D81F8 /* Check Pods Manifest.lock */,
 				86B941D81758056B00B8EACE /* Sources */,
 				86B941D91758056B00B8EACE /* Frameworks */,
 				86B941DA1758056B00B8EACE /* Resources */,
+				A262E87A27F17E956AE6A7D3 /* Copy Pods Resources */,
+				0E022981DBF1316122DDCF78 /* Upload Bugsnag dSYM */,
 			);
 			buildRules = (
 			);
@@ -1972,6 +1986,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0E022981DBF1316122DDCF78 /* Upload Bugsnag dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Bugsnag dSYM";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env ruby";
+			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
+			showEnvVarsInLog = 0;
+		};
 		772E3B0BDD914296B2558664 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1985,6 +2014,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		77F1BED1A3C4A4E2C9DD55FB /* Upload Bugsnag dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Bugsnag dSYM";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env ruby";
+			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
 			showEnvVarsInLog = 0;
 		};
 		86B943571758198100B8EACE /* Prepare Framework */ = {
@@ -2014,6 +2058,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\nset +u\n# Avoid recursively calling this script.\nif [[ $SF_MASTER_SCRIPT_RUNNING ]]\nthen\nexit 0\nfi\nset -u\nexport SF_MASTER_SCRIPT_RUNNING=1\n\nSF_TARGET_NAME=${PRODUCT_NAME}\nSF_EXECUTABLE_PATH=\"lib${SF_TARGET_NAME}.a\"\nSF_WRAPPER_NAME=\"${SF_TARGET_NAME}.framework\"\n\n# The following conditionals come from\n# https://github.com/kstenerud/iOS-Universal-Framework\n\nif [[ \"$SDK_NAME\" =~ ([A-Za-z]+) ]]\nthen\nSF_SDK_PLATFORM=${BASH_REMATCH[1]}\nelse\necho \"Could not find platform name from SDK_NAME: $SDK_NAME\"\nexit 1\nfi\n\nif [[ \"$SDK_NAME\" =~ ([0-9]+.*$) ]]\nthen\nSF_SDK_VERSION=${BASH_REMATCH[1]}\nelse\necho \"Could not find sdk version from SDK_NAME: $SDK_NAME\"\nexit 1\nfi\n\nif [[ \"$SF_SDK_PLATFORM\" = \"iphoneos\" ]]\nthen\nSF_OTHER_PLATFORM=iphonesimulator\nelse\nSF_OTHER_PLATFORM=iphoneos\nfi\n\nif [[ \"$BUILT_PRODUCTS_DIR\" =~ (.*)$SF_SDK_PLATFORM$ ]]\nthen\nSF_OTHER_BUILT_PRODUCTS_DIR=\"${BASH_REMATCH[1]}${SF_OTHER_PLATFORM}\"\nelse\necho \"Could not find platform name from build products directory: $BUILT_PRODUCTS_DIR\"\nexit 1\nfi\n\n# Build the other platform.\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration \"${CONFIGURATION}\" -sdk ${SF_OTHER_PLATFORM}${SF_SDK_VERSION} BUILD_DIR=\"${BUILD_DIR}\" OBJROOT=\"${OBJROOT}\" BUILD_ROOT=\"${BUILD_ROOT}\" SYMROOT=\"${SYMROOT}\" $ACTION\n\n# Smash the two static libraries into one fat binary and store it in the .framework\nlipo -create \"${BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}\" \"${SF_OTHER_BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}\" -output \"${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\"\n\n# Copy the smashes libraries back to the original static library\n#cp -a \"${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\" \"${BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}\"\n\n# Copy the binary to the other architecture folder to have a complete framework in both.\ncp -a \"${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\" \"${SF_OTHER_BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\"\n";
+		};
+		A262E87A27F17E956AE6A7D3 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-HeyzapSDKTest/Pods-HeyzapSDKTest-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		A6B341C0C9F8424385290773 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2058,6 +2117,51 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		BBA031DEA78CD8C4810D81F8 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		D545AFB6BA6704775073AD3F /* Upload Bugsnag dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Bugsnag dSYM";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env ruby";
+			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
+			showEnvVarsInLog = 0;
+		};
+		DF1A72313AC449E0DE4816BD /* Upload Bugsnag dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Bugsnag dSYM";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env ruby";
+			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
 			showEnvVarsInLog = 0;
 		};
 		FB0DEFC40D7D92B6FBBD1334 /* Copy Pods Resources */ = {
@@ -2665,6 +2769,7 @@
 		};
 		86B942081758056B00B8EACE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 465A0B5D52E509FBADC510AD /* Pods-HeyzapSDKTest.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -2684,7 +2789,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -2696,6 +2801,7 @@
 		};
 		86B942091758056B00B8EACE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 58C6B54C3EE10808E4BA228E /* Pods-HeyzapSDKTest.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -2716,7 +2822,7 @@
 					"$(PROJECT_DIR)",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "e51927ec-ed8f-46e5-9a18-85f8dd7263bd";
