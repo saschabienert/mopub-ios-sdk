@@ -209,7 +209,7 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
     HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:network];
     NSDictionary *const metrics = self.metricsDict[key];
     if (metrics) {
-        [[self class] writeMetricToDisk:metrics];
+        [[self class] writeMetricToDisk:metrics async:YES];
         [self.metricsDict removeObjectForKey:key];
     } else {
         // Not sure what causes this case, but want to prevent it from causing a crash. See https://app.asana.com/0/25787840548210/30669907596307/f for details and stack trace.
@@ -314,53 +314,62 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 
 NSString *const kMetricsDir = @"hzMetrics";
 
-- (NSArray *)getCachedMetrics {
+- (void)getCachedMetrics:(void(^)(NSArray *metrics))completionBlock {
+    NSParameterAssert(completionBlock);
     
-    NSError *error;
-    NSArray *const fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[[self class] metricsDirectory]
-                                  includingPropertiesForKeys:nil
-                                                     options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants|NSDirectoryEnumerationSkipsPackageDescendants|NSDirectoryEnumerationSkipsHiddenFiles)
-                                                       error:&error];
-    
-    
-    NSArray *const metricDictionaries = ({
-        NSMutableArray *metrics = [[NSMutableArray alloc] init];
-        for (NSURL *url in fileURLs) {
-            NSDictionary *dict = [NSDictionary dictionaryWithContentsOfURL:url];
-            if (dict) {
-                [metrics addObject:dict];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        NSError *error;
+        NSArray *const fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[[self class] metricsDirectory]
+                                                                includingPropertiesForKeys:nil
+                                                                                   options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants|NSDirectoryEnumerationSkipsPackageDescendants|NSDirectoryEnumerationSkipsHiddenFiles)
+                                                                                     error:&error];
+        
+        
+        NSArray *const metricDictionaries = ({
+            NSMutableArray *metrics = [[NSMutableArray alloc] init];
+            for (NSURL *url in fileURLs) {
+                NSDictionary *dict = [NSDictionary dictionaryWithContentsOfURL:url];
+                if (dict) {
+                    [metrics addObject:dict];
+                }
             }
-        }
-        metrics;
+            metrics;
+        });
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            completionBlock(metricDictionaries);
+        });
     });
-    return metricDictionaries;
 }
 
 
 - (void)sendCachedMetrics {
-    __block NSArray *metrics = [self getCachedMetrics];
-    NSArray *metricIDs = hzMap(metrics, ^NSURL *(NSDictionary *metric) {
-        return metric[kMetricID];
-    });
     
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        metrics = [metrics arrayByAddingObject:@{@"start": @1}];
-    });
+    [self getCachedMetrics:^(NSArray *cachedMetrics) {
+        __block NSArray *metrics = cachedMetrics;
+        NSArray *metricIDs = hzMap(metrics, ^NSURL *(NSDictionary *metric) {
+            return metric[kMetricID];
+        });
+        
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            metrics = [metrics arrayByAddingObject:@{@"start": @1}];
+        });
+        
+        if ([metrics count]) {
+            
+            NSMutableDictionary *params = [[[self class] staticValuesDict] mutableCopy];
+            
+            params[@"metrics"] = metrics;
+            
+            [[HZAPIClient sharedClient] post:kSendMetricsUrl withParams:params success:^(id data) {
+                HZDLog(@"# Metrics sent = %lu",(unsigned long)[metrics count]);
+                [[self class] clearMetricsWithMetricIDs:metricIDs];
+            } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+                HZELog(@"Error from server = %@",error);
+            }];
+        }
+    }];
     
-    if ([metrics count]) {
-        
-        NSMutableDictionary *params = [[[self class] staticValuesDict] mutableCopy];
-        
-        params[@"metrics"] = metrics;
-        
-        [[HZAPIClient sharedClient] post:kSendMetricsUrl withParams:params success:^(id data) {
-            HZDLog(@"# Metrics sent = %lu",(unsigned long)[metrics count]);
-            [[self class] clearMetricsWithMetricIDs:metricIDs];
-        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-            HZELog(@"Error from server = %@",error);
-        }];
-    }
 }
 
 #pragma mark - Cleanup
@@ -373,8 +382,7 @@ NSString *const kMetricsDir = @"hzMetrics";
 - (void)cacheAllMetrics
 {
     [self.metricsDict enumerateKeysAndObjectsUsingBlock:^(HZMetricsKey *key, NSMutableDictionary *metric, BOOL *stop) {
-        const BOOL success = [[self class] writeMetricToDisk:metric];
-        HZDLog(@"Able to write metric to disk = %i",success);
+        [[self class] writeMetricToDisk:metric async:NO];
     }];
 }
 
@@ -400,10 +408,17 @@ NSString *const kMetricsDir = @"hzMetrics";
     
 }
 
-+ (BOOL)writeMetricToDisk:(NSDictionary *)metricDict {
++ (void)writeMetricToDisk:(NSDictionary *)metricDict async:(BOOL)async {
     NSString *metricID = metricDict[kMetricID];
     NSURL *metricPath = [self pathToMetricWithID:metricID];
-    return [metricDict writeToURL:metricPath atomically:YES];
+    
+    if (async) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+            [metricDict writeToURL:metricPath atomically:YES];
+        });
+    } else {
+        [metricDict writeToURL:metricPath atomically:YES];
+    }
 }
 
 + (NSURL *)pathToMetricWithID:(NSString *)metricID {
