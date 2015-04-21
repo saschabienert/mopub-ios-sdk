@@ -162,7 +162,7 @@ const NSTimeInterval maxStartDelay     = 300;
     options.tag = tag;
     options.completion = completion;
 
-    [self mediateForAdType:adType showImmediately:NO fetchTimeout:10 additionalParams:additionalParams options:options];
+    [self mediateForAdType:adType showImmediately:NO additionalParams:additionalParams options:options];
 }
 
 - (void)autoFetchInterstitial
@@ -172,7 +172,6 @@ const NSTimeInterval maxStartDelay     = 300;
         
         [self mediateForAdType:HZAdTypeInterstitial
                showImmediately:NO
-                  fetchTimeout:10
               additionalParams:nil
                        options:options];
     }
@@ -220,13 +219,12 @@ NSString * const kHZDataKey = @"data";
 
     [self mediateForAdType:adType
            showImmediately:YES
-              fetchTimeout:2
           additionalParams:additionalParams
                    options:options];
 }
 
 // `mediateForSessionKey` and this method looks up the session.
-- (void)mediateForAdType:(HZAdType)adType showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
+- (void)mediateForAdType:(HZAdType)adType showImmediately:(BOOL)showImmediately additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
     NSString *adUnit = NSStringFromAdType(adType);
     
@@ -234,7 +232,7 @@ NSString * const kHZDataKey = @"data";
     HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:options.tag];
     HZMediationSession *session = self.sessionDictionary[key];
     if (session && showImmediately && !additionalParams) {
-        [self fetchForSession:session showImmediately:YES fetchTimeout:timeout sessionKey:key options:options];
+        [self fetchForSession:session showImmediately:YES sessionKey:key options:options];
         return;
     }
     
@@ -262,7 +260,6 @@ NSString * const kHZDataKey = @"data";
 
                                            [self fetchForSession:session
                                                  showImmediately:showImmediately
-                                                    fetchTimeout:timeout
                                                       sessionKey:key
                                                          options:options];
                                        } else {
@@ -278,9 +275,12 @@ NSString * const kHZDataKey = @"data";
 
 
 
-- (void)fetchForSession:(HZMediationSession *)session showImmediately:(BOOL)showImmediately fetchTimeout:(const NSTimeInterval)timeout sessionKey:(HZMediationSessionKey *)sessionKey options:(HZShowOptions *)options
+- (void)fetchForSession:(HZMediationSession *)session showImmediately:(BOOL)showImmediately sessionKey:(HZMediationSessionKey *)sessionKey options:(HZShowOptions *)options
 {
     NSString *tag = session.tag;
+    
+    const NSTimeInterval timeout = showImmediately ? 2 : 12;
+    const NSTimeInterval pollInterval = showImmediately ? 0.5 : 3;
     
     NSArray *const preferredMediatorList = ({
         NSArray *mediatorList;
@@ -327,7 +327,7 @@ NSString * const kHZDataKey = @"data";
             });
             
             __block BOOL fetchedWithinTimeout = NO;
-            hzWaitUntil(^BOOL{
+            hzWaitUntilInterval(pollInterval, ^BOOL{
                 fetchedWithinTimeout = [adapter hasAdForType:type tag:tag];
                 if ([adapter lastErrorForAdType:type]) {
                     HZELog(@"There was an error w/ the fetch = %@",[adapter lastErrorForAdType:type]);
@@ -651,6 +651,7 @@ static BOOL forceOnlyHeyzapSDK = NO;
 }
 
 const NSTimeInterval bannerTimeout = 10;
+const NSTimeInterval bannerPollInterval = 1;
 
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion {
     HZParameterAssert(options);
@@ -698,7 +699,7 @@ const NSTimeInterval bannerTimeout = 10;
                 });
                 
                 __block BOOL isAvailable = NO;
-                hzWaitUntil(^BOOL{
+                hzWaitUntilInterval(bannerPollInterval, ^BOOL{
                     isAvailable = [bannerAdapter isAvailable];
                     if (bannerAdapter.lastError) {
                         HZELog(@"Ad Network %@ had an error loading a banner: %@",baseAdapter.name, bannerAdapter.lastError);

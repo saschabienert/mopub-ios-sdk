@@ -11,8 +11,11 @@
 @implementation HZDispatch
 
 
-BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
-{
+BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout) {
+    return hzWaitUntilInterval(0.2, waitBlock, timeout);
+}
+
+BOOL hzWaitUntilInterval(const NSTimeInterval interval, BOOL (^waitBlock)(void), const NSTimeInterval timeout) {
     NSCParameterAssert(waitBlock);
     NSCParameterAssert(timeout > 0);
     
@@ -29,9 +32,8 @@ BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
         } else if (timeWaited >= timeout) {
             return NO;
         } else {
-            static const NSTimeInterval sleepInterval = 0.2;
-            [NSThread sleepForTimeInterval:sleepInterval];
-            timeWaited += sleepInterval;
+            [NSThread sleepForTimeInterval:interval];
+            timeWaited += interval;
         }
     }
 }
