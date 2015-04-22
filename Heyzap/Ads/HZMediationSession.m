@@ -177,29 +177,32 @@ NSString *const kHZOrdinalKey = @"ordinal";
 
 - (void)reportFetchWithSuccessfulAdapter:(HZBaseAdapter *)chosenAdapter
 {
-    [self.chosenAdapters enumerateObjectsUsingBlock:^(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        // If we got up to the successful adapter, don't report anything for the remaining adapters
-        // If the chosenAdapter is `nil`, this condition will never be true.
-        if (adapter == chosenAdapter) {
-            *stop = YES;
-        }
-        NSNumber *const success = @(adapter == chosenAdapter);
-        
-        NSDictionary *const params = [self addParametersToDefaults:@{@"success": success,
-                                       kHZImpressionIDKey : self.impressionID,
-                                       kHZOrdinalKey : @(idx),
-                                       kHZNetworkKey : [adapter name],
-                                       kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
-                                        }];
-        
-        [[HZMediationAPIClient sharedClient] post:@"fetch"
-                                       withParams:params
-                                          success:^(id json) {
-            HZDLog(@"Success reporting fetch");
-        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-            HZDLog(@"Error reporting fetch = %@",error);
+    // Profiling showed this to take > 5 ms (the API requests stuff is surprisingly expensive).
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        [self.chosenAdapters enumerateObjectsUsingBlock:^(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
+            // If we got up to the successful adapter, don't report anything for the remaining adapters
+            // If the chosenAdapter is `nil`, this condition will never be true.
+            if (adapter == chosenAdapter) {
+                *stop = YES;
+            }
+            NSNumber *const success = @(adapter == chosenAdapter);
+            
+            NSDictionary *const params = [self addParametersToDefaults:@{@"success": success,
+                                                                         kHZImpressionIDKey : self.impressionID,
+                                                                         kHZOrdinalKey : @(idx),
+                                                                         kHZNetworkKey : [adapter name],
+                                                                         kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                                                         }];
+            
+            [[HZMediationAPIClient sharedClient] post:@"fetch"
+                                           withParams:params
+                                              success:^(id json) {
+                                                  HZDLog(@"Success reporting fetch");
+                                              } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+                                                  HZDLog(@"Error reporting fetch = %@",error);
+                                              }];
         }];
-    }];
+    });
 }
 
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter
