@@ -10,8 +10,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#define HZ_TESTDEVICE_DEVICENAME @"HZTESTER"
-
 static HZDebugLevel kHZGlobalDebugLevel = HZDebugLevelSilent;
 
 @interface HZLog()
@@ -39,10 +37,7 @@ static HZDebugLevel kHZGlobalDebugLevel = HZDebugLevelSilent;
 }
 
 + (void) log: (NSString *) message atDebugLevel: (HZDebugLevel) debugLevel {
-    BOOL isTestDevice = [[[UIDevice currentDevice] name] isEqualToString: HZ_TESTDEVICE_DEVICENAME];
-    BOOL outputLog = (debugLevel <= kHZGlobalDebugLevel) || isTestDevice;
-    
-    if  (outputLog) {
+    if (debugLevel <= kHZGlobalDebugLevel) {
         NSLog(@"[ Heyzap ] %@", message);
     }
 }
