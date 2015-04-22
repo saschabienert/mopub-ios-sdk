@@ -12,6 +12,7 @@
 
 + (HZDevice *) currentDevice;
 
+// This method executes once and returns the same value going forward (so as not to constantly be going to disk).
 -(uint64_t) hzGetFreeDiskspace;
 - (NSDictionary *) HZIdentifierDictionary;
 - (NSString *) HZConnectivityType;
