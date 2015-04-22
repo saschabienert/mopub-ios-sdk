@@ -306,10 +306,19 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
     });
 }
 
-+ (NSDictionary *) staticValuesDict {
-    return @{
-      @"carrier": [[CTTelephonyNetworkInfo alloc] init].subscriberCellularProvider.carrierName ?: @"",
-      };
+// Looks ridiculous, but this is probably doing IO b/c its taking 3ms to complete.
++ (void) staticValuesDict:(void(^)(NSDictionary *staticValues))completionBlock {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        static NSDictionary *staticValuesDict;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            staticValuesDict = @{ @"carrier": [[CTTelephonyNetworkInfo alloc] init].subscriberCellularProvider.carrierName ?: @"", };
+        });
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionBlock(staticValuesDict);
+        });
+    });
 }
 
 NSString *const kMetricsDir = @"hzMetrics";
@@ -317,7 +326,7 @@ NSString *const kMetricsDir = @"hzMetrics";
 - (void)getCachedMetrics:(void(^)(NSArray *metrics))completionBlock {
     NSParameterAssert(completionBlock);
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         NSError *error;
         NSArray *const fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[[self class] metricsDirectory]
                                                                 includingPropertiesForKeys:nil
@@ -357,15 +366,17 @@ NSString *const kMetricsDir = @"hzMetrics";
         
         if ([metrics count]) {
             
-            NSMutableDictionary *params = [[[self class] staticValuesDict] mutableCopy];
-            
-            params[@"metrics"] = metrics;
-            
-            [[HZAPIClient sharedClient] post:kSendMetricsUrl withParams:params success:^(id data) {
-                HZDLog(@"# Metrics sent = %lu",(unsigned long)[metrics count]);
-                [[self class] clearMetricsWithMetricIDs:metricIDs];
-            } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-                HZELog(@"Error from server = %@",error);
+            [[self class] staticValuesDict:^(NSDictionary *staticValues) {
+                NSMutableDictionary *params = [staticValues mutableCopy];
+                
+                params[@"metrics"] = metrics;
+                
+                [[HZAPIClient sharedClient] post:kSendMetricsUrl withParams:params success:^(id data) {
+                    HZDLog(@"# Metrics sent = %lu",(unsigned long)[metrics count]);
+                    [[self class] clearMetricsWithMetricIDs:metricIDs];
+                } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+                    HZELog(@"Error from server = %@",error);
+                }];
             }];
         }
     }];
@@ -413,7 +424,7 @@ NSString *const kMetricsDir = @"hzMetrics";
     NSURL *metricPath = [self pathToMetricWithID:metricID];
     
     if (async) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
             [metricDict writeToURL:metricPath atomically:YES];
         });
     } else {
