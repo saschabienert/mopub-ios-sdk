@@ -20,6 +20,14 @@
 #include <arpa/inet.h> // For AF_INET, etc.
 #include <ifaddrs.h> // For getifaddrs()
 #include <net/if.h> // For IFF_LOOPBACK
+#import "HZDispatch.h"
+
+@interface HZDevice()
+
+@property (nonatomic) dispatch_source_t networkPollTimer;
+@property (nonatomic) NSString *latestConnectivity;
+
+@end
 
 @implementation HZDevice
 
@@ -155,9 +163,16 @@
     return  nil;
 }
 
-
 - (NSString *)HZConnectivityType {
-    
+    if (!self.latestConnectivity) {
+        self.latestConnectivity = [self HZConnectivityTypeInternal];
+    }
+    return self.latestConnectivity;
+}
+
+// This method may be called from a background thread.
+// Profiling revealed this to be mildly expensive; atleast 5 ms (it's doing disk IO).
+- (NSString *)HZConnectivityTypeInternal {
     CTTelephonyNetworkInfo *const telephonyInfo = [[CTTelephonyNetworkInfo alloc] init];
     NSString *radio = ({
         NSString *radio = nil;
@@ -303,6 +318,19 @@
         }
     });
     return currentDevice;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.networkPollTimer = hzCreateDispatchTimer(15, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+            NSString *connectivity = [self HZConnectivityTypeInternal];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.latestConnectivity = connectivity;
+            });
+        });
+    }
+    return self;
 }
 
 @end

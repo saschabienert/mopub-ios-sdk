@@ -50,4 +50,18 @@ void ensureMainQueue(void (^block)(void))
     }
 }
 
+// https://gist.github.com/maicki/7622108
+dispatch_source_t hzCreateDispatchTimer(double interval, dispatch_queue_t queue, dispatch_block_t block)
+{
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    if (timer)
+    {
+        dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, interval * NSEC_PER_SEC), interval * NSEC_PER_SEC, (1ull * NSEC_PER_SEC) / 10);
+        dispatch_source_set_event_handler(timer, block);
+        dispatch_resume(timer);
+    }
+    return timer;
+}
+
+
 @end
