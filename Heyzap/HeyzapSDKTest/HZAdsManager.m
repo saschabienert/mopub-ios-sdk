@@ -151,10 +151,6 @@
 
 #pragma mark - Enabled
 
-+ (BOOL) isEnabled {
-    return NO;
-}
-
 + (BOOL) isVersionSupported {
     return ![HZDevice hzSystemVersionIsLessThan:@"6.0.0"];
 }
