@@ -29,7 +29,6 @@
 //@property (nonatomic, weak) id<HZAdsDelegate> statusDelegate;
 //@property (nonatomic, weak) id<HZIncentivizedAdDelegate> incentivizedDelegate;
 
-@property (nonatomic, readonly) BOOL isEnabled;
 @property (nonatomic) HZAdOptions options;
 
 #pragma mark - Framework/Mediators
