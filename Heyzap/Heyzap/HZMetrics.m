@@ -74,6 +74,8 @@ NSString * const kSendMetricsUrl = @"/in_game_api/metrics/export";
 // is in getMetricsForTag:adUnit:network:
 @property (nonatomic, strong) NSMutableDictionary *preMediateMetricsDict;
 
+@property (nonatomic) dispatch_queue_t metricsQueue;
+
 @end
 
 NSString * metricFailureReason(NSDictionary *metric);
@@ -131,21 +133,25 @@ NSString * metricFailureReason(NSDictionary *metric);
 
         _startTime = CACurrentMediaTime();
         
+        self.metricsQueue = dispatch_queue_create("com.heyzap.sdk.metrics", DISPATCH_QUEUE_SERIAL);
+        dispatch_set_target_queue(self.metricsQueue, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0));
+        
+        
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(cacheAllMetrics)
                                                      name:UIApplicationDidEnterBackgroundNotification
                                                    object:nil];
     }
-    [[self class] createMetricsDirectory];
+    dispatch_async(self.metricsQueue, ^{
+        [[self class] createMetricsDirectory];
+    });
     
     // Check to see if we need to send metrics every 15 seconds.
     // This avoids sending many HTTP requests at app launch, when we're already busy fetching (Immad's concern).
     // It also cleanly handles us having potentially alot of metrics.
-    [NSTimer scheduledTimerWithTimeInterval:15
-                                     target:self
-                                   selector:@selector(sendCachedMetrics)
-                                   userInfo:nil
-                                    repeats:YES];
+    hzCreateDispatchTimer(15, self.metricsQueue, ^{
+        [self sendCachedMetrics];
+    });
     
     return self;
 }
@@ -209,7 +215,7 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
     HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:tag adUnit:adUnit network:network];
     NSDictionary *const metrics = self.metricsDict[key];
     if (metrics) {
-        [[self class] writeMetricToDisk:metrics async:YES];
+        [[self class] writeMetricToDisk:metrics];
         [self.metricsDict removeObjectForKey:key];
     } else {
         // Not sure what causes this case, but want to prevent it from causing a crash. See https://app.asana.com/0/25787840548210/30669907596307/f for details and stack trace.
@@ -218,17 +224,15 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 }
 
 - (void) removeAdWithProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    ensureMainQueue(^{
+    dispatch_async(self.metricsQueue, ^{
         [self finishUsingAdWithTag:provider.tag adUnit:provider.adUnit network:network];
-        //    HZMetricsKey *const key = [[HZMetricsKey alloc] initWithTag:object.tag adUnit:object.adUnit network:network];
-        //    [self.metricsDict removeObjectForKey:key];
     });
 }
 
 #pragma mark - Logging Metrics
 
 - (void) logMetricsEvent: (NSString *) eventName value:(id)value withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    ensureMainQueue(^{
+    dispatch_async(self.metricsQueue, ^{
         if (!value) {
             HZDLog(@"nil value for key %@",eventName);
             return;
@@ -243,21 +247,21 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 }
 
 - (void) logFetchTimeWithObject:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    ensureMainQueue(^{
+    dispatch_async(self.metricsQueue, ^{
         self.fetchCalledTime = CACurrentMediaTime();
         [self logMetricsEvent:@"fetch" value:@1 withProvider:provider network:network];
     });
 }
 
 - (void) logTimeSinceFetchFor:(NSString *)eventName withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
-    ensureMainQueue(^{
+    dispatch_async(self.metricsQueue, ^{
         int64_t elapsedtimeSinceFetchMilliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
         [self logMetricsEvent:eventName value:@(elapsedtimeSinceFetchMilliseconds) withProvider:provider network:network];
     });
 }
 
 - (void) logShowAdWithObject:(id <HZMetricsProvider>)provider network:(NSString *)network{
-    ensureMainQueue(^{
+    dispatch_async(self.metricsQueue, ^{
         [[HZMetrics sharedInstance] logMetricsEvent:@"show_ad_called" value:@1 withProvider:provider network:network];
         self.showAdCalledTime = CACurrentMediaTime();
         int64_t elapsedtimeSinceShowMilliseconds = millisecondsSinceCFTimeInterval(self.fetchCalledTime);
@@ -266,14 +270,14 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 }
 
 - (void) logTimeSinceShowAdFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
-    ensureMainQueue(^{
+    dispatch_async(self.metricsQueue, ^{
         int64_t elapsedtimeSinceShowMilliseconds = millisecondsSinceCFTimeInterval(self.showAdCalledTime);
         [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMilliseconds) withProvider:provider network:network];
     });
 }
 
 - (void) logDownloadPercentageFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network{
-    ensureMainQueue(^{
+    dispatch_async(self.metricsQueue, ^{
         NSNumber *downloadPercentage = [self getMetricsForTag:provider.tag adUnit:provider.adUnit network:network][kMetricDownloadPercentageKey];
         if (downloadPercentage) { // If we aren't downloading a video, don't log anything
             [self logMetricsEvent:eventname value:downloadPercentage withProvider:provider network:network];
@@ -282,14 +286,14 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 }
 
 - (void) logTimeSinceStartFor:(NSString *)eventname withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    ensureMainQueue(^{
+    dispatch_async(self.metricsQueue, ^{
         int64_t elapsedtimeSinceShowMilliseconds = millisecondsSinceCFTimeInterval(self.startTime);
         [self logMetricsEvent:eventname value:@(elapsedtimeSinceShowMilliseconds) withProvider:provider network:network];
     });
 }
 
 - (void)logIsAvailable:(BOOL)isAvailable withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    ensureMainQueue(^{
+    dispatch_async(self.metricsQueue, ^{
         if (isAvailable) {
             [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableStatusKey value:@"is_available" withProvider:provider network:network];
         } else {
@@ -301,85 +305,71 @@ NSString * const kPreMediateNetwork = @"network-placeholder";
 
 // This isn't actually a metric, but the metric dictionary is a useful place to store the current download percentage for that video ad.
 - (void)setDownloadPercentage:(int)downloadPercentage withProvider:(id <HZMetricsProvider>)provider network:(NSString *)network {
-    ensureMainQueue(^{
+    dispatch_async(self.metricsQueue, ^{
         [self logMetricsEvent:kMetricDownloadPercentageKey value:@(downloadPercentage) withProvider:provider network:network];
     });
 }
 
-// Looks ridiculous, but this is probably doing IO b/c its taking 3ms to complete.
-+ (void) staticValuesDict:(void(^)(NSDictionary *staticValues))completionBlock {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        static NSDictionary *staticValuesDict;
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            staticValuesDict = @{ @"carrier": [[CTTelephonyNetworkInfo alloc] init].subscriberCellularProvider.carrierName ?: @"", };
-        });
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completionBlock(staticValuesDict);
-        });
+// This is probably doing IO b/c its taking 3ms to complete.
++ (NSDictionary *)staticValuesDict {
+    static NSDictionary *staticValuesDict;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        staticValuesDict = @{ @"carrier": [[CTTelephonyNetworkInfo alloc] init].subscriberCellularProvider.carrierName ?: @"", };
     });
+    return staticValuesDict;
 }
 
 NSString *const kMetricsDir = @"hzMetrics";
 
-- (void)getCachedMetrics:(void(^)(NSArray *metrics))completionBlock {
-    NSParameterAssert(completionBlock);
+- (NSArray *)getCachedMetrics {
+    NSError *error;
+    NSArray *const fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[[self class] metricsDirectory]
+                                                            includingPropertiesForKeys:nil
+                                                                               options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants|NSDirectoryEnumerationSkipsPackageDescendants|NSDirectoryEnumerationSkipsHiddenFiles)
+                                                                                 error:&error];
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        NSError *error;
-        NSArray *const fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[[self class] metricsDirectory]
-                                                                includingPropertiesForKeys:nil
-                                                                                   options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants|NSDirectoryEnumerationSkipsPackageDescendants|NSDirectoryEnumerationSkipsHiddenFiles)
-                                                                                     error:&error];
-        
-        
-        NSArray *const metricDictionaries = ({
-            NSMutableArray *metrics = [[NSMutableArray alloc] init];
-            for (NSURL *url in fileURLs) {
-                NSDictionary *dict = [NSDictionary dictionaryWithContentsOfURL:url];
-                if (dict) {
-                    [metrics addObject:dict];
-                }
+    
+    NSArray *const metricDictionaries = ({
+        NSMutableArray *metrics = [[NSMutableArray alloc] init];
+        for (NSURL *url in fileURLs) {
+            NSDictionary *dict = [NSDictionary dictionaryWithContentsOfURL:url];
+            if (dict) {
+                [metrics addObject:dict];
             }
-            metrics;
-        });
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            completionBlock(metricDictionaries);
-        });
+        }
+        metrics;
     });
+    return metricDictionaries;
 }
 
 
 - (void)sendCachedMetrics {
+    __block NSArray *metrics = [self getCachedMetrics];
+    NSArray *metricIDs = hzMap(metrics, ^NSURL *(NSDictionary *metric) {
+        return metric[kMetricID];
+    });
     
-    [self getCachedMetrics:^(NSArray *cachedMetrics) {
-        __block NSArray *metrics = cachedMetrics;
-        NSArray *metricIDs = hzMap(metrics, ^NSURL *(NSDictionary *metric) {
-            return metric[kMetricID];
-        });
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        metrics = [metrics arrayByAddingObject:@{@"start": @1}];
+    });
+    
+    if ([metrics count]) {
         
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            metrics = [metrics arrayByAddingObject:@{@"start": @1}];
-        });
+        NSMutableDictionary *params = [[[self class] staticValuesDict] mutableCopy];
         
-        if ([metrics count]) {
-            
-            [[self class] staticValuesDict:^(NSDictionary *staticValues) {
-                NSMutableDictionary *params = [staticValues mutableCopy];
-                
-                params[@"metrics"] = metrics;
-                
-                [[HZAPIClient sharedClient] post:kSendMetricsUrl withParams:params success:^(id data) {
-                    HZDLog(@"# Metrics sent = %lu",(unsigned long)[metrics count]);
-                    [[self class] clearMetricsWithMetricIDs:metricIDs];
-                } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-                    HZELog(@"Error from server = %@",error);
-                }];
-            }];
-        }
-    }];
+        params[@"metrics"] = metrics;
+        
+        [[HZAPIClient sharedClient] post:kSendMetricsUrl withParams:params success:^(id data) {
+            dispatch_async(self.metricsQueue, ^{
+                HZDLog(@"# Metrics sent = %lu",(unsigned long)[metrics count]);
+                [[self class] clearMetricsWithMetricIDs:metricIDs];
+            });
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+            HZELog(@"Error from server = %@",error);
+        }];
+    }
     
 }
 
@@ -392,9 +382,12 @@ NSString *const kMetricsDir = @"hzMetrics";
  */
 - (void)cacheAllMetrics
 {
-    [self.metricsDict enumerateKeysAndObjectsUsingBlock:^(HZMetricsKey *key, NSMutableDictionary *metric, BOOL *stop) {
-        [[self class] writeMetricToDisk:metric async:NO];
-    }];
+    // This method is called from the main thread b/c of the NSNotification.
+    dispatch_async(self.metricsQueue, ^{
+        [self.metricsDict enumerateKeysAndObjectsUsingBlock:^(HZMetricsKey *key, NSMutableDictionary *metric, BOOL *stop) {
+            [[self class] writeMetricToDisk:metric];
+        }];
+    });
 }
 
 + (void)clearMetricsWithMetricIDs:(NSArray *)metricIDs
@@ -419,17 +412,10 @@ NSString *const kMetricsDir = @"hzMetrics";
     
 }
 
-+ (void)writeMetricToDisk:(NSDictionary *)metricDict async:(BOOL)async {
++ (void)writeMetricToDisk:(NSDictionary *)metricDict {
     NSString *metricID = metricDict[kMetricID];
     NSURL *metricPath = [self pathToMetricWithID:metricID];
-    
-    if (async) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-            [metricDict writeToURL:metricPath atomically:YES];
-        });
-    } else {
-        [metricDict writeToURL:metricPath atomically:YES];
-    }
+    [metricDict writeToURL:metricPath atomically:YES];
 }
 
 + (NSURL *)pathToMetricWithID:(NSString *)metricID {
@@ -443,17 +429,13 @@ NSString *const kMetricsDir = @"hzMetrics";
 }
 
 + (NSURL *)metricsDirectory {
-    NSString *libraryDir = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
+    static NSString *libraryDir;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        libraryDir = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
+    });
     
-    NSError *directoryError;
-    NSURL *directoryURL = [[NSURL fileURLWithPath:libraryDir] URLByAppendingPathComponent:@"hzMetrics" isDirectory:YES];
-    
-    [[NSFileManager defaultManager] createDirectoryAtURL:directoryURL
-                             withIntermediateDirectories:YES
-                                              attributes:@{}
-                                                   error:&directoryError];
-    
-    return directoryURL;
+    return [[NSURL fileURLWithPath:libraryDir] URLByAppendingPathComponent:@"hzMetrics" isDirectory:YES];
 }
 
 #pragma mark - Utils
