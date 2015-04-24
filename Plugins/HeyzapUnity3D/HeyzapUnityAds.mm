@@ -185,7 +185,7 @@ extern "C" {
         
         if (HZCurrentBannerAd == nil) {
             HZBannerPosition pos = HZBannerPositionBottom;
-            NSString *positionStr = [NSString stringWithUTF8String: tag];
+            NSString *positionStr = [NSString stringWithUTF8String: position];
             if ([positionStr isEqualToString: @"top"]) {
                 pos = HZBannerPositionTop;
             }
