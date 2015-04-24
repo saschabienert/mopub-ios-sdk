@@ -74,14 +74,21 @@
         
         //register this game as installed, if we haven't done so already
         if (![[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY]) {
-            [[HZAdsAPIClient sharedClient] post:@"register_new_game_install" withParams:@{} success:^(id JSON) {
-                NSLog(@"register new game success");
+            [[HZAdsAPIClient sharedClient] POST:@"register_new_game_install" parameters:@{} success:^(HZAFHTTPRequestOperation *operation, id JSON) {
                 [[HZUserDefaults sharedDefaults] setObject:@YES forKey:HAS_REPORTED_INSTALL_KEY];
-            } failure:^(HZAFHTTPRequestOperation *op, NSError *error) {
-                NSLog(@"register new game Error = %@",error);
+            } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+                HZDLog(@"Error reporting new game install = %@",error);
             }];
         }
     });
+    
+    // Initializing the first webview takes 31–42 ms; it takes something like 11ms for subsequent initializations.
+    // It's preferable to create the first webview when the SDK is started (before gameplay happens) because we can't afford 42ms while the game is running at 60 FPS.
+    // A better solution would be to maintain a pool of UIWebViews we draw from, so as to avoid the 11ms hit as well.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
+#pragma clang diagnostic pop
     
     [self reportInstalledGames];
 }
@@ -105,41 +112,49 @@
     // There are some frightening reports of the `canOpenURL:` method being really slow on iOS 7 devices with a SIM card. I wasn't able to replicate this on my 5S running 7.0.3, and even based on the person reporting 1700 URLs taking 22 seconds to check, we should take < 1 second, so I'm figuring we'll be ok.
     // http://vntin.com/openradar.appspot.com/15020847 https://github.com/danielamitay/iHasApp/issues/16 https://twitter.com/agiletortoise/status/371650061416931329
     
-    NSString * const dateOfCheckKey = @"dateOfCheckingInstalledGames";
-    NSDate *date = [[HZUserDefaults sharedDefaults] objectForKey:dateOfCheckKey];
-    const NSTimeInterval oneWeek = 604800;
-    if (date && [[NSDate date] timeIntervalSinceDate:date] < oneWeek) {
-        return;
-    }
-    
-    [[HZAdsAPIClient sharedClient] get:@"games_to_check.json" withParams:nil success:^(NSArray *response) {
-        NSMutableArray *installedGames = [@[] mutableCopy];
-        for (NSDictionary *game in response) {
-            NSNumber *const gameID = [HZDictionaryUtils hzObjectForKey:@"game_id" ofClass:[NSNumber class] withDict: game];
-            
-            NSURL *const launchURL = ({
-                NSString *launchString = [HZDictionaryUtils hzObjectForKey:@"launch_uri" ofClass:[NSString class] withDict: game];
-                if ([launchString rangeOfString:@"://"].location == NSNotFound) {
-                    launchString = [launchString stringByAppendingString:@"://"];
-                }
-                [NSURL URLWithString:launchString];
-            });
-            
-            if (gameID == nil || launchURL == nil) {
-                continue;
-            }
-            
-            if ([[UIApplication sharedApplication] canOpenURL:launchURL]) {
-                [installedGames addObject:gameID];
-            }
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        NSString * const dateOfCheckKey = @"dateOfCheckingInstalledGames";
+        NSDate *date = [[HZUserDefaults sharedDefaults] objectForKey:dateOfCheckKey];
+        const NSTimeInterval oneWeek = 604800;
+        if (date && [[NSDate date] timeIntervalSinceDate:date] < oneWeek) {
+            return;
         }
         
-        
-        [[HZAdsAPIClient sharedClient] post:@"add_initial_packages" withParams:@{@"installed_game_ids": installedGames} success:^(NSDictionary *response) {
-            [[HZUserDefaults sharedDefaults] setObject:[NSDate date] forKey:dateOfCheckKey];
-        } failure:nil];
-        
-    } failure:nil];
+        [[HZAdsAPIClient sharedClient] GET:@"games_to_check.json" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSArray *response) {
+            NSMutableArray *installedGames = [@[] mutableCopy];
+            for (NSDictionary *game in response) {
+                NSNumber *const gameID = [HZDictionaryUtils hzObjectForKey:@"game_id" ofClass:[NSNumber class] withDict: game];
+                
+                NSURL *const launchURL = ({
+                    NSString *launchString = [HZDictionaryUtils hzObjectForKey:@"launch_uri" ofClass:[NSString class] withDict: game];
+                    if ([launchString rangeOfString:@"://"].location == NSNotFound) {
+                        launchString = [launchString stringByAppendingString:@"://"];
+                    }
+                    [NSURL URLWithString:launchString];
+                });
+                
+                if (gameID == nil || launchURL == nil) {
+                    continue;
+                }
+                
+                if ([[UIApplication sharedApplication] canOpenURL:launchURL]) {
+                    [installedGames addObject:gameID];
+                }
+            }
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                [[HZAdsAPIClient sharedClient] POST:@"add_initial_packages" parameters:@{@"installed_game_ids": installedGames} success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                        [[HZUserDefaults sharedDefaults] setObject:[NSDate date] forKey:dateOfCheckKey];
+                    });
+                } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+                    HZDLog(@"Error adding_initial_packages = %@",error);
+                }];
+            });
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+            HZDLog(@"Error getting games = %@",error);
+        }];
+    });
 }
 
 #pragma mark - Getters/Setters

@@ -67,6 +67,8 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
+@property (nonatomic) dispatch_queue_t fetchQueue;
+
 @end
 
 @implementation HeyzapMediation
@@ -99,6 +101,7 @@ const NSTimeInterval maxStartDelay     = 300;
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
         _retryStartDelay = initialStartDelay;
+        self.fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_SERIAL);
     }
     return self;
 }
@@ -124,7 +127,7 @@ const NSTimeInterval maxStartDelay     = 300;
 // This method should only be called by `start`.
 - (void)retriableStart {
     
-    [[HZMediationAPIClient sharedClient] get:@"start" withParams:nil success:^(NSDictionary *json) {
+    [[HZMediationAPIClient sharedClient] GET:@"start" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
         self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
                                                      ofClass:[NSString class]
                                                      default:@"zz" // Unknown or invalid; the server also uses this.
@@ -244,9 +247,9 @@ NSString * const kHZDataKey = @"data";
     
     NSDictionary *const mediateParams = request.createParams;
     
-    [[HZMediationAPIClient sharedClient] get:@"mediate"
-                                withParams:mediateParams
-                                   success:^(NSDictionary *json) {
+    [[HZMediationAPIClient sharedClient] GET:@"mediate"
+                                  parameters:mediateParams
+                                     success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
                                        
                                        HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:options.tag];
       
@@ -307,7 +310,7 @@ NSString * const kHZDataKey = @"data";
         }
     }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+    dispatch_async(self.fetchQueue, ^{
         BOOL successful = NO;
         int ordinal = 0;
         for (HZBaseAdapter *adapter in preferredMediatorList) {
@@ -573,13 +576,20 @@ static int totalImpressions = 0;
 
 + (NSString *)commaSeparatedAdapterList
 {
-    NSMutableArray *adapterNames = [NSMutableArray array];
-    for (Class adapterClass in [HZBaseAdapter allAdapterClasses]) {
-        if ([adapterClass isSDKAvailable]) {
-            [adapterNames addObject:[adapterClass name]];
+    // Profiling showed this to take > 1 ms; it's doing a decent amount of work checking if all the classes exist.
+    static NSString *commaSeparatedAdapters;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSMutableArray *adapterNames = [NSMutableArray array];
+        for (Class adapterClass in [HZBaseAdapter allAdapterClasses]) {
+            if ([adapterClass isSDKAvailable]) {
+                [adapterNames addObject:[adapterClass name]];
+            }
         }
-    }
-    return [adapterNames componentsJoinedByString:@","];
+        commaSeparatedAdapters = [adapterNames componentsJoinedByString:@","];
+    });
+    
+    return commaSeparatedAdapters;
 }
 
 static BOOL forceOnlyHeyzapSDK = NO;
@@ -673,7 +683,7 @@ const NSTimeInterval bannerPollInterval = 1;
     
     NSDictionary *const mediateParams = request.createParams;
     
-    [[HZMediationAPIClient sharedClient] get:@"mediate" withParams:mediateParams success:^(NSDictionary *json) {
+    [[HZMediationAPIClient sharedClient] GET:@"mediate" parameters:mediateParams success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
         
         // This should be factored out into a general way of saying "does the ad network have credentials for X ad format?
         NSSet *const setupBannerMediators = [self.setupMediators objectsPassingTest:^BOOL(HZBaseAdapter *adapter, BOOL *stop) {
@@ -690,7 +700,7 @@ const NSTimeInterval bannerPollInterval = 1;
         
         NSLog(@"Chosen adapters for banners = %@",session.chosenAdapters);
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        dispatch_async(self.fetchQueue, ^{
             for (HZBaseAdapter *baseAdapter in session.chosenAdapters) {
                 NSLog(@"Base adapter = %@",baseAdapter);
                 __block HZBannerAdapter *bannerAdapter;

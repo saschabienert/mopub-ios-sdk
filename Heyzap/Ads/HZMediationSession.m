@@ -193,14 +193,11 @@ NSString *const kHZOrdinalKey = @"ordinal";
                                                                          kHZNetworkKey : [adapter name],
                                                                          kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
                                                                          }];
-            
-            [[HZMediationAPIClient sharedClient] post:@"fetch"
-                                           withParams:params
-                                              success:^(id json) {
-                                                  HZDLog(@"Success reporting fetch");
-                                              } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-                                                  HZDLog(@"Error reporting fetch = %@",error);
-                                              }];
+            [[HZMediationAPIClient sharedClient] POST:@"fetch" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
+                HZDLog(@"Success reporting fetch");
+            } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+                 HZDLog(@"Error reporting fetch = %@",error);
+            }];
         }];
     });
 }
@@ -219,9 +216,7 @@ NSString *const kHZOrdinalKey = @"ordinal";
         params[kHZBannerOrdinalKey] = @(self.bannerImpressionCount);
     }
     
-    [[HZMediationAPIClient sharedClient] post:@"click"
-                                 withParams:params
-                                    success:^(id json) {
+    [[HZMediationAPIClient sharedClient] POST:@"click" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
         HZDLog(@"Success reporting click");
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         HZDLog(@"Error reporting click = %@",error);
@@ -243,9 +238,7 @@ NSString *const kHZOrdinalKey = @"ordinal";
         params[kHZBannerOrdinalKey] = @(self.bannerImpressionCount);
     }
     
-    [[HZMediationAPIClient sharedClient] post:@"impression"
-                                 withParams:params
-                                    success:^(id json) {       
+    [[HZMediationAPIClient sharedClient] POST:@"impression" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
         HZDLog(@"Success reporting impression");
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         HZDLog(@"Error reporting impression = %@",error);

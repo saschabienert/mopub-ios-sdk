@@ -20,6 +20,7 @@
 #import "HeyzapAds.h"
 
 #import "HZAdsManager.h"
+#import "HZAdsRequestSerializer.h"
 
 static NSString * const kHZAPIBaseURLString = @"https://ads.heyzap.com";
 
@@ -40,139 +41,14 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
     return _sharedClient;
 }
 
-+ (NSMutableDictionary *)defaultParams {
-    // Profiling revealed this to be mildly expensive. The values never change so dispatch_once is a good optimization.
-    static NSDictionary *defaultParams = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        
-        NSString *deviceFormFactor;
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            deviceFormFactor = @"tablet";
-        } else {
-            deviceFormFactor = @"phone";
-        }
-        
-        NSString *versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
-        versionString = versionString ?: @"";
-        
-        NSString *publisherID = [HZUtils publisherID] ?: @"";
-        
-        NSMutableDictionary *params = [@{@"publisher_id": publisherID,
-                                         @"publisher_sdk_key": publisherID,
-                                         @"device_id": [HZUtils deviceID],
-                                         @"app_bundle_id": [[NSBundle mainBundle] bundleIdentifier],
-                                         @"app_version": versionString,
-                                         @"device_form_factor": deviceFormFactor,
-                                         @"platform": @"iphone",
-                                         @"sdk_platform": @"iphone",
-                                         @"sdk_version": SDK_VERSION,
-                                         @"ios_version": [UIDevice currentDevice].systemVersion,
-                                         @"os_version": [UIDevice currentDevice].systemVersion,
-                                         @"device_type": [HZAvailability platform],
-                                         @"advertising_id" : [HZUtils deviceID],
-                                         } mutableCopy];
-        
-        [params addEntriesFromDictionary:[[HZDevice currentDevice] HZIdentifierDictionary]];
-        defaultParams = params;
-    });
-    
-    return [defaultParams mutableCopy];
-}
-
-+ (NSMutableDictionary *) defaultParamsWithDictionary: (NSDictionary *) dictionary {
-    NSMutableDictionary *params = [self defaultParams];
-    if (dictionary) {
-        [params addEntriesFromDictionary: dictionary];
-    }
-    return params;
-}
-
-- (id)initWithBaseURL:(NSURL *)url {
+- (instancetype)initWithBaseURL:(NSURL *)url {
     self = [super initWithBaseURL:url];
-    if (!self) {
-        return nil;
+    if (self) {
+        self.requestSerializer = [HZAdsRequestSerializer serializer];
     }
-    
-    [self registerHTTPOperationClass:[HZAFJSONRequestOperation class]];
-    
-    // Accept HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
-	[self setDefaultHeader:@"Accept" value:@"application/json"];
-    
     return self;
 }
 
-- (void) get:(NSString *)endpoint withParams:(NSDictionary *)params success:(HZRequestSuccessBlock)success failure:(HZRequestFailureBlock)failure {
-    
-    NSMutableDictionary *requestParams = [[self class] defaultParamsWithDictionary: params];
-    
-    [HZLog debug: [NSString stringWithFormat: @"Client: GET : %@ %@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], requestParams]];
-    
-    // This method can be called from a background thread or main thread, so we dispatch to the main thread (error if this runs on background b/c recipient modifies the UI)
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidSendRequestNotification
-                                                            object:nil
-                                                          userInfo:@{@"info":requestParams, @"endpoint":endpoint, @"url": [NSURL URLWithString: endpoint relativeToURL: self.baseURL]}];
-    });
-    
-    [self getPath: endpoint parameters: requestParams success:^(HZAFHTTPRequestOperation *operation, id JSON) {
-        if (success) {
-            NSDictionary *userInfo;
-            if (JSON) {
-                userInfo = [JSON isKindOfClass:[NSDictionary class]] ? JSON : @{@"response": JSON};
-                if ([userInfo objectForKey:@"dev_message"]) {
-                    [HZLog error:[userInfo objectForKey:@"dev_message"]];
-                }
-            } else {
-                userInfo = nil;
-            }
-            [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidReceiveResponseNotification object:nil userInfo:userInfo];
-
-            success(JSON);
-        }
-    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        if (failure) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidReceiveResponseNotification object:nil userInfo:@{@"error_name": [error domain], @"error_info": [error userInfo]}];
-            failure(operation, error);
-        }
-    }];
-}
-
-- (void) post:(NSString *)endpoint withParams:(NSDictionary *)params success:(HZRequestSuccessBlock)success failure:(HZRequestFailureBlock)failure {
-    
-    NSMutableDictionary *requestParams = [[self class] defaultParamsWithDictionary: params];
-    
-    [HZLog debug: [NSString stringWithFormat: @"Client: POST : %@ %@", [[NSURL URLWithString: endpoint relativeToURL: self.baseURL] absoluteString], requestParams]];
-    
-    // This method can be called from a background thread or main thread, so we dispatch to the main thread (error if this runs on background b/c recipient modifies the UI)
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidSendRequestNotification object:nil userInfo:@{@"info":requestParams, @"endpoint":endpoint}];
-    });
-    
-    [self postPath: endpoint parameters: requestParams success:^(HZAFHTTPRequestOperation *operation, id JSON) {
-        if (success) {
-            NSDictionary *userInfo;
-            if (JSON) {
-                userInfo = [JSON isKindOfClass:[NSDictionary class]] ? JSON : @{@"response": JSON};
-                if ([userInfo objectForKey:@"dev_message"]) {
-                    [HZLog error:[userInfo objectForKey:@"dev_message"]];
-                }
-            } else {
-                userInfo = nil;
-            }
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidReceiveResponseNotification object:nil userInfo:userInfo];
-
-            success(JSON);
-        }
-    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        if (failure) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:HZAPIClientDidReceiveResponseNotification object:nil userInfo:@{@"error_name": [error domain], @"error_info": [error userInfo]}];
-
-            failure(operation, error);
-        }
-    }];
-}
 
 - (void)logMessageToHeyzap:(NSString *)message
                      error:(NSError *)error
@@ -188,14 +64,7 @@ NSString * const HZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendReq
         [params setObject:[NSString stringWithFormat:@"%@",error] forKey:@"NSError"];
     }
     
-    [self post:@"in_game_api/ads/log_message"
-    withParams:params
-       success:^(id response) {
-           
-       }
-       failure:^(HZAFHTTPRequestOperation *operation, NSError *anError) {
-           
-       }];
+    [self POST:@"in_game_api/ads/log_message" parameters:params success:nil failure:nil];
 }
 
 @end

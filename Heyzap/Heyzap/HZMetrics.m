@@ -141,17 +141,18 @@ NSString * metricFailureReason(NSDictionary *metric);
                                                  selector:@selector(cacheAllMetrics)
                                                      name:UIApplicationDidEnterBackgroundNotification
                                                    object:nil];
+        
+        dispatch_async(self.metricsQueue, ^{
+            [[self class] createMetricsDirectory];
+        });
+        
+        // Check to see if we need to send metrics every 15 seconds.
+        // This avoids sending many HTTP requests at app launch, when we're already busy fetching (Immad's concern).
+        // It also cleanly handles us having potentially alot of metrics.
+        hzCreateDispatchTimer(15, self.metricsQueue, ^{
+            [self sendCachedMetrics];
+        });
     }
-    dispatch_async(self.metricsQueue, ^{
-        [[self class] createMetricsDirectory];
-    });
-    
-    // Check to see if we need to send metrics every 15 seconds.
-    // This avoids sending many HTTP requests at app launch, when we're already busy fetching (Immad's concern).
-    // It also cleanly handles us having potentially alot of metrics.
-    hzCreateDispatchTimer(15, self.metricsQueue, ^{
-        [self sendCachedMetrics];
-    });
     
     return self;
 }
@@ -361,7 +362,7 @@ NSString *const kMetricsDir = @"hzMetrics";
         
         params[@"metrics"] = metrics;
         
-        [[HZAPIClient sharedClient] post:kSendMetricsUrl withParams:params success:^(id data) {
+        [[HZAPIClient sharedClient] POST:kSendMetricsUrl parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
             dispatch_async(self.metricsQueue, ^{
                 HZDLog(@"# Metrics sent = %lu",(unsigned long)[metrics count]);
                 [[self class] clearMetricsWithMetricIDs:metricIDs];
