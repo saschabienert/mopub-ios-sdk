@@ -12,6 +12,7 @@
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
 #import "HZEnums.h"
+#import "HZUtils.h"
 
 NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccessNotification";
 
@@ -27,18 +28,24 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
     
     HZAFHTTPRequestOperation *operation = [[HZAFHTTPRequestOperation alloc] initWithRequest:request];
     
+    // Make sure we clear the cache before downloading a new video.
+    [operation addDependency:clearCacheOperation];
+    
     operation.outputStream = [NSOutputStream outputStreamToFileAtPath: filePath append:NO];
-    __block BOOL loggedTotal = NO;
+//    __block BOOL loggedTotal = NO;
     [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead){
-        HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:type];
-        float decimal = (float)totalBytesRead / (float)totalBytesExpectedToRead;
-        int percent = (int) (decimal * 100);
-        NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(auctionType);
-        [[HZMetrics sharedInstance] setDownloadPercentage:percent withProvider:stub network:heyzapAdapter];
-        if (!loggedTotal){
-            [[HZMetrics sharedInstance] logMetricsEvent:kVideoSizeKey value:@(totalBytesExpectedToRead) withProvider:stub network:heyzapAdapter];
-            loggedTotal = YES;
-        }
+        
+        // This code is commented out because its expensive performance wise to constantly run this.
+        
+//        HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:type];
+//        float decimal = (float)totalBytesRead / (float)totalBytesExpectedToRead;
+//        int percent = (int) (decimal * 100);
+//        NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(auctionType);
+//        [[HZMetrics sharedInstance] setDownloadPercentage:percent withProvider:stub network:heyzapAdapter];
+//        if (!loggedTotal){
+//            [[HZMetrics sharedInstance] logMetricsEvent:kVideoSizeKey value:@(totalBytesExpectedToRead) withProvider:stub network:heyzapAdapter];
+//            loggedTotal = YES;
+//        }
     }];
 
     
@@ -77,6 +84,30 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
     [operation start];
     
     return operation;
+}
+
+static NSOperation *clearCacheOperation;
+
+// Somewhat weird to have this here. There's a weird tie between HZDownloadHelper and HZVideoAdModel where they need to know alot about each other.
++ (void)clearCache {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        clearCacheOperation = [NSBlockOperation blockOperationWithBlock:^{
+            [HZUtils createCacheDirectory];
+            
+            NSFileManager *fm = [NSFileManager defaultManager];
+            NSArray *dirContents = [fm contentsOfDirectoryAtPath: [HZUtils cacheDirectoryPath] error:nil];
+            NSPredicate *fltr = [NSPredicate predicateWithFormat:@"self BEGINSWITH 'imp'"];
+            NSArray *onlyImpressionFiles = [dirContents filteredArrayUsingPredicate:fltr];
+            
+            for (NSString *filePath in onlyImpressionFiles) {
+                [[NSFileManager defaultManager] removeItemAtPath: [HZUtils cacheDirectoryWithFilename: filePath] error: nil];
+            }
+        }];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+            [clearCacheOperation start];
+        });
+    });
 }
 
 @end

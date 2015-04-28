@@ -136,8 +136,6 @@
     [ad doPostFetchActionsWithCompletion:^(BOOL result) {
         if (result) {
             
-            [HZLog debug: [NSString stringWithFormat: @"(FETCH) %@", ad]];
-            
             [[HZAdLibrary sharedLibrary] pushAd:ad forAdUnit:request.adUnit tag:request.tag auctionType:request.auctionType];
             
             [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didReceiveAdWithTag: request.tag];

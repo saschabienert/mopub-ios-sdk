@@ -156,7 +156,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     self.available = [[self.network class] isSDKAvailable];
     
     // hit the /info endpoint for enabled status and initialization credentials
-    [[HZMediationAPIClient sharedClient] get:@"info" withParams:nil success:^(NSDictionary *json) {
+    [[HZMediationAPIClient sharedClient] GET:@"info" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
         NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
         NSArray *thisNetworkArray = [networks filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSDictionary *mediator, NSDictionary *bindings) {
             return [mediator[@"name"] isEqualToString:[[self.network class] name]];

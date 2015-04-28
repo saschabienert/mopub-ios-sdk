@@ -236,7 +236,7 @@
     }
     self.availableNetworks = availableNetworks;
 
-    [[HZMediationAPIClient sharedClient] get:@"info" withParams:nil success:^(NSDictionary *json) {
+    [[HZMediationAPIClient sharedClient] GET:@"info" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
         NSMutableSet *enabledNetworks = [NSMutableSet set];
         NSMutableSet *initializedNetworks = [NSMutableSet set];
         NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
