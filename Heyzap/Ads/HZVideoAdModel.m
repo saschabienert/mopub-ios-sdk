@@ -15,6 +15,7 @@
 #import "HZLog.h"
 #import "HZMetrics.h"
 #import "HZEnums.h"
+#import "HZWebViewPool.h"
 
 @interface HZVideoAdModel()<UIWebViewDelegate>
 @property (nonatomic) BOOL sentComplete;
@@ -100,6 +101,11 @@
 
 - (void) dealloc {
     [self cleanup];
+    UIWebView *preload = self.preloadWebview;
+    self.preloadWebview = nil;
+    if (self.preloadWebview) {
+        [[HZWebViewPool sharedPool] returnWebView:preload];
+    }
 }
 
 - (Class) controller {
@@ -109,7 +115,7 @@
 #pragma mark - Post Fetch
 
 - (void)initializeWebviewWithBaseURL:(NSURL *)baseURL {
-    self.preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)]; // This is expensive, like 30-40ms based on profiling. Is there a way to improve this? Maybe WKWebView?
+    self.preloadWebview = [[HZWebViewPool sharedPool] checkoutPool];
     self.preloadWebview.delegate = self;
     [self.preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
 }

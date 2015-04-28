@@ -328,7 +328,16 @@
 }
 
 + (BOOL) hzSystemVersionIsLessThan: (NSString *) version {
-    return ([[[UIDevice currentDevice] systemVersion] compare: version options:NSNumericSearch] == NSOrderedAscending);
+    return ([[self systemVersion] compare: version options:NSNumericSearch] == NSOrderedAscending);
+}
+
++ (NSString *)systemVersion {
+    static NSString *version;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        version = [[UIDevice currentDevice] systemVersion];
+    });
+    return version;
 }
 
 + (HZDevice *)currentDevice {
@@ -341,6 +350,25 @@
     });
     return currentDevice;
 }
+
++ (UIUserInterfaceIdiom)interfaceIdiom {
+    static UIUserInterfaceIdiom idiom;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        idiom = [[UIDevice currentDevice] userInterfaceIdiom];
+    });
+    return idiom;
+}
+
++ (BOOL)isIpad {
+    return [self interfaceIdiom] == UIUserInterfaceIdiomPad;
+}
+
++ (BOOL)isPhone {
+    return [self interfaceIdiom] == UIUserInterfaceIdiomPhone;
+}
+
+
 
 - (instancetype)init {
     self = [super init];

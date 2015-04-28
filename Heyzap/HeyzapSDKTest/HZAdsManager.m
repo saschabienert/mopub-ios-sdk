@@ -24,6 +24,9 @@
 #import "HZEnums.h"
 
 #import "HZDelegateProxy.h"
+#import "HZWebViewPool.h"
+#import "HZDownloadHelper.h"
+#import "HZNSURLUtils.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
@@ -67,44 +70,30 @@
 + (void) runInitialTasks {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [self setupCachingDirectory];
+        [HZDownloadHelper clearCache];
         
-        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:(10 * 1024 * 1024) diskCapacity: (30 * 1024 * 1024) diskPath:nil];
-        [NSURLCache setSharedURLCache:sharedCache];
-        
-        //register this game as installed, if we haven't done so already
-        if (![[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY]) {
-            [[HZAdsAPIClient sharedClient] POST:@"register_new_game_install" parameters:@{} success:^(HZAFHTTPRequestOperation *operation, id JSON) {
-                [[HZUserDefaults sharedDefaults] setObject:@YES forKey:HAS_REPORTED_INSTALL_KEY];
-            } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-                HZDLog(@"Error reporting new game install = %@",error);
-            }];
-        }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+            //register this game as installed, if we haven't done so already
+            if (![[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY]) {
+                [[HZAdsAPIClient sharedClient] POST:@"register_new_game_install" parameters:@{} success:^(HZAFHTTPRequestOperation *operation, id JSON) {
+                    [[HZUserDefaults sharedDefaults] setObject:@YES forKey:HAS_REPORTED_INSTALL_KEY];
+                } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+                    HZDLog(@"Error reporting new game install = %@",error);
+                }];
+            }
+        });
     });
     
-    // Initializing the first webview takes 31–42 ms; it takes something like 11ms for subsequent initializations.
-    // It's preferable to create the first webview when the SDK is started (before gameplay happens) because we can't afford 42ms while the game is running at 60 FPS.
-    // A better solution would be to maintain a pool of UIWebViews we draw from, so as to avoid the 11ms hit as well.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
-#pragma clang diagnostic pop
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [HZNSURLUtils substituteGetParams:@"" impressionID:@""];
+        [[HZDevice currentDevice] hzGetFreeDiskspace];
+    });
+    
+    [[HZWebViewPool sharedPool] seedWithPools:2];
+    
     
     [self reportInstalledGames];
-}
-
-+ (void) setupCachingDirectory {
-    [HZUtils createCacheDirectory];
-    
-    // Delete extraneous data
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSArray *dirContents = [fm contentsOfDirectoryAtPath: [HZUtils cacheDirectoryPath] error:nil];
-    NSPredicate *fltr = [NSPredicate predicateWithFormat:@"self BEGINSWITH 'imp'"];
-    NSArray *onlyImpressionFiles = [dirContents filteredArrayUsingPredicate:fltr];
-    
-    for (NSString *filePath in onlyImpressionFiles) {
-        [[NSFileManager defaultManager] removeItemAtPath: [HZUtils cacheDirectoryWithFilename: filePath] error: nil];
-    }
 }
 
 + (void)reportInstalledGames

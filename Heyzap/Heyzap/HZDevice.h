@@ -24,5 +24,7 @@
 
 
 + (BOOL) hzSystemVersionIsLessThan: (NSString *) version;
++ (BOOL)isIpad;
++ (BOOL)isPhone;
 
 @end

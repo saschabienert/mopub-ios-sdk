@@ -17,24 +17,27 @@ static NSString * const kHZAdsAPIBaseURLString = @"https://ads.heyzap.com/in_gam
 
 - (void) loadRequest: (HZAdFetchRequest *)request withCompletion: (void (^)(HZAdFetchRequest *request))completion {
     
-    [self GET:@"fetch_ad" parameters:request.params success:^(HZAFHTTPRequestOperation *operation, id JSON) {
-        request.lastResponse = JSON;
-        request.lastError = nil;
-        request.rejectedImpressionID = nil;
-        request.alreadyInstalledGame = nil;
-        
-        if (completion) {
-            completion(request);
-        }
-    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        request.lastFailingStatusCode = operation.response.statusCode;
-        request.lastResponse = nil;
-        request.lastError = error;
-        
-        if (completion) {
-            completion(request);
-        }
-    }];
+    NSDictionary *params = request.params;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        [self GET:@"fetch_ad" parameters:params success:^(HZAFHTTPRequestOperation *operation, id JSON) {
+            request.lastResponse = JSON;
+            request.lastError = nil;
+            request.rejectedImpressionID = nil;
+            request.alreadyInstalledGame = nil;
+            
+            if (completion) {
+                completion(request);
+            }
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+            request.lastFailingStatusCode = operation.response.statusCode;
+            request.lastResponse = nil;
+            request.lastError = error;
+            
+            if (completion) {
+                completion(request);
+            }
+        }];
+    });
 }
 
 + (HZAdsAPIClient *)sharedClient {

@@ -12,6 +12,7 @@
 
 #import "HZMediationConstants.h"
 #import "HZiAdBannerAdapter.h"
+#import "HZDevice.h"
 
 @interface HZiAdAdapter()<ADInterstitialAdDelegate>
 
@@ -101,7 +102,11 @@
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeInterstitial | HZAdTypeBanner;
+    if ([HZDevice hzSystemVersionIsLessThan:@"7.0.0"] && [HZDevice isPhone]) {
+        return HZAdTypeBanner;
+    } else {
+        return HZAdTypeInterstitial | HZAdTypeBanner;
+    }
 }
 
 - (BOOL)isVideoOnlyNetwork {
