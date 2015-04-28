@@ -33,7 +33,7 @@
 #endif
 
 @interface HZAFHTTPRequestOperationManager ()
-@property (readwrite, nonatomic, strong) NSURL *baseURL;
+//@property (readwrite, nonatomic, strong) NSURL *baseURL;
 @end
 
 @implementation HZAFHTTPRequestOperationManager

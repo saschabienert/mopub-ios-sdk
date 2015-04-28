@@ -112,10 +112,10 @@
 
 - (void)setBaseURLToString:(NSString *)string
 {
-//    [[HZAPIClient sharedClient] setBaseURL:[NSURL URLWithString:[NSString stringWithString:string]]];
+    [[HZAPIClient sharedClient] setBaseURL:[NSURL URLWithString:[NSString stringWithString:string]]];
     
-//    NSString *const fullPath = [string stringByAppendingString:@"in_game_api/ads/"];
-//    [[HZAdsAPIClient sharedClient] setBaseURL:[NSURL URLWithString:fullPath]];
+    NSString *const fullPath = [string stringByAppendingString:@"in_game_api/ads/"];
+    [[HZAdsAPIClient sharedClient] setBaseURL:[NSURL URLWithString:fullPath]];
 }
 
 #pragma mark - UITextField Delegate
