@@ -237,7 +237,6 @@
 		50B03A3A1A706C710086E444 /* NativeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455D19BE80E100C7AEEA /* NativeTableViewCell.m */; };
 		50B03A3B1A706C710086E444 /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
 		50B0AF9A1AEAB39B003B8233 /* HZNSURLUtilsSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B0AF991AEAB39B003B8233 /* HZNSURLUtilsSpec.m */; };
-		50B0AF9C1AEAB4D1003B8233 /* HZNSURLUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B0AF9B1AEAB4D1003B8233 /* HZNSURLUtilsTest.m */; };
 		50B46B0D18F862B3005155B8 /* HZAppLovinAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B46B0B18F862B3005155B8 /* HZAppLovinAdapter.h */; };
 		50B46B0E18F862B3005155B8 /* HZAppLovinAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B46B0C18F862B3005155B8 /* HZAppLovinAdapter.m */; };
 		50B46B1118F862DA005155B8 /* HZALSdk.h in Headers */ = {isa = PBXBuildFile; fileRef = 50B46B0F18F862DA005155B8 /* HZALSdk.h */; };
@@ -617,7 +616,6 @@
 		50AE54431AD333860099358E /* PersistentTestAppConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentTestAppConfiguration.h; sourceTree = "<group>"; };
 		50AE54441AD333860099358E /* PersistentTestAppConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersistentTestAppConfiguration.m; sourceTree = "<group>"; };
 		50B0AF991AEAB39B003B8233 /* HZNSURLUtilsSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNSURLUtilsSpec.m; sourceTree = "<group>"; };
-		50B0AF9B1AEAB4D1003B8233 /* HZNSURLUtilsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNSURLUtilsTest.m; sourceTree = "<group>"; };
 		50B46B0B18F862B3005155B8 /* HZAppLovinAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAppLovinAdapter.h; sourceTree = "<group>"; };
 		50B46B0C18F862B3005155B8 /* HZAppLovinAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAppLovinAdapter.m; sourceTree = "<group>"; };
 		50B46B0F18F862DA005155B8 /* HZALSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZALSdk.h; sourceTree = "<group>"; };
@@ -1264,7 +1262,6 @@
 			isa = PBXGroup;
 			children = (
 				50B0AF991AEAB39B003B8233 /* HZNSURLUtilsSpec.m */,
-				50B0AF9B1AEAB4D1003B8233 /* HZNSURLUtilsTest.m */,
 			);
 			name = "Utils Tests";
 			sourceTree = "<group>";
@@ -2347,7 +2344,6 @@
 				5020884019DA2574005C3C1B /* HZNativeAdCollectionSpec.m in Sources */,
 				509F00C518ECF42E0011EAB3 /* HZMediationSessionKeySpec.m in Sources */,
 				50A36ACC18C93B9C00FA84F0 /* InterstitialSpec.m in Sources */,
-				50B0AF9C1AEAB4D1003B8233 /* HZNSURLUtilsTest.m in Sources */,
 				50B0AF9A1AEAB39B003B8233 /* HZNSURLUtilsSpec.m in Sources */,
 				5020884219DA28DE005C3C1B /* HZNativeAdSpec.m in Sources */,
 				509B5BEC18C96CE2003A7CB9 /* TestJSON.m in Sources */,
