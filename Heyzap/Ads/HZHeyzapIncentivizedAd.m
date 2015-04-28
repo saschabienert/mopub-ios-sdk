@@ -23,14 +23,14 @@ static int HZIncentivizedCreativeIDPin = 0;
 
 + (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate
 {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
+    if ([HZAdsManager isEnabled]) {
         [[HZAdsManager sharedManager] setIncentivizedDelegate:delegate];
     }
 }
 
 + (void)showForAuctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options
 {
-    if (![[HZAdsManager sharedManager] isEnabled]) {
+    if (![HZAdsManager isEnabled]) {
         return;
     }
     
@@ -38,7 +38,7 @@ static int HZIncentivizedCreativeIDPin = 0;
 }
 
 + (void)fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
+    if ([HZAdsManager isEnabled]) {
         
         NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
         if (HZIncentivizedCreativeIDPin > 0) {
@@ -83,7 +83,7 @@ static int HZIncentivizedCreativeIDPin = 0;
 
 + (BOOL)isAvailableForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType
 {
-    if (![[HZAdsManager sharedManager] isEnabled]) return NO;
+    if (![HZAdsManager isEnabled]) return NO;
     return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZIncentivizedAdUnit tag:tag auctionType:auctionType];
 }
 

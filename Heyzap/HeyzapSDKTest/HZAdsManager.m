@@ -36,10 +36,12 @@
 
 @implementation HZAdsManager
 
+static BOOL hzAdsIsEnabled = NO;
+
 - (id) init {
     self = [super init];
     if (self) {
-        _isEnabled = YES;
+        hzAdsIsEnabled = YES;
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
@@ -152,7 +154,7 @@
 #pragma mark - Enabled
 
 + (BOOL) isEnabled {
-    return NO;
+    return hzAdsIsEnabled;
 }
 
 + (BOOL) isVersionSupported {

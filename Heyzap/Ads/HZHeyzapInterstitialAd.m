@@ -25,13 +25,13 @@ static NSString *HZInterstitialForcedCreativeType = nil;
 @implementation HZHeyzapInterstitialAd
 
 + (void) setDelegate: (id<HZAdsDelegate>) delegate {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
+    if ([HZAdsManager isEnabled]) {
         [[HZAdsManager sharedManager] setInterstitialDelegate:delegate];
     }
 }
 
 + (void)showForAuctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options {
-    if (![[HZAdsManager sharedManager] isEnabled]) {
+    if (![HZAdsManager isEnabled]) {
         return;
     }
     
@@ -46,13 +46,13 @@ static NSString *HZInterstitialForcedCreativeType = nil;
 }
 
 + (void) hide {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
+    if ([HZAdsManager isEnabled]) {
         [[HZAdsManager sharedManager] hideActiveAd];
     }
 }
 
 + (void) fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
+    if ([HZAdsManager isEnabled]) {
         HZAdFetchRequest *request = [self requestWithTag:tag auctionType:auctionType andVideo:YES];
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
             if (completion) {
@@ -67,7 +67,7 @@ static NSString *HZInterstitialForcedCreativeType = nil;
 }
 
 + (BOOL) isAvailableForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType {
-    if (![[HZAdsManager sharedManager] isEnabled]) return NO;
+    if (![HZAdsManager isEnabled]) return NO;
     return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZInterstitialAdUnit tag:tag auctionType:(HZAuctionType)auctionType];
 }
 
@@ -111,7 +111,7 @@ static NSString *HZInterstitialForcedCreativeType = nil;
 + (void)showAdWithOptions:(NSDictionary *)options
 {
     HZParameterAssert(options);
-    if ([[HZAdsManager sharedManager] isEnabled]) {
+    if ([HZAdsManager isEnabled]) {
         
     }
 }
