@@ -9,9 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "HZEnums.h"
 #import "HZAdInfo.h"
-#import "HZMetrics.h"
 
-@interface HZAdFetchRequest : NSObject <HZAdInfoProvider, HZMetricsProvider>
+@interface HZAdFetchRequest : NSObject <HZAdInfoProvider>
 
 @property (nonatomic, readonly) NSUUID *requestID;
 @property (nonatomic, readonly) int retriesRemaining;
