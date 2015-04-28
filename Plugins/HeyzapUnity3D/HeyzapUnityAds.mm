@@ -185,13 +185,22 @@ extern "C" {
         
         if (HZCurrentBannerAd == nil) {
             HZBannerPosition pos = HZBannerPositionBottom;
-            NSString *positionStr = [NSString stringWithUTF8String: tag];
+            NSString *positionStr = [NSString stringWithUTF8String: position];
             if ([positionStr isEqualToString: @"top"]) {
                 pos = HZBannerPositionTop;
             }
             
             HZBannerAdOptions *options = [[HZBannerAdOptions alloc] init];
             options.tag = [NSString stringWithUTF8String:tag];
+            
+            UIInterfaceOrientation deviceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+            
+            if (UIInterfaceOrientationIsLandscape(deviceOrientation)) {
+                options.admobBannerSize = HZAdMobBannerSizeFlexibleWidthLandscape;
+            } else {
+                options.admobBannerSize = HZAdMobBannerSizeFlexibleWidthPortrait;
+            }
+            
             [HZBannerAd placeBannerInView:nil position:pos options:options success:^(HZBannerAd *banner) {
                 HZCurrentBannerAd = banner;
                 [HZCurrentBannerAd setDelegate: HZBannerDelegate];
