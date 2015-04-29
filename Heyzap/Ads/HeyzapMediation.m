@@ -435,9 +435,9 @@ static int totalImpressions = 0;
         self.lastInterstitialVideoShownDate = [NSDate date];
     }
 
+    [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
     [adapter showAdForType:session.adType options:options];
     [session reportImpressionForAdapter:adapter];
-    [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
 
     NSString *network = [adapter name];
     [[HZMetrics sharedInstance] logTimeSinceFetchFor:kTimeFromFetchToImpressionKey withProvider:session network:network];
