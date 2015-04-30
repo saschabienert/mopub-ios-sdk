@@ -165,6 +165,10 @@ static BOOL hzAdsIsEnabled = NO;
     return ![HZDevice hzSystemVersionIsLessThan:@"6.0.0"];
 }
 
+- (BOOL)isAdobeAir {
+    return [self.framework isEqualToString:@"air"];
+}
+
 #pragma mark - Is Available
 
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType

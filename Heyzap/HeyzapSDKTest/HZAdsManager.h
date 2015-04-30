@@ -39,6 +39,7 @@
 - (void) onStart;
 + (BOOL) isEnabled;
 + (BOOL) isVersionSupported;
+- (BOOL)isAdobeAir;
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
 
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
