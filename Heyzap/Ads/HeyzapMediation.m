@@ -101,7 +101,7 @@ const NSTimeInterval maxStartDelay     = 300;
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
         _retryStartDelay = initialStartDelay;
-        self.fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_SERIAL);
+        self.fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_CONCURRENT);
     }
     return self;
 }
