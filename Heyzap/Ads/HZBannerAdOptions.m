@@ -13,6 +13,7 @@
 #import "HZGADBannerView.h"
 
 #import "HZHZAdMobBannerSupport.h"
+#import "HZAdsManager.h"
 
 @interface HZBannerAdOptions()
 
@@ -101,9 +102,15 @@ HZFBAdSize *hzlookupFBAdSizeConstant(NSString *const constantName) {
 - (HZGADAdSize)internalAdMobSize {
     const BOOL isAvailable = [HZHZAdMobBannerSupport hzProxiedClassIsAvailable];
     if (!isAvailable) {
-        NSString *const errorMessage = @"You need to add the `HZAdMobBannerSupport` class to your project to use AdMob banners. This class is available in the zip file that you got the Heyzap SDK from. If you're using Xcode, just drag the files into your project. If you're using Unity, add the files to the Plugins/iOS folder. (Sorry about this inconvenience; there's a technical limitation with loading AdMob's size constants that we're having trouble with http://stackoverflow.com/q/29136688/1176156)";
-        NSLog(errorMessage); // NSLog as well as thrown an exception, since some developers have a hard time getting exception messages, especially in Unity
-        @throw [NSException exceptionWithName:@"Missing HZAdMobBannerSupport class exception" reason:errorMessage userInfo:nil];
+        if ([[HZAdsManager sharedManager].framework isEqualToString:@"air"]) {
+            NSLog(@"Using hard-coded banner size (kGADAdSizeSmartBannerPortrait)");
+            HZGADAdSize hardcodedSize = { {0,0}, 18};
+            return hardcodedSize;
+        } else {
+            NSString *const errorMessage = @"You need to add the `HZAdMobBannerSupport` class to your project to use AdMob banners. This class is available in the zip file that you got the Heyzap SDK from. If you're using Xcode, just drag the files into your project. If you're using Unity, add the files to the Plugins/iOS folder. (Sorry about this inconvenience; there's a technical limitation with loading AdMob's size constants that we're having trouble with http://stackoverflow.com/q/29136688/1176156)";
+            NSLog(errorMessage); // NSLog as well as thrown an exception, since some developers have a hard time getting exception messages, especially in Unity
+            @throw [NSException exceptionWithName:@"Missing HZAdMobBannerSupport class exception" reason:errorMessage userInfo:nil];
+        }
     }
     
     switch (self.admobBannerSize) {
