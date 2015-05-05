@@ -57,7 +57,7 @@ const NSTimeInterval maxStartDelay     = 300;
     });
 }
 
-- (NSURL *)pathToStartInfo {
++ (NSURL *)pathToStartInfo {
     return [NSURL fileURLWithPath:[HZUtils cacheDirectoryWithFilename:@"start.plist"] isDirectory:NO];
 }
 
@@ -66,7 +66,7 @@ const NSTimeInterval maxStartDelay     = 300;
     // This allows us to initialize ad networks as soon as the game launches
     // This avoids the performance overhead of starting them during gameplay
     // And allows faster fetches.
-    NSDictionary *startInfo = [NSDictionary dictionaryWithContentsOfURL:[self pathToStartInfo]];
+    NSDictionary *startInfo = [NSDictionary dictionaryWithContentsOfURL:[[self class] pathToStartInfo]];
     if (startInfo) {
         [self giveStartDictionaryToDelegate:startInfo];
     }
@@ -82,7 +82,7 @@ const NSTimeInterval maxStartDelay     = 300;
             
             // store JSON to disk
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-                [json writeToURL:[self pathToStartInfo] atomically:YES];
+                [json writeToURL:[[self class] pathToStartInfo] atomically:YES];
                 HZDLog(@"Wrote start info to disk");
             });
             
