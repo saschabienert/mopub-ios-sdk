@@ -7,13 +7,13 @@
 //
 
 #import "NativeTableViewCell.h"
-#import "HZImageView.h"
 #import "HZNativeAd.h"
+#import "UIImageView+AFNetworking.h"
 
 @interface NativeTableViewCell()
 
 @property (weak, nonatomic) IBOutlet UILabel *appNameLabel;
-@property (weak, nonatomic) IBOutlet HZImageView *iconImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *iconImageView;
 
 @end
 
@@ -27,7 +27,7 @@
 
 - (void)configureWithAd:(HZNativeAd *)nativeAd {
     self.appNameLabel.text = nativeAd.appName;
-    [self.iconImageView HZsetImageWithURL:nativeAd.iconURL];
+    [self.iconImageView setImageWithURL:nativeAd.iconURL];
 }
 
 @end

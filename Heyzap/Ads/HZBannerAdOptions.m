@@ -13,6 +13,7 @@
 #import "HZGADBannerView.h"
 
 #import "HZHZAdMobBannerSupport.h"
+#import "HZAdsManager.h"
 
 @interface HZBannerAdOptions()
 
@@ -59,9 +60,15 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
 }
 
 + (BOOL)facebookBannerSizesAvailable {
-    return hzFBAdSize50() != NULL
-    && hzFBAdSize90() != NULL
-    && hzFBAdSize320x50() != NULL;
+    // Constant loading isn't available in Adobe Air for some reason
+    // See `internalFacebookAdSize` for details
+    if ([HZAdsManager sharedManager].isAdobeAir) {
+        return YES;
+    } else {
+        return hzFBAdSize50() != NULL
+        && hzFBAdSize90() != NULL
+        && hzFBAdSize320x50() != NULL;
+    }
 }
 
 HZFBAdSize *hzFBAdSize50(void) {
@@ -85,15 +92,21 @@ HZFBAdSize *hzlookupFBAdSizeConstant(NSString *const constantName) {
     switch (self.facebookBannerSize) {
         case HZFacebookBannerSize320x50: {
             return *hzFBAdSize320x50();
-            break;
         }
         case HZFacebookBannerSizeFlexibleWidthHeight50: {
-            return *hzFBAdSize50();
-            break;
+            // Constant loading isn't working in Adobe Air for the Facebook SDK for some reason
+            // For now I'm just hard-coding the values in the struct they use.
+            // It would be good to investigate further but we need to get the adobe air SDK out to Ketchapp
+            // (Also I imagine it being very difficult to debug this issue).
+            if ([HZAdsManager sharedManager].isAdobeAir) {
+                HZFBAdSize size = { CGSizeMake(-1, 50) };
+                return size;
+            } else {
+                return *hzFBAdSize50();
+            }
         }
         case HZFacebookBannerSizeFlexibleWidthHeight90: {
             return *hzFBAdSize90();
-            break;
         }
     }
 }
@@ -101,9 +114,14 @@ HZFBAdSize *hzlookupFBAdSizeConstant(NSString *const constantName) {
 - (HZGADAdSize)internalAdMobSize {
     const BOOL isAvailable = [HZHZAdMobBannerSupport hzProxiedClassIsAvailable];
     if (!isAvailable) {
-        NSString *const errorMessage = @"You need to add the `HZAdMobBannerSupport` class to your project to use AdMob banners. This class is available in the zip file that you got the Heyzap SDK from. If you're using Xcode, just drag the files into your project. If you're using Unity, add the files to the Plugins/iOS folder. (Sorry about this inconvenience; there's a technical limitation with loading AdMob's size constants that we're having trouble with http://stackoverflow.com/q/29136688/1176156)";
-        NSLog(errorMessage); // NSLog as well as thrown an exception, since some developers have a hard time getting exception messages, especially in Unity
-        @throw [NSException exceptionWithName:@"Missing HZAdMobBannerSupport class exception" reason:errorMessage userInfo:nil];
+        if ([HZAdsManager sharedManager].isAdobeAir) {
+            HZGADAdSize hardcodedSize = { {0,0}, 18};
+            return hardcodedSize;
+        } else {
+            NSString *const errorMessage = @"You need to add the `HZAdMobBannerSupport` class to your project to use AdMob banners. This class is available in the zip file that you got the Heyzap SDK from. If you're using Xcode, just drag the files into your project. If you're using Unity, add the files to the Plugins/iOS folder. (Sorry about this inconvenience; there's a technical limitation with loading AdMob's size constants that we're having trouble with http://stackoverflow.com/q/29136688/1176156)";
+            NSLog(errorMessage); // NSLog as well as thrown an exception, since some developers have a hard time getting exception messages, especially in Unity
+            @throw [NSException exceptionWithName:@"Missing HZAdMobBannerSupport class exception" reason:errorMessage userInfo:nil];
+        }
     }
     
     switch (self.admobBannerSize) {

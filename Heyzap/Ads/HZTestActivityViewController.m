@@ -190,6 +190,7 @@
 
 - (UIView *) makeView {
     UIView *chooseNetworkView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds))];
+    chooseNetworkView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     
     // choose network label
     self.chooseLabel = ({
@@ -215,7 +216,6 @@
                                                           style:UITableViewStylePlain];
         table.backgroundColor = [UIColor clearColor];
         table.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        table.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
         table.delegate = self;
         table.dataSource = self;
         table;
@@ -236,7 +236,7 @@
     }
     self.availableNetworks = availableNetworks;
 
-    [[HZMediationAPIClient sharedClient] get:@"info" withParams:nil success:^(NSDictionary *json) {
+    [[HZMediationAPIClient sharedClient] GET:@"info" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
         NSMutableSet *enabledNetworks = [NSMutableSet set];
         NSMutableSet *initializedNetworks = [NSMutableSet set];
         NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];

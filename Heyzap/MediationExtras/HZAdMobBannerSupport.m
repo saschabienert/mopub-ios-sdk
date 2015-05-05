@@ -42,7 +42,8 @@ extern GADAdSize const kGADAdSizeLeaderboard;
     } else if ([name isEqualToString:@"kGADAdSizeFullBanner"]) {
         return kGADAdSizeFullBanner;
     } else {
-        @throw [NSException exceptionWithName:@"InvalidAdMobBannerSizeName" reason:@"Requested an AdMob banner with an invalid size. This is a bug in the Heyzap SDK; please report it to support@heyzap.com." userInfo:nil];
+        NSLog(@"[Heyzap] Unrecognized GADAdSize requested; requested size = %@. This is a bug in the Heyzap SDK; please report it to support@heyzap.com. Defaulting to kGADAdSizeSmartBannerPortrait",name);
+        return kGADAdSizeSmartBannerPortrait;
     }
 }
 

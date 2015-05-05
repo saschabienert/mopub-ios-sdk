@@ -110,10 +110,6 @@
     self.currentInterstitial.adUnitID = self.adUnitID;
     self.currentInterstitial.delegate = self;
     
-    HZGADRequest *request = [HZGADRequest request];
-    
-    request.testDevices = @[ GAD_SIMULATOR_ID ];
-    
     [self.currentInterstitial loadRequest:[HZGADRequest request]];
 }
 

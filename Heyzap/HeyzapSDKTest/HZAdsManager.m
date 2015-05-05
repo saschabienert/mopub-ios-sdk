@@ -24,6 +24,9 @@
 #import "HZEnums.h"
 
 #import "HZDelegateProxy.h"
+#import "HZWebViewPool.h"
+#import "HZDownloadHelper.h"
+#import "HZNSURLUtils.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
@@ -36,10 +39,12 @@
 
 @implementation HZAdsManager
 
+static BOOL hzAdsIsEnabled = NO;
+
 - (id) init {
     self = [super init];
     if (self) {
-        _isEnabled = YES;
+        hzAdsIsEnabled = YES;
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
@@ -67,37 +72,30 @@
 + (void) runInitialTasks {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [self setupCachingDirectory];
+        [HZDownloadHelper clearCache];
         
-        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:(10 * 1024 * 1024) diskCapacity: (30 * 1024 * 1024) diskPath:nil];
-        [NSURLCache setSharedURLCache:sharedCache];
-        
-        //register this game as installed, if we haven't done so already
-        if (![[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY]) {
-            [[HZAdsAPIClient sharedClient] post:@"register_new_game_install" withParams:@{} success:^(id JSON) {
-                NSLog(@"register new game success");
-                [[HZUserDefaults sharedDefaults] setObject:@YES forKey:HAS_REPORTED_INSTALL_KEY];
-            } failure:^(HZAFHTTPRequestOperation *op, NSError *error) {
-                NSLog(@"register new game Error = %@",error);
-            }];
-        }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+            //register this game as installed, if we haven't done so already
+            if (![[HZUserDefaults sharedDefaults] objectForKey:HAS_REPORTED_INSTALL_KEY]) {
+                [[HZAdsAPIClient sharedClient] POST:@"register_new_game_install" parameters:@{} success:^(HZAFHTTPRequestOperation *operation, id JSON) {
+                    [[HZUserDefaults sharedDefaults] setObject:@YES forKey:HAS_REPORTED_INSTALL_KEY];
+                } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+                    HZDLog(@"Error reporting new game install = %@",error);
+                }];
+            }
+        });
     });
     
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [HZNSURLUtils substituteGetParams:@"" impressionID:@""];
+        [[HZDevice currentDevice] hzGetFreeDiskspace];
+    });
+    
+    [[HZWebViewPool sharedPool] seedWithPools:2];
+    
+    
     [self reportInstalledGames];
-}
-
-+ (void) setupCachingDirectory {
-    [HZUtils createCacheDirectory];
-    
-    // Delete extraneous data
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSArray *dirContents = [fm contentsOfDirectoryAtPath: [HZUtils cacheDirectoryPath] error:nil];
-    NSPredicate *fltr = [NSPredicate predicateWithFormat:@"self BEGINSWITH 'imp'"];
-    NSArray *onlyImpressionFiles = [dirContents filteredArrayUsingPredicate:fltr];
-    
-    for (NSString *filePath in onlyImpressionFiles) {
-        [[NSFileManager defaultManager] removeItemAtPath: [HZUtils cacheDirectoryWithFilename: filePath] error: nil];
-    }
 }
 
 + (void)reportInstalledGames
@@ -105,41 +103,49 @@
     // There are some frightening reports of the `canOpenURL:` method being really slow on iOS 7 devices with a SIM card. I wasn't able to replicate this on my 5S running 7.0.3, and even based on the person reporting 1700 URLs taking 22 seconds to check, we should take < 1 second, so I'm figuring we'll be ok.
     // http://vntin.com/openradar.appspot.com/15020847 https://github.com/danielamitay/iHasApp/issues/16 https://twitter.com/agiletortoise/status/371650061416931329
     
-    NSString * const dateOfCheckKey = @"dateOfCheckingInstalledGames";
-    NSDate *date = [[HZUserDefaults sharedDefaults] objectForKey:dateOfCheckKey];
-    const NSTimeInterval oneWeek = 604800;
-    if (date && [[NSDate date] timeIntervalSinceDate:date] < oneWeek) {
-        return;
-    }
-    
-    [[HZAdsAPIClient sharedClient] get:@"games_to_check.json" withParams:nil success:^(NSArray *response) {
-        NSMutableArray *installedGames = [@[] mutableCopy];
-        for (NSDictionary *game in response) {
-            NSNumber *const gameID = [HZDictionaryUtils hzObjectForKey:@"game_id" ofClass:[NSNumber class] withDict: game];
-            
-            NSURL *const launchURL = ({
-                NSString *launchString = [HZDictionaryUtils hzObjectForKey:@"launch_uri" ofClass:[NSString class] withDict: game];
-                if ([launchString rangeOfString:@"://"].location == NSNotFound) {
-                    launchString = [launchString stringByAppendingString:@"://"];
-                }
-                [NSURL URLWithString:launchString];
-            });
-            
-            if (gameID == nil || launchURL == nil) {
-                continue;
-            }
-            
-            if ([[UIApplication sharedApplication] canOpenURL:launchURL]) {
-                [installedGames addObject:gameID];
-            }
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        NSString * const dateOfCheckKey = @"dateOfCheckingInstalledGames";
+        NSDate *date = [[HZUserDefaults sharedDefaults] objectForKey:dateOfCheckKey];
+        const NSTimeInterval oneWeek = 604800;
+        if (date && [[NSDate date] timeIntervalSinceDate:date] < oneWeek) {
+            return;
         }
         
-        
-        [[HZAdsAPIClient sharedClient] post:@"add_initial_packages" withParams:@{@"installed_game_ids": installedGames} success:^(NSDictionary *response) {
-            [[HZUserDefaults sharedDefaults] setObject:[NSDate date] forKey:dateOfCheckKey];
-        } failure:nil];
-        
-    } failure:nil];
+        [[HZAdsAPIClient sharedClient] GET:@"games_to_check.json" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSArray *response) {
+            NSMutableArray *installedGames = [@[] mutableCopy];
+            for (NSDictionary *game in response) {
+                NSNumber *const gameID = [HZDictionaryUtils hzObjectForKey:@"game_id" ofClass:[NSNumber class] withDict: game];
+                
+                NSURL *const launchURL = ({
+                    NSString *launchString = [HZDictionaryUtils hzObjectForKey:@"launch_uri" ofClass:[NSString class] withDict: game];
+                    if ([launchString rangeOfString:@"://"].location == NSNotFound) {
+                        launchString = [launchString stringByAppendingString:@"://"];
+                    }
+                    [NSURL URLWithString:launchString];
+                });
+                
+                if (gameID == nil || launchURL == nil) {
+                    continue;
+                }
+                
+                if ([[UIApplication sharedApplication] canOpenURL:launchURL]) {
+                    [installedGames addObject:gameID];
+                }
+            }
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                [[HZAdsAPIClient sharedClient] POST:@"add_initial_packages" parameters:@{@"installed_game_ids": installedGames} success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                        [[HZUserDefaults sharedDefaults] setObject:[NSDate date] forKey:dateOfCheckKey];
+                    });
+                } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+                    HZDLog(@"Error adding_initial_packages = %@",error);
+                }];
+            });
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+            HZDLog(@"Error getting games = %@",error);
+        }];
+    });
 }
 
 #pragma mark - Getters/Setters
@@ -152,11 +158,15 @@
 #pragma mark - Enabled
 
 + (BOOL) isEnabled {
-    return NO;
+    return hzAdsIsEnabled;
 }
 
 + (BOOL) isVersionSupported {
     return ![HZDevice hzSystemVersionIsLessThan:@"6.0.0"];
+}
+
+- (BOOL)isAdobeAir {
+    return [self.framework isEqualToString:@"air"];
 }
 
 #pragma mark - Is Available

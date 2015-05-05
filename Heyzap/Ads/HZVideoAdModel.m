@@ -15,6 +15,7 @@
 #import "HZLog.h"
 #import "HZMetrics.h"
 #import "HZEnums.h"
+#import "HZWebViewPool.h"
 
 @interface HZVideoAdModel()<UIWebViewDelegate>
 @property (nonatomic) BOOL sentComplete;
@@ -100,6 +101,11 @@
 
 - (void) dealloc {
     [self cleanup];
+    UIWebView *preload = self.preloadWebview;
+    self.preloadWebview = nil;
+    if (self.preloadWebview) {
+        [[HZWebViewPool sharedPool] returnWebView:preload];
+    }
 }
 
 - (Class) controller {
@@ -108,61 +114,67 @@
 
 #pragma mark - Post Fetch
 
+- (void)initializeWebviewWithBaseURL:(NSURL *)baseURL {
+    self.preloadWebview = [[HZWebViewPool sharedPool] checkoutPool];
+    self.preloadWebview.delegate = self;
+    [self.preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
+}
+
 - (void) doPostFetchActionsWithCompletion:(void (^)(BOOL))completion {
     
     NSString *path = [[NSBundle mainBundle] bundlePath];
     NSURL *baseURL = [NSURL fileURLWithPath:path];
     
-    __block HZVideoAdModel *blockSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        blockSelf.preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)];
-        blockSelf.preloadWebview.delegate = blockSelf;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,
-                                                 (unsigned long)NULL), ^(void) {
-            [blockSelf.preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
-        });
-    });
+    [self initializeWebviewWithBaseURL:baseURL];
     
     if (!self.forceStreaming) {
-        // Just in case it got deleted in meantime
-        [HZUtils createCacheDirectory];
+        __weak HZVideoAdModel *weakSelf = self;
         
-        // Cache video
-        NSURL *URLToDownload;
-        if ([self.staticURLs count] > 0) {
-            URLToDownload = [self.staticURLs firstObject];
-        } else if ([self.streamingURLs count] > 0) {
-            URLToDownload = [self.streamingURLs firstObject];
-        }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            // Just in case it got deleted in meantime
+            [HZUtils createCacheDirectory];
+            
+            // Cache video
+            NSURL *URLToDownload;
+            if ([self.staticURLs count] > 0) {
+                URLToDownload = [self.staticURLs firstObject];
+            } else if ([self.streamingURLs count] > 0) {
+                URLToDownload = [self.streamingURLs firstObject];
+            }
+            
+            
+            CFTimeInterval startDownloadTime = CACurrentMediaTime();
+            self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload
+                                                        toFilePath: [self filePathForCachedVideo]
+                                                            forTag:self.tag
+                                                            adUnit:self.adUnit
+                                                    andAuctionType:self.auctionType
+                                                    withCompletion:^(BOOL result) {
+                                                        
+                                                        NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(self.auctionType);
+                                                        if (!result) {
+                                                            [[HZMetrics sharedInstance] logMetricsEvent:@"video_download_failed"
+                                                                                                  value:@1
+                                                                                           withProvider:self
+                                                                                                network:heyzapAdapter];
+                                                        }
+                                                        
+                                                        int64_t elapsedMiliseconds = millisecondsSinceCFTimeInterval(startDownloadTime);
+                                                        [[HZMetrics sharedInstance] logMetricsEvent:kVideoDownloadTimeKey value:@(elapsedMiliseconds) withProvider:self network:heyzapAdapter];
+                                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                                             __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+                                                            strongSelf.fileCached = result;
+                                                            if (![strongSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
+                                                                if (strongSelf.allowFallbacktoStreaming) {
+                                                                    completion(YES);
+                                                                } else {
+                                                                    completion(result);
+                                                                }
+                                                            }
+                                                        });
+                                                    }];
+        });
         
-        __block HZVideoAdModel *modelSelf = self;
-        CFTimeInterval startDownloadTime = CACurrentMediaTime();
-        self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload
-                                                    toFilePath: [self filePathForCachedVideo]
-                                                        forTag:self.tag
-                                                        adUnit:self.adUnit
-                                                andAuctionType:self.auctionType
-                                                withCompletion:^(BOOL result) {
-                                                    
-            NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(self.auctionType);
-            if (!result) {
-                [[HZMetrics sharedInstance] logMetricsEvent:@"video_download_failed"
-                                                      value:@1
-                                                 withProvider:self
-                                                    network:heyzapAdapter];
-            }
-                                                    
-            int64_t elapsedMiliseconds = millisecondsSinceCFTimeInterval(startDownloadTime);
-            [[HZMetrics sharedInstance] logMetricsEvent:kVideoDownloadTimeKey value:@(elapsedMiliseconds) withProvider:self network:heyzapAdapter];
-            modelSelf.fileCached = result;
-            if (![modelSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
-                if (modelSelf.allowFallbacktoStreaming) {
-                    completion(YES);
-                } else {
-                    completion(result);
-                }
-            }
-        }];
     }
     
     if (self.forceStreaming || [self.adUnit isEqualToString: @"interstitial"]) {
@@ -197,7 +209,7 @@
             [params setObject: @"true" forKey: @"incentivized"];
         }
         
-        [[HZAdsAPIClient sharedClient] post: @"event/video_impression_complete" withParams: params success:^(id JSON) {
+        [[HZAdsAPIClient sharedClient] POST:@"event/video_impression_complete" parameters:params success:^(HZAFHTTPRequestOperation *operation, id JSON) {
             if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @(0) withDict: JSON] intValue] == 200) {
                 self.sentComplete = YES;
             }

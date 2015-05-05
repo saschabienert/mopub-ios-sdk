@@ -11,8 +11,11 @@
 @implementation HZDispatch
 
 
-BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
-{
+BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout) {
+    return hzWaitUntilInterval(0.2, waitBlock, timeout);
+}
+
+BOOL hzWaitUntilInterval(const NSTimeInterval interval, BOOL (^waitBlock)(void), const NSTimeInterval timeout) {
     NSCParameterAssert(waitBlock);
     NSCParameterAssert(timeout > 0);
     
@@ -29,9 +32,8 @@ BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout)
         } else if (timeWaited >= timeout) {
             return NO;
         } else {
-            static const NSTimeInterval sleepInterval = 0.2;
-            [NSThread sleepForTimeInterval:sleepInterval];
-            timeWaited += sleepInterval;
+            [NSThread sleepForTimeInterval:interval];
+            timeWaited += interval;
         }
     }
 }
@@ -47,5 +49,19 @@ void ensureMainQueue(void (^block)(void))
         });
     }
 }
+
+// https://gist.github.com/maicki/7622108
+dispatch_source_t hzCreateDispatchTimer(double interval, dispatch_queue_t queue, dispatch_block_t block)
+{
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    if (timer)
+    {
+        dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, interval * NSEC_PER_SEC), interval * NSEC_PER_SEC, (1ull * NSEC_PER_SEC) / 10);
+        dispatch_source_set_event_handler(timer, block);
+        dispatch_resume(timer);
+    }
+    return timer;
+}
+
 
 @end
