@@ -57,7 +57,6 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 
 @property (nonatomic, strong) NSString *countryCode;
 
-@property (nonatomic) BOOL startHasBeenCalled;
 @property (nonatomic) HZMediationStartStatus startStatus;
 @property (nonatomic, strong) NSDate *lastInterstitialVideoShownDate;
 
@@ -113,12 +112,27 @@ const NSTimeInterval maxStartDelay     = 300;
 - (void)start
 {
     // Prevent duplicate start calls.
-    if (self.startHasBeenCalled) {
-        return;
-    }
-    self.startHasBeenCalled = YES;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [self startFromDisk];
+    });
     HZILog(@"The following SDKs have been detected = %@",[[self class] commaSeparatedAdapterList]);
-    
+}
+
+- (NSURL *)pathToStartInfo {
+    return [NSURL fileURLWithPath:[HZUtils cacheDirectoryWithFilename:@"start.plist"] isDirectory:NO];
+}
+
+- (void)startFromDisk {
+    // Load /start info from disk if present
+    // This allows us to initialize ad networks as soon as the game launches
+    // This avoids the performance overhead of starting them during gameplay
+    // And allows faster fetches.
+    NSDictionary *startInfo = [NSDictionary dictionaryWithContentsOfURL:[self pathToStartInfo]];
+    if (startInfo) {
+        [self handleStartWithJSON:startInfo];
+    }
+    // Ping /start regardless, to refresh our on-disk /start info.
     [self retriableStart];
 }
 
@@ -127,20 +141,21 @@ const NSTimeInterval maxStartDelay     = 300;
     
     dispatch_async(self.fetchQueue, ^{
         [[HZMediationAPIClient sharedClient] GET:@"start" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
-            self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
-                                                         ofClass:[NSString class]
-                                                         default:@"zz" // Unknown or invalid; the server also uses this.
-                                                        withDict:json];
-            NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
-            [NSOrderedSet orderedSetWithArray:networks];
-            if (networks) {
-                [self setupMediators:networks];
-            } else {
-                HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
+            
+            // store JSON to disk
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                [json writeToURL:[self pathToStartInfo] atomically:YES];
+                HZDLog(@"Wrote start info to disk");
+            });
+            
+            if (self.startStatus == HZMediationStartStatusNotStarted) {
+                [self handleStartWithJSON:json];
             }
-            self.startStatus = [self.setupMediators count] == 0 ? HZMediationStartStatusFailure : HZMediationStartStatusSuccess;
+            
         } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-            self.startStatus = HZMediationStartStatusFailure;
+            if (self.startStatus != HZMediationStartStatusSuccess) {
+                self.startStatus = HZMediationStartStatusFailure;
+            }
             HZELog(@"Error! Failed to get networks from Heyzap. Retrying in %g seconds. Error = %@,",self.retryStartDelay, error);
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.retryStartDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 self.retryStartDelay *= 2;
@@ -148,6 +163,21 @@ const NSTimeInterval maxStartDelay     = 300;
             });
         }];
     });
+}
+
+- (void)handleStartWithJSON:(NSDictionary *)json {
+    self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
+                                                 ofClass:[NSString class]
+                                                 default:@"zz" // Unknown or invalid; the server also uses this.
+                                                withDict:json];
+    NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
+    [NSOrderedSet orderedSetWithArray:networks];
+    if (networks) {
+        [self setupMediators:networks];
+    } else {
+        HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
+    }
+    self.startStatus = [self.setupMediators count] == 0 ? HZMediationStartStatusFailure : HZMediationStartStatusSuccess;
 }
 
 - (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion
