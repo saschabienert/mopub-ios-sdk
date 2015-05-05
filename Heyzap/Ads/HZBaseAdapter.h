@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZMetricsAdStub.h"
 #import "HZShowOptions.h"
 #import "HZBannerAdapter.h"
 @import UIKit;
@@ -61,11 +60,6 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 @property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
 
 @property (nonatomic, strong) NSDictionary *credentials;
-
-/**
- *  Subclasses to use this to store tag and adUnit for metrics
- */
-@property (nonatomic, strong) HZMetricsAdStub *metricsStub;
 
 + (instancetype)sharedInstance;
 

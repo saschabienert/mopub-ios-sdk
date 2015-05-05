@@ -35,8 +35,6 @@
 #import "HZMediationSession.h"
 
 // Metrics
-#import "HZMetrics.h"
-#import "HZMetricsAdStub.h"
 #import "HZMediationConstants.h"
 #import "HZDevice.h"
 
@@ -218,10 +216,6 @@ NSString * const kHZDataKey = @"data";
 
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
-    HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(adType)];
-    [[HZMetrics sharedInstance] logShowAdWithObject:stub network:nil];
-    [[HZMetrics sharedInstance] logTimeSinceStartFor:kTimeFromStartToShowAdKey withProvider:stub network:nil];
-
     [self mediateForAdType:adType
            showImmediately:YES
           additionalParams:additionalParams
@@ -262,8 +256,6 @@ NSString * const kHZDataKey = @"data";
                                              if (session) {
                                                  self.sessionDictionary[key] = session;
                                                  
-                                                 [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:session.impressionID withProvider:session network:nil];
-                                                 
                                                  [self fetchForSession:session
                                                        showImmediately:showImmediately
                                                             sessionKey:key
@@ -302,7 +294,6 @@ NSString * const kHZDataKey = @"data";
     });
     
     HZAdType type = session.adType;
-    NSString *connectivity = [HZUtils internetStatus];
     HZDLog(@"Preferred mediator list = %@",preferredMediatorList);
     
     // Find the first SDK that has an ad, and use it
@@ -320,18 +311,8 @@ NSString * const kHZDataKey = @"data";
         BOOL successful = NO;
         int ordinal = 0;
         for (HZBaseAdapter *adapter in preferredMediatorList) {
-            NSString *network = [[adapter class] name];
-            const CFTimeInterval startTime = CACurrentMediaTime();
             
             dispatch_sync(dispatch_get_main_queue(), ^{
-                // start of fetch metrics
-                [[HZMetrics sharedInstance] logMetricsEvent:kNetworkVersionKey value:adapter.sdkVersion withProvider:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kOrdinalKey value:@(ordinal) withProvider:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kAdUnitKey value:session.adUnit withProvider:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kConnectivityKey value:connectivity withProvider:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withProvider:session network:network];
-                [[HZMetrics sharedInstance] logFetchTimeWithObject:session network:network];
-
                 [adapter prefetchForType:type tag:tag];
             });
             
@@ -355,12 +336,9 @@ NSString * const kHZDataKey = @"data";
             if (isRateLimited && fetchedWithinTimeout) {
                 continue;
             }
-            
-            int64_t elaspsedMilliseconds = millisecondsSinceCFTimeInterval(startTime);
 
             if (fetchedWithinTimeout) {
                 HZDLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchDownloadTimeKey value:@(elaspsedMilliseconds) withProvider:session network:network];
                 successful = YES;
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if (options.completion) { options.completion(YES,nil); }
@@ -368,7 +346,6 @@ NSString * const kHZDataKey = @"data";
                     [session reportFetchWithSuccessfulAdapter:adapter];
                 });
                 if (showImmediately) {
-                    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndAttemptedFetchSuccessValue withProvider:session network:network];
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey options:options];
                     });
@@ -381,11 +358,6 @@ NSString * const kHZDataKey = @"data";
             } else {
                 HZDLog(@"The mediator with name = %@ didn't have an ad",[[adapter class] name]);
 
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@(1) withProvider:session network:network];
-                if (showImmediately) {
-                    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndAttemptedFetchFailedValue withProvider:session network:network];
-                }
-
                 // If the mediated SDK errored, reset it and try again. If there's no error, they're probably still busy fetching.
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if ([adapter lastErrorForAdType:type]) {
@@ -395,14 +367,8 @@ NSString * const kHZDataKey = @"data";
                         } else {
                             reason = [adapter lastErrorForAdType:type].localizedDescription;
                         }
-                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:reason withProvider:session network:network];
                         [adapter clearErrorForAdType:type];
                         [adapter prefetchForType:type tag:tag];
-                    } else if ([connectivity isEqualToString:kNoInternet]){
-                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:kNoConnectivityValue withProvider:session network:network];
-                        if (showImmediately) {
-                            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoConnectivityValue withProvider:session network:network];
-                        }
                     }
                 });
             }
@@ -422,8 +388,6 @@ NSString * const kHZDataKey = @"data";
     });
 }
 
-static int totalImpressions = 0;
-
 - (void)haveAdapter:(HZBaseAdapter *)adapter showAdForSession:(HZMediationSession *)session sessionKey:(HZMediationSessionKey *)key options:(HZShowOptions *)options
 {
     [self.sessionDictionary removeObjectForKey:key];
@@ -438,10 +402,6 @@ static int totalImpressions = 0;
     [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
     [adapter showAdForType:session.adType options:options];
     [session reportImpressionForAdapter:adapter];
-
-    NSString *network = [adapter name];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kTimeFromFetchToImpressionKey withProvider:session network:network];
-    [[HZMetrics sharedInstance] logMetricsEvent:kNthAdKey value:@(++totalImpressions) withProvider:session network:network];
 }
 
 
@@ -483,16 +443,7 @@ static int totalImpressions = 0;
     NSOrderedSet *const availableAdapters = [session availableAdapters:self.lastInterstitialVideoShownDate];
     
     NSIndexSet *const adapterIndexes = [availableAdapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter * adapter, NSUInteger idx, BOOL *stop) {
-        BOOL available = [adapter hasAdForType:adType tag:tag];
-        
-        NSString *network = [adapter name];
-        HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)];
-        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 withProvider:stub network:network];
-        [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey withProvider:stub network:network];
-        [[HZMetrics sharedInstance] logIsAvailable:available withProvider:stub network:network];
-        [[HZMetrics sharedInstance] logMetricsEvent:kNetworkVersionKey value:adapter.sdkVersion withProvider:stub network:network];
-        
-        return available;
+        return [adapter hasAdForType:adType tag:tag];
     }];
     
     return [NSOrderedSet orderedSetWithArray:[availableAdapters objectsAtIndexes:adapterIndexes]];
@@ -529,13 +480,6 @@ static int totalImpressions = 0;
     HZMediationSessionKey *key = [self currentShownSessionKey];
     
     if (key) {
-        // removeAdWithProvider:network: is called for Heyzap ads inside HZAdViewController for both Heyzap only and mediation
-        // so only call it here if we are talking about a non-Heyzap adapter
-        if (![adapter isKindOfClass:[HZAbstractHeyzapAdapter class]]) {
-            HZMediationSession *session = [self.sessionDictionary objectForKey:key];
-            [[HZMetrics sharedInstance] removeAdWithProvider:session network:[adapter name]];
-        }
-
         [self.sessionDictionary removeObjectForKey:key];
         [[self delegateForAdType:key.adType] didHideAdWithTag:key.tag];
     }

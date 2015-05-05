@@ -60,7 +60,6 @@
         }
     }
     
-    [self sendInitializationMetrics];
     return self;
 }
 

@@ -113,17 +113,7 @@ return nil; \
     NSArray *preferredMediatorList = [[self availableAdapters:lastInterstitialVideoShown] array];
     
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        BOOL hasAd = [adapter hasAdForType:self.adType tag:self.tag];
-        if (!hasAd) {
-            if ([adapter supportedAdFormats] & self.adType) {
-                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoAdAvailableValue withProvider:self network:[adapter name]];
-            } else {
-                [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndNotAFetchableAdUnitValue withProvider:self network:[adapter name]];
-            }
-        } else {
-            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kFullyCachedValue withProvider:self network:[adapter name]];
-        }
-        return hasAd;
+        return [adapter hasAdForType:self.adType tag:self.tag];
     }];
     
     if (idx != NSNotFound) {
