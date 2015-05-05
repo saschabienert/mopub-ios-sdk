@@ -41,23 +41,16 @@
 #import "HZiAdBannerAdapter.h"
 #import "HZiAdAdapter.h"
 #import "HZBannerAdOptions_Private.h"
-
-typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
-    HZMediationStartStatusNotStarted,
-    HZMediationStartStatusFailure,
-    HZMediationStartStatusSuccess,
-};
+#import "HZMediationStarter.h"
 
 @interface HeyzapMediation()
 
-@property (nonatomic) NSTimeInterval retryStartDelay;
 @property (nonatomic, strong) NSSet *setupMediators;
 
 @property (nonatomic, strong) NSMutableDictionary *sessionDictionary;
 
 @property (nonatomic, strong) NSString *countryCode;
 
-@property (nonatomic) HZMediationStartStatus startStatus;
 @property (nonatomic, strong) NSDate *lastInterstitialVideoShownDate;
 
 @property (nonatomic, strong) HZDelegateProxy *interstitialDelegateProxy;
@@ -65,6 +58,8 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
 @property (nonatomic) dispatch_queue_t fetchQueue;
+
+@property (nonatomic, strong) HZMediationStarter *starter;
 
 @end
 
@@ -85,9 +80,6 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     return mediator;
 }
 
-const NSTimeInterval initialStartDelay = 10;
-const NSTimeInterval maxStartDelay     = 300;
-
 - (instancetype)init
 {
     self = [super init];
@@ -97,94 +89,38 @@ const NSTimeInterval maxStartDelay     = 300;
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
-        _retryStartDelay = initialStartDelay;
         self.fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_CONCURRENT);
+        self.starter = [[HZMediationStarter alloc] initWithStartingDelegate:self];
     }
     return self;
 }
 
-- (void)setRetryStartDelay:(NSTimeInterval)retryStartDelay {
-    _retryStartDelay = MIN(retryStartDelay, maxStartDelay);
-}
-
 #pragma mark - Setup
 
-- (void)start
-{
-    // Prevent duplicate start calls.
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [self startFromDisk];
-    });
+- (void)start {
     HZILog(@"The following SDKs have been detected = %@",[[self class] commaSeparatedAdapterList]);
+    [self.starter start];
 }
 
-- (NSURL *)pathToStartInfo {
-    return [NSURL fileURLWithPath:[HZUtils cacheDirectoryWithFilename:@"start.plist"] isDirectory:NO];
-}
-
-- (void)startFromDisk {
-    // Load /start info from disk if present
-    // This allows us to initialize ad networks as soon as the game launches
-    // This avoids the performance overhead of starting them during gameplay
-    // And allows faster fetches.
-    NSDictionary *startInfo = [NSDictionary dictionaryWithContentsOfURL:[self pathToStartInfo]];
-    if (startInfo) {
-        [self handleStartWithJSON:startInfo];
-    }
-    // Ping /start regardless, to refresh our on-disk /start info.
-    [self retriableStart];
-}
-
-// This method should only be called by `start`.
-- (void)retriableStart {
-    
-    dispatch_async(self.fetchQueue, ^{
-        [[HZMediationAPIClient sharedClient] GET:@"start" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
-            
-            // store JSON to disk
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-                [json writeToURL:[self pathToStartInfo] atomically:YES];
-                HZDLog(@"Wrote start info to disk");
-            });
-            
-            if (self.startStatus == HZMediationStartStatusNotStarted) {
-                [self handleStartWithJSON:json];
-            }
-            
-        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-            if (self.startStatus != HZMediationStartStatusSuccess) {
-                self.startStatus = HZMediationStartStatusFailure;
-            }
-            HZELog(@"Error! Failed to get networks from Heyzap. Retrying in %g seconds. Error = %@,",self.retryStartDelay, error);
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.retryStartDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                self.retryStartDelay *= 2;
-                [self retriableStart];
-            });
-        }];
-    });
-}
-
-- (void)handleStartWithJSON:(NSDictionary *)json {
+- (void)startWithDictionary:(NSDictionary *)dictionary {
     self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
                                                  ofClass:[NSString class]
                                                  default:@"zz" // Unknown or invalid; the server also uses this.
-                                                withDict:json];
-    NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
+                                                withDict:dictionary];
+    NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:dictionary];
     [NSOrderedSet orderedSetWithArray:networks];
     if (networks) {
         [self setupMediators:networks];
     } else {
         HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
     }
-    self.startStatus = [self.setupMediators count] == 0 ? HZMediationStartStatusFailure : HZMediationStartStatusSuccess;
 }
 
 - (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion
 {
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
-    if (self.startStatus == HZMediationStartStatusNotStarted) {
+    if (self.starter.status == HZMediationStartStatusNotStarted) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self fetchForAdType:adType tag:tag additionalParams:additionalParams completion:completion];
         });
@@ -653,7 +589,7 @@ const NSTimeInterval bannerPollInterval = 1;
     HZParameterAssert(completion);
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
-    if (self.startStatus == HZMediationStartStatusNotStarted) {
+    if (self.starter.status == HZMediationStartStatusNotStarted) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self requestBannerWithOptions:options completion:completion];
         });
@@ -684,11 +620,8 @@ const NSTimeInterval bannerPollInterval = 1;
                 return;
             }
             
-            NSLog(@"Chosen adapters for banners = %@",session.chosenAdapters);
-            
             dispatch_async(self.fetchQueue, ^{
                 for (HZBaseAdapter *baseAdapter in session.chosenAdapters) {
-                    NSLog(@"Base adapter = %@",baseAdapter);
                     __block HZBannerAdapter *bannerAdapter;
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         bannerAdapter = [baseAdapter fetchBannerWithOptions:options reportingDelegate:self];
