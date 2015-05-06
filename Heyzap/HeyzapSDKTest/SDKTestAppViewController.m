@@ -53,7 +53,7 @@ typedef enum {
 @property (nonatomic, strong) UISwitch * logRequestsSwitch;
 @property (nonatomic, strong) UISwitch * logResponsesSwitch;
 @property (nonatomic, strong) UISwitch * logCallbacksSwitch;
-@property (nonatomic, strong) UISwitch * logHTMLSwitch;
+@property (nonatomic, strong) UISwitch * pauseExpensiveWorkSwitch;
 @property (nonatomic, strong) UISwitch * scrollSwitch;
 
 @property (nonatomic, strong) UIButton *showButton;
@@ -185,7 +185,6 @@ typedef enum {
         }else{
             title = @"RESPONSE";
             NSMutableDictionary * dict = [[notification userInfo] mutableCopy];
-            if(!self.logHTMLSwitch.isOn && dict[@"ad_html"]) dict[@"ad_html"] = @"(removed...)";
             
             logText = [dict description];
         }
@@ -467,14 +466,15 @@ const CGFloat kLeftMargin = 10;
     self.logCallbacksSwitch.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
     [self.scrollView addSubview: self.logCallbacksSwitch];
     
-    UILabel *logHTMLSwitchText = [self switchLabelWithFrameX:CGRectGetMinX(self.logRequestsSwitch.frame) + 5 Y:CGRectGetMaxY(self.logRequestsSwitch.frame) + 5 text:@"Ad HTML"];
-    logHTMLSwitchText.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
-    [self.scrollView addSubview: logHTMLSwitchText];
+    UILabel *pauseExpensiveWork = [self switchLabelWithFrameX:CGRectGetMinX(self.logRequestsSwitch.frame) + 5 Y:CGRectGetMaxY(self.logRequestsSwitch.frame) + 5 text:@"Pause"];
+    pauseExpensiveWork.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
+    [self.scrollView addSubview: pauseExpensiveWork];
     
-    self.logHTMLSwitch = [[UISwitch alloc] init];
-    self.logHTMLSwitch.frame = CGRectMake(CGRectGetMinX(logRequestsSwitchText.frame), CGRectGetMaxY(logHTMLSwitchText.frame), 40.0, 40.0);
-    self.logHTMLSwitch.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
-    [self.scrollView addSubview: self.logHTMLSwitch];
+    self.pauseExpensiveWorkSwitch = [[UISwitch alloc] init];
+    self.pauseExpensiveWorkSwitch.frame = CGRectMake(CGRectGetMinX(logRequestsSwitchText.frame), CGRectGetMaxY(pauseExpensiveWork.frame), 40.0, 40.0);
+    self.pauseExpensiveWorkSwitch.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
+    [self.pauseExpensiveWorkSwitch addTarget:self action:@selector(pauseExpensiveWorkSwitchFlipped:) forControlEvents:UIControlEventValueChanged];
+    [self.scrollView addSubview: self.pauseExpensiveWorkSwitch];
     
     UILabel *scrollSwitchText = [self switchLabelWithFrameX:CGRectGetMinX(logResponsesSwitchText.frame) Y:CGRectGetMaxY(self.logResponsesSwitch.frame) + 5 text:@"Auto Scroll"];
     scrollSwitchText.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
@@ -495,7 +495,7 @@ const CGFloat kLeftMargin = 10;
     [self.scrollView addSubview: debugSwitch];
 
     self.logCallbacksSwitch.on = self.scrollSwitch.on = YES;
-    self.logHTMLSwitch.on = NO;
+    self.pauseExpensiveWorkSwitch.on = NO;
     
     UIButton *openLastFetchButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
     [openLastFetchButton setTitle: @"Open Last Fetch in Safari" forState: UIControlStateNormal];
@@ -823,6 +823,14 @@ const CGFloat kLeftMargin = 10;
     self.creativeTypeTextField.font = [UIFont italicSystemFontOfSize:18];
     self.creativeTypeTextField.textColor = [UIColor lightGrayColor];
     self.creativeTypeTextField.text = @"No creative type chosen";
+}
+
+- (void)pauseExpensiveWorkSwitchFlipped:(UISwitch *)theSwitch {
+    if (theSwitch.isOn) {
+        [HeyzapAds pauseExpensiveWork];
+    } else {
+        [HeyzapAds resumeExpensiveWork];
+    }
 }
 
 

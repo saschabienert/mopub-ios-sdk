@@ -16,7 +16,6 @@
 
 @property (nonatomic) NSTimeInterval retryStartDelay;
 @property (nonatomic, weak) id<HZMediationStarting> startingDelegate;
-@property (nonatomic) HZMediationStartStatus status;
 @end
 
 @implementation HZMediationStarter
@@ -30,22 +29,12 @@ const NSTimeInterval maxStartDelay     = 300;
     if (self) {
         _retryStartDelay = initialStartDelay;
         _startingDelegate = startingDelegate;
-        _status = HZMediationStartStatusNotStarted;
     }
     return self;
 }
 
 - (void)setRetryStartDelay:(NSTimeInterval)retryStartDelay {
     _retryStartDelay = MIN(retryStartDelay, maxStartDelay);
-}
-
-- (void)setStatus:(HZMediationStartStatus)status {
-    // Disallow transitioning from started to failure.
-    if (_status == HZMediationStartStatusSuccess) {
-        return;
-    } else {
-        _status = status;
-    }
 }
 
 - (void)start
@@ -68,7 +57,7 @@ const NSTimeInterval maxStartDelay     = 300;
     // And allows faster fetches.
     NSDictionary *startInfo = [NSDictionary dictionaryWithContentsOfURL:[[self class] pathToStartInfo]];
     if (startInfo) {
-        [self giveStartDictionaryToDelegate:startInfo];
+        [self giveStartDictionaryToDelegate:startInfo fromCache:YES];
     }
     // Ping /start regardless, to refresh our on-disk /start info.
     [self retriableStart];
@@ -86,10 +75,10 @@ const NSTimeInterval maxStartDelay     = 300;
                 HZDLog(@"Wrote start info to disk");
             });
             
-            [self giveStartDictionaryToDelegate:json];
+            [self giveStartDictionaryToDelegate:json fromCache:NO];
             
         } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-            self.status = HZMediationStartStatusFailure;
+            [self.startingDelegate didFailStartRequest];
             HZELog(@"Error! Failed to get networks from Heyzap. Retrying in %g seconds. Error = %@,",self.retryStartDelay, error);
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.retryStartDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 self.retryStartDelay *= 2;
@@ -99,12 +88,8 @@ const NSTimeInterval maxStartDelay     = 300;
     });
 }
 
-- (void)giveStartDictionaryToDelegate:(NSDictionary *)dictionary {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        self.status = HZMediationStartStatusSuccess;
-        [self.startingDelegate startWithDictionary:dictionary];
-    });
+- (void)giveStartDictionaryToDelegate:(NSDictionary *)dictionary fromCache:(BOOL)fromCache {
+    [self.startingDelegate startWithDictionary:dictionary fromCache:fromCache];
 }
 
 @end

@@ -46,6 +46,7 @@
 @interface HeyzapMediation()
 
 @property (nonatomic, strong) NSSet *setupMediators;
+@property (nonatomic, strong) NSSet *setupMediatorClasses;
 
 @property (nonatomic, strong) NSMutableDictionary *sessionDictionary;
 
@@ -58,8 +59,14 @@
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
 @property (nonatomic) dispatch_queue_t fetchQueue;
+@property (nonatomic) dispatch_queue_t sdkStartQueue;
+@property (nonatomic) dispatch_queue_t pausableMainQueue;
+@property (nonatomic) BOOL pausableQueueIsPaused;
 
 @property (nonatomic, strong) HZMediationStarter *starter;
+
+@property (nonatomic) HZMediationStartStatus startStatus;
+@property (nonatomic) BOOL hasLoadedFromCache;
 
 @end
 
@@ -84,15 +91,33 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 {
     self = [super init];
     if (self) {
-        _setupMediators = [[NSMutableSet alloc] init];
+        _setupMediators = [NSSet set];
+        _setupMediatorClasses = [NSSet set];
         _sessionDictionary = [NSMutableDictionary dictionary];
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
         self.fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_CONCURRENT);
+        self.sdkStartQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_SERIAL);
+        
+        self.pausableMainQueue = dispatch_queue_create("com.heyzap.sdk.mediation.pausable_main", DISPATCH_QUEUE_SERIAL);
+        dispatch_set_target_queue(self.pausableMainQueue, dispatch_get_main_queue());
+        
+        self.startStatus = HZMediationStartStatusNotStarted;
         self.starter = [[HZMediationStarter alloc] initWithStartingDelegate:self];
     }
     return self;
+}
+
+#pragma mark - Getters / Setters
+
+- (void)setStartStatus:(HZMediationStartStatus)startStatus {
+    // Disallow transitioning from started to failure/not started.
+    if (_startStatus == HZMediationStartStatusSuccess) {
+        return;
+    } else {
+        _startStatus = startStatus;
+    }
 }
 
 #pragma mark - Setup
@@ -102,7 +127,21 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     [self.starter start];
 }
 
-- (void)startWithDictionary:(NSDictionary *)dictionary {
+- (void)pauseExpensiveWork {
+    if (!self.pausableQueueIsPaused) {
+        self.pausableQueueIsPaused = YES;
+        dispatch_suspend(self.pausableMainQueue);
+    }
+}
+
+- (void)resumeExpensiveWork {
+    if (self.pausableQueueIsPaused) {
+        self.pausableQueueIsPaused = NO;
+        dispatch_resume(self.pausableMainQueue);
+    }
+}
+
+- (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache {
     self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
                                                  ofClass:[NSString class]
                                                  default:@"zz" // Unknown or invalid; the server also uses this.
@@ -114,6 +153,10 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     } else {
         HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
     }
+}
+
+- (void)didFailStartRequest {
+    self.startStatus = HZMediationStartStatusFailure;
 }
 
 - (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion
@@ -152,29 +195,50 @@ NSString * const kHZDataKey = @"data";
 
 - (void)setupMediators:(NSArray *)mediatorJSON
 {
-    NSMutableSet *setupMediators = [NSMutableSet set];
-    for (NSDictionary *mediator in mediatorJSON) {
-        NSString *mediatorName = mediator[kHZAdapterKey];
-        Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
-        NSDictionary *mediatorInfo = mediator[kHZDataKey];
-        if (mediatorClass && mediatorInfo && [mediatorClass isSDKAvailable]) {
-            NSError *credentialError = [mediatorClass enableWithCredentials:mediatorInfo];
-            if (!credentialError) {
-                HZBaseAdapter *adapter = [mediatorClass sharedInstance];
-                adapter.delegate = self;
-                [setupMediators addObject:adapter];
-            } else {
-                HZELog(@"Error setting up 3rd-party SDK. Error = %@",credentialError);
+    dispatch_async(self.sdkStartQueue, ^{
+        NSMutableSet *setupMediators = [NSMutableSet set];
+        NSMutableSet *setupMediatorClasses = [NSMutableSet set];
+        
+        for (NSDictionary *mediator in mediatorJSON) {
+            NSString *mediatorName = mediator[kHZAdapterKey];
+            Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
+            
+            if ([self.setupMediatorClasses containsObject:mediatorClass]) {
+                HZDLog(@"We've already setup this mediator class %@; skipping this one.",mediatorClass);
+                continue;
             }
-        } else {
-            HZELog(@"Unavailable mediator %@",[mediatorClass name]);
+            
+            NSDictionary *mediatorInfo = mediator[kHZDataKey];
+            dispatch_sync(self.pausableMainQueue, ^{
+                if (mediatorClass && mediatorInfo && [mediatorClass isSDKAvailable]) {
+                    HZDLog(@"Enabling adapter = %@",mediatorClass);
+                    
+                    NSError *credentialError = [mediatorClass enableWithCredentials:mediatorInfo];
+                    if (!credentialError) {
+                        HZBaseAdapter *adapter = [mediatorClass sharedInstance];
+                        adapter.delegate = self;
+                        [setupMediators addObject:adapter];
+                        [setupMediatorClasses addObject:mediatorClass];
+                    } else {
+                        HZELog(@"Error setting up 3rd-party SDK. Error = %@",credentialError);
+                    }
+                } else {
+                    HZELog(@"Unavailable mediator %@",[mediatorClass name]);
+                }
+            });
         }
-    }
-    self.setupMediators = setupMediators;
-    HZILog(@"Setup mediators = %@",setupMediators);
-    if ([self.setupMediators count] != 0) {
-        [self autoFetchInterstitial];
-    }
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            self.startStatus = HZMediationStartStatusSuccess;
+            
+            self.setupMediatorClasses = [self.setupMediatorClasses setByAddingObjectsFromSet:setupMediatorClasses];
+            self.setupMediators = [self.setupMediators setByAddingObjectsFromSet:setupMediators];
+
+            HZILog(@"Setup mediators = %@",setupMediators);
+            if ([self.setupMediators count] != 0) {
+                [self autoFetchInterstitial];
+            }
+        });
+    });
 }
 
 
@@ -182,6 +246,10 @@ NSString * const kHZDataKey = @"data";
 
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
+    if (self.pausableQueueIsPaused) {
+        NSLog(@"Attempted to call show when the SDK is paused. Ignoring this request.");
+        return;
+    }
     [self mediateForAdType:adType
            showImmediately:YES
           additionalParams:additionalParams
@@ -278,7 +346,7 @@ NSString * const kHZDataKey = @"data";
         int ordinal = 0;
         for (HZBaseAdapter *adapter in preferredMediatorList) {
             
-            dispatch_sync(dispatch_get_main_queue(), ^{
+            dispatch_sync(self.pausableMainQueue, ^{
                 [adapter prefetchForType:type tag:tag];
             });
             
@@ -325,7 +393,7 @@ NSString * const kHZDataKey = @"data";
                 HZDLog(@"The mediator with name = %@ didn't have an ad",[[adapter class] name]);
 
                 // If the mediated SDK errored, reset it and try again. If there's no error, they're probably still busy fetching.
-                dispatch_sync(dispatch_get_main_queue(), ^{
+                dispatch_sync(self.pausableMainQueue, ^{
                     if ([adapter lastErrorForAdType:type]) {
                         NSString *reason;
                         if ([adapter lastErrorForAdType:type].userInfo[NSUnderlyingErrorKey]) {

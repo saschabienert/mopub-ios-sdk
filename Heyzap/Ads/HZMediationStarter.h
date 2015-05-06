@@ -16,7 +16,8 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 
 @protocol HZMediationStarting <NSObject>
 
-- (void)startWithDictionary:(NSDictionary *)dictionary;
+- (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache;
+- (void)didFailStartRequest;
 
 @end
 

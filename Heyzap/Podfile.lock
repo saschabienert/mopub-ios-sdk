@@ -23,7 +23,6 @@ DEPENDENCIES:
   - AppLovin
   - Bugsnag (from `https://github.com/bugsnag/bugsnag-cocoa.git`)
   - ChartboostSDK
-  - FacebookAudienceNetwork
   - Google-AdMob-Ads-SDK
   - Kiwi
   - OCMockito

@@ -58,4 +58,7 @@ NSString * NSStringFromAdType(HZAdType type);
 
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion;
 
+- (void)pauseExpensiveWork;
+- (void)resumeExpensiveWork;
+
 @end
