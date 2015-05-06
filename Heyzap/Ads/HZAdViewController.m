@@ -147,18 +147,21 @@ static int totalImpressions = 0;
         clickURL = self.ad.clickURL;
     }
     
-    
     [[HZStorePresenter sharedInstance] presentAppStoreForID:self.ad.promotedGamePackage
                                    presentingViewController:self
                                                    delegate:self
                                            useModalAppStore:self.ad.useModalAppStore
                                                    clickURL:clickURL
                                                impressionID:self.ad.impressionID
-                                                 completion:nil];
+                                                 completion: ^(BOOL result, NSError *error) {
+                                                     
+                                                 }];
 }
 
 - (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController {
     [self dismissModalViewControllerAnimated: YES];
+    
+    [self applicationDidEnterForeground: nil];
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
@@ -188,6 +191,10 @@ static int totalImpressions = 0;
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: keyWindow] & UIInterfaceOrientationMaskLandscape;
     }
+}
+
+- (void) applicationDidEnterForeground: (id) notification {
+    
 }
 
 
