@@ -7,5 +7,23 @@
     #import "HZEnums.h"
     #import "HZNotifications.h"
     #import "HZAdInfo.h"
+
+// When NSAssert prints its callstack to the console, its not symbolicated. I'm not sure why. It would be good to know, and ideally have a solution that doesn't involve developers changing anything.
+// This version is copied exactly from NSAssert, but additionally prints the callstack.
+
+#define HZAssert(condition, desc, ...)	\
+do {				\
+__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+if (!(condition)) {		\
+NSLog(@"Callstack = %@",[NSThread callStackSymbols]); \
+[[NSAssertionHandler currentHandler] handleFailureInMethod:_cmd \
+object:self file:[NSString stringWithUTF8String:__FILE__] \
+lineNumber:__LINE__ description:(desc), ##__VA_ARGS__]; \
+}				\
+__PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
+} while(0)
+
+#define HZParameterAssert(condition) HZAssert((condition), @"Invalid parameter not satisfying: %s", #condition)
+
 #endif
 

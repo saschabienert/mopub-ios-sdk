@@ -76,7 +76,7 @@
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
-    NSParameterAssert(credentials);
+    HZParameterAssert(credentials);
     NSError *error;
     NSString *appID = [HZDictionaryUtils objectForKey:@"game_id"
                                               ofClass:[NSString class]
@@ -112,9 +112,9 @@ NSString * const kHZNetworkName = @"mobile";
                     videoZoneID:(NSString *)videoZoneID
              incentivizedZoneID:(NSString *)incentivizedZoneID
 {
-    NSParameterAssert(appID);
-    NSParameterAssert(videoZoneID);
-    NSParameterAssert(incentivizedZoneID);
+    HZParameterAssert(appID);
+    HZParameterAssert(videoZoneID);
+    HZParameterAssert(incentivizedZoneID);
     self.videoZoneID = videoZoneID;
     self.incentivizedZoneID = incentivizedZoneID;
     

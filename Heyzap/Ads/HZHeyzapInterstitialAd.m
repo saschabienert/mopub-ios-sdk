@@ -20,6 +20,7 @@
 
 static int HZInterstitialAdCreativeIDPin = 0;
 static BOOL HZInterstitialForceTestCreative = NO;
+static NSString *HZInterstitialForcedCreativeType = nil;
 
 @implementation HZHeyzapInterstitialAd
 
@@ -83,6 +84,10 @@ static BOOL HZInterstitialForceTestCreative = NO;
     HZInterstitialForceTestCreative = forceTestCreative;
 }
 
++ (void)setCreativeType:(NSString *)creativeType {
+    HZInterstitialForcedCreativeType = creativeType;
+}
+
 + (HZAdFetchRequest *) requestWithTag: (NSString *) tag auctionType:(HZAuctionType)auctionType andVideo: (BOOL) withVideo {
     NSDictionary *params = nil;
     
@@ -90,6 +95,8 @@ static BOOL HZInterstitialForceTestCreative = NO;
         params = @{@"force_test_creative":@"true"};
     } else if (HZInterstitialAdCreativeIDPin > 0) {
         params = @{@"creative_id": [NSString stringWithFormat: @"%i", HZInterstitialAdCreativeIDPin]};
+    } else if (HZInterstitialForcedCreativeType) {
+        params = @{@"forced_creative_type":HZInterstitialForcedCreativeType};
     }
     
     NSArray *creativeTypes = withVideo ? HZInterstitialAdCreativeTypes : HZInterstitialAdCreativeTypesNoVideo;
@@ -103,7 +110,7 @@ static BOOL HZInterstitialForceTestCreative = NO;
 
 + (void)showAdWithOptions:(NSDictionary *)options
 {
-    NSParameterAssert(options);
+    HZParameterAssert(options);
     if ([[HZAdsManager sharedManager] isEnabled]) {
         
     }

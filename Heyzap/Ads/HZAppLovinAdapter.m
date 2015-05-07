@@ -97,7 +97,7 @@
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
-    NSParameterAssert(credentials);
+    HZParameterAssert(credentials);
     NSError *error;
     NSString *sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:credentials error:&error];
     CHECK_CREDENTIALS_ERROR(error);

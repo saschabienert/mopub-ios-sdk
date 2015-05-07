@@ -44,7 +44,7 @@ NSString *const kHZNativeAdRatingKey = @"rating";
 
 // Errors *must* have an NSLocalizedFailureReasonKey
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary error:(NSError **)error {
-    NSParameterAssert(error != NULL);
+    HZParameterAssert(error != NULL);
     self = [super init];
     if (self) {
         

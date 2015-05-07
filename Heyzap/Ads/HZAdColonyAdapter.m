@@ -67,7 +67,7 @@
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
-    NSParameterAssert(credentials);
+    HZParameterAssert(credentials);
     NSError *error;
     NSString *appID = [HZDictionaryUtils objectForKey:@"app_id"
                                               ofClass:[NSString class]
@@ -102,9 +102,9 @@
             interstitialZoneID:(NSString *)interstitialZoneID
             incentivizedZoneID:(NSString *)incentivizedZoneID
 {
-    NSParameterAssert(appID);
-    NSParameterAssert(interstitialZoneID);
-    NSParameterAssert(incentivizedZoneID);
+    HZParameterAssert(appID);
+    HZParameterAssert(interstitialZoneID);
+    HZParameterAssert(incentivizedZoneID);
     self.interstitialZoneID = interstitialZoneID;
     self.incentivizedZoneID = incentivizedZoneID;
     [HZAdColony configureWithAppID:appID

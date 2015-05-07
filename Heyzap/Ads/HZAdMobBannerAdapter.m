@@ -17,6 +17,7 @@
 
 @property (nonatomic, strong) HZGADBannerView *banner;
 @property (nonatomic) BOOL isLoaded;
+@property (nonatomic) BOOL waitingToBeAddedToScreen;
 
 @end
 
@@ -49,7 +50,7 @@
     if (bannerView.superview) {
         [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
     } else {
-        [self startMonitoringForImpression];
+        self.waitingToBeAddedToScreen = YES;
     }
 
     [HZUnityAbstractAdapter sendMessage:@"banner-loaded" fromNetwork:kHZAdapterAdMob];
@@ -90,6 +91,13 @@
 
 - (BOOL)isAvailable {
     return self.isLoaded;
+}
+
+- (void)bannerWasAddedToView {
+    if (self.waitingToBeAddedToScreen) {
+        [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+        self.waitingToBeAddedToScreen = NO;
+    }
 }
 
 @end

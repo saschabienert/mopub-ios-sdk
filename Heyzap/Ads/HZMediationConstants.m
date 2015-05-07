@@ -48,8 +48,8 @@ NSString * const kHZAdapteriAdHumanized = @"iAd";
                        domain:(NSString *)domain
                      userInfo:(NSDictionary *)userInfo
 {
-    NSParameterAssert(adapter);
-    NSParameterAssert(domain);
+    HZParameterAssert(adapter);
+    HZParameterAssert(domain);
     NSMutableDictionary *errorInfo = [NSMutableDictionary dictionaryWithDictionary:userInfo];
     errorInfo[kHZMediatorNameKey] = adapter;
     return [NSError errorWithDomain:domain code:1 userInfo:errorInfo];

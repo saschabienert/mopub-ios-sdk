@@ -62,7 +62,7 @@ typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
     HZAdMobBannerSizeFullBanner,
 };
 
-@interface HZBannerAdOptions : NSObject
+@interface HZBannerAdOptions : NSObject <NSCopying>
 
 /**
  *  The size to use for Facebook Audience Network banners. Defaults to HZFacebookBannerSizeFlexibleWidthHeight50.

@@ -14,7 +14,6 @@
 
 @property (nonatomic, strong) UISegmentedControl *serverSegmentedControl;
 @property (nonatomic) UITextField *ipAddressField;
-@property (nonatomic, strong) UIScrollView *scrollView;
 
 @end
 

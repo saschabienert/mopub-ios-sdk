@@ -18,6 +18,8 @@
 
 @interface HZChartboostAdapter()
 
+@property (nonatomic) BOOL isPlayingAudio;
+
 @end
 
 @implementation HZChartboostAdapter
@@ -54,7 +56,7 @@
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials
 {
-    NSParameterAssert(credentials);
+    HZParameterAssert(credentials);
     
     NSError *error;
     NSString *appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:credentials error:&error];
@@ -223,6 +225,7 @@
 
 - (void)didDismissRewardedVideo:(CBLocation)location {
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
+    [self maybeFinishPlayingAudio];
     [self.delegate adapterDidDismissAd:self];
     [HZUnityAbstractAdapter sendMessage:@"did_dismiss_rewarded_video" fromNetwork:kHZAdapterChartboost];
 }
@@ -261,6 +264,7 @@
  */
 - (void)didDismissInterstitial:(CBLocation)location {
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
+    [self maybeFinishPlayingAudio];
     [self.delegate adapterDidDismissAd:self];
     [HZUnityAbstractAdapter sendMessage:@"did_dismiss_interstitial" fromNetwork:kHZAdapterChartboost];
 }
@@ -336,6 +340,18 @@
             HZDLog(@"Chartboost: Failed to load Interstitial, unknown error !");
         }
     }
+}
+
+- (void)maybeFinishPlayingAudio {
+    if (self.isPlayingAudio) {
+        [self.delegate adapterDidFinishPlayingAudio:self];
+    }
+    self.isPlayingAudio = NO;
+}
+
+- (void)willDisplayVideo:(CBLocation)location {
+    self.isPlayingAudio = YES;
+    [self.delegate adapterWillPlayAudio:self];
 }
 
 

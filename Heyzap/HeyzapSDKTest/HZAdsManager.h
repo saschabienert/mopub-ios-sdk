@@ -20,7 +20,7 @@
 @property (nonatomic, strong) NSString *publisherID;
 
 #pragma mark - Debugging
-@property (nonatomic, assign) BOOL isDebuggable;
+@property (nonatomic) BOOL isDebuggable;
 
 #pragma mark - Active Controller
 @property (nonatomic, weak) HZAdViewController *activeController;
@@ -29,8 +29,8 @@
 //@property (nonatomic, weak) id<HZAdsDelegate> statusDelegate;
 //@property (nonatomic, weak) id<HZIncentivizedAdDelegate> incentivizedDelegate;
 
-@property (nonatomic, assign, readonly) BOOL isEnabled;
-@property (nonatomic, assign) HZAdOptions options;
+@property (nonatomic, readonly) BOOL isEnabled;
+@property (nonatomic) HZAdOptions options;
 
 #pragma mark - Framework/Mediators
 @property (nonatomic) NSString *framework;

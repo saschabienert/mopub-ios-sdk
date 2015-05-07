@@ -14,6 +14,7 @@
 @interface HZiAdBannerAdapter() <ADBannerViewDelegate>
 
 @property (nonatomic, strong) ADBannerView *banner;
+@property (nonatomic) BOOL waitingToBeAddedToScreen;
 
 @end
 
@@ -27,11 +28,6 @@
         
         _banner = [[ADBannerView alloc] initWithAdType:ADAdTypeBanner];
         _banner.delegate = self;
-        
-        const CGSize sizeThatFits = [_banner sizeThatFits:options.presentingViewController.view.bounds.size];
-        CGRect frame = _banner.frame;
-        frame.size = sizeThatFits;
-        _banner.frame = frame;
     }
     return self;
 }
@@ -48,7 +44,7 @@
     if (banner.superview) {
         [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
     } else {
-        [self startMonitoringForImpression];
+        self.waitingToBeAddedToScreen = YES;
     }
     
     [self.bannerInteractionDelegate didReceiveAd];
@@ -83,6 +79,13 @@
 
 - (BOOL)isAvailable {
     return self.banner.isBannerLoaded;
+}
+
+- (void)bannerWasAddedToView {
+    if (self.waitingToBeAddedToScreen) {
+        [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+        self.waitingToBeAddedToScreen = NO;
+    }
 }
 
 @end

@@ -19,9 +19,9 @@
 
 - (instancetype)initWithTag:(NSString *)tag adUnit:(NSString *)adUnit network:(NSString *)network
 {
-    NSParameterAssert(tag);
-    NSParameterAssert(adUnit);
-    NSParameterAssert(network);
+    HZParameterAssert(tag);
+    HZParameterAssert(adUnit);
+    HZParameterAssert(network);
     
     self = [super init];
     if (self) {

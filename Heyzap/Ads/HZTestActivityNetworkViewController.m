@@ -153,7 +153,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void) refresh {
     // check available
-    self.available = [[self.network class] isSDKAvailable] && ![[self.network class] isHeyzapAdapter];
+    self.available = [[self.network class] isSDKAvailable];
     
     // hit the /info endpoint for enabled status and initialization credentials
     [[HZMediationAPIClient sharedClient] get:@"info" withParams:nil success:^(NSDictionary *json) {
@@ -196,9 +196,11 @@ NSString *hzBannerPositionName(HZBannerPosition position);
                 
                 [self hideBanner];
                 
+                UIView *const previousSuperview = self.adControls.superview;
+                
                 [self.adControls removeFromSuperview];
                 self.adControls = [self makeAdControls];
-                [self.view addSubview:self.adControls];
+                [previousSuperview addSubview:self.adControls];
             } else {
                 [self.adControls removeFromSuperview];
             }
@@ -334,6 +336,17 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             text.text = @"Debug log:";
             text;
         });
+        UIView *debugLogShadow = ({
+            UIView *view = [[UIView alloc] initWithFrame:self.debugLog.frame];
+            view.layer.shadowColor = [UIColor grayColor].CGColor;
+            view.layer.shadowOffset = CGSizeMake(0, 1);
+            view.layer.shadowOpacity = 1;
+            view.layer.shadowRadius = 1;
+            view.layer.masksToBounds = NO;
+            view.backgroundColor = [UIColor whiteColor];
+            view;
+        });
+        [currentNetworkView addSubview:debugLogShadow];
         [currentNetworkView addSubview:self.debugLog];
     }
     
@@ -739,19 +752,16 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     [HZBannerAd placeBannerInView:self.view
                                 position:self.chosenBannerPosition
                                  options:[self bannerOptions]
-                              completion:^(NSError *error, HZBannerAd *wrapper) {
-        if (error) {
-            sender.enabled = YES;
-            [self appendStringToDebugLog:@"Error getting banner!"];
-        } else {
-            [self appendStringToDebugLog:@"Showing banner"];
-            self.hideBannerButton.enabled = YES;
-            self.bannerWrapper = wrapper;
-            self.bannerWrapper.delegate = self;
-        }
-        
-        
-    }];
+     success:^(HZBannerAd *banner) {
+         [self appendStringToDebugLog:@"Showing banner"];
+         self.hideBannerButton.enabled = YES;
+         self.bannerWrapper = banner;
+         self.bannerWrapper.delegate = self;
+     } failure:^(NSError *error) {
+         sender.enabled = YES;
+         [self appendStringToDebugLog:@"Error getting banner!"];
+     }];
+     
 }
 
 - (void)hideBanner:(UIButton *)sender {
@@ -760,36 +770,31 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 }
 
 - (void)hideBanner {
-    [self.bannerWrapper finishUsingBanner];
+    [self.bannerWrapper removeFromSuperview];
     self.bannerWrapper = nil;
     
     self.hideBannerButton.enabled = NO;
     self.showBannerButton.enabled = YES;
 }
 
-
-- (void)dealloc {
-    [self.bannerWrapper finishUsingBanner];
-}
-
 #pragma mark - Banner Ad Delegate
 
-- (void)bannerDidReceiveAd {
+- (void)bannerDidReceiveAd:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerDidFailToReceiveAd:(NSError *)error {
+- (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerWasClicked {
+- (void)bannerWasClicked:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerWillPresentModalView {
+- (void)bannerWillPresentModalView:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerDidDismissModalView {
+- (void)bannerDidDismissModalView:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
-- (void)bannerWillLeaveApplication {
+- (void)bannerWillLeaveApplication:(HZBannerAd *)banner {
     [self logBannerCallback:_cmd];
 }
 

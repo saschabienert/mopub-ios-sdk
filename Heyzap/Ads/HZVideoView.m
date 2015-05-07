@@ -17,7 +17,7 @@
 @property (nonatomic) MPMoviePlayerController *player;
 @property (nonatomic) UIInterfaceOrientation currOrientation;
 @property (nonatomic) HZVideoControlView *controlView;
-@property (nonatomic, assign) BOOL didFinishVideo;
+@property (nonatomic) BOOL didFinishVideo;
 @property (nonatomic) NSTimer *timer;
 @end
 

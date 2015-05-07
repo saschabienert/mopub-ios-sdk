@@ -52,10 +52,10 @@ NSString * const kHZMissingPropertyKey = @"missingProperty";
 
 + (id)objectForKey:(id)key ofClass:(Class)class dict:(NSDictionary *)dict error:(NSError **)error
 {
-    NSParameterAssert(key);
-    NSParameterAssert(class);
-    NSParameterAssert(dict);
-    NSParameterAssert(error != NULL);
+    HZParameterAssert(key);
+    HZParameterAssert(class);
+    HZParameterAssert(dict);
+    HZParameterAssert(error != NULL);
     id value = [self hzObjectForKey:key ofClass:class withDict:dict];
     if (value) {
         return value;

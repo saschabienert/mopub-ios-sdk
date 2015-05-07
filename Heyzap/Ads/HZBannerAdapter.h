@@ -34,13 +34,8 @@
 - (BOOL)isAvailable;
 
 /**
- *  Only subclasses should call this method. Call this method to start an `NSTimer` that checks the `superview` property of the `mediatedBanner`.
+ *  This should be called on the adapter when the banner is added as a subview so that an impression can be reported.
  */
-- (void)startMonitoringForImpression;
-
-/**
- *  This method should be called when the banner adapter is no longer in consideration in the waterfall.
- */
-- (void)stopTryingToLoadBanner;
+- (void)bannerWasAddedToView;
 
 @end

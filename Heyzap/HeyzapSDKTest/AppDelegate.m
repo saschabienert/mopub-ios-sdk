@@ -26,6 +26,7 @@
 #import "DeviceInfoViewController.h"
 
 #import "HZInterstitialAd.h"
+#import "PersistentTestAppConfiguration.h"
 
 @implementation AppDelegate
 
@@ -48,7 +49,8 @@
     // Integration tests don't want autoprefetching interfering with testing callbacks, fetching the wrong ad, etc.
     [HeyzapAds startWithPublisherID:@"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
 #else
-    [HeyzapAds startWithPublisherID: @"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
+    const HZAdOptions opts = [PersistentTestAppConfiguration sharedConfiguration].autoPrefetch ? HZAdOptionsNone : HZAdOptionsDisableAutoPrefetching;
+    [HeyzapAds startWithPublisherID: @"1234" andOptions:opts];
 #endif
     
     

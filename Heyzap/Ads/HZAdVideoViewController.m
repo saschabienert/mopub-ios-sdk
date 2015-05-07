@@ -21,12 +21,16 @@
 @interface HZAdVideoViewController ()<HZAdPopupActionDelegate>
 @property (nonatomic) HZWebView *webView;
 @property (nonatomic) HZVideoView *videoView;
-@property (nonatomic, assign) BOOL showOnReady;
-@property (nonatomic, assign) BOOL didFinishVideo;
-@property (nonatomic, assign) BOOL didStartVideo;
+@property (nonatomic) BOOL showOnReady;
+@property (nonatomic) BOOL didFinishVideo;
+@property (nonatomic) BOOL didStartVideo;
 @end
 
 @implementation HZAdVideoViewController
+
+// The superclass implements the storage for this property;
+// @dynamic is needed to subclass `ad` to `HZVideoAdModel`
+@dynamic ad;
 
 - (id) initWithAd:(HZVideoAdModel *)ad {
     self = [super initWithAd: ad];

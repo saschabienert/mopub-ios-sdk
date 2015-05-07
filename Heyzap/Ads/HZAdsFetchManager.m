@@ -88,7 +88,7 @@
     }
     
     if (!validAd) {
-        
+        NSLog(@"Not valid ad");
         [[[HZAdsManager sharedManager] delegateForAdUnit:request.adUnit] didFailToReceiveAdWithTag:request.tag];
         [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
         
@@ -148,6 +148,7 @@
             }
             
         } else {
+            NSLog(@"failure here");
             [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: request.tag];
             [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
             

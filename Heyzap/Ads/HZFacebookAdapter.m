@@ -63,7 +63,7 @@
 }
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials {
-    NSParameterAssert(credentials);
+    HZParameterAssert(credentials);
     NSError *error;
     
     NSString *placementID = [HZDictionaryUtils
@@ -101,7 +101,7 @@
 }
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag {
-    NSAssert(self.placementID, @"Need a Placement ID by this point");
+    HZAssert(self.placementID, @"Need a Placement ID by this point");
     
     if (type != HZAdTypeInterstitial) {
         // only prefetch if they want an interstitial

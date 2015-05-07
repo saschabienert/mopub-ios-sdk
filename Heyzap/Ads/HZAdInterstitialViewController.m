@@ -18,11 +18,15 @@
 @interface HZAdInterstitialViewController()
 
 @property (nonatomic) HZWebView *webview;
-@property (nonatomic, assign) BOOL showOnReady;
+@property (nonatomic) BOOL showOnReady;
 
 @end
 
 @implementation HZAdInterstitialViewController
+
+// The superclass implements the storage for this property;
+// @dynamic is needed to subclass `ad` to `HZInterstitialAdModel`
+@dynamic ad;
 
 - (id) initWithAd:(HZInterstitialAdModel *)ad {
     self = [super initWithAd: ad];

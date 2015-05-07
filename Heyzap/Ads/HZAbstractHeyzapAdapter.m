@@ -155,7 +155,7 @@
 
 - (BOOL)correctAuctionType:(NSNotification *)notification {
     HZAdInfo *info = notification.object;
-    NSAssert(info, @"info must not be nil");
+    HZAssert(info, @"info must not be nil");
     return info.auctionType == [self auctionType];
 }
 

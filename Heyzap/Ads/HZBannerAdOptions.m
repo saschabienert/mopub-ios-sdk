@@ -61,7 +61,7 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
 + (BOOL)facebookBannerSizesAvailable {
     return hzFBAdSize50() != NULL
     && hzFBAdSize90() != NULL
-    && hzFBAdSize320x50 != NULL;
+    && hzFBAdSize320x50() != NULL;
 }
 
 HZFBAdSize *hzFBAdSize50(void) {
@@ -205,6 +205,29 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size) {
             return @"468 × 60";
         }
     }
+}
+
+- (BOOL)isFlexibleWidthForNetwork:(NSString *const)networkConstant {
+    if ([networkConstant isEqualToString:kHZAdapteriAd]) {
+        return YES;
+    } else if ([networkConstant isEqualToString:kHZAdapterAdMob]) {
+        return self.admobBannerSize == HZAdMobBannerSizeFlexibleWidthPortrait
+            || self.admobBannerSize == HZAdMobBannerSizeFlexibleWidthLandscape;
+    } else if ([networkConstant isEqualToString:kHZAdapterFacebook]) {
+        return self.facebookBannerSize == HZFacebookBannerSizeFlexibleWidthHeight50
+            || self.facebookBannerSize == HZFacebookBannerSizeFlexibleWidthHeight90;
+    } else {
+        return YES;
+    }
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    HZBannerAdOptions *copy = [[HZBannerAdOptions alloc] init];
+    copy.presentingViewController = self.presentingViewController;
+    copy.admobBannerSize = self.admobBannerSize;
+    copy.facebookBannerSize = self.facebookBannerSize;
+    copy.tag = self.tag;
+    return copy;
 }
 
 
