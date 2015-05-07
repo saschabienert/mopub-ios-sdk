@@ -163,7 +163,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 {
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
-    if (self.starter.status == HZMediationStartStatusNotStarted) {
+    if (self.startStatus == HZMediationStartStatusNotStarted) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self fetchForAdType:adType tag:tag additionalParams:additionalParams completion:completion];
         });
@@ -657,7 +657,7 @@ const NSTimeInterval bannerPollInterval = 1;
     HZParameterAssert(completion);
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
-    if (self.starter.status == HZMediationStartStatusNotStarted) {
+    if (self.startStatus == HZMediationStartStatusNotStarted) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self requestBannerWithOptions:options completion:completion];
         });
