@@ -10,8 +10,6 @@
 #import "HZUnityAds.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
-#import "HZMetrics.h"
-#import "HZMetricsAdStub.h"
 
 @interface HZUnityAdsAdapter() <HZUnityAdsDelegate>
 
@@ -164,9 +162,6 @@ NSString * const kHZNetworkName = @"mobile";
         [[HZUnityAds sharedInstance] setZone:self.videoZoneID];
     }
     [[HZUnityAds sharedInstance] show];
-
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 #pragma mark - AdColony Delegation
@@ -196,11 +191,9 @@ NSString * const kHZNetworkName = @"mobile";
     self.isShowingIncentivized = NO;
     self.didSkipIncentivized = NO;
     [self.delegate adapterDidDismissAd:self];
-    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
 }
 
 - (void)unityAdsWillLeaveApplication {
-    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
 }
 

@@ -160,7 +160,7 @@
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    return [[HZFBBannerAdapter alloc] initWithAdUnitId:@"500413400097719_538033529669039" options:options reportingDelegate:reportingDelegate parentAdapter:self];
+    return [[HZFBBannerAdapter alloc] initWithAdUnitId:self.bannerPlacementID options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 
 - (BOOL)hasBannerCredentials {

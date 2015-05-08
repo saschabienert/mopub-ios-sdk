@@ -12,7 +12,6 @@
 #import "HZUtils.h"
 #import "HZAdsManager.h"
 #import "HZAdsAPIClient.h"
-#import "HZMetrics.h"
 #import "HZStorePresenter.h"
 #import "HZEnums.h"
 
@@ -79,13 +78,9 @@
     [options.viewController presentViewController:self animated:NO completion:nil];
 
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
-    
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
 }
 
-- (void) hide {
-    [[HZMetrics sharedInstance] removeAdWithProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
-    
+- (void) hide {    
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     
     [self.ad cleanup];
@@ -108,20 +103,7 @@
     
 }
 
-static int totalImpressions = 0;
-
 - (void) didImpression {
-    totalImpressions++;
-    NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(self.ad.auctionType);
-    [[HZMetrics sharedInstance] logMetricsEvent:kNthAdKey
-                                          value:@(totalImpressions)
-                                     withProvider:self.ad
-                                        network:heyzapAdapter];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kTimeFromFetchToImpressionKey
-                                          withProvider:self.ad
-                                             network:heyzapAdapter];
-    
-    
     if ([self.ad onImpression]) {
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didShowAdWithTag:self.ad.tag];
         [HZAdsManager postNotificationName:kHeyzapDidShowAdNotitification infoProvider:self.ad];
@@ -129,9 +111,6 @@ static int totalImpressions = 0;
 }
 
 - (void) didClickWithURL: (NSURL *) url {
-    
-    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.ad network:HeyzapAdapterFromHZAuctionType(self.ad.auctionType)];
-    
     if ([self.ad onClick]) {
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didClickAdWithTag:self.ad.tag];
         [HZAdsManager postNotificationName:kHeyzapDidClickAdNotification infoProvider:self.ad];

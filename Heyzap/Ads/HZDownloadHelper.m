@@ -9,8 +9,6 @@
 #import "HZDownloadHelper.h"
 #import "HZAFNetworking.h"
 #import "HZLog.h"
-#import "HZMetrics.h"
-#import "HZMetricsAdStub.h"
 #import "HZEnums.h"
 #import "HZUtils.h"
 
@@ -32,22 +30,6 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
     [operation addDependency:clearCacheOperation];
     
     operation.outputStream = [NSOutputStream outputStreamToFileAtPath: filePath append:NO];
-//    __block BOOL loggedTotal = NO;
-    [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead){
-        
-        // This code is commented out because its expensive performance wise to constantly run this.
-        
-//        HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:type];
-//        float decimal = (float)totalBytesRead / (float)totalBytesExpectedToRead;
-//        int percent = (int) (decimal * 100);
-//        NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(auctionType);
-//        [[HZMetrics sharedInstance] setDownloadPercentage:percent withProvider:stub network:heyzapAdapter];
-//        if (!loggedTotal){
-//            [[HZMetrics sharedInstance] logMetricsEvent:kVideoSizeKey value:@(totalBytesExpectedToRead) withProvider:stub network:heyzapAdapter];
-//            loggedTotal = YES;
-//        }
-    }];
-
     
     [operation setCompletionBlockWithSuccess:^(HZAFHTTPRequestOperation *operation, id responseObject) {
         NSTimeInterval executionTime = [[NSDate date] timeIntervalSinceDate:startDownload];

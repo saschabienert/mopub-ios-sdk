@@ -9,7 +9,6 @@
 #import "HZUtils.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "HZDevice.h"
-#import "HZMetrics.h"
 
 
 static NSString *HZUtilsDeviceID;
@@ -244,6 +243,8 @@ char *HZNewBase64Encode(
 + (NSMutableDictionary *)hzQueryDictionaryFromURL: (NSURL *) url {
 	return [HZUtils hzQueryStringToDictionary:[url query]];
 }
+
+NSString *const kNoInternet = @"no_internet";
 
 + (NSString *)internetStatus {
     return [[HZDevice currentDevice] HZConnectivityType] ?: kNoInternet;

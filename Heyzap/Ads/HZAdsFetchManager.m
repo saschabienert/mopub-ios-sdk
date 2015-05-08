@@ -16,7 +16,6 @@
 #import "HZAdFetchRequest.h"
 #import "HZAdsAPIClient.h"
 #import "HZDevice.h"
-#import "HZMetrics.h"
 #import "HZEnums.h"
 #import "HZUtils.h"
 
@@ -33,33 +32,11 @@
         [[HZAdLibrary sharedLibrary] purgeAd: ad];
     }
     
-    const CFTimeInterval startTime = CACurrentMediaTime();
-    NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(request.auctionType);
-    [[HZMetrics sharedInstance] logMetricsEvent:kNetworkKey value:heyzapAdapter withProvider:request network:heyzapAdapter];
-    [[HZMetrics sharedInstance] logMetricsEvent:kOrdinalKey value:@0 withProvider:request network:heyzapAdapter];
-    [[HZMetrics sharedInstance] logMetricsEvent:kAdUnitKey value:request.adUnit withProvider:request network:heyzapAdapter];
-    [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withProvider:request network:heyzapAdapter];
-    [[HZMetrics sharedInstance] logFetchTimeWithObject:request network:heyzapAdapter];
-    
-    NSString *const connectivity = [HZUtils internetStatus];
-    [[HZMetrics sharedInstance] logMetricsEvent:kConnectivityKey
-                                          value:connectivity
-                                     withProvider:request
-                                        network:heyzapAdapter];
-    
     [[HZAdsAPIClient sharedClient] loadRequest: request withCompletion: ^(HZAdFetchRequest *aRequest) {
-        const int64_t elapsedMiliseconds = millisecondsSinceCFTimeInterval(startTime);
-        [[HZMetrics sharedInstance] logMetricsEvent:kFetchDownloadTimeKey value:@(elapsedMiliseconds) withProvider:aRequest network:heyzapAdapter];
         
         if (aRequest.lastError != nil) {
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", aRequest.lastError]];
-            [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@1 withProvider:aRequest network:heyzapAdapter];
-            if (aRequest.lastFailingStatusCode) {
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:@(aRequest.lastFailingStatusCode) withProvider:aRequest network:heyzapAdapter];
-            } else if ([connectivity isEqualToString:kNoInternet]) {
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:kNoConnectivityValue withProvider:aRequest network:heyzapAdapter];
-            }
             [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: request.tag];
             [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
             

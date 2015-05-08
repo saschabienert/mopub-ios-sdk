@@ -9,7 +9,6 @@
 #import "HZAdLibrary.h"
 #import "HZAdModel.h"
 #import "HZQueue.h"
-#import "HZMetrics.h"
 #import "HZAdInfo.h"
 
 @interface HZAdLibrary()

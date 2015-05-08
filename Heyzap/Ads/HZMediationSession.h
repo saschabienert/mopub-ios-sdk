@@ -8,9 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
-#import "HZMetrics.h"
 
-@interface HZMediationSession : NSObject <HZMetricsProvider>
+@interface HZMediationSession : NSObject
 
 @property (nonatomic, strong, readonly) NSOrderedSet *chosenAdapters;
 @property (nonatomic, readonly) HZAdType adType;

@@ -8,9 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "HZMetrics.h"
 
-@interface HZAdModel : NSObject <HZAdInfoProvider, HZMetricsProvider>
+@interface HZAdModel : NSObject <HZAdInfoProvider>
 
 @property (nonatomic, readonly) NSString *impressionID;
 @property (nonatomic, readonly) NSNumber *promotedGamePackage;
@@ -63,6 +62,5 @@
 - (void) setEventCallbackParams: (NSMutableDictionary *) dict;
 
 + (NSString *) normalizeTag: (NSString *) tag;
-- (void)sendInitializationMetrics;
 
 @end
