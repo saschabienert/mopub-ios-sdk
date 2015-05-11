@@ -12,7 +12,8 @@
 #import "HZDictionaryUtils.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
-#import "HZUnityAbstractAdapter.h"
+#import "HeyzapAds.h"
+#import "HeyzapMediation.h"
 
 #import <UIKit/UIKit.h>
 
@@ -214,16 +215,20 @@
     if ([zoneID isEqualToString:self.incentivizedZoneID]) {
         if (shown) {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
-            [HZUnityAbstractAdapter sendMessage:@"incentivized_result_complete" fromNetwork:kHZAdapterAdColony];
+            
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self network]];
         } else {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
-            [HZUnityAbstractAdapter sendMessage:@"incentivized_result_incomplete" fromNetwork:kHZAdapterAdColony];
+            
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self network]];
         }
     }
     // unfortunately, adcolony doesn't tell us whether the ad was clicked or dismissed
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
-    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterAdColony];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
 }
 
 @end

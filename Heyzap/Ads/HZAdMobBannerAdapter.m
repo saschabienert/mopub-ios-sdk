@@ -11,7 +11,8 @@
 #import "HZMediationConstants.h"
 #import "HZBannerAdOptions.h"
 #import "HZBannerAdOptions_Private.h"
-#import "HZUnityAbstractAdapter.h"
+#import "HeyzapAds.h"
+#import "HeyzapMediation.h"
 
 @interface HZAdMobBannerAdapter() <HZGADBannerViewDelegate>
 
@@ -52,33 +53,34 @@
     } else {
         self.waitingToBeAddedToScreen = YES;
     }
-
-    [HZUnityAbstractAdapter sendMessage:@"banner-loaded" fromNetwork:kHZAdapterAdMob];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerLoaded forNetwork: HZNetworkAdMob];
 }
 - (void)adView:(HZGADBannerView *)view didFailToReceiveAdWithError:(HZGADRequestError *)error {
     self.lastError = (NSError *)error;
     [self.bannerInteractionDelegate didFailToReceiveAd:(NSError *)error];
-    [HZUnityAbstractAdapter sendMessage:@"banner-fetch_failed" fromNetwork:kHZAdapterAdMob];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: HZNetworkAdMob];
 }
 - (void)adViewWillPresentScreen:(HZGADBannerView *)adView {
     [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
     [self.bannerInteractionDelegate userDidClick];
     [self.bannerInteractionDelegate willPresentModalView];
-    [HZUnityAbstractAdapter sendMessage:@"banner-click" fromNetwork:kHZAdapterAdMob];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: HZNetworkAdMob];
 }
 - (void)adViewWillDismissScreen:(HZGADBannerView *)adView {
     // Not reporting this because other FAN doesn't also report it
     // (And its pretty much covered by `didDismissScreen`)
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerDismiss forNetwork: HZNetworkAdMob];
 }
 - (void)adViewDidDismissScreen:(HZGADBannerView *)adView {
     [self.bannerInteractionDelegate didDismissModalView];
-    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterAdMob];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerHide forNetwork: HZNetworkAdMob];
 }
 - (void)adViewWillLeaveApplication:(HZGADBannerView *)adView {
     [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
     [self.bannerInteractionDelegate userDidClick];
     [self.bannerInteractionDelegate willLeaveApplication];
-    [HZUnityAbstractAdapter sendMessage:@"banner-click" fromNetwork:kHZAdapterAdMob];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: HZNetworkAdMob];
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol {

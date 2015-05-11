@@ -14,7 +14,7 @@
 #import "HZLog.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
-#import "HZUnityAbstractAdapter.h"
+#import "HeyzapMediation.h"
 
 @interface HZChartboostAdapter()
 
@@ -183,34 +183,32 @@
 - (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
     [[self class] logError:error];
     self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Chartboost"}];
-    [HZUnityAbstractAdapter sendMessage:@"did_fail_to_load_interstitial" fromNetwork:kHZAdapterChartboost];
-
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self network]];
 }
 
 - (void)didFailToLoadRewardedVideo:(CBLocation)location
                          withError:(CBLoadError)error {
     [[self class] logError:error];
     self.lastIncentivizedError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey:@"Chartboost"}];
-    [HZUnityAbstractAdapter sendMessage:@"did_fail_to_load_rewarded_video" fromNetwork:kHZAdapterChartboost];
-
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self network]];
 }
 
 - (void)didCacheRewardedVideo:(CBLocation)location {
     self.lastIncentivizedError = nil;
-    [HZUnityAbstractAdapter sendMessage:@"did_cache_rewarded_video" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self network]];
 }
 
 - (void)didClickRewardedVideo:(CBLocation)location {
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked: self];
-    [HZUnityAbstractAdapter sendMessage:@"did_click_rewarded_video" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
 }
 
 - (void)didClickInterstitial:(CBLocation)location
 {
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
-    [HZUnityAbstractAdapter sendMessage:@"did_click_interstitial" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
 }
 
 - (BOOL)shouldRequestInterstitial:(CBLocation)location {
@@ -220,14 +218,14 @@
 - (void)didCompleteRewardedVideo:(CBLocation)location
                       withReward:(int)reward {
     [self.delegate adapterDidCompleteIncentivizedAd: self];
-    [HZUnityAbstractAdapter sendMessage:@"did_complete_rewarded_video" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self network]];
 }
 
 - (void)didDismissRewardedVideo:(CBLocation)location {
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self maybeFinishPlayingAudio];
     [self.delegate adapterDidDismissAd:self];
-    [HZUnityAbstractAdapter sendMessage:@"did_dismiss_rewarded_video" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self network]];
 }
 
 
@@ -248,7 +246,7 @@
 
 - (void)didCacheInterstitial:(CBLocation)location {
     self.lastInterstitialError = nil;
-    [HZUnityAbstractAdapter sendMessage:@"did_cache_interstitial" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self network]];
 }
 
 /*
@@ -266,34 +264,34 @@
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self maybeFinishPlayingAudio];
     [self.delegate adapterDidDismissAd:self];
-    [HZUnityAbstractAdapter sendMessage:@"did_dismiss_interstitial" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
 }
 
 /**
  *  More Apps
  */
 - (void)didFailToLoadMoreApps:(CBLocation)location withError:(CBLoadError)error {
-    [HZUnityAbstractAdapter sendMessage:@"did_fail_to_load_more_apps" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-fetch_failed" forNetwork: [self network]];
 }
 
 - (void)didCacheMoreApps:(CBLocation)location {
-    [HZUnityAbstractAdapter sendMessage:@"did_cache_more_apps" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-available" forNetwork: [self network]];
 }
 
 - (void)didDismissMoreApps:(CBLocation)location {
-    [HZUnityAbstractAdapter sendMessage:@"did_dismiss_more_apps" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-hide" forNetwork: [self network]];
 }
 
 - (void)didCloseMoreApps:(CBLocation)location {
-    [HZUnityAbstractAdapter sendMessage:@"did_close_more_apps" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-hide" forNetwork: [self network]];
 }
 
 - (void)didClickMoreApps:(CBLocation)location {
-    [HZUnityAbstractAdapter sendMessage:@"did_click_more_apps" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-click" forNetwork: [self network]];
 }
 
 - (void)didDisplayMoreApps:(CBLocation)location {
-    [HZUnityAbstractAdapter sendMessage:@"did_display_more_apps" fromNetwork:kHZAdapterChartboost];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-show" forNetwork: [self network]];
 }
 
 
@@ -345,6 +343,7 @@
 - (void)maybeFinishPlayingAudio {
     if (self.isPlayingAudio) {
         [self.delegate adapterDidFinishPlayingAudio:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self network]];
     }
     self.isPlayingAudio = NO;
 }
@@ -352,6 +351,7 @@
 - (void)willDisplayVideo:(CBLocation)location {
     self.isPlayingAudio = YES;
     [self.delegate adapterWillPlayAudio:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self network]];
 }
 
 

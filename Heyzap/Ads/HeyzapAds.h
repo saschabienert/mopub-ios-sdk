@@ -76,7 +76,7 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
 };
 
 typedef NS_ENUM(NSUInteger, HZNetwork) {
-    HZNetworkIAd =        1 << 0,
+    HZNetworkHeyzap =     1 << 0,
     HZNetworkFacebook =   1 << 1,
     HZNetworkUnityAds =   1 << 2,
     HZNetworkAppLovin =   1 << 3,
@@ -84,8 +84,26 @@ typedef NS_ENUM(NSUInteger, HZNetwork) {
     HZNetworkChartboost = 1 << 5,
     HZNetworkAdColony =   1 << 6,
     HZNetworkAdMob =      1 << 7,
-    HZNetworkHeyzap =     1 << 8,
+    HZNetworkIAd =        1 << 8,
 };
+
+NSString *const HZNetworkCallbackShow = @"show";
+NSString *const HZNetworkCallbackAvailable = @"available";
+NSString *const HZNetworkCallbackHide = @"hide";
+NSString *const HZNetworkCallbackFetchFailed = @"fetch_failed";
+NSString *const HZNetworkCallbackClick = @"click";
+NSString *const HZNetworkCallbackDismiss = @"dismiss";
+NSString *const HZNetworkCallbackIncentivizedResultIncomplete = @"incentivized_result_incomplete";
+NSString *const HZNetworkCallbackIncentivizedResultComplete = @"incentivized_result_complete";
+NSString *const HZNetworkCallbackAudioStarting = @"audio_starting";
+NSString *const HZNetworkCallbackAudioFinished = @"audio_finished";
+NSString *const HZNetworkCallbackBannerLoaded = @"banner-loaded";
+NSString *const HZNetworkCallbackBannerClick = @"banner-click";
+NSString *const HZNetworkCallbackBannerHide = @"banner-hide";
+NSString *const HZNetworkCallbackBannerDismiss = @"banner-dismiss";
+NSString *const HZNetworkCallbackBannerFetchFailed = @"banner-fetch_failed";
+NSString *const HZNetworkCallbackLeaveApplication = @"leave_application";
+
 
 /** The `HZAdsDelegate` protocol provides global information about our ads. If you want to know if we had an ad to show after calling `showAd` (for example, to fallback to another ads provider). It is recommend using the `showAd:completion:` method instead. */
 @protocol HZAdsDelegate<NSObject>
@@ -181,6 +199,13 @@ typedef NS_ENUM(NSUInteger, HZNetwork) {
  *  @param network  A member of the HZNetwork enum, which identifies the network to listen to.
  */
 + (void) setDelegate:(id)delegate forNetwork:(HZNetwork)network;
+
+/**
+ * Sets block which receives callbacks for all networks
+ *
+ */
+
++ (void) networkCallbackWithBlock: (void (^)(HZNetwork network, NSString *callback))block;
 
 /**
  *  Returns YES if the network's SDK is initialized and can be called directly

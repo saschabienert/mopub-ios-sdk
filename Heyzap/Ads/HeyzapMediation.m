@@ -68,6 +68,8 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
+@property (nonatomic, strong) void (^networkCallbackBlock)(HZNetwork network, NSString *callback);
+
 @property (nonatomic, strong) NSMutableDictionary *networkListeners;
 
 @end
@@ -103,6 +105,7 @@ const NSTimeInterval maxStartDelay     = 300;
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
         _networkListeners = [[NSMutableDictionary alloc] init];
         _retryStartDelay = initialStartDelay;
+        
     }
     return self;
 }
@@ -693,7 +696,7 @@ const NSTimeInterval bannerTimeout = 10;
             return;
         }
         
-        NSLog(@"Chosen adapters for banners = %@",session.chosenAdapters);
+        HZDLog(@"Chosen adapters for banners = %@",session.chosenAdapters);
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             for (HZBaseAdapter *baseAdapter in session.chosenAdapters) {
@@ -765,12 +768,22 @@ const NSTimeInterval bannerTimeout = 10;
     [self.networkListeners setObject:delegate forKey:[NSNumber numberWithUnsignedInteger:network]];
 }
 
-- (id)getDelegateForNetwork:(HZNetwork)network {
+- (id)delegateForNetwork:(HZNetwork)network {
     return [self.networkListeners objectForKey:[NSNumber numberWithUnsignedInteger:network]];
 }
 
 - (BOOL) isNetworkInitialized:(HZNetwork)network {
     return self.setupNetworks & network;
+}
+
+- (void) setNetworkCallbackBlock: (void (^)(HZNetwork network, NSString *callback))block {
+    _networkCallbackBlock = block;
+}
+
+- (void) sendNetworkCallback: (NSString *) callback forNetwork: (HZNetwork) network {
+    if (_networkCallbackBlock != nil) {
+        _networkCallbackBlock(network, callback);
+    }
 }
 
 @end

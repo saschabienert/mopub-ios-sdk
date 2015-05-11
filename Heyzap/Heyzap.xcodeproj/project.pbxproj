@@ -375,8 +375,6 @@
 		E626220B19E7076A0094957B /* HZTestActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626220A19E7076A0094957B /* HZTestActivityViewController.m */; };
 		E626228619F5BAD40094957B /* HZTestActivityNetworkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */; };
 		E626228819F5BB6C0094957B /* HZTestActivityNetworkViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */; };
-		E67B7B2D1ACF464500290B60 /* HZUnityAbstractAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = E67B7B2C1ACF464200290B60 /* HZUnityAbstractAdapter.h */; };
-		E67B7B2F1ACF467900290B60 /* HZUnityAbstractAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = E67B7B2E1ACF467900290B60 /* HZUnityAbstractAdapter.m */; };
 		E67D8F201AB7B38B000B191C /* HZShowOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = E67D8F1F1AB7B38B000B191C /* HZShowOptions.m */; };
 		E67D8F211ABA3C14000B191C /* HZShowOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E67D8F1E1AB7B313000B191C /* HZShowOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E6A41BE91A1D78EB00C80718 /* HZMetricsAdStub.h in Headers */ = {isa = PBXBuildFile; fileRef = E6A41BE81A1D78EB00C80718 /* HZMetricsAdStub.h */; };
@@ -759,8 +757,6 @@
 		E626220A19E7076A0094957B /* HZTestActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityViewController.m; sourceTree = "<group>"; };
 		E626228519F5BAD40094957B /* HZTestActivityNetworkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZTestActivityNetworkViewController.m; sourceTree = "<group>"; };
 		E626228719F5BB630094957B /* HZTestActivityNetworkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZTestActivityNetworkViewController.h; sourceTree = "<group>"; };
-		E67B7B2C1ACF464200290B60 /* HZUnityAbstractAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZUnityAbstractAdapter.h; sourceTree = "<group>"; };
-		E67B7B2E1ACF467900290B60 /* HZUnityAbstractAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZUnityAbstractAdapter.m; sourceTree = "<group>"; };
 		E67D8F1E1AB7B313000B191C /* HZShowOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZShowOptions.h; sourceTree = "<group>"; };
 		E67D8F1F1AB7B38B000B191C /* HZShowOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZShowOptions.m; sourceTree = "<group>"; };
 		E6A41BE81A1D78EB00C80718 /* HZMetricsAdStub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMetricsAdStub.h; sourceTree = "<group>"; };
@@ -941,8 +937,6 @@
 				E600E20C1ACB5715006CE286 /* HZAdapterDelegate.h */,
 				E600E20E1ACB5764006CE286 /* HZAdapterDelegate.m */,
 				E600E2131ACB781C006CE286 /* HZAdType.h */,
-				E67B7B2C1ACF464200290B60 /* HZUnityAbstractAdapter.h */,
-				E67B7B2E1ACF467900290B60 /* HZUnityAbstractAdapter.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -1729,7 +1723,6 @@
 				500F88D918E0F9BE00E5D6F8 /* HZChartboost.h in Headers */,
 				50ED56301AB8E048009D7504 /* HZGADBannerView.h in Headers */,
 				500F88F218E215D000E5D6F8 /* HZGADInterstitial.h in Headers */,
-				E67B7B2D1ACF464500290B60 /* HZUnityAbstractAdapter.h in Headers */,
 				50ED564B1AC0BC910016F9FE /* HZiAdBannerAdapter.h in Headers */,
 				5019224E18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h in Headers */,
 				86D0A99C1851897200B3D870 /* HZDownloadHelper.h in Headers */,
@@ -2219,7 +2212,6 @@
 				50ED56351AB8E392009D7504 /* HZGADRequestError.m in Sources */,
 				E62181B919AFBF520099BE8C /* HZVungleSDK.m in Sources */,
 				E67D8F201AB7B38B000B191C /* HZShowOptions.m in Sources */,
-				E67B7B2F1ACF467900290B60 /* HZUnityAbstractAdapter.m in Sources */,
 				866E3A0D18512F2500B6E431 /* HZAdViewController.m in Sources */,
 				86BDB49B175853E100D85F29 /* HZAvailability.m in Sources */,
 				86FF907E185842D900BC48BF /* HZQueue.m in Sources */,

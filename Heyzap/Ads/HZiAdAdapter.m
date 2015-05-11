@@ -12,7 +12,7 @@
 
 #import "HZMediationConstants.h"
 #import "HZiAdBannerAdapter.h"
-#import "HZUnityAbstractAdapter.h"
+#import "HeyzapMediation.h"
 
 @interface HZiAdAdapter()<ADInterstitialAdDelegate>
 
@@ -123,24 +123,29 @@
 
 - (void)interstitialAdDidLoad:(ADInterstitialAd *)interstitialAd {
     self.lastInterstitialError = nil;
-    [HZUnityAbstractAdapter sendMessage:@"available" fromNetwork:kHZAdapteriAd];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self network]];
 }
 
 - (void)interstitialAdDidUnload:(ADInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd: self];
-    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapteriAd];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
 }
 
 - (BOOL)interstitialAdActionShouldBegin:(ADInterstitialAd *)interstitialAd
                    willLeaveApplication:(BOOL)willLeave {
     [self.delegate adapterWasClicked: self];
-    [HZUnityAbstractAdapter sendMessage:@"click" fromNetwork:kHZAdapteriAd];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
+    
+    if (willLeave) {
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: [self network]];
+    }
+    
     return YES;
 }
 
 - (void)interstitialAdActionDidFinish:(ADInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd:self];
-    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapteriAd];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self network]];
 }
 
 - (void)interstitialAd:(ADInterstitialAd *)interstitialAd
@@ -152,7 +157,7 @@
                                                  userInfo:@{kHZMediatorNameKey: @"iAd",
                                                             NSUnderlyingErrorKey: error}];
     self.interstitialAd = nil;
-    [HZUnityAbstractAdapter sendMessage:@"fetch_failed" fromNetwork:kHZAdapteriAd];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self network]];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

@@ -129,11 +129,21 @@
     }
 }
 
++ (void) networkCallbackWithBlock: (void (^)(HZNetwork network, NSString *callback))block {
+    HZVersionCheck()
+    
+    if (![HeyzapMediation isOnlyHeyzapSDK]) {
+        [[HeyzapMediation sharedInstance] setNetworkCallbackBlock: block];
+    }
+}
+
 + (BOOL) isNetworkInitialized:(HZNetwork)network {
     HZVersionCheckBool()
-
+    
     if (![HeyzapMediation isOnlyHeyzapSDK]) {
         return [[HeyzapMediation sharedInstance] isNetworkInitialized:network];
+    } else if (network == HZNetworkHeyzap) {
+        return [HZAdsManager isEnabled];
     } else {
         return NO;
     }

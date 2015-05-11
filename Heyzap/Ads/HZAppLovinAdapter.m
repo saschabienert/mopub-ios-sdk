@@ -22,7 +22,8 @@
 #import "HZALAdSize.h"
 #import "HZIncentivizedAppLovinDelegate.h"
 
-#import "HZUnityAbstractAdapter.h"
+#import "HeyzapMediation.h"
+#import "HeyzapAds.h"
 
 /**
  *  AppLovin's SDK is split between using (singletons+class methods) vs instances. Inexplicably, the former group is only available when you store the SDK Key in your info.plist file, so we need to use the instance methods.
@@ -208,7 +209,7 @@
         }
     }
     
-    [HZUnityAbstractAdapter sendMessage:@"available" fromNetwork:kHZAdapterAppLovin];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self network]];
 }
 - (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error
 {
@@ -231,21 +232,21 @@
             break;
         }
     }
-
-    [HZUnityAbstractAdapter sendMessage:@"fetch_failed" fromNetwork:kHZAdapterAppLovin];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self network]];
 }
 
 - (void)didClickAd
 {
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
-    [HZUnityAbstractAdapter sendMessage:@"click" fromNetwork:kHZAdapterAppLovin];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
 }
 - (void)didDismissAd
 {
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
-    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterAppLovin];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
 }
 
 - (void)didCompleteIncentivized
@@ -253,13 +254,13 @@
     [self clearIncentivizedState];
     
     [self.delegate adapterDidCompleteIncentivizedAd:self];
-    [HZUnityAbstractAdapter sendMessage:@"incentivized_result_complete" fromNetwork:kHZAdapterAppLovin];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self network]];
 }
 - (void)didFailToCompleteIncentivized
 {
     [self clearIncentivizedState];
     [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
-    [HZUnityAbstractAdapter sendMessage:@"incentivized_result_incomplete" fromNetwork:kHZAdapterAppLovin];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self network]];
 }
 
 - (void)clearIncentivizedState {
@@ -271,12 +272,12 @@
 - (void)willPlayAudio
 {
     [self.delegate adapterWillPlayAudio:self];
-    [HZUnityAbstractAdapter sendMessage:@"audio_starting" fromNetwork:kHZAdapterAppLovin];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self network]];
 }
 - (void)didFinishAudio
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
-    [HZUnityAbstractAdapter sendMessage:@"audio_finished" fromNetwork:kHZAdapterAppLovin];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self network]];
 }
 
 

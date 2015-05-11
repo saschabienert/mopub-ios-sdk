@@ -10,7 +10,7 @@
 #import "HZFBAdView.h"
 #import "HZMediationConstants.h"
 #import "HZBannerAdOptions_Private.h"
-#import "HZUnityAbstractAdapter.h"
+#import "HeyzapMediation.h"
 
 @interface HZFBBannerAdapter()
 
@@ -45,28 +45,29 @@
     [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
     [self.bannerInteractionDelegate userDidClick];
     [self.bannerInteractionDelegate willPresentModalView];
-    [HZUnityAbstractAdapter sendMessage:@"banner-click" fromNetwork:kHZAdapterFacebook];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: HZNetworkFacebook];
 }
+
 - (void)adViewDidFinishHandlingClick:(HZFBAdView *)adView {
     [self.bannerInteractionDelegate didDismissModalView];
-    [HZUnityAbstractAdapter sendMessage:@"banner-hide" fromNetwork:kHZAdapterFacebook];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerHide forNetwork: HZNetworkFacebook];
 }
 - (void)adViewDidLoad:(HZFBAdView *)adView {
     // if on screen, then register impression
     // else monitor view for superview
     self.isLoaded = YES;
     [self.bannerInteractionDelegate didReceiveAd];
-    [HZUnityAbstractAdapter sendMessage:@"banner-available" fromNetwork:kHZAdapterFacebook];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerLoaded forNetwork: HZNetworkFacebook];
 }
 - (void)adView:(HZFBAdView *)adView didFailWithError:(NSError *)error {
     self.isLoaded = NO;
     self.lastError = error;
     [self.bannerInteractionDelegate didFailToReceiveAd:error];
-    [HZUnityAbstractAdapter sendMessage:@"banner-fetch_failed" fromNetwork:kHZAdapterFacebook];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: HZNetworkFacebook];
 }
 - (void)adViewWillLogImpression:(HZFBAdView *)adView {
     [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
-    [HZUnityAbstractAdapter sendMessage:@"banner-logging_impression" fromNetwork:kHZAdapterFacebook];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"banner-logging_impression" forNetwork: HZNetworkFacebook];
 }
 
 - (UIView *)mediatedBanner {

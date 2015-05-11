@@ -15,7 +15,8 @@
 #import "HZFBBannerAdapter.h"
 #import "HZBannerAdOptions.h"
 #import "HZBannerAdOptions_Private.h"
-#import "HZUnityAbstractAdapter.h"
+#import "HeyzapMediation.h"
+#import "HeyzapAds.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
@@ -140,13 +141,13 @@
 
 - (void)interstitialAdDidClick:(HZFBInterstitialAd *)interstitialAd {
     [self.delegate adapterWasClicked:self];
-    [HZUnityAbstractAdapter sendMessage:@"click" fromNetwork:kHZAdapterFacebook];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
 }
 
 - (void)interstitialAdDidClose:(HZFBInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd:self];
     self.interstitialAd = nil;
-    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterFacebook];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
 }
 
 - (void)interstitialAdWillClose:(HZFBInterstitialAd *)interstitialAd {
@@ -155,7 +156,7 @@
 
 - (void)interstitialAdDidLoad:(HZFBInterstitialAd *)interstitialAd {
     self.lastInterstitialError = nil;
-    [HZUnityAbstractAdapter sendMessage:@"available" fromNetwork:kHZAdapterFacebook];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self network]];
 }
 
 - (void)interstitialAd:(HZFBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
@@ -164,15 +165,15 @@
                                                  userInfo:@{kHZMediatorNameKey: @"Facebook",
                                                             NSUnderlyingErrorKey: error}];
     self.interstitialAd = nil;
-    [HZUnityAbstractAdapter sendMessage:@"fetch_failed" fromNetwork:kHZAdapterFacebook];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self network]];
 }
 
 - (void)interstitialAdWillLogImpression:(HZFBInterstitialAd *)interstitialAd {
-    [HZUnityAbstractAdapter sendMessage:@"logging_impression" fromNetwork:kHZAdapterFacebook];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"logging_impression" forNetwork: [self network]];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    return [[HZFBBannerAdapter alloc] initWithAdUnitId:@"500413400097719_538033529669039" options:options reportingDelegate:reportingDelegate parentAdapter:self];
+    return [[HZFBBannerAdapter alloc] initWithAdUnitId:self.bannerPlacementID options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 
 - (BOOL)hasBannerCredentials {

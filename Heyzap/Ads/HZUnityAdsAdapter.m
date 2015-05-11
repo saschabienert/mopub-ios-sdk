@@ -12,7 +12,7 @@
 #import "HZDictionaryUtils.h"
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
-#import "HZUnityAbstractAdapter.h"
+#import "HeyzapMediation.h"
 
 @interface HZUnityAdsAdapter() <HZUnityAdsDelegate>
 
@@ -174,6 +174,7 @@ NSString * const kHZNetworkName = @"mobile";
 
     self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
     [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self network]];
 }
 
 #pragma mark - AdColony Delegation
@@ -196,28 +197,33 @@ NSString * const kHZNetworkName = @"mobile";
     if (self.isShowingIncentivized) {
         if (self.didSkipIncentivized) {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
-            [HZUnityAbstractAdapter sendMessage:@"incentivized_result_incomplete" fromNetwork:kHZAdapterUnityAds];
+            
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self network]];
         } else {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
-            [HZUnityAbstractAdapter sendMessage:@"incentivized_result_complete" fromNetwork:kHZAdapterUnityAds];
+            
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self network]];
         }
     }
     self.isShowingIncentivized = NO;
     self.didSkipIncentivized = NO;
     [self.delegate adapterDidDismissAd:self];
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
-    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterUnityAds];
+
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
 }
 
 - (void)unityAdsWillLeaveApplication {
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
-    [HZUnityAbstractAdapter sendMessage:@"click" fromNetwork:kHZAdapterUnityAds];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
 }
 
 - (void)unityAdsVideoStarted {
     [self.delegate adapterWillPlayAudio:self];
-    [HZUnityAbstractAdapter sendMessage:@"audio_starting" fromNetwork:kHZAdapterUnityAds];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self network]];
 }
 
 @end

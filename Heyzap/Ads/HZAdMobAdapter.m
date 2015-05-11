@@ -15,7 +15,8 @@
 #import "HZMetrics.h"
 #import "HZMetricsAdStub.h"
 #import "HZAdMobBannerAdapter.h"
-#import "HZUnityAbstractAdapter.h"
+#import "HeyzapMediation.h"
+#import "HeyzapAds.h"
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
@@ -150,7 +151,8 @@
                                      userInfo:@{kHZMediatorNameKey: @"AdMob",
                                                 NSUnderlyingErrorKey: error}];
     self.currentInterstitial = nil;
-    [HZUnityAbstractAdapter sendMessage:@"fetch_failed" fromNetwork:kHZAdapterAdMob];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self network]];
 }
 
 - (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
@@ -158,7 +160,9 @@
     [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
     self.currentInterstitial = nil;
-    [HZUnityAbstractAdapter sendMessage:@"hide" fromNetwork:kHZAdapterAdMob];
+    
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
 }
 
 // As far as I can tell, this means a click.
@@ -166,13 +170,15 @@
 {
     [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
-    [HZUnityAbstractAdapter sendMessage:@"click" fromNetwork:kHZAdapterAdMob];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
 }
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
     self.lastInterstitialError = nil;
-    [HZUnityAbstractAdapter sendMessage:@"available" fromNetwork:kHZAdapterAdMob];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self network]];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

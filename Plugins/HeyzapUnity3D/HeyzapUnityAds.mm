@@ -86,7 +86,11 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 }
 
 - (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
-    [self sendMessageForKlass:self.klassName withMessage:@"error" andTag:banner.options.tag];
+    if (banner != nil) {
+        [self sendMessageForKlass:self.klassName withMessage:@"error" andTag:banner.options.tag];
+    } else {
+        [self sendMessageForKlass:self.klassName withMessage: @"error" andTag: @""];
+    }
 }
 
 - (void)bannerWasClicked:(HZBannerAd *)banner {
@@ -209,6 +213,7 @@ extern "C" {
                 [HZCurrentBannerAd setDelegate: HZBannerDelegate];
             } failure:^(NSError *error) {
                 NSLog(@"Error fetching banner; error = %@",error);
+                [HZBannerDelegate bannerDidReceiveAd: nil];
             }];
         }
     }

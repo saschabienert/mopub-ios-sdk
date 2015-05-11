@@ -7,8 +7,9 @@
 //
 
 #import "HZiAdBannerAdapter.h"
-#import "HZUnityAbstractAdapter.h"
 #import "HZMediationConstants.h"
+#import "HeyzapMediation.h"
+
 @import iAd;
 
 @interface HZiAdBannerAdapter() <ADBannerViewDelegate>
@@ -48,23 +49,27 @@
     }
     
     [self.bannerInteractionDelegate didReceiveAd];
-    [HZUnityAbstractAdapter sendMessage:@"banner-loaded" fromNetwork:kHZAdapteriAd];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerLoaded forNetwork: HZNetworkIAd];
 }
 
 - (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error {
     self.lastError = error;
     [self.bannerInteractionDelegate didFailToReceiveAd:error];
-    [HZUnityAbstractAdapter sendMessage:@"banner-fetch_failed" fromNetwork:kHZAdapteriAd];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: HZNetworkIAd];
 }
 
 
 - (BOOL)bannerViewActionShouldBegin:(ADBannerView *)banner willLeaveApplication:(BOOL)willLeave {
     [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
     [self.bannerInteractionDelegate userDidClick];
-    [HZUnityAbstractAdapter sendMessage:@"banner-click" fromNetwork:kHZAdapteriAd];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: HZNetworkIAd];
     
     if (willLeave) {
         [self.bannerInteractionDelegate willLeaveApplication];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: HZNetworkIAd];
     } else {
         [self.bannerInteractionDelegate willPresentModalView];
     }
@@ -74,7 +79,7 @@
 
 - (void)bannerViewActionDidFinish:(ADBannerView *)banner {
     [self.bannerInteractionDelegate didDismissModalView];
-    [HZUnityAbstractAdapter sendMessage:@"banner-hide" fromNetwork:kHZAdapteriAd];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerDismiss forNetwork: HZNetworkIAd];
 }
 
 - (BOOL)isAvailable {
