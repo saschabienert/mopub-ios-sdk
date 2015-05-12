@@ -199,10 +199,19 @@ extern "C" {
             } failure:^(NSError *error) {
                 NSLog(@"Error fetching banner; error = %@",error);
             }];
+        } else {
+            // Unhide the banner
+            [HZCurrentBannerAd setHidden: NO];
         }
     }
     
     void hz_ads_hide_banner(void) {
+        if (HZCurrentBannerAd != nil) {
+            [HZCurrentBannerAd setHidden: YES];
+        }
+    }
+
+    void hz_ads_destroy_banner(void) {
         if (HZCurrentBannerAd  != nil) {
             [HZCurrentBannerAd removeFromSuperview];
             HZCurrentBannerAd = nil;
