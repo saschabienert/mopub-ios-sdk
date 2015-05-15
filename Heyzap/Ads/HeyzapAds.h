@@ -61,6 +61,8 @@
 @import QuartzCore;
 @import StoreKit;
 @import iAd;
+@import MobileCoreServices;
+@import Security;
 #endif
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
