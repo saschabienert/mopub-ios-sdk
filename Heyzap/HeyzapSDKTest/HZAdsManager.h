@@ -63,4 +63,9 @@
                                HZELog(@"Heyzap only supports iOS 6.0 and above"); \
                                return NO;                                           \
                              }
+
+#define HZVersionCheckNil() if(![HZAdsManager isVersionSupported]){                \
+                                HZELog(@"Heyzap only supports iOS 6.0 and above"); \
+                                return nil;                                           \
+                                }
 @end
