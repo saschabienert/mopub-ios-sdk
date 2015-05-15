@@ -160,7 +160,7 @@ static BOOL hzAdsIsEnabled = NO;
 }
 
 + (BOOL) isVersionSupported {
-    return ![HZDevice hzSystemVersionIsLessThan:@"6.0.0"];
+    return ![HZDevice hzSystemVersionIsLessThan:@"6.0"];
 }
 
 - (BOOL)isAdobeAir {
