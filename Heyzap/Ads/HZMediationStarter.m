@@ -55,12 +55,17 @@ const NSTimeInterval maxStartDelay     = 300;
     // This allows us to initialize ad networks as soon as the game launches
     // This avoids the performance overhead of starting them during gameplay
     // And allows faster fetches.
-    NSDictionary *startInfo = [NSDictionary dictionaryWithContentsOfURL:[[self class] pathToStartInfo]];
-    if (startInfo) {
-        [self giveStartDictionaryToDelegate:startInfo fromCache:YES];
-    }
-    // Ping /start regardless, to refresh our on-disk /start info.
-    [self retriableStart];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        NSDictionary *startInfo = [NSDictionary dictionaryWithContentsOfURL:[[self class] pathToStartInfo]];
+        
+        if (startInfo) {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [self giveStartDictionaryToDelegate:startInfo fromCache:YES];
+            });
+        }
+        // Ping /start regardless, to refresh our on-disk /start info.
+        [self retriableStart];
+    });
 }
 
 // This method should only be called by `start`.
