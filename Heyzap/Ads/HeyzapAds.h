@@ -63,6 +63,7 @@
 @import iAd;
 @import MobileCoreServices;
 @import Security;
+@import SystemConfiguration;
 #endif
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
