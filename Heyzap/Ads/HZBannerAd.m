@@ -186,6 +186,14 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
         CGRect frame = self.frame;
         frame.size.width = newSuperview.bounds.size.width;
         self.frame = frame;
+        
+        // AdMob will not automatically adjust to the new size (FB will)
+        if ([self.mediatedNetwork isEqualToString:kHZAdapterAdMob]) {
+            UIView *underlyingBanner = self.adapter.mediatedBanner;
+            CGRect underlyingFrame = underlyingBanner.frame;
+            underlyingFrame.size.width = self.frame.size.width;
+            underlyingBanner.frame = underlyingFrame;
+        }
     }
 }
 

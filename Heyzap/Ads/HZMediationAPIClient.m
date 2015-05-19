@@ -8,6 +8,7 @@
 
 #import "HZMediationAPIClient.h"
 #import "HeyzapMediation.h"
+#import "HZMediationRequestSerializer.h"
 
 NSString * const kHZMediationAPIBaseURLString = @"https://med.heyzap.com/";
 
@@ -17,22 +18,18 @@ NSString * const kHZMediationAPIBaseURLString = @"https://med.heyzap.com/";
     static HZMediationAPIClient *_sharedClient = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        
         _sharedClient = [[HZMediationAPIClient alloc] initWithBaseURL:[NSURL URLWithString: kHZMediationAPIBaseURLString]];
     });
     
     return _sharedClient;
 }
 
-+ (NSMutableDictionary *)defaultParamsWithDictionary:(NSDictionary *)dictionary
-{
-    NSMutableDictionary *defaults = [super defaultParamsWithDictionary:dictionary];
-    defaults[@"external_package"] = [[NSBundle mainBundle] bundleIdentifier];
-    if (!defaults[@"networks"]) {
-        defaults[@"networks"] = [HeyzapMediation commaSeparatedAdapterList];
+- (instancetype)initWithBaseURL:(NSURL *)url {
+    self = [super initWithBaseURL:url];
+    if (self) {
+        self.requestSerializer = [HZMediationRequestSerializer serializer];
     }
-    
-    return defaults;
+    return self;
 }
 
 @end

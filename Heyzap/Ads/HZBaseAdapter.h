@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZMetricsAdStub.h"
 #import "HZShowOptions.h"
 #import "HZBannerAdapter.h"
 #import "HZAdapterDelegate.h"
@@ -56,6 +55,7 @@
 
 @property (nonatomic, strong) NSDictionary *credentials;
 
+<<<<<<< HEAD
 /**
  *  Subclasses to use this to store tag and adUnit for metrics
  */
@@ -64,6 +64,8 @@
 @property (nonatomic) HZNetwork network;
 @property (nonatomic, strong) HZAdapterDelegate *forwardingDelegate;
 
+=======
+>>>>>>> master
 + (instancetype)sharedInstance;
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag;

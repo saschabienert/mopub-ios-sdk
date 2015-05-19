@@ -9,7 +9,6 @@
 #import "HZUtils.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "HZDevice.h"
-#import "HZMetrics.h"
 
 
 static NSString *HZUtilsDeviceID;
@@ -199,8 +198,12 @@ char *HZNewBase64Encode(
 }
 
 + (NSString *) cacheDirectoryPath {
-    NSArray *pathList = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *cachePath    = [[pathList objectAtIndex: 0] stringByAppendingPathComponent: @"com.heyzap.sdk.ads"];
+    static NSString *cachePath;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSArray *pathList = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        cachePath = [[pathList objectAtIndex: 0] stringByAppendingPathComponent: @"com.heyzap.sdk.ads"];
+    });
     return cachePath;
 }
 
@@ -241,6 +244,8 @@ char *HZNewBase64Encode(
 	return [HZUtils hzQueryStringToDictionary:[url query]];
 }
 
+NSString *const kNoInternet = @"no_internet";
+
 + (NSString *)internetStatus {
     return [[HZDevice currentDevice] HZConnectivityType] ?: kNoInternet;
 }
@@ -254,7 +259,13 @@ NSArray *hzMap(NSArray *array, id (^block)(id object)) {
 }
 
 BOOL hziOS8Plus(void) {
-    return [[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0;
+    static BOOL eightPlus;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // (All UIDevice access seems to take 1ms)
+        eightPlus = [[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0;
+    });
+    return eightPlus;
 }
 
 NSString *hzLookupStringConstant(NSString *constantName) {

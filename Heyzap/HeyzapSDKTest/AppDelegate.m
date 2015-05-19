@@ -11,7 +11,6 @@
 
 #import "HeyzapAds.h"
 #import "HZLog.h"
-#import "HZMetrics.h"
 
 #import "HZInterstitialAd.h"
 #import "SDKTestAppViewController.h"
@@ -41,7 +40,7 @@
         }];
     }
     
-    [HZLog setDebugLevel: HZDebugLevelVerbose];
+    [HZLog setDebugLevel: HZDebugLevelSilent];
     
     SDKTestAppViewController *mainController = [[SDKTestAppViewController alloc] init];
     

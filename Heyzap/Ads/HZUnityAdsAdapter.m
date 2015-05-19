@@ -10,8 +10,6 @@
 #import "HZUnityAds.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
-#import "HZMetrics.h"
-#import "HZMetricsAdStub.h"
 #import "HeyzapMediation.h"
 
 @interface HZUnityAdsAdapter() <HZUnityAdsDelegate>
@@ -172,8 +170,6 @@ NSString * const kHZNetworkName = @"mobile";
     }
     [[HZUnityAds sharedInstance] show];
 
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self network]];
 }
 
@@ -208,13 +204,11 @@ NSString * const kHZNetworkName = @"mobile";
     self.isShowingIncentivized = NO;
     self.didSkipIncentivized = NO;
     [self.delegate adapterDidDismissAd:self];
-    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
-
+    
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
 }
 
 - (void)unityAdsWillLeaveApplication {
-    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
     
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];

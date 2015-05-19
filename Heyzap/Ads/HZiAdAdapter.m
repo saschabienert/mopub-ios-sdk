@@ -13,10 +13,12 @@
 #import "HZMediationConstants.h"
 #import "HZiAdBannerAdapter.h"
 #import "HeyzapMediation.h"
+#import "HZDevice.h"
 
 @interface HZiAdAdapter()<ADInterstitialAdDelegate>
 
 @property (nonatomic, strong) ADInterstitialAd *interstitialAd;
+@property (nonatomic, weak) UIViewController *presentedViewController;
 
 @end
 
@@ -104,11 +106,29 @@
     if (!success) {
         [self.interstitialAd presentFromViewController:options.viewController];
     }
+    self.presentedViewController = options.viewController.presentedViewController;
+    [NSTimer scheduledTimerWithTimeInterval:0.25 target:self selector:@selector(checkIfAdIsVisible:) userInfo:nil repeats:YES];
+}
+
+- (void)checkIfAdIsVisible:(NSTimer *)timer {
+    // It's possible we've already sent the dismiss callback via `interstitialAdDidUnload:`
+    // If so `interstitialAd` will be `nil` and we've already sent the `adapterDidDismissAd:` callback.
+    if (!self.interstitialAd) {
+        [timer invalidate];
+    }
+    if (!self.presentedViewController.presentingViewController) {
+        [timer invalidate];
+        [self adWasDismissed];
+    }
 }
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeInterstitial | HZAdTypeBanner;
+    if ([HZDevice hzSystemVersionIsLessThan:@"7.0.0"] && [HZDevice isPhone]) {
+        return HZAdTypeBanner;
+    } else {
+        return HZAdTypeInterstitial | HZAdTypeBanner;
+    }
 }
 
 - (BOOL)isVideoOnlyNetwork {
@@ -129,6 +149,12 @@
 - (void)interstitialAdDidUnload:(ADInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd: self];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
+    if (self.presentedViewController) {
+        [self adWasDismissed];
+    } else {
+        self.interstitialAd = nil;
+        self.presentedViewController = nil;
+    }
 }
 
 - (BOOL)interstitialAdActionShouldBegin:(ADInterstitialAd *)interstitialAd
@@ -166,6 +192,12 @@
 
 - (BOOL)hasBannerCredentials {
     return YES;
+}
+
+- (void)adWasDismissed {
+    [self.delegate adapterDidDismissAd:self];
+    self.interstitialAd = nil;
+    self.presentedViewController = nil;
 }
 
 @end

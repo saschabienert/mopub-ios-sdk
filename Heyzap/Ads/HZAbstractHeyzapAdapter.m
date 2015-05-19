@@ -13,8 +13,6 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HeyzapAds.h"
-#import "HZMetrics.h"
-#import "HZMetricsAdStub.h"
 
 @interface HZAbstractHeyzapAdapter()
 
@@ -116,9 +114,6 @@
             break;
         }
     }
-
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 #pragma mark - NSNotificationCenter registering

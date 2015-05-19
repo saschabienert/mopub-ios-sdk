@@ -23,7 +23,7 @@ static int HZVideoAdCreativeIDPin = 0;
 
 
 + (void)showForAuctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options {
-    if (![[HZAdsManager sharedManager] isEnabled]) {
+    if (![HZAdsManager isEnabled]) {
         return;
     }
 
@@ -31,13 +31,13 @@ static int HZVideoAdCreativeIDPin = 0;
 }
 
 + (void) hide {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
+    if ([HZAdsManager isEnabled]) {
         [[HZAdsManager sharedManager] hideActiveAd];
     }
 }
 
 + (void) fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
+    if ([HZAdsManager isEnabled]) {
         
         NSDictionary *params = (HZVideoAdCreativeIDPin > 0) ? @{@"creative_id": [NSString stringWithFormat: @"%i", HZVideoAdCreativeIDPin]} : nil;
         
@@ -62,7 +62,7 @@ static int HZVideoAdCreativeIDPin = 0;
 }
 
 + (BOOL) isAvailableForTag: (NSString *) tag auctionType:(HZAuctionType)auctionType {
-    if (![[HZAdsManager sharedManager] isEnabled]) return NO;
+    if (![HZAdsManager isEnabled]) return NO;
     return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZVideoAdUnit tag:tag auctionType:auctionType];
 }
 
@@ -82,7 +82,7 @@ static int HZVideoAdCreativeIDPin = 0;
 
 + (void)setDelegate:(id<HZAdsDelegate>)delegate
 {
-    if ([[HZAdsManager sharedManager] isEnabled]) {
+    if ([HZAdsManager isEnabled]) {
         [[HZAdsManager sharedManager] setVideoDelegate:delegate];
     }
 }

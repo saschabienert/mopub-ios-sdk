@@ -8,8 +8,6 @@
 
 #import "HZAppLovinAdapter.h"
 #import "HZMediationConstants.h"
-#import "HZMetrics.h"
-#import "HZMetricsAdStub.h"
 
 #import "HZDictionaryUtils.h"
 #import "HZAppLovinDelegate.h"
@@ -182,9 +180,6 @@
         interstitial.adVideoPlaybackDelegate = self.interstitialDelegate;
         [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
     }
-
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 #pragma mark - AppLovinDelegateReceiver
@@ -238,13 +233,11 @@
 
 - (void)didClickAd
 {
-    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterWasClicked:self];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
 }
 - (void)didDismissAd
 {
-    [[HZMetrics sharedInstance] logMetricsEvent:kCloseClickedKey value:@1 withProvider:self.metricsStub network:[self name]];
     [self.delegate adapterDidDismissAd:self];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
 }

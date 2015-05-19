@@ -110,9 +110,7 @@ NSString *const kHZNativeAdRatingKey = @"rating";
         return;
     }
     
-    [[HZAdsAPIClient sharedClient] post:kHZRegisterImpressionEndpoint
-                             withParams:[self eventParams]
-                                success:^(id JSON) {
+    [[HZAdsAPIClient sharedClient] POST:kHZRegisterImpressionEndpoint parameters:[self eventParams] success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
         self.sentImpression = YES;
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         [HZLog debug: [NSString stringWithFormat: @"(IMPRESSION ERROR) %@, Error: %@", self, error]];
@@ -126,7 +124,7 @@ NSString *const kHZNativeAdRatingKey = @"rating";
     HZVersionCheck()
 
     if (!self.sentClick) {
-        [[HZAdsAPIClient sharedClient] post: kHZRegisterClickEndpoint withParams:[self eventParams] success:^(id JSON) {
+        [[HZAdsAPIClient sharedClient] POST:kHZRegisterClickEndpoint parameters:[self eventParams] success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
             self.sentClick = YES;
         } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
             [HZLog debug: [NSString stringWithFormat: @"(IMPRESSION ERROR) %@, Error: %@", self, error]];

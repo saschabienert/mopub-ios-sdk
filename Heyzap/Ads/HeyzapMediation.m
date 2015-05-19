@@ -35,8 +35,6 @@
 #import "HZMediationSession.h"
 
 // Metrics
-#import "HZMetrics.h"
-#import "HZMetricsAdStub.h"
 #import "HZMediationConstants.h"
 #import "HZDevice.h"
 
@@ -69,8 +67,8 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
 @property (nonatomic, strong) void (^networkCallbackBlock)(HZNetwork network, NSString *callback);
-
 @property (nonatomic, strong) NSMutableDictionary *networkListeners;
+@property (nonatomic) dispatch_queue_t fetchQueue;
 
 @end
 
@@ -105,7 +103,7 @@ const NSTimeInterval maxStartDelay     = 300;
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
         _networkListeners = [[NSMutableDictionary alloc] init];
         _retryStartDelay = initialStartDelay;
-        
+        self.fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_CONCURRENT);
     }
     return self;
 }
@@ -131,27 +129,29 @@ const NSTimeInterval maxStartDelay     = 300;
 // This method should only be called by `start`.
 - (void)retriableStart {
     
-    [[HZMediationAPIClient sharedClient] get:@"start" withParams:nil success:^(NSDictionary *json) {
-        self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
-                                                     ofClass:[NSString class]
-                                                     default:@"zz" // Unknown or invalid; the server also uses this.
-                                                    withDict:json];
-        NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
-        [NSOrderedSet orderedSetWithArray:networks];
-        if (networks) {
-            [self setupMediators:networks];
-        } else {
-            HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
-        }
-        self.startStatus = [self.setupMediators count] == 0 ? HZMediationStartStatusFailure : HZMediationStartStatusSuccess;
-    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        self.startStatus = HZMediationStartStatusFailure;
-        HZELog(@"Error! Failed to get networks from Heyzap. Retrying in %g seconds. Error = %@,",self.retryStartDelay, error);
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.retryStartDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            self.retryStartDelay *= 2;
-            [self retriableStart];
-        });
-    }];
+    dispatch_async(self.fetchQueue, ^{
+        [[HZMediationAPIClient sharedClient] GET:@"start" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
+            self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
+                                                         ofClass:[NSString class]
+                                                         default:@"zz" // Unknown or invalid; the server also uses this.
+                                                        withDict:json];
+            NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
+            [NSOrderedSet orderedSetWithArray:networks];
+            if (networks) {
+                [self setupMediators:networks];
+            } else {
+                HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
+            }
+            self.startStatus = [self.setupMediators count] == 0 ? HZMediationStartStatusFailure : HZMediationStartStatusSuccess;
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+            self.startStatus = HZMediationStartStatusFailure;
+            HZELog(@"Error! Failed to get networks from Heyzap. Retrying in %g seconds. Error = %@,",self.retryStartDelay, error);
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.retryStartDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                self.retryStartDelay *= 2;
+                [self retriableStart];
+            });
+        }];
+    });
 }
 
 - (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion
@@ -169,7 +169,7 @@ const NSTimeInterval maxStartDelay     = 300;
     options.tag = tag;
     options.completion = completion;
 
-    [self mediateForAdType:adType showImmediately:NO fetchTimeout:10 additionalParams:additionalParams options:options];
+    [self mediateForAdType:adType showImmediately:NO additionalParams:additionalParams options:options];
 }
 
 - (void)autoFetchInterstitial
@@ -179,7 +179,6 @@ const NSTimeInterval maxStartDelay     = 300;
         
         [self mediateForAdType:HZAdTypeInterstitial
                showImmediately:NO
-                  fetchTimeout:10
               additionalParams:nil
                        options:options];
     }
@@ -223,19 +222,14 @@ NSString * const kHZDataKey = @"data";
 
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
-    HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(adType)];
-    [[HZMetrics sharedInstance] logShowAdWithObject:stub network:nil];
-    [[HZMetrics sharedInstance] logTimeSinceStartFor:kTimeFromStartToShowAdKey withProvider:stub network:nil];
-
     [self mediateForAdType:adType
            showImmediately:YES
-              fetchTimeout:2
           additionalParams:additionalParams
                    options:options];
 }
 
 // `mediateForSessionKey` and this method looks up the session.
-- (void)mediateForAdType:(HZAdType)adType showImmediately:(BOOL)showImmediately fetchTimeout:(NSTimeInterval)timeout additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
+- (void)mediateForAdType:(HZAdType)adType showImmediately:(BOOL)showImmediately additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
     NSString *adUnit = NSStringFromAdType(adType);
     
@@ -243,7 +237,7 @@ NSString * const kHZDataKey = @"data";
     HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:options.tag];
     HZMediationSession *session = self.sessionDictionary[key];
     if (session && showImmediately && !additionalParams) {
-        [self fetchForSession:session showImmediately:YES fetchTimeout:timeout sessionKey:key options:options];
+        [self fetchForSession:session showImmediately:YES sessionKey:key options:options];
         return;
     }
     
@@ -255,41 +249,45 @@ NSString * const kHZDataKey = @"data";
     
     NSDictionary *const mediateParams = request.createParams;
     
-    [[HZMediationAPIClient sharedClient] get:@"mediate"
-                                withParams:mediateParams
-                                   success:^(NSDictionary *json) {
-                                       
-                                       HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:options.tag];
-      
-                                       NSError *error;
-                                       HZMediationSession *session = [[HZMediationSession alloc] initWithJSON:json mediateParams:mediateParams setupMediators:self.setupMediators adType:adType tag:options.tag error:&error];
-                                       
-                                       if (session) {
-                                           self.sessionDictionary[key] = session;
-
-                                           [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:session.impressionID withProvider:session network:nil];
-
-                                           [self fetchForSession:session
-                                                 showImmediately:showImmediately
-                                                    fetchTimeout:timeout
-                                                      sessionKey:key
-                                                         options:options];
-                                       } else {
-                                           [self sendFailureMessagesForAdType:adType wasAttemptingToShow:showImmediately underlyingError:error options:options];
-                                       }
-        
-                                       
-                                   } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-                                       [self sendFailureMessagesForAdType:adType wasAttemptingToShow:showImmediately underlyingError:error options:options];
-                                       HZELog(@"Error! Failed to get the list of networks to mediate from Heyzap. Mediation won't be possible. Error = %@,",error);
-                                   }];
+    dispatch_async(self.fetchQueue, ^{
+        [[HZMediationAPIClient sharedClient] GET:@"mediate"
+                                      parameters:mediateParams
+                                         success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
+                                             
+                                             HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType tag:options.tag];
+                                             
+                                             NSError *error;
+                                             HZMediationSession *session = [[HZMediationSession alloc] initWithJSON:json mediateParams:mediateParams setupMediators:self.setupMediators adType:adType tag:options.tag error:&error];
+                                             
+                                             if (session) {
+                                                 self.sessionDictionary[key] = session;
+                                                 
+                                                 [self fetchForSession:session
+                                                       showImmediately:showImmediately
+                                                            sessionKey:key
+                                                               options:options];
+                                             } else {
+                                                 [self sendFailureMessagesForAdType:adType wasAttemptingToShow:showImmediately underlyingError:error options:options];
+                                             }
+                                             
+                                             
+                                         } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+                                             [self sendFailureMessagesForAdType:adType wasAttemptingToShow:showImmediately underlyingError:error options:options];
+                                             HZELog(@"Error! Failed to get the list of networks to mediate from Heyzap. Mediation won't be possible. Error = %@,",error);
+                                         }];
+    });
+    
+    
 }
 
 
 
-- (void)fetchForSession:(HZMediationSession *)session showImmediately:(BOOL)showImmediately fetchTimeout:(const NSTimeInterval)timeout sessionKey:(HZMediationSessionKey *)sessionKey options:(HZShowOptions *)options
+- (void)fetchForSession:(HZMediationSession *)session showImmediately:(BOOL)showImmediately sessionKey:(HZMediationSessionKey *)sessionKey options:(HZShowOptions *)options
 {
     NSString *tag = session.tag;
+    
+    const NSTimeInterval timeout = showImmediately ? 2 : 12;
+    const NSTimeInterval pollInterval = showImmediately ? 0.5 : 3;
     
     NSArray *const preferredMediatorList = ({
         NSArray *mediatorList;
@@ -302,7 +300,6 @@ NSString * const kHZDataKey = @"data";
     });
     
     HZAdType type = session.adType;
-    NSString *connectivity = [HZUtils internetStatus];
     HZDLog(@"Preferred mediator list = %@",preferredMediatorList);
     
     // Find the first SDK that has an ad, and use it
@@ -316,27 +313,17 @@ NSString * const kHZDataKey = @"data";
         }
     }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+    dispatch_async(self.fetchQueue, ^{
         BOOL successful = NO;
         int ordinal = 0;
         for (HZBaseAdapter *adapter in preferredMediatorList) {
-            NSString *network = [[adapter class] name];
-            const CFTimeInterval startTime = CACurrentMediaTime();
             
             dispatch_sync(dispatch_get_main_queue(), ^{
-                // start of fetch metrics
-                [[HZMetrics sharedInstance] logMetricsEvent:kNetworkVersionKey value:adapter.sdkVersion withProvider:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kOrdinalKey value:@(ordinal) withProvider:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kAdUnitKey value:session.adUnit withProvider:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kConnectivityKey value:connectivity withProvider:session network:network];
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchKey value:@1 withProvider:session network:network];
-                [[HZMetrics sharedInstance] logFetchTimeWithObject:session network:network];
-
                 [adapter prefetchForType:type tag:tag];
             });
             
             __block BOOL fetchedWithinTimeout = NO;
-            hzWaitUntil(^BOOL{
+            hzWaitUntilInterval(pollInterval, ^BOOL{
                 fetchedWithinTimeout = [adapter hasAdForType:type tag:tag];
                 if ([adapter lastErrorForAdType:type]) {
                     HZELog(@"There was an error w/ the fetch = %@",[adapter lastErrorForAdType:type]);
@@ -355,12 +342,9 @@ NSString * const kHZDataKey = @"data";
             if (isRateLimited && fetchedWithinTimeout) {
                 continue;
             }
-            
-            int64_t elaspsedMilliseconds = millisecondsSinceCFTimeInterval(startTime);
 
             if (fetchedWithinTimeout) {
                 HZDLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchDownloadTimeKey value:@(elaspsedMilliseconds) withProvider:session network:network];
                 successful = YES;
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if (options.completion) { options.completion(YES,nil); }
@@ -368,7 +352,6 @@ NSString * const kHZDataKey = @"data";
                     [session reportFetchWithSuccessfulAdapter:adapter];
                 });
                 if (showImmediately) {
-                    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndAttemptedFetchSuccessValue withProvider:session network:network];
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey options:options];
                     });
@@ -381,11 +364,6 @@ NSString * const kHZDataKey = @"data";
             } else {
                 HZDLog(@"The mediator with name = %@ didn't have an ad",[[adapter class] name]);
 
-                [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailedKey value:@(1) withProvider:session network:network];
-                if (showImmediately) {
-                    [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNotCachedAndAttemptedFetchFailedValue withProvider:session network:network];
-                }
-
                 // If the mediated SDK errored, reset it and try again. If there's no error, they're probably still busy fetching.
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if ([adapter lastErrorForAdType:type]) {
@@ -395,14 +373,8 @@ NSString * const kHZDataKey = @"data";
                         } else {
                             reason = [adapter lastErrorForAdType:type].localizedDescription;
                         }
-                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:reason withProvider:session network:network];
                         [adapter clearErrorForAdType:type];
                         [adapter prefetchForType:type tag:tag];
-                    } else if ([connectivity isEqualToString:kNoInternet]){
-                        [[HZMetrics sharedInstance] logMetricsEvent:kFetchFailReasonKey value:kNoConnectivityValue withProvider:session network:network];
-                        if (showImmediately) {
-                            [[HZMetrics sharedInstance] logMetricsEvent:kShowAdResultKey value:kNoConnectivityValue withProvider:session network:network];
-                        }
                     }
                 });
             }
@@ -422,8 +394,6 @@ NSString * const kHZDataKey = @"data";
     });
 }
 
-static int totalImpressions = 0;
-
 - (void)haveAdapter:(HZBaseAdapter *)adapter showAdForSession:(HZMediationSession *)session sessionKey:(HZMediationSessionKey *)key options:(HZShowOptions *)options
 {
     [self.sessionDictionary removeObjectForKey:key];
@@ -435,13 +405,9 @@ static int totalImpressions = 0;
         self.lastInterstitialVideoShownDate = [NSDate date];
     }
 
+    [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
     [adapter showAdForType:session.adType options:options];
     [session reportImpressionForAdapter:adapter];
-    [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
-
-    NSString *network = [adapter name];
-    [[HZMetrics sharedInstance] logTimeSinceFetchFor:kTimeFromFetchToImpressionKey withProvider:session network:network];
-    [[HZMetrics sharedInstance] logMetricsEvent:kNthAdKey value:@(++totalImpressions) withProvider:session network:network];
 }
 
 
@@ -483,16 +449,7 @@ static int totalImpressions = 0;
     NSOrderedSet *const availableAdapters = [session availableAdapters:self.lastInterstitialVideoShownDate];
     
     NSIndexSet *const adapterIndexes = [availableAdapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter * adapter, NSUInteger idx, BOOL *stop) {
-        BOOL available = [adapter hasAdForType:adType tag:tag];
-        
-        NSString *network = [adapter name];
-        HZMetricsAdStub *stub = [[HZMetricsAdStub alloc] initWithTag:tag adUnit:NSStringFromAdType(adType)];
-        [[HZMetrics sharedInstance] logMetricsEvent:kIsAvailableCalledKey value:@1 withProvider:stub network:network];
-        [[HZMetrics sharedInstance] logTimeSinceFetchFor:kIsAvailableTimeSincePreviousFetchKey withProvider:stub network:network];
-        [[HZMetrics sharedInstance] logIsAvailable:available withProvider:stub network:network];
-        [[HZMetrics sharedInstance] logMetricsEvent:kNetworkVersionKey value:adapter.sdkVersion withProvider:stub network:network];
-        
-        return available;
+        return [adapter hasAdForType:adType tag:tag];
     }];
     
     return [NSOrderedSet orderedSetWithArray:[availableAdapters objectsAtIndexes:adapterIndexes]];
@@ -529,13 +486,6 @@ static int totalImpressions = 0;
     HZMediationSessionKey *key = [self currentShownSessionKey];
     
     if (key) {
-        // removeAdWithProvider:network: is called for Heyzap ads inside HZAdViewController for both Heyzap only and mediation
-        // so only call it here if we are talking about a non-Heyzap adapter
-        if (![adapter isKindOfClass:[HZAbstractHeyzapAdapter class]]) {
-            HZMediationSession *session = [self.sessionDictionary objectForKey:key];
-            [[HZMetrics sharedInstance] removeAdWithProvider:session network:[adapter name]];
-        }
-
         [self.sessionDictionary removeObjectForKey:key];
         [[self delegateForAdType:key.adType] didHideAdWithTag:key.tag];
     }
@@ -582,13 +532,20 @@ static int totalImpressions = 0;
 
 + (NSString *)commaSeparatedAdapterList
 {
-    NSMutableArray *adapterNames = [NSMutableArray array];
-    for (Class adapterClass in [HZBaseAdapter allAdapterClasses]) {
-        if ([adapterClass isSDKAvailable]) {
-            [adapterNames addObject:[adapterClass name]];
+    // Profiling showed this to take > 1 ms; it's doing a decent amount of work checking if all the classes exist.
+    static NSString *commaSeparatedAdapters;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSMutableArray *adapterNames = [NSMutableArray array];
+        for (Class adapterClass in [HZBaseAdapter allAdapterClasses]) {
+            if ([adapterClass isSDKAvailable]) {
+                [adapterNames addObject:[adapterClass name]];
+            }
         }
-    }
-    return [adapterNames componentsJoinedByString:@","];
+        commaSeparatedAdapters = [adapterNames componentsJoinedByString:@","];
+    });
+    
+    return commaSeparatedAdapters;
 }
 
 static BOOL forceOnlyHeyzapSDK = NO;
@@ -598,7 +555,12 @@ static BOOL forceOnlyHeyzapSDK = NO;
 
 + (BOOL)isOnlyHeyzapSDK
 {
-    return [[self availableNonHeyzapAdapters] count] == 0 || forceOnlyHeyzapSDK;
+    static BOOL isOnlyHeyzap;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        isOnlyHeyzap = [[self availableNonHeyzapAdapters] count] == 0 || forceOnlyHeyzapSDK;
+    });
+    return isOnlyHeyzap;
 }
 
 
@@ -660,6 +622,7 @@ static BOOL forceOnlyHeyzapSDK = NO;
 }
 
 const NSTimeInterval bannerTimeout = 10;
+const NSTimeInterval bannerPollInterval = 1;
 
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion {
     HZParameterAssert(options);
@@ -681,62 +644,66 @@ const NSTimeInterval bannerTimeout = 10;
     
     NSDictionary *const mediateParams = request.createParams;
     
-    [[HZMediationAPIClient sharedClient] get:@"mediate" withParams:mediateParams success:^(NSDictionary *json) {
-        
-        // This should be factored out into a general way of saying "does the ad network have credentials for X ad format?
-        NSSet *const setupBannerMediators = [self.setupMediators objectsPassingTest:^BOOL(HZBaseAdapter *adapter, BOOL *stop) {
-            return [adapter hasBannerCredentials];
-        }];
-        
-        NSError *error;
-        HZMediationSession *const session = [[HZMediationSession alloc] initWithJSON:json mediateParams:mediateParams setupMediators:setupBannerMediators adType:HZAdTypeBanner tag:request.tag error:&error];
-        if (error) {
-            NSError *mediationError = [[self class] bannerErrorWithDescription:@"Couldn't create HZMediationSession" underlyingError:error];
-            completion(mediationError, nil);
-            return;
-        }
-        
-        HZDLog(@"Chosen adapters for banners = %@",session.chosenAdapters);
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            for (HZBaseAdapter *baseAdapter in session.chosenAdapters) {
-                NSLog(@"Base adapter = %@",baseAdapter);
-                __block HZBannerAdapter *bannerAdapter;
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    bannerAdapter = [baseAdapter fetchBannerWithOptions:options reportingDelegate:self];
-                });
-                
-                __block BOOL isAvailable = NO;
-                hzWaitUntil(^BOOL{
-                    isAvailable = [bannerAdapter isAvailable];
-                    if (bannerAdapter.lastError) {
-                        HZELog(@"Ad Network %@ had an error loading a banner: %@",baseAdapter.name, bannerAdapter.lastError);
-                    }
-                    return isAvailable || (bannerAdapter.lastError != nil);
-                }, bannerTimeout);
-                
-                if (isAvailable) {
+
+    dispatch_async(self.fetchQueue, ^{
+        [[HZMediationAPIClient sharedClient] GET:@"mediate" parameters:mediateParams success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
+            
+            // This should be factored out into a general way of saying "does the ad network have credentials for X ad format?
+            NSSet *const setupBannerMediators = [self.setupMediators objectsPassingTest:^BOOL(HZBaseAdapter *adapter, BOOL *stop) {
+                return [adapter hasBannerCredentials];
+            }];
+            
+            NSError *error;
+            HZMediationSession *const session = [[HZMediationSession alloc] initWithJSON:json mediateParams:mediateParams setupMediators:setupBannerMediators adType:HZAdTypeBanner tag:request.tag error:&error];
+            if (error) {
+                NSError *mediationError = [[self class] bannerErrorWithDescription:@"Couldn't create HZMediationSession" underlyingError:error];
+                completion(mediationError, nil);
+                return;
+            }
+            
+            NSLog(@"Chosen adapters for banners = %@",session.chosenAdapters);
+            
+            dispatch_async(self.fetchQueue, ^{
+                for (HZBaseAdapter *baseAdapter in session.chosenAdapters) {
+                    NSLog(@"Base adapter = %@",baseAdapter);
+                    __block HZBannerAdapter *bannerAdapter;
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        bannerAdapter.session = session;
-                        [session reportFetchWithSuccessfulAdapter:baseAdapter];
-                        completion(nil, bannerAdapter);
+                        bannerAdapter = [baseAdapter fetchBannerWithOptions:options reportingDelegate:self];
                     });
                     
-                    break;
-                } else if (baseAdapter == [session.chosenAdapters lastObject]) {
-                    dispatch_sync(dispatch_get_main_queue(), ^{
-                        [session reportFetchWithSuccessfulAdapter:nil];
-                        completion([[self class] bannerErrorWithDescription:@"None of the mediated ad networks had a banner available" underlyingError:nil], nil);
-                    });
+                    __block BOOL isAvailable = NO;
+                    hzWaitUntilInterval(bannerPollInterval, ^BOOL{
+                        isAvailable = [bannerAdapter isAvailable];
+                        if (bannerAdapter.lastError) {
+                            HZELog(@"Ad Network %@ had an error loading a banner: %@",baseAdapter.name, bannerAdapter.lastError);
+                        }
+                        return isAvailable || (bannerAdapter.lastError != nil);
+                    }, bannerTimeout);
+                    
+                    if (isAvailable) {
+                        dispatch_sync(dispatch_get_main_queue(), ^{
+                            bannerAdapter.session = session;
+                            [session reportFetchWithSuccessfulAdapter:baseAdapter];
+                            completion(nil, bannerAdapter);
+                        });
+                        
+                        break;
+                    } else if (baseAdapter == [session.chosenAdapters lastObject]) {
+                        dispatch_sync(dispatch_get_main_queue(), ^{
+                            [session reportFetchWithSuccessfulAdapter:nil];
+                            completion([[self class] bannerErrorWithDescription:@"None of the mediated ad networks had a banner available" underlyingError:nil], nil);
+                        });
+                    }
+                    
                 }
-                
-            }
-        });
-        
-    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        NSError *mediationError = [[self class] bannerErrorWithDescription:@"Error communicating with Heyzap's servers" underlyingError:error];
-        completion(mediationError, nil);
-    }];
+            });
+            
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+            NSError *mediationError = [[self class] bannerErrorWithDescription:@"Error communicating with Heyzap's servers" underlyingError:error];
+            completion(mediationError, nil);
+        }];
+    });
+    
     
     // Session gets attached to what? To the adapter?
     // Maybe to the wrapper?

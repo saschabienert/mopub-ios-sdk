@@ -59,7 +59,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"HZMetricsKey - tag = %@ adUnit = %@ auctionType = %@",
+    return [NSString stringWithFormat:@"HZAdInfo - tag = %@ adUnit = %@ auctionType = %@",
             self.tag,self.adUnit,NSStringFromHZAuctionType(self.auctionType)];
 }
 

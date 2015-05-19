@@ -10,8 +10,6 @@
 #import "HZAdColony.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
-#import "HZMetrics.h"
-#import "HZMetricsAdStub.h"
 #import "HeyzapAds.h"
 #import "HeyzapMediation.h"
 
@@ -162,9 +160,6 @@
     } else {
         [HZAdColony playVideoAdForZone:self.interstitialZoneID withDelegate:self];
     }
-
-    self.metricsStub = [[HZMetricsAdStub alloc] initWithTag:options.tag adUnit:NSStringFromAdType(type)];
-    [[HZMetrics sharedInstance] logTimeSinceShowAdFor:kShowAdTimeTillAdIsDisplayedKey withProvider:self.metricsStub network:[self name]];
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType

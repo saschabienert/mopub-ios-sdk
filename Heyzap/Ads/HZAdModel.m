@@ -15,7 +15,6 @@
 #import "HZAdInterstitialViewController.h"
 #import "HZDevice.h"
 #import "HeyzapAds.h"
-#import "HZMetrics.h"
 #import "HZEnums.h"
 
 #import "HZAdsAPIClient.h"
@@ -118,9 +117,6 @@
     return self;
 }
 
-- (void)sendInitializationMetrics {
-    [[HZMetrics sharedInstance] logMetricsEvent:@"impression_id" value:_impressionID withProvider:self network:HeyzapAdapterFromHZAuctionType(self.auctionType)];
-}
 
 
 - (NSString *) description {
@@ -144,14 +140,10 @@
 
 - (BOOL) onClick {
     if (self.sentClick) return false;
-    NSString *heyzapAdapter = HeyzapAdapterFromHZAuctionType(self.auctionType);
-    [[HZMetrics sharedInstance] logMetricsEvent:kAdClickedKey value:@1 withProvider:self network:heyzapAdapter];
-    long timeCLickedMiliseconds = lround([[NSDate date] timeIntervalSince1970] * 1000);
-    [[HZMetrics sharedInstance] logMetricsEvent:kTimeClickedKey value:@(timeCLickedMiliseconds) withProvider:self network:heyzapAdapter];
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     
-    [[HZAdsAPIClient sharedClient] post:kHZRegisterClickEndpoint withParams: params success:^(id JSON) {
+    [[HZAdsAPIClient sharedClient] POST:kHZRegisterClickEndpoint parameters:params success:^(HZAFHTTPRequestOperation *operation, id JSON) {
         if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @(0) withDict: JSON] intValue] == 200) {
             self.sentClick = YES;
             [HZLog debug: [NSString stringWithFormat: @"(CLICK) %@", self]];
@@ -169,7 +161,7 @@
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     
-    [[HZAdsAPIClient sharedClient] post:kHZRegisterImpressionEndpoint withParams: params success:^(id JSON) {
+    [[HZAdsAPIClient sharedClient] POST:kHZRegisterImpressionEndpoint parameters:params success:^(HZAFHTTPRequestOperation *operation, id JSON) {
         if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @(0) withDict: JSON] intValue] == 200) {
             self.sentImpression = YES;
             [HZLog debug: [NSString stringWithFormat: @"(IMPRESSION) %@", self]];

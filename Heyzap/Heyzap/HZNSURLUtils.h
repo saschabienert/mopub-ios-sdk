@@ -20,4 +20,6 @@
  */
 + (NSString *)substituteGetParams:(NSString *)urlString impressionID:(NSString *)impressionID;
 
+extern NSMutableString * hzReplaceSubstringWithString(NSMutableString *mutableString, NSString *subtring, NSString *replacement);
+
 @end

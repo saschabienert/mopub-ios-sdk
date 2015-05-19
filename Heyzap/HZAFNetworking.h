@@ -1,6 +1,6 @@
-// HZAFNetworking.h
+// AFNetworking.h
 //
-// Copyright (c) 2011 Gowalla (http://gowalla.com/)
+// Copyright (c) 2013 AFNetworking (http://afnetworking.com/)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,19 +23,22 @@
 #import <Foundation/Foundation.h>
 #import <Availability.h>
 
-#ifndef _HZAFNetworking_
-#define _HZAFNetworking_
+#ifndef _HZAFNETWORKING_
+    #define _HZAFNETWORKING_
 
-#import "HZAFURLConnectionOperation.h"
+    #import "HZAFURLRequestSerialization.h"
+    #import "HZAFURLResponseSerialization.h"
+    #import "HZAFSecurityPolicy.h"
+    #import "HZAFNetworkReachabilityManager.h"
 
-#import "HZAFHTTPRequestOperation.h"
-#import "HZAFJSONRequestOperation.h"
-#import "HZAFHTTPClient.h"
+    #import "HZAFURLConnectionOperation.h"
+    #import "HZAFHTTPRequestOperation.h"
+    #import "HZAFHTTPRequestOperationManager.h"
 
-#import "HZAFImageRequestOperation.h"
+//#if ( ( defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 1090) || \
+//      ( defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000 ) )
+//    #import "AFURLSessionManager.h"
+//    #import "AFHTTPSessionManager.h"
+//#endif
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED
-#import "HZAFNetworkActivityIndicatorManager.h"
-#endif
-
-#endif /* _HZAFNetworking_ */
+#endif /* _HZAFNETWORKING_ */

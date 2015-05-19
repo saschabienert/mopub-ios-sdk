@@ -40,7 +40,7 @@
     }
     NSString *impressionIDs = [[self.ads valueForKey:@"impressionID"] componentsJoinedByString:@","];
     
-    [[HZAdsAPIClient sharedClient] post: kHZRegisterImpressionEndpoint withParams: @{@"impression_ids": impressionIDs} success:^(id JSON) {
+    [[HZAdsAPIClient sharedClient] POST:kHZRegisterImpressionEndpoint parameters:@{@"impression_ids": impressionIDs} success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
         self.sentImpressions = YES;
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         [HZLog debug: [NSString stringWithFormat: @"(IMPRESSION ERROR) %@, Error: %@", self, error]];

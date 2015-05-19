@@ -9,6 +9,7 @@
 #import "HZInterstitialAdModel.h"
 #import "HZDictionaryUtils.h"
 #import "HZUtils.h"
+#import "HZWebViewPool.h"
 
 @interface HZInterstitialAdModel()<UIWebViewDelegate>
 
@@ -59,7 +60,6 @@
         }
     }
     
-    [self sendInitializationMetrics];
     return self;
 }
 
@@ -74,12 +74,9 @@
     
     __block HZInterstitialAdModel *blockSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        blockSelf.preloadWebview = [[UIWebView alloc] initWithFrame: CGRectMake(0.0, 0.0, 500.0, 500.0)];
+        blockSelf.preloadWebview = [[HZWebViewPool sharedPool] checkoutPool];
         blockSelf.preloadWebview.delegate = blockSelf;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,
-                                                 (unsigned long)NULL), ^(void) {
-            [blockSelf.preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
-        });
+        [blockSelf.preloadWebview loadHTMLString: self.HTMLContent baseURL: baseURL];
     });
 
     if (completion) {
@@ -98,6 +95,14 @@
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     
+}
+
+- (void)dealloc {
+    UIWebView *preload = self.preloadWebview;
+    self.preloadWebview = nil;
+    if (preload) {
+        [[HZWebViewPool sharedPool] returnWebView:preload];
+    }
 }
 
 @end
