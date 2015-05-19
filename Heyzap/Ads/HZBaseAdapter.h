@@ -11,6 +11,7 @@
 #import "HZBannerAdapter.h"
 #import "HZAdapterDelegate.h"
 #import "HZAdType.h"
+
 @import UIKit;
 
 @class HZBaseAdapter;
@@ -55,17 +56,13 @@
 
 @property (nonatomic, strong) NSDictionary *credentials;
 
-<<<<<<< HEAD
 /**
  *  Subclasses to use this to store tag and adUnit for metrics
  */
-@property (nonatomic, strong) HZMetricsAdStub *metricsStub;
 
 @property (nonatomic) HZNetwork network;
 @property (nonatomic, strong) HZAdapterDelegate *forwardingDelegate;
 
-=======
->>>>>>> master
 + (instancetype)sharedInstance;
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag;
