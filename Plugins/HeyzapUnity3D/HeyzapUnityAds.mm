@@ -99,7 +99,6 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 
 - (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *) message andTag: (NSString *) tag {
     NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", message, tag];
-    UnitySendMessage("HeyzapAds", "setDisplayState", [unityMessage UTF8String]);
     UnitySendMessage([klass UTF8String], "setDisplayState", [unityMessage UTF8String]);
 }
 
@@ -128,6 +127,12 @@ extern "C" {
         [HZVideoAd setDelegate: HZVideoDelegate];
         
         HZBannerDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_BANNER_KLASS];
+
+        [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
+            NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", network, callback];
+            NSString *klassName = @"HeyzapAds";
+            UnitySendMessage([klassName UTF8String], "setNetworkCallbackMessage", [unityMessage UTF8String]);
+        }];
     }
     
     void hz_ads_show_interstitial(const char *tag) {
@@ -228,5 +233,9 @@ extern "C" {
     
     void hz_ads_show_mediation_debug_view_controller(void) {
         [HeyzapAds presentMediationDebugViewController];
+    }
+
+    bool hz_ads_is_network_initialized(const char *network) {
+        return [HeyzapAds isNetworkInitialized: [NSString stringWithUTF8String: network]];
     }
 }
