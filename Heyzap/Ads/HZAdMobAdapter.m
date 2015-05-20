@@ -59,6 +59,7 @@
         adapter.credentials = credentials;
         [[self sharedInstance] setAdUnitID:adUnitID];
         [[self sharedInstance] setBannerAdUnitID:bannerAdUnitId];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
     return nil;

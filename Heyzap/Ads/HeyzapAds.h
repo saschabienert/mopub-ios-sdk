@@ -88,6 +88,7 @@ extern NSString * const HZNetworkAdColony;
 extern NSString * const HZNetworkAdMob;
 extern NSString * const HZNetworkIAd;
 
+extern NSString * const HZNetworkCallbackInitialized;
 extern NSString * const HZNetworkCallbackShow;
 extern NSString * const HZNetworkCallbackAvailable;
 extern NSString * const HZNetworkCallbackHide;

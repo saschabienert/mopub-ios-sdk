@@ -47,6 +47,7 @@
 }
 
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials {
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     return nil;
 }
 

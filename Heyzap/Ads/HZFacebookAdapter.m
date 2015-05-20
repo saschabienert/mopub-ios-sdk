@@ -80,6 +80,7 @@
         adapter.credentials = credentials;
         adapter.placementID = placementID;
         adapter.bannerPlacementID = bannerPlacementID;
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
     return nil;

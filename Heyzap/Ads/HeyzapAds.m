@@ -56,6 +56,8 @@ NSString * const HZNetworkIAd = @"iad";
 // Warning! Read first please.
 // Do NOT change the values. They are shared
 // with the server side and Android.
+
+NSString * const HZNetworkCallbackInitialized = @"initialized";
 NSString * const HZNetworkCallbackShow = @"show";
 NSString * const HZNetworkCallbackAvailable = @"available";
 NSString * const HZNetworkCallbackHide = @"hide";

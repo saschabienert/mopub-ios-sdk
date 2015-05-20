@@ -101,6 +101,7 @@
     if (!adapter.credentials) {
         adapter.credentials = credentials;
        [[self sharedInstance] initializeSDKWithKey:sdkKey];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
 
     return nil;

@@ -67,6 +67,7 @@
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         [[self sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
     return nil;

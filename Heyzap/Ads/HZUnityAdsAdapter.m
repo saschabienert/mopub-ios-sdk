@@ -95,6 +95,7 @@
         adapter.credentials = credentials;
         [[self sharedInstance] setupUnityAdsWithAppID:appID
                                           videoZoneID:videoZoneID incentivizedZoneID:incentivizedZoneID];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
     return nil;

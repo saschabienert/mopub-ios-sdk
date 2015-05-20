@@ -78,6 +78,7 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         [[self sharedInstance] startWithPubAppID:appID];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
     return nil;

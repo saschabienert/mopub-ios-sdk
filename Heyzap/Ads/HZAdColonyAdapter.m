@@ -88,6 +88,7 @@
         [[self sharedInstance] setupAdColonyWithAppID:appID
                                    interstitialZoneID:interstitialZoneID
                                    incentivizedZoneID:incentivizedZoneID];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
     return nil;
