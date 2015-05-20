@@ -32,7 +32,7 @@
 
 + (NSString *)name
 {
-    return kHZAdapterCrossPromo;
+    return HZNetworkCrossPromo;
 }
 
 + (NSString *)humanizedName

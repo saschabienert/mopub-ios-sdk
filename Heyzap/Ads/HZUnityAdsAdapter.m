@@ -55,16 +55,12 @@
 
 + (NSString *)name
 {
-    return kHZAdapterUnityAds;
+    return HZNetworkUnityAds;
 }
 
 + (NSString *) humanizedName
 {
     return kHZAdapterUnityAdsHumanized;
-}
-
-- (HZNetwork)network {
-    return HZNetworkUnityAds;
 }
 
 + (NSString *)sdkVersion
@@ -170,7 +166,7 @@ NSString * const kHZNetworkName = @"mobile";
     }
     [[HZUnityAds sharedInstance] show];
 
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
 }
 
 #pragma mark - AdColony Delegation
@@ -194,30 +190,30 @@ NSString * const kHZNetworkName = @"mobile";
         if (self.didSkipIncentivized) {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
             
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self network]];
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
         } else {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
             
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self network]];
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
         }
     }
     self.isShowingIncentivized = NO;
     self.didSkipIncentivized = NO;
     [self.delegate adapterDidDismissAd:self];
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 - (void)unityAdsWillLeaveApplication {
     [self.delegate adapterWasClicked:self];
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)unityAdsVideoStarted {
     [self.delegate adapterWillPlayAudio:self];
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
 }
 
 @end

@@ -78,16 +78,12 @@
 
 + (NSString *)name
 {
-    return kHZAdapterAppLovin;
+    return HZNetworkAppLovin;
 }
 
 + (NSString *)humanizedName
 {
     return kHZAdapterAppLovinHumanized;
-}
-
-- (HZNetwork)network {
-    return HZNetworkAppLovin;
 }
 
 + (NSString *)sdkVersion {
@@ -204,7 +200,7 @@
         }
     }
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 - (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error
 {
@@ -228,18 +224,18 @@
         }
     }
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)didClickAd
 {
     [self.delegate adapterWasClicked:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 - (void)didDismissAd
 {
     [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 - (void)didCompleteIncentivized
@@ -247,13 +243,13 @@
     [self clearIncentivizedState];
     
     [self.delegate adapterDidCompleteIncentivizedAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
 }
 - (void)didFailToCompleteIncentivized
 {
     [self clearIncentivizedState];
     [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
 }
 
 - (void)clearIncentivizedState {
@@ -265,12 +261,12 @@
 - (void)willPlayAudio
 {
     [self.delegate adapterWillPlayAudio:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
 }
 - (void)didFinishAudio
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
 }
 
 

@@ -52,16 +52,12 @@
 
 + (NSString *)name
 {
-    return kHZAdapteriAd;
+    return HZNetworkIAd;
 }
 
 + (NSString *)humanizedName
 {
     return kHZAdapteriAdHumanized;
-}
-
-- (HZNetwork)network {
-    return HZNetworkIAd;
 }
 
 + (NSString *)sdkVersion {
@@ -143,12 +139,12 @@
 
 - (void)interstitialAdDidLoad:(ADInterstitialAd *)interstitialAd {
     self.lastInterstitialError = nil;
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (void)interstitialAdDidUnload:(ADInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd: self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
     if (self.presentedViewController) {
         [self adWasDismissed];
     } else {
@@ -160,10 +156,10 @@
 - (BOOL)interstitialAdActionShouldBegin:(ADInterstitialAd *)interstitialAd
                    willLeaveApplication:(BOOL)willLeave {
     [self.delegate adapterWasClicked: self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
     
     if (willLeave) {
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: [self network]];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: [self name]];
     }
     
     return YES;
@@ -171,7 +167,7 @@
 
 - (void)interstitialAdActionDidFinish:(ADInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self name]];
 }
 
 - (void)interstitialAd:(ADInterstitialAd *)interstitialAd
@@ -183,7 +179,7 @@
                                                  userInfo:@{kHZMediatorNameKey: @"iAd",
                                                             NSUnderlyingErrorKey: error}];
     self.interstitialAd = nil;
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

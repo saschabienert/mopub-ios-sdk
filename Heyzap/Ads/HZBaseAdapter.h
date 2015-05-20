@@ -59,8 +59,6 @@
 /**
  *  Subclasses to use this to store tag and adUnit for metrics
  */
-
-@property (nonatomic) HZNetwork network;
 @property (nonatomic, strong) HZAdapterDelegate *forwardingDelegate;
 
 + (instancetype)sharedInstance;
@@ -121,7 +119,6 @@
 #pragma mark - Implemented methods
 
 + (Class)adapterClassForName:(NSString *)adapterName;
-+ (HZNetwork)networkForName:(NSString *)network;
 
 + (NSSet *)allAdapterClasses;
 + (NSArray *)testActivityAdapters;

@@ -90,17 +90,12 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 
 + (NSString *)name
 {
-    return kHZAdapterVungle;
+    return HZNetworkVungle;
 }
-
 
 + (NSString *)humanizedName
 {
     return kHZAdapterVungleHumanized;
-}
-
-- (HZNetwork)network {
-    return HZNetworkVungle;
 }
 
 + (NSString *)sdkVersion {
@@ -161,21 +156,21 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
         if ([viewInfo[@"completedView"] boolValue]) {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
             
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self network]];
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
         } else {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
             
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self network]];
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
         }
     }
     
     if (willPresentProductSheet) {
         [self.delegate adapterWasClicked:self];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
     } else {
         [self.delegate adapterDidFinishPlayingAudio:self];
         [self.delegate adapterDidDismissAd:self];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
     }
     
     self.isShowingIncentivized = NO;
@@ -185,7 +180,7 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self name]];
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol

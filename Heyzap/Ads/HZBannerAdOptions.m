@@ -15,6 +15,10 @@
 #import "HZHZAdMobBannerSupport.h"
 #import "HZAdsManager.h"
 
+#import "HZiAdAdapter.h"
+#import "HZAdMobAdapter.h"
+#import "HZFacebookAdapter.h"
+
 @interface HZBannerAdOptions()
 
 HZFBAdSize *hzlookupFBAdSizeConstant(NSString *constantName);
@@ -226,12 +230,12 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size) {
 }
 
 - (BOOL)isFlexibleWidthForNetwork:(NSString *const)networkConstant {
-    if ([networkConstant isEqualToString:kHZAdapteriAd]) {
+    if ([networkConstant isEqualToString: [HZiAdAdapter name]]) {
         return YES;
-    } else if ([networkConstant isEqualToString:kHZAdapterAdMob]) {
+    } else if ([networkConstant isEqualToString:[HZAdMobAdapter name]]) {
         return self.admobBannerSize == HZAdMobBannerSizeFlexibleWidthPortrait
             || self.admobBannerSize == HZAdMobBannerSizeFlexibleWidthLandscape;
-    } else if ([networkConstant isEqualToString:kHZAdapterFacebook]) {
+    } else if ([networkConstant isEqualToString: [HZFacebookAdapter name]]) {
         return self.facebookBannerSize == HZFacebookBannerSizeFlexibleWidthHeight50
             || self.facebookBannerSize == HZFacebookBannerSizeFlexibleWidthHeight90;
     } else {

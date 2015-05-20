@@ -47,16 +47,12 @@
 
 + (NSString *)name
 {
-    return kHZAdapterAdColony;
+    return HZNetworkAdColony;
 }
 
 + (NSString *)humanizedName
 {
     return kHZAdapterAdColonyHumanized;
-}
-
-- (HZNetwork)network {
-    return HZNetworkAdColony;
 }
 
 + (NSString *)sdkVersion {
@@ -211,19 +207,19 @@
         if (shown) {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
             
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self network]];
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
         } else {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
             
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self network]];
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
         }
     }
     // unfortunately, adcolony doesn't tell us whether the ad was clicked or dismissed
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self network]];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 @end

@@ -71,17 +71,12 @@
 
 + (NSString *)name
 {
-    return kHZAdapterAdMob;
+    return HZNetworkAdMob;
 }
-
 
 + (NSString *)humanizedName
 {
     return kHZAdapterAdMobHumanized;
-}
-
-- (HZNetwork)network {
-    return HZNetworkAdMob;
 }
 
 + (NSString *)sdkVersion {
@@ -143,7 +138,7 @@
                                                 NSUnderlyingErrorKey: error}];
     self.currentInterstitial = nil;
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
@@ -152,7 +147,7 @@
     self.currentInterstitial = nil;
     
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 // As far as I can tell, this means a click.
@@ -160,14 +155,14 @@
 {
     [self.delegate adapterWasClicked:self];
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
     self.lastInterstitialError = nil;
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

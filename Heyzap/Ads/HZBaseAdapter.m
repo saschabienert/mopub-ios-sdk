@@ -156,54 +156,13 @@
 
 + (Class)adapterClassForName:(NSString *)adapterName
 {
-    if ([adapterName isEqualToString:kHZAdapterVungle]) {
-        return [HZVungleAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterChartboost]) {
-        return [HZChartboostAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterAdColony]) {
-        return [HZAdColonyAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterAdMob]) {
-        return [HZAdMobAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterHeyzap]) {
-        return [HZHeyzapAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterAppLovin]) {
-        return [HZAppLovinAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterCrossPromo]) {
-        return [HZCrossPromoAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterUnityAds]) {
-        return [HZUnityAdsAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterFacebook]) {
-        return [HZFacebookAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapteriAd]) {
-        return [HZiAdAdapter class];
-    } else {
-        return nil;
+    for (Class klass in [self allAdapterClasses]) {
+        if ([[klass name] isEqualToString: adapterName]) {
+            return klass;
+        }
     }
-}
-
-+ (HZNetwork)networkForName:(NSString *)network
-{
-    if ([network isEqualToString:kHZAdapterVungle]) {
-        return HZNetworkVungle;
-    } else if ([network isEqualToString:kHZAdapterChartboost]) {
-        return HZNetworkChartboost;
-    } else if ([network isEqualToString:kHZAdapterAdColony]) {
-        return HZNetworkAdColony;
-    } else if ([network isEqualToString:kHZAdapterAdMob]) {
-        return HZNetworkAdMob;
-    } else if ([network isEqualToString:kHZAdapterHeyzap]) {
-        return HZNetworkHeyzap;
-    } else if ([network isEqualToString:kHZAdapterAppLovin]) {
-        return HZNetworkAppLovin;
-    } else if ([network isEqualToString:kHZAdapterUnityAds]) {
-        return HZNetworkUnityAds;
-    } else if ([network isEqualToString:kHZAdapterFacebook]) {
-        return HZNetworkFacebook;
-    } else if ([network isEqualToString:kHZAdapteriAd]) {
-        return HZNetworkIAd;
-    } else {
-        return -1;
-    }
+    
+    return nil;
 }
 
 + (NSSet *)allAdapterClasses

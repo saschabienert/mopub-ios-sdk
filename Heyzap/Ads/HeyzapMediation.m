@@ -52,7 +52,6 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 
 @property (nonatomic) NSTimeInterval retryStartDelay;
 @property (nonatomic, strong) NSSet *setupMediators;
-@property (nonatomic) HZNetwork setupNetworks;
 
 @property (nonatomic, strong) NSMutableDictionary *sessionDictionary;
 
@@ -66,7 +65,7 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
-@property (nonatomic, strong) void (^networkCallbackBlock)(HZNetwork network, NSString *callback);
+@property (nonatomic, strong) void (^networkCallbackBlock)(NSString *network, NSString *callback);
 @property (nonatomic, strong) NSMutableDictionary *networkListeners;
 @property (nonatomic) dispatch_queue_t fetchQueue;
 
@@ -191,7 +190,6 @@ NSString * const kHZDataKey = @"data";
 - (void)setupMediators:(NSArray *)mediatorJSON
 {
     NSMutableSet *setupMediators = [NSMutableSet set];
-    self.setupNetworks = 0;
     for (NSDictionary *mediator in mediatorJSON) {
         NSString *mediatorName = mediator[kHZAdapterKey];
         Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
@@ -202,7 +200,6 @@ NSString * const kHZDataKey = @"data";
                 HZBaseAdapter *adapter = [mediatorClass sharedInstance];
                 adapter.delegate = self;
                 [setupMediators addObject:adapter];
-                self.setupNetworks |= adapter.network;
             } else {
                 HZELog(@"Error setting up 3rd-party SDK. Error = %@",credentialError);
             }
@@ -508,6 +505,8 @@ NSString * const kHZDataKey = @"data";
     if (key) {
         [[self delegateForAdType:key.adType] didFinishAudio];
     }
+    
+    
 }
 
 #pragma mark - Incentivized Specific
@@ -731,23 +730,29 @@ const NSTimeInterval bannerPollInterval = 1;
     [session reportClickForAdapter:bannerAdapter.parentAdapter];
 }
 
-- (void)setDelegate:(id)delegate forNetwork:(HZNetwork)network {
-    [self.networkListeners setObject:delegate forKey:[NSNumber numberWithUnsignedInteger:network]];
+- (void)setDelegate:(id)delegate forNetwork:(NSString *)network {
+    [self.networkListeners setObject:delegate forKey: network];
 }
 
-- (id)delegateForNetwork:(HZNetwork)network {
-    return [self.networkListeners objectForKey:[NSNumber numberWithUnsignedInteger:network]];
+- (id)delegateForNetwork:(NSString *)network {
+    return [self.networkListeners objectForKey: network];
 }
 
-- (BOOL) isNetworkInitialized:(HZNetwork)network {
-    return self.setupNetworks & network;
+- (BOOL) isNetworkInitialized:(NSString *)network {
+    for(HZBaseAdapter *adapter in self.setupMediators) {
+        if ([[adapter name] isEqualToString: network]) {
+            return YES;
+        }
+    }
+    
+    return NO;
 }
 
-- (void) setNetworkCallbackBlock: (void (^)(HZNetwork network, NSString *callback))block {
+- (void) setNetworkCallbackBlock: (void (^)(NSString *network, NSString *callback))block {
     _networkCallbackBlock = block;
 }
 
-- (void) sendNetworkCallback: (NSString *) callback forNetwork: (HZNetwork) network {
+- (void) sendNetworkCallback: (NSString *) callback forNetwork: (NSString *) network {
     if (_networkCallbackBlock != nil) {
         _networkCallbackBlock(network, callback);
     }

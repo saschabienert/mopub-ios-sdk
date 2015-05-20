@@ -77,17 +77,16 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsDisableMedation = 1 << 3,
 };
 
-typedef NS_ENUM(NSUInteger, HZNetwork) {
-    HZNetworkHeyzap =     1 << 0,
-    HZNetworkFacebook =   1 << 1,
-    HZNetworkUnityAds =   1 << 2,
-    HZNetworkAppLovin =   1 << 3,
-    HZNetworkVungle =     1 << 4,
-    HZNetworkChartboost = 1 << 5,
-    HZNetworkAdColony =   1 << 6,
-    HZNetworkAdMob =      1 << 7,
-    HZNetworkIAd =        1 << 8,
-};
+NSString *const HZNetworkHeyzap = @"heyzap";
+NSString *const HZNetworkCrossPromo = @"heyzap_cross_promo";
+NSString *const HZNetworkFacebook = @"facebook";
+NSString *const HZNetworkUnityAds = @"unityads";
+NSString *const HZNetworkAppLovin = @"applovin";
+NSString *const HZNetworkVungle = @"vungle";
+NSString *const HZNetworkChartboost = @"chartboost";
+NSString *const HZNetworkAdColony = @"adcolony";
+NSString *const HZNetworkAdMob = @"admob";
+NSString *const HZNetworkIAd = @"iad";
 
 NSString *const HZNetworkCallbackShow = @"show";
 NSString *const HZNetworkCallbackAvailable = @"available";
@@ -200,21 +199,21 @@ NSString *const HZNetworkCallbackLeaveApplication = @"leave_application";
  *  @param delegate An object that can respond to the callbacks that the network sends.
  *  @param network  A member of the HZNetwork enum, which identifies the network to listen to.
  */
-+ (void) setDelegate:(id)delegate forNetwork:(HZNetwork)network;
++ (void) setDelegate:(id)delegate forNetwork:(NSString *)network;
 
 /**
  * Sets block which receives callbacks for all networks
  *
  */
 
-+ (void) networkCallbackWithBlock: (void (^)(HZNetwork network, NSString *callback))block;
++ (void) networkCallbackWithBlock: (void (^)(NSString *network, NSString *callback))block;
 
 /**
  *  Returns YES if the network's SDK is initialized and can be called directly
  *
  *  @param network  A member of the HZNetwork enum, which identifies the network to check initialization on.
  */
-+ (BOOL) isNetworkInitialized:(HZNetwork)network;
++ (BOOL) isNetworkInitialized:(NSString *)network;
 
 
 /**
@@ -233,7 +232,6 @@ NSString *const HZNetworkCallbackLeaveApplication = @"leave_application";
 + (void) setFramework: (NSString *) framework;
 + (void) setMediator: (NSString *) mediator;
 + (NSString *) defaultTagName;
-+ (HZNetwork) networkForName: (NSString *)network;
 
 /**
  * Presents a view controller that displays integration information and allows fetch/show testing

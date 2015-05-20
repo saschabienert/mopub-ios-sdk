@@ -48,15 +48,11 @@
 }
 
 + (NSString *)name {
-    return kHZAdapterFacebook;
+    return HZNetworkFacebook;
 }
 
 + (NSString *) humanizedName {
     return kHZAdapterFacebookHumanized;
-}
-
-- (HZNetwork)network {
-    return HZNetworkFacebook;
 }
 
 + (NSString *)sdkVersion {
@@ -141,13 +137,13 @@
 
 - (void)interstitialAdDidClick:(HZFBInterstitialAd *)interstitialAd {
     [self.delegate adapterWasClicked:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)interstitialAdDidClose:(HZFBInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd:self];
     self.interstitialAd = nil;
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 - (void)interstitialAdWillClose:(HZFBInterstitialAd *)interstitialAd {
@@ -156,7 +152,7 @@
 
 - (void)interstitialAdDidLoad:(HZFBInterstitialAd *)interstitialAd {
     self.lastInterstitialError = nil;
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (void)interstitialAd:(HZFBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
@@ -165,11 +161,11 @@
                                                  userInfo:@{kHZMediatorNameKey: @"Facebook",
                                                             NSUnderlyingErrorKey: error}];
     self.interstitialAd = nil;
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)interstitialAdWillLogImpression:(HZFBInterstitialAd *)interstitialAd {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"logging_impression" forNetwork: [self network]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"logging_impression" forNetwork: [self name]];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

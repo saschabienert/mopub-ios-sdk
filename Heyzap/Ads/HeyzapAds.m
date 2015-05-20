@@ -121,7 +121,7 @@
     [[HZAdsManager sharedManager] setMediator: mediator];
 }
 
-+ (void)setDelegate:(id)delegate forNetwork:(HZNetwork)network {
++ (void)setDelegate:(id)delegate forNetwork:(NSString *)network {
     HZVersionCheck()
     
     if (![HeyzapMediation isOnlyHeyzapSDK]) {
@@ -129,7 +129,7 @@
     }
 }
 
-+ (void) networkCallbackWithBlock: (void (^)(HZNetwork network, NSString *callback))block {
++ (void) networkCallbackWithBlock: (void (^)(NSString *network, NSString *callback))block {
     HZVersionCheck()
     
     if (![HeyzapMediation isOnlyHeyzapSDK]) {
@@ -137,7 +137,7 @@
     }
 }
 
-+ (BOOL) isNetworkInitialized:(HZNetwork)network {
++ (BOOL) isNetworkInitialized:(NSString *)network {
     HZVersionCheckBool()
     
     if (![HeyzapMediation isOnlyHeyzapSDK]) {
@@ -151,10 +151,6 @@
 
 + (NSString *) defaultTagName {
     return kHZDefaultTagName;
-}
-
-+ (HZNetwork) networkForName:(NSString *)network {
-    return [HZBaseAdapter networkForName:network];
 }
 
 + (id)alloc {
