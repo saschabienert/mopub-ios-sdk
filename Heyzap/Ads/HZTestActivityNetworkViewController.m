@@ -336,9 +336,11 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             UITextView *text = [[UITextView alloc] initWithFrame:CGRectMake(self.adControls.frame.origin.x, self.adControls.frame.origin.y + self.adControls.frame.size.height,
                                                                             self.adControls.frame.size.width, 210)];
             text.editable = false;
+            text.font = [UIFont fontWithName: @"Courier" size: 12.0];
             text.text = @"Debug log:";
             text;
         });
+        
         UIView *debugLogShadow = ({
             UIView *view = [[UIView alloc] initWithFrame:self.debugLog.frame];
             view.layer.shadowColor = [UIColor grayColor].CGColor;
@@ -349,6 +351,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             view.backgroundColor = [UIColor whiteColor];
             view;
         });
+        
         [currentNetworkView addSubview:debugLogShadow];
         [currentNetworkView addSubview:self.debugLog];
     }

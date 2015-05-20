@@ -57,10 +57,6 @@
     [HZIncentivizedAd setDelegate:mainController];
     [HZVideoAd setDelegate:mainController];
     [HeyzapAds setDelegate:mainController forNetwork:HZNetworkChartboost];
-    
-    [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
-        NSLog(@"Network: %@ Callback: %@", network, callback);
-    }];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   
