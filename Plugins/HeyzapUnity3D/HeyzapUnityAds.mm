@@ -190,17 +190,6 @@ extern "C" {
         }
         return [HZIncentivizedAd setUserIdentifier: userID];
     }
-
-    // Initialization
-    bool hz_ads_is_network_initialized(const char *network) {
-        NSString *networkName = [NSString stringWithUTF8String:network];
-        HZNetwork networkEnum = [HeyzapAds networkForName:networkName];
-        if (networkEnum == -1) {
-            return NO;
-        } else {
-            return [HeyzapAds isNetworkInitialized:networkEnum];
-        }
-    }
         
     void hz_ads_show_banner(const char *position, const char *tag) {
         
