@@ -6,7 +6,7 @@ PODS:
   - Bugsnag/no-arc (4.0.4)
   - ChartboostSDK (5.1.3)
   - FacebookAudienceNetwork (4.0.1)
-  - Google-AdMob-Ads-SDK (7.1.0)
+  - Google-AdMob-Ads-SDK (7.2.2)
   - Kiwi (2.3.1)
   - OCHamcrest (4.1.1)
   - OCMockito (1.4.0):
@@ -53,7 +53,7 @@ SPEC CHECKSUMS:
   Bugsnag: b46b04fb27c40ff635b3f950e1ee06d8cdf0eae8
   ChartboostSDK: 34443f45448fc7e7bee8626db3511e5cc56757b3
   FacebookAudienceNetwork: 329d7c9cb0ef71ad3668e2b807d53a6947585d2f
-  Google-AdMob-Ads-SDK: 2d66466c2026fde6f066fa0b9e609af14eb901a7
+  Google-AdMob-Ads-SDK: bf278da9037ad40fa8c514286f96dae1def18fef
   Kiwi: f038a6c61f7a9e4d7766bff5717aa3b3fdb75f55
   OCHamcrest: 6f03ffa81d12feab872638490a44ab0a6d3aca10
   OCMockito: 4981140c9a9ec06c31af40f636e3c0f25f27e6b2

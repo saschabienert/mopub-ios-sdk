@@ -39,6 +39,40 @@
 
 #import "HZTestActivityViewController.h"
 
+// Warning: Read first please.
+// Do NOT change these values. They are shared
+// with the server side and Android.
+NSString * const HZNetworkHeyzap = @"heyzap";
+NSString * const HZNetworkCrossPromo = @"heyzap_cross_promo";
+NSString * const HZNetworkFacebook = @"facebook";
+NSString * const HZNetworkUnityAds = @"unityads";
+NSString * const HZNetworkAppLovin = @"applovin";
+NSString * const HZNetworkVungle = @"vungle";
+NSString * const HZNetworkChartboost = @"chartboost";
+NSString * const HZNetworkAdColony = @"adcolony";
+NSString * const HZNetworkAdMob = @"admob";
+NSString * const HZNetworkIAd = @"iad";
+
+// Warning! Read first please.
+// Do NOT change the values. They are shared
+// with the server side and Android.
+NSString * const HZNetworkCallbackShow = @"show";
+NSString * const HZNetworkCallbackAvailable = @"available";
+NSString * const HZNetworkCallbackHide = @"hide";
+NSString * const HZNetworkCallbackFetchFailed = @"fetch_failed";
+NSString * const HZNetworkCallbackClick = @"click";
+NSString * const HZNetworkCallbackDismiss = @"dismiss";
+NSString * const HZNetworkCallbackIncentivizedResultIncomplete = @"incentivized_result_incomplete";
+NSString * const HZNetworkCallbackIncentivizedResultComplete = @"incentivized_result_complete";
+NSString * const HZNetworkCallbackAudioStarting = @"audio_starting";
+NSString * const HZNetworkCallbackAudioFinished = @"audio_finished";
+NSString * const HZNetworkCallbackBannerLoaded = @"banner-loaded";
+NSString * const HZNetworkCallbackBannerClick = @"banner-click";
+NSString * const HZNetworkCallbackBannerHide = @"banner-hide";
+NSString * const HZNetworkCallbackBannerDismiss = @"banner-dismiss";
+NSString * const HZNetworkCallbackBannerFetchFailed = @"banner-fetch_failed";
+NSString * const HZNetworkCallbackLeaveApplication = @"leave_application";
+
 @implementation HeyzapAds
 
 #define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"

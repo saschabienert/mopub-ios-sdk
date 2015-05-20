@@ -14,14 +14,14 @@
 
 - (BOOL)respondsToSelector:(SEL)selector {
     BOOL adapterResponds = [self.adapter respondsToSelector:selector];
-    BOOL delegateResponds = [[[HeyzapMediation sharedInstance] delegateForNetwork:self.adapter.network] respondsToSelector:selector];
+    BOOL delegateResponds = [[[HeyzapMediation sharedInstance] delegateForNetwork:self.adapter.name] respondsToSelector:selector];
     return adapterResponds || delegateResponds;
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)selector {
     NSMethodSignature *signature = [self.adapter.class instanceMethodSignatureForSelector:selector];
     if (!signature) {
-        signature = [[[[HeyzapMediation sharedInstance] delegateForNetwork:self.adapter.network] class] instanceMethodSignatureForSelector:selector];
+        signature = [[[[HeyzapMediation sharedInstance] delegateForNetwork:self.adapter.name] class] instanceMethodSignatureForSelector:selector];
     }
     return signature;
 }
@@ -33,7 +33,7 @@
         [invocation invokeWithTarget:self.adapter];
     }
     
-    id delegate = [[HeyzapMediation sharedInstance] delegateForNetwork:self.adapter.network];
+    id delegate = [[HeyzapMediation sharedInstance] delegateForNetwork:self.adapter.name];
     if ([delegate respondsToSelector:selector]) {
         [invocation invokeWithTarget:delegate];
     }

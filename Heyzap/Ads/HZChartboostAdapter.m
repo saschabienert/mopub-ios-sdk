@@ -216,6 +216,16 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
 }
 
+// Called before an interstitial will be displayed on the screen.
+- (BOOL)shouldDisplayInterstitial:(CBLocation)location {
+    return YES;
+}
+
+// Called after an interstitial has been displayed on the screen.
+- (void)didDisplayInterstitial:(CBLocation)location {
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
+}
+
 
 
 /*
@@ -266,7 +276,7 @@
 }
 
 - (void)didDismissMoreApps:(CBLocation)location {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-hide" forNetwork: [self name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-dismiss" forNetwork: [self name]];
 }
 
 - (void)didCloseMoreApps:(CBLocation)location {

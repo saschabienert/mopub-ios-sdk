@@ -731,16 +731,30 @@ const NSTimeInterval bannerPollInterval = 1;
 }
 
 - (void)setDelegate:(id)delegate forNetwork:(NSString *)network {
-    [self.networkListeners setObject:delegate forKey: network];
+    if (network == nil) return;
+    
+    if (delegate == nil) {
+        [self.networkListeners removeObjectForKey: [network lowercaseString]];
+    } else {
+        [self.networkListeners setObject:delegate forKey: [network lowercaseString]];
+    }
 }
 
 - (id)delegateForNetwork:(NSString *)network {
-    return [self.networkListeners objectForKey: network];
+    if (network == nil) {
+        return nil;
+    }
+    
+    return [self.networkListeners objectForKey: [network lowercaseString]];
 }
 
 - (BOOL) isNetworkInitialized:(NSString *)network {
+    if (network == nil) {
+        return NO;
+    }
+    
     for(HZBaseAdapter *adapter in self.setupMediators) {
-        if ([[adapter name] isEqualToString: network]) {
+        if ([[adapter name] isEqualToString: [network lowercaseString]]) {
             return YES;
         }
     }

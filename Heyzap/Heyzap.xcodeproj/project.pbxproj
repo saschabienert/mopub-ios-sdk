@@ -293,6 +293,7 @@
 		860FD47B187BB144008A35FD /* HZAdsFetchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 860FD479187BB144008A35FD /* HZAdsFetchManager.m */; };
 		860FD47E187CC056008A35FD /* HZAdFetchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 860FD47C187CC056008A35FD /* HZAdFetchRequest.h */; };
 		860FD47F187CC056008A35FD /* HZAdFetchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 860FD47D187CC056008A35FD /* HZAdFetchRequest.m */; };
+		8616E8861B0D304C00BC6670 /* HZAdapterDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E600E20E1ACB5764006CE286 /* HZAdapterDelegate.m */; };
 		86234AA918568EEA0071957B /* HZVideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = 86234AA718568EEA0071957B /* HZVideoView.h */; };
 		86234AAA18568EEA0071957B /* HZVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86234AA818568EEA0071957B /* HZVideoView.m */; };
 		86234AAC185690410071957B /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86234AAB185690410071957B /* MediaPlayer.framework */; };
@@ -2394,6 +2395,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8616E8861B0D304C00BC6670 /* HZAdapterDelegate.m in Sources */,
 				50EB889A1A0AFBF20077A4D3 /* HZNSURLUtils.m in Sources */,
 				507A456319BE95B000C7AEEA /* HZStorePresenter.m in Sources */,
 				8641E1F018ADE0FE00CAAEE0 /* HZDevice.m in Sources */,

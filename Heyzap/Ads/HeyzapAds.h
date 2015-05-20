@@ -77,34 +77,33 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsDisableMedation = 1 << 3,
 };
 
-NSString *const HZNetworkHeyzap = @"heyzap";
-NSString *const HZNetworkCrossPromo = @"heyzap_cross_promo";
-NSString *const HZNetworkFacebook = @"facebook";
-NSString *const HZNetworkUnityAds = @"unityads";
-NSString *const HZNetworkAppLovin = @"applovin";
-NSString *const HZNetworkVungle = @"vungle";
-NSString *const HZNetworkChartboost = @"chartboost";
-NSString *const HZNetworkAdColony = @"adcolony";
-NSString *const HZNetworkAdMob = @"admob";
-NSString *const HZNetworkIAd = @"iad";
+extern NSString * const HZNetworkHeyzap;
+extern NSString * const HZNetworkCrossPromo;
+extern NSString * const HZNetworkFacebook;
+extern NSString * const HZNetworkUnityAds;
+extern NSString * const HZNetworkAppLovin;
+extern NSString * const HZNetworkVungle;
+extern NSString * const HZNetworkChartboost;
+extern NSString * const HZNetworkAdColony;
+extern NSString * const HZNetworkAdMob;
+extern NSString * const HZNetworkIAd;
 
-NSString *const HZNetworkCallbackShow = @"show";
-NSString *const HZNetworkCallbackAvailable = @"available";
-NSString *const HZNetworkCallbackHide = @"hide";
-NSString *const HZNetworkCallbackFetchFailed = @"fetch_failed";
-NSString *const HZNetworkCallbackClick = @"click";
-NSString *const HZNetworkCallbackDismiss = @"dismiss";
-NSString *const HZNetworkCallbackIncentivizedResultIncomplete = @"incentivized_result_incomplete";
-NSString *const HZNetworkCallbackIncentivizedResultComplete = @"incentivized_result_complete";
-NSString *const HZNetworkCallbackAudioStarting = @"audio_starting";
-NSString *const HZNetworkCallbackAudioFinished = @"audio_finished";
-NSString *const HZNetworkCallbackBannerLoaded = @"banner-loaded";
-NSString *const HZNetworkCallbackBannerClick = @"banner-click";
-NSString *const HZNetworkCallbackBannerHide = @"banner-hide";
-NSString *const HZNetworkCallbackBannerDismiss = @"banner-dismiss";
-NSString *const HZNetworkCallbackBannerFetchFailed = @"banner-fetch_failed";
-NSString *const HZNetworkCallbackLeaveApplication = @"leave_application";
-
+extern NSString * const HZNetworkCallbackShow;
+extern NSString * const HZNetworkCallbackAvailable;
+extern NSString * const HZNetworkCallbackHide;
+extern NSString * const HZNetworkCallbackFetchFailed;
+extern NSString * const HZNetworkCallbackClick;
+extern NSString * const HZNetworkCallbackDismiss;
+extern NSString * const HZNetworkCallbackIncentivizedResultIncomplete;
+extern NSString * const HZNetworkCallbackIncentivizedResultComplete;
+extern NSString * const HZNetworkCallbackAudioStarting;
+extern NSString * const HZNetworkCallbackAudioFinished;
+extern NSString * const HZNetworkCallbackBannerLoaded;
+extern NSString * const HZNetworkCallbackBannerClick;
+extern NSString * const HZNetworkCallbackBannerHide;
+extern NSString * const HZNetworkCallbackBannerDismiss;
+extern NSString * const HZNetworkCallbackBannerFetchFailed;
+extern NSString * const HZNetworkCallbackLeaveApplication;
 
 /** The `HZAdsDelegate` protocol provides global information about our ads. If you want to know if we had an ad to show after calling `showAd` (for example, to fallback to another ads provider). It is recommend using the `showAd:completion:` method instead. */
 @protocol HZAdsDelegate<NSObject>
