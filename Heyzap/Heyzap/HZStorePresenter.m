@@ -72,10 +72,13 @@
         
         static NSString * const kAffiliateToken = @"10l74x";
         
-        NSDictionary *productParameters = @{ SKStoreProductParameterITunesItemIdentifier :  appStoreID,
-                                             SKStoreProductParameterAffiliateToken:kAffiliateToken};
-        
-        
+        NSDictionary *productParameters = ({
+            NSMutableDictionary *params = [@{ SKStoreProductParameterITunesItemIdentifier :  appStoreID } mutableCopy];
+            if (hziOS8Plus()) {
+                params[SKStoreProductParameterAffiliateToken] = kAffiliateToken;
+            }
+            params;
+        });
         
         [storeController loadProductWithParameters:productParameters
                                    completionBlock:^(BOOL result, NSError *error) {
