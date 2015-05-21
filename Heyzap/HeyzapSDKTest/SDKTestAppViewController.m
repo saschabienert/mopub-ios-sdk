@@ -196,21 +196,6 @@ typedef enum {
     }
 }
 
-- (void)didDismissMoreApps:(CBLocation)location {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-    [self changeColorOfShowButton];
-}
-
-- (void)didCacheMoreApps:(CBLocation)location {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-    [self changeColorOfShowButton];
-}
-
-- (void)didFailToLoadMoreApps:(CBLocation)location withError:(CBLoadError)error {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-    [self changeColorOfShowButton];
-}
-
 
 NSString * const kCreativeIDTextFieldAccessibilityLabel = @"creative ID";
 NSString * const kShowAdButtonAccessibilityLabel = @"show ad";
