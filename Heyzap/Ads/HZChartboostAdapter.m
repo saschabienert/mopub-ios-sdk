@@ -269,27 +269,27 @@
  *  More Apps
  */
 - (void)didFailToLoadMoreApps:(CBLocation)location withError:(CBLoadError)error {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-fetch_failed" forNetwork: [self name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackChartboostMoreAppsFetchFailed forNetwork: [self name]];
 }
 
 - (void)didCacheMoreApps:(CBLocation)location {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-available" forNetwork: [self name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackChartboostMoreAppsAvailable forNetwork: [self name]];
 }
 
 - (void)didDismissMoreApps:(CBLocation)location {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-dismiss" forNetwork: [self name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackChartboostMoreAppsDismiss forNetwork: [self name]];
 }
 
 - (void)didCloseMoreApps:(CBLocation)location {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-hide" forNetwork: [self name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackChartboostMoreAppsHide forNetwork: [self name]];
 }
 
 - (void)didClickMoreApps:(CBLocation)location {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-click" forNetwork: [self name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackChartboostMoreAppsClick forNetwork: [self name]];
 }
 
 - (void)didDisplayMoreApps:(CBLocation)location {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"moreapps-show" forNetwork: [self name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackChartboostMoreAppsShow forNetwork: [self name]];
 }
 
 

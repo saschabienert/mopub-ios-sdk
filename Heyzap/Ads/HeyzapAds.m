@@ -75,6 +75,17 @@ NSString * const HZNetworkCallbackBannerDismiss = @"banner-dismiss";
 NSString * const HZNetworkCallbackBannerFetchFailed = @"banner-fetch_failed";
 NSString * const HZNetworkCallbackLeaveApplication = @"leave_application";
 
+// Chartboost Specific
+NSString * const HZNetworkCallbackChartboostMoreAppsFetchFailed = @"moreapps-fetch_failed";
+NSString * const HZNetworkCallbackChartboostMoreAppsDismiss = @"moreapps-dismiss";
+NSString * const HZNetworkCallbackChartboostMoreAppsHide = @"moreapps-hide";
+NSString * const HZNetworkCallbackChartboostMoreAppsClick = @"moreapps-click";
+NSString * const HZNetworkCallbackChartboostMoreAppsShow = @"moreapps-show";
+NSString * const HZNetworkCallbackChartboostMoreAppsAvailable = @"moreapps-available";
+
+// Facebook Specific
+NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impression";
+
 @implementation HeyzapAds
 
 #define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"
@@ -178,7 +189,7 @@ NSString * const HZNetworkCallbackLeaveApplication = @"leave_application";
     
     if (![HeyzapMediation isOnlyHeyzapSDK]) {
         return [[HeyzapMediation sharedInstance] isNetworkInitialized:network];
-    } else if (network == HZNetworkHeyzap) {
+    } else if ([network isEqualToString: HZNetworkHeyzap]) {
         return [HZAdsManager isEnabled];
     } else {
         return NO;

@@ -77,6 +77,8 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsDisableMedation = 1 << 3,
 };
 
+
+// Network Names
 extern NSString * const HZNetworkHeyzap;
 extern NSString * const HZNetworkCrossPromo;
 extern NSString * const HZNetworkFacebook;
@@ -88,6 +90,7 @@ extern NSString * const HZNetworkAdColony;
 extern NSString * const HZNetworkAdMob;
 extern NSString * const HZNetworkIAd;
 
+// General Network Callbacks
 extern NSString * const HZNetworkCallbackInitialized;
 extern NSString * const HZNetworkCallbackShow;
 extern NSString * const HZNetworkCallbackAvailable;
@@ -105,6 +108,18 @@ extern NSString * const HZNetworkCallbackBannerHide;
 extern NSString * const HZNetworkCallbackBannerDismiss;
 extern NSString * const HZNetworkCallbackBannerFetchFailed;
 extern NSString * const HZNetworkCallbackLeaveApplication;
+
+// Chartboost Specific Callbacks
+extern NSString * const HZNetworkCallbackChartboostMoreAppsFetchFailed;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsDismiss;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsHide;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsClick;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsShow;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsAvailable;
+
+
+// Facebook Specific Callbacks
+extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
 
 /** The `HZAdsDelegate` protocol provides global information about our ads. If you want to know if we had an ad to show after calling `showAd` (for example, to fallback to another ads provider). It is recommend using the `showAd:completion:` method instead. */
 @protocol HZAdsDelegate<NSObject>
@@ -197,7 +212,7 @@ extern NSString * const HZNetworkCallbackLeaveApplication;
  *  Sets an object to be forwarded all callbacks sent by the specified network.
  *
  *  @param delegate An object that can respond to the callbacks that the network sends.
- *  @param network  A member of the HZNetwork enum, which identifies the network to listen to.
+ *  @param network  A member of the HZNetwork constants, which identifies the network to listen to.
  */
 + (void) setDelegate:(id)delegate forNetwork:(NSString *)network;
 
@@ -211,7 +226,7 @@ extern NSString * const HZNetworkCallbackLeaveApplication;
 /**
  *  Returns YES if the network's SDK is initialized and can be called directly
  *
- *  @param network  A member of the HZNetwork enum, which identifies the network to check initialization on.
+ *  @param network  A member of the HZNetwork constants, which identifies the network to check initialization on.
  */
 + (BOOL) isNetworkInitialized:(NSString *)network;
 

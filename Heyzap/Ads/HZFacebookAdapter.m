@@ -166,7 +166,7 @@
 }
 
 - (void)interstitialAdWillLogImpression:(HZFBInterstitialAd *)interstitialAd {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"logging_impression" forNetwork: [self name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFacebookLoggingImpression forNetwork: [self name]];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
