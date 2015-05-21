@@ -206,7 +206,7 @@ extern "C" {
                 [HZCurrentBannerAd setDelegate: HZBannerDelegate];
             } failure:^(NSError *error) {
                 NSLog(@"Error fetching banner; error = %@",error);
-                [HZBannerDelegate bannerDidReceiveAd: nil];
+                [HZBannerDelegate bannerDidFailToReceiveAd: nil error: error];
             }];
         } else {
             // Unhide the banner
