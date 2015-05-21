@@ -56,9 +56,6 @@
 
 @property (nonatomic, strong) NSDictionary *credentials;
 
-/**
- *  Subclasses to use this to store tag and adUnit for metrics
- */
 @property (nonatomic, strong) HZAdapterDelegate *forwardingDelegate;
 
 + (instancetype)sharedInstance;
