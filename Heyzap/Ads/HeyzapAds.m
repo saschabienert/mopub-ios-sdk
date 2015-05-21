@@ -82,6 +82,7 @@ NSString * const HZNetworkCallbackChartboostMoreAppsHide = @"moreapps-hide";
 NSString * const HZNetworkCallbackChartboostMoreAppsClick = @"moreapps-click";
 NSString * const HZNetworkCallbackChartboostMoreAppsShow = @"moreapps-show";
 NSString * const HZNetworkCallbackChartboostMoreAppsAvailable = @"moreapps-available";
+NSString * const HZNetworkCallbackChartboostMoreAppsClickFailed = @"moreapps-click_failed";
 
 // Facebook Specific
 NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impression";

@@ -116,6 +116,7 @@ extern NSString * const HZNetworkCallbackChartboostMoreAppsHide;
 extern NSString * const HZNetworkCallbackChartboostMoreAppsClick;
 extern NSString * const HZNetworkCallbackChartboostMoreAppsShow;
 extern NSString * const HZNetworkCallbackChartboostMoreAppsAvailable;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsClickFailed;
 
 
 // Facebook Specific Callbacks
