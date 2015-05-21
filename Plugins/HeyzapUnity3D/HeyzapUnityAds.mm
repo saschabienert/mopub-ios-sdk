@@ -29,7 +29,6 @@
 #import "HZInterstitialAd.h"
 #import "HZVideoAd.h"
 #import "HZIncentivizedAd.h"
-#import "HZUnityAbstractAdapter.h"
 #import "HZBannerAd.h"
 
 extern void UnitySendMessage(const char *, const char *, const char *);
@@ -210,10 +209,18 @@ extern "C" {
                 NSLog(@"Error fetching banner; error = %@",error);
                 [HZBannerDelegate bannerDidReceiveAd: nil];
             }];
+        } else {
+            [HZCurrentBannerAd setHidden: NO];
         }
     }
     
     void hz_ads_hide_banner(void) {
+        if (HZCurrentBannerAd  != nil) {
+            [HZCurrentBannerAd setHidden: YES];
+        }
+    }
+
+    void hz_ads_destroy_banner(void) {
         if (HZCurrentBannerAd  != nil) {
             [HZCurrentBannerAd removeFromSuperview];
             HZCurrentBannerAd = nil;
