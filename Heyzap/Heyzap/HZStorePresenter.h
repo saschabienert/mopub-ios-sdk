@@ -14,7 +14,8 @@
 + (instancetype) sharedInstance;
 
 // Taking this many parameters is annoying. Unfortunately, both native and normal ads need this logic, but have slight twists which makes it hard to generalize this code.
-- (void)presentAppStoreForID:(NSNumber *)appStoreID
+// Returns the `SKStoreProductViewController` if we created one. 
+- (SKStoreProductViewController *)presentAppStoreForID:(NSNumber *)appStoreID
     presentingViewController:(UIViewController *)viewController
                     delegate:(id<SKStoreProductViewControllerDelegate>)delegate
             useModalAppStore:(BOOL)useModalAppStore

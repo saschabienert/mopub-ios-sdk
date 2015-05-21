@@ -121,7 +121,7 @@
 
 - (HZAdType)supportedAdFormats
 {
-    if ([HZDevice hzSystemVersionIsLessThan:@"7.0.0"] && [HZDevice isPhone]) {
+    if ([HZDevice hzSystemVersionIsLessThan:@"7.0"] && [HZDevice isPhone]) {
         return HZAdTypeBanner;
     } else {
         return HZAdTypeInterstitial | HZAdTypeBanner;

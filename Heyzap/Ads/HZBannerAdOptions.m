@@ -50,7 +50,12 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
     self = [super init];
     if (self) {
         _facebookBannerSize = HZFacebookBannerSizeFlexibleWidthHeight50;
-        _admobBannerSize = HZAdMobBannerSizeFlexibleWidthPortrait;
+        
+        if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])) {
+            _admobBannerSize = HZAdMobBannerSizeFlexibleWidthLandscape;
+        } else {
+            _admobBannerSize = HZAdMobBannerSizeFlexibleWidthPortrait;
+        }
     }
     return self;
 }

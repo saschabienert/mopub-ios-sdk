@@ -110,28 +110,28 @@ static BOOL hzAdsIsEnabled = NO;
         }
         
         [[HZAdsAPIClient sharedClient] GET:@"games_to_check.json" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSArray *response) {
-            NSMutableArray *installedGames = [@[] mutableCopy];
-            for (NSDictionary *game in response) {
-                NSNumber *const gameID = [HZDictionaryUtils hzObjectForKey:@"game_id" ofClass:[NSNumber class] withDict: game];
-                
-                NSURL *const launchURL = ({
-                    NSString *launchString = [HZDictionaryUtils hzObjectForKey:@"launch_uri" ofClass:[NSString class] withDict: game];
-                    if ([launchString rangeOfString:@"://"].location == NSNotFound) {
-                        launchString = [launchString stringByAppendingString:@"://"];
-                    }
-                    [NSURL URLWithString:launchString];
-                });
-                
-                if (gameID == nil || launchURL == nil) {
-                    continue;
-                }
-                
-                if ([[UIApplication sharedApplication] canOpenURL:launchURL]) {
-                    [installedGames addObject:gameID];
-                }
-            }
-            
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                NSMutableArray *installedGames = [@[] mutableCopy];
+                for (NSDictionary *game in response) {
+                    NSNumber *const gameID = [HZDictionaryUtils hzObjectForKey:@"game_id" ofClass:[NSNumber class] withDict: game];
+                    
+                    NSURL *const launchURL = ({
+                        NSString *launchString = [HZDictionaryUtils hzObjectForKey:@"launch_uri" ofClass:[NSString class] withDict: game];
+                        if ([launchString rangeOfString:@"://"].location == NSNotFound) {
+                            launchString = [launchString stringByAppendingString:@"://"];
+                        }
+                        [NSURL URLWithString:launchString];
+                    });
+                    
+                    if (gameID == nil || launchURL == nil) {
+                        continue;
+                    }
+                    
+                    if ([[UIApplication sharedApplication] canOpenURL:launchURL]) {
+                        [installedGames addObject:gameID];
+                    }
+                }
+                
                 [[HZAdsAPIClient sharedClient] POST:@"add_initial_packages" parameters:@{@"installed_game_ids": installedGames} success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
                         [[HZUserDefaults sharedDefaults] setObject:[NSDate date] forKey:dateOfCheckKey];
@@ -160,7 +160,7 @@ static BOOL hzAdsIsEnabled = NO;
 }
 
 + (BOOL) isVersionSupported {
-    return ![HZDevice hzSystemVersionIsLessThan:@"6.0.0"];
+    return ![HZDevice hzSystemVersionIsLessThan:@"6.0"];
 }
 
 - (BOOL)isAdobeAir {

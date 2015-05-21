@@ -55,12 +55,17 @@
 + (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider;
 
 #define HZVersionCheck()     if(![HZAdsManager isVersionSupported]){                \
-                               HZDLog(@"Heyzap only supports iOS 6.0.0 and above"); \
+                               HZELog(@"Heyzap only supports iOS 6.0 and above"); \
                                return;                                              \
                              }
 
 #define HZVersionCheckBool() if(![HZAdsManager isVersionSupported]){                \
-                               HZDLog(@"Heyzap only supports iOS 6.0.0 and above"); \
+                               HZELog(@"Heyzap only supports iOS 6.0 and above"); \
                                return NO;                                           \
                              }
+
+#define HZVersionCheckNil() if(![HZAdsManager isVersionSupported]){                \
+                                HZELog(@"Heyzap only supports iOS 6.0 and above"); \
+                                return nil;                                           \
+                                }
 @end

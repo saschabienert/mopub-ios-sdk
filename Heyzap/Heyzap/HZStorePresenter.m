@@ -31,7 +31,7 @@
 }
 
 // Completion for 'didOpenAppStore'
-- (void)presentAppStoreForID:(NSNumber *)appStoreID
+- (SKStoreProductViewController *)presentAppStoreForID:(NSNumber *)appStoreID
     presentingViewController:(UIViewController *)viewController
                     delegate:(id<SKStoreProductViewControllerDelegate>)delegate
             useModalAppStore:(BOOL)useModalAppStore
@@ -58,7 +58,7 @@
         // iOS 7 Bug
         if (![HZDevice hzSystemVersionIsLessThan: @"7.0"] && doesNotSupportPortraitOrientation) {
             [[UIApplication sharedApplication] openURL: clickURL];
-            return;
+            return nil;
         }
         
         SKStoreProductViewController *storeController = [[SKStoreProductViewController alloc] init];
@@ -70,11 +70,10 @@
             storeController.modalPresentationStyle = UIModalPresentationOverCurrentContext;
         }
         
-        static NSString * const kAffiliateKey = @"at";
         static NSString * const kAffiliateToken = @"10l74x";
         
         NSDictionary *productParameters = @{ SKStoreProductParameterITunesItemIdentifier :  appStoreID,
-                                             kAffiliateKey:kAffiliateToken};
+                                             SKStoreProductParameterAffiliateToken:kAffiliateToken};
         
         
         
@@ -98,13 +97,14 @@
                 [viewController presentViewController:storeController animated:YES completion:nil];
             }
         }];
-        
+        return storeController;
     } else {
         NSError *error = [NSError errorWithDomain:@"heyzap"
                                             code:1
                                         userInfo:@{NSLocalizedDescriptionKey: @"SKStoreProductViewController wasn't available"}];
         completion ? completion(NO, error) : nil;
         [[UIApplication sharedApplication] openURL: clickURL];
+        return nil;
     }
 }
 

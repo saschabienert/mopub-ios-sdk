@@ -191,7 +191,6 @@ extern "C" {
     }
         
     void hz_ads_show_banner(const char *position, const char *tag) {
-        
         if (HZCurrentBannerAd == nil) {
             HZBannerPosition pos = HZBannerPositionBottom;
             NSString *positionStr = [NSString stringWithUTF8String: position];
@@ -210,12 +209,13 @@ extern "C" {
                 [HZBannerDelegate bannerDidReceiveAd: nil];
             }];
         } else {
+            // Unhide the banner
             [HZCurrentBannerAd setHidden: NO];
         }
     }
     
     void hz_ads_hide_banner(void) {
-        if (HZCurrentBannerAd  != nil) {
+        if (HZCurrentBannerAd != nil) {
             [HZCurrentBannerAd setHidden: YES];
         }
     }
