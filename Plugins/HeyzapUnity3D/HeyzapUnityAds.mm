@@ -220,4 +220,12 @@ extern "C" {
     void hz_ads_show_mediation_debug_view_controller(void) {
         [HeyzapAds presentMediationDebugViewController];
     }
+    
+    void hz_pause_expensive_work(void) {
+        [HeyzapAds pauseExpensiveWork];
+    }
+    
+    void hz_resume_expensive_work(void) {
+        [HeyzapAds resumeExpensiveWork];
+    }
 }
