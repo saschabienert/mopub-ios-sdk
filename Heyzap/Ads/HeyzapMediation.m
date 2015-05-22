@@ -65,6 +65,8 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 @property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
+@property (nonatomic, strong) void (^networkCallbackBlock)(NSString *network, NSString *callback);
+@property (nonatomic, strong) NSMutableDictionary *networkListeners;
 @property (nonatomic) dispatch_queue_t fetchQueue;
 
 @end
@@ -98,6 +100,7 @@ const NSTimeInterval maxStartDelay     = 300;
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
+        _networkListeners = [[NSMutableDictionary alloc] init];
         _retryStartDelay = initialStartDelay;
         self.fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_CONCURRENT);
     }
@@ -502,6 +505,8 @@ NSString * const kHZDataKey = @"data";
     if (key) {
         [[self delegateForAdType:key.adType] didFinishAudio];
     }
+    
+    
 }
 
 #pragma mark - Incentivized Specific
@@ -638,6 +643,7 @@ const NSTimeInterval bannerPollInterval = 1;
     
     NSDictionary *const mediateParams = request.createParams;
     
+
     dispatch_async(self.fetchQueue, ^{
         [[HZMediationAPIClient sharedClient] GET:@"mediate" parameters:mediateParams success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
             
@@ -722,6 +728,48 @@ const NSTimeInterval bannerPollInterval = 1;
 }
 - (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter wasClickedForSession:(HZMediationSession *)session {
     [session reportClickForAdapter:bannerAdapter.parentAdapter];
+}
+
+- (void)setDelegate:(id)delegate forNetwork:(NSString *)network {
+    if (network == nil) return;
+    
+    if (delegate == nil) {
+        [self.networkListeners removeObjectForKey: [network lowercaseString]];
+    } else {
+        [self.networkListeners setObject:delegate forKey: [network lowercaseString]];
+    }
+}
+
+- (id)delegateForNetwork:(NSString *)network {
+    if (network == nil) {
+        return nil;
+    }
+    
+    return [self.networkListeners objectForKey: [network lowercaseString]];
+}
+
+- (BOOL) isNetworkInitialized:(NSString *)network {
+    if (network == nil) {
+        return NO;
+    }
+    
+    for(HZBaseAdapter *adapter in self.setupMediators) {
+        if ([[adapter name] isEqualToString: [network lowercaseString]]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+- (void) setNetworkCallbackBlock: (void (^)(NSString *network, NSString *callback))block {
+    _networkCallbackBlock = block;
+}
+
+- (void) sendNetworkCallback: (NSString *) callback forNetwork: (NSString *) network {
+    if (_networkCallbackBlock != nil) {
+        _networkCallbackBlock(network, callback);
+    }
 }
 
 @end

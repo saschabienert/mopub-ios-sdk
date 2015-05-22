@@ -117,11 +117,11 @@ NSString *const kHZNativeAdRatingKey = @"rating";
     }];
 }
 
-- (void)presentAppStoreFromViewController:(UIViewController *)viewController
+- (SKStoreProductViewController *)presentAppStoreFromViewController:(UIViewController *)viewController
                             storeDelegate:(id<SKStoreProductViewControllerDelegate>)storeDelegate
                                completion:(void (^)(BOOL result, NSError *error))completion {
     
-    HZVersionCheck()
+    HZVersionCheckNil()
 
     if (!self.sentClick) {
         [[HZAdsAPIClient sharedClient] POST:kHZRegisterClickEndpoint parameters:[self eventParams] success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
@@ -131,7 +131,7 @@ NSString *const kHZNativeAdRatingKey = @"rating";
         }];
     }
     
-    [[HZStorePresenter sharedInstance] presentAppStoreForID:self.promotedGameAppStoreID
+    return [[HZStorePresenter sharedInstance] presentAppStoreForID:self.promotedGameAppStoreID
                                    presentingViewController:viewController
                                                    delegate:storeDelegate
                                            useModalAppStore:YES

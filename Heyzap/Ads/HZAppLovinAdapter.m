@@ -20,6 +20,9 @@
 #import "HZALAdSize.h"
 #import "HZIncentivizedAppLovinDelegate.h"
 
+#import "HeyzapMediation.h"
+#import "HeyzapAds.h"
+
 /**
  *  AppLovin's SDK is split between using (singletons+class methods) vs instances. Inexplicably, the former group is only available when you store the SDK Key in your info.plist file, so we need to use the instance methods.
  */
@@ -50,6 +53,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         adapter = [[HZAppLovinAdapter alloc] init];
+        adapter.forwardingDelegate = [HZAdapterDelegate new];
+        adapter.forwardingDelegate.adapter = adapter;
     });
     return adapter;
 }
@@ -73,7 +78,7 @@
 
 + (NSString *)name
 {
-    return kHZAdapterAppLovin;
+    return HZNetworkAppLovin;
 }
 
 + (NSString *)humanizedName
@@ -96,6 +101,7 @@
     if (!adapter.credentials) {
         adapter.credentials = credentials;
        [[self sharedInstance] initializeSDKWithKey:sdkKey];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
 
     return nil;
@@ -116,7 +122,7 @@
     
     switch (type) {
         case HZAdTypeInterstitial: {
-            self.interstitialDelegate = [[HZAppLovinDelegate alloc] initWithAdType:HZAdTypeInterstitial delegate:self];
+            self.interstitialDelegate = [[HZAppLovinDelegate alloc] initWithAdType:HZAdTypeInterstitial delegate:self.forwardingDelegate];
             [[self.sdk adService] loadNextAd:[HZALAdSize sizeInterstitial]
                                    andNotify:self.interstitialDelegate];
             break;
@@ -126,7 +132,7 @@
                 return;
             }
             self.currentIncentivizedAd = [[HZALIncentivizedInterstitialAd alloc] initIncentivizedInterstitialWithSdk:self.sdk];
-            self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithAdType:HZAdTypeIncentivized delegate:self];
+            self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithAdType:HZAdTypeIncentivized delegate:self.forwardingDelegate];
             [self.currentIncentivizedAd preloadAndNotify:self.incentivizedDelegate];
             self.currentIncentivizedAd.adVideoPlaybackDelegate = self.incentivizedDelegate;
             
@@ -194,6 +200,8 @@
             break;
         }
     }
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 - (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error
 {
@@ -216,15 +224,19 @@
             break;
         }
     }
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)didClickAd
 {
     [self.delegate adapterWasClicked:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 - (void)didDismissAd
 {
     [self.delegate adapterDidDismissAd:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 - (void)didCompleteIncentivized
@@ -232,11 +244,13 @@
     [self clearIncentivizedState];
     
     [self.delegate adapterDidCompleteIncentivizedAd:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
 }
 - (void)didFailToCompleteIncentivized
 {
     [self clearIncentivizedState];
     [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
 }
 
 - (void)clearIncentivizedState {
@@ -248,10 +262,12 @@
 - (void)willPlayAudio
 {
     [self.delegate adapterWillPlayAudio:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
 }
 - (void)didFinishAudio
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
 }
 
 

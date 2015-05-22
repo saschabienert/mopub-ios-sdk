@@ -7,6 +7,9 @@
 //
 
 #import "HZiAdBannerAdapter.h"
+#import "HZMediationConstants.h"
+#import "HeyzapMediation.h"
+
 @import iAd;
 
 @interface HZiAdBannerAdapter() <ADBannerViewDelegate>
@@ -46,11 +49,15 @@
     }
     
     [self.bannerInteractionDelegate didReceiveAd];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerLoaded forNetwork: HZNetworkIAd];
 }
 
 - (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error {
     self.lastError = error;
     [self.bannerInteractionDelegate didFailToReceiveAd:error];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: HZNetworkIAd];
 }
 
 
@@ -58,8 +65,11 @@
     [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
     [self.bannerInteractionDelegate userDidClick];
     
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: HZNetworkIAd];
+    
     if (willLeave) {
         [self.bannerInteractionDelegate willLeaveApplication];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: HZNetworkIAd];
     } else {
         [self.bannerInteractionDelegate willPresentModalView];
     }
@@ -69,6 +79,7 @@
 
 - (void)bannerViewActionDidFinish:(ADBannerView *)banner {
     [self.bannerInteractionDelegate didDismissModalView];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerDismiss forNetwork: HZNetworkIAd];
 }
 
 - (BOOL)isAvailable {

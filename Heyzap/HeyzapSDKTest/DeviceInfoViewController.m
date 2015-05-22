@@ -75,7 +75,36 @@
     });
     [self.scrollView addSubview:autoPrefetchSwitch];
     
+    UILabel *chartboostMoreAppsLabel = ({
+        UILabel *label = [self defaultLabelWithFrameY: CGRectGetMaxY(autoPrefetchSwitch.frame) + 10.0];
+        label.text = @"Chartboost More Apps";
+        label.font = [UIFont boldSystemFontOfSize: 13.0];
+        label;
+    });
     
+    [self.scrollView addSubview: chartboostMoreAppsLabel];
+    
+    UIButton *chartboostMAFetchButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
+    chartboostMAFetchButton.frame = CGRectMake(5.0, CGRectGetMaxY(chartboostMoreAppsLabel.frame)+5, 100.0, 40.0);
+    [chartboostMAFetchButton setTitle: @"Cache" forState: UIControlStateNormal];
+    [chartboostMAFetchButton setBackgroundColor: [UIColor lightGrayColor]];
+    [chartboostMAFetchButton addTarget: self action: @selector(chartboostMoreAppsCache:) forControlEvents: UIControlEventTouchUpInside];
+    [self.scrollView addSubview: chartboostMAFetchButton];
+    
+    UIButton *chartboostMADisplayButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
+    chartboostMADisplayButton.frame = CGRectMake(CGRectGetMaxX(chartboostMAFetchButton.frame)+5, CGRectGetMaxY(chartboostMoreAppsLabel.frame)+5, 100.0, 40.0);
+    [chartboostMADisplayButton setTitle: @"Show" forState: UIControlStateNormal];
+    [chartboostMADisplayButton setBackgroundColor: [UIColor lightGrayColor]];
+    [chartboostMADisplayButton addTarget: self action: @selector(chartboostMoreAppsDisplay:) forControlEvents: UIControlEventTouchUpInside];
+    [self.scrollView addSubview: chartboostMADisplayButton];
+}
+
+- (void) chartboostMoreAppsCache: (id) sender {
+    [Chartboost cacheMoreApps: CBLocationHomeScreen];
+}
+
+- (void) chartboostMoreAppsDisplay: (id) sender {
+    [Chartboost showMoreApps: CBLocationHomeScreen];
 }
 
 - (UILabel *)defaultLabelWithFrameY:(CGFloat)y

@@ -78,6 +78,51 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsDisableMedation = 1 << 3,
 };
 
+
+// Network Names
+extern NSString * const HZNetworkHeyzap;
+extern NSString * const HZNetworkCrossPromo;
+extern NSString * const HZNetworkFacebook;
+extern NSString * const HZNetworkUnityAds;
+extern NSString * const HZNetworkAppLovin;
+extern NSString * const HZNetworkVungle;
+extern NSString * const HZNetworkChartboost;
+extern NSString * const HZNetworkAdColony;
+extern NSString * const HZNetworkAdMob;
+extern NSString * const HZNetworkIAd;
+
+// General Network Callbacks
+extern NSString * const HZNetworkCallbackInitialized;
+extern NSString * const HZNetworkCallbackShow;
+extern NSString * const HZNetworkCallbackAvailable;
+extern NSString * const HZNetworkCallbackHide;
+extern NSString * const HZNetworkCallbackFetchFailed;
+extern NSString * const HZNetworkCallbackClick;
+extern NSString * const HZNetworkCallbackDismiss;
+extern NSString * const HZNetworkCallbackIncentivizedResultIncomplete;
+extern NSString * const HZNetworkCallbackIncentivizedResultComplete;
+extern NSString * const HZNetworkCallbackAudioStarting;
+extern NSString * const HZNetworkCallbackAudioFinished;
+extern NSString * const HZNetworkCallbackBannerLoaded;
+extern NSString * const HZNetworkCallbackBannerClick;
+extern NSString * const HZNetworkCallbackBannerHide;
+extern NSString * const HZNetworkCallbackBannerDismiss;
+extern NSString * const HZNetworkCallbackBannerFetchFailed;
+extern NSString * const HZNetworkCallbackLeaveApplication;
+
+// Chartboost Specific Callbacks
+extern NSString * const HZNetworkCallbackChartboostMoreAppsFetchFailed;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsDismiss;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsHide;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsClick;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsShow;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsAvailable;
+extern NSString * const HZNetworkCallbackChartboostMoreAppsClickFailed;
+
+
+// Facebook Specific Callbacks
+extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
+
 /** The `HZAdsDelegate` protocol provides global information about our ads. If you want to know if we had an ad to show after calling `showAd` (for example, to fallback to another ads provider). It is recommend using the `showAd:completion:` method instead. */
 @protocol HZAdsDelegate<NSObject>
 
@@ -164,6 +209,28 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
  *  @param delegate An object conforing to the HZIncentivizedAdDelegate protocol
  */
 + (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate __attribute__((deprecated("Call `HZIncentivizedAd setDelegate:` instead.")));
+
+/**
+ *  Sets an object to be forwarded all callbacks sent by the specified network.
+ *
+ *  @param delegate An object that can respond to the callbacks that the network sends.
+ *  @param network  A member of the HZNetwork constants, which identifies the network to listen to.
+ */
++ (void) setDelegate:(id)delegate forNetwork:(NSString *)network;
+
+/**
+ * Sets block which receives callbacks for all networks
+ *
+ */
+
++ (void) networkCallbackWithBlock: (void (^)(NSString *network, NSString *callback))block;
+
+/**
+ *  Returns YES if the network's SDK is initialized and can be called directly
+ *
+ *  @param network  A member of the HZNetwork constants, which identifies the network to check initialization on.
+ */
++ (BOOL) isNetworkInitialized:(NSString *)network;
 
 
 /**

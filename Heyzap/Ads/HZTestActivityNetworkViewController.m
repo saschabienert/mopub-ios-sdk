@@ -44,6 +44,9 @@
 #import "HZNoCaretTextField.h"
 #import "HZBannerAd.h"
 
+#import "HZFacebookAdapter.h"
+#import "HZAdMobAdapter.h"
+
 @interface HZTestActivityNetworkViewController() <HZMediationAdapterDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, HZBannerAdDelegate>
 
 @property (nonatomic) HZBaseAdapter *network;
@@ -333,9 +336,11 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             UITextView *text = [[UITextView alloc] initWithFrame:CGRectMake(self.adControls.frame.origin.x, self.adControls.frame.origin.y + self.adControls.frame.size.height,
                                                                             self.adControls.frame.size.width, 210)];
             text.editable = false;
+            text.font = [UIFont fontWithName: @"Courier" size: 12.0];
             text.text = @"Debug log:";
             text;
         });
+        
         UIView *debugLogShadow = ({
             UIView *view = [[UIView alloc] initWithFrame:self.debugLog.frame];
             view.layer.shadowColor = [UIColor grayColor].CGColor;
@@ -346,6 +351,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             view.backgroundColor = [UIColor whiteColor];
             view;
         });
+        
         [currentNetworkView addSubview:debugLogShadow];
         [currentNetworkView addSubview:self.debugLog];
     }
@@ -701,10 +707,10 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 }
 
 - (NSString *)bannerSizeDescription:(NSValue *)value {
-    if ([self.network.name isEqualToString:kHZAdapterFacebook]) {
+    if ([self.network.name isEqualToString:[HZFacebookAdapter name]]) {
         HZFacebookBannerSize size = hzFacebookBannerSizeFromValue(value);
         return hzFacebookBannerSizeDescription(size);
-    } else if ([self.network.name isEqualToString:kHZAdapterAdMob]) {
+    } else if ([self.network.name isEqualToString: [HZAdMobAdapter name]]) {
         HZAdMobBannerSize size = hzAdMobBannerSizeFromValue(value);
         return hzAdMobBannerSizeDescription(size);
     } else {
@@ -714,9 +720,9 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 
 - (NSArray *)bannerSizes {
     NSString *name = [self.network name];
-    if ([name isEqualToString:kHZAdapterFacebook]) {
+    if ([name isEqualToString:[HZFacebookAdapter name]]) {
         return [HZBannerAdOptions facebookBannerSizes];
-    } else if ([name isEqualToString:kHZAdapterAdMob]) {
+    } else if ([name isEqualToString:[HZAdMobAdapter name]]) {
         return [HZBannerAdOptions admobBannerSizes];
     } else {
         return @[];
@@ -734,9 +740,9 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     
     opts.presentingViewController = self;
     
-    if ([self.network.name isEqualToString:kHZAdapterFacebook]) {
+    if ([self.network.name isEqualToString: [HZFacebookAdapter name]]) {
         opts.facebookBannerSize = hzFacebookBannerSizeFromValue(self.chosenBannerSize);
-    } else if ([self.network.name isEqualToString:kHZAdapterAdMob]) {
+    } else if ([self.network.name isEqualToString: [HZAdMobAdapter name]]) {
         opts.admobBannerSize = hzAdMobBannerSizeFromValue(self.chosenBannerSize);
     }
     

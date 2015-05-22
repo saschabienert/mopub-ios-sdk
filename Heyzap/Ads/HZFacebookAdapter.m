@@ -15,6 +15,8 @@
 #import "HZFBBannerAdapter.h"
 #import "HZBannerAdOptions.h"
 #import "HZBannerAdOptions_Private.h"
+#import "HeyzapMediation.h"
+#import "HeyzapAds.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
@@ -31,6 +33,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         proxy = [[HZFacebookAdapter alloc] init];
+        proxy.forwardingDelegate = [HZAdapterDelegate new];
+        proxy.forwardingDelegate.adapter = proxy;
     });
     return proxy;
 }
@@ -44,7 +48,7 @@
 }
 
 + (NSString *)name {
-    return kHZAdapterFacebook;
+    return HZNetworkFacebook;
 }
 
 + (NSString *) humanizedName {
@@ -76,6 +80,7 @@
         adapter.credentials = credentials;
         adapter.placementID = placementID;
         adapter.bannerPlacementID = bannerPlacementID;
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
     return nil;
@@ -108,7 +113,7 @@
     }
     
     self.interstitialAd = [[HZFBInterstitialAd alloc] initWithPlacementID:self.placementID];
-    self.interstitialAd.delegate = self;
+    self.interstitialAd.delegate = self.forwardingDelegate;
     [self.interstitialAd loadAd];
 }
 
@@ -133,11 +138,13 @@
 
 - (void)interstitialAdDidClick:(HZFBInterstitialAd *)interstitialAd {
     [self.delegate adapterWasClicked:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)interstitialAdDidClose:(HZFBInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd:self];
     self.interstitialAd = nil;
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 - (void)interstitialAdWillClose:(HZFBInterstitialAd *)interstitialAd {
@@ -146,6 +153,7 @@
 
 - (void)interstitialAdDidLoad:(HZFBInterstitialAd *)interstitialAd {
     self.lastInterstitialError = nil;
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (void)interstitialAd:(HZFBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
@@ -154,9 +162,11 @@
                                                  userInfo:@{kHZMediatorNameKey: @"Facebook",
                                                             NSUnderlyingErrorKey: error}];
     self.interstitialAd = nil;
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)interstitialAdWillLogImpression:(HZFBInterstitialAd *)interstitialAd {
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFacebookLoggingImpression forNetwork: [self name]];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

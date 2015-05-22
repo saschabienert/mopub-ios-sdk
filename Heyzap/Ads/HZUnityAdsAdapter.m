@@ -10,6 +10,7 @@
 #import "HZUnityAds.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HeyzapMediation.h"
 
 @interface HZUnityAdsAdapter() <HZUnityAdsDelegate>
 
@@ -38,7 +39,9 @@
 {
     self = [super init];
     if (self) {
-        [[HZUnityAds sharedInstance] setDelegate:self];
+        self.forwardingDelegate = [HZAdapterDelegate new];
+        self.forwardingDelegate.adapter = self;
+        [[HZUnityAds sharedInstance] setDelegate:self.forwardingDelegate];
     }
     return self;
 }
@@ -52,7 +55,7 @@
 
 + (NSString *)name
 {
-    return kHZAdapterUnityAds;
+    return HZNetworkUnityAds;
 }
 
 + (NSString *) humanizedName
@@ -92,6 +95,7 @@
         adapter.credentials = credentials;
         [[self sharedInstance] setupUnityAdsWithAppID:appID
                                           videoZoneID:videoZoneID incentivizedZoneID:incentivizedZoneID];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
     return nil;
@@ -162,6 +166,8 @@ NSString * const kHZNetworkName = @"mobile";
         [[HZUnityAds sharedInstance] setZone:self.videoZoneID];
     }
     [[HZUnityAds sharedInstance] show];
+
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
 }
 
 #pragma mark - AdColony Delegation
@@ -184,21 +190,31 @@ NSString * const kHZNetworkName = @"mobile";
     if (self.isShowingIncentivized) {
         if (self.didSkipIncentivized) {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+            
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
         } else {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
+            
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
         }
     }
     self.isShowingIncentivized = NO;
     self.didSkipIncentivized = NO;
     [self.delegate adapterDidDismissAd:self];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 - (void)unityAdsWillLeaveApplication {
     [self.delegate adapterWasClicked:self];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)unityAdsVideoStarted {
     [self.delegate adapterWillPlayAudio:self];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
 }
 
 @end

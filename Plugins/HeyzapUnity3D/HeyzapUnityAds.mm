@@ -1,7 +1,7 @@
 //
 //  HeyzapUnitySDK.m
 //
-//  Copyright 2014 Smart Balloon, Inc. All Rights Reserved
+//  Copyright 2015 Smart Balloon, Inc. All Rights Reserved
 //
 //  Permission is hereby granted, free of charge, to any person
 //  obtaining a copy of this software and associated documentation
@@ -85,7 +85,11 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 }
 
 - (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
-    [self sendMessageForKlass:self.klassName withMessage:@"error" andTag:banner.options.tag];
+    if (banner != nil) {
+        [self sendMessageForKlass:self.klassName withMessage:@"error" andTag:banner.options.tag];
+    } else {
+        [self sendMessageForKlass:self.klassName withMessage: @"error" andTag: @""];
+    }
 }
 
 - (void)bannerWasClicked:(HZBannerAd *)banner {
@@ -94,7 +98,6 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 
 - (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *) message andTag: (NSString *) tag {
     NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", message, tag];
-    UnitySendMessage("HeyzapAds", "setDisplayState", [unityMessage UTF8String]);
     UnitySendMessage([klass UTF8String], "setDisplayState", [unityMessage UTF8String]);
 }
 
@@ -123,6 +126,12 @@ extern "C" {
         [HZVideoAd setDelegate: HZVideoDelegate];
         
         HZBannerDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_BANNER_KLASS];
+
+        [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
+            NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", network, callback];
+            NSString *klassName = @"HeyzapAds";
+            UnitySendMessage([klassName UTF8String], "setNetworkCallbackMessage", [unityMessage UTF8String]);
+        }];
     }
     
     void hz_ads_show_interstitial(const char *tag) {
@@ -180,7 +189,7 @@ extern "C" {
         }
         return [HZIncentivizedAd setUserIdentifier: userID];
     }
-    
+        
     void hz_ads_show_banner(const char *position, const char *tag) {
         if (HZCurrentBannerAd == nil) {
             HZBannerPosition pos = HZBannerPositionBottom;
@@ -197,6 +206,7 @@ extern "C" {
                 [HZCurrentBannerAd setDelegate: HZBannerDelegate];
             } failure:^(NSError *error) {
                 NSLog(@"Error fetching banner; error = %@",error);
+                [HZBannerDelegate bannerDidFailToReceiveAd: nil error: error];
             }];
         } else {
             // Unhide the banner
@@ -219,5 +229,9 @@ extern "C" {
     
     void hz_ads_show_mediation_debug_view_controller(void) {
         [HeyzapAds presentMediationDebugViewController];
+    }
+
+    bool hz_ads_is_network_initialized(const char *network) {
+        return [HeyzapAds isNetworkInitialized: [NSString stringWithUTF8String: network]];
     }
 }
