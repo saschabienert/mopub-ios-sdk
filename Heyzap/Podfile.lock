@@ -1,19 +1,18 @@
 PODS:
-  - AdColony (2.5.0)
+  - AdColony (2.5.1)
   - AppLovin (2.5.4)
-  - Bugsnag (4.0.4):
-    - Bugsnag/no-arc (= 4.0.4)
-  - Bugsnag/no-arc (4.0.4)
+  - Bugsnag (4.0.6):
+    - Bugsnag/no-arc (= 4.0.6)
+  - Bugsnag/no-arc (4.0.6)
   - ChartboostSDK (5.3.0)
-  - FacebookAudienceNetwork (4.0.1)
+  - FacebookAudienceNetwork (4.1.0)
   - Google-AdMob-Ads-SDK (7.2.2)
+  - HyprMX (18)
   - Kiwi (2.3.1)
   - OCHamcrest (4.1.1)
   - OCMockito (1.4.0):
     - OCHamcrest (~> 4.0)
-  - OHHTTPStubs (3.1.11):
-    - OHHTTPStubs/Core (= 3.1.11)
-  - OHHTTPStubs/Core (3.1.11)
+  - OHHTTPStubs (4.0.2)
   - Subliminal (1.1.0)
   - UnityAds (1.3.12)
   - VungleAdvertiserSDK (3.0.12)
@@ -25,6 +24,7 @@ DEPENDENCIES:
   - ChartboostSDK
   - FacebookAudienceNetwork
   - Google-AdMob-Ads-SDK
+  - HyprMX
   - Kiwi
   - OCMockito
   - OHHTTPStubs
@@ -41,23 +41,24 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Bugsnag:
-    :commit: 9da3b58e09c3e76cca943f49ef31056aec17a8e2
+    :commit: 8cde077fe062552b6e64a2fe4e6a76d98253df64
     :git: https://github.com/bugsnag/bugsnag-cocoa.git
   Subliminal:
     :commit: d99fef42529589373adc1948aede98aed0fbe9de
     :git: https://github.com/inkling/Subliminal.git
 
 SPEC CHECKSUMS:
-  AdColony: 64af6f0a58571bb396a85729424cb5989fce74b8
+  AdColony: 4e459b2634cf325ed32bbd8a12428366f09aa49a
   AppLovin: fdbeb15795c675c8c847b63876150d3c7806b484
-  Bugsnag: b46b04fb27c40ff635b3f950e1ee06d8cdf0eae8
+  Bugsnag: ddca4f032072f68f5ff92ed1c6da40843a94693d
   ChartboostSDK: 4f649a42b057a11339b27b8ba9c1a2bb280e447c
-  FacebookAudienceNetwork: 329d7c9cb0ef71ad3668e2b807d53a6947585d2f
+  FacebookAudienceNetwork: 03d36034c120e47dea22e1f4fc773d0a8db76c49
   Google-AdMob-Ads-SDK: bf278da9037ad40fa8c514286f96dae1def18fef
+  HyprMX: 1ab69ae92ac1726b5dc22a5117029c52fe7a486d
   Kiwi: f038a6c61f7a9e4d7766bff5717aa3b3fdb75f55
   OCHamcrest: 6f03ffa81d12feab872638490a44ab0a6d3aca10
   OCMockito: 4981140c9a9ec06c31af40f636e3c0f25f27e6b2
-  OHHTTPStubs: 5624a5d20d97d46d47e15a68ca8808b59ccf0512
+  OHHTTPStubs: dbd1957d414659783e07b49c961940b7564c23d9
   Subliminal: 5d9b445e84343d602fad3ce6ac14cff91e9bd618
   UnityAds: f570b20497c56d7f4aac2b1c60e4e6962598ab58
   VungleAdvertiserSDK: 609e82e96bb15959887f5fea72859cabe1d8032a

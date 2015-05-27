@@ -52,6 +52,7 @@ NSString * const HZNetworkChartboost = @"chartboost";
 NSString * const HZNetworkAdColony = @"adcolony";
 NSString * const HZNetworkAdMob = @"admob";
 NSString * const HZNetworkIAd = @"iad";
+NSString * const HZNetworkHyperMX = @"hyprmx";
 
 // Warning! Read first please.
 // Do NOT change the values. They are shared

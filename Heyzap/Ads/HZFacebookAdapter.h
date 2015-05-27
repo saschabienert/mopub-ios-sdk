@@ -9,6 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
 
-@interface HZFacebookAdapter : HZBaseAdapter 
+@interface HZFacebookAdapter : HZBaseAdapter
 
 @end

@@ -130,6 +130,7 @@ const NSTimeInterval maxStartDelay     = 300;
     
     dispatch_async(self.fetchQueue, ^{
         [[HZMediationAPIClient sharedClient] GET:@"start" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
+            
             self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
                                                          ofClass:[NSString class]
                                                          default:@"zz" // Unknown or invalid; the server also uses this.
@@ -195,6 +196,7 @@ NSString * const kHZDataKey = @"data";
         Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
         NSDictionary *mediatorInfo = mediator[kHZDataKey];
         if (mediatorClass && mediatorInfo && [mediatorClass isSDKAvailable]) {
+
             NSError *credentialError = [mediatorClass enableWithCredentials:mediatorInfo];
             if (!credentialError) {
                 HZBaseAdapter *adapter = [mediatorClass sharedInstance];
@@ -203,7 +205,7 @@ NSString * const kHZDataKey = @"data";
             } else {
                 HZELog(@"Error setting up 3rd-party SDK. Error = %@",credentialError);
             }
-        } else {
+        } else {            
             HZELog(@"Unavailable mediator %@",[mediatorClass name]);
         }
     }
