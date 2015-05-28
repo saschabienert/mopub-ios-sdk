@@ -85,62 +85,54 @@
     
     NSString *adID = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
     
+    [HZHYPRManager disableAutomaticPreloading];
     [[HZHYPRManager sharedManager] initializeWithDistributorId:distributorID
                                                     propertyId:propertyID
                                                         userId:adID];
 }
 
 - (HZAdType)supportedAdFormats {
-    return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;
+    return HZAdTypeIncentivized;
 }
 
 - (BOOL)isVideoOnlyNetwork {
     return YES;
 }
 
+static BOOL wasReady = NO;
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag {
-    __block BOOL successful;
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
-        successful = isOfferReady;
-        dispatch_semaphore_signal(semaphore);
-     }];
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    return successful;
+        wasReady = isOfferReady;
+    }];
+    
+    return wasReady;
 }
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag {
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
     
-//    if (type != HZAdTypeInterstitial) {
-//        // only prefetch if they want an interstitial
-//        return;
-//    }
+    [[HZHYPRManager sharedManager] preloadContent];
 }
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options {
     __block HZHyprmxAdapter *bSelf = self;
-    [[HZHYPRManager sharedManager] displayOffer:^(BOOL completed, HYPROffer *offer) {
-        if (type == HZAdTypeIncentivized) {
-            if (completed) {
-                [bSelf.delegate adapterDidCompleteIncentivizedAd: bSelf];
-            } else {
-                [bSelf.delegate adapterDidFailToCompleteIncentivizedAd: bSelf];
-            }
+    
+    [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
+        wasReady = isOfferReady;
+        if (isOfferReady) {
+            [[HZHYPRManager sharedManager] displayOffer:^(BOOL completed, id offer) {
+                wasReady = NO;
+                if (type == HZAdTypeIncentivized) {
+                    if (completed) {
+                        [bSelf.delegate adapterDidCompleteIncentivizedAd: bSelf];
+                    } else {
+                        [bSelf.delegate adapterDidFailToCompleteIncentivizedAd: bSelf];
+                    }
+                }
+            }];
         }
     }];
-}
-
-#pragma mark - Facebook Delegation
-
-- (BOOL)conformsToProtocol:(Protocol *)aProtocol {
-    return YES;
-//    if ([NSStringFromProtocol(aProtocol) isEqualToString:@"FBInterstitialAdDelegate"]) {
-//        return YES;
-//    } else {
-//        return [super conformsToProtocol:aProtocol];
-//    }
 }
                 
 
