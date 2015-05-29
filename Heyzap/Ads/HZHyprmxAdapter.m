@@ -116,7 +116,7 @@ static BOOL wasReady = NO;
 }
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options {
-    __block HZHyprmxAdapter *bSelf = self;
+    HZHyprmxAdapter *bSelf = self;
     
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
         wasReady = isOfferReady;
