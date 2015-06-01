@@ -151,6 +151,10 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 
 #pragma mark - Vungle Delegate
 
+- (void)vungleSDKwillShowAd {
+    [self.delegate adapterDidShowAd:self];
+}
+
 - (void)vungleSDKwillCloseAdWithViewInfo:(NSDictionary*)viewInfo willPresentProductSheet:(BOOL)willPresentProductSheet
 {
     if (self.isShowingIncentivized) {

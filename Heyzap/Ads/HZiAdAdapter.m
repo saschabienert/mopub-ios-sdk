@@ -103,6 +103,9 @@
     if (!success) {
         [self.interstitialAd presentFromViewController:options.viewController];
     }
+    
+    [self.delegate adapterDidShowAd:self];
+
     self.presentedViewController = options.viewController.presentedViewController;
     [NSTimer scheduledTimerWithTimeInterval:0.25 target:self selector:@selector(checkIfAdIsVisible:) userInfo:nil repeats:YES];
 }
