@@ -230,6 +230,10 @@ extern "C" {
     void hz_ads_show_mediation_debug_view_controller(void) {
         [HeyzapAds presentMediationDebugViewController];
     }
+
+    bool hz_ads_is_network_initialized(const char *network) {
+        return [HeyzapAds isNetworkInitialized: [NSString stringWithUTF8String: network]];
+    }
     
     void hz_pause_expensive_work(void) {
         [HeyzapAds pauseExpensiveWork];
