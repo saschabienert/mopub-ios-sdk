@@ -12,6 +12,9 @@
 #import "HZBannerAdapter.h"
 #import "HZBannerAdOptions.h"
 #import "HZBannerAdOptions_Private.h"
+
+#import "HZAdMobAdapter.h"
+
 @import iAd;
 
 @interface HZBannerAd()
@@ -188,7 +191,7 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
         self.frame = frame;
         
         // AdMob will not automatically adjust to the new size (FB will)
-        if ([self.mediatedNetwork isEqualToString:kHZAdapterAdMob]) {
+        if ([self.mediatedNetwork isEqualToString: [HZAdMobAdapter name]]) {
             UIView *underlyingBanner = self.adapter.mediatedBanner;
             CGRect underlyingFrame = underlyingBanner.frame;
             underlyingFrame.size.width = self.frame.size.width;

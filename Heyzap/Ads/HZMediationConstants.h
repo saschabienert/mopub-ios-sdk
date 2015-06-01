@@ -26,18 +26,6 @@ extern NSString * const kHZMediationCredentialsDomain;
  */
 extern NSString * const kHZMediatorNameKey;
 
-// Known mediators
-extern NSString * const kHZAdapterVungle;
-extern NSString * const kHZAdapterChartboost;
-extern NSString * const kHZAdapterAdColony;
-extern NSString * const kHZAdapterAdMob;
-extern NSString * const kHZAdapterHeyzap;
-extern NSString * const kHZAdapterCrossPromo;
-extern NSString * const kHZAdapterAppLovin;
-extern NSString * const kHZAdapterUnityAds;
-extern NSString * const kHZAdapterFacebook;
-extern NSString * const kHZAdapteriAd;
-
 // Humanized names for known mediators
 extern NSString * const kHZAdapterVungleHumanized;
 extern NSString * const kHZAdapterChartboostHumanized;

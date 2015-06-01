@@ -156,29 +156,13 @@
 
 + (Class)adapterClassForName:(NSString *)adapterName
 {
-    if ([adapterName isEqualToString:kHZAdapterVungle]) {
-        return [HZVungleAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterChartboost]) {
-        return [HZChartboostAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterAdColony]) {
-        return [HZAdColonyAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterAdMob]) {
-        return [HZAdMobAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterHeyzap]) {
-        return [HZHeyzapAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterAppLovin]) {
-        return [HZAppLovinAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterCrossPromo]) {
-        return [HZCrossPromoAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterUnityAds]) {
-        return [HZUnityAdsAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapterFacebook]) {
-        return [HZFacebookAdapter class];
-    } else if ([adapterName isEqualToString:kHZAdapteriAd]) {
-        return [HZiAdAdapter class];
-    } else {
-        return nil;
+    for (Class klass in [self allAdapterClasses]) {
+        if ([[klass name] isEqualToString: adapterName]) {
+            return klass;
+        }
     }
+    
+    return nil;
 }
 
 + (NSSet *)allAdapterClasses

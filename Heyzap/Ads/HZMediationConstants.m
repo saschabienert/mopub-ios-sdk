@@ -15,18 +15,6 @@ NSString * const kHZMediationDomain = @"HeyzapMediation";
 NSString * const kHZMediationCredentialsDomain = @"HeyzapMediationCredentials";
 NSString * const kHZMediatorNameKey = @"MediatorName";
 
-// Known mediators
-NSString * const kHZAdapterVungle = @"vungle";
-NSString * const kHZAdapterChartboost = @"chartboost";
-NSString * const kHZAdapterAdColony = @"adcolony";
-NSString * const kHZAdapterAdMob = @"admob";
-NSString * const kHZAdapterHeyzap = @"heyzap";
-NSString * const kHZAdapterCrossPromo = @"heyzap_cross_promo";
-NSString * const kHZAdapterAppLovin = @"applovin";
-NSString * const kHZAdapterUnityAds = @"unityads";
-NSString * const kHZAdapterFacebook = @"facebook";
-NSString * const kHZAdapteriAd = @"iad";
-
 // Humanized names for known mediators
 NSString * const kHZAdapterVungleHumanized = @"Vungle";
 NSString * const kHZAdapterChartboostHumanized = @"Chartboost";

@@ -12,6 +12,7 @@
 #import "HZDictionaryUtils.h"
 #import "HZVungleSDK.h"
 #import "HZUtils.h"
+#import "HeyzapMediation.h"
 
 const NSString* HZVunglePlayAdOptionKeyIncentivized        = @"incentivized";
 const NSString* HZVunglePlayAdOptionKeyShowClose           = @"showClose";
@@ -57,7 +58,9 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 {
     self = [super init];
     if (self) {
-        [[HZVungleSDK sharedSDK] setDelegate:self];
+        self.forwardingDelegate = [HZAdapterDelegate new];
+        self.forwardingDelegate.adapter = self;
+        [[HZVungleSDK sharedSDK] setDelegate:self.forwardingDelegate];
     }
     return self;
 }
@@ -75,6 +78,7 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         [[self sharedInstance] startWithPubAppID:appID];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
     return nil;
@@ -87,9 +91,8 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 
 + (NSString *)name
 {
-    return kHZAdapterVungle;
+    return HZNetworkVungle;
 }
-
 
 + (NSString *)humanizedName
 {
@@ -153,16 +156,22 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     if (self.isShowingIncentivized) {
         if ([viewInfo[@"completedView"] boolValue]) {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
+            
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
         } else {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+            
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
         }
     }
     
     if (willPresentProductSheet) {
         [self.delegate adapterWasClicked:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
     } else {
         [self.delegate adapterDidFinishPlayingAudio:self];
         [self.delegate adapterDidDismissAd:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
     }
     
     self.isShowingIncentivized = NO;
@@ -172,6 +181,7 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self name]];
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol

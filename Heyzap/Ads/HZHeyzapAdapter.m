@@ -35,7 +35,7 @@
 
 + (NSString *)name
 {
-    return kHZAdapterHeyzap;
+    return HZNetworkHeyzap;
 }
 
 + (NSString *)humanizedName

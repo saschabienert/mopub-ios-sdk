@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BaseTestAppViewController.h"
 #import "HeyzapAds.h"
+#import "Chartboost.h"
 
 @interface SDKTestAppViewController : BaseTestAppViewController <HZAdsDelegate,UITextFieldDelegate, HZIncentivizedAdDelegate>
 

@@ -39,6 +39,54 @@
 
 #import "HZTestActivityViewController.h"
 
+// Warning: Read first please.
+// Do NOT change these values. They are shared
+// with the server side and Android.
+NSString * const HZNetworkHeyzap = @"heyzap";
+NSString * const HZNetworkCrossPromo = @"heyzap_cross_promo";
+NSString * const HZNetworkFacebook = @"facebook";
+NSString * const HZNetworkUnityAds = @"unityads";
+NSString * const HZNetworkAppLovin = @"applovin";
+NSString * const HZNetworkVungle = @"vungle";
+NSString * const HZNetworkChartboost = @"chartboost";
+NSString * const HZNetworkAdColony = @"adcolony";
+NSString * const HZNetworkAdMob = @"admob";
+NSString * const HZNetworkIAd = @"iad";
+
+// Warning! Read first please.
+// Do NOT change the values. They are shared
+// with the server side and Android.
+
+NSString * const HZNetworkCallbackInitialized = @"initialized";
+NSString * const HZNetworkCallbackShow = @"show";
+NSString * const HZNetworkCallbackAvailable = @"available";
+NSString * const HZNetworkCallbackHide = @"hide";
+NSString * const HZNetworkCallbackFetchFailed = @"fetch_failed";
+NSString * const HZNetworkCallbackClick = @"click";
+NSString * const HZNetworkCallbackDismiss = @"dismiss";
+NSString * const HZNetworkCallbackIncentivizedResultIncomplete = @"incentivized_result_incomplete";
+NSString * const HZNetworkCallbackIncentivizedResultComplete = @"incentivized_result_complete";
+NSString * const HZNetworkCallbackAudioStarting = @"audio_starting";
+NSString * const HZNetworkCallbackAudioFinished = @"audio_finished";
+NSString * const HZNetworkCallbackBannerLoaded = @"banner-loaded";
+NSString * const HZNetworkCallbackBannerClick = @"banner-click";
+NSString * const HZNetworkCallbackBannerHide = @"banner-hide";
+NSString * const HZNetworkCallbackBannerDismiss = @"banner-dismiss";
+NSString * const HZNetworkCallbackBannerFetchFailed = @"banner-fetch_failed";
+NSString * const HZNetworkCallbackLeaveApplication = @"leave_application";
+
+// Chartboost Specific
+NSString * const HZNetworkCallbackChartboostMoreAppsFetchFailed = @"moreapps-fetch_failed";
+NSString * const HZNetworkCallbackChartboostMoreAppsDismiss = @"moreapps-dismiss";
+NSString * const HZNetworkCallbackChartboostMoreAppsHide = @"moreapps-hide";
+NSString * const HZNetworkCallbackChartboostMoreAppsClick = @"moreapps-click";
+NSString * const HZNetworkCallbackChartboostMoreAppsShow = @"moreapps-show";
+NSString * const HZNetworkCallbackChartboostMoreAppsAvailable = @"moreapps-available";
+NSString * const HZNetworkCallbackChartboostMoreAppsClickFailed = @"moreapps-click_failed";
+
+// Facebook Specific
+NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impression";
+
 @implementation HeyzapAds
 
 #define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"
@@ -119,6 +167,34 @@
     HZVersionCheck()
 
     [[HZAdsManager sharedManager] setMediator: mediator];
+}
+
++ (void)setDelegate:(id)delegate forNetwork:(NSString *)network {
+    HZVersionCheck()
+    
+    if (![HeyzapMediation isOnlyHeyzapSDK]) {
+        [[HeyzapMediation sharedInstance] setDelegate:delegate forNetwork:network];
+    }
+}
+
++ (void) networkCallbackWithBlock: (void (^)(NSString *network, NSString *callback))block {
+    HZVersionCheck()
+    
+    if (![HeyzapMediation isOnlyHeyzapSDK]) {
+        [[HeyzapMediation sharedInstance] setNetworkCallbackBlock: block];
+    }
+}
+
++ (BOOL) isNetworkInitialized:(NSString *)network {
+    HZVersionCheckBool()
+    
+    if (![HeyzapMediation isOnlyHeyzapSDK]) {
+        return [[HeyzapMediation sharedInstance] isNetworkInitialized:network];
+    } else if ([network isEqualToString: HZNetworkHeyzap]) {
+        return [HZAdsManager isEnabled];
+    } else {
+        return NO;
+    }
 }
 
 + (NSString *) defaultTagName {

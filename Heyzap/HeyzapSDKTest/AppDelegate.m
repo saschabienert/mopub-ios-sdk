@@ -57,6 +57,7 @@
     [HZInterstitialAd setDelegate:mainController];
     [HZIncentivizedAd setDelegate:mainController];
     [HZVideoAd setDelegate:mainController];
+    [HeyzapAds setDelegate:mainController forNetwork:HZNetworkChartboost];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   

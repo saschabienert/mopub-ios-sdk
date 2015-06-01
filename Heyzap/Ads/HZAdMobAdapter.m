@@ -13,6 +13,8 @@
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
 #import "HZAdMobBannerAdapter.h"
+#import "HeyzapMediation.h"
+#import "HeyzapAds.h"
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
@@ -33,6 +35,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         proxy = [[HZAdMobAdapter alloc] init];
+        proxy.forwardingDelegate = [HZAdapterDelegate new];
+        proxy.forwardingDelegate.adapter = proxy;
     });
     return proxy;
 }
@@ -55,6 +59,7 @@
         adapter.credentials = credentials;
         [[self sharedInstance] setAdUnitID:adUnitID];
         [[self sharedInstance] setBannerAdUnitID:bannerAdUnitId];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
     return nil;
@@ -67,9 +72,8 @@
 
 + (NSString *)name
 {
-    return kHZAdapterAdMob;
+    return HZNetworkAdMob;
 }
-
 
 + (NSString *)humanizedName
 {
@@ -106,7 +110,7 @@
     
     self.currentInterstitial = [[HZGADInterstitial alloc] init];
     self.currentInterstitial.adUnitID = self.adUnitID;
-    self.currentInterstitial.delegate = self;
+    self.currentInterstitial.delegate = self.forwardingDelegate;
     
     [self.currentInterstitial loadRequest:[HZGADRequest request]];
 }
@@ -134,23 +138,32 @@
                                      userInfo:@{kHZMediatorNameKey: @"AdMob",
                                                 NSUnderlyingErrorKey: error}];
     self.currentInterstitial = nil;
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
 {
     [self.delegate adapterDidDismissAd:self];
     self.currentInterstitial = nil;
+    
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 // As far as I can tell, this means a click.
 - (void)interstitialWillLeaveApplication:(HZGADInterstitial *)ad
 {
     [self.delegate adapterWasClicked:self];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
     self.lastInterstitialError = nil;
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {

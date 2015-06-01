@@ -92,7 +92,7 @@ typedef enum {
 #pragma mark - Callbacks
 
 - (void)didReceiveAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
+    LOG_METHOD_NAME_TO_CONSOLE;
     
     [self changeColorOfShowButton];
 }
@@ -101,13 +101,15 @@ typedef enum {
     
     [self changeColorOfShowButton];
 }
-- (void)didClickAdWithTag:(NSString *)tag { if (self.logCallbacksSwitch.isOn) LOG_METHOD_NAME_TO_CONSOLE;
+- (void)didClickAdWithTag:(NSString *)tag { LOG_METHOD_NAME_TO_CONSOLE;
     
 }
-- (void)didHideAdWithTag:(NSString *)tag { if (self.logCallbacksSwitch.isOn) LOG_METHOD_NAME_TO_CONSOLE;
+- (void)didHideAdWithTag:(NSString *)tag {
+    LOG_METHOD_NAME_TO_CONSOLE;
     [self changeColorOfShowButton];
 }
-- (void)didFailToReceiveAdWithTag:(NSString *)tag { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
+- (void)didFailToReceiveAdWithTag:(NSString *)tag { LOG_METHOD_NAME_TO_CONSOLE; }
+
 - (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error {
     if(self.logCallbacksSwitch.isOn)[self logToConsole:[NSString stringWithFormat:@"%@:%@",NSStringFromSelector(_cmd),error]];
 }
@@ -119,9 +121,9 @@ typedef enum {
     if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
 }
 
-- (void)didCompleteAdWithTag:(NSString *)tag { if (self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
+- (void)didCompleteAdWithTag:(NSString *)tag { LOG_METHOD_NAME_TO_CONSOLE; }
 
-- (void) didFailToCompleteAdWithTag:(NSString *)tag { if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE; }
+- (void) didFailToCompleteAdWithTag:(NSString *)tag { LOG_METHOD_NAME_TO_CONSOLE; }
 
 - (void)requestNotification:(NSNotification *)notification{
     if(self.logRequestsSwitch.isOn){
@@ -215,6 +217,12 @@ const CGFloat kLeftMargin = 10;
     [HZInterstitialAd setDelegate:self];
     [HZVideoAd setDelegate:self];
     [HZIncentivizedAd setDelegate:self];
+    
+    
+    [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
+        NSLog(@"Network: %@ Callback: %@", network, callback);
+        [self logToConsole: [NSString stringWithFormat: @"[%@] %@", network, callback]];
+    }];
     
     self.view.accessibilityLabel = kViewAccessibilityLabel;
     
@@ -335,7 +343,7 @@ const CGFloat kLeftMargin = 10;
     testActivityButton.frame = CGRectMake(CGRectGetMaxX(nativeAdsButton.frame) + 10, CGRectGetMinY(nativeAdsButton.frame), 167.0, 25.0);
     testActivityButton.layer.cornerRadius = 4.0;
     testActivityButton.backgroundColor = [UIColor lightTextColor];
-    [testActivityButton setTitle:@"Start Test Activity" forState:UIControlStateNormal];
+    [testActivityButton setTitle:@"Start Test Suite" forState:UIControlStateNormal];
     [testActivityButton addTarget:self action:@selector(showTestActivity) forControlEvents:UIControlEventTouchUpInside];
     [self.scrollView addSubview:testActivityButton];
 
@@ -348,64 +356,6 @@ const CGFloat kLeftMargin = 10;
                          action:@selector(changeColorOfShowButton)
                forControlEvents:UIControlEventValueChanged];
     [self.scrollView addSubview: self.adUnitSegmentedControl];
-    
-//    NSString * const allStr = @"All";
-//    NSString * const portraitSocialStreamStr = @"P Social";
-//    NSString * const landscapeSocialStreamStr = @"L Social";
-//    NSString * const landscapeFullScreenInterstitialStr = @"L FS Int.";
-//    NSString * const portraitFullScreenInterstitialStr = @"P FS Int.";
-//    NSString * const interstitialStr = @"Interstitial";
-//    NSString * const landscapeChatheadStr = @"L Chathead";
-//    NSString * const portraitChatheadStr = @"P Chathead";
-//    NSString * const screenshotsStr = @"L Screens";
-//    NSString * const portraitScreenshotsStr = @"P Screens";
-//
-//    self.forcedCreativeDict = @{
-//                               allStr: @"",
-//                               portraitSocialStreamStr: @"portrait_social_stream",
-//                               landscapeSocialStreamStr: @"social_stream",
-//                               landscapeFullScreenInterstitialStr: @"full_screen_interstitial" ,
-//                               portraitFullScreenInterstitialStr: @"portrait_full_screen_interstitial",
-//                               interstitialStr: @"interstitial",
-//                               //@"B": @"banner",
-//                               //@"GOTD": @"game_of_the_day",
-//                               landscapeChatheadStr: @"social_fullscreen",
-//                               portraitChatheadStr: @"portrait_social_fullscreen",
-//                               screenshotsStr : @"screenshots_fullscreen",
-//                               portraitScreenshotsStr : @"portrait_screenshots_fullscreen"
-//                               };
-//    
-//    self.forcedCreativeType = @"";
-//   
-//    self.creativeSegmentedControl1 = [[UISegmentedControl alloc] initWithItems:@[allStr, interstitialStr,landscapeFullScreenInterstitialStr, portraitFullScreenInterstitialStr]];
-//    self.creativeSegmentedControl1.frame = CGRectMake(30, CGRectGetMaxY(self.serverChoice.frame)+20, self.view.frame.size.width-60, 44);
-//    self.creativeSegmentedControl1.segmentedControlStyle = UISegmentedControlStylePlain;
-//    self.creativeSegmentedControl1.selectedSegmentIndex = 0;
-//    self.creativeSegmentedControl1.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-//    [self.creativeSegmentedControl1 addTarget:self action:@selector(creativeControlValueChanged:)
-//                          forControlEvents: UIControlEventValueChanged];
-//    [self.creativeSegmentedControl1 setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:10.0f] forKey:UITextAttributeFont] forState:UIControlStateNormal];
-//    [self.scrollView addSubview:self.creativeSegmentedControl1];
-//    
-//    self.creativeSegmentedControl2 = [[UISegmentedControl alloc] initWithItems:@[ landscapeSocialStreamStr,portraitSocialStreamStr,landscapeChatheadStr, portraitChatheadStr]];
-//    self.creativeSegmentedControl2.frame = CGRectMake(30, CGRectGetMaxY(self.creativeSegmentedControl1.frame)+5, self.view.frame.size.width-60, 44);
-//    self.creativeSegmentedControl2.segmentedControlStyle = UISegmentedControlStylePlain;
-//    self.creativeSegmentedControl2.selectedSegmentIndex = UISegmentedControlNoSegment;
-//    self.creativeSegmentedControl2.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-//    [self.creativeSegmentedControl2 addTarget:self action:@selector(creativeControlValueChanged:)
-//                             forControlEvents: UIControlEventValueChanged];
-//    [self.creativeSegmentedControl2 setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:10.0f] forKey:UITextAttributeFont] forState:UIControlStateNormal];
-//    [self.scrollView addSubview:self.creativeSegmentedControl2];
-//    
-//    self.creativeSegmentedControl3 = [[UISegmentedControl alloc] initWithItems:@[ screenshotsStr, portraitScreenshotsStr]];
-//    self.creativeSegmentedControl3.frame = CGRectMake(30, CGRectGetMaxY(self.creativeSegmentedControl2.frame)+5, self.view.frame.size.width-60, 44);
-//    self.creativeSegmentedControl3.segmentedControlStyle = UISegmentedControlStylePlain;
-//    self.creativeSegmentedControl3.selectedSegmentIndex = UISegmentedControlNoSegment;
-//    self.creativeSegmentedControl3.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-//    [self.creativeSegmentedControl3 addTarget:self action:@selector(creativeControlValueChanged:)
-//                             forControlEvents: UIControlEventValueChanged];
-//    [self.creativeSegmentedControl3 setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIFont boldSystemFontOfSize:10.0f] forKey:UITextAttributeFont] forState:UIControlStateNormal];
-//    [self.scrollView addSubview:self.creativeSegmentedControl3];
     
     self.consoleTextView = [[UITextView alloc] initWithFrame:CGRectMake(0.0, CGRectGetMaxY(self.adUnitSegmentedControl.frame)+10, self.view.frame.size.width, 180)];
     self.consoleTextView.editable = NO;
@@ -605,6 +555,7 @@ const CGFloat kLeftMargin = 10;
                          position:HZBannerPositionBottom
                           options:opts
      success:^(HZBannerAd *banner) {
+         banner.delegate = self;
          self.hideBannerButton.enabled = YES;
          self.wrapper = banner;
      } failure:^(NSError *error) {
@@ -728,8 +679,11 @@ const CGFloat kLeftMargin = 10;
 
 #pragma mark - Console
 
-- (void)logToConsole:(NSString *)consoleString
-{
+- (void)logToConsole:(NSString *)consoleString {
+    if (!self.logCallbacksSwitch.isOn) {
+        return;
+    }
+    
     NSDateFormatter * format = [[NSDateFormatter alloc]init];
     [format setDateFormat:@"[h:mm:ss a]"];
     self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[format stringFromDate:[NSDate date]],consoleString];
@@ -750,26 +704,33 @@ const CGFloat kLeftMargin = 10;
 
 - (void)bannerDidReceiveAd:(HZBannerAd *)banner {
     NSLog(@"bannerDidReceiveAd");
+    LOG_METHOD_NAME_TO_CONSOLE;
+    
 }
 
 - (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
     NSLog(@"bannerDidFailtoReceiveAd:%@",error);
+    LOG_METHOD_NAME_TO_CONSOLE;
 }
 
 - (void)bannerWasClicked:(HZBannerAd *)banner {
     NSLog(@"bannerWasClicked");
+    LOG_METHOD_NAME_TO_CONSOLE;
 }
 
 - (void)bannerWillPresentModalView:(HZBannerAd *)banner {
     NSLog(@"bannerWillPresentModalView");
+    LOG_METHOD_NAME_TO_CONSOLE;
 }
 
 - (void)bannerDidDismissModalView:(HZBannerAd *)banner {
     NSLog(@"bannerDidDismissModalView");
+    LOG_METHOD_NAME_TO_CONSOLE;
 }
 
 - (void)bannerWillLeaveApplication:(HZBannerAd *)banner {
     NSLog(@"bannerWillLeaveApplication");
+    LOG_METHOD_NAME_TO_CONSOLE;
 }
 
 

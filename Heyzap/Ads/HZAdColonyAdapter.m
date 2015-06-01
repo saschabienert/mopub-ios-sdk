@@ -10,6 +10,8 @@
 #import "HZAdColony.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HeyzapAds.h"
+#import "HeyzapMediation.h"
 
 #import <UIKit/UIKit.h>
 
@@ -30,6 +32,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         proxy = [[HZAdColonyAdapter alloc] init];
+        proxy.forwardingDelegate = [HZAdapterDelegate new];
+        proxy.forwardingDelegate.adapter = proxy;
     });
     return proxy;
 }
@@ -43,7 +47,7 @@
 
 + (NSString *)name
 {
-    return kHZAdapterAdColony;
+    return HZNetworkAdColony;
 }
 
 + (NSString *)humanizedName
@@ -84,6 +88,7 @@
         [[self sharedInstance] setupAdColonyWithAppID:appID
                                    interstitialZoneID:interstitialZoneID
                                    incentivizedZoneID:incentivizedZoneID];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
     return nil;
@@ -100,7 +105,7 @@
     self.incentivizedZoneID = incentivizedZoneID;
     [HZAdColony configureWithAppID:appID
                            zoneIDs:@[interstitialZoneID,incentivizedZoneID]
-                          delegate:self
+                          delegate:self.forwardingDelegate
                            logging:NO];
 }
 
@@ -202,13 +207,20 @@
     if ([zoneID isEqualToString:self.incentivizedZoneID]) {
         if (shown) {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
+            
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
         } else {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+            
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
         }
     }
     // unfortunately, adcolony doesn't tell us whether the ad was clicked or dismissed
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
+    
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 @end
