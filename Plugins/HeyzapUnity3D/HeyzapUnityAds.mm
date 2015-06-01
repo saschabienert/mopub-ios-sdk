@@ -234,4 +234,12 @@ extern "C" {
     bool hz_ads_is_network_initialized(const char *network) {
         return [HeyzapAds isNetworkInitialized: [NSString stringWithUTF8String: network]];
     }
+    
+    void hz_pause_expensive_work(void) {
+        [HeyzapAds pauseExpensiveWork];
+    }
+    
+    void hz_resume_expensive_work(void) {
+        [HeyzapAds resumeExpensiveWork];
+    }
 }

@@ -46,7 +46,7 @@
 #import "HZDevice.h"
 #import "HZAbstractHeyzapAdapter.h"
 
-@interface HZTestActivityViewController() <UITableViewDelegate, UITableViewDataSource>
+@interface HZTestActivityViewController()
 
 @property (nonatomic) BOOL statusBarHidden;
 @property (nonatomic) UIViewController *rootVC;
@@ -56,7 +56,6 @@
 @property (nonatomic) NSSet *enabledNetworks;
 @property (nonatomic) NSMutableArray *integrationStatuses;
 @property (nonatomic) UILabel *chooseLabel;
-@property (nonatomic) UITableView *networksTableView;
 
 @end
 
@@ -66,9 +65,9 @@
 
 + (void) show {
     HZDLog(@"Showing test activity view controller");
-
+    
     [[HeyzapMediation sharedInstance] start];
-
+    
     HZTestActivityViewController *vc = [[self alloc] init];
     
     // save whether the status bar is hidden
@@ -80,17 +79,7 @@
         HZDLog(@"Heyzap requires a root view controller to display the test activity. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
         return;
     }
-
-    // get the list of all networks
-    vc.allNetworks = [HZBaseAdapter testActivityAdapters];
-    HZDLog(@"All networks: %@", vc.allNetworks);
     
-    // this will link network names to their labels, so we can update the check/cross if necessary
-    vc.integrationStatuses = [NSMutableArray array];
-    for (NSUInteger i = 0; i < [vc.allNetworks count]; i++) {
-        [vc.integrationStatuses addObject:@NO];
-    }
-
     // take over the screen
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
@@ -115,17 +104,17 @@
     [self.navigationItem setLeftBarButtonItem:button animated:NO];
     
     self.navigationController.navigationBar.titleTextAttributes = nil;
-
+    
     self.view.backgroundColor = [UIColor whiteColor];
- 
-    [self.view addSubview:[self makeView]];
+    
+    [self makeView];
+    
+    //fetch ad list
+    [self checkNetworkInfo:self.refreshControl];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
-    // check network info again, so that if we switch back to a network that has been refreshed we don't forget the new state
-    [self checkNetworkInfo];
 }
 
 
@@ -146,7 +135,7 @@
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     HZBaseAdapter *network = [self.allNetworks objectAtIndex:indexPath.row];
-
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
     if(cell == nil){
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"reuseIdentifier"];
@@ -160,20 +149,20 @@
         cell.detailTextLabel.text = @"☒";
         cell.detailTextLabel.textColor = [UIColor redColor];
     }
-
+    
     return cell;
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-
+    
     Class networkClass = [self.allNetworks objectAtIndex:indexPath.row];
     if (![networkClass isSDKAvailable]) {
         [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@ SDK is not available", [networkClass humanizedName]]
                                     message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
         return;
     }
-
+    
     HZBaseAdapter *network = (HZBaseAdapter *)[networkClass sharedInstance];
     HZDLog(@"Current network adapter: %@", network);
     
@@ -186,57 +175,81 @@
     [self.navigationController pushViewController:networkVC animated:YES];
 }
 
+// To get rid of empty rows at the bottom
+// from: http://stackoverflow.com/a/5377569
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    // This will create an "invisible" footer
+    return 0.01f;
+}
+
 #pragma mark - View creation utility methods
 
-- (UIView *) makeView {
-    UIView *chooseNetworkView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds))];
-    chooseNetworkView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+- (void) makeView {
+    // network table
+    self.tableView.backgroundView = nil;
+    self.tableView.backgroundColor = [UIColor whiteColor];
+    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(self.tableView.frame.origin.x + 10,
+                                                                              self.tableView.frame.origin.y,
+                                                                              self.tableView.frame.size.width - 10, 32)];
     
     // choose network label
-    self.chooseLabel = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x + 10, chooseNetworkView.frame.origin.y,
-                                                                   chooseNetworkView.frame.size.width - 10, 32)];
-        if (self.availableNetworks.count == 0) {
-            label.text = @"No SDKs are available";
-        } else {
-            label.text = @"Choose a network:";
-        }
-        label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont systemFontOfSize:12];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        label;
-    });
-    [chooseNetworkView addSubview:self.chooseLabel];
+    self.chooseLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.tableView.frame.origin.x + 10,
+                                                                 self.tableView.frame.origin.y,
+                                                                 self.tableView.frame.size.width - 10, 32)];
+    self.chooseLabel.backgroundColor = [UIColor clearColor];
+    self.chooseLabel.font = [UIFont systemFontOfSize:12];
+    self.chooseLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
-    // networks table view
-    self.networksTableView = ({
-        UITableView *table = [[UITableView alloc] initWithFrame:CGRectMake(chooseNetworkView.frame.origin.x,
-                                                                           chooseNetworkView.frame.origin.y + self.chooseLabel.frame.size.height,
-                                                                           chooseNetworkView.frame.size.width, chooseNetworkView.frame.size.height - self.chooseLabel.frame.size.height)
-                                                          style:UITableViewStylePlain];
-        table.backgroundColor = [UIColor clearColor];
-        table.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        table.delegate = self;
-        table.dataSource = self;
-        table;
-    });
-    [self.networksTableView reloadData];
-    [chooseNetworkView addSubview:self.networksTableView];
+    if (self.availableNetworks.count == 0) {
+        self.chooseLabel.text = @"No SDKs are available";
+    } else {
+        self.chooseLabel.text = @"Choose a network:";
+    }
     
-    return chooseNetworkView;
+    [self.tableView.tableHeaderView addSubview:self.chooseLabel];
+    [self.tableView reloadData];
+    
+    //refresh spinner
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(checkNetworkInfo:) forControlEvents:UIControlEventValueChanged];
+    [self.refreshControl beginRefreshing];
 }
 
 #pragma mark - General utility methods
 
-- (void) checkNetworkInfo {
+- (void) checkNetworkInfo:(UIRefreshControl *)refreshControl {
+    
     // check available
     NSMutableSet *availableNetworks = [NSMutableSet set];
     for (HZBaseAdapter *adapter in [HeyzapMediation availableAdaptersWithHeyzap:YES]) {
         [availableNetworks addObject:[[adapter class] sharedInstance]];
     }
     self.availableNetworks = availableNetworks;
-
+    self.chooseLabel.text = @"Loading...";
+    
     [[HZMediationAPIClient sharedClient] GET:@"info" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
+        
+        // get networks and their integration statuses when fetching for the first time
+        if (!self.allNetworks) {
+            
+            // get the list of all networks
+            self.allNetworks = [HZBaseAdapter testActivityAdapters];
+            HZDLog(@"All networks: %@", self.allNetworks);
+        }
+        
+        if (!self.integrationStatuses) {
+            
+            // this will link network names to their labels, so we can update the check/cross if necessary
+            self.integrationStatuses = [NSMutableArray array];
+            for (NSUInteger i = 0; i < [self.allNetworks count]; i++) {
+                [self.integrationStatuses addObject:@NO];
+            }
+        }
+        
         NSMutableSet *enabledNetworks = [NSMutableSet set];
         NSMutableSet *initializedNetworks = [NSMutableSet set];
         NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
@@ -245,56 +258,69 @@
             BOOL enabled = NO;
             BOOL initialized = NO;
             NSString *mediatorName = mediator[@"name"];
-
+            
             Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
             
             if ([self.allNetworks indexOfObjectIdenticalTo:mediatorClass] == NSNotFound) {
                 continue;
             }
-
+            
             // don't do anything if the sdk isn't available
             if (![mediatorClass isSDKAvailable]) {
                 continue;
             } else {
                 available = YES;
             }
-
+            
             HZBaseAdapter *adapter = (HZBaseAdapter *)[mediatorClass sharedInstance];
-
+            
             // check enabled
             if([mediator[@"enabled"] boolValue]){
                 [enabledNetworks addObject:adapter];
                 enabled = YES;
             }
-
+            
             // check original initialization succeeded
             if (adapter.credentials || [adapter isKindOfClass:[HZAbstractHeyzapAdapter class]]) {
                 [initializedNetworks addObject:adapter];
                 initialized = YES;
             }
-
+            
             // update this network's integration status
             NSUInteger index = [self.allNetworks indexOfObject:mediatorClass];
             self.integrationStatuses[index] = @(available && enabled && initialized);
         }
-
+        
         self.enabledNetworks = enabledNetworks;
         self.initializedNetworks = initializedNetworks;
         HZDLog(@"Networks available: %@", self.availableNetworks);
         HZDLog(@"Networks initialized: %@", self.initializedNetworks);
         HZDLog(@"Networks enabled: %@", self.enabledNetworks);
-
+        
         // update the table view, so that the checkboxes can change if necessary
-        [self.networksTableView reloadData];
-
+        [self.tableView reloadData];
+        
         // update the message that either says "No SDKs are available" or says "Choose a network"
         if (self.availableNetworks.count == 0) {
             self.chooseLabel.text = @"No SDKs are available";
         } else {
             self.chooseLabel.text = @"Choose a network:";
         }
-
+        
+        [refreshControl endRefreshing];
+        
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+        
+        [refreshControl endRefreshing];
+        self.chooseLabel.text = @"Error getting Ad Networks";
+        
+        [[[UIAlertView alloc] initWithTitle:@"Unable to get Ad Networks"
+                                    message:@"Please make sure you are connected to the internet and refresh the list. If the error persists, contact support@heyzap.com."
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil]
+         show];
+        
         HZDLog(@"Error from /info: %@", error.localizedDescription);
     }];
 }

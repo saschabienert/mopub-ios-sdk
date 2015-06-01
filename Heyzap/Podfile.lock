@@ -1,19 +1,17 @@
 PODS:
-  - AdColony (2.5.0)
+  - AdColony (2.5.1)
   - AppLovin (2.5.4)
-  - Bugsnag (4.0.4):
-    - Bugsnag/no-arc (= 4.0.4)
-  - Bugsnag/no-arc (4.0.4)
+  - Bugsnag (4.0.7):
+    - Bugsnag/no-arc (= 4.0.7)
+  - Bugsnag/no-arc (4.0.7)
   - ChartboostSDK (5.3.0)
-  - FacebookAudienceNetwork (4.0.1)
+  - FacebookAudienceNetwork (4.2.0)
   - Google-AdMob-Ads-SDK (7.2.2)
   - Kiwi (2.3.1)
   - OCHamcrest (4.1.1)
   - OCMockito (1.4.0):
     - OCHamcrest (~> 4.0)
-  - OHHTTPStubs (3.1.11):
-    - OHHTTPStubs/Core (= 3.1.11)
-  - OHHTTPStubs/Core (3.1.11)
+  - OHHTTPStubs (4.0.2)
   - Subliminal (1.1.0)
   - UnityAds (1.3.12)
   - VungleAdvertiserSDK (3.0.12)
@@ -41,25 +39,25 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Bugsnag:
-    :commit: 9da3b58e09c3e76cca943f49ef31056aec17a8e2
+    :commit: 96335704981ce5a8d99939f5da78019edc5baf2e
     :git: https://github.com/bugsnag/bugsnag-cocoa.git
   Subliminal:
     :commit: d99fef42529589373adc1948aede98aed0fbe9de
     :git: https://github.com/inkling/Subliminal.git
 
 SPEC CHECKSUMS:
-  AdColony: 64af6f0a58571bb396a85729424cb5989fce74b8
+  AdColony: 4e459b2634cf325ed32bbd8a12428366f09aa49a
   AppLovin: fdbeb15795c675c8c847b63876150d3c7806b484
-  Bugsnag: b46b04fb27c40ff635b3f950e1ee06d8cdf0eae8
+  Bugsnag: 5861d8519d30063abe7b3fcdcf4114a6dddab27a
   ChartboostSDK: 4f649a42b057a11339b27b8ba9c1a2bb280e447c
-  FacebookAudienceNetwork: 329d7c9cb0ef71ad3668e2b807d53a6947585d2f
+  FacebookAudienceNetwork: a3dce7270d2418a766f103e1662918d865b8e011
   Google-AdMob-Ads-SDK: bf278da9037ad40fa8c514286f96dae1def18fef
   Kiwi: f038a6c61f7a9e4d7766bff5717aa3b3fdb75f55
   OCHamcrest: 6f03ffa81d12feab872638490a44ab0a6d3aca10
   OCMockito: 4981140c9a9ec06c31af40f636e3c0f25f27e6b2
-  OHHTTPStubs: 5624a5d20d97d46d47e15a68ca8808b59ccf0512
+  OHHTTPStubs: dbd1957d414659783e07b49c961940b7564c23d9
   Subliminal: 5d9b445e84343d602fad3ce6ac14cff91e9bd618
   UnityAds: f570b20497c56d7f4aac2b1c60e4e6962598ab58
   VungleAdvertiserSDK: 609e82e96bb15959887f5fea72859cabe1d8032a
 
-COCOAPODS: 0.36.4
+COCOAPODS: 0.37.2

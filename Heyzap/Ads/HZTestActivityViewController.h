@@ -33,7 +33,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@interface HZTestActivityViewController : UIViewController
+@interface HZTestActivityViewController : UITableViewController
 
 + (void) show;
 

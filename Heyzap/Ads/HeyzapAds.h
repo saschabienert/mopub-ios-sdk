@@ -255,4 +255,26 @@ extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
  */
 + (void)presentMediationDebugViewController;
 
+#pragma mark - Performance Optimization
+
+/**
+ *  Call this method to have the SDK not start any expensive, main-thread operations. For example, when high-performance gameplay starts you might call `pauseExpensiveWork`, and then `resumeExpensiveWork` on the post-level screen.
+ *
+ *  Heyzap makes all possible efforts to move expensive work to background queues. We have profiled extensively with Timer Profiler and System Trace to try to minimize time spent on the main thread. If you run Instruments and see Heyzap spending more than 5ms on the main thread, please report this as a bug to Heyzap (and attach your .trace file if possible) (exceptions to this are while displaying ads and during the `start` call to Heyzap—we initialize the first `UIWebView` here to make subsequent ones cheaper; see http://stackoverflow.com/q/29811906/1176156).
+ *
+ *  However, certain operations are unavoidably expensive + must be performed on the main thread. For example, initializing some 3rd party SDKs can take up to 100ms. In some 3rd party networks, requesting an ad can take up to 60ms. Creating the first `UIWebView` in iOS takes up to 40ms, and subsequent ones take up to 11ms. This necessitates not starting these operations while 60 FPS gameplay is occurring.
+ *
+ *  If you are experiencing frame drops after adding mediation, you can use this method to prevent Heyzap from starting these expensive operations. Note that this could cause the time to finish a fetch take significantly longer. If you use this method, please take every opportunity to call `resumeExpensiveWork`; even spending a tenth of a second on a post-level screen is ample time for the most expensive operations to complete.
+ *
+ *  @warning Using this method is likely to extend the amount of time until you receive an ad from Heyzap Mediation. Please only use this method if you are experiencing performance issues and after reading this documentation. Note: you *must* call `resumeExpensiveWork` to show ads.
+ */
++ (void)pauseExpensiveWork;
+
+/**
+ *  Call this method to allow the SDK to start any expensive, main-thread operations. The SDK must be resumed before trying to show an ad.
+ *
+ *  @see pauseExpensiveWork
+ */
++ (void)resumeExpensiveWork;
+
 @end

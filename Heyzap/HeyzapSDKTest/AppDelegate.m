@@ -50,6 +50,7 @@
 #else
     const HZAdOptions opts = [PersistentTestAppConfiguration sharedConfiguration].autoPrefetch ? HZAdOptionsNone : HZAdOptionsDisableAutoPrefetching;
     [HeyzapAds startWithPublisherID: @"1234" andOptions:opts];
+//    [HeyzapAds pauseExpensiveWork];
 #endif
     
     

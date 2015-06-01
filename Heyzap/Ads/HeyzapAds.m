@@ -212,6 +212,16 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
     [HZTestActivityViewController show];
 }
 
++ (void)pauseExpensiveWork {
+    HZVersionCheck();
+    [[HeyzapMediation sharedInstance] pauseExpensiveWork];
+}
++ (void)resumeExpensiveWork {
+    HZVersionCheck();
+    [[HeyzapMediation sharedInstance] resumeExpensiveWork];
+    
+}
+
 
 @end
 
