@@ -10,13 +10,14 @@
 #import "HZBaseAdapter.h"
 #import "HZShowOptions.h"
 #import "HZBannerAdapter.h"
+#import "HZMediationStarter.h"
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
 @protocol HZBannerReportingDelegate;
 @class HZBannerAdOptions;
 
-@interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate>
+@interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting>
 
 + (instancetype)sharedInstance;
 
@@ -63,5 +64,8 @@ HZAdType hzAdTypeFromString(NSString *adUnit);
 NSString * NSStringFromAdType(HZAdType type);
 
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion;
+
+- (void)pauseExpensiveWork;
+- (void)resumeExpensiveWork;
 
 @end
