@@ -225,10 +225,10 @@
     }
     
     if (tag == nil || [tag isEqualToString: @""]) {
-        tag = [HeyzapAds defaultTagName];
+        tag = [[HeyzapAds defaultTagName] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
     }
     
-    return [tag stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];;
+    return tag;
 }
 
 @end
