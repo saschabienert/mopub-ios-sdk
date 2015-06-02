@@ -62,7 +62,6 @@
 
 - (void) layoutSubviews {
     [super layoutSubviews];
-    [self.webview stringByEvaluatingJavaScriptFromString:@"adViewShown();"];
     self.webview.frame = self.bounds;
 }
 
@@ -127,6 +126,7 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     self.ready = YES;
+    [self.webview stringByEvaluatingJavaScriptFromString:@"adViewShown();"];
     if (self.actionDelegate != nil) {
         
         [self.actionDelegate onActionReady: self];
