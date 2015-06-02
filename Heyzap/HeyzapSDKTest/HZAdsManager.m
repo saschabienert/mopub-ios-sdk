@@ -25,6 +25,8 @@
 #import "HZWebViewPool.h"
 #import "HZDownloadHelper.h"
 #import "HZNSURLUtils.h"
+#import "HeyzapMediation.h"
+#import "HZPaymentTransactionObserver.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
@@ -60,6 +62,10 @@ static BOOL hzAdsIsEnabled = NO;
 #pragma mark - Run Initial Tasks
 
 - (void) onStart {
+    
+    if (![self isOptionEnabled:HZAdOptionsDisableIAPDataCollection]) {
+        [[SKPaymentQueue defaultQueue] addTransactionObserver:[HZPaymentTransactionObserver sharedInstance]];
+    }
     
     if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly]
         && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
@@ -171,12 +177,17 @@ static BOOL hzAdsIsEnabled = NO;
 
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType
 {
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:adUnit tag:tag auctionType:auctionType] != nil;
+    return ([[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:adUnit tag:tag auctionType:auctionType] != nil
+            && ![HeyzapMediation sharedInstance].adsTimeOut);
 }
 
 #pragma mark - Show
 
 - (void) showForAdUnit: (NSString *) adUnit auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options  {
+    if ([HeyzapMediation sharedInstance].adsTimeOut) {
+        NSLog(@"Ads disabled because of an IAP");
+    }
+    
     BOOL result = NO;
     NSError *error;
     

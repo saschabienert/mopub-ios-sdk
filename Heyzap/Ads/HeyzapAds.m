@@ -36,6 +36,7 @@
 #import "HZAdsManager.h"
 
 #import "HeyzapMediation.h"
+#import "HZPaymentTransactionObserver.h"
 
 #import "HZTestActivityViewController.h"
 
@@ -223,6 +224,12 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
     
 }
 
+#pragma mark - Record IAP Transaction
+
++(void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price {
+    HZVersionCheck();
+    [[HZPaymentTransactionObserver sharedInstance] onIAPPurchaseComplete:productId productName:productName price:price];
+}
 
 @end
 

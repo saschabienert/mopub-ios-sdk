@@ -76,6 +76,10 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
      *  Pass this to disable mediation. This is not required, but is recommended for developers not using mediation. If you're mediating Heyzap through someone (e.g. AdMob), it is *strongly* recommended that you disable Heyzap's mediation to prevent any potential conflicts.
      */
     HZAdOptionsDisableMedation = 1 << 3,
+    /**
+     * Pass this to disable collection of In-App Purchase data
+     */
+    HZAdOptionsDisableIAPDataCollection = 1 << 4,
 };
 
 
@@ -277,5 +281,14 @@ extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
  *  @see pauseExpensiveWork
  */
 + (void)resumeExpensiveWork;
+
+#pragma mark - Record IAP Transaction
+
+/**
+ * Call this method to record an In-App Purchase made from the user. This will disable Ads for the time interval set in your game settings. 
+ *
+ * Only call this method if automatic IAP recording is disabled* (i.e. `HZAdOptionsDisableIAPDataCollection` is enabled).
+ */
++ (void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price;
 
 @end

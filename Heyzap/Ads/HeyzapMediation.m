@@ -70,6 +70,8 @@
 @property (nonatomic) HZMediationStartStatus startStatus;
 @property (nonatomic) BOOL hasLoadedFromCache;
 
+@property (nonatomic) NSTimeInterval IAPAdDisableTime;
+
 @end
 
 @implementation HeyzapMediation
@@ -122,6 +124,20 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     }
 }
 
+
+@synthesize adsTimeOut = _adsTimeOut;
+
+-(NSTimeInterval)adsTimeOut {
+    if (_adsTimeOut < [NSDate timeIntervalSinceReferenceDate]) {
+        _adsTimeOut = 0;
+    }
+    return _adsTimeOut;
+}
+
+-(void)setAdsTimeOut:(NSTimeInterval)adsTimeOut {
+    _adsTimeOut = [[NSDate dateWithTimeIntervalSinceNow:adsTimeOut] timeIntervalSinceReferenceDate];
+}
+
 #pragma mark - Setup
 
 - (void)start {
@@ -143,11 +159,19 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     }
 }
 
+NSString * const kHZIAPAdDisableTime = @"iab_ad_disable_time";
 - (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache {
+    
+    self.IAPAdDisableTime = [[HZDictionaryUtils hzObjectForKey:kHZIAPAdDisableTime
+                                                      ofClass:[NSString class]
+                                                      default:0
+                                                     withDict:dictionary] longLongValue] * 60; // in seconds
+
     self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
                                                  ofClass:[NSString class]
                                                  default:@"zz" // Unknown or invalid; the server also uses this.
                                                 withDict:dictionary];
+    
     NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:dictionary];
     [NSOrderedSet orderedSetWithArray:networks];
     if (networks) {
@@ -255,6 +279,12 @@ NSString * const kHZDataKey = @"data";
         if (options.completion) { options.completion(NO,error); }
         return;
     }
+    
+    if (self.adsTimeOut) {
+        NSLog(@"Ads disabled because of an IAP");
+        return;
+    }
+    
     [self mediateForAdType:adType
            showImmediately:YES
           additionalParams:additionalParams
@@ -466,12 +496,12 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 {
     tag = tag ?: [HeyzapAds defaultTagName];
     
-    return [[self availableAdaptersForAdType:adType tag:tag] count] != 0;
+    return ([[self availableAdaptersForAdType:adType tag:tag] count] != 0 && !self.adsTimeOut);
 }
 
 - (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag network:(HZBaseAdapter *const)network {
     tag = tag ?: [HeyzapAds defaultTagName];
-    return [[self availableAdaptersForAdType:adType tag:tag] containsObject:network];
+    return ([[self availableAdaptersForAdType:adType tag:tag] containsObject:network] && !self.adsTimeOut);
 }
 
 - (NSOrderedSet *)availableAdaptersForAdType:(const HZAdType)adType tag:(NSString *)tag {
