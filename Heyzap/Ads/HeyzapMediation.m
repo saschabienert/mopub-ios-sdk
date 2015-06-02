@@ -171,11 +171,11 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         });
         return;
     }
-
+    
     HZShowOptions *options = [HZShowOptions new];
     options.tag = tag;
     options.completion = completion;
-
+    
     [self mediateForAdType:adType showImmediately:NO additionalParams:additionalParams options:options];
 }
 
@@ -234,7 +234,7 @@ NSString * const kHZDataKey = @"data";
             
             self.setupMediatorClasses = [self.setupMediatorClasses setByAddingObjectsFromSet:setupMediatorClasses];
             self.setupMediators = [self.setupMediators setByAddingObjectsFromSet:setupMediators];
-
+            
             HZILog(@"Setup mediators = %@",setupMediators);
             if ([self.setupMediators count] != 0) {
                 [self autoFetchInterstitial];
@@ -374,7 +374,7 @@ NSString * const kHZDataKey = @"data";
             if (isRateLimited && fetchedWithinTimeout) {
                 continue;
             }
-
+            
             if (fetchedWithinTimeout) {
                 HZDLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
                 successful = YES;
@@ -395,7 +395,7 @@ NSString * const kHZDataKey = @"data";
                 // Send delegate notification about showing an ad.
             } else {
                 HZDLog(@"The mediator with name = %@ didn't have an ad",[[adapter class] name]);
-
+                
                 // If the mediated SDK errored, reset it and try again. If there's no error, they're probably still busy fetching.
                 dispatch_sync(self.pausableMainQueue, ^{
                     if ([adapter lastErrorForAdType:type]) {
@@ -410,7 +410,7 @@ NSString * const kHZDataKey = @"data";
                     }
                 });
             }
-
+            
             ordinal++;
         }
         if (!successful) {
@@ -418,9 +418,9 @@ NSString * const kHZDataKey = @"data";
                 [session reportFetchWithSuccessfulAdapter:nil];
                 [self.sessionDictionary removeObjectForKey:sessionKey];
                 [self sendFailureMessagesForAdType:type
-                            wasAttemptingToShow:showImmediately
-                                underlyingError:nil
-                                        options:options];
+                               wasAttemptingToShow:showImmediately
+                                   underlyingError:nil
+                                           options:options];
             });
         }
     });
@@ -482,7 +482,7 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     if (!session) {
         return [NSOrderedSet orderedSet];
     }
-
+    
     NSOrderedSet *const availableAdapters = [session availableAdapters:self.lastInterstitialVideoShownDate];
     
     NSIndexSet *const adapterIndexes = [availableAdapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter * adapter, NSUInteger idx, BOOL *stop) {
@@ -720,7 +720,7 @@ const NSTimeInterval bannerPollInterval = 1;
     
     NSDictionary *const mediateParams = request.createParams;
     
-
+    
     dispatch_async(self.fetchQueue, ^{
         [[HZMediationAPIClient sharedClient] GET:@"mediate" parameters:mediateParams success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
             

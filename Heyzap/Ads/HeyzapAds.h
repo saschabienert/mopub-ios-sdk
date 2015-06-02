@@ -90,6 +90,7 @@ extern NSString * const HZNetworkChartboost;
 extern NSString * const HZNetworkAdColony;
 extern NSString * const HZNetworkAdMob;
 extern NSString * const HZNetworkIAd;
+extern NSString * const HZNetworkHyperMX;
 
 // General Network Callbacks
 extern NSString * const HZNetworkCallbackInitialized;
