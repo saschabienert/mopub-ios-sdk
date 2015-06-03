@@ -121,6 +121,10 @@ static BOOL wasReady = NO;
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
         wasReady = isOfferReady;
         if (isOfferReady) {
+            
+            [self.delegate adapterDidShowAd:self];
+            [self.delegate adapterWillPlayAudio:self];
+            
             [[HZHYPRManager sharedManager] displayOffer:^(BOOL completed, id offer) {
                 wasReady = NO;
                 if (type == HZAdTypeIncentivized) {
@@ -130,6 +134,8 @@ static BOOL wasReady = NO;
                         [bSelf.delegate adapterDidFailToCompleteIncentivizedAd: bSelf];
                     }
                 }
+                [self.delegate adapterDidFinishPlayingAudio:self];
+                [self.delegate adapterDidDismissAd:self];
             }];
         }
     }];
