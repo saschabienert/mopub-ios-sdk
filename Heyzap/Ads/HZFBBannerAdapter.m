@@ -32,6 +32,7 @@
         _adView.delegate = self;
         
         // Hack to get bottom banners to work (the frame height of the banner is required by `HZBannerAd` -> `placeBannerInView`)
+        // The frame of FBAdView was set to `CGRectZero` since 4.1.0 (an explicit height was set before 4.1.0)
         self.mediatedBanner.frame = CGRectMake(0, 0, 0, adSize.size.height);
         
         [_adView loadAd];
