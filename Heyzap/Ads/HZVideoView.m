@@ -18,6 +18,14 @@
 @property (nonatomic) HZVideoControlView *controlView;
 @property (nonatomic) BOOL didFinishVideo;
 @property (nonatomic) NSTimer *timer;
+@property (nonatomic) BOOL durationAvailableFireImmediately;
+@property (nonatomic) NSTimer *animationTimer;
+
+#define kHZVideoViewAnimateInTime 0.0
+#define kHZVideoViewAnimateInAlpha 1.0
+#define kHZVideoViewAnimateOutTime 1.5
+#define kHZVideoViewAnimateOutAlpha 0.0
+
 @end
 
 @implementation HZVideoView
@@ -30,6 +38,8 @@
         [self registerForNotifications];
         
         self.backgroundColor = [UIColor clearColor];
+        
+        _showingAllVideoControls = true;
         
         _player = [[MPMoviePlayerController alloc] init];
         _player.controlStyle = MPMovieControlStyleNone;
@@ -58,6 +68,9 @@
         [_controlView.skipButton addTarget: self action: @selector(onHide:) forControlEvents: UIControlEventTouchUpInside];
         _controlView.hideButton.tag = 3;
         [_controlView.hideButton addTarget: self action: @selector(onHide:) forControlEvents: UIControlEventTouchUpInside];
+        
+        _controlView.installButton.tag = 4;
+        [_controlView.installButton addTarget: self action: @selector(onInstall:) forControlEvents: UIControlEventTouchUpInside];
     }
     return self;
 }
@@ -122,9 +135,7 @@
 }
 
 - (void) onTap: (id) sender {
-    if (self.actionDelegate != nil) {
-        [self.actionDelegate performSelector: @selector(onActionClick:withURL:) withObject: self withObject: nil];
-    }
+    [self animateControls:!_showingAllVideoControls];
 }
 
 - (void) onHide: (id) sender {
@@ -136,6 +147,49 @@
         
         [self.actionDelegate performSelector: @selector(onActionHide:) withObject: self];
     }
+}
+
+- (void) onInstall: (id) sender {
+    if (self.actionDelegate != nil) {
+        [self.actionDelegate performSelector: @selector(onActionClick:withURL:) withObject: self withObject: nil];
+    }
+}
+
+#pragma mark - Animation
+- (void) animateControls:(BOOL)animateIn {
+    double alpha = animateIn ? kHZVideoViewAnimateInAlpha : kHZVideoViewAnimateOutAlpha;
+    double duration = animateIn ? kHZVideoViewAnimateInTime : kHZVideoViewAnimateOutTime;
+    
+    [UIView animateWithDuration:duration
+                          delay: 0.0f
+                        options: UIViewAnimationOptionBeginFromCurrentState
+                     animations:^(void){
+        [self.controlView.hideButton setAlpha:alpha];
+        [self.controlView.timerTextLabel setAlpha:alpha];
+        [self.controlView.skipButton setAlpha:alpha];
+        [self.controlView.installButton setAlpha:alpha];
+    }completion:^(BOOL finished){
+        if(self.animationTimer){
+            [self.animationTimer invalidate];
+            self.animationTimer = nil;
+        }
+        
+        // if we're showing the controls, set a timer to hide them
+        if(animateIn) {
+            self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: 4 target: self selector: @selector(animationTimerDidFire:) userInfo: nil repeats: NO];
+        }
+    }];
+    
+    self.showingAllVideoControls = animateIn;
+}
+
+- (void) animationTimerDidFire: (id) sender {
+    // fade out video controls after this timer fires, if they're still showing.
+    if(!self.showingAllVideoControls){
+        return;
+    }
+    
+    [self animateControls:NO];
 }
 
 - (void) removeFromSuperview {
@@ -151,9 +205,16 @@
 
 - (void) timerDidFire: (id) sender {
     if (self.player.playbackState == MPMoviePlaybackStatePlaying) {
-        int remainingDuration = (int)(self.player.duration - self.player.currentPlaybackTime);
+        // occasionally, the timer will fire earlier than the currentPlaybackTime can been determined.
+        // in that case, set it to 0 (this happens at the start of the video playback)
+        double currentPlaybackTime = self.player.currentPlaybackTime;
+        if(isnan(currentPlaybackTime)){
+            currentPlaybackTime = 0;
+        }
+        
+        int remainingDuration = (int)(self.player.duration - currentPlaybackTime);
         [self.controlView updateTimeRemaining: remainingDuration];
-        int skipRemaining = (self.skipButtonTimeInterval - self.player.currentPlaybackTime);
+        int skipRemaining = (self.skipButtonTimeInterval - currentPlaybackTime);
         if (skipRemaining > -1) {
             [self.controlView updateSkipRemaining: skipRemaining];
         } else {
@@ -181,9 +242,27 @@
     self.controlView.skipButton.hidden = !value;
 }
 
+- (void) setInstallButton:(BOOL)value {
+    _installButton = value;
+    self.controlView.installButton.hidden = !value;
+}
+
+- (void) setTimerLabel:(BOOL)value {
+    _timerLabel = value;
+    self.controlView.timerTextLabel.hidden = !value;
+}
+
 #pragma mark - Video Notifications
 
-- (void) mediaPlayerDurationAvailable: (id) notification {}
+- (void) mediaPlayerDurationAvailable: (id) notification {
+    // show ad timer as soon as possible. if our timer is initialized, fire it right away to show ad timer.
+    // if our timer isn't initialized yet, remember to fire the timer event immediately when it is.
+    if(self.timer == nil) {
+        _durationAvailableFireImmediately = true;
+    } else {
+        [self.timer fire];
+    }
+}
 - (void) mediaPlayerNowPlayingMovieDidChange: (id) notification {}
 
 - (void) mediaPlayerLoadStateDidChange: (id) notification {
@@ -207,10 +286,7 @@
         default:
             break;
     }
-    
 }
-
-
 
 - (void) mediaPlayerPlaybackDidFinish: (NSNotification *) notification {
     [self.player setFullscreen: NO animated: NO];
@@ -229,7 +305,6 @@
             [self.actionDelegate performSelector: @selector(onActionCompleted:) withObject: self];
         }
     }
-    
 }
 
 - (void) mediaPlayerPlaybackStateDidChange: (id) notification {
@@ -245,6 +320,11 @@
     if (self.player.playbackState == MPMoviePlaybackStatePlaying) {
         if (self.timer == nil) {
             self.timer = [NSTimer scheduledTimerWithTimeInterval: 1 target: self selector: @selector(timerDidFire:) userInfo: nil repeats: YES];
+            if(_durationAvailableFireImmediately) {
+                [self.timer fire];
+            }
+            
+            [self animateControls:YES];
         }
         
         self.videoDuration = self.player.duration;

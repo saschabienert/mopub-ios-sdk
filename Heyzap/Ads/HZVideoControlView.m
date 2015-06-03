@@ -12,6 +12,10 @@
 #define kHZVideoControlViewTimerSide 50.0
 #define kHZVideoControlViewTimerPadding 10.0
 
+#define kHZVideoControlViewInstallTop 5.0
+#define kHZVideoControlViewInstallSide 5.0
+#define kHZVideoControlViewInstallPadding 20.0
+
 @interface HZVideoControlView()
 @property (nonatomic) NSString *skipFormatText;
 @property (nonatomic) NSString *skipNowText;
@@ -23,6 +27,8 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        _isTimeExpired = false;
+        
         _timerTextLabel = [[UILabel alloc] initWithFrame: CGRectMake(0.0, 0.0, kHZVideoControlViewTimerSide, kHZVideoControlViewTimerSide)];
         _timerTextLabel.textColor = [UIColor whiteColor];
         _timerTextLabel.backgroundColor = [UIColor clearColor];
@@ -71,6 +77,23 @@
         }
         
         [self addSubview: _hideButton];
+        
+        _installButton = [UIButton buttonWithType: UIButtonTypeCustom];
+        _installButton.frame = CGRectMake(0.0, 0.0, 80.0, 30.0);
+        _installButton.accessibilityLabel = @"install";
+        [_installButton.titleLabel setFont: [UIFont boldSystemFontOfSize: 20.0]];
+        _installButton.titleLabel.textAlignment = UITextAlignmentCenter;
+        _installButton.hidden = YES;
+        _installButton.layer.opacity = 0.8f;
+        _installButton.layer.shadowColor = [[UIColor blackColor] CGColor];
+        _installButton.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
+        _installButton.layer.shadowRadius = 0.0f;
+        _installButton.layer.shadowOpacity = 1.0f;
+        _installButton.layer.cornerRadius = 2;
+        _installButton.layer.borderWidth = 1;
+        _installButton.layer.borderColor = [[UIColor whiteColor] CGColor];
+        [self.installButton setTitle: @"Install Now" forState: UIControlStateNormal];
+        [self addSubview: _installButton];
     }
     return self;
 }
@@ -85,10 +108,10 @@
                                            kHZVideoControlViewTimerSide + 40.0,
                                            kHZVideoControlViewTimerSide);
     
-    CGSize textSize = [self.skipButton.titleLabel.text sizeWithFont: self.skipButton.titleLabel.font];
-    self.skipButton.frame = CGRectMake(self.bounds.size.width - (textSize.width + 20.0),
+    CGSize skipButtonTextSize = [self.skipButton.titleLabel.text sizeWithFont: self.skipButton.titleLabel.font];
+    self.skipButton.frame = CGRectMake(self.bounds.size.width - (skipButtonTextSize.width + 20.0),
                                        self.frame.origin.y,
-                                       textSize.width + 30.0,
+                                       skipButtonTextSize.width + 30.0,
                                        self.skipButton.frame.size.height);
     
     self.hideButton.frame = CGRectMake(self.bounds.size.width - self.hideButton.frame.size.width,
@@ -96,15 +119,22 @@
                                        self.hideButton.frame.size.width,
                                        self.hideButton.frame.size.height);
     
+    CGSize installButtonTextSize = [self.installButton.titleLabel.text sizeWithFont: self.installButton.titleLabel.font];
+    self.installButton.frame = CGRectMake(kHZVideoControlViewInstallSide,
+                                           self.frame.origin.y + kHZVideoControlViewInstallTop,
+                                           installButtonTextSize.width + kHZVideoControlViewInstallPadding,
+                                           self.installButton.frame.size.height);
+    
 }
 
 - (void) updateTimeRemaining:(int)timeRemaining {
     if (timeRemaining > 0) {
 //        self.timerTextView.frame = CGRectMake(kHZVideoControlViewTimerPadding, self.bounds.size.height - kHZVideoControlViewTimerPadding - kHZVideoControlViewTimerSide, [, kHZVideoControlViewTimerSide);
-        self.timerTextLabel.hidden = NO;
+        
         [[self timerTextLabel] setText: [NSString stringWithFormat: @"%i", timeRemaining]];
     } else {
         self.timerTextLabel.hidden = YES;
+        _isTimeExpired = true;
     }
 }
 

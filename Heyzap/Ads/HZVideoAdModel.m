@@ -62,9 +62,10 @@
         }
     
         // On-Screen Video Behaviors
-        _allowClick = [[HZDictionaryUtils hzObjectForKey: @"allow_click" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         _allowHide = [[HZDictionaryUtils hzObjectForKey: @"allow_hide" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         _allowSkip = [[HZDictionaryUtils hzObjectForKey: @"allow_skip" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
+        _allowInstallButton = [[HZDictionaryUtils hzObjectForKey: @"allow_install_button" ofClass: [NSNumber class] default: @(1) withDict: video] boolValue];
+        _allowAdTimer = [[HZDictionaryUtils hzObjectForKey: @"allow_ad_timer" ofClass: [NSNumber class] default: @(1) withDict: video] boolValue];
         _lockoutTime = [HZDictionaryUtils hzObjectForKey: @"lockout_time" ofClass: [NSNumber class] default: @(0) withDict: video];
         _postRollInterstitial = [[HZDictionaryUtils hzObjectForKey: @"post_roll_interstitial" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         

@@ -30,7 +30,8 @@
 @property (nonatomic, readonly) NSNumber *lockoutTime;
 @property (nonatomic, readonly) BOOL allowSkip;
 @property (nonatomic, readonly) BOOL allowHide;
-@property (nonatomic, readonly) BOOL allowClick;
+@property (nonatomic, readonly) BOOL allowInstallButton;
+@property (nonatomic, readonly) BOOL allowAdTimer;
 @property (nonatomic, readonly) BOOL postRollInterstitial;
 
 @property (nonatomic, readonly) BOOL allowFallbacktoStreaming;

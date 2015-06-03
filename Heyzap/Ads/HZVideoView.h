@@ -15,6 +15,9 @@
 @property (nonatomic) BOOL hideButton;
 @property (nonatomic) NSTimeInterval skipButtonTimeInterval;
 @property (nonatomic) BOOL skipButton;
+@property (nonatomic) BOOL installButton;
+@property (nonatomic) BOOL timerLabel;
+@property (nonatomic) BOOL showingAllVideoControls;
 // Longest time video was played for.
 @property (nonatomic) NSTimeInterval playbackTime;
 @property (nonatomic) NSTimeInterval videoDuration;

@@ -16,6 +16,8 @@
  */
 @property (nonatomic) UIButton *skipButton;
 @property (nonatomic) UIButton *hideButton;
+@property (nonatomic) UIButton *installButton;
+@property (nonatomic) BOOL isTimeExpired;
 
 - (void) updateTimeRemaining: (int) timeRemaining;
 - (void) updateSkipRemaining: (int) skipRemaining;

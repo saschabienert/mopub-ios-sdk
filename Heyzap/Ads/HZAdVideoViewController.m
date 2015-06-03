@@ -52,6 +52,8 @@
         
         [_videoView setSkipButton: self.ad.allowSkip];
         [_videoView setHideButton: self.ad.allowHide];
+        [_videoView setInstallButton: self.ad.allowInstallButton];
+        [_videoView setTimerLabel: self.ad.allowAdTimer];
         [_videoView setSkipButtonTimeInterval: [self.ad.lockoutTime doubleValue]/1000.0];
         
         _webView = [[HZWebView alloc] initWithFrame: CGRectZero];
@@ -262,7 +264,7 @@
 
 - (void) onActionClick: (UIView *) sender withURL: (NSURL *) url {
     if ([sender tag] == kHZVideoViewTag) {
-        if ([self.ad allowClick]) {
+        if ([self.ad allowInstallButton]) {
             [self.videoView pause];
             [self didClickWithURL: url];
         }
