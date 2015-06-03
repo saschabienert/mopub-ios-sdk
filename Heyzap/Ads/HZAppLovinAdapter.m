@@ -228,6 +228,10 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
+- (void)didShowAd {
+    [self.delegate adapterDidShowAd:self];
+}
+
 - (void)didClickAd
 {
     [self.delegate adapterWasClicked:self];

@@ -142,6 +142,10 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
+- (void)interstitialWillPresentScreen:(HZGADInterstitial *)ad {
+    [self.delegate adapterDidShowAd:self];
+}
+
 - (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
 {
     [self.delegate adapterDidDismissAd:self];

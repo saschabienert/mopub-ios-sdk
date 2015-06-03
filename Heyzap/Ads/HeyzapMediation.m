@@ -171,11 +171,11 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         });
         return;
     }
-
+    
     HZShowOptions *options = [HZShowOptions new];
     options.tag = tag;
     options.completion = completion;
-
+    
     [self mediateForAdType:adType showImmediately:NO additionalParams:additionalParams options:options];
 }
 
@@ -234,7 +234,7 @@ NSString * const kHZDataKey = @"data";
             
             self.setupMediatorClasses = [self.setupMediatorClasses setByAddingObjectsFromSet:setupMediatorClasses];
             self.setupMediators = [self.setupMediators setByAddingObjectsFromSet:setupMediators];
-
+            
             HZILog(@"Setup mediators = %@",setupMediators);
             if ([self.setupMediators count] != 0) {
                 [self autoFetchInterstitial];
@@ -250,6 +250,9 @@ NSString * const kHZDataKey = @"data";
 {
     if (self.pausableQueueIsPaused) {
         NSLog(@"Attempted to call show when the SDK is paused. Ignoring this request.");
+        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad when the SDK is paused."}];
+        [[self delegateForAdType:adType] didFailToShowAdWithTag:options.tag andError:error];
+        if (options.completion) { options.completion(NO,error); }
         return;
     }
     [self mediateForAdType:adType
@@ -337,7 +340,6 @@ NSString * const kHZDataKey = @"data";
     if (showImmediately) {
         HZBaseAdapter *adapter = [session firstAdapterWithAd:self.lastInterstitialVideoShownDate];
         if (adapter) {
-            if (options.completion) { options.completion(YES,nil); }
             [self haveAdapter:adapter showAdForSession:session sessionKey:sessionKey options:options];
             return;
         }
@@ -372,7 +374,7 @@ NSString * const kHZDataKey = @"data";
             if (isRateLimited && fetchedWithinTimeout) {
                 continue;
             }
-
+            
             if (fetchedWithinTimeout) {
                 HZDLog(@"We fetched within the timeout! Network = %@",[[adapter class] name]);
                 successful = YES;
@@ -393,7 +395,7 @@ NSString * const kHZDataKey = @"data";
                 // Send delegate notification about showing an ad.
             } else {
                 HZDLog(@"The mediator with name = %@ didn't have an ad",[[adapter class] name]);
-
+                
                 // If the mediated SDK errored, reset it and try again. If there's no error, they're probably still busy fetching.
                 dispatch_sync(self.pausableMainQueue, ^{
                     if ([adapter lastErrorForAdType:type]) {
@@ -408,7 +410,7 @@ NSString * const kHZDataKey = @"data";
                     }
                 });
             }
-
+            
             ordinal++;
         }
         if (!successful) {
@@ -416,28 +418,33 @@ NSString * const kHZDataKey = @"data";
                 [session reportFetchWithSuccessfulAdapter:nil];
                 [self.sessionDictionary removeObjectForKey:sessionKey];
                 [self sendFailureMessagesForAdType:type
-                            wasAttemptingToShow:showImmediately
-                                underlyingError:nil
-                                        options:options];
+                               wasAttemptingToShow:showImmediately
+                                   underlyingError:nil
+                                           options:options];
             });
         }
     });
 }
 
+unsigned long long const adapterDidShowAdTimeout = 1.5;
+
 - (void)haveAdapter:(HZBaseAdapter *)adapter showAdForSession:(HZMediationSession *)session sessionKey:(HZMediationSessionKey *)key options:(HZShowOptions *)options
 {
     [self.sessionDictionary removeObjectForKey:key];
     
-    HZMediationSessionKey *showKey = [key sessionKeyAfterShowing];
+    HZMediationSessionKey *showKey = [key sessionKeyAfterRequestingShow];
     self.sessionDictionary[showKey] = session;
     
     if ([adapter isVideoOnlyNetwork] && session.adType == HZAdTypeInterstitial) {
         self.lastInterstitialVideoShownDate = [NSDate date];
     }
-
-    [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
+    
     [adapter showAdForType:session.adType options:options];
-    [session reportImpressionForAdapter:adapter];
+    
+    // Check if the session has responded yet.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(adapterDidShowAdTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self checkIfSession:session isUnshownWithKey:showKey adapter:adapter showOptions:options];
+    });
 }
 
 
@@ -475,7 +482,7 @@ NSString * const kHZDataKey = @"data";
     if (!session) {
         return [NSOrderedSet orderedSet];
     }
-
+    
     NSOrderedSet *const availableAdapters = [session availableAdapters:self.lastInterstitialVideoShownDate];
     
     NSIndexSet *const adapterIndexes = [availableAdapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter * adapter, NSUInteger idx, BOOL *stop) {
@@ -487,10 +494,47 @@ NSString * const kHZDataKey = @"data";
 
 #pragma mark - Adapter Callbacks
 
-- (HZMediationSessionKey *)currentShownSessionKey
+- (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
+    HZMediationSessionKey *key = [self sessionKeyForAdState:HZAdStateRequestedShow];
+    
+    if (key) {
+        HZMediationSession *session = self.sessionDictionary[key];
+        [session reportImpressionForAdapter:adapter];
+        
+        [self.sessionDictionary removeObjectForKey:key];
+        HZMediationSessionKey *showKey = [key sessionKeyAfterShown];
+        self.sessionDictionary[showKey] = session;
+        
+        [[self delegateForAdType:session.adType] didShowAdWithTag:session.tag];
+    } else {
+        HZDLog(@"The network %@ reported that it showed an ad, but we weren't expecting this.",adapter.name);
+    }
+}
+
+- (void)checkIfSession:(HZMediationSession *)session isUnshownWithKey:(HZMediationSessionKey *)key adapter:(HZBaseAdapter *)adapter showOptions:(HZShowOptions *)showOptions {
+    HZParameterAssert(session);
+    HZParameterAssert(key);
+    HZParameterAssert(key.adState == HZAdStateRequestedShow);
+    
+    HZMediationSession *unshownSession = self.sessionDictionary[key];
+    if (unshownSession == session) {
+        NSError *showError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:
+            @{
+              NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Adapter %@ was asked to show an ad, but we didn't Heyzap didn't get a callback from that network reporting that it did so within %llu seconds. Assuming it failed and sending a didFail callback",adapter.name, adapterDidShowAdTimeout]}];
+        
+        // Assume if we haven't shown yet, the show is broken and we should just log an error.
+        [self.sessionDictionary removeObjectForKey:key];
+        [[self delegateForAdType:session.adType] didFailToShowAdWithTag:session.tag andError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{}]];
+        if (showOptions.completion) { showOptions.completion(NO,showError); }
+    }
+}
+
+// did Fail To Show?
+
+- (HZMediationSessionKey *)sessionKeyForAdState:(const HZAdState)state
 {
     return [[self.sessionDictionary keysOfEntriesPassingTest:^BOOL(HZMediationSessionKey *key, id obj, BOOL *stop) {
-        return key.hasBeenShown;
+        return key.adState == state;
     }] anyObject]; // Should be just 1 key that is being shown at a time.
 }
 
@@ -501,7 +545,7 @@ NSString * const kHZDataKey = @"data";
  */
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter
 {
-    HZMediationSessionKey *key = [self currentShownSessionKey];
+    HZMediationSessionKey *key = [self sessionKeyForAdState:HZAdStateShown];
     
     if (key) {
         HZMediationSession *session = self.sessionDictionary[key];
@@ -513,7 +557,7 @@ NSString * const kHZDataKey = @"data";
 // Potential issue: If an adapter fails to send us a callback we might not remove the sessionKey from the dictionary
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter
 {
-    HZMediationSessionKey *key = [self currentShownSessionKey];
+    HZMediationSessionKey *key = [self sessionKeyForAdState:HZAdStateShown];
     
     if (key) {
         [self.sessionDictionary removeObjectForKey:key];
@@ -527,14 +571,14 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter
 {
-    HZMediationSessionKey *key = [self currentShownSessionKey];
+    HZMediationSessionKey *key = [self sessionKeyForAdState:HZAdStateShown];
     if (key) {
         [[self delegateForAdType:key.adType] willStartAudio];
     }
 }
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter
 {
-    HZMediationSessionKey *key = [self currentShownSessionKey];
+    HZMediationSessionKey *key = [self sessionKeyForAdState:HZAdStateShown];
     if (key) {
         [[self delegateForAdType:key.adType] didFinishAudio];
     }
@@ -546,7 +590,7 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
-    HZMediationSessionKey *key = [self currentShownSessionKey];
+    HZMediationSessionKey *key = [self sessionKeyForAdState:HZAdStateShown];
     if (key) {
         [[self delegateForAdType:HZAdTypeIncentivized] didCompleteAdWithTag:key.tag];
     }
@@ -554,7 +598,7 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
-    HZMediationSessionKey *key = [self currentShownSessionKey];
+    HZMediationSessionKey *key = [self sessionKeyForAdState:HZAdStateShown];
     if (key) {
         [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAdWithTag:key.tag];
     }
@@ -676,7 +720,7 @@ const NSTimeInterval bannerPollInterval = 1;
     
     NSDictionary *const mediateParams = request.createParams;
     
-
+    
     dispatch_async(self.fetchQueue, ^{
         [[HZMediationAPIClient sharedClient] GET:@"mediate" parameters:mediateParams success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
             

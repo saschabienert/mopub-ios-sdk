@@ -181,6 +181,10 @@ NSString * const kHZNetworkName = @"mobile";
     }
 }
 
+- (void)unityAdsDidShow {
+    [self.delegate adapterDidShowAd:self];
+}
+
 - (void)unityAdsVideoCompleted:(NSString *)rewardItemKey skipped:(BOOL)skipped {
     [self.delegate adapterDidFinishPlayingAudio:self];
     self.didSkipIncentivized = skipped;

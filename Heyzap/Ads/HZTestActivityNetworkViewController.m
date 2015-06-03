@@ -279,6 +279,10 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     return @"us";
 }
 
+- (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
+    
+}
+
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter {
 
 }
