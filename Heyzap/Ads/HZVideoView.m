@@ -23,8 +23,9 @@
 
 #define kHZVideoViewAnimateInTime 0.0
 #define kHZVideoViewAnimateInAlpha 1.0
-#define kHZVideoViewAnimateOutTime 1.5
+#define kHZVideoViewAnimateOutTime 1.0
 #define kHZVideoViewAnimateOutAlpha 0.0
+#define kHZVideoViewAutoFadeOutTime 2
 
 @end
 
@@ -165,7 +166,6 @@
                         options: UIViewAnimationOptionBeginFromCurrentState
                      animations:^(void){
         [self.controlView.hideButton setAlpha:alpha];
-        [self.controlView.timerTextLabel setAlpha:alpha];
         [self.controlView.skipButton setAlpha:alpha];
         [self.controlView.installButton setAlpha:alpha];
     }completion:^(BOOL finished){
@@ -176,7 +176,7 @@
         
         // if we're showing the controls, set a timer to hide them
         if(animateIn) {
-            self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: 4 target: self selector: @selector(animationTimerDidFire:) userInfo: nil repeats: NO];
+            self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: kHZVideoViewAutoFadeOutTime target: self selector: @selector(animationTimerDidFire:) userInfo: nil repeats: NO];
         }
     }];
     
@@ -321,6 +321,7 @@
         if (self.timer == nil) {
             self.timer = [NSTimer scheduledTimerWithTimeInterval: 1 target: self selector: @selector(timerDidFire:) userInfo: nil repeats: YES];
             if(_durationAvailableFireImmediately) {
+                // only fire the timer immediately if we know the duration of the ad by now. otherwise, wait.
                 [self.timer fire];
             }
             

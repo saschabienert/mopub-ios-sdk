@@ -14,7 +14,8 @@
 
 #define kHZVideoControlViewInstallTop 5.0
 #define kHZVideoControlViewInstallSide 5.0
-#define kHZVideoControlViewInstallPadding 20.0
+#define kHZVideoControlViewInstallWidthPadding 30.0
+#define kHZVideoControlViewInstallHeightPadding 0.0
 
 @interface HZVideoControlView()
 @property (nonatomic) NSString *skipFormatText;
@@ -78,10 +79,10 @@
         
         [self addSubview: _hideButton];
         
-        _installButton = [UIButton buttonWithType: UIButtonTypeCustom];
+        _installButton = [HZExtendedHitAreaButton buttonWithType: UIButtonTypeCustom];
         _installButton.frame = CGRectMake(0.0, 0.0, 80.0, 30.0);
         _installButton.accessibilityLabel = @"install";
-        [_installButton.titleLabel setFont: [UIFont boldSystemFontOfSize: 20.0]];
+        [_installButton.titleLabel setFont: [UIFont boldSystemFontOfSize: 24.0]];
         _installButton.titleLabel.textAlignment = UITextAlignmentCenter;
         _installButton.hidden = YES;
         _installButton.layer.opacity = 0.8f;
@@ -92,6 +93,10 @@
         _installButton.layer.cornerRadius = 2;
         _installButton.layer.borderWidth = 1;
         _installButton.layer.borderColor = [[UIColor whiteColor] CGColor];
+        
+        // make the hit area of the button larger than the button
+        [_installButton setExtendedHitAreaMarginX:40];
+        [_installButton setExtendedHitAreaMarginY:40];
         [self.installButton setTitle: @"Install Now" forState: UIControlStateNormal];
         [self addSubview: _installButton];
     }
@@ -120,10 +125,10 @@
                                        self.hideButton.frame.size.height);
     
     CGSize installButtonTextSize = [self.installButton.titleLabel.text sizeWithFont: self.installButton.titleLabel.font];
-    self.installButton.frame = CGRectMake(kHZVideoControlViewInstallSide,
+    self.installButton.frame = CGRectMake(self.frame.origin.x + kHZVideoControlViewInstallSide,
                                            self.frame.origin.y + kHZVideoControlViewInstallTop,
-                                           installButtonTextSize.width + kHZVideoControlViewInstallPadding,
-                                           self.installButton.frame.size.height);
+                                           installButtonTextSize.width + kHZVideoControlViewInstallWidthPadding,
+                                           self.installButton.frame.size.height + kHZVideoControlViewInstallHeightPadding);
     
 }
 

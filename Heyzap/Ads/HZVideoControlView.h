@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HZExtendedHitAreaButton.h"
 
 @interface HZVideoControlView : UIView
 
@@ -16,7 +17,7 @@
  */
 @property (nonatomic) UIButton *skipButton;
 @property (nonatomic) UIButton *hideButton;
-@property (nonatomic) UIButton *installButton;
+@property (nonatomic) HZExtendedHitAreaButton *installButton;
 @property (nonatomic) BOOL isTimeExpired;
 
 - (void) updateTimeRemaining: (int) timeRemaining;
