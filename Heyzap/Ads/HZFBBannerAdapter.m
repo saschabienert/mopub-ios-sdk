@@ -25,10 +25,15 @@
     if (self) {
         self.parentAdapter = parentAdapter;
         self.bannerReportingDelegate = reportingDelegate;
+        HZFBAdSize adSize = options.internalFacebookAdSize;
         
-        _adView = [[HZFBAdView alloc] initWithPlacementID:adUnitId adSize:options.internalFacebookAdSize rootViewController:options.presentingViewController];
+        _adView = [[HZFBAdView alloc] initWithPlacementID:adUnitId adSize:adSize rootViewController:options.presentingViewController];
         
         _adView.delegate = self;
+        
+        // Hack to get bottom banners to work (the frame height of the banner is required by `HZBannerAd` -> `placeBannerInView`)
+        self.mediatedBanner.frame = CGRectMake(0, 0, 0, adSize.size.height);
+        
         [_adView loadAd];
     }
     return self;
