@@ -152,7 +152,7 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
                 break;
             }
             case HZBannerPositionBottom: {
-                const CGFloat viewHeight = CGRectGetMaxY(view.frame);
+                const CGFloat viewHeight = CGRectGetMaxY(view.bounds);
                 const CGFloat bannerHeight = wrapper.frame.size.height;
                 
                 if (viewHeight < bannerHeight) {
@@ -161,7 +161,6 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
                 
                 CGRect tmpFrame = wrapper.frame;
                 tmpFrame.origin.y = viewHeight - bannerHeight;
-                
                 if ([options.presentingViewController respondsToSelector:@selector(bottomLayoutGuide)]
                     && options.presentingViewController.view == view) {
                     tmpFrame.origin.y -= options.presentingViewController.bottomLayoutGuide.length;
