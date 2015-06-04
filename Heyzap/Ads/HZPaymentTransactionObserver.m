@@ -37,6 +37,7 @@
 #import "HeyzapMediation.h"
 
 @interface HZPaymentTransactionObserver()<SKProductsRequestDelegate>
+
 @end
 
 @implementation HZPaymentTransactionObserver
@@ -54,7 +55,7 @@
 
 #pragma mark - SKPaymentTransactionObserver Protocol Methods
 
--(void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
     NSMutableSet *productIds = [[NSMutableSet alloc] init];
 
     for (id transaction in transactions) {
@@ -90,7 +91,7 @@
 
 #pragma mark - IAP Purchase recording
 
--(void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price {
+- (void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price {
     
     [self onIAPPurchaseComplete:productId
                     productName:productName
@@ -98,15 +99,15 @@
                        currency:[[NSLocale currentLocale] objectForKey:NSLocaleCurrencyCode]];
 }
 
-NSString * const kHZSendIAPMetricsEndPoint = @"metrics/iap";
+NSString * const kHZIAPMetricsEndPoint = @"in_game_api/metrics/iap";
 
--(void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price currency:(NSString *)currency {
+- (void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price currency:(NSString *)currency {
     
     NSDictionary *params = [[NSDictionary alloc] initWithObjects:@[productId, productName, price, currency] forKeys:@[@"iab_id", @"name", @"usd_price_cents", @"price_currency"]];
     
-    [[HZAPIClient sharedClient] POST:kHZSendIAPMetricsEndPoint parameters:params success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
+    [[HZAPIClient sharedClient] POST:kHZIAPMetricsEndPoint parameters:params success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
         
-        if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @(0) withDict: json] intValue] == 200) {
+        if ([json[@"success"] integerValue]) {
             
             HeyzapMediation *mediation = [HeyzapMediation sharedInstance];
             mediation.adsTimeOut = mediation.IAPAdDisableTime;
@@ -121,6 +122,5 @@ NSString * const kHZSendIAPMetricsEndPoint = @"metrics/iap";
             [HZLog error: [NSString stringWithFormat: @"(Unable to Send IAP Transaction Data) %@", error]];
     }];
 }
-
 
 @end
