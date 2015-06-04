@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "HeyzapAds.h"
 #import "HZAdsManager.h"
+#import "HZAdModel.h"
 #import "HZUtils.h"
 #import "HZDevice.h"
 
@@ -33,7 +34,7 @@
         _creativeTypes = creativeTypes;
         _adUnit = adUnit;
         _auctionType = auctionType;
-        _tag = tag != nil ? tag : [HeyzapAds defaultTagName];
+        _tag = [HZAdModel normalizeTag:tag];
         _retriesRemaining = kHZAdRetries;
         
         NSString *internetStatus = [HZUtils internetStatus];

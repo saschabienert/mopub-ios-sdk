@@ -117,6 +117,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        [[NSNotificationCenter  defaultCenter] addObserver:self selector:@selector(didShowAd:) name:kHeyzapDidShowAdNotitification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFailToShowAd:) name:kHeyzapDidFailToShowAdNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveAd:) name:kHeyzapDidReceiveAdNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFailToReceiveAd:) name:kHeyzapDidFailToReceiveAdNotification object:nil];
@@ -150,10 +151,13 @@
     return info.auctionType == [self auctionType];
 }
 
+- (void)didShowAd:(NSNotification *)notification {
+    [self.delegate adapterDidShowAd:self];
+}
+
 - (void)didFailToShowAd:(NSNotification *)notification {
-    if ([self correctAuctionType:notification]) {
-        [self.delegate adapterDidDismissAd:self];
-    }
+    // This is handled automatically by the HeyzapMediation timeout.
+    // Potentially it's a worthwhile optimization to tell that to HeyzapMediation directly when possible, to avoid the 1.5s timeout.
 }
 
 - (void)didReceiveAd:(NSNotification *)notification {

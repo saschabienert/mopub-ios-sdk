@@ -225,8 +225,13 @@
 // Called after an interstitial has been displayed on the screen.
 - (void)didDisplayInterstitial:(CBLocation)location {
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
+    [self.delegate adapterDidShowAd:self];
 }
 
+- (void)didDisplayRewardedVideo:(CBLocation)location {
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
+    [self.delegate adapterDidShowAd:self];
+}
 
 
 /*

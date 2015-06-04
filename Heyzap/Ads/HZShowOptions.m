@@ -47,7 +47,7 @@
 
 - (NSString *)tag {
     if (_tag == nil) {
-        _tag = [HeyzapAds defaultTagName];
+        _tag = [HZAdModel normalizeTag: [HeyzapAds defaultTagName]];
     }
 
     return _tag;

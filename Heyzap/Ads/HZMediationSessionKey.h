@@ -9,6 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
 
+typedef NS_ENUM(NSUInteger, HZAdState) {
+    HZAdStateLoading,
+    HZAdStateRequestedShow,
+    HZAdStateShown,
+};
+
 /**
  *  Session keys encapsulate the unique data for a request. By preventing
  */
@@ -16,10 +22,13 @@
 
 @property (nonatomic, strong, readonly) NSString *tag;
 @property (nonatomic, readonly) HZAdType adType;
-@property (nonatomic, readonly) BOOL hasBeenShown;
+@property (nonatomic, readonly) HZAdState adState;
 
 - (instancetype)initWithAdType:(HZAdType)type tag:(NSString *)tag;
 
-- (instancetype)sessionKeyAfterShowing;
+- (instancetype)sessionKeyAfterRequestingShow;
+- (instancetype)sessionKeyAfterShown;
+
+NSString *NSStringFromHZAdState(HZAdState state);
 
 @end

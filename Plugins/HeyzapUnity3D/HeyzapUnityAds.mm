@@ -163,7 +163,7 @@ extern "C" {
     }
     
     bool hz_ads_video_is_available(const char *tag) {
-        return [HZVideoAd isAvailable];
+        return [HZVideoAd isAvailableForTag:[NSString stringWithUTF8String:tag]];
     }
     
     void hz_ads_show_incentivized(const char *tag) {

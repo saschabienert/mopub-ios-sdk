@@ -29,6 +29,7 @@
  */
 - (NSString *)countryCode;
 
+- (void)adapterDidShowAd:(HZBaseAdapter *)adapter;
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter;
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter;
 
