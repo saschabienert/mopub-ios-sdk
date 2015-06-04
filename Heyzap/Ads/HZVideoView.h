@@ -8,12 +8,15 @@
 
 #import "HZRotatingView.h"
 #import "HZAdViewController.h"
+#import "HZVideoControlView.h"
 
 @interface HZVideoView : UIView<UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) id<HZAdPopupActionDelegate> actionDelegate;
 @property (nonatomic) BOOL hideButton;
 @property (nonatomic) NSTimeInterval skipButtonTimeInterval;
+@property (nonatomic, readonly) HZVideoControlView *controlView;
+
 @property (nonatomic) BOOL skipButton;
 @property (nonatomic) BOOL installButton;
 @property (nonatomic) BOOL timerLabel;

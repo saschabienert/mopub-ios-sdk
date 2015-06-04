@@ -55,6 +55,9 @@
         [_videoView setInstallButton: self.ad.allowInstallButton];
         [_videoView setTimerLabel: self.ad.allowAdTimer];
         [_videoView setSkipButtonTimeInterval: [self.ad.lockoutTime doubleValue]/1000.0];
+        [_videoView.controlView setInstallButtonText: self.ad.installButtonText];
+        [_videoView.controlView setSkipNowText: self.ad.skipNowText];
+        [_videoView.controlView setSkipLaterFormatText: self.ad.skipLaterFormattedText];
         
         _webView = [[HZWebView alloc] initWithFrame: CGRectZero];
         _webView.tag = kHZWebViewTag;

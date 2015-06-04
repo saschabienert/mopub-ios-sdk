@@ -69,6 +69,10 @@
         _lockoutTime = [HZDictionaryUtils hzObjectForKey: @"lockout_time" ofClass: [NSNumber class] default: @(0) withDict: video];
         _postRollInterstitial = [[HZDictionaryUtils hzObjectForKey: @"post_roll_interstitial" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         
+        _installButtonText = [NSString stringWithFormat:@"%@", [HZDictionaryUtils hzObjectForKey:@"install_button_text" ofClass:[NSString class] default:@"Install Now" withDict:video]];
+        _skipNowText = [NSString stringWithFormat:@"%@", [HZDictionaryUtils hzObjectForKey:@"skip_now_text" ofClass:[NSString class] default:@"Skip" withDict:video]];
+        _skipLaterFormattedText = [NSString stringWithFormat:@"%@", [HZDictionaryUtils hzObjectForKey:@"skip_later_formatted_text" ofClass:[NSString class] default:@"Skip in %is" withDict:video]];
+        
         _allowFallbacktoStreaming = [[HZDictionaryUtils hzObjectForKey: @"allow_streaming_fallback" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         _forceStreaming = [[HZDictionaryUtils hzObjectForKey: @"force_streaming" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         

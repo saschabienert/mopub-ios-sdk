@@ -18,12 +18,10 @@
 #define kHZVideoControlViewInstallHeightPadding 0.0
 
 @interface HZVideoControlView()
-@property (nonatomic) NSString *skipFormatText;
-@property (nonatomic) NSString *skipNowText;
+
 @end
 
 @implementation HZVideoControlView
-
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -69,20 +67,12 @@
         _hideButton.layer.shadowOpacity = 1.0f;
         _hideButton.hidden = YES;
         
-        if ([HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
-            self.skipFormatText = @"Skip in %is";
-            self.skipNowText = @"Skip";
-        } else {
-            self.skipFormatText = @"Skip in %is ▶︎";
-            self.skipNowText = @"Skip ▶︎";
-        }
-        
         [self addSubview: _hideButton];
         
         _installButton = [HZExtendedHitAreaButton buttonWithType: UIButtonTypeCustom];
         _installButton.frame = CGRectMake(0.0, 0.0, 80.0, 30.0);
         _installButton.accessibilityLabel = @"install";
-        [_installButton.titleLabel setFont: [UIFont boldSystemFontOfSize: 24.0]];
+        [_installButton.titleLabel setFont: [UIFont boldSystemFontOfSize: 17.0]];
         _installButton.titleLabel.textAlignment = UITextAlignmentCenter;
         _installButton.hidden = YES;
         _installButton.layer.opacity = 0.8f;
@@ -97,7 +87,6 @@
         // make the hit area of the button larger than the button
         [_installButton setExtendedHitAreaMarginX:40];
         [_installButton setExtendedHitAreaMarginY:40];
-        [self.installButton setTitle: @"Install Now" forState: UIControlStateNormal];
         [self addSubview: _installButton];
     }
     return self;
@@ -146,7 +135,7 @@
 - (void) updateSkipRemaining: (int) skipRemaining {
     NSString *text;
     if (skipRemaining > 0) {
-        text = [NSString stringWithFormat: self.skipFormatText, skipRemaining];
+        text = [NSString stringWithFormat: self.skipLaterFormatText, skipRemaining];
     } else {
         text = self.skipNowText;
     }
@@ -155,6 +144,27 @@
     
     CGSize textSize = [self.skipButton.currentTitle sizeWithFont: self.skipButton.titleLabel.font];
     self.skipButton.frame = CGRectMake(self.bounds.size.width - (textSize.width + 20.0), self.frame.origin.y, textSize.width + 30.0, self.skipButton.frame.size.height);
+}
+
+- (void) setSkipNowText:(NSString *)skipNowText {
+    if (![HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
+        _skipNowText = [skipNowText stringByAppendingString: @" ▶︎"];
+    }else{
+        _skipNowText = skipNowText;
+    }
+}
+
+- (void) setSkipLaterFormatText:(NSString *)skipLaterFormatText {
+    if (![HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
+        _skipLaterFormatText = [skipLaterFormatText stringByAppendingString: @" ▶︎"];
+    }else{
+        _skipLaterFormatText = skipLaterFormatText;
+    }
+}
+
+- (void) setInstallButtonText:(NSString *)installButtonText {
+    _installButtonText = installButtonText;
+    [self.installButton setTitle: _installButtonText forState: UIControlStateNormal];
 }
 
 @end

@@ -34,6 +34,10 @@
 @property (nonatomic, readonly) BOOL allowAdTimer;
 @property (nonatomic, readonly) BOOL postRollInterstitial;
 
+@property (nonatomic, readonly) NSString *installButtonText; //i.e.: "Install Now"
+@property (nonatomic, readonly) NSString *skipNowText; // i.e.: "Skip"
+@property (nonatomic, readonly) NSString *skipLaterFormattedText; // i.e.: "Skip in %is" (where '%i' will be replaced by the time remaining in seconds)
+
 @property (nonatomic, readonly) BOOL allowFallbacktoStreaming;
 @property (nonatomic, readonly) BOOL forceStreaming;
 

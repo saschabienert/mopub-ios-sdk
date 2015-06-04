@@ -8,14 +8,12 @@
 
 #import "HZVideoView.h"
 #import <MediaPlayer/MediaPlayer.h>
-#import "HZVideoControlView.h"
 #import "HZDevice.h"
 #import "HZLog.h"
 
 @interface HZVideoView()
 @property (nonatomic) MPMoviePlayerController *player;
 @property (nonatomic) UIInterfaceOrientation currOrientation;
-@property (nonatomic) HZVideoControlView *controlView;
 @property (nonatomic) BOOL didFinishVideo;
 @property (nonatomic) NSTimer *timer;
 @property (nonatomic) BOOL durationAvailableFireImmediately;
@@ -104,7 +102,7 @@
     [self.player.view removeFromSuperview];
 
     self.player = nil;
-    self.controlView = nil;
+    _controlView = nil;
     self.actionDelegate = nil;
     
     if (self.timer != nil) {
