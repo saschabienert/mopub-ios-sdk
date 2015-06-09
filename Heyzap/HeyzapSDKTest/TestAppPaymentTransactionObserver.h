@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
+extern NSString * const kHZPaymentTransactionErrorNotification;
+
 @interface TestAppPaymentTransactionObserver : NSObject<SKPaymentTransactionObserver>
 
 + (instancetype) sharedInstance;

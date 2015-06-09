@@ -25,12 +25,6 @@
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
     
-    if ([NSThread isMainThread]) {
-        NSLog(@"updatedTransactions runs on the main thread");
-    } else {
-        NSLog(@"updatedTransactions does NOT run on the main thread");
-    }
-    
     for (id transaction in transactions) {
         
         if ([transaction isKindOfClass:[SKPaymentTransaction class]]) {
@@ -42,12 +36,9 @@
                 [queue finishTransaction:paymentTransaction];
                 
                 if (paymentTransaction.transactionState == SKPaymentTransactionStateFailed) {
-                    [[[UIAlertView alloc] initWithTitle:paymentTransaction.error.domain
-                                                message:paymentTransaction.error.description
-                                               delegate:nil
-                                      cancelButtonTitle:@"OK"
-                                      otherButtonTitles:nil]
-                     show];
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kHZPaymentTransactionErrorNotification
+                                                                        object:paymentTransaction.error];
                 }
             }
         }

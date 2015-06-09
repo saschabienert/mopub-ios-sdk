@@ -196,6 +196,18 @@ typedef enum {
     }
 }
 
+- (void)paymentTransactionErrorNotification:(NSNotification *)notification {
+    if ([notification.name isEqualToString:kHZPaymentTransactionErrorNotification] && [notification.object isKindOfClass:[NSError class]]) {
+        NSError *error = (NSError *)notification.object;
+        
+        [[[UIAlertView alloc] initWithTitle:error.domain
+                                    message:error.description
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil]
+         show];
+    }
+}
 
 NSString * const kCreativeIDTextFieldAccessibilityLabel = @"creative ID";
 NSString * const kShowAdButtonAccessibilityLabel = @"show ad";
@@ -206,6 +218,7 @@ NSString * const kViewAccessibilityLabel = @"testAppView";
 NSString * const kHZAPIClientDidReceiveResponseNotification = @"HZAPIClientDidReceiveResponse";
 NSString * const kHZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendRequest";
 NSString * const kHZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccessNotification";
+NSString * const kHZPaymentTransactionErrorNotification = @"HZPaymentTransactionErrorNotification";
 
 #pragma mark - View lifecycle
 
@@ -232,6 +245,8 @@ const CGFloat kLeftMargin = 10;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(responseNotification:) name:kHZAPIClientDidReceiveResponseNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(downloadNotification:) name: kHZDownloadHelperSuccessNotification object: nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(paymentTransactionErrorNotification:) name: kHZPaymentTransactionErrorNotification object: nil];
 
     
     self.showButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
