@@ -280,7 +280,7 @@ NSString * const kHZDataKey = @"data";
         return;
     }
     
-    if (self.adsTimeOut) {
+    if (self.adsTimeOut && adType != HZAdTypeIncentivized) {
         NSLog(@"Ads disabled because of an IAP");
         return;
     }
@@ -733,6 +733,13 @@ const NSTimeInterval bannerPollInterval = 1;
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion {
     HZParameterAssert(options);
     HZParameterAssert(completion);
+    
+    if (self.adsTimeOut) {
+        NSLog(@"Ads disabled because of an IAP");
+        completion([[self class] bannerErrorWithDescription:@"Ads disabled because of an IAP" underlyingError:nil], nil);
+        return;
+    }
+    
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
     if (self.startStatus == HZMediationStartStatusNotStarted) {
