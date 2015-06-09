@@ -103,24 +103,33 @@ NSString * const kHZIAPMetricsEndPoint = @"in_game_api/metrics/iap";
 
 - (void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price currency:(NSString *)currency {
     
-    NSDictionary *params = [[NSDictionary alloc] initWithObjects:@[productId, productName, price, currency] forKeys:@[@"iab_id", @"name", @"usd_price_cents", @"price_currency"]];
+    NSDictionary *params = @{
+                             @"iab_id": productId,
+                             @"name": productName,
+                             @"usd_price_cents": price,
+                             @"price_currency": currency
+                             };
     
-    [[HZAPIClient sharedClient] POST:kHZIAPMetricsEndPoint parameters:params success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         
-        if ([json[@"success"] integerValue]) {
+        [[HZAPIClient sharedClient] POST:kHZIAPMetricsEndPoint parameters:params success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
             
-            HeyzapMediation *mediation = [HeyzapMediation sharedInstance];
-            mediation.adsTimeOut = mediation.IAPAdDisableTime;
-            [HZLog debug: [NSString stringWithFormat: @"(IAP Transaction) %@", json]];
+            if ([json[@"success"] integerValue]) {
+                
+                HeyzapMediation *mediation = [HeyzapMediation sharedInstance];
+                mediation.adsTimeOut = mediation.IAPAdDisableTime;
+                [HZLog debug: [NSString stringWithFormat: @"(IAP Transaction) %@", json]];
+                
+            } else {
+                [HZLog error: [NSString stringWithFormat: @"(Unable to Send IAP Transaction Data) %@", operation]];
+            }
             
-        } else {
-            [HZLog error: [NSString stringWithFormat: @"(Unable to Send IAP Transaction Data) %@", operation]];
-        }
-        
-    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+            
             [HZLog error: [NSString stringWithFormat: @"(Unable to Send IAP Transaction Data) %@", error]];
-    }];
+        }];
+
+    });
 }
 
 @end

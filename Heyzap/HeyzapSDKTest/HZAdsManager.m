@@ -63,7 +63,7 @@ static BOOL hzAdsIsEnabled = NO;
 
 - (void) onStart {
     
-    if (![self isOptionEnabled:HZAdOptionsDisableIAPDataCollection]) {
+    if (![self isOptionEnabled:HZAdOptionsDisableAutomaticIAPRecording]) {
         [[SKPaymentQueue defaultQueue] addTransactionObserver:[HZPaymentTransactionObserver sharedInstance]];
     }
     
@@ -177,8 +177,10 @@ static BOOL hzAdsIsEnabled = NO;
 
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType
 {
+    BOOL iapAdsTimeout = [HeyzapMediation sharedInstance].adsTimeOut && adUnit != NSStringFromAdType(HZAdTypeIncentivized);
+    
     return ([[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:adUnit tag:tag auctionType:auctionType] != nil
-            && ![HeyzapMediation sharedInstance].adsTimeOut);
+            && !iapAdsTimeout);
 }
 
 #pragma mark - Show

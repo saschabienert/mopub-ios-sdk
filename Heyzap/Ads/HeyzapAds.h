@@ -77,9 +77,9 @@ typedef NS_ENUM(NSUInteger, HZAdOptions) {
      */
     HZAdOptionsDisableMedation = 1 << 3,
     /**
-     * Pass this to disable collection of In-App Purchase data
+     * Pass this to disable recording of In-App Purchase data
      */
-    HZAdOptionsDisableIAPDataCollection = 1 << 4,
+    HZAdOptionsDisableAutomaticIAPRecording = 1 << 4,
 };
 
 

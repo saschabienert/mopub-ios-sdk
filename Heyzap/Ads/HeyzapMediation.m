@@ -281,7 +281,7 @@ NSString * const kHZDataKey = @"data";
     }
     
     if (self.adsTimeOut && adType != HZAdTypeIncentivized) {
-        NSLog(@"Ads disabled because of an IAP");
+        HZILog(@"Ads disabled because of an IAP");
         return;
     }
     
@@ -496,12 +496,15 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 {
     tag = tag ?: [HeyzapAds defaultTagName];
     
-    return ([[self availableAdaptersForAdType:adType tag:tag] count] != 0 && !self.adsTimeOut);
+    BOOL iapAdsTimeout = self.adsTimeOut && adType != HZAdTypeIncentivized;
+    
+    return ([[self availableAdaptersForAdType:adType tag:tag] count] != 0 && !iapAdsTimeout);
 }
 
 - (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag network:(HZBaseAdapter *const)network {
     tag = tag ?: [HeyzapAds defaultTagName];
-    return ([[self availableAdaptersForAdType:adType tag:tag] containsObject:network] && !self.adsTimeOut);
+    BOOL iapAdsTimeout = self.adsTimeOut && adType != HZAdTypeIncentivized;
+    return ([[self availableAdaptersForAdType:adType tag:tag] containsObject:network] && !iapAdsTimeout);
 }
 
 - (NSOrderedSet *)availableAdaptersForAdType:(const HZAdType)adType tag:(NSString *)tag {
@@ -735,7 +738,7 @@ const NSTimeInterval bannerPollInterval = 1;
     HZParameterAssert(completion);
     
     if (self.adsTimeOut) {
-        NSLog(@"Ads disabled because of an IAP");
+        HZILog(@"Ads disabled because of an IAP");
         completion([[self class] bannerErrorWithDescription:@"Ads disabled because of an IAP" underlyingError:nil], nil);
         return;
     }
