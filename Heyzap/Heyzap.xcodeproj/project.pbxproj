@@ -30,6 +30,17 @@
 			name = HeyzapAds;
 			productName = HeyzapAds;
 		};
+		86C4913D1B27E75B00A84B2C /* MRAIDJShex */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 86C4913E1B27E75B00A84B2C /* Build configuration list for PBXAggregateTarget "MRAIDJShex" */;
+			buildPhases = (
+				86C491411B27E76300A84B2C /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = MRAIDJShex;
+			productName = MRAIDJShex;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -304,6 +315,7 @@
 		86234AB118581B800071957B /* HZVideoControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86234AAF18581B800071957B /* HZVideoControlView.m */; };
 		862D5342176D12E900C4221F /* SDKTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 862D5341176D12E900C4221F /* SDKTestAppViewController.m */; };
 		86309F8418873D960000B6E3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86309F8318873D960000B6E3 /* StoreKit.framework */; };
+		863E104D1B28BBBC00EBE9C9 /* HZMRAIDJS.h in Headers */ = {isa = PBXBuildFile; fileRef = 863E104B1B28BBBC00EBE9C9 /* HZMRAIDJS.h */; };
 		8641E1F018ADE0FE00CAAEE0 /* HZDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 8641E1E118AD997800CAAEE0 /* HZDevice.m */; };
 		866E39EF1850087B00B6E431 /* HZVideoAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 866E39ED1850087B00B6E431 /* HZVideoAd.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		866E39F01850087B00B6E431 /* HZVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 866E39EE1850087B00B6E431 /* HZVideoAd.m */; };
@@ -355,6 +367,28 @@
 		86BDB4E917585A0100D85F29 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B941DF1758056B00B8EACE /* CoreGraphics.framework */; };
 		86BDB4EA17585A0500D85F29 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B8175830A700B8EACE /* QuartzCore.framework */; };
 		86BDB4EB17585A9000D85F29 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943BF1758347300B8EACE /* UIKit.framework */; };
+		86C491371B279DCB00A84B2C /* DemandTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491361B279DCB00A84B2C /* DemandTestViewController.m */; };
+		86C491381B279E7700A84B2C /* DemandTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491361B279DCB00A84B2C /* DemandTestViewController.m */; };
+		86C491641B2819C000A84B2C /* CloseButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C4914F1B2819C000A84B2C /* CloseButton.h */; };
+		86C491651B2819C000A84B2C /* HZMRAIDView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491501B2819C000A84B2C /* HZMRAIDView.m */; };
+		86C491661B2819C000A84B2C /* HZMRAIDModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491511B2819C000A84B2C /* HZMRAIDModalViewController.m */; };
+		86C491671B2819C000A84B2C /* HZMRAIDLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491521B2819C000A84B2C /* HZMRAIDLogger.m */; };
+		86C491681B2819C000A84B2C /* HZMRAIDView.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C491531B2819C000A84B2C /* HZMRAIDView.h */; };
+		86C491691B2819C000A84B2C /* HZMRAIDInterstitial.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491541B2819C000A84B2C /* HZMRAIDInterstitial.m */; };
+		86C4916A1B2819C000A84B2C /* MRAIDSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C491561B2819C000A84B2C /* MRAIDSettings.h */; };
+		86C4916B1B2819C000A84B2C /* MRAIDSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491571B2819C000A84B2C /* MRAIDSettings.m */; };
+		86C4916C1B2819C000A84B2C /* HZMRAIDLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C491581B2819C000A84B2C /* HZMRAIDLogger.h */; };
+		86C4916D1B2819C000A84B2C /* HZMRAIDInterstitial.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C491591B2819C000A84B2C /* HZMRAIDInterstitial.h */; };
+		86C4916E1B2819C000A84B2C /* HZMRAIDModalViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C4915A1B2819C000A84B2C /* HZMRAIDModalViewController.h */; };
+		86C4916F1B2819C000A84B2C /* HZMRAIDOrientationProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C4915B1B2819C000A84B2C /* HZMRAIDOrientationProperties.h */; };
+		86C491701B2819C000A84B2C /* HZMRAIDOrientationProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C4915C1B2819C000A84B2C /* HZMRAIDOrientationProperties.m */; };
+		86C491711B2819C000A84B2C /* HZMRAIDParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C4915D1B2819C000A84B2C /* HZMRAIDParser.h */; };
+		86C491721B2819C000A84B2C /* HZMRAIDParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C4915E1B2819C000A84B2C /* HZMRAIDParser.m */; };
+		86C491731B2819C000A84B2C /* HZMRAIDResizeProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C4915F1B2819C000A84B2C /* HZMRAIDResizeProperties.h */; };
+		86C491741B2819C000A84B2C /* HZMRAIDResizeProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491601B2819C000A84B2C /* HZMRAIDResizeProperties.m */; };
+		86C491751B2819C000A84B2C /* HZMRAIDServiceDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C491611B2819C000A84B2C /* HZMRAIDServiceDelegate.h */; };
+		86C491761B2819C000A84B2C /* HZMRAIDUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C491621B2819C000A84B2C /* HZMRAIDUtil.h */; };
+		86C491771B2819C000A84B2C /* HZMRAIDUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491631B2819C000A84B2C /* HZMRAIDUtil.m */; };
 		86CD0E8B17BB0B940005BD3D /* HZAdsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8646A8A217B071D700316453 /* HZAdsManager.m */; };
 		86CD0E8E17BB0C070005BD3D /* HZAdsAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CD0E8C17BB0C070005BD3D /* HZAdsAPIClient.h */; };
 		86CD0ECC17C3F7B00005BD3D /* HZAdsAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 86CD0E8D17BB0C070005BD3D /* HZAdsAPIClient.m */; };
@@ -435,6 +469,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 86B943291758108700B8EACE;
 			remoteInfo = Ads;
+		};
+		86C491421B27E77400A84B2C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 86C4913D1B27E75B00A84B2C;
+			remoteInfo = MRAIDJShex;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -683,6 +724,8 @@
 		862D5340176D12E900C4221F /* SDKTestAppViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKTestAppViewController.h; sourceTree = "<group>"; };
 		862D5341176D12E900C4221F /* SDKTestAppViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKTestAppViewController.m; sourceTree = "<group>"; };
 		86309F8318873D960000B6E3 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		863E104B1B28BBBC00EBE9C9 /* HZMRAIDJS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDJS.h; path = MRAID/HZMRAIDJS.h; sourceTree = "<group>"; };
+		863E104C1B28BBBC00EBE9C9 /* mraid.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = mraid.js; path = MRAID/mraid.js; sourceTree = "<group>"; };
 		8641E1E018AD997800CAAEE0 /* HZDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZDevice.h; sourceTree = "<group>"; };
 		8641E1E118AD997800CAAEE0 /* HZDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZDevice.m; sourceTree = "<group>"; };
 		8646A8A117B071D700316453 /* HZAdsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZAdsManager.h; path = ../HeyzapSDKTest/HZAdsManager.h; sourceTree = "<group>"; };
@@ -743,6 +786,29 @@
 		86B943B7175830A600B8EACE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		86B943B8175830A700B8EACE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		86B943BF1758347300B8EACE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		86C491351B279DCB00A84B2C /* DemandTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemandTestViewController.h; sourceTree = "<group>"; };
+		86C491361B279DCB00A84B2C /* DemandTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemandTestViewController.m; sourceTree = "<group>"; };
+		86C4914F1B2819C000A84B2C /* CloseButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CloseButton.h; path = MRAID/CloseButton.h; sourceTree = "<group>"; };
+		86C491501B2819C000A84B2C /* HZMRAIDView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDView.m; path = MRAID/HZMRAIDView.m; sourceTree = "<group>"; };
+		86C491511B2819C000A84B2C /* HZMRAIDModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDModalViewController.m; path = MRAID/HZMRAIDModalViewController.m; sourceTree = "<group>"; };
+		86C491521B2819C000A84B2C /* HZMRAIDLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDLogger.m; path = MRAID/HZMRAIDLogger.m; sourceTree = "<group>"; };
+		86C491531B2819C000A84B2C /* HZMRAIDView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDView.h; path = MRAID/HZMRAIDView.h; sourceTree = "<group>"; };
+		86C491541B2819C000A84B2C /* HZMRAIDInterstitial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDInterstitial.m; path = MRAID/HZMRAIDInterstitial.m; sourceTree = "<group>"; };
+		86C491551B2819C000A84B2C /* CloseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CloseButton.png; path = MRAID/CloseButton.png; sourceTree = "<group>"; };
+		86C491561B2819C000A84B2C /* MRAIDSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MRAIDSettings.h; path = MRAID/MRAIDSettings.h; sourceTree = "<group>"; };
+		86C491571B2819C000A84B2C /* MRAIDSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MRAIDSettings.m; path = MRAID/MRAIDSettings.m; sourceTree = "<group>"; };
+		86C491581B2819C000A84B2C /* HZMRAIDLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDLogger.h; path = MRAID/HZMRAIDLogger.h; sourceTree = "<group>"; };
+		86C491591B2819C000A84B2C /* HZMRAIDInterstitial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDInterstitial.h; path = MRAID/HZMRAIDInterstitial.h; sourceTree = "<group>"; };
+		86C4915A1B2819C000A84B2C /* HZMRAIDModalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDModalViewController.h; path = MRAID/HZMRAIDModalViewController.h; sourceTree = "<group>"; };
+		86C4915B1B2819C000A84B2C /* HZMRAIDOrientationProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDOrientationProperties.h; path = MRAID/HZMRAIDOrientationProperties.h; sourceTree = "<group>"; };
+		86C4915C1B2819C000A84B2C /* HZMRAIDOrientationProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDOrientationProperties.m; path = MRAID/HZMRAIDOrientationProperties.m; sourceTree = "<group>"; };
+		86C4915D1B2819C000A84B2C /* HZMRAIDParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDParser.h; path = MRAID/HZMRAIDParser.h; sourceTree = "<group>"; };
+		86C4915E1B2819C000A84B2C /* HZMRAIDParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDParser.m; path = MRAID/HZMRAIDParser.m; sourceTree = "<group>"; };
+		86C4915F1B2819C000A84B2C /* HZMRAIDResizeProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDResizeProperties.h; path = MRAID/HZMRAIDResizeProperties.h; sourceTree = "<group>"; };
+		86C491601B2819C000A84B2C /* HZMRAIDResizeProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDResizeProperties.m; path = MRAID/HZMRAIDResizeProperties.m; sourceTree = "<group>"; };
+		86C491611B2819C000A84B2C /* HZMRAIDServiceDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDServiceDelegate.h; path = MRAID/HZMRAIDServiceDelegate.h; sourceTree = "<group>"; };
+		86C491621B2819C000A84B2C /* HZMRAIDUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDUtil.h; path = MRAID/HZMRAIDUtil.h; sourceTree = "<group>"; };
+		86C491631B2819C000A84B2C /* HZMRAIDUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDUtil.m; path = MRAID/HZMRAIDUtil.m; sourceTree = "<group>"; };
 		86CD0E8C17BB0C070005BD3D /* HZAdsAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdsAPIClient.h; sourceTree = "<group>"; };
 		86CD0E8D17BB0C070005BD3D /* HZAdsAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdsAPIClient.m; sourceTree = "<group>"; };
 		86D0A9961851808200B3D870 /* HZAdVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdVideoViewController.h; sourceTree = "<group>"; };
@@ -1461,6 +1527,36 @@
 			name = Chartboost;
 			sourceTree = "<group>";
 		};
+		860220001B211FA9004476A3 /* MRAID */ = {
+			isa = PBXGroup;
+			children = (
+				863E104B1B28BBBC00EBE9C9 /* HZMRAIDJS.h */,
+				863E104C1B28BBBC00EBE9C9 /* mraid.js */,
+				86C4914F1B2819C000A84B2C /* CloseButton.h */,
+				86C491501B2819C000A84B2C /* HZMRAIDView.m */,
+				86C491511B2819C000A84B2C /* HZMRAIDModalViewController.m */,
+				86C491521B2819C000A84B2C /* HZMRAIDLogger.m */,
+				86C491531B2819C000A84B2C /* HZMRAIDView.h */,
+				86C491541B2819C000A84B2C /* HZMRAIDInterstitial.m */,
+				86C491551B2819C000A84B2C /* CloseButton.png */,
+				86C491561B2819C000A84B2C /* MRAIDSettings.h */,
+				86C491571B2819C000A84B2C /* MRAIDSettings.m */,
+				86C491581B2819C000A84B2C /* HZMRAIDLogger.h */,
+				86C491591B2819C000A84B2C /* HZMRAIDInterstitial.h */,
+				86C4915A1B2819C000A84B2C /* HZMRAIDModalViewController.h */,
+				86C4915B1B2819C000A84B2C /* HZMRAIDOrientationProperties.h */,
+				86C4915C1B2819C000A84B2C /* HZMRAIDOrientationProperties.m */,
+				86C4915D1B2819C000A84B2C /* HZMRAIDParser.h */,
+				86C4915E1B2819C000A84B2C /* HZMRAIDParser.m */,
+				86C4915F1B2819C000A84B2C /* HZMRAIDResizeProperties.h */,
+				86C491601B2819C000A84B2C /* HZMRAIDResizeProperties.m */,
+				86C491611B2819C000A84B2C /* HZMRAIDServiceDelegate.h */,
+				86C491621B2819C000A84B2C /* HZMRAIDUtil.h */,
+				86C491631B2819C000A84B2C /* HZMRAIDUtil.m */,
+			);
+			name = MRAID;
+			sourceTree = "<group>";
+		};
 		86114121185BF688002248EF /* Manager */ = {
 			isa = PBXGroup;
 			children = (
@@ -1629,6 +1725,8 @@
 				86B941E21758056B00B8EACE /* Supporting Files */,
 				50AE54431AD333860099358E /* PersistentTestAppConfiguration.h */,
 				50AE54441AD333860099358E /* PersistentTestAppConfiguration.m */,
+				86C491351B279DCB00A84B2C /* DemandTestViewController.h */,
+				86C491361B279DCB00A84B2C /* DemandTestViewController.m */,
 			);
 			name = "SDK Test App";
 			path = HeyzapSDKTest;
@@ -1670,6 +1768,7 @@
 		86B9432C1758108700B8EACE /* Ads */ = {
 			isa = PBXGroup;
 			children = (
+				860220001B211FA9004476A3 /* MRAID */,
 				5053E7EB1AEAB93B0090889B /* Caching */,
 				50A10DDE1AE9A3A100001C4C /* Networking */,
 				86C6E96F1ACB0F29006A8F33 /* Extensions */,
@@ -1839,6 +1938,7 @@
 				50B46B0D18F862B3005155B8 /* HZAppLovinAdapter.h in Headers */,
 				509F002D18EB62BC0011EAB3 /* HZMediationSessionKey.h in Headers */,
 				509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */,
+				86C491761B2819C000A84B2C /* HZMRAIDUtil.h in Headers */,
 				86E439351AA7DCE400470E62 /* HZiAdAdapter.h in Headers */,
 				E621820D19BE669B0099BE8C /* HZUnityAds.h in Headers */,
 				E67D8F211ABA3C14000B191C /* HZShowOptions.h in Headers */,
@@ -1849,12 +1949,14 @@
 				50DB884D1AB0C0D9003C5758 /* HZBannerAdOptions.h in Headers */,
 				50608AD01AF9650D00CFB9F6 /* HZMediationStarter.h in Headers */,
 				504D82441AAA26B3004695C8 /* HZBannerAd.h in Headers */,
+				86C4916F1B2819C000A84B2C /* HZMRAIDOrientationProperties.h in Headers */,
 				509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */,
 				50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */,
 				860FD47A187BB144008A35FD /* HZAdsFetchManager.h in Headers */,
 				50A10DE61AE9BABF00001C4C /* HZMediationRequestSerializer.h in Headers */,
 				86FF907918583FF100BC48BF /* HZAdLibrary.h in Headers */,
 				50ECA1CD18DB684D006284AB /* HZChartboostAdapter.h in Headers */,
+				86C4916D1B2819C000A84B2C /* HZMRAIDInterstitial.h in Headers */,
 				50CAB1991AE9752E00F9642D /* HZAFURLConnectionOperation.h in Headers */,
 				50ED564B1AC0BC910016F9FE /* HZiAdBannerAdapter.h in Headers */,
 				5019224E18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h in Headers */,
@@ -1862,13 +1964,16 @@
 				8680AC9F193ED2E60078B5CF /* HZTestDelegate.h in Headers */,
 				866E39F31850089C00B6E431 /* HZIncentivizedAd.h in Headers */,
 				5053E7EE1AEAB94D0090889B /* HZWebViewPool.h in Headers */,
+				86C491751B2819C000A84B2C /* HZMRAIDServiceDelegate.h in Headers */,
 				507A454D19BE318200C7AEEA /* HZNativeAd.h in Headers */,
+				86C4916E1B2819C000A84B2C /* HZMRAIDModalViewController.h in Headers */,
 				507A455119BE4E5100C7AEEA /* HZNativeAdCollection.h in Headers */,
 				507A454819BE29CC00C7AEEA /* HZNativeAdController.h in Headers */,
 				50CAB1A11AE9757800F9642D /* HZAFNetworkReachabilityManager.h in Headers */,
 				50A10DE11AE9A3B500001C4C /* HZAdsRequestSerializer.h in Headers */,
 				507A456219BE95B000C7AEEA /* HZStorePresenter.h in Headers */,
 				5019224818EDFA6A002793A3 /* HZMediationSession.h in Headers */,
+				863E104D1B28BBBC00EBE9C9 /* HZMRAIDJS.h in Headers */,
 				E621821119BE66A90099BE8C /* HZUnityAdsAdapter.h in Headers */,
 				866E39EF1850087B00B6E431 /* HZVideoAd.h in Headers */,
 				866E3A0C18512F2500B6E431 /* HZAdViewController.h in Headers */,
@@ -1896,29 +2001,35 @@
 				5011CE8918DBBBF700604B53 /* HZAdMobAdapter.h in Headers */,
 				500F88F218E215D000E5D6F8 /* HZGADInterstitial.h in Headers */,
 				50CAB1AB1AE9758E00F9642D /* HZAFURLRequestSerialization.h in Headers */,
+				86C491681B2819C000A84B2C /* HZMRAIDView.h in Headers */,
 				86B09B92175975C80045AA54 /* HZLog.h in Headers */,
 				509E8D4219B9065500ABF2D2 /* HZNotifications.h in Headers */,
 				509E8D3919B7A96E00ABF2D2 /* HZAdInfo.h in Headers */,
 				5079F3CB1AC4B672008AB46B /* HZNoCaretTextField.h in Headers */,
 				50B46B1518F87B2C005155B8 /* HZALInterstitialAd.h in Headers */,
 				50ED56341AB8E392009D7504 /* HZGADRequestError.h in Headers */,
+				86C4916A1B2819C000A84B2C /* MRAIDSettings.h in Headers */,
 				860FD47E187CC056008A35FD /* HZAdFetchRequest.h in Headers */,
 				504D82511AAA64CE004695C8 /* HZFBBannerAdapter.h in Headers */,
 				E626220919E707540094957B /* HZTestActivityViewController.h in Headers */,
+				86C4916C1B2819C000A84B2C /* HZMRAIDLogger.h in Headers */,
 				866E3A101851302C00B6E431 /* HZAdInterstitialViewController.h in Headers */,
 				50CAB1A51AE9758500F9642D /* HZAFSecurityPolicy.h in Headers */,
 				509E8D3E19B7F15300ABF2D2 /* HZCrossPromoAdapter.h in Headers */,
 				86234AB018581B800071957B /* HZVideoControlView.h in Headers */,
+				86C491641B2819C000A84B2C /* CloseButton.h in Headers */,
 				50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */,
 				86CD0E8E17BB0C070005BD3D /* HZAdsAPIClient.h in Headers */,
 				50CAB1951AE9752E00F9642D /* HZAFHTTPRequestOperation.h in Headers */,
 				86234AA918568EEA0071957B /* HZVideoView.h in Headers */,
 				866E39F718500DBE00B6E431 /* HZAdModel.h in Headers */,
 				5046CE8618E3545E000395AA /* HZMediationConstants.h in Headers */,
+				86C491731B2819C000A84B2C /* HZMRAIDResizeProperties.h in Headers */,
 				500F88E418E203A500E5D6F8 /* HZClassProxy.h in Headers */,
 				E6DBD5FD1A44AA4F00D9999D /* HZFacebookAdapter.h in Headers */,
 				50ED562C1AB8DFA6009D7504 /* HZAdMobBannerAdapter.h in Headers */,
 				8680AC9B193ED2DC0078B5CF /* HZDelegateProxy.h in Headers */,
+				86C491711B2819C000A84B2C /* HZMRAIDParser.h in Headers */,
 				86FF907D185842D900BC48BF /* HZQueue.h in Headers */,
 				E626228819F5BB6C0094957B /* HZTestActivityNetworkViewController.h in Headers */,
 			);
@@ -2021,10 +2132,12 @@
 				86B943271758108700B8EACE /* Frameworks */,
 				86B943281758108700B8EACE /* Copy Files */,
 				86B943571758198100B8EACE /* Prepare Framework */,
+				86C4913B1B27E5D800A84B2C /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				86C491431B27E77400A84B2C /* PBXTargetDependency */,
 			);
 			name = Ads;
 			productName = Ads;
@@ -2054,6 +2167,9 @@
 							};
 						};
 					};
+					86C4913D1B27E75B00A84B2C = {
+						CreatedOnToolsVersion = 6.3.2;
+					};
 				};
 			};
 			buildConfigurationList = 86B941961757FD6300B8EACE /* Build configuration list for PBXProject "Heyzap" */;
@@ -2075,6 +2191,7 @@
 				504E9C9118C9322100402BC3 /* Ads Tests */,
 				50A36ACE18C9405A00FA84F0 /* Integration Tests */,
 				505351E918F76550003C531E /* MediationTestApp */,
+				86C4913D1B27E75B00A84B2C /* MRAIDJShex */,
 			);
 		};
 /* End PBXProject section */
@@ -2204,6 +2321,33 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\nset +u\n# Avoid recursively calling this script.\nif [[ $SF_MASTER_SCRIPT_RUNNING ]]\nthen\nexit 0\nfi\nset -u\nexport SF_MASTER_SCRIPT_RUNNING=1\n\nSF_TARGET_NAME=${PRODUCT_NAME}\nSF_EXECUTABLE_PATH=\"lib${SF_TARGET_NAME}.a\"\nSF_WRAPPER_NAME=\"${SF_TARGET_NAME}.framework\"\n\n# The following conditionals come from\n# https://github.com/kstenerud/iOS-Universal-Framework\n\nif [[ \"$SDK_NAME\" =~ ([A-Za-z]+) ]]\nthen\nSF_SDK_PLATFORM=${BASH_REMATCH[1]}\nelse\necho \"Could not find platform name from SDK_NAME: $SDK_NAME\"\nexit 1\nfi\n\nif [[ \"$SDK_NAME\" =~ ([0-9]+.*$) ]]\nthen\nSF_SDK_VERSION=${BASH_REMATCH[1]}\nelse\necho \"Could not find sdk version from SDK_NAME: $SDK_NAME\"\nexit 1\nfi\n\nif [[ \"$SF_SDK_PLATFORM\" = \"iphoneos\" ]]\nthen\nSF_OTHER_PLATFORM=iphonesimulator\nelse\nSF_OTHER_PLATFORM=iphoneos\nfi\n\nif [[ \"$BUILT_PRODUCTS_DIR\" =~ (.*)$SF_SDK_PLATFORM$ ]]\nthen\nSF_OTHER_BUILT_PRODUCTS_DIR=\"${BASH_REMATCH[1]}${SF_OTHER_PLATFORM}\"\nelse\necho \"Could not find platform name from build products directory: $BUILT_PRODUCTS_DIR\"\nexit 1\nfi\n\n# Build the other platform.\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration \"${CONFIGURATION}\" -sdk ${SF_OTHER_PLATFORM}${SF_SDK_VERSION} BUILD_DIR=\"${BUILD_DIR}\" OBJROOT=\"${OBJROOT}\" BUILD_ROOT=\"${BUILD_ROOT}\" SYMROOT=\"${SYMROOT}\" $ACTION\n\n# Smash the two static libraries into one fat binary and store it in the .framework\nlipo -create \"${BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}\" \"${SF_OTHER_BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}\" -output \"${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\"\n\n# Copy the smashes libraries back to the original static library\n#cp -a \"${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\" \"${BUILT_PRODUCTS_DIR}/${SF_EXECUTABLE_PATH}\"\n\n# Copy the binary to the other architecture folder to have a complete framework in both.\ncp -a \"${BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\" \"${SF_OTHER_BUILT_PRODUCTS_DIR}/${SF_WRAPPER_NAME}/Versions/A/${SF_TARGET_NAME}\"\n";
+		};
+		86C4913B1B27E5D800A84B2C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "";
+		};
+		86C491411B27E76300A84B2C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# create the hex mraidjs header file\nxxd -i ./Ads/MRAID/mraid.js ./Ads/MRAID/HZMRAIDJS.h\nxxd -i ./Ads/MRAID/CloseButton.png ./Ads/MRAID/CloseButton.h";
+			showEnvVarsInLog = 0;
 		};
 		A262E87A27F17E956AE6A7D3 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2365,6 +2509,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86C491381B279E7700A84B2C /* DemandTestViewController.m in Sources */,
 				50B03A391A706C710086E444 /* NativeAdTableViewController.m in Sources */,
 				50B03A3A1A706C710086E444 /* NativeTableViewCell.m in Sources */,
 				50B03A3B1A706C710086E444 /* NativeAdDetailsTableViewController.m in Sources */,
@@ -2418,6 +2563,7 @@
 				50759D281AD3359F00AECC2B /* PersistentTestAppConfiguration.m in Sources */,
 				86B941EC1758056B00B8EACE /* AppDelegate.m in Sources */,
 				507A457419BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */,
+				86C491371B279DCB00A84B2C /* DemandTestViewController.m in Sources */,
 				5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */,
 				504514C918B5A59100E00E6C /* BaseTestAppViewController.m in Sources */,
 				862D5342176D12E900C4221F /* SDKTestAppViewController.m in Sources */,
@@ -2434,6 +2580,8 @@
 				8641E1F018ADE0FE00CAAEE0 /* HZDevice.m in Sources */,
 				509E8D3A19B7A96E00ABF2D2 /* HZAdInfo.m in Sources */,
 				50CAB1AE1AE9758E00F9642D /* HZAFURLResponseSerialization.m in Sources */,
+				86C491721B2819C000A84B2C /* HZMRAIDParser.m in Sources */,
+				86C491661B2819C000A84B2C /* HZMRAIDModalViewController.m in Sources */,
 				500F88EB18E210D400E5D6F8 /* HZAdColony.m in Sources */,
 				866E39F01850087B00B6E431 /* HZVideoAd.m in Sources */,
 				86D0A99D1851897200B3D870 /* HZDownloadHelper.m in Sources */,
@@ -2445,7 +2593,10 @@
 				50CAB1A21AE9757800F9642D /* HZAFNetworkReachabilityManager.m in Sources */,
 				E626228619F5BAD40094957B /* HZTestActivityNetworkViewController.m in Sources */,
 				86B09B8A1759743F0045AA54 /* HZRotatingView.m in Sources */,
+				86C491771B2819C000A84B2C /* HZMRAIDUtil.m in Sources */,
 				5011CE5618DB9B7F00604B53 /* HZAdColonyAdapter.m in Sources */,
+				86C491691B2819C000A84B2C /* HZMRAIDInterstitial.m in Sources */,
+				86C4916B1B2819C000A84B2C /* MRAIDSettings.m in Sources */,
 				86B09B89175973E60045AA54 /* HeyzapAds.m in Sources */,
 				50ED56351AB8E392009D7504 /* HZGADRequestError.m in Sources */,
 				50CAB19A1AE9752E00F9642D /* HZAFURLConnectionOperation.m in Sources */,
@@ -2486,6 +2637,7 @@
 				86BDB4A6175853E100D85F29 /* HZDictionaryUtils.m in Sources */,
 				500F88DA18E0F9BE00E5D6F8 /* HZChartboost.m in Sources */,
 				50B46B1A18F88C2E005155B8 /* HZALAdService.m in Sources */,
+				86C491701B2819C000A84B2C /* HZMRAIDOrientationProperties.m in Sources */,
 				E621820E19BE669B0099BE8C /* HZUnityAds.m in Sources */,
 				E6DBD6061A44AAEA00D9999D /* HZFBInterstitialAd.m in Sources */,
 				86BDB4A9175853E100D85F29 /* HZLog.m in Sources */,
@@ -2507,6 +2659,7 @@
 				8680AC9C193ED2DC0078B5CF /* HZDelegateProxy.m in Sources */,
 				507A454919BE29CC00C7AEEA /* HZNativeAdController.m in Sources */,
 				866E3A111851302C00B6E431 /* HZAdInterstitialViewController.m in Sources */,
+				86C491671B2819C000A84B2C /* HZMRAIDLogger.m in Sources */,
 				509E8D4719B91B7000ABF2D2 /* HZAbstractHeyzapAdapter.m in Sources */,
 				50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */,
 				50608AD11AF9650D00CFB9F6 /* HZMediationStarter.m in Sources */,
@@ -2516,11 +2669,13 @@
 				50B46B2218F89C58005155B8 /* HZAppLovinDelegate.m in Sources */,
 				866E3A001850172100B6E431 /* HZInterstitialAdModel.m in Sources */,
 				50ECA1CE18DB684D006284AB /* HZChartboostAdapter.m in Sources */,
+				86C491741B2819C000A84B2C /* HZMRAIDResizeProperties.m in Sources */,
 				50AC611F18FDD3E70046EBC6 /* HZALAdSize.m in Sources */,
 				86F92C761B1535C9003DEAEE /* HZHyprmxAdapter.m in Sources */,
 				866E39F41850089C00B6E431 /* HZIncentivizedAd.m in Sources */,
 				50CAB1A61AE9758500F9642D /* HZAFSecurityPolicy.m in Sources */,
 				504D82451AAA26B3004695C8 /* HZBannerAd.m in Sources */,
+				86C491651B2819C000A84B2C /* HZMRAIDView.m in Sources */,
 				866E39F818500DBE00B6E431 /* HZAdModel.m in Sources */,
 				866E3A191851329500B6E431 /* HZWebView.m in Sources */,
 				507A454E19BE318200C7AEEA /* HZNativeAd.m in Sources */,
@@ -2567,6 +2722,11 @@
 			isa = PBXTargetDependency;
 			target = 86B943291758108700B8EACE /* Ads */;
 			targetProxy = 86B943B11758223500B8EACE /* PBXContainerItemProxy */;
+		};
+		86C491431B27E77400A84B2C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 86C4913D1B27E75B00A84B2C /* MRAIDJShex */;
+			targetProxy = 86C491421B27E77400A84B2C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3075,6 +3235,20 @@
 			};
 			name = Release;
 		};
+		86C4913F1B27E75B00A84B2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		86C491401B27E75B00A84B2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -3146,6 +3320,15 @@
 			buildConfigurations = (
 				86B943AE1758220700B8EACE /* Debug */,
 				86B943AF1758220700B8EACE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		86C4913E1B27E75B00A84B2C /* Build configuration list for PBXAggregateTarget "MRAIDJShex" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86C4913F1B27E75B00A84B2C /* Debug */,
+				86C491401B27E75B00A84B2C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
