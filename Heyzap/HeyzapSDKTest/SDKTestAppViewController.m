@@ -152,8 +152,17 @@ typedef enum {
     }
 }
 
+- (void) customPublisherDataRefreshed: (NSNotification *)notification {
+    if(self.logCallbacksSwitch.isOn) {
+        if([notification.userInfo count] > 0) {
+            [self logToConsole: [NSString stringWithFormat:@"Custom publisher data refreshed. Data: %@", notification.userInfo]];
+        } else {
+            [self logToConsole: [NSString stringWithFormat:@"Custom publisher data refreshed (empty)"]];
+        }
+    }
+}
+
 - (void) changeColorOfShowButton {
-    
     [self.bannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex != kAdUnitSegmentBanner) forKey:@"hidden"];
     [self.nonBannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex == kAdUnitSegmentBanner) forKey:@"hidden"];
     
@@ -231,6 +240,8 @@ const CGFloat kLeftMargin = 10;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(responseNotification:) name:kHZAPIClientDidReceiveResponseNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(downloadNotification:) name: kHZDownloadHelperSuccessNotification object: nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(customPublisherDataRefreshed:) name:kHeyzapAdsCustomPublisherDataRefreshedNotification object:nil];
 
     
     self.showButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];

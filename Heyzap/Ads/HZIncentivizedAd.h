@@ -36,7 +36,6 @@
 #import <Foundation/Foundation.h>
 #import "HeyzapAds.h"
 #import "HZShowOptions.h"
-#import "HZIncentivizedAdReward.h"
 
 @class HZShowOptions;
 
@@ -100,12 +99,6 @@
  *  @return If the video is ready to show
  */
 + (BOOL) isAvailableForTag: (NSString *) tag;
-
-/**
- * Returns information about the incentive currently being provided for users that watch incentivized
- ads.
- */
-+ (HZIncentivizedAdReward *) getCurrentRewardData;
 
 /**
  *  (Optional) As a layer of added security, you can specify an identifier for the user. You can opt to receive a server-to-server callback with the provided userIdentifier.

@@ -124,6 +124,9 @@ extern NSString * const HZNetworkCallbackChartboostMoreAppsClickFailed;
 // Facebook Specific Callbacks
 extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
 
+// NSNotifications
+extern NSString * const kHeyzapAdsCustomPublisherDataRefreshedNotification;
+
 /** The `HZAdsDelegate` protocol provides global information about our ads. If you want to know if we had an ad to show after calling `showAd` (for example, to fallback to another ads provider). It is recommend using the `showAd:completion:` method instead. */
 @protocol HZAdsDelegate<NSObject>
 
@@ -253,8 +256,15 @@ extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
 
 /**
  * Returns a dictionary of publisher-settable data.
+ 
+ * Note: This data is cached, so it will usually be available at app launch. It is updated via a network call that is made when `[HeyzapAds startWithPublisherId:]` (or one of it's related methods) is called. If you want to guarantee that the data has been refreshed, only use it after receiving an NSNotification with name=`kHeyzapAdsCustomPublisherDataRefreshedNotification`. The userInfo passed with the notification will be the same NSDictionary you can receive with this method call. 
  */
 + (NSDictionary *) getCustomPublisherData;
+
+/**
+ * Returns a JSON string representation of the return value of `getCustomPublisherData`, or `nil` if there is no data or an error in the conversion.
+ */
++ (NSString *) getCustomPublisherDataJSON;
 
 /**
  * Presents a view controller that displays integration information and allows fetch/show testing

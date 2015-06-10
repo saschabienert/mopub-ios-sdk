@@ -88,6 +88,9 @@ NSString * const HZNetworkCallbackChartboostMoreAppsClickFailed = @"moreapps-cli
 // Facebook Specific
 NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impression";
 
+// NSNotifications
+NSString * const kHeyzapAdsCustomPublisherDataRefreshedNotification = @"kHeyzapAdsCustomPublisherDataRefreshedNotification";
+
 @implementation HeyzapAds
 
 #define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"
@@ -141,7 +144,6 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
 
 + (void) setOptions: (HZAdOptions) options {
     HZVersionCheck()
-
     [[HZAdsManager sharedManager] setOptions: options];
 }
 
@@ -228,6 +230,20 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
     return [[HeyzapMediation sharedInstance] customPublisherData];
 }
 
++ (NSString *) getCustomPublisherDataJSON {
+    HZVersionCheckNil();
+    NSDictionary * dict = [HeyzapAds getCustomPublisherData];
+    if(!dict){
+        return nil;
+    }
+    
+    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:nil];
+    if(!jsonData){
+        return nil;
+    }
+    
+    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+}
 
 @end
 
