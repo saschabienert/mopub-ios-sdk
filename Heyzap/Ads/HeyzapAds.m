@@ -223,6 +223,11 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
     
 }
 
++ (NSDictionary *) getCustomPublisherData {
+    HZVersionCheckNil();
+    return [[HeyzapMediation sharedInstance] customPublisherData];
+}
+
 
 @end
 

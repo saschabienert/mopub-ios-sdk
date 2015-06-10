@@ -252,6 +252,11 @@ extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
 + (NSString *) defaultTagName;
 
 /**
+ * Returns a dictionary of publisher-settable data.
+ */
++ (NSDictionary *) getCustomPublisherData;
+
+/**
  * Presents a view controller that displays integration information and allows fetch/show testing
  */
 + (void)presentMediationDebugViewController;
