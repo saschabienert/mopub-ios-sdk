@@ -39,12 +39,10 @@
 
 #define HZIncentivizedAdUnit @"incentivized"
 #define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
-#define HZIncentivizedAdCustomPublisherDataRewardKey @"reward"
 
 #import "HZIncentivizedAd.h"
 #import "HeyzapMediation.h"
 #import "HZHeyzapIncentivizedAd.h"
-#import "HZDictionaryUtils.h"
 
 @implementation HZIncentivizedAd
 

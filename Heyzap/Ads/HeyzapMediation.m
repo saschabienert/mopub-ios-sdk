@@ -158,19 +158,20 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
     }
     
+    _customPublisherDataString = [HZDictionaryUtils hzObjectForKey:HZMediationCustomPublisherDataKey ofClass:[NSString class] default: nil withDict:dictionary];
+    
     // converts string like "{\"test\":\"foo\"}" to dictionary
-    NSString * customPublisherDataString = [HZDictionaryUtils hzObjectForKey:HZMediationCustomPublisherDataKey ofClass:[NSString class] default: nil withDict:dictionary];
-    if(customPublisherDataString == nil) {
-        _customPublisherData = nil;
+    if(_customPublisherDataString == nil) {
+        _customPublisherDataDictionary = nil;
     } else {
         NSError *error;
-        NSData *objectData = [customPublisherDataString dataUsingEncoding:NSUTF8StringEncoding];
+        NSData *objectData = [_customPublisherDataString dataUsingEncoding:NSUTF8StringEncoding];
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData options:kNilOptions error:&error];
-        _customPublisherData = (error ? nil : json);
+        _customPublisherDataDictionary = (error ? nil : json);
     }
     
     if(!fromCache){
-     [[NSNotificationCenter defaultCenter] postNotificationName:kHeyzapAdsCustomPublisherDataRefreshedNotification object:nil userInfo:_customPublisherData];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kHeyzapAdsCustomPublisherDataRefreshedNotification object:nil userInfo:_customPublisherDataDictionary];
     }
 }
 

@@ -227,22 +227,12 @@ NSString * const kHeyzapAdsCustomPublisherDataRefreshedNotification = @"kHeyzapA
 
 + (NSDictionary *) getCustomPublisherData {
     HZVersionCheckNil();
-    return [[HeyzapMediation sharedInstance] customPublisherData];
+    return [[HeyzapMediation sharedInstance] customPublisherDataDictionary];
 }
 
 + (NSString *) getCustomPublisherDataJSON {
     HZVersionCheckNil();
-    NSDictionary * dict = [HeyzapAds getCustomPublisherData];
-    if(!dict){
-        return nil;
-    }
-    
-    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:nil];
-    if(!jsonData){
-        return nil;
-    }
-    
-    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    return [[HeyzapMediation sharedInstance] customPublisherDataString];
 }
 
 @end
