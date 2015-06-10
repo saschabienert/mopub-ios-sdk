@@ -111,7 +111,6 @@ NSString * const kHeyzapAdsCustomPublisherDataRefreshedNotification = @"kHeyzapA
         [HeyzapMediation forceOnlyHeyzapSDK];
     }
     
-    // call start even if we aren't mediating - allows for server config, etc., to still occur
     [[HeyzapMediation sharedInstance] start];
     
     if (framework && ![framework isEqualToString:@""]) {
@@ -175,29 +174,19 @@ NSString * const kHeyzapAdsCustomPublisherDataRefreshedNotification = @"kHeyzapA
 + (void)setDelegate:(id)delegate forNetwork:(NSString *)network {
     HZVersionCheck()
     
-    if (![HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HeyzapMediation sharedInstance] setDelegate:delegate forNetwork:network];
-    }
+    [[HeyzapMediation sharedInstance] setDelegate:delegate forNetwork:network];
 }
 
 + (void) networkCallbackWithBlock: (void (^)(NSString *network, NSString *callback))block {
     HZVersionCheck()
     
-    if (![HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HeyzapMediation sharedInstance] setNetworkCallbackBlock: block];
-    }
+    [[HeyzapMediation sharedInstance] setNetworkCallbackBlock: block];
 }
 
 + (BOOL) isNetworkInitialized:(NSString *)network {
     HZVersionCheckBool()
     
-    if (![HeyzapMediation isOnlyHeyzapSDK]) {
-        return [[HeyzapMediation sharedInstance] isNetworkInitialized:network];
-    } else if ([network isEqualToString: HZNetworkHeyzap]) {
-        return [HZAdsManager isEnabled];
-    } else {
-        return NO;
-    }
+    return [[HeyzapMediation sharedInstance] isNetworkInitialized:network];
 }
 
 + (NSString *) defaultTagName {
