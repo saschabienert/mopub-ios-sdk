@@ -373,6 +373,8 @@
 		86FF907D185842D900BC48BF /* HZQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 86FF907B185842D900BC48BF /* HZQueue.h */; };
 		86FF907E185842D900BC48BF /* HZQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 86FF907C185842D900BC48BF /* HZQueue.m */; };
 		996D9AA5BB144F82A96FC8B0 /* libPods-Integration Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */; };
+		9977B4CB1B26406E00A9AF33 /* HZIncentivizedAdReward.h in Headers */ = {isa = PBXBuildFile; fileRef = 9977B4CA1B26406E00A9AF33 /* HZIncentivizedAdReward.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9977B4CD1B26409900A9AF33 /* HZIncentivizedAdReward.m in Sources */ = {isa = PBXBuildFile; fileRef = 9977B4CC1B26409900A9AF33 /* HZIncentivizedAdReward.m */; };
 		E62181B319AFB3CC0099BE8C /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E62181B219AFB3CC0099BE8C /* libsqlite3.dylib */; };
 		E62181B919AFBF520099BE8C /* HZVungleSDK.m in Sources */ = {isa = PBXBuildFile; fileRef = E62181B719AFBF520099BE8C /* HZVungleSDK.m */; };
 		E62181F919AFCEEE0099BE8C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E62181F819AFCEEE0099BE8C /* CoreData.framework */; };
@@ -761,6 +763,8 @@
 		86FF907B185842D900BC48BF /* HZQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZQueue.h; sourceTree = "<group>"; };
 		86FF907C185842D900BC48BF /* HZQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZQueue.m; sourceTree = "<group>"; };
 		9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Integration Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9977B4CA1B26406E00A9AF33 /* HZIncentivizedAdReward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZIncentivizedAdReward.h; sourceTree = "<group>"; };
+		9977B4CC1B26409900A9AF33 /* HZIncentivizedAdReward.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZIncentivizedAdReward.m; sourceTree = "<group>"; };
 		B1D5F5ECB01E4EDFA33DE9B0 /* libPods-Ads Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ads Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9241C359E50B2D9005581FE /* Pods-Integration Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integration Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Integration Tests/Pods-Integration Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		E600E20C1ACB5715006CE286 /* HZAdapterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdapterDelegate.h; sourceTree = "<group>"; };
@@ -1520,6 +1524,8 @@
 				E67D8F1E1AB7B313000B191C /* HZShowOptions.h */,
 				E67D8F1F1AB7B38B000B191C /* HZShowOptions.m */,
 				507A454A19BE317000C7AEEA /* Native Ads */,
+				9977B4CA1B26406E00A9AF33 /* HZIncentivizedAdReward.h */,
+				9977B4CC1B26409900A9AF33 /* HZIncentivizedAdReward.m */,
 			);
 			name = "Public Interface";
 			sourceTree = "<group>";
@@ -1834,6 +1840,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				50CAB1AD1AE9758E00F9642D /* HZAFURLResponseSerialization.h in Headers */,
+				9977B4CB1B26406E00A9AF33 /* HZIncentivizedAdReward.h in Headers */,
 				50B46B1118F862DA005155B8 /* HZALSdk.h in Headers */,
 				50CAB1971AE9752E00F9642D /* HZAFHTTPRequestOperationManager.h in Headers */,
 				50B46B0D18F862B3005155B8 /* HZAppLovinAdapter.h in Headers */,
@@ -2430,6 +2437,7 @@
 			files = (
 				8616E8861B0D304C00BC6670 /* HZAdapterDelegate.m in Sources */,
 				50EB889A1A0AFBF20077A4D3 /* HZNSURLUtils.m in Sources */,
+				9977B4CD1B26409900A9AF33 /* HZIncentivizedAdReward.m in Sources */,
 				507A456319BE95B000C7AEEA /* HZStorePresenter.m in Sources */,
 				8641E1F018ADE0FE00CAAEE0 /* HZDevice.m in Sources */,
 				509E8D3A19B7A96E00ABF2D2 /* HZAdInfo.m in Sources */,

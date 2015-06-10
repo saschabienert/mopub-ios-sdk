@@ -39,10 +39,12 @@
 
 #define HZIncentivizedAdUnit @"incentivized"
 #define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
+#define HZIncentivizedAdCustomPublisherDataRewardKey @"reward"
 
 #import "HZIncentivizedAd.h"
 #import "HeyzapMediation.h"
 #import "HZHeyzapIncentivizedAd.h"
+#import "HZDictionaryUtils.h"
 
 @implementation HZIncentivizedAd
 
@@ -130,6 +132,20 @@
     } else {
         return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeIncentivized tag:tag];
     }
+}
+
++ (HZIncentivizedAdReward *) getCurrentRewardData {
+    HZVersionCheckNil();
+    
+    NSDictionary * dict = [[HeyzapMediation sharedInstance] customPublisherData];
+    if(dict == nil){
+        dict = [[NSDictionary alloc] init];
+        HZDLog(@"Error! getCurrentRewardData called before the data is available. Initialize SDK and give it time for a network request before calling this method.");
+    }
+    
+    HZIncentivizedAdReward *reward = [[HZIncentivizedAdReward alloc] initWithDict:[HZDictionaryUtils hzObjectForKey:HZIncentivizedAdCustomPublisherDataRewardKey ofClass:[NSDictionary class] withDict:dict]];
+    
+    return reward;
 }
 
 #pragma mark - Heyzap specific

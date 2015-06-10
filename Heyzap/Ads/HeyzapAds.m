@@ -107,9 +107,9 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
     if (options & HZAdOptionsDisableMedation) {
         [HeyzapMediation forceOnlyHeyzapSDK];
     }
-    if (![HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HeyzapMediation sharedInstance] start];
-    }
+    
+    // call start even if we aren't mediating - allows for server config, etc., to still occur
+    [[HeyzapMediation sharedInstance] start];
     
     if (framework && ![framework isEqualToString:@""]) {
         [[HZAdsManager sharedManager] setFramework:framework];

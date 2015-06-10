@@ -43,6 +43,8 @@
 #import "HZBannerAdOptions_Private.h"
 #import "HZMediationStarter.h"
 
+#define HZMediationCustomPublisherDataKey @"custom_publisher_data"
+
 @interface HeyzapMediation()
 
 @property (nonatomic, strong) NSSet *setupMediators;
@@ -150,11 +152,13 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
                                                 withDict:dictionary];
     NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:dictionary];
     [NSOrderedSet orderedSetWithArray:networks];
-    if (networks) {
+    if (networks && ![HeyzapMediation isOnlyHeyzapSDK]) {
         [self setupMediators:networks];
-    } else {
+    } else if (!networks){
         HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
     }
+    
+    _customPublisherData = [HZDictionaryUtils hzObjectForKey:HZMediationCustomPublisherDataKey ofClass:[NSDictionary class] default: [[NSDictionary alloc]init] withDict:dictionary];
 }
 
 - (void)didFailStartRequest {
