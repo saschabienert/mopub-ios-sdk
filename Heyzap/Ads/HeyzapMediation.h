@@ -19,6 +19,9 @@
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting>
 
+@property (nonatomic, readonly) NSString *customPublisherDataString;
+@property (nonatomic, readonly) NSDictionary *customPublisherDataDictionary;
+
 + (instancetype)sharedInstance;
 
 #pragma mark - Setup
