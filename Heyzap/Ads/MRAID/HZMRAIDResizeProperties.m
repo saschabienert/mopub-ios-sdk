@@ -18,7 +18,7 @@
         _height = 0;
         _offsetX = 0;
         _offsetY = 0;
-        _customClosePosition = MRAIDCustomClosePositionTopRight;
+        _customClosePosition = HZMRAIDCustomClosePositionTopRight;
         _allowOffscreen = YES;
     }
     return self;
@@ -40,7 +40,7 @@
         return (HZMRAIDCustomClosePosition)i;
     }
     // Use top-right for the default value
-    return MRAIDCustomClosePositionTopRight;;
+    return HZMRAIDCustomClosePositionTopRight;;
 }
 
 @end

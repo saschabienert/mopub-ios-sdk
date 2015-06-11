@@ -10,12 +10,12 @@
 
 typedef enum {
     HZMRAIDCustomClosePositionTopLeft,
-    MRAIDCustomClosePositionTopCenter,
-    MRAIDCustomClosePositionTopRight,
-    MRAIDCustomClosePositionCenter,
-    MRAIDCustomClosePositionBottomLeft,
-    MRAIDCustomClosePositionBottomCenter,
-    MRAIDCustomClosePositionBottomRight
+    HZMRAIDCustomClosePositionTopCenter,
+    HZMRAIDCustomClosePositionTopRight,
+    HZMRAIDCustomClosePositionCenter,
+    HZMRAIDCustomClosePositionBottomLeft,
+    HZMRAIDCustomClosePositionBottomCenter,
+    HZMRAIDCustomClosePositionBottomRight
 } HZMRAIDCustomClosePosition;
 
 @interface HZMRAIDResizeProperties : NSObject

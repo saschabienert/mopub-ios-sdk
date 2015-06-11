@@ -9,11 +9,11 @@
 #import "HZMRAIDView.h"
 #import "HZMRAIDOrientationProperties.h"
 #import "HZMRAIDResizeProperties.h"
-#import "HZMRAIDParser.h"
+#import "HZMRAIDCommand.h"
 #import "HZMRAIDModalViewController.h"
 #import "HZMRAIDServiceDelegate.h"
 #import "HZMRAIDUtil.h"
-#import "MRAIDSettings.h"
+#import "HZMRAIDSettings.h"
 
 #import "HZMRAIDLogger.h"
 
@@ -45,7 +45,6 @@ typedef enum {
     HZMRAIDOrientationProperties *orientationProperties;
     HZMRAIDResizeProperties *resizeProperties;
     
-    HZMRAIDParser *mraidParser;
     HZMRAIDModalViewController *modalVC;
     
     NSString *mraidjs;
@@ -72,33 +71,6 @@ typedef enum {
     
     BOOL _isViewable;
 }
-
-// "hidden" method for interstitial support
-- (void)showAsInterstitial;
-
-- (void)deviceOrientationDidChange:(NSNotification *)notification;
-
-- (void)addCloseEventRegion;
-- (void)showResizeCloseRegion;
-- (void)removeResizeCloseRegion;
-- (void)setResizeViewPosition;
-
-// These methods provide the means for native code to talk to JavaScript code.
-- (void)injectJavaScript:(NSString *)js;
-// convenience methods to fire MRAID events
-- (void)fireErrorEventWithAction:(NSString *)action message:(NSString *)message;
-- (void)fireReadyEvent;
-- (void)fireSizeChangeEvent;
-- (void)fireStateChangeEvent;
-- (void)fireViewableChangeEvent;
-// setters
-- (void)setDefaultPosition;
--(void)setMaxSize;
--(void)setScreenSize;
-
-// internal helper methods
-- (void)initWebView:(UIWebView *)wv;
-- (void)parseCommandUrl:(NSString *)commandUrlString;
 
 @end
 
@@ -170,8 +142,6 @@ typedef enum {
         
         orientationProperties = [[HZMRAIDOrientationProperties alloc] init];
         resizeProperties = [[HZMRAIDResizeProperties alloc] init];
-        
-        mraidParser = [[HZMRAIDParser alloc] init];
         
         mraidFeatures = @[
                           HZMRAIDSupportsSMS,
@@ -343,7 +313,42 @@ typedef enum {
 // These methods are (indirectly) called by JavaScript code.
 // They provide the means for JavaScript code to talk to native code
 
-- (void)close
+- (void)executeCommand:(HZMRAIDCommand *) command {
+    
+    SEL selector;
+    BOOL validCommand = YES;
+    
+    switch (command.command) {
+        case HZMRAIDInternalCommandCreateCalendarEvent: selector = @selector(createCalendarEvent:); break;
+        case HZMRAIDInternalCommandClose: selector = @selector(close:); break;
+        case HZMRAIDInternalCommandExpand: selector = @selector(expand:); break;
+        case HZMRAIDInternalCommandOpen: selector = @selector(open:); break;
+        case HZMRAIDInternalCommandPlayVideo: selector = @selector(playVideo:); break;
+        case HZMRAIDInternalCommandSetOrientationProperties: selector = @selector(setOrientationProperties:); break;
+        case HZMRAIDInternalCommandSetResizeProperties: selector = @selector(setResizeProperties:); break;
+        case HZMRAIDInternalCommandStorePicture: selector = @selector(storePicture:); break;
+        case HZMRAIDInternalCommandUseCustomClose: selector = @selector(useCustomClose:); break;
+        case HZMRAIDInternalCommandResize: selector = @selector(resize:); break;
+        case HZMRAIDInternalCommandUndefined:
+        default:
+            validCommand = NO;
+            break;
+    }
+    
+    
+    
+    if (validCommand && [self respondsToSelector: selector]) {
+        // Turn off the warning "PerformSelector may cause a leak because its selector is unknown".
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        [self performSelector: selector withObject: command.params];
+#pragma clang diagnostic pop
+    } else {
+        [HZMRAIDLogger warning:@"MRAID - View" withMessage:[NSString stringWithFormat:@"invalid command attempted"]];
+    }
+}
+
+- (void)close: (id) obj
 {
     [HZMRAIDLogger debug:@"MRAID - View" withMessage:[NSString stringWithFormat: @"JS callback %@", NSStringFromSelector(_cmd)]];
     
@@ -426,8 +431,11 @@ typedef enum {
     }
 }
 
-- (void)createCalendarEvent:(NSString *)eventJSON
+- (void)createCalendarEvent:(NSDictionary *)params
 {
+    
+    NSString *eventJSON = [params objectForKey: @"eventJSON"];
+    
     if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZMRAIDLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.createCalendarEvent() when no UI touch event exists."];
         return;  // ignore programmatic touches (taps)
@@ -446,8 +454,13 @@ typedef enum {
 }
 
 // Note: This method is also used to present an interstitial ad.
-- (void)expand:(NSString *)urlString
-{
+- (void)expand:(NSDictionary *)params {
+    
+    NSString *urlString = nil;
+    if (params != nil) {
+        urlString = [params objectForKey: @"url"];
+    }
+    
     if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZMRAIDLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.expand() when no UI touch event exists."];
         return;  // ignore programmatic touches (taps)
@@ -544,8 +557,9 @@ typedef enum {
     self.isViewable = YES;
 }
 
-- (void)open:(NSString *)urlString
-{
+- (void)open:(NSDictionary *) params {
+    NSString *urlString = [params objectForKey: @"url"];
+    
     if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZMRAIDLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.open() when no UI touch event exists."];
        return;  // ignore programmatic touches (taps)
@@ -554,28 +568,35 @@ typedef enum {
     urlString = [urlString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     [HZMRAIDLogger debug:@"MRAID - View" withMessage:[NSString stringWithFormat: @"JS callback %@ %@", NSStringFromSelector(_cmd), urlString]];
     
+    NSURL *url = [NSURL URLWithString: urlString];
+    
     // Notify the callers
-    if ([self.serviceDelegate respondsToSelector:@selector(mraidServiceOpenBrowserWithUrlString:)]) {
-        [self.serviceDelegate mraidServiceOpenBrowserWithUrlString:urlString];
+    if ([self.serviceDelegate respondsToSelector:@selector(mraidServiceOpenBrowserWithURL:)]) {
+        [self.serviceDelegate mraidServiceOpenBrowserWithURL:url];
     }
 }
 
-- (void)playVideo:(NSString *)urlString
-{
+- (void)playVideo:(NSDictionary *) params {
+    
+    NSString *urlString = [params objectForKey: @"url"];
+    
     if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZMRAIDLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.playVideo() when no UI touch event exists."];
         return;  // ignore programmatic touches (taps)
     }
     
     urlString = [urlString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSURL *url = [NSURL URLWithString: urlString];
+    
     [HZMRAIDLogger debug:@"MRAID - View" withMessage:[NSString stringWithFormat: @"JS callback %@ %@", NSStringFromSelector(_cmd), urlString]];
-    if ([self.serviceDelegate respondsToSelector:@selector(mraidServicePlayVideoWithUrlString:)]) {
-        [self.serviceDelegate mraidServicePlayVideoWithUrlString:urlString];
+    if ([self.serviceDelegate respondsToSelector:@selector(mraidServicePlayVideoWithURL:)]) {
+        [self.serviceDelegate mraidServicePlayVideoWithURL:url];
     }
 }
 
-- (void)resize
-{
+- (void)resize: (NSDictionary *) params {
+    
     if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZMRAIDLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.resize when no UI touch event exists."];
         return;  // ignore programmatic touches (taps)
@@ -616,6 +637,7 @@ typedef enum {
 }
 
 - (void)setOrientationProperties:(NSDictionary *)properties {
+    
     BOOL allowOrientationChange = [[properties valueForKey:@"allowOrientationChange"] boolValue];
     NSString *forceOrientation = [properties valueForKey:@"forceOrientation"];
     [HZMRAIDLogger debug:@"MRAID - View" withMessage:[NSString stringWithFormat: @"JS callback %@ %@ %@", NSStringFromSelector(_cmd), (allowOrientationChange ? @"YES" : @"NO"), forceOrientation]];
@@ -625,6 +647,7 @@ typedef enum {
 }
 
 - (void)setResizeProperties:(NSDictionary *)properties {
+    
     int width = [[properties valueForKey:@"width"] intValue];
     int height = [[properties valueForKey:@"height"] intValue];
     int offsetX = [[properties valueForKey:@"offsetX"] intValue];
@@ -640,8 +663,10 @@ typedef enum {
     resizeProperties.allowOffscreen = allowOffscreen;
 }
 
--(void)storePicture:(NSString *)urlString
-{
+-(void)storePicture:(NSDictionary *) params {
+    
+    NSString *urlString = [params objectForKey: @"url"];
+    
     if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZMRAIDLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.storePicture when no UI touch event exists."];
         return;  // ignore programmatic touches (taps)
@@ -650,18 +675,20 @@ typedef enum {
     urlString=[urlString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     [HZMRAIDLogger debug:@"MRAID - View" withMessage:[NSString stringWithFormat: @"JS callback %@ %@", NSStringFromSelector(_cmd), urlString]];
     
+    NSURL *url = [NSURL URLWithString: urlString];
+    
     if ([supportedFeatures containsObject:HZMRAIDSupportsStorePicture]) {
-        if ([self.serviceDelegate respondsToSelector:@selector(mraidServiceStorePictureWithUrlString:)]) {
-            [self.serviceDelegate mraidServiceStorePictureWithUrlString:urlString];
+        if ([self.serviceDelegate respondsToSelector:@selector(mraidServiceStorePictureWithURL:)]) {
+            [self.serviceDelegate mraidServiceStorePictureWithURL:url];
         }
     } else {
         [HZMRAIDLogger warning:@"MRAID - View" withMessage:[NSString stringWithFormat:@"No MRAIDSupportsStorePicture feature has been included"]];
     }
 }
 
-- (void)useCustomClose:(NSString *)isCustomCloseString
-{
-    BOOL isCustomClose = [isCustomCloseString boolValue];
+- (void)useCustomClose:(NSDictionary *)params {
+    
+    BOOL isCustomClose = [(NSString *)[params objectForKey: @"isCustomClose"] boolValue];
     [HZMRAIDLogger debug:@"MRAID - View" withMessage:[NSString stringWithFormat: @"JS callback %@ %@", NSStringFromSelector(_cmd), (isCustomClose ? @"YES" : @"NO")]];
     useCustomClose = isCustomClose;
 }
@@ -674,7 +701,7 @@ typedef enum {
 {
     closeEventRegion = [UIButton buttonWithType:UIButtonTypeCustom];
     closeEventRegion.backgroundColor = [UIColor clearColor];
-    [closeEventRegion addTarget:self action:@selector(close) forControlEvents:UIControlEventTouchUpInside];
+    [closeEventRegion addTarget:self action:@selector(close:) forControlEvents:UIControlEventTouchUpInside];
     
     if (!useCustomClose) {
         // get button image from header file
@@ -715,17 +742,17 @@ typedef enum {
     
     switch (resizeProperties.customClosePosition) {
         case HZMRAIDCustomClosePositionTopLeft:
-        case MRAIDCustomClosePositionBottomLeft:
+        case HZMRAIDCustomClosePositionBottomLeft:
             x = 0;
             break;
-        case MRAIDCustomClosePositionTopCenter:
-        case MRAIDCustomClosePositionCenter:
-        case MRAIDCustomClosePositionBottomCenter:
+        case HZMRAIDCustomClosePositionTopCenter:
+        case HZMRAIDCustomClosePositionCenter:
+        case HZMRAIDCustomClosePositionBottomCenter:
             x = (CGRectGetWidth(resizeView.frame) - CGRectGetWidth(resizeCloseRegion.frame)) / 2;
             autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
             break;
-        case MRAIDCustomClosePositionTopRight:
-        case MRAIDCustomClosePositionBottomRight:
+        case HZMRAIDCustomClosePositionTopRight:
+        case HZMRAIDCustomClosePositionBottomRight:
             x = CGRectGetWidth(resizeView.frame) - CGRectGetWidth(resizeCloseRegion.frame);
             autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
             break;
@@ -733,17 +760,17 @@ typedef enum {
     
     switch (resizeProperties.customClosePosition) {
         case HZMRAIDCustomClosePositionTopLeft:
-        case MRAIDCustomClosePositionTopCenter:
-        case MRAIDCustomClosePositionTopRight:
+        case HZMRAIDCustomClosePositionTopCenter:
+        case HZMRAIDCustomClosePositionTopRight:
             y = 0;
             break;
-        case MRAIDCustomClosePositionCenter:
+        case HZMRAIDCustomClosePositionCenter:
             y = (CGRectGetHeight(resizeView.frame) - CGRectGetHeight(resizeCloseRegion.frame)) / 2;
             autoresizingMask |= UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
             break;
-        case MRAIDCustomClosePositionBottomLeft:
-        case MRAIDCustomClosePositionBottomCenter:
-        case MRAIDCustomClosePositionBottomRight:
+        case HZMRAIDCustomClosePositionBottomLeft:
+        case HZMRAIDCustomClosePositionBottomCenter:
+        case HZMRAIDCustomClosePositionBottomRight:
             y = CGRectGetHeight(resizeView.frame) - CGRectGetHeight(resizeCloseRegion.frame);
             autoresizingMask |= UIViewAutoresizingFlexibleTopMargin;
             break;
@@ -780,7 +807,7 @@ typedef enum {
 #pragma mark - native -->  JavaScript support
 
 - (void)injectJavaScript:(NSString *)js
-{
+{    
     [currentWebView stringByEvaluatingJavaScriptFromString:js];
 }
 
@@ -802,16 +829,26 @@ typedef enum {
         int y;
         int width;
         int height;
+        
+        UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+        BOOL isLandscape = UIInterfaceOrientationIsLandscape(interfaceOrientation);
+        [HZMRAIDLogger debug: @"Orienatation" withMessage: (isLandscape ?  @"landscape" : @"portrait")];
+        
         if (state == HZMRAIDStateExpanded || isInterstitial) {
+            
             x = (int)currentWebView.frame.origin.x;
             y = (int)currentWebView.frame.origin.y;
+            
             width = (int)currentWebView.frame.size.width;
             height = (int)currentWebView.frame.size.height;
+            
         } else if (state == HZMRAIDStateResized) {
+            
             x = (int)resizeView.frame.origin.x;
             y = (int)resizeView.frame.origin.y;
             width = (int)resizeView.frame.size.width;
             height = (int)resizeView.frame.size.height;
+            
         } else {
             // Per the MRAID spec, the current or default position is relative to the rectangle defined by the getMaxSize method,
             // that is, the largest size that the ad can resize to.
@@ -822,10 +859,12 @@ typedef enum {
             height = (int)self.frame.size.height;
         }
         
-        UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
-        BOOL isLandscape = UIInterfaceOrientationIsLandscape(interfaceOrientation);
-        // [SKLogger debug:[NSString stringWithFormat:@"orientation is %@", (isLandscape ?  @"landscape" : @"portrait")]];
-        BOOL adjustOrientationForIOS8 = isInterstitial &&  isLandscape && !SYSTEM_VERSION_LESS_THAN(@"8.0");
+        BOOL adjustOrientationForIOS8 = NO;
+        
+        //BOOL adjustOrientationForIOS8 = isInterstitial &&  isLandscape && !SYSTEM_VERSION_LESS_THAN(@"8.0");
+        
+        //[self injectJavaScript: [NSString stringWithFormat: @"mraid.fireSizeChangeEvent(%d, %d);", adjustOrientationForIOS8?height:width, adjustOrientationForIOS8?width:height]];
+        
         [self injectJavaScript:[NSString stringWithFormat:@"mraid.setCurrentPosition(%d,%d,%d,%d);", x, y, adjustOrientationForIOS8?height:width, adjustOrientationForIOS8?width:height]];
     }
 }
@@ -980,9 +1019,9 @@ typedef enum {
     NSString *scheme = [url scheme];
     NSString *absUrlString = [url absoluteString];
     
-    if ([scheme isEqualToString:@"mraid"]) {
-        [self parseCommandUrl:absUrlString];
-
+    if ([request.URL.scheme isEqualToString:@"mraid"]) {
+        HZMRAIDCommand *command = [[HZMRAIDCommand alloc] initWithURL: request.URL];
+        [self executeCommand: command];
     } else if ([scheme isEqualToString:@"console-log"]) {
         [HZMRAIDLogger debug:@"MRAID - View" withMessage:[NSString stringWithFormat:@"JS console: %@",
                           [[absUrlString substringFromIndex:14] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding ]]];
@@ -1007,11 +1046,15 @@ typedef enum {
 
 #pragma mark - MRAIDModalViewControllerDelegate
 
-- (void)mraidModalViewControllerDidRotate:(HZMRAIDModalViewController *)modalViewController
-{
+- (void)mraidModalViewControllerDidRotate:(HZMRAIDModalViewController *)modalViewController {
     [HZMRAIDLogger debug:@"MRAID - View" withMessage:[NSString stringWithFormat: @"%@", NSStringFromSelector(_cmd)]];
-    [self setScreenSize];
-    [self fireSizeChangeEvent];
+    
+    @synchronized (self) {
+        [self setScreenSize];
+        [self setMaxSize];
+        [self setDefaultPosition];
+        [self fireSizeChangeEvent];
+    }
 }
 
 #pragma mark - internal helper methods
@@ -1057,28 +1100,6 @@ typedef enum {
     // Alert suppression
     if (SK_SUPPRESS_JS_ALERT)
         [wv stringByEvaluatingJavaScriptFromString:@"function alert(){}; function prompt(){}; function confirm(){}"];
-}
-
-- (void)parseCommandUrl:(NSString *)commandUrlString
-{
-    NSDictionary *commandDict = [mraidParser parseCommandUrl:commandUrlString];
-    if (!commandDict) {
-        [HZMRAIDLogger warning:@"MRAID - View" withMessage:[NSString stringWithFormat:@"invalid command URL: %@", commandUrlString]];
-        return;
-    }
-    
-    NSString *command = [commandDict valueForKey:@"command"];
-    NSObject *paramObj = [commandDict valueForKey:@"paramObj"];
-    
-    SEL selector = NSSelectorFromString(command);
-    
-    // Turn off the warning "PerformSelector may cause a leak because its selector is unknown".
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    
-    [self performSelector:selector withObject:paramObj];
-    
-#pragma clang diagnostic pop
 }
 
 #pragma mark - Gesture Methods

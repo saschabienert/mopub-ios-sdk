@@ -180,24 +180,24 @@
     }
 }
 
-- (void)mraidServicePlayVideoWithUrlString:(NSString *)urlString
+- (void)mraidServicePlayVideoWithURL:(NSURL *)URL
 {
-    if ([self.serviceDelegate respondsToSelector:@selector(mraidServicePlayVideoWithUrlString:)]) {
-        [self.serviceDelegate mraidServicePlayVideoWithUrlString:urlString];
+    if ([self.serviceDelegate respondsToSelector:@selector(mraidServicePlayVideoWithURL:)]) {
+        [self.serviceDelegate mraidServicePlayVideoWithURL:URL];
     }
 }
 
-- (void)mraidServiceOpenBrowserWithUrlString:(NSString *)urlString
+- (void)mraidServiceOpenBrowserWithURL:(NSURL *)URL
 {
-    if ([self.serviceDelegate respondsToSelector:@selector(mraidServiceOpenBrowserWithUrlString:)]) {
-        [self.serviceDelegate mraidServiceOpenBrowserWithUrlString:urlString];
+    if ([self.serviceDelegate respondsToSelector:@selector(mraidServiceOpenBrowserWithURL:)]) {
+        [self.serviceDelegate mraidServiceOpenBrowserWithURL:URL];
     }
 }
 
-- (void)mraidServiceStorePictureWithUrlString:(NSString *)urlString
+- (void)mraidServiceStorePictureWithURL:(NSURL *)URL
 {
-    if ([self.serviceDelegate respondsToSelector:@selector(mraidServiceStorePictureWithUrlString:)]) {
-        [self.serviceDelegate mraidServiceStorePictureWithUrlString:urlString];
+    if ([self.serviceDelegate respondsToSelector:@selector(mraidServiceStorePictureWithURL:)]) {
+        [self.serviceDelegate mraidServiceStorePictureWithURL:URL];
     }
 }
 

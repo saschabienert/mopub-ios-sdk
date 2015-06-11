@@ -14,6 +14,8 @@ typedef enum {
     HZMRAIDForceOrientationNone
 } HZMRAIDForceOrientation;
 
+NSString *HZNSStringFromMRAIDForceOrientation(HZMRAIDForceOrientation orientation);
+
 @interface HZMRAIDOrientationProperties : NSObject
 
 @property (nonatomic, assign) BOOL allowOrientationChange;

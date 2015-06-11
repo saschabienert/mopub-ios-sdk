@@ -51,7 +51,7 @@
                          @"<html>\n"
                          "<head>\n"
                          "</head>\n"
-                         "<body style='background-color: transparent;'>\n"
+                         "<body>\n"
                          "<div align='center'>\n"
                          "%@"
                          "</div>\n"
@@ -78,7 +78,7 @@
     
     NSString *styleTag =
     @"<style>\n"
-    "body { margin:0; padding:0; }\n"
+    "body { margin:0; padding:0; background-color: transparent; }\n"
     "*:not(input) { -webkit-touch-callout:none; -webkit-user-select:none; -webkit-text-size-adjust:none; }\n"
     "</style>";
     

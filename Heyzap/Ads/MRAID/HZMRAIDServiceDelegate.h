@@ -22,8 +22,8 @@ static NSString* HZMRAIDSupportsInlineVideo = @"inlineVideo";
 
 // These callbacks are to request other services.
 - (void)mraidServiceCreateCalendarEventWithEventJSON:(NSString *)eventJSON;
-- (void)mraidServicePlayVideoWithUrlString:(NSString *)urlString;
-- (void)mraidServiceOpenBrowserWithUrlString:(NSString *)urlString;
-- (void)mraidServiceStorePictureWithUrlString:(NSString *)urlString;
+- (void)mraidServicePlayVideoWithURL:(NSURL *)URL;
+- (void)mraidServiceOpenBrowserWithURL:(NSURL *)URL;
+- (void)mraidServiceStorePictureWithURL:(NSURL *)URL;
 
 @end

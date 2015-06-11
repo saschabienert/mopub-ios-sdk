@@ -153,6 +153,7 @@
     }
     
     [HZMRAIDLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat: @"%@ %@ %@", [self.class description], NSStringFromSelector(_cmd), (retval ? @"YES" : @"NO")]];
+    
     return retval;
 }
 
@@ -225,28 +226,11 @@
 
 - (void)forceToOrientation:(HZMRAIDOrientationProperties *)orientationProps
 {
-    NSString *orientationString;
-    switch (orientationProps.forceOrientation) {
-        case HZMRAIDForceOrientationPortrait:
-            orientationString = @"portrait";
-            break;
-        case HZMRAIDForceOrientationLandscape:
-            orientationString = @"landscape";
-            break;
-        case HZMRAIDForceOrientationNone:
-            orientationString = @"none";
-            break;
-        default:
-            orientationString = @"wtf!";
-            break;
-    }
-    
     [HZMRAIDLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat: @"%@ %@ %@ %@",
                       [self.class description],
                       NSStringFromSelector(_cmd),
                       (_orientationProperties.allowOrientationChange ? @"YES" : @"NO"),
-                      orientationString]];
-
+                      HZNSStringFromMRAIDForceOrientation(orientationProps.forceOrientation)]];
     _orientationProperties = orientationProps;
     UIInterfaceOrientation currentInterfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
     
@@ -256,6 +240,8 @@
             _preferredOrientation = currentInterfaceOrientation;
         } else {
             _preferredOrientation = UIInterfaceOrientationPortrait;
+            NSNumber *value = [NSNumber numberWithInt:_preferredOrientation];
+            [[UIDevice currentDevice] setValue:value forKey:@"orientation"];
         }
     } else if (_orientationProperties.forceOrientation == HZMRAIDForceOrientationLandscape) {
         if (UIInterfaceOrientationIsLandscape(currentInterfaceOrientation)) {
@@ -263,6 +249,9 @@
             _preferredOrientation = currentInterfaceOrientation;
         } else {
             _preferredOrientation = UIInterfaceOrientationLandscapeLeft;
+            
+            NSNumber *value = [NSNumber numberWithInt:_preferredOrientation];
+            [[UIDevice currentDevice] setValue:value forKey:@"orientation"];
         }
     } else {
         // orientationProperties.forceOrientation == MRAIDForceOrientationNone
@@ -270,6 +259,7 @@
             UIDeviceOrientation currentDeviceOrientation = [[UIDevice currentDevice] orientation];
             // NB: UIInterfaceOrientationLandscapeLeft = UIDeviceOrientationLandscapeRight
             // and UIInterfaceOrientationLandscapeLeft = UIDeviceOrientationLandscapeLeft !
+            
             if (currentDeviceOrientation == UIDeviceOrientationPortrait) {
                 _preferredOrientation = UIInterfaceOrientationPortrait;
             } else if (currentDeviceOrientation == UIDeviceOrientationPortraitUpsideDown) {

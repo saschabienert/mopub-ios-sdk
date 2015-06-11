@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Nexage. All rights reserved.
 //
 
-#import "MRAIDSettings.h"
+#import "HZMRAIDSettings.h"
 
 NSString* const kMRAIDKitVersion    = @"1.0.6";
-BOOL SK_ENABLE_JS_LOG                  = NO;
+BOOL SK_ENABLE_JS_LOG                  = YES;
 BOOL SK_SUPPRESS_JS_ALERT              = YES;
 BOOL SK_SUPPRESS_BANNER_AUTO_REDIRECT  = YES;

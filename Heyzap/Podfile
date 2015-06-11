@@ -21,6 +21,7 @@ target :MediationTestApp, :exclusive => true do
   pod 'UnityAds' # Vendored by Heyzap
   pod 'FacebookAudienceNetwork' # Vendored by Heyzap
   pod 'HyprMX' #Vendored by Heyzap
+  pod 'Masonry'
 end
 
 target :"Ads Tests", :exclusive => true do

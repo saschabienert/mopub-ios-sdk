@@ -8,6 +8,18 @@
 
 #import "HZMRAIDOrientationProperties.h"
 
+NSString *HZNSStringFromMRAIDForceOrientation(HZMRAIDForceOrientation orientation) {
+    switch (orientation) {
+        case HZMRAIDForceOrientationPortrait:
+            return @"HZMRAIDForceOrientationPortrait";
+        case HZMRAIDForceOrientationLandscape:
+            return @"HZMRAIDForceOrientationLandscape";
+        case HZMRAIDForceOrientationNone:
+            return @"HZMRAIDForceOrientationNone";
+            break;
+    }
+}
+
 @implementation HZMRAIDOrientationProperties
 
 - (id)init
