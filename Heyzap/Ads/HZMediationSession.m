@@ -113,7 +113,7 @@ return nil; \
     NSArray *preferredMediatorList = [[self availableAdapters:lastInterstitialVideoShown] array];
     
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        return [adapter hasAdForType:self.adType tag:self.tag];
+        return [adapter hasAdForType:self.adType];
     }];
     
     if (idx != NSNotFound) {

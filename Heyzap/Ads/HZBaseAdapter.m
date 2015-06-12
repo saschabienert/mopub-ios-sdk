@@ -70,12 +70,12 @@
     ABSTRACT_METHOD_ERROR();
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     ABSTRACT_METHOD_ERROR();
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     ABSTRACT_METHOD_ERROR();
 }

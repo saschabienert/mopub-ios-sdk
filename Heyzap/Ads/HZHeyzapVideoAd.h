@@ -24,11 +24,10 @@
 /**
  *  Fetches a new ad for the given tag.
  *
- *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
  *  @param completion A block called when the video is fetched or fails to fetch. `result` states whether the fetch was sucessful; the error object describes the issue, if there was one.
  *
  */
-+ (void) fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion;
++ (void) fetchForAuctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion;
 
 /**
  *  Whether or not the video is ready to show for the given tag

@@ -17,7 +17,6 @@
 
 @property (nonatomic, readonly) NSArray *creativeTypes;
 @property (nonatomic, readonly) NSString *adUnit;
-@property (nonatomic, readonly) NSString *tag;
 @property (nonatomic, readonly) HZAuctionType auctionType;
 
 @property (nonatomic) NSString *rejectedImpressionID;

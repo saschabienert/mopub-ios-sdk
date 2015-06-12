@@ -61,9 +61,9 @@
 
 + (instancetype)sharedInstance;
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag;
+- (void)prefetchForType:(HZAdType)type;
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag;
+- (BOOL)hasAdForType:(HZAdType)type;
 
 /**
  *  The adapter should show an ad for the given ad type.

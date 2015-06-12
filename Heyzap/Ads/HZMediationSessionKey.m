@@ -11,40 +11,19 @@
 
 @interface HZMediationSessionKey()
 
-@property (nonatomic, strong) NSString *tag;
 @property (nonatomic) HZAdType adType;
-@property (nonatomic) HZAdState adState;
 
 @end
 
 @implementation HZMediationSessionKey
 
-- (instancetype)initWithAdType:(HZAdType)type tag:(NSString *)tag
+- (instancetype)initWithAdType:(HZAdType)type
 {
     self = [super init];
     if (self) {
-        _tag = tag;
         _adType = type;
-        _adState = HZAdStateLoading;
     }
     return self;
-}
-
-- (instancetype)sessionKeyAfterRequestingShow {
-    if (self.adState != HZAdStateLoading) {
-        HZELog(@"Invalid state transition in HZMediationSessionKey from %@ in %@",NSStringFromHZAdState(self.adState),NSStringFromSelector(_cmd));
-    }
-    HZMediationSessionKey *copy = [self copy];
-    copy.adState = HZAdStateRequestedShow;
-    return copy;
-}
-- (instancetype)sessionKeyAfterShown {
-    if (self.adState != HZAdStateRequestedShow) {
-        HZELog(@"Invalid state transition in HZMediationSessionKey from %@ in %@",NSStringFromHZAdState(self.adState),NSStringFromSelector(_cmd));
-    }
-    HZMediationSessionKey *copy = [self copy];
-    copy.adState = HZAdStateShown;
-    return copy;
 }
 
 // Referenced these blog posts for this section
@@ -56,16 +35,14 @@
 {
     if ([object isKindOfClass:[HZMediationSessionKey class]]) {
         HZMediationSessionKey *session = object;
-        return [self.tag isEqualToString:session.tag]
-        && self.adType == session.adType
-        && self.adState == session.adState;
+        return self.adType == session.adType;
     }
     return [super isEqual:object];
 }
 
 - (NSUInteger)hash
 {
-    return [self.tag hash] ^ self.adType ^ self.adState;
+    return self.adType;
 }
 
 #pragma mark - NSCopying
@@ -73,9 +50,7 @@
 - (id)copyWithZone: (NSZone *)zone
 {
     HZMediationSessionKey *newObj = [[[self class] alloc] init];
-    newObj.tag = self.tag;
     newObj.adType = self.adType;
-    newObj.adState = self.adState;
     return newObj;
 }
 
@@ -83,22 +58,7 @@
 
 - (NSString *)debugDescription
 {
-    return [NSString stringWithFormat:@"MediationKey - tag = %@ adType = %@ adState = %@",
-            self.tag,@(self.adType),NSStringFromHZAdState(self.adState)];
-}
-
-NSString *NSStringFromHZAdState(HZAdState state) {
-    switch (state) {
-        case HZAdStateLoading: {
-            return @"HZAdStateLoading";
-        }
-        case HZAdStateRequestedShow: {
-            return @"HZAdStateRequestedShow";
-        }
-        case HZAdStateShown: {
-            return @"HZAdStateShown";
-        }
-    }
+    return [NSString stringWithFormat:@"MediationKey - adType = %@", @(self.adType)];
 }
 
 @end

@@ -104,7 +104,7 @@
 
     tag = tag ?: [HeyzapAds defaultTagName];
 
-    [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeVideo tag:tag additionalParams:nil completion:completion];
+    [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeVideo additionalParams:nil completion:completion];
 }
 
 #pragma mark - Querying

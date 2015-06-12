@@ -42,7 +42,7 @@
 - (BOOL)isAdobeAir;
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
 
-- (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
+- (BOOL)isAvailableForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;
 - (void) showForAdUnit: (NSString *) adUnit auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options;
 - (void) hideActiveAd;
 
