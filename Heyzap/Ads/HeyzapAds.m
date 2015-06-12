@@ -89,7 +89,7 @@ NSString * const HZNetworkCallbackChartboostMoreAppsClickFailed = @"moreapps-cli
 NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impression";
 
 // NSNotifications
-NSString * const kHeyzapAdsCustomPublisherDataRefreshedNotification = @"kHeyzapAdsCustomPublisherDataRefreshedNotification";
+NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNotification";
 
 @implementation HeyzapAds
 
@@ -225,14 +225,9 @@ NSString * const kHeyzapAdsCustomPublisherDataRefreshedNotification = @"kHeyzapA
     
 }
 
-+ (NSDictionary *) getCustomPublisherData {
++ (NSDictionary *) remoteData {
     HZVersionCheckNil();
-    return [[HeyzapMediation sharedInstance] customPublisherDataDictionary];
-}
-
-+ (NSString *) getCustomPublisherDataJSON {
-    HZVersionCheckNil();
-    return [[HeyzapMediation sharedInstance] customPublisherDataString];
+    return [[HeyzapMediation sharedInstance] remoteDataDictionary];
 }
 
 @end

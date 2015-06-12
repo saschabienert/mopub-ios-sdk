@@ -43,7 +43,7 @@
 #import "HZBannerAdOptions_Private.h"
 #import "HZMediationStarter.h"
 
-#define HZMediationCustomPublisherDataKey @"custom_publisher_data"
+#define kHZMediationCustomPublisherDataKey @"custom_publisher_data"
 
 @interface HeyzapMediation()
 
@@ -98,6 +98,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         _setupMediators = [NSSet set];
         _setupMediatorClasses = [NSSet set];
         _sessionDictionary = [NSMutableDictionary dictionary];
+        _remoteDataDictionary = [[NSDictionary alloc] init];
         _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
         _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
         _videoDelegateProxy = [[HZDelegateProxy alloc] init];
@@ -158,20 +159,23 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         HZDLog(@"Error! Failed to get networks from Heyzap; mediation won't be possible. `networks` was invalid");
     }
     
-    _customPublisherDataString = [HZDictionaryUtils hzObjectForKey:HZMediationCustomPublisherDataKey ofClass:[NSString class] default: nil withDict:dictionary];
+    NSString *jsonString = [HZDictionaryUtils hzObjectForKey:kHZMediationCustomPublisherDataKey
+                                                     ofClass:[NSString class]
+                                                     default: @"{}"
+                                                    withDict:dictionary];
     
     // converts string like "{\"test\":\"foo\"}" to dictionary
-    if(_customPublisherDataString == nil) {
-        _customPublisherDataDictionary = nil;
+    if(jsonString == nil) {
+        _remoteDataDictionary = @{};
     } else {
         NSError *error;
-        NSData *objectData = [_customPublisherDataString dataUsingEncoding:NSUTF8StringEncoding];
+        NSData *objectData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData options:kNilOptions error:&error];
-        _customPublisherDataDictionary = (error ? nil : json);
+        _remoteDataDictionary = (error ? @{} : json);
     }
     
     if(!fromCache){
-        [[NSNotificationCenter defaultCenter] postNotificationName:kHeyzapAdsCustomPublisherDataRefreshedNotification object:nil userInfo:_customPublisherDataDictionary];
+        [[NSNotificationCenter defaultCenter] postNotificationName:HZRemoteDataRefreshedNotification object:nil userInfo:_remoteDataDictionary];
     }
 }
 

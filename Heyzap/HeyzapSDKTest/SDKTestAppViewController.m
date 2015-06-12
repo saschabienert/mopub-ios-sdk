@@ -153,11 +153,12 @@ typedef enum {
 }
 
 - (void) customPublisherDataRefreshed: (NSNotification *)notification {
+    
     if(self.logCallbacksSwitch.isOn) {
         if([notification.userInfo count] > 0) {
-            [self logToConsole: [NSString stringWithFormat:@"Custom publisher data refreshed. Data: %@", notification.userInfo]];
+            [self logToConsole: [NSString stringWithFormat:@"Remote publisher data refreshed. Data: %@", [HeyzapAds remoteData]]];
         } else {
-            [self logToConsole: [NSString stringWithFormat:@"Custom publisher data refreshed (empty)"]];
+            [self logToConsole: [NSString stringWithFormat:@"Remote publisher data refreshed (empty)"]];
         }
     }
 }
@@ -241,7 +242,7 @@ const CGFloat kLeftMargin = 10;
     
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(downloadNotification:) name: kHZDownloadHelperSuccessNotification object: nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(customPublisherDataRefreshed:) name:kHeyzapAdsCustomPublisherDataRefreshedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(customPublisherDataRefreshed:) name:HZRemoteDataRefreshedNotification object:nil];
 
     
     self.showButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
