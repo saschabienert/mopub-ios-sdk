@@ -43,6 +43,7 @@
 #import "HZBannerAdOptions_Private.h"
 #import "HZMediationStarter.h"
 #import "HZMediationCurrentShownAd.h"
+#import "HZMediateRequester.h"
 
 #define HZMediationCustomPublisherDataKey @"custom_publisher_data"
 
@@ -68,7 +69,9 @@
 @property (nonatomic) dispatch_queue_t pausableMainQueue;
 @property (nonatomic) BOOL pausableQueueIsPaused;
 
+// Child objects HeyzapMediation uses to avoid putting everything in this file
 @property (nonatomic, strong) HZMediationStarter *starter;
+@property (nonatomic, strong) HZMediateRequester *mediateRequester;
 
 @property (nonatomic) HZMediationStartStatus startStatus;
 @property (nonatomic) BOOL hasLoadedFromCache;
@@ -77,6 +80,10 @@
 
 // State
 @property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
+
+// Latest /mediate response
+// Cached /mediate response
+//
 
 @end
 
@@ -115,6 +122,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
         
         self.startStatus = HZMediationStartStatusNotStarted;
         self.starter = [[HZMediationStarter alloc] initWithStartingDelegate:self];
+        self.mediateRequester = [[HZMediateRequester alloc] init];
         self.disabledTags = [NSSet set];
     }
     return self;
@@ -136,6 +144,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
 - (void)start {
     HZILog(@"The following SDKs have been detected = %@",[[self class] commaSeparatedAdapterList]);
     [self.starter start];
+    [self.mediateRequester start];
 }
 
 - (void)pauseExpensiveWork {
@@ -280,31 +289,54 @@ NSString * const kHZDataKey = @"data";
     
     NSError *preShowError = [self checkForPreShowError:options];
     if (preShowError) {
-        [[self delegateForAdType:adType] didFailToShowAdWithTag:options.tag andError:preShowError];
-        if (options.completion) { options.completion(NO,preShowError); }
+        [self sendShowFailureMessagesForAdType:adType options:options error:preShowError];
         return;
     }
     
-    // have that preShowError return session and
+    // Getting /mediate and sending failure message can be part of the
+    // TODO: tell the server if an outdated or cached mediate is being used. Potentially include the outdated time diff.
+    NSDictionary *const latestMediate = [self.mediateRequester latestMediate];
+    NSDictionary *const latestMediateParams = [self.mediateRequester latestMediateParams];
+    if (!latestMediate || !latestMediateParams) {
+        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Didn't get the waterfall from Heyzap's servers before a request to show an ad was made."}];
+        [self sendShowFailureMessagesForAdType:adType options:options error:error];
+        return;
+    }
     
-//    HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType];
-//    HZMediationSession *session = self.sessionDictionary[key];
+    NSError *mediationSessionError;
+    HZMediationSession *session = [[HZMediationSession alloc] initWithJSON:latestMediate mediateParams:latestMediateParams setupMediators:self.setupMediators adType:adType tag:options.tag error:&mediationSessionError];
+    if (mediationSessionError) {
+        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{
+                                                                                       NSLocalizedDescriptionKey: @"Failed to parse /mediate response",
+                                                                                       NSUnderlyingErrorKey:mediationSessionError,
+                                                                                       }];
+        [self sendShowFailureMessagesForAdType:adType options:options error:error];
+        return;
+    }
     
-    // Find session
-    // If we don't have a session, failure (don't block on network request + simpler)
-    // If we do have a session, find the first ad network that has an ad
-    // Attempt to show an ad from that network
+    HZMediationSessionKey *key = [[HZMediationSessionKey alloc] initWithAdType:adType];
     
-    // Look up session?
+    HZBaseAdapter *adapter = [session firstAdapterWithAd:self.lastInterstitialVideoShownDate];
+    [session reportFetchWithSuccessfulAdapter:adapter];
+    if (!adapter) {
+        // TODO: make that error message prettier.
+        NSOrderedSet *triedAdapters = [session availableAdapters:self.lastInterstitialVideoShownDate];
+        NSString *const errorMessage = [NSString stringWithFormat:@"No ad network had an ad to show. Ad networks we checked were: %@",triedAdapters];
+        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: errorMessage}];
+        [self sendShowFailureMessagesForAdType:adType options:options error:error];
+        return;
+    }
     
-    [self mediateForAdType:adType
-           showImmediately:YES
-          additionalParams:additionalParams
-                   options:options];
+    self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithSessionKey:key session:session tag:options.tag adapter:adapter];
+    [self.mediateRequester refreshMediate];
+    
+    [self haveAdapter:adapter showAdForSession:session sessionKey:key options:options];
 }
 
 - (NSError *)checkForPreShowError:(HZShowOptions *)options {
-    if (self.pausableQueueIsPaused) {
+    if (self.startStatus != HZMediationStartStatusSuccess) {
+        return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"SDK hasn't finished starting."}];
+    } else if (self.pausableQueueIsPaused) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad when the SDK is paused."}];
     } else if ([self.disabledTags containsObject:[HZAdModel normalizeTag:options.tag]]) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad with a disabled tag"}];
@@ -313,6 +345,12 @@ NSString * const kHZDataKey = @"data";
     }
     
     return nil;
+}
+
+- (void)sendShowFailureMessagesForAdType:(HZAdType)adType options:(HZShowOptions *)options error:(NSError *)error {
+    HZELog(@"Error showing ad = %@",error);
+    [[self delegateForAdType:adType] didFailToShowAdWithTag:options.tag andError:error];
+    if (options.completion) { options.completion(NO,error); }
 }
 
 // `mediateForSessionKey` and this method looks up the session.
@@ -484,9 +522,6 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 - (void)haveAdapter:(HZBaseAdapter *)adapter showAdForSession:(HZMediationSession *)session sessionKey:(HZMediationSessionKey *)key options:(HZShowOptions *)options
 {
     [self.sessionDictionary removeObjectForKey:key];
-    
-//    HZMediationSessionKey *showKey = [key sessionKeyAfterRequestingShow];
-//    self.sessionDictionary[showKey] = session;
     
     if ([adapter isVideoOnlyNetwork] && session.adType == HZAdTypeInterstitial) {
         self.lastInterstitialVideoShownDate = [NSDate date];

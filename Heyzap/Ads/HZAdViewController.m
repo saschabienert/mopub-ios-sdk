@@ -93,7 +93,8 @@
     
     if ([self.ad.adUnit isEqualToString: @"interstitial"]) {
         if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
-            [HZInterstitialAd fetchForTag: self.ad.tag];
+            // TODO: remove this; mediation should handle prefetching.
+            [HZIncentivizedAd fetch];
         }
     }
 }
