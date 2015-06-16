@@ -180,7 +180,7 @@ static BOOL hzAdsIsEnabled = NO;
     BOOL result = NO;
     NSError *error;
     
-    if ([self activeController] != nil) {
+    if (self.activeController) {
         if (options.completion) {
             options.completion(NO, [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 7 userInfo: @{NSLocalizedDescriptionKey: @"Another ad is currently displaying."}]);
         }
@@ -239,9 +239,7 @@ static BOOL hzAdsIsEnabled = NO;
 }
 
 - (void) hideActiveAd {
-    if ([self activeController] != nil) {
-        [[self activeController] hide];
-    }
+    [self.activeController hide];
 }
 
 #pragma mark - Option Enabled?
