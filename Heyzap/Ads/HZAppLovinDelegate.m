@@ -12,9 +12,41 @@
 #import "HZAppLovinAdapter.h"
 #import "HZMediationConstants.h"
 
+
+@interface HZAppLovinRewardedAdState:NSObject
+
+typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdPlaybackState) {
+    NOT_STARTED,
+    FINISHED,
+    WONT_FINISH
+};
+
+typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
+    WAITING,
+    VALIDATION_SUCCESSFUL,
+    VALIDATION_FAILED
+};
+
+@property (nonatomic) HZAppLovinRewardedAdPlaybackState playbackState;
+@property (nonatomic) HZAppLovinRewardedAdValidationState validationState;
+
+@end
+
+@implementation HZAppLovinRewardedAdState
+- (instancetype) init{
+    self = [super init];
+    if(self){
+        _playbackState = NOT_STARTED;
+        _validationState = WAITING;
+    }
+    return self;
+}
+@end
+
 @interface HZAppLovinDelegate()
 
 @property (nonatomic) HZAdType adType;
+@property (nonatomic) NSMutableDictionary *adStateDictionary;
 
 @end
 
@@ -27,6 +59,7 @@
         
         _adType = adType;
         _delegate = delegate;
+        _adStateDictionary = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -86,16 +119,74 @@
 - (void)videoPlaybackBeganInAd:(HZALAd *)ad
 {
     [self.delegate willPlayAudio];
+    
+    HZAppLovinRewardedAdState * state = [self.adStateDictionary objectForKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
+    if(!state){
+        state = [[HZAppLovinRewardedAdState alloc] init];
+        [self.adStateDictionary setObject:state forKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
+    }
 }
 
 - (void)videoPlaybackEndedInAd:(HZALAd *)ad atPlaybackPercent:(NSNumber *)percentPlayed fullyWatched:(BOOL)wasFullyWatched
 {
     [self.delegate didFinishAudio];
 
-    // since applovin's only successful reward callback is called early, trigger incentive complete here
-    if ([self isKindOfClass:[HZIncentivizedAppLovinDelegate class]] && ((HZIncentivizedAppLovinDelegate *) self).rewardValidationSucceeded) {
-        [self.delegate didCompleteIncentivized];
+    HZAppLovinRewardedAdState * state = [self.adStateDictionary objectForKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
+    if(!state) {
+        HZDLog(@"HZAppLovinDelegate: video playback ended but ad reference was not saved successfully when playback began.");
+        return;
     }
+    
+    state.playbackState = FINISHED;
+    [self notifyDelegateIfApplicableForAd:ad withState:state];
+}
+
+- (void) rewardValidationResult:(BOOL)success forAd:(HZALAd *)ad
+{
+    HZAppLovinRewardedAdState * state = [self.adStateDictionary objectForKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
+    if(!state) {
+        state = [[HZAppLovinRewardedAdState alloc] init];
+        state.validationState = (success ? VALIDATION_SUCCESSFUL : VALIDATION_FAILED);
+        [self.adStateDictionary setObject:state forKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
+    }else{
+        state.validationState = (success ? VALIDATION_SUCCESSFUL : VALIDATION_FAILED);
+    }
+
+    [self notifyDelegateIfApplicableForAd:ad withState:state];
+}
+
+-(void)userDeclinedToViewAppLovinIncentivizedAd:(HZALAd *)ad {
+    // user declined to view an ad - treat it as a validation failure but first remember
+    // the video will never complete so the dict entry is removed
+    HZAppLovinRewardedAdState * state = [self.adStateDictionary objectForKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
+    if(!state){
+        state = [[HZAppLovinRewardedAdState alloc] init];
+        state.playbackState = WONT_FINISH;
+        [self.adStateDictionary setObject:state forKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
+    }else{
+        state.playbackState = WONT_FINISH;
+    }
+    
+    [self rewardValidationResult:NO forAd:ad];
+}
+
+- (void) notifyDelegateIfApplicableForAd:(HZALAd *)ad withState:(HZAppLovinRewardedAdState *)state{
+    if([self isKindOfClass:[HZIncentivizedAppLovinDelegate class]]){
+        if(state.validationState == VALIDATION_SUCCESSFUL && state.playbackState == FINISHED){
+            [self.delegate didCompleteIncentivized];
+        }else if(state.validationState == VALIDATION_FAILED){
+            [self.delegate didFailToCompleteIncentivized];
+        }
+    }
+    
+    // remove dict entry for ad if there won't be any more messages to send about it
+    if(state.validationState != WAITING && state.playbackState != NOT_STARTED){
+        [self.adStateDictionary removeObjectForKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
+    }
+}
+
++ (NSValue *) adStatusDictionaryKeyForAd:(HZALAd *)ad{
+    return [NSValue valueWithNonretainedObject:ad];
 }
 
 @end

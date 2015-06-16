@@ -25,4 +25,10 @@
 
 - (id)initWithAdType:(HZAdType)adType delegate:(id<HZAppLovinDelegateReceiver>)delegate;
 
+/**
+ *  These methods report whether a video was viewed or not to the delegate, which will then forward the message on to the delegate receiver
+ */
+- (void)rewardValidationResult:(BOOL)success forAd:(HZALAd *) ad;
+- (void)userDeclinedToViewAppLovinIncentivizedAd:(HZALAd *)ad;
+
 @end
