@@ -19,13 +19,14 @@
 @property (nonatomic) NSTimeInterval mediateRequestDelay;
 @property (nonatomic) NSDictionary *latestMediate;
 @property (nonatomic) NSDictionary *latestMediateParams;
-@property (nonatomic) BOOL mediateRequestInProgress;
+
+@property (nonatomic) NSUInteger consecutiveMediateFailures;
 
 @end
 
 @implementation HZMediateRequester
 
-const NSTimeInterval initialMediateDelay = 5;
+const NSTimeInterval initialMediateDelay = 3;
 const NSTimeInterval maxMediateDelay     = 300;
 
 + (NSURL *)pathToMediatePlist {
@@ -48,26 +49,11 @@ const NSTimeInterval maxMediateDelay     = 300;
     return self;
 }
 
-const NSInteger kHZBackOffStatusCode = 420;
-
 - (void)start {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        self.latestMediate = [NSDictionary dictionaryWithContentsOfURL:[[self class] pathToMediatePlist]];
-        self.latestMediateParams = [NSDictionary dictionaryWithContentsOfURL:[[self class] pathToMediateParamsPlist]];
-        
-        if (self.latestMediate) {
-            NSLog(@"Loaded latest /mediate from disk");
-        }
-        
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self loadMediateFromNetwork];
-        });
-    });
+    [self loadMediateFromNetwork];
 }
 
 - (void)loadMediateFromNetwork {
-    HZParameterAssert([NSThread isMainThread]);
     // Should be all ad types? none?
     // HZAdFetchRequest requires the main queue; it's getting the status bar orientation and screen size and such.
     HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:@[@"all"] // TODO ?
@@ -78,15 +64,14 @@ const NSInteger kHZBackOffStatusCode = 420;
     
     NSDictionary *const mediateParams = request.createParams;
     
-    self.mediateRequestInProgress = YES;
-    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[HZMediationAPIClient sharedClient] GET:@"mediate"
                                       parameters:mediateParams
                                          success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
                                              self.latestMediate = json;
                                              self.latestMediateParams = mediateParams;
-                                             self.mediateRequestInProgress = NO;
+                                             self.consecutiveMediateFailures = 0;
+                                             self.mediateRequestDelay = initialMediateDelay;
                                              
                                              // Background priority b/c we shouldn't need to use the cache often.
                                              dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
@@ -96,7 +81,16 @@ const NSInteger kHZBackOffStatusCode = 420;
                                                  HZDLog(@"Wrote /mediate to disk");
                                              });
                                          } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+                                             // TODO: Mediation servers should return a certain status code telling the client to fallback to cache for X minutes. This would be much better than e.g. the server-side fallback option, and allows us to reduce load on mediation if necessary.
                                              
+                                             // Require a failing status code, otherwise things like internet being down will cause a cache fallback.
+                                             if (operation.response.statusCode >= 500 && operation.response.statusCode < 600) {
+                                                 self.consecutiveMediateFailures += 1;
+                                                 
+                                                 if (self.consecutiveMediateFailures >= 3 && self.latestMediate == nil) {
+                                                     [self restoreFromCache];
+                                                 }
+                                             }
                                              // TODO: Potentially immediately go to 5 minutes before /mediate based on e.g. status code / header telling us to do so?
                                              
                                              HZELog(@"Error updating waterfall (/mediate endpoint). Error = %@",error);
@@ -109,9 +103,24 @@ const NSInteger kHZBackOffStatusCode = 420;
 }
 
 - (void)refreshMediate {
-    if (!self.mediateRequestInProgress) {
-        [self loadMediateFromNetwork];
-    }
+    self.latestMediate = nil;
+    self.latestMediateParams = nil;
+    
+    [self loadMediateFromNetwork];
+}
+
+- (void)restoreFromCache {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        NSDictionary *mediatePlist = [NSDictionary dictionaryWithContentsOfURL:[[self class] pathToMediatePlist]];
+        NSDictionary *mediateParamsPlist = [NSDictionary dictionaryWithContentsOfURL:[[self class] pathToMediateParamsPlist]];
+        
+        if (mediatePlist && mediateParamsPlist) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.latestMediate = mediatePlist;
+                self.latestMediateParams = mediateParamsPlist;
+            });
+        }
+    });
 }
 
 @end
