@@ -202,7 +202,10 @@
         }
         
         if(self.player.duration > 0){
-            [self.controlView updateProgress:(self.player.currentPlaybackTime/self.player.duration) delayUntilNextUpdate:timer.timeInterval];
+            // have a minimum amount of progress to report so the circular progress always shows up right away
+            [self.controlView updateProgress:MAX((currentPlaybackTime/self.player.duration), 0.0001) delayUntilNextUpdate:timer.timeInterval];
+        } else {
+            HZDLog(@"HZVideoView player duration=%f bad for division.", self.player.duration);
         }
         
         int remainingDuration = (int)(self.player.duration - currentPlaybackTime);

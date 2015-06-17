@@ -27,8 +27,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        _isTimeExpired = false;
-
         _circularProgressTimerLabel = [[HZKAProgressLabel alloc] init];
         _circularProgressTimerLabel.fillColor = [UIColor clearColor]; // color inside the circular label
         _circularProgressTimerLabel.trackColor = [UIColor clearColor]; // color of the circular outline behind the progress
@@ -148,8 +146,7 @@
         [[self circularProgressTimerLabel] setText: [NSString stringWithFormat: @"%i", timeRemaining]];
         [self recalculateTimerFrame];
     } else {
-        _isTimeExpired = true;
-        self.circularProgressTimerLabel.hidden = YES; //monroe: necessary after merge?
+        self.circularProgressTimerLabel.hidden = YES;
     }
 }
 

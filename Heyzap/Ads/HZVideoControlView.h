@@ -19,7 +19,6 @@
 @property (nonatomic) UIButton *skipButton;
 @property (nonatomic) UIButton *hideButton;
 @property (nonatomic) HZExtendedHitAreaButton *installButton;
-@property (nonatomic) BOOL isTimeExpired;
 @property (nonatomic) NSString *skipLaterFormatText;
 @property (nonatomic) NSString *skipNowText;
 @property (nonatomic) NSString *installButtonText;
