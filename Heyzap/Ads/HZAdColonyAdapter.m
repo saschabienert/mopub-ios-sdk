@@ -202,6 +202,10 @@
 
 #pragma mark - AdColonyAdDelegate (individual ads)
 
+- ( void ) onAdColonyAdStartedInZone:( NSString * )zoneID {
+    [self.delegate adapterDidShowAd:self];
+}
+
 - (void)onAdColonyAdAttemptFinished:(BOOL)shown inZone:(NSString *)zoneID
 {
     if ([zoneID isEqualToString:self.incentivizedZoneID]) {

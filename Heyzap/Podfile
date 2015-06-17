@@ -1,6 +1,8 @@
 source 'https://github.com/Heyzap/CocoapodsSource.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
+inhibit_all_warnings!
+
 
 platform :ios, '6.0'
 
@@ -10,7 +12,7 @@ end
 
 target :MediationTestApp, :exclusive => true do
   pod 'Bugsnag', :git => "https://github.com/bugsnag/bugsnag-cocoa.git"
-  pod 'ChartboostSDK' # Maintained by Chartboost
+  pod 'ChartboostSDK', :inhibit_warnings => true # Maintained by Chartboost
   pod 'AdColony' # Maintained by AdColony
 
   pod 'Google-AdMob-Ads-SDK' # In Cocoapods, but outdated. Vendored by Heyzap
@@ -18,6 +20,7 @@ target :MediationTestApp, :exclusive => true do
   pod 'AppLovin' # Vendored by Heyzap
   pod 'UnityAds' # Vendored by Heyzap
   pod 'FacebookAudienceNetwork' # Vendored by Heyzap
+  pod 'HyprMX' #Vendored by Heyzap
 end
 
 target :"Ads Tests", :exclusive => true do

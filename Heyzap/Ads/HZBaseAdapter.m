@@ -19,6 +19,7 @@
 #import "HZFacebookAdapter.h"
 #import "HZiAdAdapter.h"
 #import "HZBannerAdapter.h"
+#import "HZHyprmxAdapter.h"
 
 @implementation HZBaseAdapter
 
@@ -179,6 +180,7 @@
             [HZCrossPromoAdapter class],
             [HZFacebookAdapter class],
             [HZiAdAdapter class],
+            [HZHyprmxAdapter class],
             nil];
 }
 

@@ -63,7 +63,7 @@
 
 - (void)ad:(HZALAd *)ad wasDisplayedIn:(UIView *)view
 {
-    // ignored
+    [self.delegate didShowAd];
 }
 
 - (void)ad:(HZALAd *)ad wasHiddenIn:(UIView *)view

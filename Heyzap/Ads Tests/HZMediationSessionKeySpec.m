@@ -37,14 +37,19 @@ describe(@"HZMediationSessionKey", ^{
         
         [[theValue(dict.allKeys.count) should] equal:@4];
         
-        HZMediationSessionKey *beenShownKey = [key6 sessionKeyAfterShowing];
-        dict[beenShownKey] = @"";
+        HZMediationSessionKey *requestingShownKey = [key6 sessionKeyAfterRequestingShow];
+        dict[requestingShownKey] = @"";
         
         [[theValue(dict.allKeys.count) should] equal:@5];
         
+        HZMediationSessionKey *afterShownKey = [requestingShownKey sessionKeyAfterShown];
+        dict[afterShownKey] = @"";
+        
+        [[theValue(dict.allKeys.count) should] equal:@6];
+        
         [dict removeObjectForKey:key6];
         
-        [[theValue(dict.allKeys.count) should] equal:@4];
+        [[theValue(dict.allKeys.count) should] equal:@5];
     });
 
 });

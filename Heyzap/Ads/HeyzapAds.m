@@ -52,6 +52,7 @@ NSString * const HZNetworkChartboost = @"chartboost";
 NSString * const HZNetworkAdColony = @"adcolony";
 NSString * const HZNetworkAdMob = @"admob";
 NSString * const HZNetworkIAd = @"iad";
+NSString * const HZNetworkHyperMX = @"hyprmx";
 
 // Warning! Read first please.
 // Do NOT change the values. They are shared
@@ -87,6 +88,9 @@ NSString * const HZNetworkCallbackChartboostMoreAppsClickFailed = @"moreapps-cli
 // Facebook Specific
 NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impression";
 
+// NSNotifications
+NSString * const kHeyzapAdsCustomPublisherDataRefreshedNotification = @"kHeyzapAdsCustomPublisherDataRefreshedNotification";
+
 @implementation HeyzapAds
 
 #define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"
@@ -106,9 +110,9 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
     if (options & HZAdOptionsDisableMedation) {
         [HeyzapMediation forceOnlyHeyzapSDK];
     }
-    if (![HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HeyzapMediation sharedInstance] start];
-    }
+    
+    // call start even if we aren't mediating - allows for server config, etc., to still occur
+    [[HeyzapMediation sharedInstance] start];
     
     if (framework && ![framework isEqualToString:@""]) {
         [[HZAdsManager sharedManager] setFramework:framework];
@@ -140,7 +144,6 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
 
 + (void) setOptions: (HZAdOptions) options {
     HZVersionCheck()
-
     [[HZAdsManager sharedManager] setOptions: options];
 }
 
@@ -222,6 +225,15 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
     
 }
 
++ (NSDictionary *) getCustomPublisherData {
+    HZVersionCheckNil();
+    return [[HeyzapMediation sharedInstance] customPublisherDataDictionary];
+}
+
++ (NSString *) getCustomPublisherDataJSON {
+    HZVersionCheckNil();
+    return [[HeyzapMediation sharedInstance] customPublisherDataString];
+}
 
 @end
 
