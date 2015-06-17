@@ -18,7 +18,6 @@
 @interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
 
 @property (nonatomic) UIWebView *clickTrackingWebView;
-@property (nonatomic) UIViewController *storeController;
 
 @property (nonatomic) BOOL statusBarHidden;
 

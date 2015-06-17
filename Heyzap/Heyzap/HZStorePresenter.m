@@ -80,6 +80,7 @@
             params;
         });
         
+        UIViewController *__weak weakViewController = viewController;
         [storeController loadProductWithParameters:productParameters
                                    completionBlock:^(BOOL result, NSError *error) {
             if (!result || error) {
@@ -96,8 +97,17 @@
                 completion ? completion(result, error) : nil;
                 [[UIApplication sharedApplication] openURL: clickURL];
             } else {
-                completion ? completion(YES, nil) : nil;
-                [viewController presentViewController:storeController animated:YES completion:nil];
+                if (weakViewController) {
+                    [weakViewController presentViewController:storeController animated:YES completion:nil];
+                    completion ? completion(YES, nil) : nil;
+                } else {
+                    NSError *error = [[NSError alloc] initWithDomain:@"HZStorePresenter"
+                                                                code:1
+                                                            userInfo:@{
+                                                                       NSLocalizedDescriptionKey: @"SKStoreProductViewController didn't get a chance to display in time - root view controller no longer exists"}];
+                    completion ? completion(NO, error) : nil;
+                }
+
             }
         }];
         return storeController;
