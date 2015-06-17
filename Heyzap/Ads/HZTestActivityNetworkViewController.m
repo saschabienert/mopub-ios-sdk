@@ -280,31 +280,35 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 }
 
 - (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
+    [[HeyzapMediation sharedInstance] adapterDidShowAd:adapter];
     
 }
 
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter {
-
+    [[HeyzapMediation sharedInstance] adapterWasClicked:adapter];
 }
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {
     [self changeShowButtonColor];
+    [[HeyzapMediation sharedInstance] adapterDidDismissAd:adapter];
 }
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
     [self changeShowButtonColor];
+    [[HeyzapMediation sharedInstance] adapterDidCompleteIncentivizedAd:adapter];
 }
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
     [self changeShowButtonColor];
+    [[HeyzapMediation sharedInstance] adapterDidFailToCompleteIncentivizedAd:adapter];
 }
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter {
-    
+    [[HeyzapMediation sharedInstance] adapterWillPlayAudio:adapter];
 }
 
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter {
-    
+    [[HeyzapMediation sharedInstance] adapterDidFinishPlayingAudio:adapter];
 }
 
 #pragma mark - View creation utility methods

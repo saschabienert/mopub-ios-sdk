@@ -8,6 +8,7 @@
 
 #import "HZAdModel.h"
 #import "HZAFNetworking.h"
+#import "HZVideoAdDisplayOptions.h"
 
 @interface HZVideoAdModel : HZAdModel
 
@@ -27,19 +28,7 @@
 @property (nonatomic, readonly) NSMutableArray *streamingURLs;
 
 // On-screen Video Behaviors
-@property (nonatomic, readonly) NSNumber *lockoutTime;
-@property (nonatomic, readonly) BOOL allowSkip;
-@property (nonatomic, readonly) BOOL allowHide;
-@property (nonatomic, readonly) BOOL allowInstallButton;
-@property (nonatomic, readonly) BOOL allowAdTimer;
-@property (nonatomic, readonly) BOOL postRollInterstitial;
-
-@property (nonatomic, readonly) NSString *installButtonText; //i.e.: "Install Now"
-@property (nonatomic, readonly) NSString *skipNowText; // i.e.: "Skip"
-@property (nonatomic, readonly) NSString *skipLaterFormattedText; // i.e.: "Skip in %is" (where '%i' will be replaced by the time remaining in seconds)
-
-@property (nonatomic, readonly) BOOL allowFallbacktoStreaming;
-@property (nonatomic, readonly) BOOL forceStreaming;
+@property (nonatomic, readonly) HZVideoAdDisplayOptions *displayOptions;
 
 // Download Ops
 @property (nonatomic) BOOL fileCached;

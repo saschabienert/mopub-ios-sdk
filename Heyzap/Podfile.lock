@@ -1,6 +1,6 @@
 PODS:
   - AdColony (2.5.1)
-  - AppLovin (2.5.4)
+  - AppLovin (3.0.0)
   - Bugsnag (4.0.7):
     - Bugsnag/no-arc (= 4.0.7)
   - Bugsnag/no-arc (4.0.7)
@@ -49,7 +49,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AdColony: 4e459b2634cf325ed32bbd8a12428366f09aa49a
-  AppLovin: fdbeb15795c675c8c847b63876150d3c7806b484
+  AppLovin: 3db27d5a6b95bda65b63707cba2acab8ce044bac
   Bugsnag: 5861d8519d30063abe7b3fcdcf4114a6dddab27a
   ChartboostSDK: 4f649a42b057a11339b27b8ba9c1a2bb280e447c
   FacebookAudienceNetwork: a3dce7270d2418a766f103e1662918d865b8e011

@@ -12,7 +12,7 @@
 #define HZExtendedHitAreaButtonDefaultMarginX 20.0
 #define HZExtendedHitAreaButtonDefaultMarginY 20.0
 
--(id)init {
+-(instancetype)init {
     if (self = [super init])  {
         self.extendedHitAreaMarginX = HZExtendedHitAreaButtonDefaultMarginX;
         self.extendedHitAreaMarginY = HZExtendedHitAreaButtonDefaultMarginY;

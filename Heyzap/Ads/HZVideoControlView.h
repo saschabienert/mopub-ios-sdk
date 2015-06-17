@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "HZExtendedHitAreaButton.h"
+#import "HZKAProgressLabel.h"
 
 @interface HZVideoControlView : UIView
 
-@property (nonatomic) UILabel *timerTextLabel;
+@property (nonatomic) HZKAProgressLabel *circularProgressTimerLabel;
 /**
  *  This button is tappable while the skip countdown is happening; this allows the skip button to intercept clicks.
  */
@@ -23,6 +24,7 @@
 @property (nonatomic) NSString *skipNowText;
 @property (nonatomic) NSString *installButtonText;
 
+- (void) updateProgress: (CGFloat) progress delayUntilNextUpdate: (CGFloat) animationTime;
 - (void) updateTimeRemaining: (int) timeRemaining;
 - (void) updateSkipRemaining: (int) skipRemaining;
 

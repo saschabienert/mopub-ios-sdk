@@ -1,4 +1,4 @@
-//
+	//
 //  HZVideoPopup.m
 //  Heyzap
 //
@@ -19,11 +19,7 @@
 @property (nonatomic) BOOL durationAvailableFireImmediately;
 @property (nonatomic) NSTimer *animationTimer;
 
-#define kHZVideoViewAnimateInTime 0.0
-#define kHZVideoViewAnimateInAlpha 1.0
-#define kHZVideoViewAnimateOutTime 1.0
-#define kHZVideoViewAnimateOutAlpha 0.0
-#define kHZVideoViewAutoFadeOutTime 2
+#define kHZVideoViewAutoFadeOutControlsTime 2
 
 @end
 
@@ -59,16 +55,11 @@
         UITapGestureRecognizer *clickTapGesture = [[UITapGestureRecognizer alloc]
                                                    initWithTarget: self action: @selector(onTap:)];
         clickTapGesture.delegate = self;
-        _controlView.tag = 1;
         [_controlView addGestureRecognizer: clickTapGesture];
         [self addSubview: _controlView];
 
-        _controlView.skipButton.tag = 2;
         [_controlView.skipButton addTarget: self action: @selector(onHide:) forControlEvents: UIControlEventTouchUpInside];
-        _controlView.hideButton.tag = 3;
         [_controlView.hideButton addTarget: self action: @selector(onHide:) forControlEvents: UIControlEventTouchUpInside];
-        
-        _controlView.installButton.tag = 4;
         [_controlView.installButton addTarget: self action: @selector(onInstall:) forControlEvents: UIControlEventTouchUpInside];
     }
     return self;
@@ -134,7 +125,7 @@
 }
 
 - (void) onTap: (id) sender {
-    [self animateControls:!_showingAllVideoControls];
+    [self animateControls: !self.showingAllVideoControls];
 }
 
 - (void) onHide: (id) sender {
@@ -149,15 +140,17 @@
 }
 
 - (void) onInstall: (id) sender {
-    if (self.actionDelegate != nil) {
-        [self.actionDelegate performSelector: @selector(onActionClick:withURL:) withObject: self withObject: nil];
-    }
+    [self.actionDelegate performSelector: @selector(onActionClick:withURL:) withObject: self withObject: nil];
 }
 
 #pragma mark - Animation
 - (void) animateControls:(BOOL)animateIn {
-    double alpha = animateIn ? kHZVideoViewAnimateInAlpha : kHZVideoViewAnimateOutAlpha;
-    double duration = animateIn ? kHZVideoViewAnimateInTime : kHZVideoViewAnimateOutTime;
+    double alpha = animateIn ? 1.0 : 0.0; // alpha value to animate the the controls in/out to
+    double duration = animateIn ? 0.0 : 1.0; // how many seconds it takes to fade controls in/out
+    
+    // cancel any pending animations on the video controls since we're about to start animating them now.
+    [self.animationTimer invalidate];
+    self.animationTimer = nil;
     
     [UIView animateWithDuration:duration
                           delay: 0.0f
@@ -167,20 +160,18 @@
         [self.controlView.skipButton setAlpha:alpha];
         [self.controlView.installButton setAlpha:alpha];
     }completion:^(BOOL finished){
-        if(self.animationTimer){
-            [self.animationTimer invalidate];
-            self.animationTimer = nil;
-        }
-        
-        // if we're showing the controls, set a timer to hide them
+        // if we're showing the controls, set a timer to hide them automatically later
         if(animateIn) {
-            self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: kHZVideoViewAutoFadeOutTime target: self selector: @selector(animationTimerDidFire:) userInfo: nil repeats: NO];
+            self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: kHZVideoViewAutoFadeOutControlsTime target: self selector: @selector(animationTimerDidFire:) userInfo: nil repeats: NO];
         }
     }];
     
     self.showingAllVideoControls = animateIn;
 }
 
+/**
+ *  This method is called in order to automatically fade out video controls after a certain time period
+ */
 - (void) animationTimerDidFire: (id) sender {
     // fade out video controls after this timer fires, if they're still showing.
     if(!self.showingAllVideoControls){
@@ -201,7 +192,7 @@
 
 #pragma mark - Timer
 
-- (void) timerDidFire: (id) sender {
+- (void) timerDidFire: (NSTimer *) timer {
     if (self.player.playbackState == MPMoviePlaybackStatePlaying) {
         // occasionally, the timer will fire earlier than the currentPlaybackTime can been determined.
         // in that case, set it to 0 (this happens at the start of the video playback)
@@ -210,8 +201,17 @@
             currentPlaybackTime = 0;
         }
         
+        if(self.player.duration > 0){
+            [self.controlView updateProgress:(self.player.currentPlaybackTime/self.player.duration) delayUntilNextUpdate:timer.timeInterval];
+        }
+        
         int remainingDuration = (int)(self.player.duration - currentPlaybackTime);
-        [self.controlView updateTimeRemaining: remainingDuration];
+        // +1 to time remaining reported to control view so that "0" is not displayed as the time remaining when there is between [0,1) seconds left
+        [self.controlView updateTimeRemaining: remainingDuration + 1];
+        if(remainingDuration > 0 && self.timerLabelEnabled) {
+            self.controlView.circularProgressTimerLabel.hidden = NO;
+        }
+        
         int skipRemaining = (self.skipButtonTimeInterval - currentPlaybackTime);
         if (skipRemaining > -1) {
             [self.controlView updateSkipRemaining: skipRemaining];
@@ -230,24 +230,24 @@
 
 #pragma mark - On Screen Control Elements
 
-- (void) setHideButton:(BOOL)value {
-    _hideButton = value;
+- (void) setHideButtonEnabled:(BOOL)value {
+    _hideButtonEnabled = value;
     self.controlView.hideButton.hidden = !value;
 }
 
-- (void) setSkipButton:(BOOL)value {
-    _skipButton = value;
+- (void) setSkipButtonEnabled:(BOOL)value {
+    _skipButtonEnabled = value;
     self.controlView.skipButton.hidden = !value;
 }
 
-- (void) setInstallButton:(BOOL)value {
-    _installButton = value;
+- (void) setInstallButtonEnabled:(BOOL)value {
+    _installButtonEnabled = value;
     self.controlView.installButton.hidden = !value;
 }
 
-- (void) setTimerLabel:(BOOL)value {
-    _timerLabel = value;
-    self.controlView.timerTextLabel.hidden = !value;
+- (void) setTimerLabelEnabled:(BOOL)value {
+    _timerLabelEnabled = value;
+    self.controlView.circularProgressTimerLabel.hidden = !value;
 }
 
 #pragma mark - Video Notifications
@@ -317,12 +317,14 @@
 
     if (self.player.playbackState == MPMoviePlaybackStatePlaying) {
         if (self.timer == nil) {
-            self.timer = [NSTimer scheduledTimerWithTimeInterval: 1 target: self selector: @selector(timerDidFire:) userInfo: nil repeats: YES];
+            // timer interval below should stay below 1 second to increase the visual accuracy of the circular progress animation
+            self.timer = [NSTimer scheduledTimerWithTimeInterval: 0.2 target: self selector: @selector(timerDidFire:) userInfo: nil repeats: YES];
             if(_durationAvailableFireImmediately) {
                 // only fire the timer immediately if we know the duration of the ad by now. otherwise, wait.
                 [self.timer fire];
             }
             
+            // turn the video controls on when video starts (and schedule them to animate away later)
             [self animateControls:YES];
         }
         

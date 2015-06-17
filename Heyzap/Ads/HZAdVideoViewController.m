@@ -39,7 +39,7 @@
         _videoView = [[HZVideoView alloc] initWithFrame: CGRectZero];
         _videoView.tag = kHZVideoViewTag;
         
-        if (ad.fileCached || ad.allowFallbacktoStreaming || ad.forceStreaming) {
+        if (ad.fileCached || ad.displayOptions.allowFallbacktoStreaming || ad.displayOptions.forceStreaming) {
             if (![_videoView setVideoURL: [self.ad URLForVideo]]) {
                 return nil;
             }
@@ -50,14 +50,14 @@
         
         _videoView.actionDelegate = self;
         
-        [_videoView setSkipButton: self.ad.allowSkip];
-        [_videoView setHideButton: self.ad.allowHide];
-        [_videoView setInstallButton: self.ad.allowInstallButton];
-        [_videoView setTimerLabel: self.ad.allowAdTimer];
-        [_videoView setSkipButtonTimeInterval: [self.ad.lockoutTime doubleValue]/1000.0];
-        [_videoView.controlView setInstallButtonText: self.ad.installButtonText];
-        [_videoView.controlView setSkipNowText: self.ad.skipNowText];
-        [_videoView.controlView setSkipLaterFormatText: self.ad.skipLaterFormattedText];
+        [_videoView setSkipButtonEnabled: self.ad.displayOptions.allowSkip];
+        [_videoView setHideButtonEnabled: self.ad.displayOptions.allowHide];
+        [_videoView setInstallButtonEnabled: self.ad.displayOptions.allowInstallButton];
+        [_videoView setTimerLabelEnabled: self.ad.displayOptions.allowAdTimer];
+        [_videoView setSkipButtonTimeInterval: [self.ad.displayOptions.lockoutTime doubleValue]/1000.0];
+        [_videoView.controlView setInstallButtonText: self.ad.displayOptions.installButtonText];
+        [_videoView.controlView setSkipNowText: self.ad.displayOptions.skipNowText];
+        [_videoView.controlView setSkipLaterFormatText: self.ad.displayOptions.skipLaterFormattedText];
         
         _webView = [[HZWebView alloc] initWithFrame: CGRectZero];
         _webView.tag = kHZWebViewTag;
@@ -154,7 +154,7 @@
     }
     
     [self.view addSubview: self.webView];
-    if (self.ad.fileCached || self.ad.allowFallbacktoStreaming || self.ad.forceStreaming) {
+    if (self.ad.fileCached || self.ad.displayOptions.allowFallbacktoStreaming || self.ad.displayOptions.forceStreaming) {
         [self.view addSubview: self.videoView];
     }
 
@@ -236,7 +236,7 @@
             
             self.didStartVideo = NO;
             
-            if (self.ad.postRollInterstitial) {
+            if (self.ad.displayOptions.postRollInterstitial) {
                 [self.videoView pause];
                 [self switchToViewWithTag: kHZWebViewTag];
             } else {
@@ -267,7 +267,7 @@
 
 - (void) onActionClick: (UIView *) sender withURL: (NSURL *) url {
     if ([sender tag] == kHZVideoViewTag) {
-        if ([self.ad allowInstallButton]) {
+        if ([self.ad.displayOptions allowInstallButton]) {
             [self.videoView pause];
             [self didClickWithURL: url];
         }
@@ -298,7 +298,7 @@
         [HZAdsManager postNotificationName:kHeyzapDidFinishAudio infoProvider:self.ad];
     }
     
-    if (sender.tag == kHZVideoViewTag && self.ad.postRollInterstitial) {
+    if (sender.tag == kHZVideoViewTag && self.ad.displayOptions.postRollInterstitial) {
         [self switchToViewWithTag: kHZWebViewTag];
     } else {
         [self hide];
