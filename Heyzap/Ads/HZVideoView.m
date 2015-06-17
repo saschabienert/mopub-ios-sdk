@@ -149,10 +149,20 @@
 
 #pragma mark - Timer
 
-- (void) timerDidFire: (id) sender {
+- (void) timerDidFire: (NSTimer *) timer {
     if (self.player.playbackState == MPMoviePlaybackStatePlaying) {
         int remainingDuration = (int)(self.player.duration - self.player.currentPlaybackTime);
-        [self.controlView updateTimeRemaining: remainingDuration];
+        
+        if(self.player.duration > 0){
+            [self.controlView updateProgress:(self.player.currentPlaybackTime/self.player.duration) delayUntilNextUpdate:timer.timeInterval];
+        }
+        
+        // +1 to time remaining so that "0" is not displayed as the time remaining when there is between [0,1) seconds left
+        [self.controlView updateTimeRemaining: remainingDuration + 1];
+        if(remainingDuration > 0) {
+            self.controlView.circularProgressTimerLabel.hidden = NO;
+        }
+        
         int skipRemaining = (self.skipButtonTimeInterval - self.player.currentPlaybackTime);
         if (skipRemaining > -1) {
             [self.controlView updateSkipRemaining: skipRemaining];
@@ -244,7 +254,8 @@
 
     if (self.player.playbackState == MPMoviePlaybackStatePlaying) {
         if (self.timer == nil) {
-            self.timer = [NSTimer scheduledTimerWithTimeInterval: 1 target: self selector: @selector(timerDidFire:) userInfo: nil repeats: YES];
+            // timer interval below should stay below 1 second to increase the accuracy of the circular progress animation
+            self.timer = [NSTimer scheduledTimerWithTimeInterval: 0.2 target: self selector: @selector(timerDidFire:) userInfo: nil repeats: YES];
         }
         
         self.videoDuration = self.player.duration;
