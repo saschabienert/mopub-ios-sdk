@@ -16,15 +16,15 @@
 @interface HZAppLovinRewardedAdState:NSObject
 
 typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdPlaybackState) {
-    NOT_STARTED,
-    FINISHED,
-    WONT_FINISH
+    HZAppLovinRewardedAdPlaybackStateNotStarted,
+    HZAppLovinRewardedAdPlaybackStateFinished,
+    HZAppLovinRewardedAdPlaybackStateWontFinish
 };
 
 typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
-    WAITING,
-    VALIDATION_SUCCESSFUL,
-    VALIDATION_FAILED
+    HZAppLovinRewardedAdValidationStateWaiting,
+    HZAppLovinRewardedAdValidationStateSuccessful,
+    HZAppLovinRewardedAdValidationStateFailed
 };
 
 @property (nonatomic) HZAppLovinRewardedAdPlaybackState playbackState;
@@ -36,8 +36,8 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
 - (instancetype) init{
     self = [super init];
     if(self){
-        _playbackState = NOT_STARTED;
-        _validationState = WAITING;
+        _playbackState = HZAppLovinRewardedAdPlaybackStateNotStarted;
+        _validationState = HZAppLovinRewardedAdValidationStateWaiting;
     }
     return self;
 }
@@ -137,7 +137,7 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
         return;
     }
     
-    state.playbackState = FINISHED;
+    state.playbackState = HZAppLovinRewardedAdPlaybackStateFinished;
     [self notifyDelegateIfApplicableForAd:ad withState:state];
 }
 
@@ -146,10 +146,10 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
     HZAppLovinRewardedAdState * state = [self.adStateDictionary objectForKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
     if(!state) {
         state = [[HZAppLovinRewardedAdState alloc] init];
-        state.validationState = (success ? VALIDATION_SUCCESSFUL : VALIDATION_FAILED);
+        state.validationState = (success ? HZAppLovinRewardedAdValidationStateSuccessful : HZAppLovinRewardedAdValidationStateFailed);
         [self.adStateDictionary setObject:state forKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
     }else{
-        state.validationState = (success ? VALIDATION_SUCCESSFUL : VALIDATION_FAILED);
+        state.validationState = (success ? HZAppLovinRewardedAdValidationStateSuccessful : HZAppLovinRewardedAdValidationStateFailed);
     }
 
     [self notifyDelegateIfApplicableForAd:ad withState:state];
@@ -161,10 +161,10 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
     HZAppLovinRewardedAdState * state = [self.adStateDictionary objectForKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
     if(!state){
         state = [[HZAppLovinRewardedAdState alloc] init];
-        state.playbackState = WONT_FINISH;
+        state.playbackState = HZAppLovinRewardedAdPlaybackStateWontFinish;
         [self.adStateDictionary setObject:state forKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
     }else{
-        state.playbackState = WONT_FINISH;
+        state.playbackState = HZAppLovinRewardedAdPlaybackStateWontFinish;
     }
     
     [self rewardValidationResult:NO forAd:ad];
@@ -172,15 +172,15 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
 
 - (void) notifyDelegateIfApplicableForAd:(HZALAd *)ad withState:(HZAppLovinRewardedAdState *)state{
     if([self isKindOfClass:[HZIncentivizedAppLovinDelegate class]]){
-        if(state.validationState == VALIDATION_SUCCESSFUL && state.playbackState == FINISHED){
+        if(state.validationState == HZAppLovinRewardedAdValidationStateSuccessful && state.playbackState == HZAppLovinRewardedAdPlaybackStateFinished){
             [self.delegate didCompleteIncentivized];
-        }else if(state.validationState == VALIDATION_FAILED){
+        }else if(state.validationState == HZAppLovinRewardedAdValidationStateFailed){
             [self.delegate didFailToCompleteIncentivized];
         }
     }
     
     // remove dict entry for ad if there won't be any more messages to send about it
-    if(state.validationState != WAITING && state.playbackState != NOT_STARTED){
+    if(state.validationState != HZAppLovinRewardedAdValidationStateWaiting && state.playbackState != HZAppLovinRewardedAdPlaybackStateNotStarted){
         [self.adStateDictionary removeObjectForKey:[HZAppLovinDelegate adStatusDictionaryKeyForAd:ad]];
     }
 }
