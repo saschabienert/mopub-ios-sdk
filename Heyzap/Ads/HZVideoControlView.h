@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HZExtendedHitAreaButton.h"
 #import "HZKAProgressLabel.h"
 
 @interface HZVideoControlView : UIView
@@ -17,6 +18,10 @@
  */
 @property (nonatomic) UIButton *skipButton;
 @property (nonatomic) UIButton *hideButton;
+@property (nonatomic) HZExtendedHitAreaButton *installButton;
+@property (nonatomic) NSString *skipLaterFormatText;
+@property (nonatomic) NSString *skipNowText;
+@property (nonatomic) NSString *installButtonText;
 
 - (void) updateProgress: (CGFloat) progress delayUntilNextUpdate: (CGFloat) animationTime;
 - (void) updateTimeRemaining: (int) timeRemaining;
