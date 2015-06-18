@@ -6,14 +6,18 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
+#import <objc/runtime.h>
 #import "HZIncentivizedAppLovinDelegate.h"
 #import "HZAppLovinAdapter.h"
 #import "HZDispatch.h"
 
+/* Pointer to this char is used as a unique key for the state stored as an associated object on the HZALAd*/
+static char adStatusKey;
+
 @interface HZAppLovinRewardedAdState:NSObject
 
 typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdPlaybackState) {
-    HZAppLovinRewardedAdPlaybackStateNotStarted,
+    HZAppLovinRewardedAdPlaybackStateNotFinished,
     HZAppLovinRewardedAdPlaybackStateFinished,
     HZAppLovinRewardedAdPlaybackStateWontFinish
 };
@@ -33,47 +37,33 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
 - (instancetype)init {
     self = [super init];
     if(self){
-        _playbackState = HZAppLovinRewardedAdPlaybackStateNotStarted;
+        _playbackState = HZAppLovinRewardedAdPlaybackStateNotFinished;
         _validationState = HZAppLovinRewardedAdValidationStateWaiting;
     }
     return self;
 }
 @end
 
-@interface HZIncentivizedAppLovinDelegate()
-@property (nonatomic) NSMutableDictionary *adStateDictionary;
-@end
-
 @implementation HZIncentivizedAppLovinDelegate
-
-- (id)initWithAdType:(HZAdType)adType delegate:(id<HZAppLovinDelegateReceiver>)delegate {
-    self = [super initWithAdType:adType delegate:delegate];
-    if (self) {
-        _adStateDictionary = [[NSMutableDictionary alloc] init];
-    }
-    return self;
-}
 
 #pragma mark - Overridden AppLovin callbacks from HZAppLovinDelegate
 
 - (void)videoPlaybackBeganInAd:(HZALAd *)ad {
     [super videoPlaybackBeganInAd:ad];
     
-    NSValue * dictKey = [HZIncentivizedAppLovinDelegate adStatusDictionaryKeyForAd:ad];
-    HZAppLovinRewardedAdState * state = self.adStateDictionary[dictKey];
+    HZAppLovinRewardedAdState * state = [HZIncentivizedAppLovinDelegate adStateForAd:ad];
     if(!state){
         state = [[HZAppLovinRewardedAdState alloc] init];
-        self.adStateDictionary[dictKey] = state;
+        [HZIncentivizedAppLovinDelegate setAdState:state forAd:ad];
     }
 }
 
 - (void)videoPlaybackEndedInAd:(HZALAd *)ad atPlaybackPercent:(NSNumber *)percentPlayed fullyWatched:(BOOL)wasFullyWatched {
     [super videoPlaybackEndedInAd:ad atPlaybackPercent:percentPlayed fullyWatched:wasFullyWatched];
     
-    NSValue * dictKey = [HZIncentivizedAppLovinDelegate adStatusDictionaryKeyForAd:ad];
-    HZAppLovinRewardedAdState * state = self.adStateDictionary[dictKey];
+    HZAppLovinRewardedAdState * state = [HZIncentivizedAppLovinDelegate adStateForAd:ad];
     if(!state) {
-        HZDLog(@"HZAppLovinDelegate: video playback ended but ad reference was not saved successfully when playback began.");
+        HZELog(@"HZAppLovinDelegate: video playback ended but ad reference was not saved successfully when playback began.");
         return;
     }
     
@@ -127,12 +117,11 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
     ensureMainQueue(^{
         // user declined to view an ad - treat it as a validation failure but first remember
         // the video will never complete so the dict entry is removed
-        NSValue * dictKey = [HZIncentivizedAppLovinDelegate adStatusDictionaryKeyForAd:ad];
-        HZAppLovinRewardedAdState * state = self.adStateDictionary[dictKey];
+        HZAppLovinRewardedAdState * state = [HZIncentivizedAppLovinDelegate adStateForAd:ad];
         if(!state){
             state = [[HZAppLovinRewardedAdState alloc] init];
             state.playbackState = HZAppLovinRewardedAdPlaybackStateWontFinish;
-            self.adStateDictionary[dictKey] = state;
+            [HZIncentivizedAppLovinDelegate setAdState:state forAd:ad];
         }else{
             state.playbackState = HZAppLovinRewardedAdPlaybackStateWontFinish;
         }
@@ -144,12 +133,11 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
 #pragma mark - Processing AppLovin callbacks
 
 - (void) rewardValidationResult:(BOOL)success forAd:(HZALAd *)ad {
-    NSValue * dictKey = [HZIncentivizedAppLovinDelegate adStatusDictionaryKeyForAd:ad];
-    HZAppLovinRewardedAdState * state = self.adStateDictionary[dictKey];
+    HZAppLovinRewardedAdState * state = [HZIncentivizedAppLovinDelegate adStateForAd:ad];
     if(!state) {
         state = [[HZAppLovinRewardedAdState alloc] init];
         state.validationState = (success ? HZAppLovinRewardedAdValidationStateSuccessful : HZAppLovinRewardedAdValidationStateFailed);
-        self.adStateDictionary[dictKey] = state;
+        [HZIncentivizedAppLovinDelegate setAdState:state forAd:ad];
     }else{
         state.validationState = (success ? HZAppLovinRewardedAdValidationStateSuccessful : HZAppLovinRewardedAdValidationStateFailed);
     }
@@ -166,18 +154,20 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
         [self.delegate didFailToCompleteIncentivized];
     }
     
-    // remove dict entry for ad if there won't be any more messages to send about it
-    // this prevents duplicate messages being sent for an ad (& frees memory)
-    if(state.validationState != HZAppLovinRewardedAdValidationStateWaiting && state.playbackState != HZAppLovinRewardedAdPlaybackStateNotStarted){
-        NSValue * dictKey = [HZIncentivizedAppLovinDelegate adStatusDictionaryKeyForAd:ad];
-        [self.adStateDictionary removeObjectForKey:dictKey];
+    // remove state from ad if there won't be any more messages to send about it
+    if(state.validationState != HZAppLovinRewardedAdValidationStateWaiting && state.playbackState != HZAppLovinRewardedAdPlaybackStateNotFinished){
+        [HZIncentivizedAppLovinDelegate setAdState:nil forAd:ad];
     }
 }
 
 #pragma mark - Helper methods
 
-+ (NSValue *) adStatusDictionaryKeyForAd:(HZALAd *)ad {
-    return [NSValue valueWithNonretainedObject:ad];
++ (HZAppLovinRewardedAdState *) adStateForAd:(HZALAd *)ad {
+    return objc_getAssociatedObject(ad, &adStatusKey);
+}
+
++ (void) setAdState:(HZAppLovinRewardedAdState *)state forAd:(HZALAd *)ad {
+    objc_setAssociatedObject(ad, &adStatusKey, state, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end
