@@ -18,6 +18,7 @@
 @property (nonatomic) NSTimer *timer;
 @property (nonatomic) BOOL durationAvailableFireImmediately;
 @property (nonatomic) NSTimer *animationTimer;
+@property (nonatomic) BOOL timerDidFireAlready;
 
 #define kHZVideoViewAutoFadeOutControlsTime 2
 
@@ -34,7 +35,8 @@
         
         self.backgroundColor = [UIColor clearColor];
         
-        _showingAllVideoControls = true;
+        _showingAllVideoControls = YES;
+        _timerDidFireAlready = NO;
         
         _player = [[MPMoviePlayerController alloc] init];
         _player.controlStyle = MPMovieControlStyleNone;
@@ -193,6 +195,8 @@
 #pragma mark - Timer
 
 - (void) timerDidFire: (NSTimer *) timer {
+    self.timerDidFireAlready = YES;
+    
     if (self.player.playbackState == MPMoviePlaybackStatePlaying) {
         // occasionally, the timer will fire earlier than the currentPlaybackTime can been determined.
         // in that case, set it to 0 (this happens at the start of the video playback)
@@ -260,7 +264,7 @@
     // if our timer isn't initialized yet, remember to fire the timer event immediately when it is.
     if(self.timer == nil) {
         _durationAvailableFireImmediately = true;
-    } else {
+    } else if(!self.timerDidFireAlready) {
         [self.timer fire];
     }
 }
