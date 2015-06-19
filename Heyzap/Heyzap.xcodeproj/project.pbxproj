@@ -2080,7 +2080,7 @@
 						TestTargetID = 86B943291758108700B8EACE;
 					};
 					505351E918F76550003C531E = {
-						DevelopmentTeam = DG2HGK7LFT;
+						DevelopmentTeam = A722HEF3XB;
 					};
 					86B941DB1758056B00B8EACE = {
 						DevelopmentTeam = A722HEF3XB;
@@ -2733,7 +2733,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: SMART BALLOON, INC.";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: SMART BALLOON, INC.";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
