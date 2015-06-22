@@ -81,8 +81,8 @@
         [HZSKLogger debug:@"VAST-Parser" withMessage:@"Validating against schema"];
         
         // Using header data
-        NSData *vastSchemaData = [NSData dataWithBytesNoCopy:HZnexage_vast_2_0_1_xsd
-                                                      length:HZnexage_vast_2_0_1_xsd_len
+        NSData *vastSchemaData = [NSData dataWithBytesNoCopy:HZvast_2_0_1_xsd
+                                                      length:HZvast_2_0_1_xsd_len
                                                 freeWhenDone:NO];
         isValid = validateXMLDocAgainstSchema(vastData, vastSchemaData);
         if (!isValid) {
