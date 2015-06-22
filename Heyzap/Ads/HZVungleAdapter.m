@@ -151,7 +151,7 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 
 #pragma mark - Vungle Delegate
 
-/* Note: The is a bug with the Vungle SDK. According to the Vungle docs, `vungleSDKwillCloseAdWithViewInfo` should be called first, with `willPresentProductSheet` stating if the iOS app store will launch. Then `vungleSDKwillCloseProductSheet` is called when the iOS app store closes. In reality however, `vungleSDKwillCloseProductSheet` is called first and then `vungleSDKwillCloseAdWithViewInfo`. The `willPresentProductSheet` parameter is always `NO`.
+/* Note: There is a bug with the Vungle SDK. `willPresentProductSheet` method gets called first and then the `vungleSDKwillCloseAdWithViewInfo` method, even though their docs state the opposite order. This made us end up calling `adapterDidDismissAd` in `willPresentProductSheet` FIRST, which prevented any further callbacks for the session to be called (i.e. the `did*CompleteAdWithTag` for incentivized ads to be called).
  * Please git blame and revert changes to the two callbacks when the bug is resolved.
  */
 
