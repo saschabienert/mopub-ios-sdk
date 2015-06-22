@@ -151,6 +151,10 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 
 #pragma mark - Vungle Delegate
 
+/* Note: The is a bug with the Vungle SDK. According to the Vungle docs, `vungleSDKwillCloseAdWithViewInfo` should be called first, with `willPresentProductSheet` stating if the iOS app store will launch. Then `vungleSDKwillCloseProductSheet` is called when the iOS app store closes. In reality however, `vungleSDKwillCloseProductSheet` is called first and then `vungleSDKwillCloseAdWithViewInfo`. The `willPresentProductSheet` parameter is always `NO`.
+ * Please git blame and revert changes to the two callbacks when the bug is resolved.
+ */
+
 - (void)vungleSDKwillShowAd {
     [self.delegate adapterDidShowAd:self];
 }
@@ -169,38 +173,21 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
         }
     }
     
-    if (willPresentProductSheet) {
+    
+    if ([viewInfo[@"didDownload"] boolValue]) {
         [self.delegate adapterWasClicked:self];
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
-    } else {
-        [self.delegate adapterDidFinishPlayingAudio:self];
-        [self.delegate adapterDidDismissAd:self];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self name]];
     }
+    
+    [self.delegate adapterDidFinishPlayingAudio:self];
+    [self.delegate adapterDidDismissAd:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self name]];
     
     self.isShowingIncentivized = NO;
 }
 
-/* Note: The is a bug with the Vungle SDK. According to the Vungle docs, `vungleSDKwillCloseAdWithViewInfo` should be called first, with `willPresentProductSheet` stating if the iOS app store will launch. Then `vungleSDKwillCloseProductSheet` is called when the iOS app store closes. In reality however, `vungleSDKwillCloseProductSheet` is called first and then `vungleSDKwillCloseAdWithViewInfo`. The `willPresentProductSheet` parameter is always `NO`.
- * Please git blame and revert changes to this method when the bug is resolved.
- */
-
-#define kHZVungleCallbackBugSDKVersion @"3.0.13"
-
-- (void)vungleSDKwillCloseProductSheet:(id)productSheet
-{
-    NSComparisonResult versionCheckComparisonResult = [kHZVungleCallbackBugSDKVersion compare:[self sdkVersion]
-                                                                                      options:NSNumericSearch];
+- (void)vungleSDKwillCloseProductSheet:(id)productSheet {
     
-    if (versionCheckComparisonResult == NSOrderedDescending || versionCheckComparisonResult == NSOrderedSame) {
-        [self.delegate adapterWasClicked:self];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
-        
-    } else {
-        [self.delegate adapterDidFinishPlayingAudio:self];
-        [self.delegate adapterDidDismissAd:self];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self name]];
-    }
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol
