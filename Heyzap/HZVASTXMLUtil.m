@@ -249,7 +249,7 @@ BOOL validateXMLDocAgainstSchema(NSData *document, NSData *schemaData)
                             NULL);
     int ret = xmlSchemaValidateDoc(validCtxt, doc);
     if (ret == 0) {
-        [HZSKLogger error:@"VAST - XML Util" withMessage:@"document is valid"];
+        [HZSKLogger debug:@"VAST - XML Util" withMessage:@"document is valid"];
     } else if (ret > 0) {
         [HZSKLogger error:@"VAST - XML Util" withMessage:@"document is invalid"];
     } else {

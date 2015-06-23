@@ -64,6 +64,7 @@ typedef enum {
 
 @property (nonatomic) UIButton *showBannerButton;
 @property (nonatomic) UIButton *hideBannerButton;
+@property (nonatomic) UIButton *vastButton;
 
 @property (nonatomic) NSArray *bannerControls;
 @property (nonatomic) NSArray *nonBannerControls;
@@ -314,6 +315,20 @@ const CGFloat kLeftMargin = 10;
                 forControlEvents:UIControlEventEditingChanged];
     [self.scrollView addSubview:self.adsTextField];
     
+    self.vastButton = ({
+        UIButton * button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        button.frame = CGRectMake(CGRectGetMaxX(self.adsTextField.frame) + 6.0, 10.0, 89.0, 25.0);
+        button.backgroundColor = [UIColor darkGrayColor];
+        button.layer.cornerRadius = 4.0;
+        [button setTitle: @"VAST" forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
+        button.enabled = YES;
+        button;
+    });
+    [self.vastButton addTarget: self action: @selector(vastButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
+    [self.scrollView addSubview: self.vastButton];
+    
     self.creativeTypeTextField = ({
         UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.showButton.frame) + 5, 320, 35)];
         tf.delegate = self;
@@ -470,7 +485,7 @@ const CGFloat kLeftMargin = 10;
     for (UIView *view in self.scrollView.subviews) {
         subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
     }
-    self.scrollView.contentSize = (CGSize) { CGRectGetWidth(self.view.frame), subviewContainingRect.size.height + 80 };
+    self.scrollView.contentSize = (CGSize) { subviewContainingRect.size.width, subviewContainingRect.size.height + 80 };
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{
@@ -806,5 +821,44 @@ const CGFloat kLeftMargin = 10;
     }
 }
 
+# pragma mark - VAST
+
+- (void)vastButtonPressed:(id)sender {
+    HZSKVASTViewController * vastVC = [[HZSKVASTViewController alloc] initWithDelegate: self withViewController:self];
+    [HZLog setDebugLevel:HZDebugLevelVerbose];
+    NSURL* url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_doubleclick_inline_comp.xml"];
+    [vastVC loadVideoWithURL:url];
+}
+
+// sent when the video is ready to play - required
+- (void)vastReady:(HZSKVASTViewController *)vastVC {
+    NSLog(@"vastReady");
+    [vastVC play];
+}
+
+// sent when any VASTError occurs - optional
+- (void)vastError:(HZSKVASTViewController *)vastVC error:(HZSKVASTError)error{
+    NSLog(@"vastError: %u", error);
+}
+
+// These optional callbacks are for basic presentation, dismissal, and calling video clickthrough url browser.
+- (void)vastWillPresentFullScreen:(HZSKVASTViewController *)vastVC {
+     NSLog(@"vastWillPresentFullScreen");
+}
+
+// These optional callbacks are for basic presentation, dismissal, and calling video clickthrough url browser.
+- (void)vastDidDismissFullScreen:(HZSKVASTViewController *)vastVC {
+     NSLog(@"vastDidDismissFullScreen");
+}
+
+// These optional callbacks are for basic presentation, dismissal, and calling video clickthrough url browser.
+- (void)vastOpenBrowseWithUrl:(NSURL *)url {
+     NSLog(@"vastOpenBrowseWithUrl: %@", url);
+}
+
+// These optional callbacks are for basic presentation, dismissal, and calling video clickthrough url browser.
+- (void)vastTrackingEvent:(NSString *)eventName {
+    NSLog(@"vastTrackingEvent: %@", eventName);
+}
 
 @end
