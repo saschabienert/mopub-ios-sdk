@@ -43,8 +43,7 @@
 
 + (BOOL)isSDKAvailable {
     return [HZFBInterstitialAd hzProxiedClassIsAvailable]
-    && [HZFBAdView hzProxiedClassIsAvailable]
-    && [HZBannerAdOptions facebookBannerSizesAvailable];
+    && [HZFBAdView hzProxiedClassIsAvailable];
 }
 
 + (NSString *)name {
