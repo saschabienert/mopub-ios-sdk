@@ -71,6 +71,8 @@ typedef enum {
 
 @property (nonatomic) UITextField *creativeTypeTextField;
 
+@property (nonatomic) HZSKVASTViewController * vastVC;
+
 
 @end
 
@@ -822,18 +824,27 @@ const CGFloat kLeftMargin = 10;
 }
 
 # pragma mark - VAST
-
+BOOL pressed = NO;
 - (void)vastButtonPressed:(id)sender {
-    HZSKVASTViewController * vastVC = [[HZSKVASTViewController alloc] initWithDelegate: self withViewController:self];
+    if(pressed){
+        [self.vastVC play];
+        pressed = false;
+        return;
+    }
+    self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate: self withViewController:self];
     [HZLog setDebugLevel:HZDebugLevelVerbose];
     NSURL* url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_doubleclick_inline_comp.xml"];
-    [vastVC loadVideoWithURL:url];
+    //url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/simple_tracking.xml"];//intel ad
+    //url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_missing_mediafile.xml"];//erroroneous xml
+    //url = [NSURL URLWithString:@"http://ads.mdotm.com/ads/feed.php?partnerkey=heyzap&apikey=heyzapmediation&appkey=4cd119700fff11605d38f197ae5435dc&ua=SampleApp%202.1.3%20(iPhone;%20iPhone%20OS%208.1.1;%20it_IT)&width=320&height=480&fmt=xhtml&v=3.4.0&test=0&deviceid=&aid=3305397B-FB19-4812-86F3-AEC2367C2CE5&ate=1&machine=iPhone4,1%208.1.1&vidsupport=2&clientip=198.228.200.41"];//mdotm
+    [self.vastVC loadVideoWithURL:url];
+    pressed = true;
 }
 
 // sent when the video is ready to play - required
 - (void)vastReady:(HZSKVASTViewController *)vastVC {
     NSLog(@"vastReady");
-    [vastVC play];
+    //[vastVC play];
 }
 
 // sent when any VASTError occurs - optional

@@ -377,8 +377,6 @@
 		99D4C4141B38878C004D24DE /* HZSKReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C3FB1B38878C004D24DE /* HZSKReachability.h */; };
 		99D4C4151B38878C004D24DE /* HZSKVAST2Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C3FC1B38878C004D24DE /* HZSKVAST2Parser.h */; };
 		99D4C4161B38878C004D24DE /* HZSKVAST2Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C3FD1B38878C004D24DE /* HZSKVAST2Parser.m */; };
-		99D4C4171B38878C004D24DE /* HZSKVASTControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C3FE1B38878C004D24DE /* HZSKVASTControls.h */; };
-		99D4C4181B38878C004D24DE /* HZSKVASTControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C3FF1B38878C004D24DE /* HZSKVASTControls.m */; };
 		99D4C4191B38878C004D24DE /* HZSKVASTError.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C4001B38878C004D24DE /* HZSKVASTError.h */; };
 		99D4C41A1B38878C004D24DE /* HZSKVASTEventProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C4011B38878C004D24DE /* HZSKVASTEventProcessor.h */; };
 		99D4C41B1B38878C004D24DE /* HZSKVASTEventProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C4021B38878C004D24DE /* HZSKVASTEventProcessor.m */; };
@@ -792,8 +790,6 @@
 		99D4C3FB1B38878C004D24DE /* HZSKReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKReachability.h; sourceTree = "<group>"; };
 		99D4C3FC1B38878C004D24DE /* HZSKVAST2Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKVAST2Parser.h; sourceTree = "<group>"; };
 		99D4C3FD1B38878C004D24DE /* HZSKVAST2Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKVAST2Parser.m; sourceTree = "<group>"; };
-		99D4C3FE1B38878C004D24DE /* HZSKVASTControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKVASTControls.h; sourceTree = "<group>"; };
-		99D4C3FF1B38878C004D24DE /* HZSKVASTControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKVASTControls.m; sourceTree = "<group>"; };
 		99D4C4001B38878C004D24DE /* HZSKVASTError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKVASTError.h; sourceTree = "<group>"; };
 		99D4C4011B38878C004D24DE /* HZSKVASTEventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKVASTEventProcessor.h; sourceTree = "<group>"; };
 		99D4C4021B38878C004D24DE /* HZSKVASTEventProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKVASTEventProcessor.m; sourceTree = "<group>"; };
@@ -1868,8 +1864,6 @@
 				99D4C3FB1B38878C004D24DE /* HZSKReachability.h */,
 				99D4C3FC1B38878C004D24DE /* HZSKVAST2Parser.h */,
 				99D4C3FD1B38878C004D24DE /* HZSKVAST2Parser.m */,
-				99D4C3FE1B38878C004D24DE /* HZSKVASTControls.h */,
-				99D4C3FF1B38878C004D24DE /* HZSKVASTControls.m */,
 				99D4C4001B38878C004D24DE /* HZSKVASTError.h */,
 				99D4C4011B38878C004D24DE /* HZSKVASTEventProcessor.h */,
 				99D4C4021B38878C004D24DE /* HZSKVASTEventProcessor.m */,
@@ -1986,7 +1980,6 @@
 				866E3A0C18512F2500B6E431 /* HZAdViewController.h in Headers */,
 				50B46B2718F8B241005155B8 /* HZALIncentivizedInterstitialAd.h in Headers */,
 				50D1598F18F34B0900734ABB /* HZHeyzapVideoAd.h in Headers */,
-				99D4C4171B38878C004D24DE /* HZSKVASTControls.h in Headers */,
 				99D4C41E1B38878C004D24DE /* HZSKVASTViewController.h in Headers */,
 				50ECA1D218DB7373006284AB /* HZHeyzapAdapter.h in Headers */,
 				509E8D3519B79F8200ABF2D2 /* HZEnums.h in Headers */,
@@ -2678,7 +2671,6 @@
 				50B46B2818F8B241005155B8 /* HZALIncentivizedInterstitialAd.m in Sources */,
 				50B46B1618F87B2C005155B8 /* HZALInterstitialAd.m in Sources */,
 				99D4C41B1B38878C004D24DE /* HZSKVASTEventProcessor.m in Sources */,
-				99D4C4181B38878C004D24DE /* HZSKVASTControls.m in Sources */,
 				E6DBD5FE1A44AA4F00D9999D /* HZFacebookAdapter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

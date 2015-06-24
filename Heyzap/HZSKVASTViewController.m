@@ -15,9 +15,11 @@
 #import "HZSKVASTEventProcessor.h"
 #import "HZSKVASTUrlWithId.h"
 #import "HZSKVASTMediaFile.h"
-#import "HZSKVASTControls.h"
 #import "HZSKVASTMediaFilePicker.h"
 #import "HZSKReachability.h"
+
+#import "HZVideoView.h"
+#import "HZDevice.h"
 
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
@@ -31,19 +33,15 @@ typedef enum {
     VASTFourtQuartile,
 } CurrentVASTQuartile;
 
-@interface HZSKVASTViewController() <UIGestureRecognizerDelegate>
+@interface HZSKVASTViewController() <HZAdPopupActionDelegate>
 {
     NSURL *mediaFileURL;
     NSArray *clickTracking;
     NSArray *vastErrors;
     NSArray *impressions;
     NSTimer *playbackTimer;
-    NSTimer *initialDelayTimer;
-    NSTimer *videoLoadTimeoutTimer;
     NSTimeInterval movieDuration;
     NSTimeInterval playedSeconds;
-    
-    HZSKVASTControls *controls;
     
     float currentPlayedPercentage;
     BOOL isPlaying;
@@ -51,9 +49,8 @@ typedef enum {
     BOOL hasPlayerStarted;
     BOOL isLoadCalled;
     BOOL vastReady;
-    BOOL statusBarHidden;
+    BOOL statusBarHiddenOutsideOfVAST;
     CurrentVASTQuartile currentQuartile;
-    UIActivityIndicatorView *loadingIndicator;
     UIViewController *presentingViewController;
     
     HZSKReachability *reachabilityForVAST;
@@ -61,11 +58,9 @@ typedef enum {
     NetworkUnreachable networkUnreachableBlock;
 }
 
-@property(nonatomic, strong) MPMoviePlayerController *moviePlayer;
-@property(nonatomic, strong) UITapGestureRecognizer *touchGestureRecognizer;
 @property(nonatomic, strong) HZSKVASTEventProcessor *eventProcessor;
-@property(nonatomic, strong) NSMutableArray *videoHangTest;
-@property(nonatomic, assign) BOOL networkCurrentlyReachable;
+
+@property(nonatomic, strong) HZVideoView *videoView;
 
 @end
 
@@ -86,38 +81,15 @@ typedef enum {
         _delegate = delegate;
         presentingViewController = viewController;
         currentQuartile=VASTFirstQuartile;
-        self.videoHangTest=[NSMutableArray arrayWithCapacity:20];
-        [self setupReachability];
         
-        [[NSNotificationCenter defaultCenter] addObserver: self
-												 selector: @selector(applicationDidBecomeActive:)
-													 name: UIApplicationDidBecomeActiveNotification
-												   object: nil];
+        _videoView = [[HZVideoView alloc] initWithFrame:CGRectZero];
+        _videoView.actionDelegate = self;
+        _videoView.player.shouldAutoplay = NO;
         
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(movieDuration:)
-                                                     name:MPMovieDurationAvailableNotification
-                                                   object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(moviePlayBackDidFinish:)
-                                                     name:MPMoviePlayerPlaybackDidFinishNotification
-                                                   object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(playbackStateChangeNotification:)
-                                                     name:MPMoviePlayerPlaybackStateDidChangeNotification
-                                                   object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(moviePlayerLoadStateChanged:)
-                                                     name:MPMoviePlayerLoadStateDidChangeNotification
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(movieSourceType:)
-                                                     name:MPMovieSourceTypeAvailableNotification
-                                                   object:nil];
+        //TODO: hook up with some other logic later
+        [_videoView setSkipButton: YES];
+        [_videoView setHideButton: NO];
+        [_videoView setSkipButtonTimeInterval: 5.0];
     }
     return self;
 }
@@ -125,7 +97,6 @@ typedef enum {
 - (void)dealloc
 {
     [reachabilityForVAST stopNotifier];
-    [self removeObservers];
 }
 
 #pragma mark - Load methods
@@ -185,6 +156,8 @@ typedef enum {
             return;
         }
         
+        [self.videoView setVideoURL:self->mediaFileURL];
+        
         // VAST document parsing OK, player ready to attempt play, so send vastReady
         [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending vastReady: callback"];
         self->vastReady = YES;
@@ -193,13 +166,6 @@ typedef enum {
     
     HZSKVAST2Parser *parser = [[HZSKVAST2Parser alloc] init];
     if ([source isKindOfClass:[NSURL class]]) {
-        if (!self.networkCurrentlyReachable) {
-            [HZSKLogger error:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"No network available - VASTViewcontroller will not be presented"]];
-            if ([self.delegate respondsToSelector:@selector(vastError:error:)]) {
-                [self.delegate vastError:self error:VASTErrorNoInternetConnection];  // There is network so no requests can be sent, we don't queue errors, so no external Error event is sent.
-            }
-            return;
-        }
         [parser parseWithUrl:(NSURL *)source completion:parserCompletionBlock];     // Load the and parse the VAST document at the supplied URL
     } else {
         [parser parseWithData:(NSData *)source completion:parserCompletionBlock];   // Parse a VAST document in supplied data
@@ -212,38 +178,21 @@ typedef enum {
 {
     [super viewDidAppear:animated];
     isViewOnScreen=YES;
-    if (!hasPlayerStarted) {
-        loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-        
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0") ) {
-            loadingIndicator.frame = CGRectMake( (self.view.frame.size.width/2)-25.0, (self.view.frame.size.height/2)-25.0,50,50);
-        }
-        else {
-            loadingIndicator.frame = CGRectMake( (self.view.frame.size.height/2)-25.0, (self.view.frame.size.width/2)-25.0,50,50);
-        }
-        [loadingIndicator startAnimating];
-        [self.view addSubview:loadingIndicator];
-    } else {
-        // resuming from background or phone call, so resume if was playing, stay paused if manually paused
-        [self handleResumeState];
-    }
+
+    [self handleResumeState];
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    statusBarHidden = [[UIApplication sharedApplication] isStatusBarHidden];
-    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
-        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
-    }
+    statusBarHiddenOutsideOfVAST = [[UIApplication sharedApplication] isStatusBarHidden];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
 }
 
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) {
-        [[UIApplication sharedApplication] setStatusBarHidden:statusBarHidden withAnimation:UIStatusBarAnimationNone];
-    }
+    [[UIApplication sharedApplication] setStatusBarHidden:statusBarHiddenOutsideOfVAST withAnimation:UIStatusBarAnimationNone];
 }
 
 #pragma mark - App lifecycle
@@ -254,162 +203,30 @@ typedef enum {
     [self handleResumeState];
 }
 
-#pragma mark - MPMoviePlayerController notifications
-
-- (void)playbackStateChangeNotification:(NSNotification *)notification
-{
-    @synchronized (self) {
-        MPMoviePlaybackState state = [self.moviePlayer playbackState];
-        [HZSKLogger debug:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"playback state change to %li", (long)state]];
-        
-        switch (state) {
-            case MPMoviePlaybackStateStopped:  // 0
-                [HZSKLogger debug:@"VAST - View Controller" withMessage:@"video stopped"];
-                break;
-            case MPMoviePlaybackStatePlaying:  // 1
-                isPlaying=YES;
-                if (loadingIndicator) {
-                    [self stopVideoLoadTimeoutTimer];
-                    [loadingIndicator stopAnimating];
-                    [loadingIndicator removeFromSuperview];
-                    loadingIndicator = nil;
-                }
-                if (isViewOnScreen) {
-                    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"video is playing"];
-                    [self startPlaybackTimer];
-                }
-                break;
-            case MPMoviePlaybackStatePaused:  // 2
-                [self stopPlaybackTimer];
-                [HZSKLogger debug:@"VAST - View Controller" withMessage:@"video paused"];
-                isPlaying=NO;
-                break;
-            case MPMoviePlaybackStateInterrupted:  // 3
-                [HZSKLogger debug:@"VAST - View Controller" withMessage:@"video interrupt"];
-                break;
-            case MPMoviePlaybackStateSeekingForward:  // 4
-                [HZSKLogger debug:@"VAST - View Controller" withMessage:@"video seeking forward"];
-                break;
-            case MPMoviePlaybackStateSeekingBackward:  // 5
-                [HZSKLogger debug:@"VAST - View Controller" withMessage:@"video seeking backward"];
-                break;
-            default:
-                [HZSKLogger debug:@"VAST - View Controller" withMessage:@"undefined state change"];
-                break;
-        }
-    }
-}
-
-- (void)moviePlayerLoadStateChanged:(NSNotification *)notification
-{
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"movie player load state is %li", (long)self.moviePlayer.loadState]];
-    
-    if ((self.moviePlayer.loadState & MPMovieLoadStatePlaythroughOK) == MPMovieLoadStatePlaythroughOK )
-    {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerLoadStateDidChangeNotification object:nil];
-        [self showAndPlayVideo];
-    }
-}
-
-- (void)moviePlayBackDidFinish:(NSNotification *)notification
-{
-    @synchronized(self) {
-        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"playback did finish"];
-        
-        NSDictionary* userInfo=[notification userInfo];
-        NSString* error= userInfo[kPlaybackFinishedUserInfoErrorKey];
-        
-        if (error) {
-            [self stopVideoLoadTimeoutTimer];  // don't time out if there was a playback error
-            [HZSKLogger error:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"playback error:  %@", error]];
-            if ([self.delegate respondsToSelector:@selector(vastError:error:)]) {
-                [self.delegate vastError:self error:VASTErrorPlaybackError];
-            }
-            if (vastErrors) {
-                [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending Error requests"];
-                [self.eventProcessor sendVASTUrlsWithId:vastErrors];
-            }
-            [self close];
-        } else {
-            // no error, clean finish, so send track complete
-            [self.eventProcessor trackEvent:VASTEventTrackComplete];
-            [self updatePlayedSeconds];
-            [self showControls];
-            [controls toggleToPlayButton:YES];
-        }
-    }
-}
-
-- (void)movieDuration:(NSNotification *)notification
-{
-    @try {
-        movieDuration = self.moviePlayer.duration;
-    }
-    @catch (NSException *e) {
-        [HZSKLogger error:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"Exception - movieDuration: %@", e]];
-        // The movie too short error will fire if movieDuration is < 0.5 or is a NaN value, so no need for further action here.
-    }
-    
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"playback duration is %f", movieDuration]];
-    
-    if (movieDuration < 0.5 || isnan(movieDuration)) {
-        // movie too short - ignore it
-        [self stopVideoLoadTimeoutTimer];  // don't time out in this case
-        [HZSKLogger warning:@"VAST - View Controller" withMessage:@"Movie too short - will dismiss player"];
-        if ([self.delegate respondsToSelector:@selector(vastError:error:)]) {
-            [self.delegate vastError:self error:VASTErrorMovieTooShort];
-        }
-        if (vastErrors) {
-            [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending Error requests"];
-            [self.eventProcessor sendVASTUrlsWithId:vastErrors];
-        }
-        [self close];
-    }
-}
-
-- (void)movieSourceType:(NSNotification *)notification
-{
-    MPMovieSourceType sourceType;
-    @try {
-        sourceType = self.moviePlayer.movieSourceType;
-    }
-    @catch (NSException *e) {
-        [HZSKLogger error:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"Exception - movieSourceType: %@", e]];
-        // sourceType is used for info only - any player related error will be handled otherwise, ultimately by videoTimeout, so no other action needed here.
-    }
-    
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"movie source type is %li", (long)sourceType]];
-}
-
 #pragma mark - Orientation handling
 
-// force to always play in Landscape
-- (BOOL)shouldAutorotate
-{
-    NSArray *supportedOrientationsInPlist = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
-    BOOL isLandscapeLeftSupported = [supportedOrientationsInPlist containsObject:@"UIInterfaceOrientationLandscapeLeft"];
-    BOOL isLandscapeRightSupported = [supportedOrientationsInPlist containsObject:@"UIInterfaceOrientationLandscapeRight"];
-    return isLandscapeLeftSupported && isLandscapeRightSupported;
+- (NSUInteger)supportedInterfaceOrientations {
+    if ([self applicationSupportsLandscape]) {
+        return UIInterfaceOrientationMaskLandscape;
+    } else {
+        return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow:[UIApplication sharedApplication].keyWindow];
+    }
 }
 
-- (NSUInteger)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskLandscape;
-}
-
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
-{
-    UIInterfaceOrientation currentInterfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-    return UIInterfaceOrientationIsLandscape(currentInterfaceOrientation) ? currentInterfaceOrientation : UIInterfaceOrientationLandscapeRight;
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-{
-    return UIInterfaceOrientationIsLandscape(toInterfaceOrientation);
-}
-
-- (BOOL)prefersStatusBarHidden{
+- (BOOL)shouldAutorotate {
     return YES;
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
+    return UIStatusBarAnimationNone;
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft  || interfaceOrientation ==  UIInterfaceOrientationLandscapeRight);
 }
 
 #pragma mark - Timers
@@ -438,97 +255,48 @@ typedef enum {
 - (void)updatePlayedSeconds
 {
     @try {
-        playedSeconds = self.moviePlayer.currentPlaybackTime;
+        playedSeconds = self.videoView.player.currentPlaybackTime;
     }
     @catch (NSException *e) {
         [HZSKLogger warning:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"Exception - updatePlayedSeconds: %@", e]];
-        // The hang test below will fire if playedSeconds doesn't update (including a NaN value), so no need for further action here.
+        playedSeconds = 0;
     }
 
-    [self.videoHangTest addObject:@((int) (playedSeconds * 10.0))];     // add new number to end of hang test buffer
-    
-    if ([self.videoHangTest count]>20) {  // only check for hang if we have at least 20 elements or about 5 seconds of played video, to prevent false positives
-        if ([[self.videoHangTest firstObject] integerValue]==[[self.videoHangTest lastObject] integerValue]) {
-            [HZSKLogger error:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"Video error - video player hung at playedSeconds: %f", playedSeconds]];
-            if ([self.delegate respondsToSelector:@selector(vastError:error:)]) {
-                [self.delegate vastError:self error:VASTErrorPlayerHung];
-            }
-            if (vastErrors) {
-                [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending Error requests"];
-                [self.eventProcessor sendVASTUrlsWithId:vastErrors];
-            }
-            [self close];
-        }
-        [self.videoHangTest removeObjectAtIndex:0];   // remove oldest number from start of hang test buffer
+    NSTimeInterval duration = self.videoView.player.duration;
+    if(duration <= 0){
+        [HZSKLogger warning:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"Duration is not >0"]];
+        return;
     }
     
-   	currentPlayedPercentage = (float)100.0*(playedSeconds/movieDuration);
-    [controls updateProgressBar: currentPlayedPercentage/100.0 withPlayedSeconds:playedSeconds withTotalDuration:movieDuration];
+   	currentPlayedPercentage = (float)100.0*(playedSeconds/self.videoView.player.duration);
     
     switch (currentQuartile) {
-            
         case VASTFirstQuartile:
             if (currentPlayedPercentage>25.0) {
                 [self.eventProcessor trackEvent:VASTEventTrackFirstQuartile];
                 currentQuartile=VASTSecondQuartile;
             }
             break;
-            
         case VASTSecondQuartile:
             if (currentPlayedPercentage>50.0) {
                 [self.eventProcessor trackEvent:VASTEventTrackMidpoint];
                 currentQuartile=VASTThirdQuartile;
             }
             break;
-            
         case VASTThirdQuartile:
             if (currentPlayedPercentage>75.0) {
                 [self.eventProcessor trackEvent:VASTEventTrackThirdQuartile];
                 currentQuartile=VASTFourtQuartile;
             }
             break;
-            
         default:
             break;
-    }
-}
-
-// Reports error if vast video document times out while loading
-- (void)startVideoLoadTimeoutTimer
-{
-    [HZSKLogger error:@"VAST - View Controller" withMessage:@"Start Video Load Timer"];
-    videoLoadTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:[HZVASTSettings vastVideoLoadTimeout]
-                                                             target:self
-                                                           selector:@selector(videoLoadTimerFired)
-                                                           userInfo:nil
-                                                            repeats:NO];
-}
-
-- (void)stopVideoLoadTimeoutTimer
-{
-    [videoLoadTimeoutTimer invalidate];
-    videoLoadTimeoutTimer = nil;
-    [HZSKLogger error:@"VAST - View Controller" withMessage:@"Stop Video Load Timer"];
-}
-
-- (void)videoLoadTimerFired
-{
-    [HZSKLogger error:@"VAST - View Controller" withMessage:@"Video Load Timeout"];
-    [self close];
-    
-    if (vastErrors) {
-       [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending Error requests"];
-        [self.eventProcessor sendVASTUrlsWithId:vastErrors];
-    }
-    if ([self.delegate respondsToSelector:@selector(vastError:error:)]) {
-        [self.delegate vastError:self error:VASTErrorLoadTimeout];
     }
 }
 
 - (void)killTimers
 {
     [self stopPlaybackTimer];
-    [self stopVideoLoadTimeoutTimer];
 }
 
 #pragma mark - Methods needed to support toolbar buttons
@@ -554,14 +322,6 @@ typedef enum {
             }
         }
         
-        if (!self.networkCurrentlyReachable) {
-            [HZSKLogger error:@"VAST - View Controller" withMessage:@"No network available - VASTViewcontroller will not be presented"];
-            if ([self.delegate respondsToSelector:@selector(vastError:error:)]) {
-                [self.delegate vastError:self error:VASTErrorNoInternetConnection];   // There is network so no requests can be sent, we don't queue errors, so no external Error event is sent.
-            }
-            return;
-        }
-        
         // Now we are ready to launch the player and start buffering the content
         // It will throw error if the url is invalid for any reason. In this case, we don't even need to open ViewController.
         [HZSKLogger debug:@"VAST - View Controller" withMessage:@"initializing player"];
@@ -570,12 +330,7 @@ typedef enum {
             playedSeconds = 0.0;
             currentPlayedPercentage = 0.0;
             
-            // Create and prepare the player to confirm the video is playable (or not) as early as possible
-            [self startVideoLoadTimeoutTimer];
-            self.moviePlayer = [[MPMoviePlayerController alloc] initWithContentURL: mediaFileURL];
-            self.moviePlayer.shouldAutoplay = NO; // YES by default - But we don't want to autoplay
-            self.moviePlayer.controlStyle=MPMovieControlStyleNone;  // To use custom control toolbar
-            [self.moviePlayer prepareToPlay];
+            [self startPlaybackTimer];
             [self presentPlayer];
         }
         @catch (NSException *e) {
@@ -592,37 +347,25 @@ typedef enum {
     }
 }
 
-- (void)pause
-{
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"pause"];
-    [self handlePauseState];
-}
-
-- (void)resume
-{
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"resume"];
-    [self handleResumeState];
-}
-
-- (void)info
-{
-    if (clickTracking) {
-        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending clickTracking requests"];
-        [self.eventProcessor sendVASTUrlsWithId:clickTracking];
-    }
-    if ([self.delegate respondsToSelector:@selector(vastOpenBrowseWithUrl:)]) {
-        [self.delegate vastOpenBrowseWithUrl:self.clickThrough];
-    }
-}
+//- (void)pause
+//{
+//    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"pause"];
+//    [self handlePauseState];
+//}
+//
+//- (void)resume
+//{
+//    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"resume"];
+//    [self handleResumeState];
+//}
 
 - (void)close
 {
     @synchronized (self) {
-        [self removeObservers];
         [self killTimers];
-        [self.moviePlayer stop];
-        
-        self.moviePlayer=nil;
+        [self.videoView.player stop];
+        [self.videoView removeFromSuperview];
+        self.videoView = nil;
         
         if (isViewOnScreen) {
             // send close any time the player has been dismissed
@@ -637,69 +380,6 @@ typedef enum {
     }
 }
 
-//
-// Handle touches
-//
-#pragma mark - Gesture setup & delegate
-
-- (void)setUpTapGestureRecognizer
-{
-    self.touchGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTouches)];
-    self.touchGestureRecognizer.delegate = self;
-    [self.touchGestureRecognizer setNumberOfTouchesRequired:1];
-    self.touchGestureRecognizer.cancelsTouchesInView=NO;  // required to enable controlToolbar buttons to receive touches
-    [self.view addGestureRecognizer:self.touchGestureRecognizer];
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
-{
-    return YES;
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-    return YES;
-}
-
-- (void)handleTouches{
-    if (!initialDelayTimer) {
-        [self showControls];
-    }
-}
-
-- (void)showControls
-{
-    initialDelayTimer = nil;
-    [controls showControls];
-}
-
-#pragma mark - Reachability
-
-- (void)setupReachability
-{
-    reachabilityForVAST = [HZSKReachability reachabilityForInternetConnection];
-    reachabilityForVAST.reachableOnWWAN = YES;            // Do allow 3G/WWAN for reachablity
-    
-    __unsafe_unretained HZSKVASTViewController *self_ = self; // avoid block retain cycle
-    
-    networkReachableBlock  = ^(HZSKReachability*reachabilityForVAST){
-        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Network reachable"];
-        self_.networkCurrentlyReachable = YES;
-    };
-    
-    networkUnreachableBlock = ^(HZSKReachability*reachabilityForVAST){
-        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Network not reachable"];
-        self_.networkCurrentlyReachable = NO;
-    };
-    
-    reachabilityForVAST.reachableBlock = networkReachableBlock;
-    reachabilityForVAST.unreachableBlock = networkUnreachableBlock;
-    
-    [reachabilityForVAST startNotifier];
-    self.networkCurrentlyReachable = [reachabilityForVAST isReachable];
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"Network is reachable %d", self.networkCurrentlyReachable]];
-}
-
 #pragma mark - Other methods
 
 - (BOOL)isPlaying
@@ -711,26 +391,11 @@ typedef enum {
 {
     [HZSKLogger debug:@"VAST - View Controller" withMessage:@"adding player to on screen view and starting play sequence"];
     
-    self.moviePlayer.view.frame=self.view.bounds;
-    [self.view addSubview:self.moviePlayer.view];
+    self.videoView.frame=self.view.bounds;
+    [self.view addSubview:self.videoView];
     
-    // N.B. The player has to be ready to play before controls may be added to the player's view
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"initializing player controls"];
-    controls = [[HZSKVASTControls alloc] initWithVASTPlayer:self];
-    [self.moviePlayer.view addSubview: controls];
+    [self.videoView play];
     
-    if (kFirstShowControlsDelay > 0) {
-        [controls hideControls];
-        initialDelayTimer = [NSTimer scheduledTimerWithTimeInterval:kFirstShowControlsDelay
-                                                             target:self
-                                                           selector:@selector(showControls)
-                                                           userInfo:nil
-                                                            repeats:NO];
-    } else {
-        [self showControls];
-    }
-    
-    [self.moviePlayer play];
     hasPlayerStarted=YES;
     
     if (impressions) {
@@ -738,47 +403,34 @@ typedef enum {
         [self.eventProcessor sendVASTUrlsWithId:impressions];
     }
     [self.eventProcessor trackEvent:VASTEventTrackStart];
-    [self setUpTapGestureRecognizer];
-}
-
-- (void)removeObservers
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackStateDidChangeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMovieDurationAvailableNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMovieSourceTypeAvailableNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerLoadStateDidChangeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 - (void)handlePauseState
 {
     @synchronized (self) {
-    if (isPlaying) {
-        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"handle pausing player"];
-        [self.moviePlayer pause];
-        isPlaying = NO;
-        [self.eventProcessor trackEvent:VASTEventTrackPause];
-    }
-    [self stopPlaybackTimer];
+        if (isPlaying) {
+            [HZSKLogger debug:@"VAST - View Controller" withMessage:@"handle pausing player"];
+            [self.videoView pause];
+            isPlaying = NO;
+            [self.eventProcessor trackEvent:VASTEventTrackPause];
+        }
+        [self stopPlaybackTimer];
     }
 }
 
 - (void)handleResumeState
 {
     @synchronized (self) {
-    if (hasPlayerStarted) {
-        if (![controls controlsPaused]) {
-        // resuming from background or phone call, so resume if was playing, stay paused if manually paused by inspecting controls state
-        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"handleResumeState, resuming player"];
-        [self.moviePlayer play];
-        isPlaying = YES;
-        [self.eventProcessor trackEvent:VASTEventTrackResume];
-        [self startPlaybackTimer];
+        if (hasPlayerStarted) {
+            // resuming from background or phone call, so resume if was playing, stay paused if manually paused by inspecting controls state
+                [HZSKLogger debug:@"VAST - View Controller" withMessage:@"handleResumeState, resuming player"];
+                [self.videoView play];
+                isPlaying = YES;
+                [self.eventProcessor trackEvent:VASTEventTrackResume];
+                [self startPlaybackTimer];
+        } else {
+            [self showAndPlayVideo];   // Edge case: loadState is playable but not playThroughOK and had resignedActive, so play immediately on resume
         }
-    } else if (self.moviePlayer) {
-        [self showAndPlayVideo];   // Edge case: loadState is playable but not playThroughOK and had resignedActive, so play immediately on resume
-    }
     }
 }
 
@@ -797,6 +449,74 @@ typedef enum {
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [presentingViewController presentModalViewController:self animated:NO];
 #pragma clang diagnostic pop
+    }
+}
+
+
+#pragma mark - HZAdPopupActionDelegate methods
+
+- (void) onActionHide: (id) sender {
+    NSLog(@"monroedebug: vast vc onActionHide");
+    [self close];
+}
+
+- (void) onActionShow: (id) sender {
+     NSLog(@"monroedebug: vast vc onActionShow");
+}
+
+- (void) onActionReady: (id) sender {
+    NSLog(@"monroedebug: vast vc onActionReady");
+    //[self showAndPlayVideo];
+}
+
+- (void) onActionClick: (id) sender withURL: (NSURL *) url {
+    NSLog(@"monroedebug: vast vc onActionClick");
+    if (clickTracking) {
+        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending clickTracking requests"];
+        [self.eventProcessor sendVASTUrlsWithId:clickTracking];
+    }
+    if ([self.delegate respondsToSelector:@selector(vastOpenBrowseWithUrl:)]) {
+        [self.delegate vastOpenBrowseWithUrl:self.clickThrough];
+    }
+}
+
+- (void) onActionCompleted: (id) sender {
+    NSLog(@"monroedebug: vast vc onActionCompleted");
+    [self.eventProcessor trackEvent:VASTEventTrackComplete];
+    [self updatePlayedSeconds];
+    [self close];
+}
+
+- (void) onActionError: (id) sender {
+    NSLog(@"monroedebug: vast vc onActionError");
+    [HZSKLogger error:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"playback error"]];
+    if ([self.delegate respondsToSelector:@selector(vastError:error:)]) {
+        [self.delegate vastError:self error:VASTErrorPlaybackError];
+    }
+    if (vastErrors) {
+        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending Error requests"];
+        [self.eventProcessor sendVASTUrlsWithId:vastErrors];
+    }
+    
+    [self close];
+}
+
+- (void) onActionRestart: (id) sender {
+    NSLog(@"monroedebug: vast vc onActionRestart");
+}
+
+- (void) onActionInstallHeyzap: (id) sender {
+    NSLog(@"monroedebug: vast vc onActionInstallHeyzap");
+}
+
+#pragma mark - Utility
+
+- (BOOL) applicationSupportsLandscape {
+    if ([HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
+        return YES;
+    } else {
+        UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+        return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: keyWindow] & UIInterfaceOrientationMaskLandscape;
     }
 }
 
