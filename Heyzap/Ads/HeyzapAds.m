@@ -38,6 +38,7 @@
 #import "HeyzapMediation.h"
 
 #import "HZTestActivityViewController.h"
+#import "HZDevice.h"
 
 // Warning: Read first please.
 // Do NOT change these values. They are shared
@@ -228,6 +229,15 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
 + (NSDictionary *) remoteData {
     HZVersionCheckNil();
     return [[HeyzapMediation sharedInstance] remoteDataDictionary];
+}
+
++ (void)setBundleIdentifier:(NSString *)bundleIdentifier {
+    HZParameterAssert(bundleIdentifier);
+    if ([self isStarted]) {
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"You must call setBundleIdentifier before starting the SDK" userInfo:nil];
+    } else {
+        [HZDevice setBundleIdentifier:bundleIdentifier];
+    }
 }
 
 @end

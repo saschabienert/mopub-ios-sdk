@@ -27,4 +27,9 @@
 + (BOOL)isIpad;
 + (BOOL)isPhone;
 
+#pragma mark - Overriding the bundle ID
+
++ (void)setBundleIdentifier:(NSString *)bundleIdentifier;
+- (NSString *)bundleIdentifier;
+
 @end

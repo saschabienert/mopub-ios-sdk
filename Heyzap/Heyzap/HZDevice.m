@@ -214,6 +214,21 @@
     return radio;
 }
 
+static NSString *overriddenBundleIdentifier;
+
++ (void)setBundleIdentifier:(NSString *)bundleIdentifier {
+    overriddenBundleIdentifier = bundleIdentifier;
+}
+
+- (NSString *)bundleIdentifier {
+    static NSString *bundleIdentifier;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        bundleIdentifier = overriddenBundleIdentifier ?: [[NSBundle mainBundle] bundleIdentifier];
+    });
+    return bundleIdentifier;
+}
+
 #pragma mark - Device Identifiers
 
 - (NSString *) HZuniqueDeviceIdentifier{
@@ -221,7 +236,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSString *macaddress = [self HZmacaddress];
-        NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+        NSString *bundleIdentifier = [[HZDevice currentDevice] bundleIdentifier];
         
         NSString *stringToHash = [NSString stringWithFormat:@"%@%@",macaddress,bundleIdentifier];
         uniqueIdentifier = [HZUtils base64EncodedStringFromString: stringToHash];
