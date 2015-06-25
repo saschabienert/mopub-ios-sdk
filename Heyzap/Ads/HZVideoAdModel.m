@@ -207,7 +207,7 @@
 #pragma mark - Video Caching/Files
 
 - (NSURL *) URLForVideo {
-    if ([[NSFileManager defaultManager] fileExistsAtPath: [self filePathForCachedVideo]]) {
+    if (self.fileCached) {
         return [NSURL fileURLWithPath: [self filePathForCachedVideo]];
     } else {
         if ([self.streamingURLs count] > 0 && (self.allowFallbacktoStreaming || self.forceStreaming)) {

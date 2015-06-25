@@ -1,4 +1,13 @@
 //
+//  HZSKVASTViewController.m
+//  Heyzap
+//
+//  Created by Monroe Ekilah on 6/24/15.
+//  Heavily modified from original SKVASTViewController.m (see below comments for original info).
+//  Copyright (c) 2015 Heyzap. All rights reserved.
+//
+
+//
 //  SKVASTViewController.m
 //  VAST
 //
@@ -16,10 +25,10 @@
 #import "HZSKVASTUrlWithId.h"
 #import "HZSKVASTMediaFile.h"
 #import "HZSKVASTMediaFilePicker.h"
-#import "HZSKReachability.h"
 
 #import "HZVideoView.h"
 #import "HZDevice.h"
+#import "HZVASTVideoCache.h"
 
 static const NSString* kPlaybackFinishedUserInfoErrorKey=@"error";
 
@@ -50,16 +59,13 @@ typedef enum {
     BOOL hasReportedEngagedView;
     BOOL didFinish;
     CurrentVASTQuartile currentQuartile;
-    
-    HZSKReachability *reachabilityForVAST;
-    NetworkReachable networkReachableBlock;
-    NetworkUnreachable networkUnreachableBlock;
 }
 
 @property(nonatomic, strong) HZSKVASTEventProcessor *eventProcessor;
 
 @property(nonatomic, strong) HZVideoView *videoView;
 @property(nonatomic, strong) HZVASTVideoSettings *videoSettings;
+@property(nonatomic, strong) HZVASTVideoCache *videoCache;
 
 @end
 
@@ -83,11 +89,6 @@ typedef enum {
         _videoView.player.shouldAutoplay = NO;
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [reachabilityForVAST stopNotifier];
 }
 
 #pragma mark - Load methods
@@ -164,11 +165,24 @@ typedef enum {
         //setting the url here causes prepareToPlay to be called. doing this before the frame of the player is set causes some autolayout warnings
         //instead, it's called in showAndPlayVideo
         //[self.videoView setVideoURL:self->mediaFileURL];
-        
-        // VAST document parsing OK, player ready to attempt play, so send vastReady
-        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending vastReady: callback"];
-        self->vastReady = YES;
-        [self.delegate vastReady:self];
+        self.videoCache = [[HZVASTVideoCache alloc] init];
+        [self.videoCache startCaching:self->mediaFileURL withCompletion:^(BOOL success){
+            if(success) {
+                // VAST document parsing OK & video cached, so send vastReady
+                [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending vastReady: callback"];
+                self->vastReady = YES;
+                [self.delegate vastReady:self];
+            } else {
+                [HZSKLogger error:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"video cache error"]];
+                if ([self.delegate respondsToSelector:@selector(vastError:error:)]) {
+                    [self.delegate vastError:self error:VASTErrorCacheFailed];
+                }
+                if (self->vastErrors) {
+                    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending Error requests"];
+                    [self.eventProcessor sendVASTUrlsWithId:self->vastErrors];
+                }
+            }
+        }];
     };
     
     HZSKVAST2Parser *parser = [[HZSKVAST2Parser alloc] init];
@@ -379,7 +393,7 @@ typedef enum {
         [self.videoView removeFromSuperview];
         self.videoView = nil;
         
-        if(!didFinish) {
+        if(hasPlayerStarted && !didFinish) {
             [self.eventProcessor trackEvent:VASTEventTrackSkip];
         }
         
@@ -403,13 +417,17 @@ typedef enum {
     return isPlaying;
 }
 
+-(BOOL)vastVideoCached {
+    return self.videoCache && self.videoCache.fileCached;
+}
+
 - (void)showAndPlayVideo
 {
     [HZSKLogger debug:@"VAST - View Controller" withMessage:@"adding player to on screen view and starting play sequence"];
     
     self.videoView.frame=self.view.bounds;
     [self.view addSubview:self.videoView];
-    [self.videoView setVideoURL:self->mediaFileURL];
+    [self.videoView setVideoURL:[self.videoCache URLForVideo]];
     [self.videoView play];
     
     hasPlayerStarted=YES;
@@ -459,19 +477,15 @@ typedef enum {
     [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:self animated:NO completion:nil];
 }
 
-
 #pragma mark - HZAdPopupActionDelegate methods
 
 - (void) onActionHide: (id) sender {
     [self close];
 }
 
-- (void) onActionShow: (id) sender {
-}
+- (void) onActionShow: (id) sender { }
 
-- (void) onActionReady: (id) sender {
-    //[self showAndPlayVideo];
-}
+- (void) onActionReady: (id) sender { }
 
 - (void) onActionClick: (id) sender withURL: (NSURL *) url {
     if(self.videoSettings.allowClick) {

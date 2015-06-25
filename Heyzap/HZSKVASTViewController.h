@@ -1,4 +1,13 @@
 //
+//  HZSKVASTViewController.h
+//  Heyzap
+//
+//  Created by Monroe Ekilah on 6/24/15.
+//  Heavily modified from original SKVASTViewController.h (see below comments for original info).
+//  Copyright (c) 2015 Heyzap. All rights reserved.
+//
+
+//
 //  SKVASTViewController.h
 //  VAST
 //
@@ -7,12 +16,6 @@
 //
 
 // VASTViewController is the main component of the SourceKit VAST Implementation.
-//
-// This class creates and manages an iOS MPMediaPlayerViewController to playback a video from a VAST 2.0 document.
-// The document may be loaded using a URL or directly from an exisitng XML document (as NSData).
-//
-// See the VASTViewControllerDelegate Protocol for the required vastReady: and other useful methods.
-// Screen controls are exposed for play, pause, info, and dismiss, which are handled by the VASTControls class as an overlay toolbar.
 //
 // VASTEventProcessor handles tracking events and impressions.
 // Errors encountered are listed in in VASTError.h
@@ -27,21 +30,15 @@
 @class HZSKVASTViewController;
 
 @protocol HZSKVASTViewControllerDelegate <NSObject>
-
 @required
-
 - (void)vastReady:(HZSKVASTViewController *)vastVC;  // sent when the video is ready to play - required
-
 @optional
-
 - (void)vastError:(HZSKVASTViewController *)vastVC error:(HZSKVASTError)error;  // sent when any VASTError occurs - optional
-
 // These optional callbacks are for basic presentation, dismissal, and calling video clickthrough url browser.
 - (void)vastWillPresentFullScreen:(HZSKVASTViewController *)vastVC;
 - (void)vastDidDismissFullScreen:(HZSKVASTViewController *)vastVC;
 - (void)vastOpenBrowseWithUrl:(NSURL *)url;
 - (void)vastTrackingEvent:(NSString *)eventName;
-
 @end
 
 @interface HZSKVASTViewController : UIViewController
@@ -56,6 +53,7 @@
 - (void)loadVideoWithData:(NSData *)xmlContent;   // load and prepare to play a VAST video from existing XML data
 
 - (void)play;// command to play the video, this is only valid after receiving the vastReady: callback (which will be called after a loadVideo...: call)
+- (BOOL)vastVideoCached; // returns whether or not the video (sent to one of the loadVideoWith...: methods) has been cached yet
 
 @end
 

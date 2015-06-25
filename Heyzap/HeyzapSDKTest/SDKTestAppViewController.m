@@ -64,7 +64,8 @@ typedef enum {
 
 @property (nonatomic) UIButton *showBannerButton;
 @property (nonatomic) UIButton *hideBannerButton;
-@property (nonatomic) UIButton *vastButton;
+@property (nonatomic) UIButton *vastLoadButton;
+@property (nonatomic) UIButton *vastPlayButton;
 
 @property (nonatomic) NSArray *bannerControls;
 @property (nonatomic) NSArray *nonBannerControls;
@@ -317,19 +318,33 @@ const CGFloat kLeftMargin = 10;
                 forControlEvents:UIControlEventEditingChanged];
     [self.scrollView addSubview:self.adsTextField];
     
-    self.vastButton = ({
+    self.vastLoadButton = ({
         UIButton * button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         button.frame = CGRectMake(CGRectGetMaxX(self.adsTextField.frame) + 6.0, 10.0, 89.0, 25.0);
         button.backgroundColor = [UIColor darkGrayColor];
         button.layer.cornerRadius = 4.0;
-        [button setTitle: @"VAST" forState: UIControlStateNormal];
+        [button setTitle: @"VAST load" forState: UIControlStateNormal];
         [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
         [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
         button.enabled = YES;
         button;
     });
-    [self.vastButton addTarget: self action: @selector(vastButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
-    [self.scrollView addSubview: self.vastButton];
+    [self.vastLoadButton addTarget: self action: @selector(vastLoadButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
+    [self.scrollView addSubview: self.vastLoadButton];
+    
+    self.vastPlayButton = ({
+        UIButton * button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        button.frame = CGRectMake(CGRectGetMaxX(self.vastLoadButton.frame) + 6.0, 10.0, 89.0, 25.0);
+        button.backgroundColor = [UIColor darkGrayColor];
+        button.layer.cornerRadius = 4.0;
+        [button setTitle: @"VAST play" forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
+        button.enabled = NO;
+        button;
+    });
+    [self.vastPlayButton addTarget: self action: @selector(vastPlayButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
+    [self.scrollView addSubview: self.vastPlayButton];
     
     self.creativeTypeTextField = ({
         UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.showButton.frame) + 5, 320, 35)];
@@ -824,7 +839,8 @@ const CGFloat kLeftMargin = 10;
 }
 
 # pragma mark - VAST
-- (void)vastButtonPressed:(id)sender {
+- (void)vastLoadButtonPressed:(id)sender {
+    self.vastPlayButton.enabled = NO;
     self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate: self forAdType:HZAdTypeVideo];
     [HZLog setDebugLevel:HZDebugLevelVerbose];
     NSURL* url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_doubleclick_inline_comp.xml"];
@@ -835,11 +851,15 @@ const CGFloat kLeftMargin = 10;
     [self.vastVC loadVideoWithURL:url];
 }
 
+- (void)vastPlayButtonPressed:(id)sender {
+    [self.vastVC play];
+}
+
 // sent when the video is ready to play - required
 - (void)vastReady:(HZSKVASTViewController *)vastVC {
     NSLog(@"vastReady");
     [self logToConsole:@"vastReady"];
-    [vastVC play];
+    self.vastPlayButton.enabled = YES;
 }
 
 // sent when any VASTError occurs
@@ -852,6 +872,7 @@ const CGFloat kLeftMargin = 10;
 - (void)vastWillPresentFullScreen:(HZSKVASTViewController *)vastVC {
      NSLog(@"vastWillPresentFullScreen");
     [self logToConsole:@"vastWillPresentFullScreen"];
+    self.vastPlayButton.enabled = NO;
 }
 
 // Sent when VAST dismissed a video

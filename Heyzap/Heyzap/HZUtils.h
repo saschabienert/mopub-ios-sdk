@@ -32,6 +32,7 @@ char *HZNewBase64Encode(
 + (void) setPublisherID: (NSString *) publisherID;
 + (NSString *) publisherID;
 + (NSString *) internetStatus;
++ (NSString *) MD5ForString:(NSString*)string;
 
 NSArray *hzMap(NSArray *array, id (^block)(id object));
 

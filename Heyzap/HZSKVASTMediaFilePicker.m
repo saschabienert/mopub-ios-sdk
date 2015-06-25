@@ -7,7 +7,6 @@
 //
 
 #import "HZSKVASTMediaFilePicker.h"
-#import "HZSKReachability.h"
 #import "HZVASTSettings.h"
 #import "HZSKLogger.h"
 #import <UIKit/UIKit.h>
@@ -22,7 +21,6 @@ typedef enum {
 
 @interface HZSKVASTMediaFilePicker()
 
-+ (NetworkType)networkType;
 + (BOOL)isMIMETypeCompatible:(HZSKVASTMediaFile *)vastMediaFile;
 
 @end
@@ -31,15 +29,6 @@ typedef enum {
 
 + (HZSKVASTMediaFile *)pick:(NSArray *)mediaFiles
 {
-    // Check whether we even have a network connection.
-    // If not, return a nil.
-    NetworkType networkType = [self networkType];
-    
-    [HZSKLogger debug:@"VAST - Mediafile Picker" withMessage:[NSString stringWithFormat:@"NetworkType: %d", networkType]];
-    if (networkType == NetworkTypeNone) {
-        return nil;
-    }
-    
     // Go through the provided media files and only those that have a compatible MIME type.
     NSMutableArray *compatibleMediaFiles = [[NSMutableArray alloc] init];
     for (HZSKVASTMediaFile *vastMediaFile in mediaFiles) {
@@ -87,20 +76,6 @@ typedef enum {
     HZSKVASTMediaFile *toReturn = (HZSKVASTMediaFile *)sortedMediaFiles[bestMatch];
     [HZSKLogger debug:@"VAST - Mediafile Picker" withMessage:[NSString stringWithFormat:@"Selected Media File: %@", toReturn.url]];
     return toReturn;
-}
-
-+ (NetworkType)networkType
-{
-    HZSKReachability* reach = [HZSKReachability reachabilityWithHostname:@"www.google.com"];
-    NetworkType reachableState = NetworkTypeNone;
-    if ([reach isReachable]) {
-        if ([reach isReachableViaWiFi]) {
-            reachableState = NetworkTypeWiFi;
-        } else if ([reach isReachableViaWWAN]) {
-            reachableState = NetworkTypeCellular;
-        }
-    }
-    return reachableState;
 }
 
 + (BOOL)isMIMETypeCompatible:(HZSKVASTMediaFile *)vastMediaFile

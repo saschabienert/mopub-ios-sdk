@@ -19,5 +19,6 @@ typedef enum {
     VASTErrorPlaybackError,
     VASTErrorMovieTooShort,
     VASTErrorPlayerHung,
-    VASTErrorPlaybackAlreadyInProgress
+    VASTErrorPlaybackAlreadyInProgress,
+    VASTErrorCacheFailed
 } HZSKVASTError;

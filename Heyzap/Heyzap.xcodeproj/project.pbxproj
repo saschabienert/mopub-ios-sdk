@@ -373,8 +373,9 @@
 		86FF907D185842D900BC48BF /* HZQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 86FF907B185842D900BC48BF /* HZQueue.h */; };
 		86FF907E185842D900BC48BF /* HZQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 86FF907C185842D900BC48BF /* HZQueue.m */; };
 		996D9AA5BB144F82A96FC8B0 /* libPods-Integration Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */; };
+		99752D541B3B860C0075B328 /* HZVASTVideoCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 99752D531B3B860C0075B328 /* HZVASTVideoCache.m */; };
+		99752D561B3B86230075B328 /* HZVASTVideoCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 99752D551B3B86230075B328 /* HZVASTVideoCache.h */; };
 		99D4C4131B38878C004D24DE /* HZSKLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C3FA1B38878C004D24DE /* HZSKLogger.h */; };
-		99D4C4141B38878C004D24DE /* HZSKReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C3FB1B38878C004D24DE /* HZSKReachability.h */; };
 		99D4C4151B38878C004D24DE /* HZSKVAST2Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C3FC1B38878C004D24DE /* HZSKVAST2Parser.h */; };
 		99D4C4161B38878C004D24DE /* HZSKVAST2Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C3FD1B38878C004D24DE /* HZSKVAST2Parser.m */; };
 		99D4C4191B38878C004D24DE /* HZSKVASTError.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C4001B38878C004D24DE /* HZSKVASTError.h */; };
@@ -389,7 +390,6 @@
 		99D4C4221B38878C004D24DE /* HZVASTSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C40A1B38878C004D24DE /* HZVASTSettings.m */; };
 		99D4C4231B38878C004D24DE /* HZVASTXMLUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C40B1B38878C004D24DE /* HZVASTXMLUtil.h */; };
 		99D4C4241B38878C004D24DE /* HZVASTXMLUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C40C1B38878C004D24DE /* HZVASTXMLUtil.m */; };
-		99D4C4321B388FD3004D24DE /* HZSKReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C4311B388FD3004D24DE /* HZSKReachability.m */; };
 		99D4C4341B388FF7004D24DE /* HZSKLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C4331B388FF7004D24DE /* HZSKLogger.m */; };
 		99D4C4371B38906F004D24DE /* HZSKVASTModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C4351B38906F004D24DE /* HZSKVASTModel.h */; };
 		99D4C4381B38906F004D24DE /* HZSKVASTModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C4361B38906F004D24DE /* HZSKVASTModel.m */; };
@@ -786,8 +786,9 @@
 		86FF907B185842D900BC48BF /* HZQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZQueue.h; sourceTree = "<group>"; };
 		86FF907C185842D900BC48BF /* HZQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZQueue.m; sourceTree = "<group>"; };
 		9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Integration Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		99752D531B3B860C0075B328 /* HZVASTVideoCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVASTVideoCache.m; sourceTree = "<group>"; };
+		99752D551B3B86230075B328 /* HZVASTVideoCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVASTVideoCache.h; sourceTree = "<group>"; };
 		99D4C3FA1B38878C004D24DE /* HZSKLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKLogger.h; sourceTree = "<group>"; };
-		99D4C3FB1B38878C004D24DE /* HZSKReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKReachability.h; sourceTree = "<group>"; };
 		99D4C3FC1B38878C004D24DE /* HZSKVAST2Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKVAST2Parser.h; sourceTree = "<group>"; };
 		99D4C3FD1B38878C004D24DE /* HZSKVAST2Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKVAST2Parser.m; sourceTree = "<group>"; };
 		99D4C4001B38878C004D24DE /* HZSKVASTError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKVASTError.h; sourceTree = "<group>"; };
@@ -803,7 +804,6 @@
 		99D4C40A1B38878C004D24DE /* HZVASTSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVASTSettings.m; sourceTree = "<group>"; };
 		99D4C40B1B38878C004D24DE /* HZVASTXMLUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVASTXMLUtil.h; sourceTree = "<group>"; };
 		99D4C40C1B38878C004D24DE /* HZVASTXMLUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVASTXMLUtil.m; sourceTree = "<group>"; };
-		99D4C4311B388FD3004D24DE /* HZSKReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKReachability.m; sourceTree = "<group>"; };
 		99D4C4331B388FF7004D24DE /* HZSKLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKLogger.m; sourceTree = "<group>"; };
 		99D4C4351B38906F004D24DE /* HZSKVASTModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKVASTModel.h; sourceTree = "<group>"; };
 		99D4C4361B38906F004D24DE /* HZSKVASTModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKVASTModel.m; sourceTree = "<group>"; };
@@ -1861,7 +1861,6 @@
 				99D4C4301B388F10004D24DE /* SKCommon */,
 				99D4C4251B388D81004D24DE /* model */,
 				99D4C3FA1B38878C004D24DE /* HZSKLogger.h */,
-				99D4C3FB1B38878C004D24DE /* HZSKReachability.h */,
 				99D4C3FC1B38878C004D24DE /* HZSKVAST2Parser.h */,
 				99D4C3FD1B38878C004D24DE /* HZSKVAST2Parser.m */,
 				99D4C4001B38878C004D24DE /* HZSKVASTError.h */,
@@ -1877,6 +1876,8 @@
 				99D4C40A1B38878C004D24DE /* HZVASTSettings.m */,
 				99D4C40B1B38878C004D24DE /* HZVASTXMLUtil.h */,
 				99D4C40C1B38878C004D24DE /* HZVASTXMLUtil.m */,
+				99752D531B3B860C0075B328 /* HZVASTVideoCache.m */,
+				99752D551B3B86230075B328 /* HZVASTVideoCache.h */,
 			);
 			name = SKVAST;
 			sourceTree = "<group>";
@@ -1897,7 +1898,6 @@
 		99D4C4301B388F10004D24DE /* SKCommon */ = {
 			isa = PBXGroup;
 			children = (
-				99D4C4311B388FD3004D24DE /* HZSKReachability.m */,
 				99D4C4331B388FF7004D24DE /* HZSKLogger.m */,
 			);
 			name = SKCommon;
@@ -1975,7 +1975,6 @@
 				507A456219BE95B000C7AEEA /* HZStorePresenter.h in Headers */,
 				5019224818EDFA6A002793A3 /* HZMediationSession.h in Headers */,
 				E621821119BE66A90099BE8C /* HZUnityAdsAdapter.h in Headers */,
-				99D4C4141B38878C004D24DE /* HZSKReachability.h in Headers */,
 				866E39EF1850087B00B6E431 /* HZVideoAd.h in Headers */,
 				866E3A0C18512F2500B6E431 /* HZAdViewController.h in Headers */,
 				50B46B2718F8B241005155B8 /* HZALIncentivizedInterstitialAd.h in Headers */,
@@ -1985,6 +1984,7 @@
 				509E8D3519B79F8200ABF2D2 /* HZEnums.h in Headers */,
 				5046CE8A18E3B0C3000395AA /* HZDispatch.h in Headers */,
 				50AC60B218FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.h in Headers */,
+				99752D561B3B86230075B328 /* HZVASTVideoCache.h in Headers */,
 				99D4C4151B38878C004D24DE /* HZSKVAST2Parser.h in Headers */,
 				50B46B1918F88C2E005155B8 /* HZALAdService.h in Headers */,
 				500F88F618E215DD00E5D6F8 /* HZGADRequest.h in Headers */,
@@ -2580,6 +2580,7 @@
 				50CAB19A1AE9752E00F9642D /* HZAFURLConnectionOperation.m in Sources */,
 				E62181B919AFBF520099BE8C /* HZVungleSDK.m in Sources */,
 				E67D8F201AB7B38B000B191C /* HZShowOptions.m in Sources */,
+				99752D541B3B860C0075B328 /* HZVASTVideoCache.m in Sources */,
 				866E3A0D18512F2500B6E431 /* HZAdViewController.m in Sources */,
 				86F92C711B152E6B003DEAEE /* HZHYPRManager.m in Sources */,
 				86BDB49B175853E100D85F29 /* HZAvailability.m in Sources */,
@@ -2633,7 +2634,6 @@
 				50B46B1218F862DA005155B8 /* HZALSdk.m in Sources */,
 				99D4C4241B38878C004D24DE /* HZVASTXMLUtil.m in Sources */,
 				50A10DE71AE9BABF00001C4C /* HZMediationRequestSerializer.m in Sources */,
-				99D4C4321B388FD3004D24DE /* HZSKReachability.m in Sources */,
 				86234AAA18568EEA0071957B /* HZVideoView.m in Sources */,
 				50B46B1E18F88C6B005155B8 /* HZALAd.m in Sources */,
 				509E8D3F19B7F15300ABF2D2 /* HZCrossPromoAdapter.m in Sources */,
