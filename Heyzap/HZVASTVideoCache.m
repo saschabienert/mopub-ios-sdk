@@ -1,5 +1,5 @@
 //
-//  HZVASTVideoCacher.m
+//  HZVASTVideoCache.m
 //  Heyzap
 //
 //  Created by Monroe Ekilah on 6/24/15.

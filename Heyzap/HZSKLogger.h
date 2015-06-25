@@ -8,21 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-//typedef enum {
-//    HZSourceKitLogLevelNone,
-//    HZSourceKitLogLevelError,
-//    HZSourceKitLogLevelWarning,
-//    HZSourceKitLogLevelInfo,
-//    HZSourceKitLogLevelDebug,
-//} HZSourceKitLogLevel;
-
-// A simple logger enable you to see different levels of logging.
-// Use logLevel as a filter to see the messages for the specific level.
-//
 @interface HZSKLogger : NSObject
-
-// Method to filter logging with the level passed as the paramter
-//+ (void)setLogLevel:(HZSourceKitLogLevel)logLevel;
 
 + (void)error:(NSString *)tag withMessage:(NSString *)message;
 + (void)warning:(NSString *)tag withMessage:(NSString *)message;

@@ -14,7 +14,6 @@ BOOL validateXMLDocSyntax(NSData *document);                         // check fo
 BOOL validateXMLDocAgainstSchema(NSData *document, NSData *schema);  // check for valid VAST 2.0 syntax using xmlSchemaValidateDoc & vast_2.0.1.xsd schema
 NSArray *performXMLXPathQuery(NSData *document, NSString *query);    // parse the document for the xpath in 'query' using xmlXPathEvalExpression
 
-/* The below declarations added by Monroe to avoid 'no previous prototype' errors*/
 void documentParserErrorCallback(void *ctx, const char *msg, ...);
 void schemaParserErrorCallback(void *ctx, const char *msg, ...);
 void schemaParserWarningCallback(void *ctx, const char *msg, ...);
@@ -22,4 +21,3 @@ void schemaValidationErrorCallback(void *ctx, const char *msg, ...);
 void schemaValidationWarningCallback(void *ctx, const char *msg, ...);
 NSDictionary *dictionaryForNode(xmlNodePtr currentNode, NSMutableDictionary *parentResult);
 NSArray *performXPathQuery(xmlDocPtr doc, NSString *query);
-/* The above declarations added by Monroe*/

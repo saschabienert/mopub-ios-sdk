@@ -374,18 +374,6 @@ typedef enum {
     }
 }
 
-//- (void)pause
-//{
-//    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"pause"];
-//    [self handlePauseState];
-//}
-//
-//- (void)resume
-//{
-//    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"resume"];
-//    [self handleResumeState];
-//}
-
 - (void)close
 {
     @synchronized (self) {
@@ -439,6 +427,7 @@ typedef enum {
     [self.eventProcessor trackEvent:VASTEventTrackStart];
 }
 
+// not used right now, but could be in the future if there's a reason to pause
 - (void)handlePauseState
 {
     @synchronized (self) {
@@ -456,14 +445,13 @@ typedef enum {
 {
     @synchronized (self) {
         if (hasPlayerStarted) {
-            // resuming from background or phone call, so resume if was playing, stay paused if manually paused by inspecting controls state
-                [HZSKLogger debug:@"VAST - View Controller" withMessage:@"handleResumeState, resuming player"];
-                [self.videoView play];
-                isPlaying = YES;
-                [self.eventProcessor trackEvent:VASTEventTrackResume];
-                [self startPlaybackTimer];
+            [HZSKLogger debug:@"VAST - View Controller" withMessage:@"handleResumeState, resuming player"];
+            [self.videoView play];
+            isPlaying = YES;
+            [self.eventProcessor trackEvent:VASTEventTrackResume];
+            [self startPlaybackTimer];
         } else {
-            [self showAndPlayVideo];   // Edge case: loadState is playable but not playThroughOK and had resignedActive, so play immediately on resume
+            [self showAndPlayVideo]; // resume is called when the view loads the first time.
         }
     }
 }
