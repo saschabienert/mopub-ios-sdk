@@ -824,52 +824,52 @@ const CGFloat kLeftMargin = 10;
 }
 
 # pragma mark - VAST
-BOOL pressed = NO;
 - (void)vastButtonPressed:(id)sender {
-    if(pressed){
-        [self.vastVC play];
-        pressed = false;
-        return;
-    }
-    self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate: self withViewController:self];
+    self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate: self forAdType:HZAdTypeVideo];
     [HZLog setDebugLevel:HZDebugLevelVerbose];
     NSURL* url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_doubleclick_inline_comp.xml"];
     //url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/simple_tracking.xml"];//intel ad
     //url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_missing_mediafile.xml"];//erroroneous xml
     //url = [NSURL URLWithString:@"http://ads.mdotm.com/ads/feed.php?partnerkey=heyzap&apikey=heyzapmediation&appkey=4cd119700fff11605d38f197ae5435dc&ua=SampleApp%202.1.3%20(iPhone;%20iPhone%20OS%208.1.1;%20it_IT)&width=320&height=480&fmt=xhtml&v=3.4.0&test=0&deviceid=&aid=3305397B-FB19-4812-86F3-AEC2367C2CE5&ate=1&machine=iPhone4,1%208.1.1&vidsupport=2&clientip=198.228.200.41"];//mdotm
+    url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/mdotm_vast.xml"];//mdotm hosted
     [self.vastVC loadVideoWithURL:url];
-    pressed = true;
 }
 
 // sent when the video is ready to play - required
 - (void)vastReady:(HZSKVASTViewController *)vastVC {
     NSLog(@"vastReady");
-    //[vastVC play];
+    [self logToConsole:@"vastReady"];
+    [vastVC play];
 }
 
-// sent when any VASTError occurs - optional
+// sent when any VASTError occurs
 - (void)vastError:(HZSKVASTViewController *)vastVC error:(HZSKVASTError)error{
     NSLog(@"vastError: %u", error);
+    [self logToConsole:[NSString stringWithFormat:@"vastError: %u", error]];
 }
 
-// These optional callbacks are for basic presentation, dismissal, and calling video clickthrough url browser.
+// Sent when VAST will show a video.
 - (void)vastWillPresentFullScreen:(HZSKVASTViewController *)vastVC {
      NSLog(@"vastWillPresentFullScreen");
+    [self logToConsole:@"vastWillPresentFullScreen"];
 }
 
-// These optional callbacks are for basic presentation, dismissal, and calling video clickthrough url browser.
+// Sent when VAST dismissed a video
 - (void)vastDidDismissFullScreen:(HZSKVASTViewController *)vastVC {
      NSLog(@"vastDidDismissFullScreen");
+    [self logToConsole:@"vastDidDismissFullScreen"];
 }
 
-// These optional callbacks are for basic presentation, dismissal, and calling video clickthrough url browser.
+// Sent when VAST detected a valid click on a video. `url` is the URL meant to be opened with the user's click
 - (void)vastOpenBrowseWithUrl:(NSURL *)url {
      NSLog(@"vastOpenBrowseWithUrl: %@", url);
+    [self logToConsole:@"vastOpenBrowseWithUrl: %@"];
 }
 
-// These optional callbacks are for basic presentation, dismissal, and calling video clickthrough url browser.
+// Sent when VAST tracks an event (see HZSKVASTEventProcessor)
 - (void)vastTrackingEvent:(NSString *)eventName {
     NSLog(@"vastTrackingEvent: %@", eventName);
+    [self logToConsole:[NSString stringWithFormat:@"vastTrackingEvent: %@", eventName]];
 }
 
 @end

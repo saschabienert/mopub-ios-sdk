@@ -11,7 +11,7 @@
 #import "HZVASTSettings.h"
 #import "HZSKLogger.h"
 #import "HZSKVAST2Parser.h"
-#import "HZHZSKVASTModel.h"
+#import "HZSKVASTModel.h"
 #import "HZSKVASTEventProcessor.h"
 #import "HZSKVASTUrlWithId.h"
 #import "HZSKVASTMediaFile.h"
@@ -20,9 +20,6 @@
 
 #import "HZVideoView.h"
 #import "HZDevice.h"
-
-#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 
 static const NSString* kPlaybackFinishedUserInfoErrorKey=@"error";
 
@@ -50,8 +47,9 @@ typedef enum {
     BOOL isLoadCalled;
     BOOL vastReady;
     BOOL statusBarHiddenOutsideOfVAST;
+    BOOL hasReportedEngagedView;
+    BOOL didFinish;
     CurrentVASTQuartile currentQuartile;
-    UIViewController *presentingViewController;
     
     HZSKReachability *reachabilityForVAST;
     NetworkReachable networkReachableBlock;
@@ -61,6 +59,7 @@ typedef enum {
 @property(nonatomic, strong) HZSKVASTEventProcessor *eventProcessor;
 
 @property(nonatomic, strong) HZVideoView *videoView;
+@property(nonatomic, strong) HZVASTVideoSettings *videoSettings;
 
 @end
 
@@ -68,28 +67,20 @@ typedef enum {
 
 #pragma mark - Init & dealloc
 
-- (id)init
-{
-    return [self initWithDelegate:nil withViewController:nil];
-}
-
 // designated initializer
-- (id)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate withViewController:(UIViewController *)viewController
+- (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forAdType:(HZAdType)adType
 {
     self = [super init];
     if (self) {
+        _adType = adType;
         _delegate = delegate;
-        presentingViewController = viewController;
         currentQuartile=VASTFirstQuartile;
+        hasReportedEngagedView = NO;
+        didFinish = false;
         
         _videoView = [[HZVideoView alloc] initWithFrame:CGRectZero];
         _videoView.actionDelegate = self;
         _videoView.player.shouldAutoplay = NO;
-        
-        //TODO: hook up with some other logic later
-        [_videoView setSkipButton: YES];
-        [_videoView setHideButton: NO];
-        [_videoView setSkipButtonTimeInterval: 5.0];
     }
     return self;
 }
@@ -126,7 +117,7 @@ typedef enum {
     }
     isLoadCalled = YES;
 
-    void (^parserCompletionBlock)(HZHZSKVASTModel *vastModel, HZSKVASTError vastError) = ^(HZHZSKVASTModel *vastModel, HZSKVASTError vastError) {
+    void (^parserCompletionBlock)(HZSKVASTModel *vastModel, HZSKVASTError vastError) = ^(HZSKVASTModel *vastModel, HZSKVASTError vastError) {
         [HZSKLogger debug:@"VAST - View Controller" withMessage:@"back from block in loadVideoFromData"];
         
         if (!vastModel) {
@@ -144,6 +135,20 @@ typedef enum {
         self->clickTracking = [vastModel clickTracking];
         self->mediaFileURL = [HZSKVASTMediaFilePicker pick:[vastModel mediaFiles]].url;
         
+        NSNumber * skipOffsetSeconds = [vastModel skipOffsetSeconds];
+        if(!skipOffsetSeconds) {
+            //error parsing - leave skip seconds as default of 0
+            skipOffsetSeconds = @(0);
+            [HZSKLogger error:@"VAST - View Controller" withMessage:@"skipOffsetSeconds could not be parsed. Default left alone."];
+        } else {
+            [HZSKLogger debug:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"skipOffsetSeconds read as: %@", skipOffsetSeconds]];
+        }
+        
+        self.videoSettings = [[HZVASTVideoSettings alloc] initForAdType:self.adType skipOffset:skipOffsetSeconds];
+        [self.videoView setSkipButton: self.videoSettings.allowSkip];
+        [self.videoView setHideButton: self.videoSettings.allowHide];
+        [self.videoView setSkipButtonTimeInterval: [self.videoSettings.skipOffsetSeconds doubleValue]];
+        
         if(!self->mediaFileURL) {
             [HZSKLogger error:@"VAST - View Controller" withMessage:@"Error - VASTMediaFilePicker did not find a compatible mediaFile - VASTViewcontroller will not be presented"];
             if ([self.delegate respondsToSelector:@selector(vastError:error:)]) {
@@ -156,7 +161,9 @@ typedef enum {
             return;
         }
         
-        [self.videoView setVideoURL:self->mediaFileURL];
+        //setting the url here causes prepareToPlay to be called. doing this before the frame of the player is set causes some autolayout warnings
+        //instead, it's called in showAndPlayVideo
+        //[self.videoView setVideoURL:self->mediaFileURL];
         
         // VAST document parsing OK, player ready to attempt play, so send vastReady
         [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending vastReady: callback"];
@@ -268,6 +275,12 @@ typedef enum {
         return;
     }
     
+    //engaged view is defined as at least 30 seconds watched or completed, whichever comes first (completed is handled later)
+    if(!hasReportedEngagedView && playedSeconds >= 30) {
+        hasReportedEngagedView = YES;
+        [self.eventProcessor trackEvent:VASTEventTrackEngagedView];
+    }
+    
    	currentPlayedPercentage = (float)100.0*(playedSeconds/self.videoView.player.duration);
     
     switch (currentQuartile) {
@@ -363,9 +376,12 @@ typedef enum {
 {
     @synchronized (self) {
         [self killTimers];
-        [self.videoView.player stop];
         [self.videoView removeFromSuperview];
         self.videoView = nil;
+        
+        if(!didFinish) {
+            [self.eventProcessor trackEvent:VASTEventTrackSkip];
+        }
         
         if (isViewOnScreen) {
             // send close any time the player has been dismissed
@@ -393,7 +409,7 @@ typedef enum {
     
     self.videoView.frame=self.view.bounds;
     [self.view addSubview:self.videoView];
-    
+    [self.videoView setVideoURL:self->mediaFileURL];
     [self.videoView play];
     
     hasPlayerStarted=YES;
@@ -440,55 +456,50 @@ typedef enum {
         [self.delegate vastWillPresentFullScreen:self];
     }
     
-    if ([presentingViewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-        // used if running >= iOS 6
-        [presentingViewController presentViewController:self animated:NO completion:nil];
-    } else {
-        // Turn off the warning about using a deprecated method.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [presentingViewController presentModalViewController:self animated:NO];
-#pragma clang diagnostic pop
-    }
+    [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:self animated:NO completion:nil];
 }
 
 
 #pragma mark - HZAdPopupActionDelegate methods
 
 - (void) onActionHide: (id) sender {
-    NSLog(@"monroedebug: vast vc onActionHide");
     [self close];
 }
 
 - (void) onActionShow: (id) sender {
-     NSLog(@"monroedebug: vast vc onActionShow");
 }
 
 - (void) onActionReady: (id) sender {
-    NSLog(@"monroedebug: vast vc onActionReady");
     //[self showAndPlayVideo];
 }
 
 - (void) onActionClick: (id) sender withURL: (NSURL *) url {
-    NSLog(@"monroedebug: vast vc onActionClick");
-    if (clickTracking) {
-        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending clickTracking requests"];
-        [self.eventProcessor sendVASTUrlsWithId:clickTracking];
-    }
-    if ([self.delegate respondsToSelector:@selector(vastOpenBrowseWithUrl:)]) {
-        [self.delegate vastOpenBrowseWithUrl:self.clickThrough];
+    if(self.videoSettings.allowClick) {
+        if (clickTracking) {
+            [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending clickTracking requests"];
+            [self.eventProcessor sendVASTUrlsWithId:clickTracking];
+        }
+        if ([self.delegate respondsToSelector:@selector(vastOpenBrowseWithUrl:)]) {
+            [self.delegate vastOpenBrowseWithUrl:self.clickThrough];
+        }
     }
 }
 
 - (void) onActionCompleted: (id) sender {
-    NSLog(@"monroedebug: vast vc onActionCompleted");
     [self.eventProcessor trackEvent:VASTEventTrackComplete];
+    didFinish = YES;
+    
+    //engaged view is defined as at least 30 seconds watched or completed, whichever comes first
+    if(!hasReportedEngagedView) {
+        hasReportedEngagedView = YES;
+        [self.eventProcessor trackEvent:VASTEventTrackEngagedView];
+    }
+    
     [self updatePlayedSeconds];
     [self close];
 }
 
 - (void) onActionError: (id) sender {
-    NSLog(@"monroedebug: vast vc onActionError");
     [HZSKLogger error:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"playback error"]];
     if ([self.delegate respondsToSelector:@selector(vastError:error:)]) {
         [self.delegate vastError:self error:VASTErrorPlaybackError];
@@ -501,13 +512,9 @@ typedef enum {
     [self close];
 }
 
-- (void) onActionRestart: (id) sender {
-    NSLog(@"monroedebug: vast vc onActionRestart");
-}
+- (void) onActionRestart: (id) sender { }
 
-- (void) onActionInstallHeyzap: (id) sender {
-    NSLog(@"monroedebug: vast vc onActionInstallHeyzap");
-}
+- (void) onActionInstallHeyzap: (id) sender { }
 
 #pragma mark - Utility
 
@@ -518,6 +525,38 @@ typedef enum {
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: keyWindow] & UIInterfaceOrientationMaskLandscape;
     }
+}
+
+@end
+
+@implementation HZVASTVideoSettings
+
+- (instancetype) initForAdType:(HZAdType)adType skipOffset:(NSNumber *)skipOffsetSeconds {
+    self = [super init];
+    if(self) {
+        // defaults
+        _allowClick = YES;
+        _allowHide = NO;
+        _allowSkip = YES;
+        _skipOffsetSeconds = skipOffsetSeconds;
+        
+        if(adType == HZAdTypeIncentivized) {
+            _allowSkip = NO;
+            _allowHide = NO;
+            _skipOffsetSeconds = 0;
+        } else if(adType == HZAdTypeVideo) {
+            if(skipOffsetSeconds && [skipOffsetSeconds longValue] > 0){
+                _allowSkip = YES;
+                _allowHide = NO;
+            }else{
+                _allowSkip = NO;
+                _allowHide = YES;
+                _skipOffsetSeconds = 0;
+            }
+        }
+    }
+    
+    return self;
 }
 
 @end

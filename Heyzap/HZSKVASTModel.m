@@ -6,13 +6,13 @@
 //  Copyright (c) 2013 Nexage. All rights reserved.
 //
 
-#import "HZHZSKVASTModel.h"
+#import "HZSKVASTModel.h"
 #import "HZSKVASTUrlWithId.h"
 #import "HZSKVASTMediaFile.h"
 #import "HZVASTXMLUtil.h"
 #import "HZSKLogger.h"
 
-@interface HZHZSKVASTModel ()
+@interface HZSKVASTModel ()
 {
     NSMutableArray *vastDocumentArray;
 }
@@ -25,7 +25,7 @@
 
 @end
 
-@implementation HZHZSKVASTModel
+@implementation HZSKVASTModel
 
 #pragma mark - "private" method
 
@@ -200,7 +200,75 @@
     return mediaFileArray;
 }
 
+// returns nil if unsuccessful, otherwise a NSNumber (double) value for how long before a skip button should be presented
+- (NSNumber *) skipOffsetSeconds {
+    // sanity check
+    if ([vastDocumentArray count] == 0) {
+        return nil;
+    }
+    
+    NSString *skipOffsetRaw = nil;
+    NSString *query = @"//Linear/@skipoffset";
+    NSArray *results = performXMLXPathQuery(vastDocumentArray[0], query);
+    if ([results count] > 0) {
+        NSDictionary *attribute = results[0];
+        skipOffsetRaw = attribute[@"nodeContent"];
+    }else{
+        return nil;
+    }
+    
+    // use duration to calculate seconds
+    NSNumber *duration = [self durationInSeconds];
+    if(!duration) {
+        return nil;
+    }
+    long durationLong = [duration longValue];
+    
+    // XML validation guarantees either a 1-3 digit number % or HH:MM:SS for this field
+    if([skipOffsetRaw containsString:@"%"]) {
+        //process \d{1,3}%
+        int percentageInt = [[skipOffsetRaw stringByReplacingOccurrencesOfString:@"%" withString:@""] intValue];
+
+        //ensure that duration >= skipOffset
+        return [NSNumber numberWithDouble:MIN((durationLong * percentageInt / 100.0), durationLong)];
+    } else {
+        long skipTime = [[self secondsFromHHMMSS:skipOffsetRaw] longValue];
+        //ensure that duration >= skipOffset
+        return [NSNumber numberWithLong:MIN(skipTime, durationLong)];
+    }
+}
+
+- (NSNumber *) durationInSeconds{
+    NSString *duration = nil;
+    NSString *query = @"//Creative//Duration";
+    NSArray *results = performXMLXPathQuery(vastDocumentArray[0], query);
+    
+    if ([results count] > 0) {
+        NSDictionary *attribute = results[0];
+        duration = attribute[@"nodeContent"];
+    } else {
+        return nil;
+    }
+    
+    if(!duration) {
+        return nil;
+    }
+    
+    return [self secondsFromHHMMSS:duration];
+}
+
 #pragma mark - helper methods
+
+- (NSNumber *) secondsFromHHMMSS:(NSString *) str {
+    //process HH:MM:SS
+    NSArray *components = [str componentsSeparatedByString:@":"];
+    
+    NSInteger hours   = [[components objectAtIndex:0] integerValue];
+    NSInteger minutes = [[components objectAtIndex:1] integerValue];
+    NSInteger seconds = [[components objectAtIndex:2] integerValue];
+    
+    return [NSNumber numberWithInteger:(hours * 60 * 60) + (minutes * 60) + seconds];
+}
 
 - (NSArray *)resultsForQuery:(NSString *)query
 {

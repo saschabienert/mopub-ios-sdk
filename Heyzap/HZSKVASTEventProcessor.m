@@ -108,7 +108,7 @@
             
             for (NSURL *aURL in (self.trackingEvents)[@"pause"]) {
                 [self sendTrackingRequest:aURL];
-                [HZSKLogger debug:@"VAST - Event Processor" withMessage:[NSString stringWithFormat:@"Sent pause start to url: %@", [aURL absoluteString]]];
+                [HZSKLogger debug:@"VAST - Event Processor" withMessage:[NSString stringWithFormat:@"Sent pause to url: %@", [aURL absoluteString]]];
             }
             break;
             
@@ -119,8 +119,32 @@
             
             for (NSURL *aURL in (self.trackingEvents)[@"resume"]) {
                 [self sendTrackingRequest:aURL];
-                [HZSKLogger debug:@"VAST - Event Processor" withMessage:[NSString stringWithFormat:@"Sent resume start to url: %@", [aURL absoluteString]]];
+                [HZSKLogger debug:@"VAST - Event Processor" withMessage:[NSString stringWithFormat:@"Sent resume to url: %@", [aURL absoluteString]]];
             }
+            break;
+            
+        case VASTEventTrackEngagedView:
+            if ([self.delegate respondsToSelector:@selector(vastTrackingEvent:)]) {
+                [self.delegate vastTrackingEvent:@"engagedView"];
+            }
+            
+            for (NSURL *aURL in (self.trackingEvents)[@"engagedView"]) {
+                [self sendTrackingRequest:aURL];
+                [HZSKLogger debug:@"VAST - Event Processor" withMessage:[NSString stringWithFormat:@"Sent engagedView to url: %@", [aURL absoluteString]]];
+            }
+
+            break;
+            
+        case VASTEventTrackSkip:
+            if ([self.delegate respondsToSelector:@selector(vastTrackingEvent:)]) {
+                [self.delegate vastTrackingEvent:@"skip"];
+            }
+            
+            for (NSURL *aURL in (self.trackingEvents)[@"skip"]) {
+                [self sendTrackingRequest:aURL];
+                [HZSKLogger debug:@"VAST - Event Processor" withMessage:[NSString stringWithFormat:@"Sent skip to url: %@", [aURL absoluteString]]];
+            }
+            
             break;
             
         default:

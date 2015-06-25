@@ -391,8 +391,8 @@
 		99D4C4241B38878C004D24DE /* HZVASTXMLUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C40C1B38878C004D24DE /* HZVASTXMLUtil.m */; };
 		99D4C4321B388FD3004D24DE /* HZSKReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C4311B388FD3004D24DE /* HZSKReachability.m */; };
 		99D4C4341B388FF7004D24DE /* HZSKLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C4331B388FF7004D24DE /* HZSKLogger.m */; };
-		99D4C4371B38906F004D24DE /* HZHZSKVASTModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C4351B38906F004D24DE /* HZHZSKVASTModel.h */; };
-		99D4C4381B38906F004D24DE /* HZHZSKVASTModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C4361B38906F004D24DE /* HZHZSKVASTModel.m */; };
+		99D4C4371B38906F004D24DE /* HZSKVASTModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C4351B38906F004D24DE /* HZSKVASTModel.h */; };
+		99D4C4381B38906F004D24DE /* HZSKVASTModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C4361B38906F004D24DE /* HZSKVASTModel.m */; };
 		99D4C43B1B38908C004D24DE /* HZSKVASTMediaFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C4391B38908C004D24DE /* HZSKVASTMediaFile.h */; };
 		99D4C43C1B38908C004D24DE /* HZSKVASTMediaFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C43A1B38908C004D24DE /* HZSKVASTMediaFile.m */; };
 		99D4C43F1B389097004D24DE /* HZSKVASTUrlWithId.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C43D1B389097004D24DE /* HZSKVASTUrlWithId.h */; };
@@ -805,8 +805,8 @@
 		99D4C40C1B38878C004D24DE /* HZVASTXMLUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVASTXMLUtil.m; sourceTree = "<group>"; };
 		99D4C4311B388FD3004D24DE /* HZSKReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKReachability.m; sourceTree = "<group>"; };
 		99D4C4331B388FF7004D24DE /* HZSKLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKLogger.m; sourceTree = "<group>"; };
-		99D4C4351B38906F004D24DE /* HZHZSKVASTModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHZSKVASTModel.h; sourceTree = "<group>"; };
-		99D4C4361B38906F004D24DE /* HZHZSKVASTModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHZSKVASTModel.m; sourceTree = "<group>"; };
+		99D4C4351B38906F004D24DE /* HZSKVASTModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKVASTModel.h; sourceTree = "<group>"; };
+		99D4C4361B38906F004D24DE /* HZSKVASTModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKVASTModel.m; sourceTree = "<group>"; };
 		99D4C4391B38908C004D24DE /* HZSKVASTMediaFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKVASTMediaFile.h; sourceTree = "<group>"; };
 		99D4C43A1B38908C004D24DE /* HZSKVASTMediaFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKVASTMediaFile.m; sourceTree = "<group>"; };
 		99D4C43D1B389097004D24DE /* HZSKVASTUrlWithId.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKVASTUrlWithId.h; sourceTree = "<group>"; };
@@ -1888,8 +1888,8 @@
 				99D4C43E1B389097004D24DE /* HZSKVASTUrlWithId.m */,
 				99D4C4391B38908C004D24DE /* HZSKVASTMediaFile.h */,
 				99D4C43A1B38908C004D24DE /* HZSKVASTMediaFile.m */,
-				99D4C4351B38906F004D24DE /* HZHZSKVASTModel.h */,
-				99D4C4361B38906F004D24DE /* HZHZSKVASTModel.m */,
+				99D4C4351B38906F004D24DE /* HZSKVASTModel.h */,
+				99D4C4361B38906F004D24DE /* HZSKVASTModel.m */,
 			);
 			name = model;
 			sourceTree = "<group>";
@@ -1969,7 +1969,7 @@
 				507A454D19BE318200C7AEEA /* HZNativeAd.h in Headers */,
 				507A455119BE4E5100C7AEEA /* HZNativeAdCollection.h in Headers */,
 				507A454819BE29CC00C7AEEA /* HZNativeAdController.h in Headers */,
-				99D4C4371B38906F004D24DE /* HZHZSKVASTModel.h in Headers */,
+				99D4C4371B38906F004D24DE /* HZSKVASTModel.h in Headers */,
 				50CAB1A11AE9757800F9642D /* HZAFNetworkReachabilityManager.h in Headers */,
 				50A10DE11AE9A3B500001C4C /* HZAdsRequestSerializer.h in Headers */,
 				507A456219BE95B000C7AEEA /* HZStorePresenter.h in Headers */,
@@ -2645,7 +2645,7 @@
 				509E8D4719B91B7000ABF2D2 /* HZAbstractHeyzapAdapter.m in Sources */,
 				50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */,
 				99D4C41D1B38878C004D24DE /* HZSKVASTMediaFilePicker.m in Sources */,
-				99D4C4381B38906F004D24DE /* HZHZSKVASTModel.m in Sources */,
+				99D4C4381B38906F004D24DE /* HZSKVASTModel.m in Sources */,
 				50608AD11AF9650D00CFB9F6 /* HZMediationStarter.m in Sources */,
 				50CAB1961AE9752E00F9642D /* HZAFHTTPRequestOperation.m in Sources */,
 				500F88E518E203A500E5D6F8 /* HZClassProxy.m in Sources */,

@@ -8,14 +8,14 @@
 
 #import "HZSKVAST2Parser.h"
 #import "HZVASTXMLUtil.h"
-#import "HZHZSKVASTModel.h"
+#import "HZSKVASTModel.h"
 #import "HZVASTSchema.h"
 #import "HZVASTSettings.h"
 #import "HZSKLogger.h"
 
 @interface HZSKVAST2Parser ()
 {
-    HZHZSKVASTModel *vastModel;
+    HZSKVASTModel *vastModel;
 }
 
 - (HZSKVASTError)parseRecursivelyWithData:(NSData *)vastData depth:(int)depth;
@@ -28,14 +28,14 @@
 {
     self = [super init];
     if (self) {
-        vastModel = [[HZHZSKVASTModel alloc] init];
+        vastModel = [[HZSKVASTModel alloc] init];
     }
     return self;
 }
 
 #pragma mark - "public" methods
 
-- (void)parseWithUrl:(NSURL *)url completion:(void (^)(HZHZSKVASTModel *, HZSKVASTError))block
+- (void)parseWithUrl:(NSURL *)url completion:(void (^)(HZSKVASTModel *, HZSKVASTError))block
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSData *vastData = [NSData dataWithContentsOfURL:url];
@@ -46,7 +46,7 @@
     });
 }
 
-- (void)parseWithData:(NSData *)vastData completion:(void (^)(HZHZSKVASTModel *, HZSKVASTError))block
+- (void)parseWithData:(NSData *)vastData completion:(void (^)(HZSKVASTModel *, HZSKVASTError))block
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         HZSKVASTError vastError = [self parseRecursivelyWithData:vastData depth:0];

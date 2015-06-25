@@ -22,6 +22,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import "HZSKVASTError.h"
+#import "HZAdType.h"
 
 @class HZSKVASTViewController;
 
@@ -47,12 +48,21 @@
 
 @property (nonatomic, unsafe_unretained) id<HZSKVASTViewControllerDelegate>delegate;
 @property (nonatomic, strong) NSURL *clickThrough;
+@property (nonatomic) HZAdType adType;
 
-- (id)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate withViewController:(UIViewController *)viewController;  // designated initializer for VASTViewController
+- (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forAdType:(HZAdType)adType; // designated initializer for VASTViewController
 
 - (void)loadVideoWithURL:(NSURL *)url;            // load and prepare to play a VAST video from a URL
 - (void)loadVideoWithData:(NSData *)xmlContent;   // load and prepare to play a VAST video from existing XML data
 
 - (void)play;// command to play the video, this is only valid after receiving the vastReady: callback (which will be called after a loadVideo...: call)
 
+@end
+
+@interface HZVASTVideoSettings : NSObject
+@property (nonatomic) BOOL allowHide;
+@property (nonatomic) BOOL allowClick;
+@property (nonatomic) BOOL allowSkip;
+@property (nonatomic) NSNumber *skipOffsetSeconds;
+- (instancetype) initForAdType:(HZAdType)adType skipOffset:(NSNumber *)skipOffsetSeconds;
 @end

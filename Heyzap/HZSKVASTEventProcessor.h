@@ -18,7 +18,9 @@ typedef enum {
     VASTEventTrackComplete,
     VASTEventTrackClose,
     VASTEventTrackPause,
-    VASTEventTrackResume
+    VASTEventTrackResume,
+    VASTEventTrackSkip, //added for mdotm - sent when ad is skipped
+    VASTEventTrackEngagedView //added for mdotm - sent when view lasts at least 30sec (or completes, if shorter than 30sec)
 } HZSKVASTEvent;
 
 @interface HZSKVASTEventProcessor : NSObject

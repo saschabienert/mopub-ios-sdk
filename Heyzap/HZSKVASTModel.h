@@ -11,7 +11,7 @@
 
 @class HZSKVASTUrlWithId;
 
-@interface HZHZSKVASTModel : NSObject
+@interface HZSKVASTModel : NSObject
 
 // returns the version of the VAST document 
 - (NSString *)vastVersion;
@@ -34,5 +34,7 @@
 
 // returns an array of VASTMediaFile objects
 - (NSArray *)mediaFiles;
+
+- (NSNumber *) skipOffsetSeconds;
 
 @end

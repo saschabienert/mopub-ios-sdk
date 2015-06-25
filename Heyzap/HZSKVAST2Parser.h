@@ -10,11 +10,11 @@
 #import <Foundation/Foundation.h>
 #import "HZSKVASTError.h"
 
-@class HZHZSKVASTModel;
+@class HZSKVASTModel;
 
 @interface HZSKVAST2Parser : NSObject
 
-- (void)parseWithUrl:(NSURL *)url completion:(void (^)(HZHZSKVASTModel *, HZSKVASTError))block;
-- (void)parseWithData:(NSData *)vastData completion:(void (^)(HZHZSKVASTModel *, HZSKVASTError))block;;
+- (void)parseWithUrl:(NSURL *)url completion:(void (^)(HZSKVASTModel *, HZSKVASTError))block;
+- (void)parseWithData:(NSData *)vastData completion:(void (^)(HZSKVASTModel *, HZSKVASTError))block;;
 
 @end
