@@ -242,4 +242,12 @@ extern "C" {
     void hz_resume_expensive_work(void) {
         [HeyzapAds resumeExpensiveWork];
     }
+
+    void hz_ads_show_debug_logs(void) {
+        [HeyzapAds setDebugLevel:HZDebugLevelVerbose];
+    }
+    
+    void hz_ads_hide_debug_logs(void) {
+        [HeyzapAds setDebugLevel:HZDebugLevelSilent];
+    }
 }
