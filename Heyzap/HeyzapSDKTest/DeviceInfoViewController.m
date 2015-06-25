@@ -53,7 +53,7 @@
     
     UILabel *appBundleID = [self deviceInformationLabelWithFrameY: CGRectGetMaxY(emailButton.frame)+5
                                                           keyText: @"Bundle ID"
-                                                        valueText: [[NSBundle mainBundle] bundleIdentifier]];
+                                                        valueText: [[HZDevice currentDevice] bundleIdentifier]];
     [self.scrollView addSubview: appBundleID];
     
     

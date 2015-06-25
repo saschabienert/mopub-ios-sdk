@@ -252,6 +252,20 @@ extern NSString * const HZRemoteDataRefreshedNotification;
 + (void) setOptions: (HZAdOptions)options;
 + (void) setFramework: (NSString *) framework;
 + (void) setMediator: (NSString *) mediator;
+
+/**
+ *  Heyzap uses your app's bundle identifier to lookup your game in our database. By default, we lookup the bundle identifier from your Info.plist file.
+ *
+ *  If you need to use a different bundle identifier to identify your app than the one in the Info.plist file, you can call this method to override the bundle ID Heyzap uses. This supports use cases like having a different bundle ID in your Info.plist for production and development builds.
+ *
+ * You must call this method before starting the SDK.
+ *
+ *  @param bundleIdentifier The bundle identifier Heyzap should use to lookup your game in our database.
+ *
+ *  @exception NSInternalInconsistencyException is thrown if this method is called after starting the SDK.
+ *  @exception NSInternalInconsistencyException if bundleIdentifier is `nil`.
+ */
++ (void)setBundleIdentifier:(NSString *)bundleIdentifier;
 + (NSString *) defaultTagName;
 
 /**
