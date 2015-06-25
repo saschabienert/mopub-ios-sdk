@@ -21,11 +21,6 @@
 
 @interface HZBannerAdOptions()
 
-HZFBAdSize *hzlookupFBAdSizeConstant(NSString *constantName);
-HZFBAdSize *hzFBAdSize50(void);
-HZFBAdSize *hzFBAdSize90(void);
-HZFBAdSize *hzFBAdSize320x50(void);
-
 NSValue *hzAdMobBannerSizeValue(HZAdMobBannerSize size);
 NSValue *hzFacebookBannerSizeValue(HZFacebookBannerSize size);
 HZAdMobBannerSize hzAdMobBannerSizeFromValue(NSValue *value);
@@ -68,54 +63,16 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
     }
 }
 
-+ (BOOL)facebookBannerSizesAvailable {
-    // Constant loading isn't available in Adobe Air for some reason
-    // See `internalFacebookAdSize` for details
-    if ([HZAdsManager sharedManager].isAdobeAir) {
-        return YES;
-    } else {
-        return hzFBAdSize50() != NULL
-        && hzFBAdSize90() != NULL
-        && hzFBAdSize320x50() != NULL;
-    }
-}
-
-HZFBAdSize *hzFBAdSize50(void) {
-    return hzlookupFBAdSizeConstant(@"kFBAdSizeHeight50Banner");
-}
-
-HZFBAdSize *hzFBAdSize90(void) {
-    return hzlookupFBAdSizeConstant(@"kFBAdSizeHeight90Banner");
-}
-
-HZFBAdSize *hzFBAdSize320x50(void) {
-    return hzlookupFBAdSizeConstant(@"kFBAdSize320x50");
-}
-
-HZFBAdSize *hzlookupFBAdSizeConstant(NSString *const constantName) {
-    return CFBundleGetDataPointerForName(CFBundleGetMainBundle(), (__bridge CFStringRef)constantName);
-}
-
 - (HZFBAdSize)internalFacebookAdSize {
-    
     switch (self.facebookBannerSize) {
         case HZFacebookBannerSize320x50: {
-            return *hzFBAdSize320x50();
+            return (HZFBAdSize) { CGSizeMake(320, 50) };
         }
         case HZFacebookBannerSizeFlexibleWidthHeight50: {
-            // Constant loading isn't working in Adobe Air for the Facebook SDK for some reason
-            // For now I'm just hard-coding the values in the struct they use.
-            // It would be good to investigate further but we need to get the adobe air SDK out to Ketchapp
-            // (Also I imagine it being very difficult to debug this issue).
-            if ([HZAdsManager sharedManager].isAdobeAir) {
-                HZFBAdSize size = { CGSizeMake(-1, 50) };
-                return size;
-            } else {
-                return *hzFBAdSize50();
-            }
+            return (HZFBAdSize) { CGSizeMake(-1, 50) };
         }
         case HZFacebookBannerSizeFlexibleWidthHeight90: {
-            return *hzFBAdSize90();
+            return (HZFBAdSize) { CGSizeMake(-1, 90) };
         }
     }
 }

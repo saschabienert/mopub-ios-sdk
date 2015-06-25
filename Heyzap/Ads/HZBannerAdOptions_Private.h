@@ -13,7 +13,6 @@
 @interface HZBannerAdOptions()
 
 - (HZFBAdSize)internalFacebookAdSize;
-+ (BOOL)facebookBannerSizesAvailable;
 
 - (HZGADAdSize)internalAdMobSize;
 
