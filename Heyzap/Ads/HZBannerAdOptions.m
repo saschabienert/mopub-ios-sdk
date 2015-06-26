@@ -31,6 +31,9 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
 
 @end
 
+// Ignore deprecation warnings to allow us to use our own HZFacebookBannerSize320x50 constant.
+// TODO: Remove this after we remove HZFacebookBannerSize320x50.
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @implementation HZBannerAdOptions
 
 - (NSString *)tag {

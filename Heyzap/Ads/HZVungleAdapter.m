@@ -14,22 +14,6 @@
 #import "HZUtils.h"
 #import "HeyzapMediation.h"
 
-const NSString* HZVunglePlayAdOptionKeyIncentivized        = @"incentivized";
-const NSString* HZVunglePlayAdOptionKeyShowClose           = @"showClose";
-const NSString* HZVunglePlayAdOptionKeyOrientations        = @"orientations";
-const NSString* HZVunglePlayAdOptionKeyUser                = @"user";
-const NSString* HZVunglePlayAdOptionKeyPlacement           = @"placement";
-const NSString* HZVunglePlayAdOptionKeyExtraInfoDictionary = @"extraInfo";
-const NSString* HZVunglePlayAdOptionKeyExtra1              = @"extra1";
-const NSString* HZVunglePlayAdOptionKeyExtra2              = @"extra2";
-const NSString* HZVunglePlayAdOptionKeyExtra3              = @"extra3";
-const NSString* HZVunglePlayAdOptionKeyExtra4              = @"extra4";
-const NSString* HZVunglePlayAdOptionKeyExtra5              = @"extra5";
-const NSString* HZVunglePlayAdOptionKeyExtra6              = @"extra6";
-const NSString* HZVunglePlayAdOptionKeyExtra7              = @"extra7";
-const NSString* HZVunglePlayAdOptionKeyExtra8              = @"extra8";
-const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
-
 @interface HZVungleAdapter() <HZVungleSDKDelegate>
 
 /**
@@ -143,9 +127,10 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     
     if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
-        [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:@{HZVunglePlayAdOptionKeyIncentivized: @1}];
+        NSString *const incentivizedKey = [[self class] vunglePlayAdOptionKeyIncentivized];;
+        [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:@{incentivizedKey: @1}];
     } else {
-        [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:@{HZVunglePlayAdOptionKeyShowClose: @1}];
+        [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:@{}];
     }
 }
 
@@ -197,6 +182,10 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     } else {
         return [super conformsToProtocol:aProtocol];
     }
+}
+
++ (NSString *)vunglePlayAdOptionKeyIncentivized {
+    return hzLookupStringConstant(@"VunglePlayAdOptionKeyIncentivized") ?: @"incentivized";
 }
 
 @end

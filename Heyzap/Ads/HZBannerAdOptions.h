@@ -15,7 +15,7 @@ typedef NS_ENUM(NSUInteger, HZFacebookBannerSize) {
     /**
      *  A fixed size 320x50 pt banner. Corresponds to kFBAdSize320x50.
      */
-    HZFacebookBannerSize320x50,
+    HZFacebookBannerSize320x50 __attribute__((deprecated("Facebook has deprecated the 320x50 size."))),
     /**
      *  A banner 50 pts in height whose width expands to fill its containing view. Corresponds to kFBAdSizeHeight50Banner.
      *  **Default value** for Facebook banners.
