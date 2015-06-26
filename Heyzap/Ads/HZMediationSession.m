@@ -58,7 +58,7 @@ return nil; \
 } while (0)
 
 
-- (instancetype)initWithJSON:(NSDictionary *)json mediateParams:(NSDictionary *)mediateParams setupMediators:(NSSet *)setupMediators adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error
+- (instancetype)initWithJSON:(NSDictionary *)json mediateParams:(NSDictionary *)mediateParams potentialAdapters:(NSOrderedSet *)potentialAdapters adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error
 {
     HZParameterAssert(error != NULL);
     HZParameterAssert(mediateParams);
@@ -75,83 +75,14 @@ return nil; \
         _impressionID = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] dict:json error:error];
         CHECK_NOT_NIL(_impressionID);
         
-        _interstitialVideoIntervalMillis = [[HZDictionaryUtils hzObjectForKey:@"interstitial_video_interval" ofClass:[NSNumber class] default:@(30 * 1000) withDict:json] doubleValue];
-        
-        _interstitialVideoEnabled = [[HZDictionaryUtils hzObjectForKey:@"interstitial_video_enabled" ofClass:[NSNumber class] default:@1 withDict:json] boolValue];
-        
-        // Check error macro for impression ID being nil.
-        
-        NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:json error:error];
-        CHECK_NOT_NIL(networks);
-        // Check error macro for networks being nil/empty
-        
-        NSMutableOrderedSet *adapters = [NSMutableOrderedSet orderedSet];
-        for (NSDictionary *network in networks) {
-            NSString *networkName = network[@"network"];
-            Class adapter = [HZBaseAdapter adapterClassForName:networkName];
-            if (adapter
-                && [adapter isSDKAvailable]
-                && [setupMediators containsObject:[adapter sharedInstance]]
-                && [(HZBaseAdapter *)[adapter sharedInstance] supportsAdType:adType]) {
-                
-                HZBaseAdapter *instance = (HZBaseAdapter *)[adapter sharedInstance];
-                if (adType != HZAdTypeInterstitial || _interstitialVideoEnabled || !instance.isVideoOnlyNetwork) {
-                    [adapters addObject:[adapter sharedInstance]];
-                }
-            }
-        }
-        
-        self.chosenAdapters = adapters;
+        self.chosenAdapters = potentialAdapters;
         HZDLog(@"Available SDKs for this fetch (assuming no video rate limiting) are = %@",self.chosenAdapters);
     }
     return self;
 }
 
-- (HZBaseAdapter *)firstAdapterWithAd:(NSDate *const)lastInterstitialVideoShown
-{
-    
-    NSArray *preferredMediatorList = [[self availableAdapters:lastInterstitialVideoShown] array];
-    
-    const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        return [adapter hasAdForType:self.adType];
-    }];
-    
-    if (idx != NSNotFound) {
-        return preferredMediatorList[idx];
-    } else {
-        return nil;
-    }
-}
-
 - (NSString *) adUnit {
     return NSStringFromAdType(self.adType);
-}
-
-- (BOOL)withinInterval:(NSDate *const)lastInterstitialVideoShown {
-    if (!lastInterstitialVideoShown) {
-        return YES;
-    }
-    const NSTimeInterval secondsSinceLastInterstitial = [[NSDate date] timeIntervalSinceDate:lastInterstitialVideoShown];
-    return (secondsSinceLastInterstitial * 1000) > self.interstitialVideoIntervalMillis;
-}
-
-
-- (NSOrderedSet *)availableAdapters:(NSDate *const)lastInterstitialVideoShown {
-    if (!lastInterstitialVideoShown || self.adType != HZAdTypeInterstitial) {
-        return self.chosenAdapters;
-    }
-    
-    const BOOL withinInterval = [self withinInterval:lastInterstitialVideoShown];
-    
-    NSIndexSet *indexes = [self.chosenAdapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        return withinInterval || !adapter.isVideoOnlyNetwork;
-    }];
-    
-    return [NSOrderedSet orderedSetWithArray:[self.chosenAdapters objectsAtIndexes:indexes]];
-}
-
-- (BOOL)adapterIsRateLimited:(HZBaseAdapter *const)adapter lastInterstitialVideoShown:(NSDate *const)lastInterstitialVideoShown {
-    return self.adType == HZAdTypeInterstitial && adapter.isVideoOnlyNetwork && ![self withinInterval:lastInterstitialVideoShown];
 }
 
 #pragma mark - Reporting Events to the server

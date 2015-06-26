@@ -102,4 +102,44 @@ HZAdType hzAdTypeFromString(NSString *adUnit) {
     }
 }
 
+NSString * const hzCreativeTypeIncentivized = @"INCENTIVIZED";
+NSString * const hzCreativeTypeVideo = @"VIDEO";
+NSString * const hzCreativeTypeBanner = @"BANNER";
+NSString * const hzCreativeTypeInterstitial = @"STATIC";
+
+
+
+HZAdType hzAdTypeFromCreativeTypeString(NSString *adUnit) {
+    if ([adUnit isEqualToString:@"INCENTIVIZED"]) {
+        return HZAdTypeIncentivized;
+    } else if ([adUnit isEqualToString:@"VIDEO"]) {
+        return HZAdTypeVideo;
+    } else if ([adUnit isEqualToString:@"BANNER"]) {
+        return HZAdTypeBanner;
+    } else {
+        return HZAdTypeInterstitial;
+    }
+}
+
+BOOL hzCreativeTypeSetContainsAdType(NSSet *const creativeTypes, const HZAdType adType) {
+    switch (adType) {
+        case HZAdTypeIncentivized: {
+            return [creativeTypes containsObject:hzCreativeTypeIncentivized];
+            break;
+        }
+        case HZAdTypeVideo: {
+            return [creativeTypes containsObject:hzCreativeTypeVideo];
+            break;
+        }
+        case HZAdTypeBanner: {
+            return [creativeTypes containsObject:hzCreativeTypeBanner];
+            break;
+        }
+        case HZAdTypeInterstitial: {
+            return [creativeTypes containsObject:hzCreativeTypeInterstitial];
+            break;
+        }
+    }
+}
+
 @end

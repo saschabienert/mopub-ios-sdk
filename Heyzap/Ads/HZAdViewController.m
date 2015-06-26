@@ -89,14 +89,6 @@
     
     [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didHideAdWithTag: self.ad.tag];
     [HZAdsManager postNotificationName:kHeyzapDidHideAdNotification infoProvider:self.ad];
-    
-    
-    if ([self.ad.adUnit isEqualToString: @"interstitial"]) {
-        if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
-            // TODO: remove this; mediation should handle prefetching.
-            [HZIncentivizedAd fetch];
-        }
-    }
 }
 
 - (void) didClickHeyzapInstall {

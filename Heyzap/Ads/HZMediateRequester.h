@@ -8,10 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol HZMediateRequesterDelegate <NSObject>
+
+- (void)requesterUpdatedMediate;
+
+@end
+
 /**
  *  Object handling requests to mediate, including retrying and caching logic.
  */
 @interface HZMediateRequester : NSObject
+
+- (instancetype)initWithDelegate:(id<HZMediateRequesterDelegate>)delegate;
 
 @property (nonatomic, readonly) NSDictionary *latestMediate;
 @property (nonatomic, readonly) NSDictionary *latestMediateParams;

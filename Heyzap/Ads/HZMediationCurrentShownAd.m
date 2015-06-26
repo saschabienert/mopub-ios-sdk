@@ -10,14 +10,11 @@
 
 @implementation HZMediationCurrentShownAd
 
-- (instancetype)initWithSessionKey:(HZMediationSessionKey *)key session:(HZMediationSession *)session tag:(NSString *)tag adapter:(HZBaseAdapter *)adapter {
-    HZParameterAssert(key);
+- (instancetype)initWithSession:(HZMediationSession *)session tag:(NSString *)tag adapter:(HZBaseAdapter *)adapter {
     HZParameterAssert(session);
-//    HZParameterAssert(tag); // TODO: not sure about this
     HZParameterAssert(adapter);
     self = [super init];
     if (self) {
-        _key = key;
         _session = session;
         _tag = tag;
         _adapter = adapter;

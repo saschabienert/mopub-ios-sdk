@@ -200,8 +200,8 @@ NSString * const kHeyzapAdsCustomPublisherDataRefreshedNotification = @"kHeyzapA
 
 + (void)presentMediationDebugViewController {
     HZVersionCheck()
-
-    [HZTestActivityViewController show];
+    
+    [[HeyzapMediation sharedInstance] showTestActivity];
 }
 
 + (void)pauseExpensiveWork {

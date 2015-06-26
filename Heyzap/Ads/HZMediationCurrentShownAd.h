@@ -19,12 +19,11 @@ typedef NS_ENUM(NSUInteger, HZAdState) {
 
 @interface HZMediationCurrentShownAd : NSObject
 
-@property (nonatomic, readonly) HZMediationSessionKey *key;
 @property (nonatomic, readonly) HZMediationSession *session;
 @property (nonatomic, readonly) NSString *tag;
 @property (nonatomic, readonly) HZBaseAdapter *adapter;
 @property (nonatomic) HZAdState adState; // Mutable
 
-- (instancetype)initWithSessionKey:(HZMediationSessionKey *)key session:(HZMediationSession *)session tag:(NSString *)tag adapter:(HZBaseAdapter *)adapter;
+- (instancetype)initWithSession:(HZMediationSession *)session tag:(NSString *)tag adapter:(HZBaseAdapter *)adapter;
 
 @end

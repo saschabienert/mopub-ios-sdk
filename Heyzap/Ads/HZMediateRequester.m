@@ -21,6 +21,7 @@
 @property (nonatomic) NSDictionary *latestMediateParams;
 
 @property (nonatomic) NSUInteger consecutiveMediateFailures;
+@property (nonatomic, readonly) id<HZMediateRequesterDelegate>delegate;
 
 @end
 
@@ -41,10 +42,11 @@ const NSTimeInterval maxMediateDelay     = 300;
     _mediateRequestDelay = MIN(mediateRequestDelay, maxMediateDelay);
 }
 
-- (instancetype)init {
+- (instancetype)initWithDelegate:(id<HZMediateRequesterDelegate>)delegate {
     self = [super init];
     if (self) {
         _mediateRequestDelay = initialMediateDelay;
+        _delegate = delegate;
     }
     return self;
 }
@@ -56,13 +58,16 @@ const NSTimeInterval maxMediateDelay     = 300;
 - (void)loadMediateFromNetwork {
     // Should be all ad types? none?
     // HZAdFetchRequest requires the main queue; it's getting the status bar orientation and screen size and such.
-    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:@[@"all"] // TODO ?
+    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[HZMediationConstants creativeTypesForAdType:HZAdTypeInterstitial] // TODO ?
                                                                          adUnit:@"all" // TODO ?
                                                                             tag:nil
                                                                     auctionType:HZAuctionTypeMixed
                                                             andAdditionalParams:@{}];
     
-    NSDictionary *const mediateParams = request.createParams;
+    // TODO: cleanup the process of getting mediateParams.
+    NSMutableDictionary *const mediateParams = [request.createParams mutableCopy];
+    [mediateParams removeObjectForKey:@"creative_type"];
+    [mediateParams removeObjectForKey:@"ad_unit"];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[HZMediationAPIClient sharedClient] GET:@"mediate"
@@ -70,6 +75,7 @@ const NSTimeInterval maxMediateDelay     = 300;
                                          success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
                                              self.latestMediate = json;
                                              self.latestMediateParams = mediateParams;
+                                             [self.delegate requesterUpdatedMediate];
                                              self.consecutiveMediateFailures = 0;
                                              self.mediateRequestDelay = initialMediateDelay;
                                              
@@ -118,6 +124,7 @@ const NSTimeInterval maxMediateDelay     = 300;
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.latestMediate = mediatePlist;
                 self.latestMediateParams = mediateParamsPlist;
+                [self.delegate requesterUpdatedMediate];
             });
         }
     });
