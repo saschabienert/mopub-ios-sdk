@@ -112,7 +112,9 @@ static BOOL wasReady = NO;
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
     
-    [[HZHYPRManager sharedManager] preloadContent];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[HZHYPRManager sharedManager] preloadContent];
+    });
 }
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options {
