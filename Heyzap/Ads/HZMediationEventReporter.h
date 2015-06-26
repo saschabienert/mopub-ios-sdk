@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
 
-@interface HZMediationSession : NSObject
+@interface HZMediationEventReporter : NSObject
 
 @property (nonatomic, readonly) HZAdType adType;
 @property (nonatomic, readonly) NSString *adUnit;
@@ -17,7 +17,7 @@
 @property (nonatomic, strong, readonly) NSString *impressionID;
 
 /**
- *  Initializes a session
+ *  Initializes an event reporter
  *
  *  @param json              The /mediate response. Required.
  *  @param mediateParams     The params used for /mediate. Required
@@ -26,7 +26,7 @@
  *  @param tag               The tag for the show.
  *  @param error             An out-pointer for an error reading the JSON.
  *
- *  @return The HZMediationSession, or nil if there was an error.
+ *  @return The HZMediationEventReporter, or nil if there was an error.
  */
 - (instancetype)initWithJSON:(NSDictionary *)json mediateParams:(NSDictionary *)mediateParams potentialAdapters:(NSOrderedSet *)potentialAdapters adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error;
 

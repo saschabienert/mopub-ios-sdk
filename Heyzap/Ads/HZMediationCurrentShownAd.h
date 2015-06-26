@@ -8,9 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-@class HZMediationSessionKey;
 @class HZBaseAdapter;
-@class HZMediationSession;
+@class HZMediationEventReporter;
 
 typedef NS_ENUM(NSUInteger, HZAdState) {
     HZAdStateRequestedShow,
@@ -19,11 +18,11 @@ typedef NS_ENUM(NSUInteger, HZAdState) {
 
 @interface HZMediationCurrentShownAd : NSObject
 
-@property (nonatomic, readonly) HZMediationSession *session;
+@property (nonatomic, readonly) HZMediationEventReporter *eventReporter;
 @property (nonatomic, readonly) NSString *tag;
 @property (nonatomic, readonly) HZBaseAdapter *adapter;
 @property (nonatomic) HZAdState adState; // Mutable
 
-- (instancetype)initWithSession:(HZMediationSession *)session tag:(NSString *)tag adapter:(HZBaseAdapter *)adapter;
+- (instancetype)initWithEventReporter:(HZMediationEventReporter *)eventReporter tag:(NSString *)tag adapter:(HZBaseAdapter *)adapter;
 
 @end

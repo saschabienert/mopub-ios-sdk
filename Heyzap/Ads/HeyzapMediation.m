@@ -30,9 +30,8 @@
 #import "HZUtils.h"
 #import "HZAdsManager.h"
 
-// Session
-#import "HZMediationSessionKey.h"
-#import "HZMediationSession.h"
+// Event Reporting
+#import "HZMediationEventReporter.h"
 
 // Metrics
 #import "HZMediationConstants.h"
@@ -263,24 +262,24 @@ NSString * const kHZDataKey = @"data";
         return;
     }
     
-    NSError *mediationSessionError;
+    NSError *eventReporterError;
     
     NSOrderedSet *adapters = [self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:adType];
     
     HZBaseAdapter *chosenAdapter = [self.availabilityChecker firstAdapterWithAdForAdType:adType adapters:adapters];
     
-    HZMediationSession *session = [[HZMediationSession alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:adapters adType:adType tag:options.tag error:&mediationSessionError];
+    HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:adapters adType:adType tag:options.tag error:&eventReporterError];
     
-    if (mediationSessionError) {
+    if (eventReporterError) {
         NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{
                                                                                        NSLocalizedDescriptionKey: @"Failed to parse /mediate response",
-                                                                                       NSUnderlyingErrorKey:mediationSessionError,
+                                                                                       NSUnderlyingErrorKey:eventReporterError,
                                                                                        }];
         [self sendShowFailureMessagesForAdType:adType options:options error:error];
         return;
     }
     
-    [session reportFetchWithSuccessfulAdapter:chosenAdapter];
+    [eventReporter reportFetchWithSuccessfulAdapter:chosenAdapter];
     if (!chosenAdapter) {
         // TODO: make that error message prettier.
         NSString *const errorMessage = [NSString stringWithFormat:@"No ad network had an ad to show. Ad networks we checked were: %@",adapters];
@@ -289,9 +288,9 @@ NSString * const kHZDataKey = @"data";
         return;
     }
     
-    self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithSession:session tag:options.tag adapter:chosenAdapter];
+    self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithEventReporter:eventReporter tag:options.tag adapter:chosenAdapter];
     
-    [self haveAdapter:chosenAdapter showAdForSession:session options:options];
+    [self haveAdapter:chosenAdapter showAdWithEventReporter:eventReporter options:options];
 }
 
 - (NSError *)checkForPreShowError:(NSString *)tag {
@@ -316,17 +315,17 @@ NSString * const kHZDataKey = @"data";
 
 unsigned long long const adapterDidShowAdTimeout = 1.5;
 
-- (void)haveAdapter:(HZBaseAdapter *)adapter showAdForSession:(HZMediationSession *)session options:(HZShowOptions *)options
+- (void)haveAdapter:(HZBaseAdapter *)adapter showAdWithEventReporter:(HZMediationEventReporter *)eventReporter options:(HZShowOptions *)options
 {
-    if ([adapter isVideoOnlyNetwork] && session.adType == HZAdTypeInterstitial) {
+    if ([adapter isVideoOnlyNetwork] && eventReporter.adType == HZAdTypeInterstitial) {
         self.lastInterstitialVideoShownDate = [NSDate date];
     }
     
-    [adapter showAdForType:session.adType options:options];
+    [adapter showAdForType:eventReporter.adType options:options];
     
-    // Check if the session has responded yet.
+    // Check if the adapter has responded yet.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(adapterDidShowAdTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self checkIfSession:session adapter:adapter showOptions:options];
+        [self checkIfAdapterShowedAd:adapter showOptions:options];
     });
 }
 
@@ -388,23 +387,22 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     
     if (currentAd && currentAd.adState == HZAdStateRequestedShow) {
         self.currentShownAd.adState = HZAdStateShown;
-        [[self delegateForAdType:currentAd.session.adType] didShowAdWithTag:currentAd.tag];
+        [[self delegateForAdType:currentAd.eventReporter.adType] didShowAdWithTag:currentAd.tag];
     } else {
         HZELog(@"The network %@ reported that it showed an ad, but we weren't expecting this.",adapter.name);
     }
 }
 
-- (void)checkIfSession:(HZMediationSession *)session adapter:(HZBaseAdapter *)adapter showOptions:(HZShowOptions *)showOptions {
-    HZParameterAssert(session);
-    
+- (void)checkIfAdapterShowedAd:(HZBaseAdapter *)adapter showOptions:(HZShowOptions *)showOptions {
     if (self.currentShownAd && self.currentShownAd.adState == HZAdStateRequestedShow) {
+        HZMediationEventReporter *reporter = self.currentShownAd.eventReporter;
         NSError *showError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:
                               @{
                                 NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Adapter %@ was asked to show an ad, but we didn't Heyzap didn't get a callback from that network reporting that it did so within %llu seconds. Assuming it failed and sending a didFail callback",adapter.name, adapterDidShowAdTimeout]}];
         
         // Assume if we haven't shown yet, the show is broken and we should just log an error.
         self.currentShownAd = nil;
-        [[self delegateForAdType:session.adType] didFailToShowAdWithTag:session.tag andError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{}]];
+        [[self delegateForAdType:reporter.adType] didFailToShowAdWithTag:reporter.tag andError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{}]];
         if (showOptions.completion) { showOptions.completion(NO,showError); }
     }
 }
@@ -417,12 +415,11 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter
 {
     if (self.currentShownAd) {
-        [self.currentShownAd.session reportClickForAdapter:adapter];
-        [[self delegateForAdType:self.currentShownAd.session.adType] didClickAdWithTag:self.currentShownAd.tag];
+        [self.currentShownAd.eventReporter reportClickForAdapter:adapter];
+        [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didClickAdWithTag:self.currentShownAd.tag];
     }
 }
 
-// Potential issue: If an adapter fails to send us a callback we might not remove the sessionKey from the dictionary
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter
 {
     self.currentShownAd = nil;
@@ -431,13 +428,13 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter
 {
     if (self.currentShownAd) {
-        [[self delegateForAdType:self.currentShownAd.session.adType] willStartAudio];
+        [[self delegateForAdType:self.currentShownAd.eventReporter.adType] willStartAudio];
     }
 }
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter
 {
     if (self.currentShownAd) {
-        [[self delegateForAdType:self.currentShownAd.session.adType] didFinishAudio];
+        [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didFinishAudio];
     }
 }
 
@@ -447,7 +444,7 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
     if (self.currentShownAd) {
-        [[self delegateForAdType:self.currentShownAd.session.adType] didCompleteAdWithTag:self.currentShownAd.tag];
+        [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didCompleteAdWithTag:self.currentShownAd.tag];
     }
 }
 
@@ -607,11 +604,11 @@ const NSTimeInterval bannerPollInterval = 1;
                 return [adapter hasBannerCredentials];
             });
             
-            NSError *sessionError;
-            HZMediationSession *session = [[HZMediationSession alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:adapters adType:HZAdTypeBanner tag:options.tag error:&sessionError];
+            NSError *eventReporterError;
+            HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:adapters adType:HZAdTypeBanner tag:options.tag error:&eventReporterError];
             
-            if (sessionError) {
-                NSError *mediationError = [[self class] bannerErrorWithDescription:@"Couldn't create HZMediationSession" underlyingError:error];
+            if (eventReporterError) {
+                NSError *mediationError = [[self class] bannerErrorWithDescription:@"Couldn't create HZMediationEventReporter" underlyingError:error];
                 completion(mediationError, nil);
                 return;
             }
@@ -637,15 +634,15 @@ const NSTimeInterval bannerPollInterval = 1;
                         dispatch_sync(dispatch_get_main_queue(), ^{
                             
                             
-                            bannerAdapter.session = session;
-                            [session reportFetchWithSuccessfulAdapter:baseAdapter];
+                            bannerAdapter.eventReporter = eventReporter;
+                            [eventReporter reportFetchWithSuccessfulAdapter:baseAdapter];
                             completion(nil, bannerAdapter);
                         });
                         
                         break;
                     } else if (baseAdapter == [adapters lastObject]) {
                         dispatch_sync(dispatch_get_main_queue(), ^{
-                            [session reportFetchWithSuccessfulAdapter:nil];
+                            [eventReporter reportFetchWithSuccessfulAdapter:nil];
                             completion([[self class] bannerErrorWithDescription:@"None of the mediated ad networks had a banner available" underlyingError:nil], nil);
                         });
                     }
@@ -672,11 +669,11 @@ const NSTimeInterval bannerPollInterval = 1;
 
 // TODO *** need to implement functionality so that the ad loading only counts as an impression after it is added to the screen, which is mildly tricky (best I have so far is an NStimer to check the superview property).
 
-- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter hadImpressionForSession:(HZMediationSession *)session {
-    [session reportImpressionForAdapter:bannerAdapter.parentAdapter];
+- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter hadImpressionWithEventReporter:(HZMediationEventReporter *)eventReporter {
+    [eventReporter reportImpressionForAdapter:bannerAdapter.parentAdapter];
 }
-- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter wasClickedForSession:(HZMediationSession *)session {
-    [session reportClickForAdapter:bannerAdapter.parentAdapter];
+- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter wasClickedWithEventReporter:(HZMediationEventReporter *)eventReporter {
+    [eventReporter reportClickForAdapter:bannerAdapter.parentAdapter];
 }
 
 - (void)setDelegate:(id)delegate forNetwork:(NSString *)network {

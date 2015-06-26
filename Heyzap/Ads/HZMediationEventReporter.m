@@ -6,14 +6,14 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZMediationSession.h"
+#import "HZMediationEventReporter.h"
 #import "HZDictionaryUtils.h"
 #import "HZBaseAdapter.h"
 #import "HZMediationConstants.h"
 #import "HZMediationAPIClient.h"
 #import "HZLog.h"
 
-@interface HZMediationSession()
+@interface HZMediationEventReporter()
 
 #pragma mark - Properties from the client
 @property (nonatomic) HZAdType adType;
@@ -48,7 +48,7 @@ NSString * sdkVersionOrDefault(NSString *const version);
 
 @end
 
-@implementation HZMediationSession
+@implementation HZMediationEventReporter
 
 #define CHECK_NOT_NIL(value) do { \
 if (value == nil) { \

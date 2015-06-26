@@ -10,12 +10,12 @@
 
 @implementation HZMediationCurrentShownAd
 
-- (instancetype)initWithSession:(HZMediationSession *)session tag:(NSString *)tag adapter:(HZBaseAdapter *)adapter {
-    HZParameterAssert(session);
+- (instancetype)initWithEventReporter:(HZMediationEventReporter *)eventReporter tag:(NSString *)tag adapter:(HZBaseAdapter *)adapter {
+    HZParameterAssert(eventReporter);
     HZParameterAssert(adapter);
     self = [super init];
     if (self) {
-        _session = session;
+        _eventReporter = eventReporter;
         _tag = tag;
         _adapter = adapter;
         _adState = HZAdStateRequestedShow;
