@@ -12,7 +12,7 @@
 #import "HZLog.h"
 
 @interface HZVideoView()
-@property (nonatomic) MPMoviePlayerController *player;
+
 @property (nonatomic) UIInterfaceOrientation currOrientation;
 @property (nonatomic) BOOL didFinishVideo;
 @property (nonatomic) NSTimer *timer;
@@ -94,7 +94,7 @@
     [self.player stop];
     [self.player.view removeFromSuperview];
 
-    self.player = nil;
+    _player = nil;
     _controlView = nil;
     self.actionDelegate = nil;
     

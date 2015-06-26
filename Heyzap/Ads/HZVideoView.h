@@ -28,6 +28,8 @@
 @property (nonatomic) NSTimeInterval playbackTime;
 @property (nonatomic) NSTimeInterval videoDuration;
 
+@property (nonatomic, readonly) MPMoviePlayerController *player;
+
 - (BOOL) setVideoURL: (NSURL *) url;
 - (void) pause;
 - (void) play;

@@ -96,6 +96,11 @@
         [_installButton setExtendedHitAreaMarginX:40];
         [_installButton setExtendedHitAreaMarginY:40];
         [self addSubview: _installButton];
+        
+        //defaults
+        _skipNowText = @"Skip ▶︎";
+        _skipLaterFormatText = @"Skip in %is ▶︎";
+        _installButtonText = @"Install Now";
     }
     return self;
 }

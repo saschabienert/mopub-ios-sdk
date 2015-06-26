@@ -64,11 +64,15 @@ typedef enum {
 
 @property (nonatomic) UIButton *showBannerButton;
 @property (nonatomic) UIButton *hideBannerButton;
+@property (nonatomic) UIButton *vastLoadButton;
+@property (nonatomic) UIButton *vastPlayButton;
 
 @property (nonatomic) NSArray *bannerControls;
 @property (nonatomic) NSArray *nonBannerControls;
 
 @property (nonatomic) UITextField *creativeTypeTextField;
+
+@property (nonatomic) HZSKVASTViewController * vastVC;
 
 
 @end
@@ -314,6 +318,34 @@ const CGFloat kLeftMargin = 10;
                 forControlEvents:UIControlEventEditingChanged];
     [self.scrollView addSubview:self.adsTextField];
     
+    self.vastLoadButton = ({
+        UIButton * button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        button.frame = CGRectMake(CGRectGetMaxX(self.adsTextField.frame) + 6.0, 10.0, 89.0, 25.0);
+        button.backgroundColor = [UIColor darkGrayColor];
+        button.layer.cornerRadius = 4.0;
+        [button setTitle: @"VAST load" forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
+        button.enabled = YES;
+        button;
+    });
+    [self.vastLoadButton addTarget: self action: @selector(vastLoadButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
+    [self.scrollView addSubview: self.vastLoadButton];
+    
+    self.vastPlayButton = ({
+        UIButton * button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        button.frame = CGRectMake(CGRectGetMaxX(self.vastLoadButton.frame) + 6.0, 10.0, 89.0, 25.0);
+        button.backgroundColor = [UIColor darkGrayColor];
+        button.layer.cornerRadius = 4.0;
+        [button setTitle: @"VAST play" forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
+        button.enabled = NO;
+        button;
+    });
+    [self.vastPlayButton addTarget: self action: @selector(vastPlayButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
+    [self.scrollView addSubview: self.vastPlayButton];
+    
     self.creativeTypeTextField = ({
         UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.showButton.frame) + 5, 320, 35)];
         tf.delegate = self;
@@ -470,7 +502,7 @@ const CGFloat kLeftMargin = 10;
     for (UIView *view in self.scrollView.subviews) {
         subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
     }
-    self.scrollView.contentSize = (CGSize) { CGRectGetWidth(self.view.frame), subviewContainingRect.size.height + 80 };
+    self.scrollView.contentSize = (CGSize) { subviewContainingRect.size.width, subviewContainingRect.size.height + 80 };
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{
@@ -806,5 +838,59 @@ const CGFloat kLeftMargin = 10;
     }
 }
 
+# pragma mark - VAST
+- (void)vastLoadButtonPressed:(id)sender {
+    self.vastPlayButton.enabled = NO;
+    self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate: self forAdType:HZAdTypeVideo];
+    [HZLog setDebugLevel:HZDebugLevelVerbose];
+    NSURL* url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_doubleclick_inline_comp.xml"];
+    //url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/simple_tracking.xml"];//intel ad
+    //url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_missing_mediafile.xml"];//erroroneous xml
+    //url = [NSURL URLWithString:@"http://ads.mdotm.com/ads/feed.php?partnerkey=heyzap&apikey=heyzapmediation&appkey=4cd119700fff11605d38f197ae5435dc&ua=SampleApp%202.1.3%20(iPhone;%20iPhone%20OS%208.1.1;%20it_IT)&width=320&height=480&fmt=xhtml&v=3.4.0&test=0&deviceid=&aid=3305397B-FB19-4812-86F3-AEC2367C2CE5&ate=1&machine=iPhone4,1%208.1.1&vidsupport=2&clientip=198.228.200.41"];//mdotm
+    url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/mdotm_vast.xml"];//mdotm hosted
+    [self.vastVC loadVideoWithURL:url];
+}
+
+- (void)vastPlayButtonPressed:(id)sender {
+    [self.vastVC play];
+}
+
+// sent when the video is ready to play - required
+- (void)vastReady:(HZSKVASTViewController *)vastVC {
+    NSLog(@"vastReady");
+    [self logToConsole:@"vastReady"];
+    self.vastPlayButton.enabled = YES;
+}
+
+// sent when any VASTError occurs
+- (void)vastError:(HZSKVASTViewController *)vastVC error:(HZSKVASTError)error{
+    NSLog(@"vastError: %u", error);
+    [self logToConsole:[NSString stringWithFormat:@"vastError: %u", error]];
+}
+
+// Sent when VAST will show a video.
+- (void)vastWillPresentFullScreen:(HZSKVASTViewController *)vastVC {
+     NSLog(@"vastWillPresentFullScreen");
+    [self logToConsole:@"vastWillPresentFullScreen"];
+    self.vastPlayButton.enabled = NO;
+}
+
+// Sent when VAST dismissed a video
+- (void)vastDidDismissFullScreen:(HZSKVASTViewController *)vastVC {
+     NSLog(@"vastDidDismissFullScreen");
+    [self logToConsole:@"vastDidDismissFullScreen"];
+}
+
+// Sent when VAST detected a valid click on a video. `url` is the URL meant to be opened with the user's click
+- (void)vastOpenBrowseWithUrl:(NSURL *)url {
+     NSLog(@"vastOpenBrowseWithUrl: %@", url);
+    [self logToConsole:@"vastOpenBrowseWithUrl: %@"];
+}
+
+// Sent when VAST tracks an event (see HZSKVASTEventProcessor)
+- (void)vastTrackingEvent:(NSString *)eventName {
+    NSLog(@"vastTrackingEvent: %@", eventName);
+    [self logToConsole:[NSString stringWithFormat:@"vastTrackingEvent: %@", eventName]];
+}
 
 @end
