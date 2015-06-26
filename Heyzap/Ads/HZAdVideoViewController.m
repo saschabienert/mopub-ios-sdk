@@ -274,7 +274,12 @@
     }
     
     if ([sender tag] == kHZWebViewTag) {
-        [self didClickWithURL: url];
+        self.webView.isLoading = YES;
+        __weak HZAdVideoViewController *weakSelf = self;
+        
+        [self didClickWithURL:url completion:^(BOOL result, NSError *error) {
+            [[weakSelf webView] setIsLoading:NO];
+        }];
     }
 }
 

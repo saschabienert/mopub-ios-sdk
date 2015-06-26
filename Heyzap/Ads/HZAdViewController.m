@@ -110,11 +110,18 @@
 }
 
 - (void) didClickWithURL: (NSURL *) url {
+    [self didClickWithURL:url
+               completion:^(BOOL result, NSError *error) {
+               }];
+}
+
+- (void)didClickWithURL:(NSURL *)url completion:(void (^)(BOOL, NSError *))completion {
+    
     if ([self.ad onClick]) {
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didClickAdWithTag:self.ad.tag];
         [HZAdsManager postNotificationName:kHeyzapDidClickAdNotification infoProvider:self.ad];
     }
-
+    
     NSDictionary *queryDictionary = [HZUtils hzQueryDictionaryFromURL: url];
     
     NSURL *clickURL;
@@ -132,7 +139,7 @@
                                                    clickURL:clickURL
                                                impressionID:self.ad.impressionID
                                                  completion: ^(BOOL result, NSError *error) {
-                                                     
+                                                     completion(result, error);
                                                  }];
 }
 
