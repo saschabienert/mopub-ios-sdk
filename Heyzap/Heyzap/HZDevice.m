@@ -346,6 +346,10 @@ static NSString *overriddenBundleIdentifier;
     return ([[self systemVersion] compare: version options:NSNumericSearch] == NSOrderedAscending);
 }
 
++ (BOOL) hzSystemVersionIsGreaterOrEqualTo:(NSString *)version {
+    return ([[self systemVersion] compare: version options:NSNumericSearch] == NSOrderedAscending);
+}
+
 + (NSString *)systemVersion {
     static NSString *version;
     static dispatch_once_t onceToken;

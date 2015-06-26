@@ -23,6 +23,7 @@
 #import "SDCSegmentedViewController.h"
 #import "ServerSelectionViewController.h"
 #import "DeviceInfoViewController.h"
+#import "DemandTestViewController.h"
 
 #import "HZInterstitialAd.h"
 #import "PersistentTestAppConfiguration.h"
@@ -63,7 +64,9 @@
   
     ServerSelectionViewController *serverController = [[ServerSelectionViewController alloc] init];
     DeviceInfoViewController *deviceController = [[DeviceInfoViewController alloc] init];
-    SDCSegmentedViewController *segmentedController = [[SDCSegmentedViewController alloc] initWithViewControllers:@[mainController, serverController,deviceController]];
+    DemandTestViewController *mraidController = [[DemandTestViewController alloc] init];
+    
+    SDCSegmentedViewController *segmentedController = [[SDCSegmentedViewController alloc] initWithViewControllers:@[mainController, serverController, mraidController, deviceController]];
 
     if ([segmentedController respondsToSelector:@selector(edgesForExtendedLayout)]) {
         segmentedController.edgesForExtendedLayout = UIRectEdgeNone;
