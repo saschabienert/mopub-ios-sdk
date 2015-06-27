@@ -68,9 +68,17 @@ return nil; \
 
 const NSTimeInterval hasAdPollInterval = 3;
 
-- (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions {
+- (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork {
     
-    NSArray *matching = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
+    NSArray *networksForFetch = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
+        if (forcedNetwork) {
+            return forcedNetwork == datum.adapterClass;
+        } else {
+            return YES;
+        }
+    });
+    
+    NSArray *matching = hzFilter(networksForFetch, ^BOOL(HZMediationLoadData *datum) {
         return hzCreativeTypeSetContainsAdType(datum.creativeTypeSet, adType);
     });
     [self fetchAdType:adType loadData:matching showOptions:showOptions notifyDelegate:YES];
@@ -78,7 +86,7 @@ const NSTimeInterval hasAdPollInterval = 3;
     // Should just take all STATIC and VIDEO?
     
     if (adType == HZAdTypeInterstitial) {
-        NSArray *videoNetworks = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
+        NSArray *videoNetworks = hzFilter(networksForFetch, ^BOOL(HZMediationLoadData *datum) {
             return hzCreativeTypeSetContainsAdType(datum.creativeTypeSet, HZAdTypeVideo);
         });
         [self fetchAdType:HZAdTypeVideo loadData:videoNetworks showOptions:nil notifyDelegate:NO];

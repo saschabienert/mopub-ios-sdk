@@ -18,8 +18,9 @@
 
 - (instancetype)initWithMediateResponse:(NSDictionary *)dictionary;
 
-- (HZBaseAdapter *)firstAdapterWithAdForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters;
 - (NSOrderedSet *)availableAdaptersForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters;
+- (HZBaseAdapter *)firstAdapterWithAdForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters optionalForcedNetwork:(Class)forcedNetwork;
+
 
 - (void)updateWithMediateResponse:(NSDictionary *)json;
 - (void)didShowInterstitialVideo;

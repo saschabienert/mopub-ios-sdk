@@ -224,7 +224,10 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     HZParameterAssert(self.loadManager);
     HZShowOptions *options = [HZShowOptions new];
     options.completion = completion;
-    [self.loadManager fetchAdType:adType showOptions:options];
+    
+    Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
+    
+    [self.loadManager fetchAdType:adType showOptions:options optionalForcedNetwork:optionalForcedNetwork];
 }
 
 - (void)autoFetchInterstitial
@@ -266,7 +269,9 @@ NSString * const kHZDataKey = @"data";
     
     NSOrderedSet *adapters = [self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:adType];
     
-    HZBaseAdapter *chosenAdapter = [self.availabilityChecker firstAdapterWithAdForAdType:adType adapters:adapters];
+    Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
+    
+    HZBaseAdapter *chosenAdapter = [self.availabilityChecker firstAdapterWithAdForAdType:adType adapters:adapters optionalForcedNetwork:optionalForcedNetwork];
     
     HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:adapters adType:adType tag:options.tag error:&eventReporterError];
     
@@ -841,6 +846,18 @@ const NSTimeInterval bannerPollInterval = 1;
             if (completion) { completion(); }
         });
     });
+}
+
+/**
+ *  Lookup the forced network (the test activity calls this)
+ *
+ *  @param additionalParams Params containing a "network" key
+ *
+ *  @return The network, if one was looked up.
+ */
++ (Class)optionalForcedNetwork:(NSDictionary *)additionalParams {
+    NSString *const forcedNetworkName = additionalParams[@"network"];
+    return [HZBaseAdapter adapterClassForName:forcedNetworkName];
 }
 
 @end

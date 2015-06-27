@@ -242,7 +242,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void) fetchAd {
     [self appendStringToDebugLog:@"Fetching ad (may take up to 10 seconds)"];
-    NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
+    NSDictionary *additionalParams = @{ @"network": [[self.network class] name] };
     [[HeyzapMediation sharedInstance] fetchForAdType:self.currentAdType additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
         if (error) {
             [self appendStringToDebugLog:@"Fetch failed"];
@@ -256,7 +256,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void) showAd {
     [self appendStringToDebugLog:@"Showing ad"];
-    NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
+    NSDictionary *additionalParams = @{ @"network": [[self.network class] name] };
 
     HZShowOptions *options = [HZShowOptions new];
     options.viewController = self;

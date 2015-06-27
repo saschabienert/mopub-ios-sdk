@@ -22,6 +22,6 @@
 @interface HZMediationLoadManager : NSObject
 
 - (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate error:(NSError **)error;
-- (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions;
+- (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork;
 
 @end

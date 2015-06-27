@@ -29,9 +29,14 @@
     return self;
 }
 
-- (HZBaseAdapter *)firstAdapterWithAdForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters {
+- (HZBaseAdapter *)firstAdapterWithAdForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters optionalForcedNetwork:(Class)forcedNetwork {
         
     NSOrderedSet *preferredMediatorList = [self availableAdaptersForAdType:adType adapters:adapters];
+    
+    if (forcedNetwork) {
+        HZBaseAdapter *forcedAdapter = [forcedNetwork sharedInstance];
+        return [preferredMediatorList containsObject:forcedAdapter] ? forcedAdapter : nil;
+    }
         
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         return [adapter hasAdForType:adType];
