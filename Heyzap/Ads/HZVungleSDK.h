@@ -39,7 +39,8 @@
 - (void)startWithAppId:(NSString*)appId;
 - (void)playAd:(UIViewController*)viewController;
 - (void)playAd:(UIViewController *)viewController withOptions:(id)options;
-- (BOOL)isCachedAdAvailable;
+- (BOOL)isCachedAdAvailable DEPRECATED_MSG_ATTRIBUTE("Deprecated in Vungle SDK 3.1.0.");
+- (BOOL)isAdPlayable;
 - (NSDictionary*)debugInfo;
 - (void)setLoggingEnabled:(BOOL)enable;
 - (void)log:(NSString*)message, ... NS_FORMAT_FUNCTION(1,2);

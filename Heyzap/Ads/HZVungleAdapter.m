@@ -108,7 +108,7 @@
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    return [self supportedAdFormats] & type && [[HZVungleSDK sharedSDK] isCachedAdAvailable];
+    return [self supportedAdFormats] & type && [[HZVungleSDK sharedSDK] isAdPlayable];
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType
@@ -123,8 +123,6 @@
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
-    [self.delegate adapterWillPlayAudio:self];
-    
     if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
         NSString *const incentivizedKey = [[self class] vunglePlayAdOptionKeyIncentivized];;
@@ -142,6 +140,7 @@
 
 - (void)vungleSDKwillShowAd {
     [self.delegate adapterDidShowAd:self];
+    [self.delegate adapterWillPlayAudio:self]; // adapterWillPlayAudio has to be called AFTER adapterDidShowAd
 }
 
 - (void)vungleSDKwillCloseAdWithViewInfo:(NSDictionary*)viewInfo willPresentProductSheet:(BOOL)willPresentProductSheet
