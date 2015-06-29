@@ -14,11 +14,7 @@
 /** Pointer to this char is used as a unique key for the state stored as an associated object on the HZALAd*/
 static char adStatusKey;
 
-/**
- *  A pointer to this char is used as a unique key for storing whether we've sent an incentivized callback for a given HZALAd.
- *
- *  This is useful to workaround AppLovin sending `rewardValidationRequestForAd:didSucceedWithResponse:` followed by `rewardValidationRequestForAd:didFailWithError:`.
- */
+/** A pointer to this char is used as a unique key for storing whether we've sent an incentivized callback for a given HZALAd. */
 static char adHasSentIncentivizedCallbackKey;
 
 @interface HZAppLovinRewardedAdState:NSObject
@@ -142,6 +138,17 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
     });
 }
 
+#pragma mark - Warnings about AppLovin Incentivized Callbacks
+
+// Success-then-Failure callbacks: Note that AppLovin will send `rewardValidationRequestForAd:didSucceedWithResponse:` followed by `rewardValidationRequestForAd:wasRejectedWithResponse:` if the user closes the incentivized video† (This is documented as correct behavior at https://www.applovin.com/integration#iosRewardedVids (search "kALErrorCodeIncentivizedUserClosedVideo")).
+// To handle this case, we check in `videoPlaybackEndedInAd:atPlaybackPercent:fullyWatched:` if `fullyWatched` is NO, and if so treat that as incentivized failure.
+// Since we get "reward success", "playback began", "playback ended", "reward failed" as the chain of callbacks, it can be tricky to prevent sending duplicate callbacks. To workaround this we use an associated object on the ad (see `hasAdSentCallback:`).
+
+// † You can get an X button to appear during an incentivized video by pressing the home button, then returning to the app.
+
+// Callback Ordering:: AppLovin's incentivized callbacks are validated over the network, and are on a different thread than the video success callbacks, so the order the callbacks arrive is non-deterministic.
+
+
 #pragma mark - Processing AppLovin callbacks
 
 - (void) rewardValidationResult:(BOOL)success forAd:(HZALAd *)ad {
@@ -167,7 +174,6 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
     }
 }
 
-// Because AppLovin sends an incentivized success callback and then later an incentivized failure callback, it can be tricky to prevent sending multiple callbacks; this approach solves that.
 - (void)sendIncentivizedCallbackForAd:(HZALAd *)ad incentivizedSuccess:(BOOL)wasSuccessful {
     if (![[self class] hasAdSentCallback:ad]) {
         if (wasSuccessful) {
