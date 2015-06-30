@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "HZAdType.h"
 #import "HZBannerAd.h"
+#import "HZShowOptions.h"
 
 @class HZHeyzapExchangeClient;
 @protocol HZHeyzapExchangeClientDelegate <NSObject>
@@ -27,7 +28,8 @@
 @property (nonatomic, weak) id<HZHeyzapExchangeClientDelegate> delegate;
 @property (nonatomic) BOOL isIncentivized;
 @property (nonatomic) BOOL isWithAudio;
+@property (nonatomic, readonly) HZAdType adType;
 
-- (void) fetchForAdType:(HZAdType)adype;
-- (void) play;
+- (void) fetchForAdType:(HZAdType)adType;
+- (void) showWithOptions:(HZShowOptions *)options;
 @end

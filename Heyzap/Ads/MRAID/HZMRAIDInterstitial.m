@@ -8,7 +8,7 @@
 
 #import "HZMRAIDInterstitial.h"
 #import "HZMRAIDView.h"
-#import "HZMRAIDLogger.h"
+#import "HZSKLogger.h"
 #import "HZMRAIDServiceDelegate.h"
 
 @interface HZMRAIDInterstitial () <HZMRAIDViewDelegate, HZMRAIDServiceDelegate>
@@ -79,7 +79,7 @@
 - (void)show
 {
     if (!self.isReady) {
-        [HZMRAIDLogger warning:@"MRAID - Interstitial" withMessage:@"interstitial is not ready to show"];
+        [HZSKLogger warning:@"MRAID - Interstitial" withMessage:@"interstitial is not ready to show"];
         return;
     }
     
@@ -97,7 +97,7 @@
 
 - (void) setIsViewable:(BOOL)newIsViewable
 {
-    [HZMRAIDLogger debug:@"MRAID - Interstitial" withMessage:[NSString stringWithFormat: @"%@ %@", [self.class description], NSStringFromSelector(_cmd)]];
+    [HZSKLogger debug:@"MRAID - Interstitial" withMessage:[NSString stringWithFormat: @"%@ %@", [self.class description], NSStringFromSelector(_cmd)]];
     self.mraidView.isViewable=newIsViewable;
 }
 
@@ -110,7 +110,7 @@
 - (void) setRootViewController:(UIViewController *)newRootViewController
 {
     self.mraidView.rootViewController = newRootViewController;
-    [HZMRAIDLogger debug:@"MRAID - Interstitial" withMessage:[NSString stringWithFormat:@"setRootViewController: %@", newRootViewController]];
+    [HZSKLogger debug:@"MRAID - Interstitial" withMessage:[NSString stringWithFormat:@"setRootViewController: %@", newRootViewController]];
 
 }
 

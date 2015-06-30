@@ -48,6 +48,8 @@
 @property (nonatomic) HZAdType adType;
 @property (nonatomic, readonly) BOOL didFinishSuccessfully;
 
+@property(nonatomic) UIViewController *rootViewController;
+
 - (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forAdType:(HZAdType)adType; // designated initializer for VASTViewController
 
 - (void)loadVideoWithURL:(NSURL *)url;            // load and prepare to play a VAST video from a URL

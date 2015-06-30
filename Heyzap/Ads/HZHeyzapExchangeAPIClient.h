@@ -13,9 +13,5 @@
 @interface HZHeyzapExchangeAPIClient : HZAPIClient
 
 + (HZHeyzapExchangeAPIClient *)sharedClient;
-- (HZAFHTTPRequestOperation *)GET:(NSString *)URLString
-                       parameters:(id)parameters
-                          success:(void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
-                          failure:(void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure
-                    redirectBlock: (NSURLRequest * (^)(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse))block;
+
 @end

@@ -9,7 +9,7 @@
 #import "HZMRAIDModalViewController.h"
 
 #import "HZMRAIDUtil.h"
-#import "HZMRAIDLogger.h"
+#import "HZSKLogger.h"
 #import "HZMRAIDOrientationProperties.h"
 
 @interface HZMRAIDModalViewController ()
@@ -83,7 +83,7 @@
 {
     [super viewWillAppear:animated];
     
-    [HZMRAIDLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat:@"%@ %@", [self.class description], NSStringFromSelector(_cmd)]];
+    [HZSKLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat:@"%@ %@", [self.class description], NSStringFromSelector(_cmd)]];
 
     _isStatusBarHidden = [[UIApplication sharedApplication] isStatusBarHidden];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
@@ -93,7 +93,7 @@
 {
     [super viewDidAppear:animated];
     
-    [HZMRAIDLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat:@"%@ %@", [self.class description], NSStringFromSelector(_cmd)]];
+    [HZSKLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat:@"%@ %@", [self.class description], NSStringFromSelector(_cmd)]];
     _hasViewAppeared = YES;
     
     if (_hasRotated) {
@@ -147,14 +147,14 @@
         }
     }
     
-    [HZMRAIDLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat: @"%@ %@ %@", [self.class description], NSStringFromSelector(_cmd), (retval ? @"YES" : @"NO")]];
+    [HZSKLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat: @"%@ %@ %@", [self.class description], NSStringFromSelector(_cmd), (retval ? @"YES" : @"NO")]];
     
     return retval;
 }
 
 - (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
 {
-    [HZMRAIDLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat: @"%@ %@ %@",
+    [HZSKLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat: @"%@ %@ %@",
                             [self.class description],
                             NSStringFromSelector(_cmd),
                             [self stringfromUIInterfaceOrientation: _preferredOrientation]]];
@@ -163,7 +163,7 @@
 
 - (NSUInteger)supportedInterfaceOrientations
 {
-    [HZMRAIDLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat: @"%@ %@", [self.class description], NSStringFromSelector(_cmd)]];
+    [HZSKLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat: @"%@ %@", [self.class description], NSStringFromSelector(_cmd)]];
     if (_orientationProperties.forceOrientation == HZMRAIDForceOrientationPortrait) {
         return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
     }
@@ -207,7 +207,7 @@
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
     UIInterfaceOrientation toInterfaceOrientation = self.interfaceOrientation;
-    [HZMRAIDLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat:@"%@ %@from %@ to %@",
+    [HZSKLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat:@"%@ %@from %@ to %@",
                       [self.class description],
                       NSStringFromSelector(_cmd),
                       [self stringfromUIInterfaceOrientation:fromInterfaceOrientation],
@@ -221,7 +221,7 @@
 
 - (void)forceToOrientation:(HZMRAIDOrientationProperties *)orientationProps
 {
-    [HZMRAIDLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat: @"%@ %@ %@ %@",
+    [HZSKLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat: @"%@ %@ %@ %@",
                       [self.class description],
                       NSStringFromSelector(_cmd),
                       (_orientationProperties.allowOrientationChange ? @"YES" : @"NO"),
@@ -300,7 +300,7 @@
         }
     }
     
-    [HZMRAIDLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat:@"requesting from %@ to %@",
+    [HZSKLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat:@"requesting from %@ to %@",
                             [self stringfromUIInterfaceOrientation:currentInterfaceOrientation],
                             [self stringfromUIInterfaceOrientation:_preferredOrientation]]];
     

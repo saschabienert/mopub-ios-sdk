@@ -11,9 +11,7 @@
 #import "HeyzapAds.h"
 #import "Chartboost.h"
 
-#import "HZBaseAdapter.h"//monroe: remove later
-
-@interface SDKTestAppViewController : BaseTestAppViewController <HZAdsDelegate,UITextFieldDelegate, HZIncentivizedAdDelegate, HZMediationAdapterDelegate>
+@interface SDKTestAppViewController : BaseTestAppViewController <HZAdsDelegate,UITextFieldDelegate, HZIncentivizedAdDelegate>
 
 extern NSString * const kCreativeIDTextFieldAccessibilityLabel;
 extern NSString * const kShowAdButtonAccessibilityLabel;

@@ -7,7 +7,7 @@
 //
 
 #import "HZMRAIDCommand.h"
-#import "HZMRAIDLogger.h"
+#import "HZSKLogger.h"
 #import "HZUtils.h"
 
 NSString * const HZMRAIDJSCommandCreateCalendarEvent = @"createCalendarEvent";
@@ -69,14 +69,14 @@ NSString * const HZMRAIDJSCommandUseCustomClose = @"useCustomClose";
      and then send an appropriate message back to the MRAIDView to run the command.
      */
     
-    [HZMRAIDLogger debug:@"MRAID - Parser" withMessage:[NSString stringWithFormat:@"%@ %@", NSStringFromSelector(_cmd), url]];
+    [HZSKLogger debug:@"MRAID - Parser" withMessage:[NSString stringWithFormat:@"%@ %@", NSStringFromSelector(_cmd), url]];
 
     NSString *commandStr = [_url host];
     NSMutableDictionary *params = [HZUtils hzQueryDictionaryFromURL: url];
     
     // Check for valid command.
     if (![self isValidCommand:commandStr]) {
-        [HZMRAIDLogger warning:@"MRAID - Parser" withMessage:[NSString stringWithFormat:@"command '%@' is unknown", commandStr]];
+        [HZSKLogger warning:@"MRAID - Parser" withMessage:[NSString stringWithFormat:@"command '%@' is unknown", commandStr]];
         _command = HZMRAIDInternalCommandUndefined;
         _params = @{};
         return;
@@ -84,7 +84,7 @@ NSString * const HZMRAIDJSCommandUseCustomClose = @"useCustomClose";
     
     // Check for valid parameters for the given command.
     if (![self checkParamsForCommand:commandStr params:params]) {
-        [HZMRAIDLogger warning:@"MRAID - Parser" withMessage:[NSString stringWithFormat:@"command URL %@ is missing parameters", url]];
+        [HZSKLogger warning:@"MRAID - Parser" withMessage:[NSString stringWithFormat:@"command URL %@ is missing parameters", url]];
         _command = HZMRAIDInternalCommandUndefined;
         _params = @{};
         return;

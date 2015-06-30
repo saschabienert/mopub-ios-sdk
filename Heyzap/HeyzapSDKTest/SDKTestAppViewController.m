@@ -66,15 +66,11 @@ typedef enum {
 
 @property (nonatomic) UIButton *showBannerButton;
 @property (nonatomic) UIButton *hideBannerButton;
-@property (nonatomic) UIButton *vastLoadButton;
-@property (nonatomic) UIButton *vastPlayButton;
 
 @property (nonatomic) NSArray *bannerControls;
 @property (nonatomic) NSArray *nonBannerControls;
 
 @property (nonatomic) UITextField *creativeTypeTextField;
-
-@property (nonatomic) HZHeyzapExchangeAdapter *exchangeAdapter;
 
 
 @end
@@ -319,35 +315,7 @@ const CGFloat kLeftMargin = 10;
                           action:@selector(creativeIDEditingChanged:)
                 forControlEvents:UIControlEventEditingChanged];
     [self.scrollView addSubview:self.adsTextField];
-    
-    self.vastLoadButton = ({
-        UIButton * button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        button.frame = CGRectMake(CGRectGetMaxX(self.adsTextField.frame) + 6.0, 10.0, 89.0, 25.0);
-        button.backgroundColor = [UIColor darkGrayColor];
-        button.layer.cornerRadius = 4.0;
-        [button setTitle: @"VAST load" forState: UIControlStateNormal];
-        [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
-        [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
-        button.enabled = YES;
-        button;
-    });
-    [self.vastLoadButton addTarget: self action: @selector(vastLoadButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
-    [self.scrollView addSubview: self.vastLoadButton];
-    
-    self.vastPlayButton = ({
-        UIButton * button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        button.frame = CGRectMake(CGRectGetMaxX(self.vastLoadButton.frame) + 6.0, 10.0, 89.0, 25.0);
-        button.backgroundColor = [UIColor darkGrayColor];
-        button.layer.cornerRadius = 4.0;
-        [button setTitle: @"VAST play" forState: UIControlStateNormal];
-        [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
-        [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
-        button.enabled = YES;
-        button;
-    });
-    [self.vastPlayButton addTarget: self action: @selector(vastPlayButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
-    [self.scrollView addSubview: self.vastPlayButton];
-    
+
     self.creativeTypeTextField = ({
         UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.showButton.frame) + 5, 320, 35)];
         tf.delegate = self;
@@ -839,51 +807,4 @@ const CGFloat kLeftMargin = 10;
     }
 }
 
-# pragma mark - Heyzap Exchange
-HZAdType adType;
-- (void)vastLoadButtonPressed:(id)sender {
-    [HZLog setDebugLevel:HZDebugLevelVerbose];
-    adType = HZAdTypeInterstitial;
-    
-    self.exchangeAdapter = [[HZHeyzapExchangeAdapter alloc]init];
-    self.exchangeAdapter.delegate = self;
-    [self.exchangeAdapter prefetchForType:adType tag:nil];
-}
-
-- (void)vastPlayButtonPressed:(id)sender {
-    if([self.exchangeAdapter hasAdForType:adType tag:nil]){
-        [self.exchangeAdapter showAdForType:adType options:nil];
-    }else{
-        [self logToConsole:@"exchange does not have an ad for that type yet"];
-    }
-}
-
-- (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)adapterWasClicked:(HZBaseAdapter *)adapter {
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-- (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-- (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter {
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-- (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter {
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (NSString *)countryCode {
-    return @"us";
-}
 @end

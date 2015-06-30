@@ -372,12 +372,10 @@
 		86C491641B2819C000A84B2C /* CloseButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C4914F1B2819C000A84B2C /* CloseButton.h */; };
 		86C491651B2819C000A84B2C /* HZMRAIDView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491501B2819C000A84B2C /* HZMRAIDView.m */; };
 		86C491661B2819C000A84B2C /* HZMRAIDModalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491511B2819C000A84B2C /* HZMRAIDModalViewController.m */; };
-		86C491671B2819C000A84B2C /* HZMRAIDLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491521B2819C000A84B2C /* HZMRAIDLogger.m */; };
 		86C491681B2819C000A84B2C /* HZMRAIDView.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C491531B2819C000A84B2C /* HZMRAIDView.h */; };
 		86C491691B2819C000A84B2C /* HZMRAIDInterstitial.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491541B2819C000A84B2C /* HZMRAIDInterstitial.m */; };
 		86C4916A1B2819C000A84B2C /* HZMRAIDSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C491561B2819C000A84B2C /* HZMRAIDSettings.h */; };
 		86C4916B1B2819C000A84B2C /* HZMRAIDSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 86C491571B2819C000A84B2C /* HZMRAIDSettings.m */; };
-		86C4916C1B2819C000A84B2C /* HZMRAIDLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C491581B2819C000A84B2C /* HZMRAIDLogger.h */; };
 		86C4916D1B2819C000A84B2C /* HZMRAIDInterstitial.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C491591B2819C000A84B2C /* HZMRAIDInterstitial.h */; };
 		86C4916E1B2819C000A84B2C /* HZMRAIDModalViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C4915A1B2819C000A84B2C /* HZMRAIDModalViewController.h */; };
 		86C4916F1B2819C000A84B2C /* HZMRAIDOrientationProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C4915B1B2819C000A84B2C /* HZMRAIDOrientationProperties.h */; };
@@ -836,13 +834,11 @@
 		86C4914F1B2819C000A84B2C /* CloseButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CloseButton.h; path = MRAID/CloseButton.h; sourceTree = "<group>"; };
 		86C491501B2819C000A84B2C /* HZMRAIDView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDView.m; path = MRAID/HZMRAIDView.m; sourceTree = "<group>"; };
 		86C491511B2819C000A84B2C /* HZMRAIDModalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDModalViewController.m; path = MRAID/HZMRAIDModalViewController.m; sourceTree = "<group>"; };
-		86C491521B2819C000A84B2C /* HZMRAIDLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDLogger.m; path = MRAID/HZMRAIDLogger.m; sourceTree = "<group>"; };
 		86C491531B2819C000A84B2C /* HZMRAIDView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDView.h; path = MRAID/HZMRAIDView.h; sourceTree = "<group>"; };
 		86C491541B2819C000A84B2C /* HZMRAIDInterstitial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDInterstitial.m; path = MRAID/HZMRAIDInterstitial.m; sourceTree = "<group>"; };
 		86C491551B2819C000A84B2C /* CloseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CloseButton.png; path = MRAID/CloseButton.png; sourceTree = "<group>"; };
 		86C491561B2819C000A84B2C /* HZMRAIDSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDSettings.h; path = MRAID/HZMRAIDSettings.h; sourceTree = "<group>"; };
 		86C491571B2819C000A84B2C /* HZMRAIDSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZMRAIDSettings.m; path = MRAID/HZMRAIDSettings.m; sourceTree = "<group>"; };
-		86C491581B2819C000A84B2C /* HZMRAIDLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDLogger.h; path = MRAID/HZMRAIDLogger.h; sourceTree = "<group>"; };
 		86C491591B2819C000A84B2C /* HZMRAIDInterstitial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDInterstitial.h; path = MRAID/HZMRAIDInterstitial.h; sourceTree = "<group>"; };
 		86C4915A1B2819C000A84B2C /* HZMRAIDModalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDModalViewController.h; path = MRAID/HZMRAIDModalViewController.h; sourceTree = "<group>"; };
 		86C4915B1B2819C000A84B2C /* HZMRAIDOrientationProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDOrientationProperties.h; path = MRAID/HZMRAIDOrientationProperties.h; sourceTree = "<group>"; };
@@ -1627,13 +1623,11 @@
 				86C4914F1B2819C000A84B2C /* CloseButton.h */,
 				86C491501B2819C000A84B2C /* HZMRAIDView.m */,
 				86C491511B2819C000A84B2C /* HZMRAIDModalViewController.m */,
-				86C491521B2819C000A84B2C /* HZMRAIDLogger.m */,
 				86C491531B2819C000A84B2C /* HZMRAIDView.h */,
 				86C491541B2819C000A84B2C /* HZMRAIDInterstitial.m */,
 				86C491551B2819C000A84B2C /* CloseButton.png */,
 				86C491561B2819C000A84B2C /* HZMRAIDSettings.h */,
 				86C491571B2819C000A84B2C /* HZMRAIDSettings.m */,
-				86C491581B2819C000A84B2C /* HZMRAIDLogger.h */,
 				86C491591B2819C000A84B2C /* HZMRAIDInterstitial.h */,
 				86C4915A1B2819C000A84B2C /* HZMRAIDModalViewController.h */,
 				86C4915B1B2819C000A84B2C /* HZMRAIDOrientationProperties.h */,
@@ -2214,7 +2208,6 @@
 				504D82511AAA64CE004695C8 /* HZFBBannerAdapter.h in Headers */,
 				E626220919E707540094957B /* HZTestActivityViewController.h in Headers */,
 				99D4C4131B38878C004D24DE /* HZSKLogger.h in Headers */,
-				86C4916C1B2819C000A84B2C /* HZMRAIDLogger.h in Headers */,
 				866E3A101851302C00B6E431 /* HZAdInterstitialViewController.h in Headers */,
 				50CAB1A51AE9758500F9642D /* HZAFSecurityPolicy.h in Headers */,
 				99D4C41A1B38878C004D24DE /* HZSKVASTEventProcessor.h in Headers */,
@@ -2894,7 +2887,6 @@
 				8680AC9C193ED2DC0078B5CF /* HZDelegateProxy.m in Sources */,
 				507A454919BE29CC00C7AEEA /* HZNativeAdController.m in Sources */,
 				866E3A111851302C00B6E431 /* HZAdInterstitialViewController.m in Sources */,
-				86C491671B2819C000A84B2C /* HZMRAIDLogger.m in Sources */,
 				509E8D4719B91B7000ABF2D2 /* HZAbstractHeyzapAdapter.m in Sources */,
 				50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */,
 				99D4C41D1B38878C004D24DE /* HZSKVASTMediaFilePicker.m in Sources */,

@@ -47,13 +47,13 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
         return;
     }
     
-    //monroe: send error log here
     if(adType == HZAdTypeBanner){
+        HZELog(@"This is not the correct method to call for banner ad fetches. See HZHeyzapExchangeAdapter.");
         return;//wrong method to call
     }
     
     self.apiClient = [[HZHeyzapExchangeAPIClient alloc] init];
-    
+    _adType = adType;
     int width = [self screenWidth];
     int height = [[[UIApplication sharedApplication] keyWindow] bounds].size.height;
     
@@ -68,7 +68,8 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
     switch (adType) {
         case HZAdTypeVideo:
         case HZAdTypeIncentivized:
-            url = @"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/mdotm_vast.xml";
+            //url = @"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/mdotm_vast.xml";
+            url = [NSString stringWithFormat:@"http://ads.mdotm.com/ads/feed.php?partnerkey=heyzap&apikey=heyzapmediation&appkey=4cd119700fff11605d38f197ae5435dc&ua=%@&width=%i&height=%i&fmt=xhtml&v=3.4.0&test=1&deviceid=&aid=3305397B-FB19-4812-86F3-AEC2367C2CE5&ate=1&machine=%@&vidsupport=2&clientip=198.228.200.41", @"SampleApp%202.1.3%20(iPhone;%20iPhone%20OS%208.1.1;%20it_IT)", width, height, @"iPhone4,1%208.1.1"];
             break;
             case HZAdTypeInterstitial:
                 url = [NSString stringWithFormat:@"http://ads.mdotm.com/ads/feed.php?partnerkey=heyzap&apikey=heyzapmediation&appkey=4cd119700fff11605d38f197ae5435dc&ua=%@&width=%i&height=%i&fmt=xhtml&v=3.4.0&test=1&deviceid=&aid=3305397B-FB19-4812-86F3-AEC2367C2CE5&ate=1&machine=%@&vidsupport=0&clientip=198.228.200.41", @"SampleApp%202.1.3%20(iPhone;%20iPhone%20OS%208.1.1;%20it_IT)", width, height, @"iPhone4,1%208.1.1"];
@@ -77,12 +78,14 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
             break;
     }
     
+    HZDLog(@"Exchange client fetching url: %@", url);
+    
     [self.apiClient GET:url parameters:nil
         success:^(HZAFHTTPRequestOperation *operation, id responseObject)
             {
                 NSData * data = (NSData *)responseObject;
                 if(!data || data.bytes == nil) {
-                    NSLog(@"monroedebug failure");
+                    HZELog(@"Fetch failed - data null or empty");
                     [self.delegate client:self didFailToFetchAdWithType:adType];
                     return;
                 }
@@ -94,7 +97,8 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
                     [self.delegate client:self didFailToFetchAdWithType:adType];
                     return;
                 }
-                NSLog(@"monroedebug success, responseObject: %@", self.responseString);
+                
+                HZDLog(@"Fetch success, response: %@", self.responseString);
                 
                 if(self.format == HZHeyzapExchangeClientFormatVAST){
                     self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate:self forAdType:adType];
@@ -106,7 +110,7 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
                     self.lastMRAIDAdType = adType;
                     self.mraidInterstitial = [[HZMRAIDInterstitial alloc] initWithSupportedFeatures:nil
                                                                                        withHtmlData:self.responseString
-                                                                                        withBaseURL:[NSURL URLWithString:@"http://www.google.com"]
+                                                                                        withBaseURL:nil
                                                                                            delegate:self
                                                                                     serviceDelegate:nil
                                                                                  rootViewController:viewController];
@@ -115,25 +119,18 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
      
         failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
             {
-                NSLog(@"monroedebug failure");
+                HZELog(@"Fetch failed. Error: %@", error);
                 [self.delegate client:self didFailToFetchAdWithType:adType];
-            }
-        redirectBlock:^NSURLRequest * (NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse)
-            {
-//                if(redirectResponse != nil){
-//                    NSHTTPURLResponse * response = (NSHTTPURLResponse *) redirectResponse;
-//                    
-//                  NSLog(@"monroedebug redirect status: %ld: MIME: %@, request: %@, URL: %@ headers: %@", (long)response.statusCode, response.MIMEType, request.debugDescription ,response.URL, response.allHeaderFields);
-//                }
-                return request;
             }
      ];
 }
 
-- (void) play {
+- (void) showWithOptions:(HZShowOptions *)options {
     if(self.vastAdFetchedAndReady){
+        self.vastVC.rootViewController = options.viewController;
         [self.vastVC play];
     }else if(self.mraidInterstitialFetchedAndReady){
+        self.mraidInterstitial.rootViewController = options.viewController;
         [self.mraidInterstitial show];
     }
 }
@@ -149,7 +146,7 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
     if(!self.vastAdFetchedAndReady) {
         [self.delegate client:self didFailToFetchAdWithType:vastVC.adType];
     }else{
-        [self.delegate client:self didHaveError:@"playback_error"];
+        [self.delegate client:self didHaveError:[NSString stringWithFormat:@"vast_playback_error: %i", error]];
     }
 }
 

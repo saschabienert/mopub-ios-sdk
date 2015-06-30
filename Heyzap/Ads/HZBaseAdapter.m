@@ -20,6 +20,7 @@
 #import "HZiAdAdapter.h"
 #import "HZBannerAdapter.h"
 #import "HZHyprmxAdapter.h"
+#import "HZHeyzapExchangeAdapter.h"
 
 @implementation HZBaseAdapter
 
@@ -181,6 +182,7 @@
             [HZFacebookAdapter class],
             [HZiAdAdapter class],
             [HZHyprmxAdapter class],
+            [HZHeyzapExchangeAdapter class],
             nil];
 }
 

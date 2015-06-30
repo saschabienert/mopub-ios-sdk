@@ -34,20 +34,4 @@ NSString * const kHZHeyzapExchangeAPIBaseURLString = @"https://x.heyzap.com/";
     return self;
 }
 
-- (HZAFHTTPRequestOperation *)GET:(NSString *)URLString
-                       parameters:(id)parameters
-                          success:(void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
-                          failure:(void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure
-                    redirectBlock: (NSURLRequest * (^)(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse))block {
-    NSString *finalurl =[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString];
-    
-    NSMutableURLRequest *request = [self.requestSerializer requestWithMethod:@"GET" URLString:finalurl parameters:parameters error:nil];
-    
-    HZAFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request success:success failure:failure];
-    [operation setRedirectResponseBlock:block];
-    
-    [self.operationQueue addOperation:operation];
-    return operation;
-}
-
 @end

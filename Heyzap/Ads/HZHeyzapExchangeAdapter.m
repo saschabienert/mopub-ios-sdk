@@ -22,14 +22,9 @@
 #import "HZHeyzapExchangeBannerAdapter.h"
 
 @interface HZHeyzapExchangeAdapter()<HZHeyzapExchangeClientDelegate>
-
-/**
- *  Because Vungle makes no differentiation between having an incentivized ad and having a video ad, we just store any error in a property shared between the ad types.
- */
-@property (nonatomic, strong) NSError *lastError;
-@property (nonatomic) BOOL isShowingIncentivized;
-
+/* Just keeps reference to clients during their fetches. They will be added to the dict adTypeExchangeClients once they fetch (that's when we're certain of their adType)*/
 @property (nonatomic) NSMutableArray * exchangeClients;
+/* Maps adType to a client that has already fetched an ad for that type.*/
 @property (nonatomic) NSMutableDictionary *adTypeExchangeClients;
 
 @property (nonatomic) HZHeyzapExchangeClient *currentlyPlayingClient;
@@ -65,6 +60,12 @@
     return YES;
 }
 
++ (NSError *)enableWithCredentials:(NSDictionary *)credentials{
+    [HZHeyzapExchangeAdapter sharedInstance].credentials = @{};//exchange does not have credentials, but nil checks later will think there was a failure w/o this
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
+    return nil;
+}
+
 + (NSString *)name
 {
     return HZNetworkHeyzapExchange;
@@ -90,11 +91,15 @@
 
 - (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
 {
+    if([self hasAdForType:type tag:tag]){
+        HZDLog(@"Prefetch called but an ad is already available.");
+        return;
+    }
+    
     HZHeyzapExchangeClient *client = [[HZHeyzapExchangeClient alloc] init];
     [client setDelegate:self];
     [client fetchForAdType:type];
     [self.exchangeClients addObject:client]; // keeps a strong ref to client until we get a callback
-
 }
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
@@ -110,39 +115,20 @@
     return false;
 }
 
-- (NSError *)lastErrorForAdType:(HZAdType)adType
-{
-    return self.lastError;
-}
-
-- (void)clearErrorForAdType:(HZAdType)adType
-{
-    self.lastError = nil;
-}
-
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
     if(self.currentlyPlayingClient != nil){
-        NSLog(@"ERROR: client already showing ad.");
+        HZELog(@"HeyzapExchangeAdapter: Already showing an ad.");
         return;
     }
     
     HZHeyzapExchangeClient * exchangeClient = [self.adTypeExchangeClients objectForKey:[self adTypeAsDictKey:type]];
     if(!exchangeClient){
+        HZELog(@"HeyzapExchangeAdapter: No ad available for that type.")
         return;
     }
     
-    [exchangeClient play];
-}
-
-
-- (BOOL)conformsToProtocol:(Protocol *)aProtocol
-{
-    if ([NSStringFromProtocol(aProtocol) isEqualToString:@"HZHeyzapExchangeClientDelegate"]) {
-        return YES;
-    } else {
-        return [super conformsToProtocol:aProtocol];
-    }
+    [exchangeClient showWithOptions:options];
 }
 
 
@@ -151,13 +137,15 @@
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZHeyzapExchangeBannerAdapter alloc] initWithAdUnitID:nil options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
+
 - (BOOL)hasBannerCredentials {
-    return YES;//monroe: ?
+    return YES;
 }
 
 #pragma mark - HZHeyzapExchangeClientDelegate
 
 - (void) client:(HZHeyzapExchangeClient *)client didFetchAdWithType:(HZAdType)adType {
+    [self setError:nil forType:adType];
     [self.adTypeExchangeClients setObject:client forKey:[self adTypeAsDictKey:adType]];
     [self.exchangeClients removeObject:client];
 }
@@ -167,24 +155,26 @@
 }
 
 - (void) client:(HZHeyzapExchangeClient *)client didHaveError:(NSString *)error {
-    NSLog(@"monroe: clientDidHaveError: %@", error);
-    self.lastError = [NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}];
+    [self setError:[NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}] forType:client.adType];
+    [self.adTypeExchangeClients removeObjectForKey:[self adTypeAsDictKey:[client adType]]];
+    [self.exchangeClients removeObject:client];
+    self.currentlyPlayingClient = nil;
 }
 
 - (void) didStartAdWithClient:(HZHeyzapExchangeClient *)client {
+    [self.delegate adapterDidShowAd:self];
+    
     if(client.isWithAudio){
         [self.delegate adapterWillPlayAudio:self];
     }
-    
-    [self.delegate adapterDidShowAd:self];
     
     self.currentlyPlayingClient = client;    
 }
 
 - (void) didEndAdWithClient:(HZHeyzapExchangeClient *)client successfullyFinished:(BOOL)successfullyFinished{
-    if(self.currentlyPlayingClient != client){
-        NSLog(@"ERROR: client that didEndAd is not currentlyPlayingClient!");
-    }
+    self.currentlyPlayingClient = nil;
+    [self.adTypeExchangeClients removeObjectForKey:[self adTypeAsDictKey:[client adType]]];
+
     
     if(client.isWithAudio){
         [self.delegate adapterDidFinishPlayingAudio:self];
@@ -199,18 +189,33 @@
     }
     
     [self.delegate adapterDidDismissAd:self];
-    
-    self.currentlyPlayingClient = nil;
 }
 
 - (void) adClickedWithClient:(HZHeyzapExchangeClient *)client {
     [self.delegate adapterWasClicked:self];
 }
 
+
 #pragma mark - Utilities
 
 - (NSNumber *) adTypeAsDictKey:(HZAdType)adType {
     return [NSNumber numberWithInt:adType];
+}
+
+- (void) setError:(NSError *)error forType:(HZAdType)type {
+    switch(type) {
+        case HZAdTypeInterstitial:
+            self.lastInterstitialError = error;
+        break;
+        case HZAdTypeIncentivized:
+            self.lastIncentivizedError = error;
+        break;
+        case HZAdTypeVideo:
+            self.lastVideoError = error;
+        break;
+        default://ignore banners here
+        break;
+    }
 }
 
 @end

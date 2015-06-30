@@ -468,8 +468,9 @@ typedef enum {
         [self.delegate vastWillPresentFullScreen:self];
     }
     
-    [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:self animated:NO completion:nil];
+    [self.rootViewController presentViewController:self animated:NO completion:nil];
 }
+
 
 #pragma mark - HZAdPopupActionDelegate methods
 
