@@ -15,7 +15,7 @@ PODS:
   - OHHTTPStubs (4.0.2)
   - Subliminal (1.1.0)
   - UnityAds (1.3.12)
-  - VungleAdvertiserSDK (3.0.12)
+  - VungleAdvertiserSDK (3.1.0)
 
 DEPENDENCIES:
   - AdColony
@@ -61,6 +61,6 @@ SPEC CHECKSUMS:
   OHHTTPStubs: dbd1957d414659783e07b49c961940b7564c23d9
   Subliminal: 5d9b445e84343d602fad3ce6ac14cff91e9bd618
   UnityAds: f570b20497c56d7f4aac2b1c60e4e6962598ab58
-  VungleAdvertiserSDK: 609e82e96bb15959887f5fea72859cabe1d8032a
+  VungleAdvertiserSDK: c1ece8ff374be77966fde504d234218b0cc6e17f
 
 COCOAPODS: 0.37.2
