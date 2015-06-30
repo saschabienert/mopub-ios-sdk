@@ -25,6 +25,8 @@
 #import "HZBannerAd.h"
 #import "HZNoCaretTextField.h"
 
+#import "HZHeyzapExchangeAdapter.h"
+
 #define kTagCreativeIDField 4393
 
 typedef enum {
@@ -72,7 +74,7 @@ typedef enum {
 
 @property (nonatomic) UITextField *creativeTypeTextField;
 
-@property (nonatomic) HZSKVASTViewController * vastVC;
+@property (nonatomic) HZHeyzapExchangeAdapter *exchangeAdapter;
 
 
 @end
@@ -340,7 +342,7 @@ const CGFloat kLeftMargin = 10;
         [button setTitle: @"VAST play" forState: UIControlStateNormal];
         [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
         [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
-        button.enabled = NO;
+        button.enabled = YES;
         button;
     });
     [self.vastPlayButton addTarget: self action: @selector(vastPlayButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
@@ -749,7 +751,6 @@ const CGFloat kLeftMargin = 10;
 - (void)bannerDidReceiveAd:(HZBannerAd *)banner {
     NSLog(@"bannerDidReceiveAd");
     LOG_METHOD_NAME_TO_CONSOLE;
-    
 }
 
 - (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
@@ -838,59 +839,51 @@ const CGFloat kLeftMargin = 10;
     }
 }
 
-# pragma mark - VAST
+# pragma mark - Heyzap Exchange
+HZAdType adType;
 - (void)vastLoadButtonPressed:(id)sender {
-    self.vastPlayButton.enabled = NO;
-    self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate: self forAdType:HZAdTypeVideo];
     [HZLog setDebugLevel:HZDebugLevelVerbose];
-    NSURL* url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_doubleclick_inline_comp.xml"];
-    //url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/simple_tracking.xml"];//intel ad
-    //url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_missing_mediafile.xml"];//erroroneous xml
-    //url = [NSURL URLWithString:@"http://ads.mdotm.com/ads/feed.php?partnerkey=heyzap&apikey=heyzapmediation&appkey=4cd119700fff11605d38f197ae5435dc&ua=SampleApp%202.1.3%20(iPhone;%20iPhone%20OS%208.1.1;%20it_IT)&width=320&height=480&fmt=xhtml&v=3.4.0&test=0&deviceid=&aid=3305397B-FB19-4812-86F3-AEC2367C2CE5&ate=1&machine=iPhone4,1%208.1.1&vidsupport=2&clientip=198.228.200.41"];//mdotm
-    url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/mdotm_vast.xml"];//mdotm hosted
-    [self.vastVC loadVideoWithURL:url];
+    adType = HZAdTypeInterstitial;
+    
+    self.exchangeAdapter = [[HZHeyzapExchangeAdapter alloc]init];
+    self.exchangeAdapter.delegate = self;
+    [self.exchangeAdapter prefetchForType:adType tag:nil];
 }
 
 - (void)vastPlayButtonPressed:(id)sender {
-    [self.vastVC play];
+    if([self.exchangeAdapter hasAdForType:adType tag:nil]){
+        [self.exchangeAdapter showAdForType:adType options:nil];
+    }else{
+        [self logToConsole:@"exchange does not have an ad for that type yet"];
+    }
 }
 
-// sent when the video is ready to play - required
-- (void)vastReady:(HZSKVASTViewController *)vastVC {
-    NSLog(@"vastReady");
-    [self logToConsole:@"vastReady"];
-    self.vastPlayButton.enabled = YES;
+- (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
+    LOG_METHOD_NAME_TO_CONSOLE;
 }
 
-// sent when any VASTError occurs
-- (void)vastError:(HZSKVASTViewController *)vastVC error:(HZSKVASTError)error{
-    NSLog(@"vastError: %u", error);
-    [self logToConsole:[NSString stringWithFormat:@"vastError: %u", error]];
+- (void)adapterWasClicked:(HZBaseAdapter *)adapter {
+    LOG_METHOD_NAME_TO_CONSOLE;
+}
+- (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {
+    LOG_METHOD_NAME_TO_CONSOLE;
 }
 
-// Sent when VAST will show a video.
-- (void)vastWillPresentFullScreen:(HZSKVASTViewController *)vastVC {
-     NSLog(@"vastWillPresentFullScreen");
-    [self logToConsole:@"vastWillPresentFullScreen"];
-    self.vastPlayButton.enabled = NO;
+- (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
+    LOG_METHOD_NAME_TO_CONSOLE;
+}
+- (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
+    LOG_METHOD_NAME_TO_CONSOLE;
 }
 
-// Sent when VAST dismissed a video
-- (void)vastDidDismissFullScreen:(HZSKVASTViewController *)vastVC {
-     NSLog(@"vastDidDismissFullScreen");
-    [self logToConsole:@"vastDidDismissFullScreen"];
+- (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter {
+    LOG_METHOD_NAME_TO_CONSOLE;
+}
+- (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter {
+    LOG_METHOD_NAME_TO_CONSOLE;
 }
 
-// Sent when VAST detected a valid click on a video. `url` is the URL meant to be opened with the user's click
-- (void)vastOpenBrowseWithUrl:(NSURL *)url {
-     NSLog(@"vastOpenBrowseWithUrl: %@", url);
-    [self logToConsole:@"vastOpenBrowseWithUrl: %@"];
+- (NSString *)countryCode {
+    return @"us";
 }
-
-// Sent when VAST tracks an event (see HZSKVASTEventProcessor)
-- (void)vastTrackingEvent:(NSString *)eventName {
-    NSLog(@"vastTrackingEvent: %@", eventName);
-    [self logToConsole:[NSString stringWithFormat:@"vastTrackingEvent: %@", eventName]];
-}
-
 @end

@@ -19,6 +19,7 @@
 @property (nonatomic) BOOL durationAvailableFireImmediately;
 @property (nonatomic) NSTimer *animationTimer;
 @property (nonatomic) BOOL timerDidFireAlready;
+@property (nonatomic) BOOL videoClickEnabled;
 
 #define kHZVideoViewAutoFadeOutControlsTime 2
 
@@ -127,7 +128,11 @@
 }
 
 - (void) onTap: (id) sender {
-    [self animateControls: !self.showingAllVideoControls];
+    if(self.videoClickEnabled){
+        [self onInstall:nil];
+    }else{
+        [self animateControls: !self.showingAllVideoControls];
+    }
 }
 
 - (void) onHide: (id) sender {
@@ -175,8 +180,8 @@
  *  This method is called in order to automatically fade out video controls after a certain time period
  */
 - (void) animationTimerDidFire: (id) sender {
-    // fade out video controls after this timer fires, if they're still showing.
-    if(!self.showingAllVideoControls){
+    // fade out video controls after this timer fires, if they're still showing & we're using the new fading controls
+    if(!self.showingAllVideoControls || self.videoClickEnabled){
         return;
     }
     
@@ -388,5 +393,8 @@
     [self.player play];
 }
 
-
+- (void) shouldUseClickableVideoConfiguration {
+    self.videoClickEnabled = YES;
+    
+}
 @end

@@ -34,4 +34,7 @@
 - (void) pause;
 - (void) play;
 
+// use this method to revert the video view back to a clickable video with no install button and no fading controls
+- (void) shouldUseClickableVideoConfiguration;
+
 @end

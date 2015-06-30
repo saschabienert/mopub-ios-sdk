@@ -43,9 +43,10 @@
 
 @interface HZSKVASTViewController : UIViewController
 
-@property (nonatomic, unsafe_unretained) id<HZSKVASTViewControllerDelegate>delegate;
+
 @property (nonatomic, strong) NSURL *clickThrough;
 @property (nonatomic) HZAdType adType;
+@property (nonatomic, readonly) BOOL didFinishSuccessfully;
 
 - (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forAdType:(HZAdType)adType; // designated initializer for VASTViewController
 

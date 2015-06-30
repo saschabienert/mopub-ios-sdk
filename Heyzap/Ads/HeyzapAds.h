@@ -91,6 +91,7 @@ extern NSString * const HZNetworkAdColony;
 extern NSString * const HZNetworkAdMob;
 extern NSString * const HZNetworkIAd;
 extern NSString * const HZNetworkHyperMX;
+extern NSString * const HZNetworkHeyzapExchange;
 
 // General Network Callbacks
 extern NSString * const HZNetworkCallbackInitialized;

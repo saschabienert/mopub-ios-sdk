@@ -57,12 +57,14 @@ typedef enum {
     BOOL vastReady;
     BOOL statusBarHiddenOutsideOfVAST;
     BOOL hasReportedEngagedView;
-    BOOL didFinish;
     CurrentVASTQuartile currentQuartile;
 }
 
+@property (nonatomic, weak) id<HZSKVASTViewControllerDelegate>delegate;
+
 @property(nonatomic, strong) HZSKVASTEventProcessor *eventProcessor;
 
+@property (nonatomic) BOOL didFinishSuccessfully;
 @property(nonatomic, strong) HZVideoView *videoView;
 @property(nonatomic, strong) HZVASTVideoSettings *videoSettings;
 @property(nonatomic, strong) HZVASTVideoCache *videoCache;
@@ -82,7 +84,7 @@ typedef enum {
         _delegate = delegate;
         currentQuartile=VASTFirstQuartile;
         hasReportedEngagedView = NO;
-        didFinish = false;
+        _didFinishSuccessfully = false;
         
         _videoView = [[HZVideoView alloc] initWithFrame:CGRectZero];
         _videoView.actionDelegate = self;
@@ -150,6 +152,7 @@ typedef enum {
         self.videoView.hideButtonEnabled = self.videoSettings.allowHide;
         self.videoView.timerLabelEnabled = self.videoSettings.allowTimer;
         self.videoView.installButtonEnabled = self.videoSettings.allowInstallButton;
+        [self.videoView shouldUseClickableVideoConfiguration];
         
         [self.videoView setSkipButtonTimeInterval: [self.videoSettings.skipOffsetSeconds doubleValue]];
         
@@ -384,7 +387,7 @@ typedef enum {
         [self.videoView removeFromSuperview];
         self.videoView = nil;
         
-        if(hasPlayerStarted && !didFinish) {
+        if(hasPlayerStarted && !self.didFinishSuccessfully) {
             [self.eventProcessor trackEvent:VASTEventTrackSkip];
         }
         
@@ -492,7 +495,7 @@ typedef enum {
 
 - (void) onActionCompleted: (id) sender {
     [self.eventProcessor trackEvent:VASTEventTrackComplete];
-    didFinish = YES;
+    self.didFinishSuccessfully = YES;
     
     //engaged view is defined as at least 30 seconds watched or completed, whichever comes first
     if(!hasReportedEngagedView) {
