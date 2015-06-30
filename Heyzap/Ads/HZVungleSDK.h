@@ -24,7 +24,8 @@
 - (void)vungleSDKwillShowAd;
 - (void)vungleSDKwillCloseAdWithViewInfo:(NSDictionary*)viewInfo willPresentProductSheet:(BOOL)willPresentProductSheet;
 - (void)vungleSDKwillCloseProductSheet:(id)productSheet;
-- (void)vungleSDKhasCachedAdAvailable;
+- (void)vungleSDKhasCachedAdAvailable; // Deprecated in Vungle SDK 3.1.0
+- (void)vungleSDKAdPlayableChanged;
 @end
 
 @interface HZVungleSDK : HZClassProxy
@@ -39,7 +40,7 @@
 - (void)startWithAppId:(NSString*)appId;
 - (void)playAd:(UIViewController*)viewController;
 - (void)playAd:(UIViewController *)viewController withOptions:(id)options;
-- (BOOL)isCachedAdAvailable DEPRECATED_MSG_ATTRIBUTE("Deprecated in Vungle SDK 3.1.0.");
+- (BOOL)isCachedAdAvailable; // Deprecated in Vungle SDK 3.1.0
 - (BOOL)isAdPlayable;
 - (NSDictionary*)debugInfo;
 - (void)setLoggingEnabled:(BOOL)enable;

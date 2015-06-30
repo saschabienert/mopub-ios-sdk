@@ -108,7 +108,14 @@
 
 - (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
 {
-    return [self supportedAdFormats] & type && [[HZVungleSDK sharedSDK] isAdPlayable];
+    BOOL adPlayable = NO;
+    
+    if ([[HZVungleSDK sharedSDK] respondsToSelector:@selector(isAdPlayable)]) {
+        adPlayable = [[HZVungleSDK sharedSDK] isAdPlayable];
+    } else {
+        adPlayable = [[HZVungleSDK sharedSDK] isCachedAdAvailable];
+    }
+    return [self supportedAdFormats] & type && adPlayable;
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType
