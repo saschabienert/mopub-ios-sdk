@@ -101,12 +101,12 @@
     return YES;
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     BOOL adPlayable = NO;
     

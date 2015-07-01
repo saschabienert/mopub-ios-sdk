@@ -34,6 +34,8 @@ char *HZNewBase64Encode(
 + (NSString *) internetStatus;
 
 NSArray *hzMap(NSArray *array, id (^block)(id object));
+NSArray *hzFilter(NSArray *array, BOOL(^block)(id object));
+NSOrderedSet *hzFilterOrderedSet(NSOrderedSet *set, BOOL(^block)(id object));
 
 BOOL hziOS8Plus(void);
 

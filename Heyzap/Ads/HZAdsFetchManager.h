@@ -14,7 +14,7 @@
 
 @interface HZAdsFetchManager : NSObject
 
-- (void) fetch: (HZAdFetchRequest *) request withCompletion:(void (^)(HZAdModel *, NSString *, NSError *))completion;
+- (void) fetch: (HZAdFetchRequest *) request withCompletion:(void (^)(HZAdModel *, NSError *))completion;
 + (instancetype)sharedManager;
 
 @end

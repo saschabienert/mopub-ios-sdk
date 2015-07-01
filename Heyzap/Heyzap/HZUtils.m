@@ -257,6 +257,20 @@ NSArray *hzMap(NSArray *array, id (^block)(id object)) {
     }
     return newArray;
 }
+NSArray *hzFilter(NSArray *array, BOOL(^block)(id object)) {
+    NSIndexSet *idxSet = [array indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        return block(obj);
+    }];
+    return [array objectsAtIndexes:idxSet];
+}
+
+NSOrderedSet *hzFilterOrderedSet(NSOrderedSet *set, BOOL(^block)(id object)) {
+    NSIndexSet *idxSet = [set indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        return block(obj);
+    }];
+    
+    return [NSOrderedSet orderedSetWithArray:[set objectsAtIndexes:idxSet]];
+}
 
 BOOL hziOS8Plus(void) {
     static BOOL eightPlus;

@@ -163,6 +163,12 @@ extern NSString * const kHeyzapAdsCustomPublisherDataRefreshedNotification;
  */
 - (void)didFailToReceiveAdWithTag: (NSString *) tag;
 
+
+
+// Should probably have new API: didFailToReceiveAd (no tag)
+// didRecieveAd (no tag)
+
+
 /**
  *  Called when the user clicks on an ad.
  *
