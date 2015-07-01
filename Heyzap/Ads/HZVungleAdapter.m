@@ -143,7 +143,7 @@
         vungleOptions[incentivizedKey] = @1;
     }
     
-    NSError *error = [[NSError alloc] init];
+    NSError *error;
     [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:vungleOptions error:&error];
     
     if (error) {
@@ -202,7 +202,7 @@
 }
 
 + (NSString *)vunglePlayAdOptionKeyIncentivized {
-    return hzLookupStringConstant(@"VunglePlayAdOptionKeyIncentivized") ?: @"incentivized";
+    return @"incentivized";
 }
 
 @end
