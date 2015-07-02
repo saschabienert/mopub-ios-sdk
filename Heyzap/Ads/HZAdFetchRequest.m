@@ -17,6 +17,7 @@
 #define kHZAdRetries 3
 
 @interface HZAdFetchRequest()
+@property (nonatomic, readonly) NSString *tag;
 @property (nonatomic) NSMutableDictionary *generatedParams;
 @end
 

@@ -37,7 +37,7 @@ static int HZIncentivizedCreativeIDPin = 0;
     [[HZAdsManager sharedManager] showForAdUnit:HZIncentivizedAdUnit auctionType:auctionType options:options];
 }
 
-+ (void)fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion {
++ (void)fetchForAuctionType:(HZAuctionType)auctionType completion:(void (^)(BOOL result, NSError *error))completion {
     if ([HZAdsManager isEnabled]) {
         
         NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
@@ -49,9 +49,9 @@ static int HZIncentivizedCreativeIDPin = 0;
             [params setObject: HZIncentivizedAdUserIdentifier forKey: @"user_identifier"];
         }
         
-        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: HZIncentivizedAdCreativeTypes adUnit: HZIncentivizedAdUnit tag: tag auctionType:auctionType andAdditionalParams: params];
+        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: HZIncentivizedAdCreativeTypes adUnit: HZIncentivizedAdUnit tag:nil auctionType:auctionType andAdditionalParams: params];
         
-        [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
+        [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSError *error) {
             if (completion) {
                 BOOL result = YES;
                 if (error != nil || ad == nil) {
@@ -84,7 +84,7 @@ static int HZIncentivizedCreativeIDPin = 0;
 + (BOOL)isAvailableForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType
 {
     if (![HZAdsManager isEnabled]) return NO;
-    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZIncentivizedAdUnit tag:tag auctionType:auctionType];
+    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZIncentivizedAdUnit auctionType:auctionType];
 }
 
 + (id)alloc {

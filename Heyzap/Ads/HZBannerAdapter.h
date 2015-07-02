@@ -10,13 +10,13 @@
 #import "HZBannerAd_Private.h"
 #import "HZBaseAdapter.h"
 
-@class HZMediationSession;
+@class HZMediationEventReporter;
 @class HZBaseAdapter;
 
 @protocol HZBannerReportingDelegate <NSObject>
 
-- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter hadImpressionForSession:(HZMediationSession *)session;
-- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter wasClickedForSession:(HZMediationSession *)session;
+- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter hadImpressionWithEventReporter:(HZMediationEventReporter *)eventReporter;
+- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter wasClickedWithEventReporter:(HZMediationEventReporter *)eventReporter;
 
 @end
 
@@ -26,7 +26,7 @@
 
 @property (nonatomic, strong) NSError *lastError;
 
-@property (nonatomic, strong) HZMediationSession *session;
+@property (nonatomic, strong) HZMediationEventReporter *eventReporter;
 @property (nonatomic, weak) id<HZBannerReportingDelegate> bannerReportingDelegate;
 @property (nonatomic, weak) HZBaseAdapter *parentAdapter;
 

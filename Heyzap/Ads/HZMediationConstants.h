@@ -52,4 +52,8 @@ NSString * NSStringFromAdType(HZAdType type);
 HZAdType hzAdTypeFromString(NSString *adUnit);
 + (NSArray *)creativeTypesForAdType:(HZAdType)type;
 
+HZAdType hzAdTypeFromCreativeTypeString(NSString *creativeTypeString);
+
+BOOL hzCreativeTypeSetContainsAdType(NSSet *const creativeTypes, const HZAdType adType);
+
 @end

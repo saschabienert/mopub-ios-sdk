@@ -84,7 +84,7 @@
     return [HZGADRequest sdkVersion];
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     return [self supportedAdFormats] & type && self.currentInterstitial.isReady;
 }
@@ -98,7 +98,7 @@
     return NO;
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     HZAssert(self.adUnitID, @"Need an ad unit ID by this point");
     if (self.currentInterstitial

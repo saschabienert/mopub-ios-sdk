@@ -17,8 +17,6 @@
 @property (nonatomic) HZBannerAdOptions *options;
 @property (nonatomic) HZHeyzapExchangeBannerClient *client;
 
-@property (nonatomic) UIWebView *clickTrackingWebView;
-
 @property (nonatomic) BOOL isLoaded;
 
 @end
@@ -35,7 +33,6 @@
         _options = options;
         
         _client = [[HZHeyzapExchangeBannerClient alloc] init];
-        _client.delegate = self;
         [_client fetchWithOptions:options delegate:self];
     }
     
@@ -60,6 +57,7 @@
 }
 
 - (void) bannerInteractionWillLeaveApplication:(BOOL)willLeaveApplication{
+    [self.bannerReportingDelegate bannerAdapter:self wasClickedWithEventReporter:self.eventReporter];
     [self.bannerInteractionDelegate userDidClick];
     if(willLeaveApplication){
         [self.bannerInteractionDelegate willLeaveApplication];
@@ -68,40 +66,26 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
-
-#pragma mark - HZMRAIDViewDelegate (banners)
-
-- (void)mraidViewAdReady:(HZMRAIDView *)mraidView {
-    self.bannerView = mraidView;
+- (void)bannerReady:(HZMRAIDView *)banner {
+    self.bannerView = banner;
     self.isLoaded = YES;
     [self.bannerInteractionDelegate didReceiveAd];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerLoaded forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
-- (void)mraidViewAdFailed:(HZMRAIDView *)mraidView {
+- (void)bannerFailed {
     self.bannerView = nil;
     self.isLoaded = NO;
     [self.bannerInteractionDelegate didFailToReceiveAd:nil];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
-- (void)mraidViewWillExpand:(HZMRAIDView *)mraidView{
-    [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+- (void)bannerWillShow {
+    [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
 }
 
-- (void)mraidViewDidClose:(HZMRAIDView *)mraidView {
+- (void)bannerDidClose {
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerDismiss forNetwork: [HZHeyzapExchangeAdapter name]];
-}
-
-- (void)mraidViewNavigate:(HZMRAIDView *)mraidView withURL:(NSURL *)url {
-    self.clickTrackingWebView = [[UIWebView alloc] init];
-    [self.clickTrackingWebView loadRequest:[NSURLRequest requestWithURL:url]];
-    
-    [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
-    [self.bannerInteractionDelegate userDidClick];
-    [self.bannerInteractionDelegate willLeaveApplication];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: [HZHeyzapExchangeAdapter name]];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
 @end

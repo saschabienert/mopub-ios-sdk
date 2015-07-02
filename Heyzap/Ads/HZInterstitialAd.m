@@ -47,11 +47,7 @@
 + (void) setDelegate: (id<HZAdsDelegate>) delegate {
     HZVersionCheck()
 
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapInterstitialAd setDelegate:delegate];
-    } else {
-        [[HeyzapMediation sharedInstance] setDelegate:delegate forAdType:HZAdTypeInterstitial];
-    }
+    [[HeyzapMediation sharedInstance] setDelegate:delegate forAdType:HZAdTypeInterstitial];
 }
 
 #pragma mark - Showing Ads
@@ -79,11 +75,7 @@
         options = [HZShowOptions new];
     }
 
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapInterstitialAd showForAuctionType:HZAuctionTypeMixed options:options];
-    } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeInterstitial additionalParams:nil options:options];
-    }
+    [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeInterstitial additionalParams:nil options:options];
 }
 
 #pragma mark - Fetching Ads
@@ -103,12 +95,7 @@
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
     HZVersionCheck()
 
-    tag = tag ?: [HeyzapAds defaultTagName];
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapInterstitialAd fetchForTag:tag auctionType:HZAuctionTypeMixed withCompletion:completion];
-    } else {
-        [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeInterstitial tag:tag additionalParams:nil completion:completion];
-    }
+    [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeInterstitial additionalParams:nil completion:completion];
 }
 
 + (BOOL) isAvailable {
@@ -120,11 +107,7 @@
 
     tag = tag ?: [HeyzapAds defaultTagName];
     
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        return [HZHeyzapInterstitialAd isAvailableForTag:tag auctionType:HZAuctionTypeMixed];
-    } else {
-        return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeInterstitial tag:tag];
-    }
+    return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeInterstitial tag:tag];
 }
 
 #pragma mark - Private API

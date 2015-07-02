@@ -8,11 +8,14 @@
 
 #import "HZWebView.h"
 #import "HZUtils.h"
+#import "HZWebViewActivityIndicator.h"
 
 @interface HZWebView()
 @property (nonatomic) UIInterfaceOrientation currOrientation;
 @property (nonatomic) NSString *HTMLContent;
 @property (nonatomic) UIWebView *webview;
+@property (nonatomic) HZWebViewActivityIndicator *activityIndicator;
+@property (nonatomic) UIView *hzActivityIndicatorBackgroundView;
 @property (nonatomic) BOOL ready;
 @property (nonatomic) BOOL isFullscreen;
 @end
@@ -37,6 +40,11 @@
         
         [self addSubview: _webview];
         
+        // activity indicator
+        _activityIndicator = [[HZWebViewActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
+        _activityIndicator.labelText = @"Loading App Store";
+        [self addSubview:_activityIndicator];
+        
         self.backgroundColor = [UIColor redColor];
     }
     return self;
@@ -60,11 +68,13 @@
 
 #pragma mark - Views
 
+// Override
 - (void) layoutSubviews {
     [super layoutSubviews];
     self.webview.frame = self.bounds;
 }
 
+// Override
 - (void) removeFromSuperview {
     [self.webview stringByEvaluatingJavaScriptFromString: @"adViewHidden();"];
     [super removeFromSuperview];
@@ -101,7 +111,7 @@
         
         return NO;
     } else if ([url.absoluteString rangeOfString:@"Heyzap.clickAd"].location != NSNotFound) {
-        if (self.actionDelegate) {
+        if (self.actionDelegate && !self.isLoading) {
             [self.actionDelegate onActionClick: self withURL: url];
         }
         return NO;
@@ -135,6 +145,23 @@
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {
     
+}
+
+# pragma mark - Getters/Setters
+
+// start activity indicator
+- (void)setIsLoading:(BOOL)isLoading {
+    
+    if (isLoading) {
+        self.webview.alpha = 0.7;
+        [self.activityIndicator startAnimating];
+        
+    } else {
+        self.webview.alpha = 1.0;
+        [self.activityIndicator stopAnimating];
+    }
+    
+    _isLoading = isLoading;
 }
 
 @end

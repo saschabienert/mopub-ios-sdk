@@ -132,7 +132,7 @@ NSString * const kHZNetworkName = @"mobile";
     return YES;
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     if (![[[UIApplication sharedApplication] keyWindow] rootViewController]) {
         // This is important so we should always NSLog this.
@@ -150,7 +150,7 @@ NSString * const kHZNetworkName = @"mobile";
     }
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     // AdColony auto-prefetches
 }

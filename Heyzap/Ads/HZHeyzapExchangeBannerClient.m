@@ -10,10 +10,10 @@
 #import "HZHeyzapExchangeAPIClient.h"
 #import "HZLog.h"
 #import "HZDictionaryUtils.h"
-#import "HZHeyzapExchangeFormat.h"
+#import "HZHeyzapExchangeConstants.h"
 #import "HZHeyzapExchangeMRAIDServiceHandler.h"
 
-@interface HZHeyzapExchangeBannerClient()<HZHeyzapExchangeMRAIDServiceHandlerDelegate>
+@interface HZHeyzapExchangeBannerClient()<HZHeyzapExchangeMRAIDServiceHandlerDelegate, HZMRAIDViewDelegate>
 
 @property (nonatomic) HZBannerAdOptions *lastBannerAdOptions;
 @property (nonatomic) HZMRAIDView *mraidBanner;
@@ -23,11 +23,16 @@
 
 @property (nonatomic) NSDictionary *responseDict;
 @property (nonatomic) NSString *adMediationId;
-@property (nonatomic) NSDictionary *adMetaDict;
+@property (nonatomic) NSNumber *adScore;
 @property (nonatomic) NSString *adMarkup;
+@property (nonatomic) NSString *adDataHash;//encryption hash for request validation
 @property (nonatomic) HZHeyzapExchangeFormat format;
 
 @property (nonatomic) HZHeyzapExchangeMRAIDServiceHandler *serviceHandler;
+
+@property (nonatomic, weak) id<HZHeyzapExchangeBannerClientDelegate> delegate;
+
+@property (nonatomic) UIWebView *clickTrackingWebView;
 @end
 
 
@@ -43,13 +48,13 @@
     return self;
 }
 
-- (void) fetchWithOptions:(HZBannerAdOptions *)options delegate:(id<HZMRAIDViewDelegate>)delegate {
+- (void) fetchWithOptions:(HZBannerAdOptions *)options delegate:(id<HZHeyzapExchangeBannerClientDelegate>)delegate {
     if(self.mraidBannerFetchedAndReady) {
         // already fetched
         return;
     }
     self.lastBannerAdOptions = options;
-    
+    self.delegate = delegate;
     self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
 
     [self.apiClient GET:@"_/0/ad"
@@ -100,8 +105,10 @@
                      }
                      
                      self.adMarkup = adDict[@"markup"];
-                     self.adMetaDict = self.responseDict[@"meta"];
-                     self.adMediationId = self.adMetaDict[@"id"];
+                     NSDictionary *adMetaDict = self.responseDict[@"meta"];
+                     self.adMediationId = adMetaDict[@"id"];
+                     self.adScore = adMetaDict[@"score"];
+                     self.adDataHash = adMetaDict[@"data"];
                      
                      self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@(0) withDict:adDict] intValue];
                      if(![self isSupportedFormat]) {
@@ -116,7 +123,7 @@
                                                               withHtmlData:self.adMarkup
                                                                withBaseURL:nil
                                                          supportedFeatures:[self.serviceHandler supportedFeatures]
-                                                                  delegate:delegate
+                                                                  delegate:self
                                                            serviceDelegate:self.serviceHandler
                                                         rootViewController:options.presentingViewController];
                      [self.delegate fetchSuccessWithClient:self banner:self.mraidBanner];
@@ -133,9 +140,57 @@
     [self.delegate fetchFailedWithClient:self];
 }
 
+- (void) reportImpression {
+    [self.apiClient POST:[NSString stringWithFormat:@"_/0/ad/%@/impression", self.adMediationId]
+             parameters:[self impressionParams]
+                 success:^(HZAFHTTPRequestOperation *operation, id responseObject){}
+                failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
+     {
+         HZELog(@"Heyzap Exchange Banner failed to report impression. Error: %@", error);
+     }];
+}
+
+- (void) reportClick {
+    [self.apiClient GET:[NSString stringWithFormat:@"_/0/ad/%@/click", self.adMediationId]
+             parameters:[self clickParams]
+                success:^(HZAFHTTPRequestOperation *operation, id responseObject){}
+                failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
+     {
+         HZELog(@"Heyzap Exchange Banner failed to report click. Error: %@", error);
+     }];
+}
+
 #pragma mark - HZHeyzapExchangeMRAIDServiceHandlerDelegate
 - (void) serviceEventProcessed:(NSString *)serviceEvent willLeaveApplication:(BOOL)willLeaveApplication {
     [self.delegate bannerInteractionWillLeaveApplication:willLeaveApplication];
+}
+
+
+#pragma mark - HZMRAIDViewDelegate (banners)
+
+- (void)mraidViewAdReady:(HZMRAIDView *)mraidView {
+    [self.delegate bannerReady:mraidView];
+}
+
+- (void)mraidViewAdFailed:(HZMRAIDView *)mraidView {
+    [self.delegate bannerFailed];
+}
+
+- (void)mraidViewWillExpand:(HZMRAIDView *)mraidView{
+    [self.delegate bannerWillShow];
+    [self reportImpression];
+}
+
+- (void)mraidViewDidClose:(HZMRAIDView *)mraidView {
+    [self.delegate bannerDidClose];
+}
+
+- (void)mraidViewNavigate:(HZMRAIDView *)mraidView withURL:(NSURL *)url {
+    [self.delegate bannerInteractionWillLeaveApplication:YES];
+    [self reportClick];
+    
+    self.clickTrackingWebView = [[UIWebView alloc] init];
+    [self.clickTrackingWebView loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
 #pragma mark - Utilities
@@ -164,7 +219,7 @@
 + (NSArray *) supportedFormats {
     return @[
              @(HZHeyzapExchangeFormatMRAID_2)
-             ];
+            ];
 }
 
 + (NSString *) supportedFormatsString {
@@ -177,7 +232,22 @@
              @"banner_w":@([self currentBannerWidth]),
              @"banner_h":@([self currentBannerHeight]),
              @"sdk_api": [HZHeyzapExchangeBannerClient supportedFormatsString],
-             @"impression_creativetype": @(8),//banner
+             @"impression_creativetype": @(HZHeyzapExchangeCreativeTypeBanner),
             };
 }
+
+- (NSDictionary *) impressionParams {
+    NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
+    [allRequestParams addEntriesFromDictionary:@{
+                                                 @"mediation_id":self.adMediationId,
+                                                 @"data":self.adDataHash,
+                                                 @"markup":self.adMarkup,
+                                                 }];
+    return allRequestParams;
+}
+
+- (NSDictionary *) clickParams {
+    return [self apiRequestParams]; //no special params necessary for click events yet
+}
+
 @end

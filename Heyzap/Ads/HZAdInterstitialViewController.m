@@ -101,7 +101,13 @@
 #pragma mark - Popup Action Delegate
 
 - (void) onActionClick: (id) sender withURL:(NSURL *)url {
-    [self didClickWithURL: url];
+    self.webview.isLoading = YES;
+    
+    __weak HZAdInterstitialViewController *weakSelf = self;
+    
+    [self didClickWithURL: url completion:^(BOOL result, NSError *error) {
+        [[weakSelf webview] setIsLoading:NO];
+    }];
 }
 
 - (void) onActionCompleted: (id) sender {}

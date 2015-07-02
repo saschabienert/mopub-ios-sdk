@@ -14,4 +14,12 @@
 
 + (HZHeyzapExchangeAPIClient *)sharedClient;
 
+- (HZAFHTTPRequestOperation *)fetchAdWithExtraParams:(id)parameters success:(void (^)(HZAFHTTPRequestOperation *, id))success failure:(void (^)(HZAFHTTPRequestOperation *, NSError *))failure;
+
+- (HZAFHTTPRequestOperation *)reportImpressionForAd:(NSString *)adId withExtraParams:(id)parameters success:(void (^)(HZAFHTTPRequestOperation *, id))success failure:(void (^)(HZAFHTTPRequestOperation *, NSError *))failure;
+
+- (HZAFHTTPRequestOperation *)reportClickForAd:(NSString *)adId withExtraParams:(id)parameters success:(void (^)(HZAFHTTPRequestOperation *, id))success failure:(void (^)(HZAFHTTPRequestOperation *, NSError *))failure;
+
+- (HZAFHTTPRequestOperation *)reportVideoCompletionForAd:(NSString *)adId withExtraParams:(id)parameters success:(void (^)(HZAFHTTPRequestOperation *, id))success failure:(void (^)(HZAFHTTPRequestOperation *, NSError *))failure;
+
 @end

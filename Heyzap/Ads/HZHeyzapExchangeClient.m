@@ -9,7 +9,7 @@
 #import "HZHeyzapExchangeClient.h"
 #import "HZHeyzapExchangeAPIClient.h"
 #import "HZHeyzapExchangeAdapter.h"
-#import "HZHeyzapExchangeFormat.h"
+#import "HZHeyzapExchangeConstants.h"
 #import "HZLog.h"
 #import "HZDictionaryUtils.h"
 #import "HZSKVASTViewController.h"
@@ -32,8 +32,9 @@
 
 @property (nonatomic) NSDictionary *responseDict;
 @property (nonatomic) NSString *adMediationId;
-@property (nonatomic) NSDictionary *adMetaDict;
+@property (nonatomic) NSNumber *adScore;
 @property (nonatomic) NSString *adMarkup;
+@property (nonatomic) NSString *adDataHash;//encryption hash for request validation
 
 @property (nonatomic) HZHeyzapExchangeAPIClient *apiClient;
 
@@ -58,8 +59,7 @@
     self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
     _adType = adType;
     
-    [self.apiClient GET:@"_/0/ad"
-             parameters:[self apiRequestParams]
+    [self.apiClient fetchAdWithExtraParams:[self apiRequestParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
                 {
                     NSData * data = (NSData *)responseObject;
@@ -106,8 +106,10 @@
                     }
                     
                     self.adMarkup = adDict[@"markup"];
-                    self.adMetaDict = self.responseDict[@"meta"];
-                    self.adMediationId = self.adMetaDict[@"id"];
+                    NSDictionary *adMetaDict = self.responseDict[@"meta"];
+                    self.adMediationId = adMetaDict[@"id"];
+                    self.adScore = adMetaDict[@"score"];
+                    self.adDataHash = adMetaDict[@"data"];
                     
                     self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@(0) withDict:adDict] intValue];
                     if(![self isSupportedFormat]) {
@@ -142,6 +144,45 @@
      ];
 }
 
+- (void) reportImpression {
+    [self.apiClient reportImpressionForAd:self.adMediationId
+                          withExtraParams:[self impressionParams]
+                success:^(HZAFHTTPRequestOperation *operation, id responseObject)
+                {
+                    
+                }
+                failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
+                {
+                    HZELog(@"Heyzap Exchange failed to report impression. Error: %@", error);
+                }];
+}
+
+- (void) reportClick {
+    [self.apiClient reportClickForAd:self.adMediationId
+             withExtraParams:[self clickParams]
+                success:^(HZAFHTTPRequestOperation *operation, id responseObject)
+                 {
+                     
+                 }
+                failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
+                 {
+                     HZELog(@"Heyzap Exchange failed to report click. Error: %@", error);
+                 }];
+}
+
+- (void) reportVideoComplete {
+    [self.apiClient reportVideoCompletionForAd:self.adMediationId
+             withExtraParams:[self videoCompleteParams]
+                success:^(HZAFHTTPRequestOperation *operation, id responseObject)
+                 {
+                     
+                 }
+                failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
+                 {
+                     HZELog(@"Heyzap Exchange failed to report video completion. Error: %@", error);
+                 }];
+}
+
 - (void)handleFailure {
     [self.delegate client:self didFailToFetchAdWithType:self.adType];
 }
@@ -174,23 +215,25 @@
 // These optional callbacks are for basic presentation, dismissal, and calling video clickthrough url browser.
 - (void)vastWillPresentFullScreen:(HZSKVASTViewController *)vastVC {
     [self.delegate didStartAdWithClient:self];
+    [self reportImpression];
 }
 - (void)vastDidDismissFullScreen:(HZSKVASTViewController *)vastVC {
     self.vastVC = nil;
     self.format = HZHeyzapExchangeFormatUnknown;
-    self.adMarkup = nil;
-    self.adMetaDict = nil;
-    self.adMediationId = nil;
     self.responseDict = nil;
     
     self.vastAdFetchedAndReady = NO;
     [self.delegate didEndAdWithClient:self successfullyFinished:vastVC.didFinishSuccessfully];
+    if(vastVC.didFinishSuccessfully){
+        [self reportVideoComplete];
+    }
 }
 - (void)vastOpenBrowseWithUrl:(NSURL *)url {
     self.clickTrackingWebView = [[UIWebView alloc] init];
     [self.clickTrackingWebView loadRequest:[NSURLRequest requestWithURL:url]];
     
     [self.delegate adClickedWithClient:self];
+    [self reportClick];
 }
 - (void)vastTrackingEvent:(NSString *)eventName { }
 
@@ -210,9 +253,15 @@
 
 - (void)mraidInterstitialWillShow:(HZMRAIDInterstitial *)mraidInterstitial {
     [self.delegate didStartAdWithClient:self];
+    [self reportImpression];
 }
 
 - (void)mraidInterstitialDidHide:(HZMRAIDInterstitial *)mraidInterstitial {
+    self.mraidInterstitialFetchedAndReady = NO;
+    self.mraidInterstitial = nil;
+    self.format = HZHeyzapExchangeFormatUnknown;
+    self.responseDict = nil;
+    
     [self.delegate didEndAdWithClient:self successfullyFinished:YES];
 }
 
@@ -222,11 +271,13 @@
     [self.clickTrackingWebView loadRequest:[NSURLRequest requestWithURL:url]];
     
     [self.delegate adClickedWithClient:self];
+    [self reportClick];
 }
 
 #pragma mark - HZHeyzapExchangeMRAIDServiceHandlerDelegate
 - (void) serviceEventProcessed:(NSString *)serviceEvent willLeaveApplication:(BOOL)willLeaveApplication{
     [self.delegate adClickedWithClient:self];
+    [self reportClick];
 }
 
 #pragma mark - Utilities
@@ -249,20 +300,22 @@
     return (int) [[[UIApplication sharedApplication] keyWindow] bounds].size.width;
 }
 
-// add additional params that HZHeyzapExchangeRequestSerializer doesn't cover
+// add additional params that HZHeyzapExchangeRequestSerializer doesn't cover that are necessary for every request to the exchange server
 - (NSDictionary *) apiRequestParams {
-    int creativeType = 0;
+    // in the future, if mediation is refactored to request creative type instead of adUnit, this will be unnecessary
+    // also, the hardcoded mapping from interstitial => static below (missing out on blended opportunity) would be avoided
+    int creativeType = HZHeyzapExchangeFormatUnknown;
     switch (self.adType) {
         case HZAdTypeBanner://ignore here
             break;
         case HZAdTypeIncentivized:
-            creativeType = 4;
+            creativeType = HZHeyzapExchangeCreativeTypeIncentivized;
             break;
         case HZAdTypeVideo:
-            creativeType = 2;
+            creativeType = HZHeyzapExchangeCreativeTypeVideo;
             break;
         case HZAdTypeInterstitial:
-            creativeType = 1;
+            creativeType = HZHeyzapExchangeCreativeTypeStatic;
             break;
         default:
             break;
@@ -272,6 +325,24 @@
              @"sdk_api": [HZHeyzapExchangeClient supportedFormatsString],
              @"impression_creativetype": @(creativeType),
             };
+}
+
+- (NSDictionary *) impressionParams {
+    NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
+    [allRequestParams addEntriesFromDictionary:@{
+                                                 @"mediation_id":self.adMediationId,
+                                                 @"data":self.adDataHash,
+                                                 @"markup":self.adMarkup,
+                                                 }];
+    return allRequestParams;
+}
+
+- (NSDictionary *) clickParams {
+    return [self apiRequestParams]; //no special params necessary for click events yet
+}
+
+- (NSDictionary *) videoCompleteParams {
+    return [self apiRequestParams]; //no special params necessary for video complete events yet
 }
 
 @end

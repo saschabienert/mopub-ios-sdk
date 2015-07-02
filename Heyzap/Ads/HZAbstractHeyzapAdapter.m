@@ -51,20 +51,20 @@
     return NO;
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     const HZAuctionType auctionType = [self auctionType];
     switch (type) {
         case HZAdTypeInterstitial: {
-            [HZHeyzapInterstitialAd fetchForTag:tag auctionType:auctionType withCompletion:nil];
+            [HZHeyzapInterstitialAd fetchForAuctionType:auctionType withCompletion:nil];
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZHeyzapIncentivizedAd fetchForTag:tag auctionType:auctionType completion:nil];
+            [HZHeyzapIncentivizedAd fetchForAuctionType:auctionType completion:nil];
             break;
         }
         case HZAdTypeVideo: {
-            [HZHeyzapVideoAd fetchForTag:tag auctionType:auctionType withCompletion:nil];
+            [HZHeyzapVideoAd fetchForAuctionType:auctionType withCompletion:nil];
             break;
         }
         case HZAdTypeBanner: {
@@ -74,15 +74,15 @@
     }
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     const HZAuctionType auctionType = [self auctionType];
     if (type & HZAdTypeVideo) {
-        return [HZHeyzapVideoAd isAvailableForTag:tag auctionType:auctionType];
+        return [HZHeyzapVideoAd isAvailableForTag:nil auctionType:auctionType];
     } else if (type & HZAdTypeInterstitial) {
-        return [HZHeyzapInterstitialAd isAvailableForTag:tag auctionType:auctionType];
+        return [HZHeyzapInterstitialAd isAvailableForTag:nil auctionType:auctionType];
     } else  {
-        return [HZHeyzapIncentivizedAd isAvailableForTag:tag auctionType:auctionType];
+        return [HZHeyzapIncentivizedAd isAvailableForTag:nil auctionType:auctionType];
     }
 }
 

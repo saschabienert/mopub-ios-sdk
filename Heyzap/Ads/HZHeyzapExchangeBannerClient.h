@@ -14,12 +14,15 @@
 
 - (void) fetchFailedWithClient:(HZHeyzapExchangeBannerClient *)client;
 - (void) fetchSuccessWithClient:(HZHeyzapExchangeBannerClient *)client banner:(HZMRAIDView *)banner;
+
+- (void) bannerReady:(HZMRAIDView *)banner;
+- (void) bannerFailed;
+- (void) bannerWillShow;
+- (void) bannerDidClose;
 - (void) bannerInteractionWillLeaveApplication:(BOOL)willLeaveApplication;
 @end
 
 @interface HZHeyzapExchangeBannerClient : NSObject
 
-@property (nonatomic, weak) id<HZHeyzapExchangeBannerClientDelegate>delegate;
-
-- (void) fetchWithOptions:(HZBannerAdOptions *)options delegate:(id<HZMRAIDViewDelegate>)delegate;
+- (void) fetchWithOptions:(HZBannerAdOptions *)options delegate:(id<HZHeyzapExchangeBannerClientDelegate>)delegate;
 @end

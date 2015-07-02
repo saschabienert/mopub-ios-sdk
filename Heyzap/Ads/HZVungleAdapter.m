@@ -14,22 +14,6 @@
 #import "HZUtils.h"
 #import "HeyzapMediation.h"
 
-const NSString* HZVunglePlayAdOptionKeyIncentivized        = @"incentivized";
-const NSString* HZVunglePlayAdOptionKeyShowClose           = @"showClose";
-const NSString* HZVunglePlayAdOptionKeyOrientations        = @"orientations";
-const NSString* HZVunglePlayAdOptionKeyUser                = @"user";
-const NSString* HZVunglePlayAdOptionKeyPlacement           = @"placement";
-const NSString* HZVunglePlayAdOptionKeyExtraInfoDictionary = @"extraInfo";
-const NSString* HZVunglePlayAdOptionKeyExtra1              = @"extra1";
-const NSString* HZVunglePlayAdOptionKeyExtra2              = @"extra2";
-const NSString* HZVunglePlayAdOptionKeyExtra3              = @"extra3";
-const NSString* HZVunglePlayAdOptionKeyExtra4              = @"extra4";
-const NSString* HZVunglePlayAdOptionKeyExtra5              = @"extra5";
-const NSString* HZVunglePlayAdOptionKeyExtra6              = @"extra6";
-const NSString* HZVunglePlayAdOptionKeyExtra7              = @"extra7";
-const NSString* HZVunglePlayAdOptionKeyExtra8              = @"extra8";
-const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
-
 @interface HZVungleAdapter() <HZVungleSDKDelegate>
 
 /**
@@ -117,14 +101,24 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     return YES;
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
-    return [self supportedAdFormats] & type && [[HZVungleSDK sharedSDK] isCachedAdAvailable];
+    BOOL adPlayable = NO;
+    
+    // in v.3.1.0 `isAdPlayable` is added, `isCachedAdAvailable` is deprecated
+    if ([[HZVungleSDK sharedSDK] respondsToSelector:@selector(isAdPlayable)]) {
+        adPlayable = [[HZVungleSDK sharedSDK] isAdPlayable];
+        
+    } else {
+        adPlayable = [[HZVungleSDK sharedSDK] isCachedAdAvailable];
+    }
+    
+    return [self supportedAdFormats] & type && adPlayable;
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType
@@ -139,13 +133,21 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
-    [self.delegate adapterWillPlayAudio:self];
+    // setup options
+    NSMutableDictionary *vungleOptions = [[NSMutableDictionary alloc] init];
     
     if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
-        [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:@{HZVunglePlayAdOptionKeyIncentivized: @1}];
-    } else {
-        [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:@{HZVunglePlayAdOptionKeyShowClose: @1}];
+        
+        NSString *const incentivizedKey = [[self class] vunglePlayAdOptionKeyIncentivized];
+        vungleOptions[incentivizedKey] = @1;
+    }
+    
+    NSError *error;
+    [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:vungleOptions error:&error];
+    
+    if (error) {
+        HZELog(@"Could not display vungle ad. Error = %@", error);
     }
 }
 
@@ -157,6 +159,7 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
 
 - (void)vungleSDKwillShowAd {
     [self.delegate adapterDidShowAd:self];
+    [self.delegate adapterWillPlayAudio:self]; // adapterWillPlayAudio has to be called AFTER adapterDidShowAd
 }
 
 - (void)vungleSDKwillCloseAdWithViewInfo:(NSDictionary*)viewInfo willPresentProductSheet:(BOOL)willPresentProductSheet
@@ -172,7 +175,6 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
             [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
         }
     }
-    
     
     if ([viewInfo[@"didDownload"] boolValue]) {
         [self.delegate adapterWasClicked:self];
@@ -197,6 +199,10 @@ const NSString* HZVunglePlayAdOptionKeyLargeButtons        = @"largeButtons";
     } else {
         return [super conformsToProtocol:aProtocol];
     }
+}
+
++ (NSString *)vunglePlayAdOptionKeyIncentivized {
+    return @"incentivized";
 }
 
 @end

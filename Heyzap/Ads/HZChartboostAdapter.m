@@ -92,7 +92,7 @@
     return nil; // Chartboost doesn't provide the version.
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     switch (type) {
         case HZAdTypeInterstitial: {
@@ -110,7 +110,7 @@
     }
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     switch (type) {
         case HZAdTypeIncentivized: {

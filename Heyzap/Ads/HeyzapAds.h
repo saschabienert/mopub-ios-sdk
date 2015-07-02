@@ -51,7 +51,7 @@
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif
 
-#define SDK_VERSION @"8.1.1"
+#define SDK_VERSION @"8.5.1"
 
 #if __has_feature(objc_modules)
 @import AdSupport;
@@ -163,6 +163,12 @@ extern NSString * const HZRemoteDataRefreshedNotification;
  *  @param tag The identifier for the ad.
  */
 - (void)didFailToReceiveAdWithTag: (NSString *) tag;
+
+
+
+// Should probably have new API: didFailToReceiveAd (no tag)
+// didRecieveAd (no tag)
+
 
 /**
  *  Called when the user clicks on an ad.

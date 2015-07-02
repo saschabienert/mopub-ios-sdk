@@ -89,9 +89,9 @@
     return NO;
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
-    if([self hasAdForType:type tag:tag]){
+    if([self hasAdForType:type]){
         HZDLog(@"Prefetch called but an ad is already available.");
         return;
     }
@@ -102,7 +102,7 @@
     [self.exchangeClients addObject:client]; // keeps a strong ref to client until we get a callback
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     if(![self supportedAdFormats] & type){
         return false;

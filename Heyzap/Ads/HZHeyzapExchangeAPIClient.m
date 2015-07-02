@@ -10,7 +10,7 @@
 #import "HZAFURLResponseSerialization.h"
 #import "HZHeyzapExchangeRequestSerializer.h"
 
-NSString * const kHZHeyzapExchangeAPIBaseURLString = @"http://x.heyzap.com/";//monroe: https?
+NSString * const kHZHeyzapExchangeAPIBaseURLString = @"http://x.heyzap.com/"; // monroe: change from test endpoint later. also: https? certs are broken right now
 
 @implementation HZHeyzapExchangeAPIClient
 
@@ -33,5 +33,22 @@ NSString * const kHZHeyzapExchangeAPIBaseURLString = @"http://x.heyzap.com/";//m
     }
     return self;
 }
+
+- (HZAFHTTPRequestOperation *)fetchAdWithExtraParams:(id)parameters success:(void (^)(HZAFHTTPRequestOperation *, id))success failure:(void (^)(HZAFHTTPRequestOperation *, NSError *))failure {
+    return [self GET:@"_/0/ad" parameters:parameters success:success failure:failure];
+}
+
+- (HZAFHTTPRequestOperation *)reportClickForAd:(NSString *)adId withExtraParams:(id)parameters success:(void (^)(HZAFHTTPRequestOperation *, id))success failure:(void (^)(HZAFHTTPRequestOperation *, NSError *))failure {
+    return [self GET:[NSString stringWithFormat:@"_/0/ad/%@/click", adId] parameters:parameters success:success failure:failure];
+}
+
+- (HZAFHTTPRequestOperation *)reportImpressionForAd:(NSString *)adId withExtraParams:(id)parameters success:(void (^)(HZAFHTTPRequestOperation *, id))success failure:(void (^)(HZAFHTTPRequestOperation *, NSError *))failure {
+    return [self POST:[NSString stringWithFormat:@"_/0/ad/%@/impression", adId] parameters:parameters success:success failure:failure];
+}
+
+- (HZAFHTTPRequestOperation *)reportVideoCompletionForAd:(NSString *)adId withExtraParams:(id)parameters success:(void (^)(HZAFHTTPRequestOperation *, id))success failure:(void (^)(HZAFHTTPRequestOperation *, NSError *))failure {
+    return [self GET:[NSString stringWithFormat:@"_/0/ad/%@/complete", adId] parameters:parameters success:success failure:failure];
+}
+
 
 @end

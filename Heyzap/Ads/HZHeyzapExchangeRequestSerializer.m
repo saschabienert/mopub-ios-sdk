@@ -49,7 +49,7 @@
         }
         
         UIWebView* webView = [[UIWebView alloc] initWithFrame:CGRectZero];
-        NSString* userAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+        NSString* userAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"] ?: @"";
         
         NSString *versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
         versionString = versionString ?: @"";
@@ -61,7 +61,6 @@
                                          @"app_version": versionString,
                                          @"app_sdk_key": publisherID,
                                          @"publisher_id": publisherID,//monroe: remove this later, server still expecting it
-                                         //@"impression_creativetype":,//done by caller instead of here
                                          @"device_ua": userAgent,
                                          @"device_carrier": [[HZDevice currentDevice] HZCarrierName],
                                          @"device_make": @"Apple",
@@ -72,7 +71,6 @@
                                          @"device_connectiontype": @([[HZDevice currentDevice] getHZOpenRTBConnectionType]),
                                          @"device_ifa": [HZUtils deviceID],
                                          @"device_devicetype": deviceType,
-                                         //@"sdk_api": [HZHeyzapExchangeClient supportedFormatsString],//done by caller instead of here
                                          @"sdk_version": SDK_VERSION,
                                          @"video_delivery": @"2",//comma separated list of delivery methods STREAMING(1),PROGRESSIVE(2)
                                          @"video_playbackmethod": @"1",//comma separated list of playback methods: AUTO_PLAY_SOUND_ON_VALUE(1), AUTO_PLAY_SOUND_OFF_VALUE(2), CLICK_TO_PLAY_VALUE(3), MOUSE_OVER_VALUE(4)
