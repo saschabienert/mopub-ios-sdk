@@ -172,6 +172,7 @@
     [self.delegate bannerReady:mraidView];
 }
 
+//sent when ad html is bad
 - (void)mraidViewAdFailed:(HZMRAIDView *)mraidView {
     [self.delegate bannerFailed];
 }
