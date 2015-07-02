@@ -12,6 +12,7 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <AdSupport/ASIdentifierManager.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
+#import <CoreTelephony/CTCarrier.h>
 
 #include <sys/socket.h> // Per msqr
 #include <sys/sysctl.h>
@@ -22,12 +23,17 @@
 #include <net/if.h> // For IFF_LOOPBACK
 #import "HZDispatch.h"
 
+#import "HZLog.h"
+
 @interface HZDevice()
 
 @property (nonatomic) dispatch_source_t networkPollTimer;
 @property (nonatomic) NSString *latestConnectivity;
-
+@property (nonatomic) NSString *latestRadioAccessTechnology;
+@property (nonatomic) id notificationObserver;
 @end
+
+NSString * const kHZDeviceNetworkUnknown = @"unknown";
 
 @implementation HZDevice
 
@@ -214,6 +220,42 @@
     return radio;
 }
 
+- (NSString *) HZCarrierName{
+    CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
+    CTCarrier *carrier = [netinfo subscriberCellularProvider];
+    return [carrier carrierName] ?: kHZDeviceNetworkUnknown;
+}
+
+// see http://stackoverflow.com/questions/25405566/mapping-ios-7-constants-to-2g-3g-4g-lte-etc
+- (HZOpenRTBConnectionType) getHZOpenRTBConnectionType {
+    NSString *str = self.latestRadioAccessTechnology;
+    
+    // we only care about this value if we're making a network request. so, if there's no radio detected but we have a connection to make a request, it must be wifi
+    if (str == nil) {
+        return HZOpenRTBConnectionTypeWifi;
+    }
+    
+    // pre-iOS7 device - we can't determine network type. Default to HZOpenRTBConnectionTypeCellularUnknown.
+    if([str isEqualToString:kHZDeviceNetworkUnknown]){
+        return HZOpenRTBConnectionTypeCellularUnknown;
+    }
+    
+    if([str isEqualToString:@"CTRadioAccessTechnologyGPRS"] || [str isEqualToString: @"CTRadioAccessTechnologyEdge"] || [str isEqualToString: @"CTRadioAccessTechnologyCDMA1x"]){
+        return HZOpenRTBConnectionTypeCellular2G;
+    }
+    
+    if([str isEqualToString: @"CTRadioAccessTechnologyWCDMA"] || [str isEqualToString: @"CTRadioAccessTechnologyHSDPA"] || [str isEqualToString: @"CTRadioAccessTechnologyHSUPA"] || [str isEqualToString: @"CTRadioAccessTechnologyCDMAEVDORev0"] || [str isEqualToString: @"CTRadioAccessTechnologyCDMAEVDORevA"] || [str isEqualToString: @"CTRadioAccessTechnologyCDMAEVDORevB"] || [str isEqualToString: @"CTRadioAccessTechnologyeHRPD"]){
+        return HZOpenRTBConnectionTypeCellular3G;
+    }
+    
+    if([str isEqualToString: @"CTRadioAccessTechnologyLTE"]){
+        return HZOpenRTBConnectionTypeCellular4G;
+    }
+    
+    HZELog(@"HZDevice sees unknown CTRadioAccessTechnology: %@", str);
+    return HZOpenRTBConnectionTypeUnknown;
+}
+
 static NSString *overriddenBundleIdentifier;
 
 + (void)setBundleIdentifier:(NSString *)bundleIdentifier {
@@ -387,7 +429,10 @@ static NSString *overriddenBundleIdentifier;
     return [self interfaceIdiom] == UIUserInterfaceIdiomPhone;
 }
 
-
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self.notificationObserver];
+}
 
 - (instancetype)init {
     self = [super init];
@@ -398,6 +443,21 @@ static NSString *overriddenBundleIdentifier;
                 self.latestConnectivity = connectivity;
             });
         });
+        
+        CTTelephonyNetworkInfo *telephonyInfo = [[CTTelephonyNetworkInfo alloc] init];
+        // iOS 7 and above only
+        if ([telephonyInfo respondsToSelector:@selector(currentRadioAccessTechnology)]){
+            self.latestRadioAccessTechnology = telephonyInfo.currentRadioAccessTechnology;
+            self.notificationObserver = [NSNotificationCenter.defaultCenter addObserverForName:CTRadioAccessTechnologyDidChangeNotification
+                                                            object:nil
+                                                             queue:nil
+                                                        usingBlock:^(NSNotification *notif)
+             {
+                 self.latestRadioAccessTechnology = telephonyInfo.currentRadioAccessTechnology;
+             }];
+        }else{
+            self.latestRadioAccessTechnology = kHZDeviceNetworkUnknown;
+        }
     }
     return self;
 }

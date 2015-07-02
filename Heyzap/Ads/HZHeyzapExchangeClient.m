@@ -8,23 +8,20 @@
 
 #import "HZHeyzapExchangeClient.h"
 #import "HZHeyzapExchangeAPIClient.h"
+#import "HZHeyzapExchangeAdapter.h"
+#import "HZHeyzapExchangeFormat.h"
 #import "HZLog.h"
-
+#import "HZDictionaryUtils.h"
 #import "HZSKVASTViewController.h"
-
+#import "HZHeyzapExchangeMRAIDServiceHandler.h"
 #import "HZMRAIDInterstitial.h"
+#import "HZMRAIDServiceDelegate.h"
 
 
 
-typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
-    HZHeyzapExchangeClientFormatUnknown,
-    HZHeyzapExchangeClientFormatVAST,
-    HZHeyzapExchangeClientFormatMRAID
-};
+@interface HZHeyzapExchangeClient() <HZSKVASTViewControllerDelegate, HZMRAIDInterstitialDelegate, HZHeyzapExchangeMRAIDServiceHandlerDelegate>
 
-@interface HZHeyzapExchangeClient() <HZSKVASTViewControllerDelegate, HZMRAIDInterstitialDelegate>
-@property (nonatomic) NSString *responseString;
-@property (nonatomic) HZHeyzapExchangeClientFormat format;
+@property (nonatomic) HZHeyzapExchangeFormat format;
 
 @property (nonatomic) HZSKVASTViewController *vastVC;
 @property (nonatomic) BOOL vastAdFetchedAndReady;
@@ -33,10 +30,16 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
 @property (nonatomic) BOOL mraidInterstitialFetchedAndReady;
 @property (nonatomic) HZAdType lastMRAIDAdType;
 
+@property (nonatomic) NSDictionary *responseDict;
+@property (nonatomic) NSString *adMediationId;
+@property (nonatomic) NSDictionary *adMetaDict;
+@property (nonatomic) NSString *adMarkup;
 
 @property (nonatomic) HZHeyzapExchangeAPIClient *apiClient;
 
 @property (nonatomic) UIWebView *clickTrackingWebView;
+
+@property (nonatomic) HZHeyzapExchangeMRAIDServiceHandler *serviceHandler;
 @end
 
 @implementation HZHeyzapExchangeClient
@@ -52,77 +55,95 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
         return;//wrong method to call
     }
     
-    self.apiClient = [[HZHeyzapExchangeAPIClient alloc] init];
+    self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
     _adType = adType;
-    int width = [self screenWidth];
-    int height = [[[UIApplication sharedApplication] keyWindow] bounds].size.height;
     
-    NSString * url;
-    
-    //    NSURL* url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_doubleclick_inline_comp.xml"];
-    //    //url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/simple_tracking.xml"];//intel ad
-    //    //url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/vast_missing_mediafile.xml"];//erroroneous xml
-    //    //url = [NSURL URLWithString:@"http://ads.mdotm.com/ads/feed.php?partnerkey=heyzap&apikey=heyzapmediation&appkey=4cd119700fff11605d38f197ae5435dc&ua=SampleApp%202.1.3%20(iPhone;%20iPhone%20OS%208.1.1;%20it_IT)&width=320&height=480&fmt=xhtml&v=3.4.0&test=0&deviceid=&aid=3305397B-FB19-4812-86F3-AEC2367C2CE5&ate=1&machine=iPhone4,1%208.1.1&vidsupport=2&clientip=198.228.200.41"];//mdotm
-    //    url = [NSURL URLWithString:@"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/mdotm_vast.xml"];//mdotm hosted
-    
-    switch (adType) {
-        case HZAdTypeVideo:
-        case HZAdTypeIncentivized:
-            //url = @"https://hz-temp.s3.amazonaws.com/dsp-source-test/vast/mdotm_vast.xml";
-            url = [NSString stringWithFormat:@"http://ads.mdotm.com/ads/feed.php?partnerkey=heyzap&apikey=heyzapmediation&appkey=4cd119700fff11605d38f197ae5435dc&ua=%@&width=%i&height=%i&fmt=xhtml&v=3.4.0&test=1&deviceid=&aid=3305397B-FB19-4812-86F3-AEC2367C2CE5&ate=1&machine=%@&vidsupport=2&clientip=198.228.200.41", @"SampleApp%202.1.3%20(iPhone;%20iPhone%20OS%208.1.1;%20it_IT)", width, height, @"iPhone4,1%208.1.1"];
-            break;
-            case HZAdTypeInterstitial:
-                url = [NSString stringWithFormat:@"http://ads.mdotm.com/ads/feed.php?partnerkey=heyzap&apikey=heyzapmediation&appkey=4cd119700fff11605d38f197ae5435dc&ua=%@&width=%i&height=%i&fmt=xhtml&v=3.4.0&test=1&deviceid=&aid=3305397B-FB19-4812-86F3-AEC2367C2CE5&ate=1&machine=%@&vidsupport=0&clientip=198.228.200.41", @"SampleApp%202.1.3%20(iPhone;%20iPhone%20OS%208.1.1;%20it_IT)", width, height, @"iPhone4,1%208.1.1"];
-            break;
-        case HZAdTypeBanner:
-            break;
-    }
-    
-    HZDLog(@"Exchange client fetching url: %@", url);
-    
-    [self.apiClient GET:url parameters:nil
-        success:^(HZAFHTTPRequestOperation *operation, id responseObject)
-            {
-                NSData * data = (NSData *)responseObject;
-                if(!data || data.bytes == nil) {
-                    HZELog(@"Fetch failed - data null or empty");
-                    [self.delegate client:self didFailToFetchAdWithType:adType];
-                    return;
-                }
-                
-                self.responseString = [NSString stringWithCString:[data bytes] encoding:NSUTF8StringEncoding];
-                self.format = [HZHeyzapExchangeClient guessFormatOfResponse:self.responseString];
-                if(self.format == HZHeyzapExchangeClientFormatUnknown) {
-                    HZELog(@"Format of Exchange response could not be determined.");
-                    [self.delegate client:self didFailToFetchAdWithType:adType];
-                    return;
-                }
-                
-                HZDLog(@"Fetch success, response: %@", self.responseString);
-                
-                if(self.format == HZHeyzapExchangeClientFormatVAST){
-                    self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate:self forAdType:adType];
-                    [self.vastVC loadVideoWithData:data];
-                    self.isWithAudio = YES;
-                }else if(self.format == HZHeyzapExchangeClientFormatMRAID){
-                    UIViewController * viewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+    [self.apiClient GET:@"_/0/ad"
+             parameters:[self apiRequestParams]
+                success:^(HZAFHTTPRequestOperation *operation, id responseObject)
+                {
+                    NSData * data = (NSData *)responseObject;
+                    if(!data || data.bytes == nil) {
+                        HZELog(@"Fetch failed - data null or empty");
+                        [self.delegate client:self didFailToFetchAdWithType:adType];
+                        return;
+                    }
                     
-                    self.lastMRAIDAdType = adType;
-                    self.mraidInterstitial = [[HZMRAIDInterstitial alloc] initWithSupportedFeatures:nil
-                                                                                       withHtmlData:self.responseString
-                                                                                        withBaseURL:nil
-                                                                                           delegate:self
-                                                                                    serviceDelegate:nil
-                                                                                 rootViewController:viewController];
+                    NSError *jsonError;
+                    
+                    /* expected format:
+                     
+                     {
+                        "meta":
+                        {
+                            "id": "123...",
+                            "score":10000,
+                            "data":"{hash}"
+                        }
+                        "ad":
+                        {
+                            "format": 5, //enum for format
+                            "markup": "<script src=\"mraid.js\"> ..." //VAST or MRAID tag
+                        },
+                     }
+                    */
+                    self.responseDict = [NSJSONSerialization JSONObjectWithData:data
+                                                                         options:NSJSONReadingMutableContainers
+                                                                           error:&jsonError];
+                    
+                    if(jsonError || !self.responseDict){
+                        HZELog(@"JSON parse failed for exchange response. Error: %@", jsonError);
+                        [self handleFailure];
+                        return;
+                    }
+                    
+                    NSDictionary *adDict = [HZDictionaryUtils hzObjectForKey:@"ad" ofClass:[NSDictionary class] default:nil withDict:self.responseDict];
+                    
+                    if(!adDict){
+                        HZELog(@"JSON format unexpected for exchange response.");
+                        [self handleFailure];
+                        return;
+                    }
+                    
+                    self.adMarkup = adDict[@"markup"];
+                    self.adMetaDict = self.responseDict[@"meta"];
+                    self.adMediationId = self.adMetaDict[@"id"];
+                    
+                    self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@(0) withDict:adDict] intValue];
+                    if(![self isSupportedFormat]) {
+                        HZELog(@"Format of Exchange response unsupported (%lu).", (unsigned long)self.format);
+                        [self handleFailure];
+                        return;
+                    }
+                    
+                    NSData *adMarkupData = [self.adMarkup dataUsingEncoding:NSUTF8StringEncoding];
+                    
+                    if(self.format == HZHeyzapExchangeFormatVAST_2_0){
+                        self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate:self forAdType:adType];
+                        [self.vastVC loadVideoWithData:adMarkupData];
+                        self.isWithAudio = YES;
+                    }else if(self.format == HZHeyzapExchangeFormatMRAID_2){
+                        UIViewController * viewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+                        self.serviceHandler = [[HZHeyzapExchangeMRAIDServiceHandler alloc]initWithDelegate:self];
+                        self.lastMRAIDAdType = adType;
+                        self.mraidInterstitial = [[HZMRAIDInterstitial alloc] initWithSupportedFeatures:[self.serviceHandler supportedFeatures]
+                                                                                           withHtmlData:self.adMarkup
+                                                                                            withBaseURL:nil
+                                                                                               delegate:self
+                                                                                        serviceDelegate:self.serviceHandler
+                                                                                     rootViewController:viewController];
+                    }
                 }
-            }
-     
-        failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
-            {
-                HZELog(@"Fetch failed. Error: %@", error);
-                [self.delegate client:self didFailToFetchAdWithType:adType];
-            }
+                failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
+                {
+                    HZELog(@"Fetch failed. Error: %@", error);
+                    [self handleFailure];
+                }
      ];
+}
+
+- (void)handleFailure {
+    [self.delegate client:self didFailToFetchAdWithType:self.adType];
 }
 
 - (void) showWithOptions:(HZShowOptions *)options {
@@ -156,8 +177,12 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
 }
 - (void)vastDidDismissFullScreen:(HZSKVASTViewController *)vastVC {
     self.vastVC = nil;
-    self.format = HZHeyzapExchangeClientFormatUnknown;
-    self.responseString = nil;
+    self.format = HZHeyzapExchangeFormatUnknown;
+    self.adMarkup = nil;
+    self.adMetaDict = nil;
+    self.adMediationId = nil;
+    self.responseDict = nil;
+    
     self.vastAdFetchedAndReady = NO;
     [self.delegate didEndAdWithClient:self successfullyFinished:vastVC.didFinishSuccessfully];
 }
@@ -199,23 +224,54 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientFormat) {
     [self.delegate adClickedWithClient:self];
 }
 
+#pragma mark - HZHeyzapExchangeMRAIDServiceHandlerDelegate
+- (void) serviceEventProcessed:(NSString *)serviceEvent willLeaveApplication:(BOOL)willLeaveApplication{
+    [self.delegate adClickedWithClient:self];
+}
 
 #pragma mark - Utilities
-
-+ (HZHeyzapExchangeClientFormat) guessFormatOfResponse:(NSString *)response {
-    if([response containsString:@"<VAST"]) {
-        return HZHeyzapExchangeClientFormatVAST;
-    }
-    
-    if([response containsString:@"mraid.js"]) {
-        return HZHeyzapExchangeClientFormatMRAID;
-    }
-    
-    return HZHeyzapExchangeClientFormatUnknown;
+- (BOOL) isSupportedFormat {
+    return [[HZHeyzapExchangeClient supportedFormats] containsObject:@(self.format)];
 }
-                    
+
++ (NSArray *) supportedFormats {
+    return @[
+             @(HZHeyzapExchangeFormatVAST_2_0),
+             @(HZHeyzapExchangeFormatMRAID_2)
+             ];
+}
+
++ (NSString *) supportedFormatsString {
+    return [[HZHeyzapExchangeClient supportedFormats] componentsJoinedByString:@","];
+}
+
 - (int) screenWidth {
     return (int) [[[UIApplication sharedApplication] keyWindow] bounds].size.width;
+}
+
+// add additional params that HZHeyzapExchangeRequestSerializer doesn't cover
+- (NSDictionary *) apiRequestParams {
+    int creativeType = 0;
+    switch (self.adType) {
+        case HZAdTypeBanner://ignore here
+            break;
+        case HZAdTypeIncentivized:
+            creativeType = 4;
+            break;
+        case HZAdTypeVideo:
+            creativeType = 2;
+            break;
+        case HZAdTypeInterstitial:
+            creativeType = 1;
+            break;
+        default:
+            break;
+    }
+    
+    return @{
+             @"sdk_api": [HZHeyzapExchangeClient supportedFormatsString],
+             @"impression_creativetype": @(creativeType),
+            };
 }
 
 @end

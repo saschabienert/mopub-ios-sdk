@@ -9,8 +9,11 @@
 #import "HZHeyzapExchangeBannerClient.h"
 #import "HZHeyzapExchangeAPIClient.h"
 #import "HZLog.h"
+#import "HZDictionaryUtils.h"
+#import "HZHeyzapExchangeFormat.h"
+#import "HZHeyzapExchangeMRAIDServiceHandler.h"
 
-@interface HZHeyzapExchangeBannerClient()
+@interface HZHeyzapExchangeBannerClient()<HZHeyzapExchangeMRAIDServiceHandlerDelegate>
 
 @property (nonatomic) HZBannerAdOptions *lastBannerAdOptions;
 @property (nonatomic) HZMRAIDView *mraidBanner;
@@ -18,8 +21,13 @@
 
 @property (nonatomic) HZHeyzapExchangeAPIClient *apiClient;
 
-@property (nonatomic) NSString *responseString;
+@property (nonatomic) NSDictionary *responseDict;
+@property (nonatomic) NSString *adMediationId;
+@property (nonatomic) NSDictionary *adMetaDict;
+@property (nonatomic) NSString *adMarkup;
+@property (nonatomic) HZHeyzapExchangeFormat format;
 
+@property (nonatomic) HZHeyzapExchangeMRAIDServiceHandler *serviceHandler;
 @end
 
 
@@ -42,17 +50,10 @@
     }
     self.lastBannerAdOptions = options;
     
-    self.apiClient = [[HZHeyzapExchangeAPIClient alloc] init];
-    
-    int width = [self screenWidth];
-    int height = [self currentBannerHeight];
-    
-    NSString * url;
-    url = [NSString stringWithFormat:@"http://ads.mdotm.com/ads/feed.php?partnerkey=heyzap&apikey=heyzapmediation&appkey=4cd119700fff11605d38f197ae5435dc&ua=%@&width=%i&height=%i&fmt=xhtml&v=3.4.0&test=1&deviceid=&aid=3305397B-FB19-4812-86F3-AEC2367C2CE5&ate=1&machine=%@&vidsupport=0&clientip=198.228.200.41", @"SampleApp%202.1.3%20(iPhone;%20iPhone%20OS%208.1.1;%20it_IT)", width, height, @"iPhone4,1%208.1.1"];
-    
-    HZDLog(@"Exchange banner client fetching url: %@", url);
+    self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
 
-    [self.apiClient GET:url parameters:nil
+    [self.apiClient GET:@"_/0/ad"
+             parameters:[self apiRequestParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
                  {
                      NSData * data = (NSData *)responseObject;
@@ -62,29 +63,80 @@
                          return;
                      }
                      
-                     self.responseString = [NSString stringWithCString:[data bytes] encoding:NSUTF8StringEncoding];
+                     NSError *jsonError;
+                     /* expected format:
+                      
+                      {
+                      "meta":
+                      {
+                      "id": "123...",
+                      "score":10000,
+                      "data":"{hash}"
+                      }
+                      "ad":
+                      {
+                      "format": 5, //enum for format
+                      "markup": "<script src=\"mraid.js\"> ..." //VAST or MRAID tag
+                      },
+                      }
+                     */
+                     self.responseDict = [NSJSONSerialization JSONObjectWithData:data
+                                                                         options:NSJSONReadingMutableContainers
+                                                                           error:&jsonError];
                      
-                     HZDLog(@"Fetch success, response: %@", self.responseString);
                      
-                     self.mraidBanner = [[HZMRAIDView alloc] initWithFrame:CGRectMake(0, 0, [self screenWidth], [self currentBannerHeight])
-                                                              withHtmlData:self.responseString
+                     if(jsonError || !self.responseDict){
+                         HZELog(@"JSON parse failed for exchange response. Error: %@", jsonError);
+                         [self handleFailure];
+                         return;
+                     }
+                     
+                     NSDictionary *adDict = [HZDictionaryUtils hzObjectForKey:@"ad" ofClass:[NSDictionary class] default:nil withDict:self.responseDict];
+                     
+                     if(!adDict){
+                         HZELog(@"JSON format unexpected for exchange response.");
+                         [self handleFailure];
+                         return;
+                     }
+                     
+                     self.adMarkup = adDict[@"markup"];
+                     self.adMetaDict = self.responseDict[@"meta"];
+                     self.adMediationId = self.adMetaDict[@"id"];
+                     
+                     self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@(0) withDict:adDict] intValue];
+                     if(![self isSupportedFormat]) {
+                         HZELog(@"Format of Exchange response unsupported (%lu).", (unsigned long)self.format);
+                         [self handleFailure];
+                         return;
+                     }
+                     
+                     self.serviceHandler = [[HZHeyzapExchangeMRAIDServiceHandler alloc] initWithDelegate:self];
+                     
+                     self.mraidBanner = [[HZMRAIDView alloc] initWithFrame:CGRectMake(0, 0, [self currentBannerWidth], [self currentBannerHeight])
+                                                              withHtmlData:self.adMarkup
                                                                withBaseURL:nil
-                                                         supportedFeatures:nil
+                                                         supportedFeatures:[self.serviceHandler supportedFeatures]
                                                                   delegate:delegate
-                                                           serviceDelegate:nil
+                                                           serviceDelegate:self.serviceHandler
                                                         rootViewController:options.presentingViewController];
                      [self.delegate fetchSuccessWithClient:self banner:self.mraidBanner];
                  }
                 failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
                 {
                     HZELog(@"Fetch failed. Error: %@", error);
-                    [self.delegate fetchFailedWithClient:self];
+                    [self handleFailure];
                 }
      ];
 }
 
+- (void)handleFailure {
+    [self.delegate fetchFailedWithClient:self];
+}
 
-
+#pragma mark - HZHeyzapExchangeMRAIDServiceHandlerDelegate
+- (void) serviceEventProcessed:(NSString *)serviceEvent willLeaveApplication:(BOOL)willLeaveApplication {
+    [self.delegate bannerInteractionWillLeaveApplication:willLeaveApplication];
+}
 
 #pragma mark - Utilities
 - (int) currentBannerHeight {
@@ -96,7 +148,36 @@
     }
 }
 
+- (int) currentBannerWidth {
+    return [self screenWidth];
+}
+
 - (int) screenWidth {
     return (int)[[self.lastBannerAdOptions.presentingViewController view]bounds].size.width;
+}
+
+- (BOOL) isSupportedFormat {
+    return [[HZHeyzapExchangeBannerClient supportedFormats] containsObject:@(self.format)];
+}
+
+// banners only supported via MRAID
++ (NSArray *) supportedFormats {
+    return @[
+             @(HZHeyzapExchangeFormatMRAID_2)
+             ];
+}
+
++ (NSString *) supportedFormatsString {
+    return [[HZHeyzapExchangeBannerClient supportedFormats] componentsJoinedByString:@","];
+}
+
+// add additional params that HZHeyzapExchangeRequestSerializer doesn't cover for banners
+- (NSDictionary *) apiRequestParams {
+    return @{
+             @"banner_w":@([self currentBannerWidth]),
+             @"banner_h":@([self currentBannerHeight]),
+             @"sdk_api": [HZHeyzapExchangeBannerClient supportedFormatsString],
+             @"impression_creativetype": @(8),//banner
+            };
 }
 @end

@@ -59,6 +59,15 @@
     [self mraidViewAdFailed:nil];
 }
 
+- (void) bannerInteractionWillLeaveApplication:(BOOL)willLeaveApplication{
+    [self.bannerInteractionDelegate userDidClick];
+    if(willLeaveApplication){
+        [self.bannerInteractionDelegate willLeaveApplication];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: [HZHeyzapExchangeAdapter name]];
+    }
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: [HZHeyzapExchangeAdapter name]];
+}
+
 
 #pragma mark - HZMRAIDViewDelegate (banners)
 

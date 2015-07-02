@@ -14,6 +14,7 @@
 
 - (void) fetchFailedWithClient:(HZHeyzapExchangeBannerClient *)client;
 - (void) fetchSuccessWithClient:(HZHeyzapExchangeBannerClient *)client banner:(HZMRAIDView *)banner;
+- (void) bannerInteractionWillLeaveApplication:(BOOL)willLeaveApplication;
 @end
 
 @interface HZHeyzapExchangeBannerClient : NSObject

@@ -7,10 +7,10 @@
 //
 
 #import "HZHeyzapExchangeAPIClient.h"
-#import "HZMediationRequestSerializer.h"
 #import "HZAFURLResponseSerialization.h"
+#import "HZHeyzapExchangeRequestSerializer.h"
 
-NSString * const kHZHeyzapExchangeAPIBaseURLString = @"https://x.heyzap.com/";
+NSString * const kHZHeyzapExchangeAPIBaseURLString = @"http://x.heyzap.com/";//monroe: https?
 
 @implementation HZHeyzapExchangeAPIClient
 
@@ -27,9 +27,9 @@ NSString * const kHZHeyzapExchangeAPIBaseURLString = @"https://x.heyzap.com/";
 - (instancetype)initWithBaseURL:(NSURL *)url {
     self = [super initWithBaseURL:url];
     if (self) {
-        self.requestSerializer = [HZMediationRequestSerializer serializer]; //monroe: this is where custom server params should probably go later
+        self.requestSerializer = [HZHeyzapExchangeRequestSerializer serializer];
         self.responseSerializer = [[HZAFHTTPResponseSerializer alloc] init];
-        self.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/xml", @"text/html", nil];
+        self.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", nil];
     }
     return self;
 }

@@ -30,6 +30,9 @@
 @property (nonatomic) BOOL isWithAudio;
 @property (nonatomic, readonly) HZAdType adType;
 
+
 - (void) fetchForAdType:(HZAdType)adType;
 - (void) showWithOptions:(HZShowOptions *)options;
+
++ (NSString *)supportedFormatsString;
 @end
