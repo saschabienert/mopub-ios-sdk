@@ -21,21 +21,23 @@
 
 @interface HZBannerAdOptions()
 
-HZFBAdSize *hzlookupFBAdSizeConstant(NSString *constantName);
-HZFBAdSize *hzFBAdSize50(void);
-HZFBAdSize *hzFBAdSize90(void);
-HZFBAdSize *hzFBAdSize320x50(void);
-
 NSValue *hzAdMobBannerSizeValue(HZAdMobBannerSize size);
 NSValue *hzFacebookBannerSizeValue(HZFacebookBannerSize size);
+NSValue *hzHeyzapExchangeBannerSizeValue(HZHeyzapExchangeBannerSize size);
+
 HZAdMobBannerSize hzAdMobBannerSizeFromValue(NSValue *value);
 HZFacebookBannerSize hzFacebookBannerSizeFromValue(NSValue *value);
+HZHeyzapExchangeBannerSize hzHeyzapExchangeBannerSizeFromValue(NSValue *value);
 
 NSString *hzFacebookBannerSizeDescription(HZFacebookBannerSize size);
 NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
+NSString *hzHeyzapExchangeBannerSizeDescription(HZHeyzapExchangeBannerSize size);
 
 @end
 
+// Ignore deprecation warnings to allow us to use our own HZFacebookBannerSize320x50 constant.
+// TODO: Remove this after we remove HZFacebookBannerSize320x50.
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @implementation HZBannerAdOptions
 
 - (NSString *)tag {
@@ -68,54 +70,16 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
     }
 }
 
-+ (BOOL)facebookBannerSizesAvailable {
-    // Constant loading isn't available in Adobe Air for some reason
-    // See `internalFacebookAdSize` for details
-    if ([HZAdsManager sharedManager].isAdobeAir) {
-        return YES;
-    } else {
-        return hzFBAdSize50() != NULL
-        && hzFBAdSize90() != NULL
-        && hzFBAdSize320x50() != NULL;
-    }
-}
-
-HZFBAdSize *hzFBAdSize50(void) {
-    return hzlookupFBAdSizeConstant(@"kFBAdSizeHeight50Banner");
-}
-
-HZFBAdSize *hzFBAdSize90(void) {
-    return hzlookupFBAdSizeConstant(@"kFBAdSizeHeight90Banner");
-}
-
-HZFBAdSize *hzFBAdSize320x50(void) {
-    return hzlookupFBAdSizeConstant(@"kFBAdSize320x50");
-}
-
-HZFBAdSize *hzlookupFBAdSizeConstant(NSString *const constantName) {
-    return CFBundleGetDataPointerForName(CFBundleGetMainBundle(), (__bridge CFStringRef)constantName);
-}
-
 - (HZFBAdSize)internalFacebookAdSize {
-    
     switch (self.facebookBannerSize) {
         case HZFacebookBannerSize320x50: {
-            return *hzFBAdSize320x50();
+            return (HZFBAdSize) { CGSizeMake(320, 50) };
         }
         case HZFacebookBannerSizeFlexibleWidthHeight50: {
-            // Constant loading isn't working in Adobe Air for the Facebook SDK for some reason
-            // For now I'm just hard-coding the values in the struct they use.
-            // It would be good to investigate further but we need to get the adobe air SDK out to Ketchapp
-            // (Also I imagine it being very difficult to debug this issue).
-            if ([HZAdsManager sharedManager].isAdobeAir) {
-                HZFBAdSize size = { CGSizeMake(-1, 50) };
-                return size;
-            } else {
-                return *hzFBAdSize50();
-            }
+            return (HZFBAdSize) { CGSizeMake(-1, 50) };
         }
         case HZFacebookBannerSizeFlexibleWidthHeight90: {
-            return *hzFBAdSize90();
+            return (HZFBAdSize) { CGSizeMake(-1, 90) };
         }
     }
 }
@@ -174,12 +138,23 @@ HZFBAdSize *hzlookupFBAdSizeConstant(NSString *const constantName) {
              ];
 }
 
++ (NSArray *)heyzapExchangeBannerSizes {
+    return @[
+             hzHeyzapExchangeBannerSizeValue(HZHeyzapExchangeBannerSizeFlexibleWidthHeight50), // default value should be first
+             hzHeyzapExchangeBannerSizeValue(HZHeyzapExchangeBannerSizeFlexibleWidthHeight90),
+             ];
+}
+
 NSValue *hzAdMobBannerSizeValue(HZAdMobBannerSize size) {
     return [NSValue valueWithBytes:&size objCType:@encode(HZAdMobBannerSize)];
 }
 
 NSValue *hzFacebookBannerSizeValue(HZFacebookBannerSize size) {
     return [NSValue valueWithBytes:&size objCType:@encode(HZFacebookBannerSize)];
+}
+
+NSValue *hzHeyzapExchangeBannerSizeValue(HZHeyzapExchangeBannerSize size) {
+    return [NSValue valueWithBytes:&size objCType:@encode(HZHeyzapExchangeBannerSize)];
 }
 
 HZAdMobBannerSize hzAdMobBannerSizeFromValue(NSValue *value) {
@@ -194,21 +169,10 @@ HZFacebookBannerSize hzFacebookBannerSizeFromValue(NSValue *value) {
     return size;
 }
 
-NSString *hzFacebookBannerSizeDescription(HZFacebookBannerSize size) {
-    switch (size) {
-        case HZFacebookBannerSizeFlexibleWidthHeight50: {
-            return @"Flex × 50";
-            break;
-        }
-        case HZFacebookBannerSizeFlexibleWidthHeight90: {
-            return @"Flex × 90";
-            break;
-        }
-        case HZFacebookBannerSize320x50: {
-            return @"320 × 50";
-            break;
-        }
-    }
+HZHeyzapExchangeBannerSize hzHeyzapExchangeBannerSizeFromValue(NSValue *value) {
+    HZHeyzapExchangeBannerSize size;
+    [value getValue:&size];
+    return size;
 }
 
 NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size) {
@@ -230,6 +194,36 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size) {
         }
         case HZAdMobBannerSizeFullBanner: {
             return @"468 × 60";
+        }
+    }
+}
+
+NSString *hzFacebookBannerSizeDescription(HZFacebookBannerSize size) {
+    switch (size) {
+        case HZFacebookBannerSizeFlexibleWidthHeight50: {
+            return @"Flex × 50";
+            break;
+        }
+        case HZFacebookBannerSizeFlexibleWidthHeight90: {
+            return @"Flex × 90";
+            break;
+        }
+        case HZFacebookBannerSize320x50: {
+            return @"320 × 50";
+            break;
+        }
+    }
+}
+
+NSString *hzHeyzapExchangeBannerSizeDescription(HZHeyzapExchangeBannerSize size) {
+    switch (size) {
+        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight50: {
+            return @"Flex × 50";
+            break;
+        }
+        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight90: {
+            return @"Flex × 90";
+            break;
         }
     }
 }

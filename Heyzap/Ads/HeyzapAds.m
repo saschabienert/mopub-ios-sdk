@@ -39,6 +39,7 @@
 #import "HZPaymentTransactionObserver.h"
 
 #import "HZTestActivityViewController.h"
+#import "HZDevice.h"
 
 // Warning: Read first please.
 // Do NOT change these values. They are shared
@@ -54,6 +55,7 @@ NSString * const HZNetworkAdColony = @"adcolony";
 NSString * const HZNetworkAdMob = @"admob";
 NSString * const HZNetworkIAd = @"iad";
 NSString * const HZNetworkHyperMX = @"hyprmx";
+NSString * const HZNetworkHeyzapExchange = @"heyzap_demand";
 
 // Warning! Read first please.
 // Do NOT change the values. They are shared
@@ -89,6 +91,9 @@ NSString * const HZNetworkCallbackChartboostMoreAppsClickFailed = @"moreapps-cli
 // Facebook Specific
 NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impression";
 
+// NSNotifications
+NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNotification";
+
 @implementation HeyzapAds
 
 #define _HZAFNetworking_ALLOW_INVALID_SSL_CERTIFICATES_ @"true"
@@ -108,9 +113,8 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
     if (options & HZAdOptionsDisableMedation) {
         [HeyzapMediation forceOnlyHeyzapSDK];
     }
-    if (![HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HeyzapMediation sharedInstance] start];
-    }
+    
+    [[HeyzapMediation sharedInstance] start];
     
     if (framework && ![framework isEqualToString:@""]) {
         [[HZAdsManager sharedManager] setFramework:framework];
@@ -142,7 +146,6 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
 
 + (void) setOptions: (HZAdOptions) options {
     HZVersionCheck()
-
     [[HZAdsManager sharedManager] setOptions: options];
 }
 
@@ -174,29 +177,19 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
 + (void)setDelegate:(id)delegate forNetwork:(NSString *)network {
     HZVersionCheck()
     
-    if (![HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HeyzapMediation sharedInstance] setDelegate:delegate forNetwork:network];
-    }
+    [[HeyzapMediation sharedInstance] setDelegate:delegate forNetwork:network];
 }
 
 + (void) networkCallbackWithBlock: (void (^)(NSString *network, NSString *callback))block {
     HZVersionCheck()
     
-    if (![HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HeyzapMediation sharedInstance] setNetworkCallbackBlock: block];
-    }
+    [[HeyzapMediation sharedInstance] setNetworkCallbackBlock: block];
 }
 
 + (BOOL) isNetworkInitialized:(NSString *)network {
     HZVersionCheckBool()
     
-    if (![HeyzapMediation isOnlyHeyzapSDK]) {
-        return [[HeyzapMediation sharedInstance] isNetworkInitialized:network];
-    } else if ([network isEqualToString: HZNetworkHeyzap]) {
-        return [HZAdsManager isEnabled];
-    } else {
-        return NO;
-    }
+    return [[HeyzapMediation sharedInstance] isNetworkInitialized:network];
 }
 
 + (NSString *) defaultTagName {
@@ -210,8 +203,8 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
 
 + (void)presentMediationDebugViewController {
     HZVersionCheck()
-
-    [HZTestActivityViewController show];
+    
+    [[HeyzapMediation sharedInstance] showTestActivity];
 }
 
 + (void)pauseExpensiveWork {

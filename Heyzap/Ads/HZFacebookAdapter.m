@@ -43,8 +43,7 @@
 
 + (BOOL)isSDKAvailable {
     return [HZFBInterstitialAd hzProxiedClassIsAvailable]
-    && [HZFBAdView hzProxiedClassIsAvailable]
-    && [HZBannerAdOptions facebookBannerSizesAvailable];
+    && [HZFBAdView hzProxiedClassIsAvailable];
 }
 
 + (NSString *)name {
@@ -94,11 +93,11 @@
     return NO;
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag {
+- (BOOL)hasAdForType:(HZAdType)type {
     return type == HZAdTypeInterstitial && self.interstitialAd && self.interstitialAd.isAdValid;
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag {
+- (void)prefetchForType:(HZAdType)type {
     HZAssert(self.placementID, @"Need a Placement ID by this point");
     
     if (type != HZAdTypeInterstitial) {

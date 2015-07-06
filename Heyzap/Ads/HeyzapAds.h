@@ -51,7 +51,7 @@
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif
 
-#define SDK_VERSION @"8.1.1"
+#define SDK_VERSION @"8.5.1"
 
 #if __has_feature(objc_modules)
 @import AdSupport;
@@ -95,6 +95,7 @@ extern NSString * const HZNetworkAdColony;
 extern NSString * const HZNetworkAdMob;
 extern NSString * const HZNetworkIAd;
 extern NSString * const HZNetworkHyperMX;
+extern NSString * const HZNetworkHeyzapExchange;
 
 // General Network Callbacks
 extern NSString * const HZNetworkCallbackInitialized;
@@ -127,6 +128,9 @@ extern NSString * const HZNetworkCallbackChartboostMoreAppsClickFailed;
 
 // Facebook Specific Callbacks
 extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
+
+// NSNotifications
+extern NSString * const HZRemoteDataRefreshedNotification;
 
 /** The `HZAdsDelegate` protocol provides global information about our ads. If you want to know if we had an ad to show after calling `showAd` (for example, to fallback to another ads provider). It is recommend using the `showAd:completion:` method instead. */
 @protocol HZAdsDelegate<NSObject>
@@ -163,6 +167,12 @@ extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
  *  @param tag The identifier for the ad.
  */
 - (void)didFailToReceiveAdWithTag: (NSString *) tag;
+
+
+
+// Should probably have new API: didFailToReceiveAd (no tag)
+// didRecieveAd (no tag)
+
 
 /**
  *  Called when the user clicks on an ad.
@@ -253,7 +263,28 @@ extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
 + (void) setOptions: (HZAdOptions)options;
 + (void) setFramework: (NSString *) framework;
 + (void) setMediator: (NSString *) mediator;
+
+/**
+ *  Heyzap uses your app's bundle identifier to lookup your game in our database. By default, we lookup the bundle identifier from your Info.plist file.
+ *
+ *  If you need to use a different bundle identifier to identify your app than the one in the Info.plist file, you can call this method to override the bundle ID Heyzap uses. This supports use cases like having a different bundle ID in your Info.plist for production and development builds.
+ *
+ * You must call this method before starting the SDK.
+ *
+ *  @param bundleIdentifier The bundle identifier Heyzap should use to lookup your game in our database.
+ *
+ *  @exception NSInternalInconsistencyException is thrown if this method is called after starting the SDK.
+ *  @exception NSInternalInconsistencyException if bundleIdentifier is `nil`.
+ */
++ (void)setBundleIdentifier:(NSString *)bundleIdentifier;
 + (NSString *) defaultTagName;
+
+/**
+ * Returns a dictionary of developer-settable data or an empty dictionary if no data is available.
+ 
+ * Note: This data is cached, so it will usually be available at app launch. It is updated via a network call that is made when `[HeyzapAds startWithPublisherId:]` (or one of its related methods) is called. If you want to guarantee that the data has been refreshed, only use it after receiving an NSNotification with name=`HZRemoteDataRefreshedNotification`. The userInfo passed with the notification will be the same NSDictionary you can receive with this method call.
+ */
++ (NSDictionary *) remoteData;
 
 /**
  * Presents a view controller that displays integration information and allows fetch/show testing

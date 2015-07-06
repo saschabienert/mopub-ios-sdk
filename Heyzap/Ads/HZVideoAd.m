@@ -49,11 +49,7 @@
 {
     HZVersionCheck()
 
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [[HZAdsManager sharedManager] setVideoDelegate: delegate];
-    } else {
-        [[HeyzapMediation sharedInstance] setDelegate:delegate forAdType:HZAdTypeVideo];
-    }
+    [[HeyzapMediation sharedInstance] setDelegate:delegate forAdType:HZAdTypeVideo];
 }
 
 #pragma mark - Showing
@@ -81,11 +77,7 @@
         options = [HZShowOptions new];
     }
 
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapVideoAd showForAuctionType:HZAuctionTypeMixed options:options];
-    } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo additionalParams:nil options:options];
-    }
+    [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo additionalParams:nil options:options];
 }
 
 + (void) showWithCompletion:(void (^)(BOOL result, NSError *error))completion {
@@ -110,13 +102,7 @@
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
     HZVersionCheck()
 
-    tag = tag ?: [HeyzapAds defaultTagName];
-
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapVideoAd fetchForTag:tag auctionType:HZAuctionTypeMixed withCompletion:completion];
-    } else {
-        [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeVideo tag:tag additionalParams:nil completion:completion];
-    }
+    [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeVideo additionalParams:nil completion:completion];
 }
 
 #pragma mark - Querying
@@ -130,11 +116,7 @@
 
     tag = tag ?: [HeyzapAds defaultTagName];
 
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        return [HZHeyzapVideoAd isAvailableForTag:tag auctionType:HZAuctionTypeMixed];
-    } else {
-        return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeVideo tag:tag];
-    }
+    return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeVideo tag:tag];
 }
 
 #pragma mark - Heyzap Only

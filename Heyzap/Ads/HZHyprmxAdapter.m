@@ -100,7 +100,7 @@
 }
 
 static BOOL wasReady = NO;
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag {
+- (BOOL)hasAdForType:(HZAdType)type {
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
         wasReady = isOfferReady;
     }];
@@ -108,11 +108,13 @@ static BOOL wasReady = NO;
     return wasReady;
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag {
+- (void)prefetchForType:(HZAdType)type {
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
     
-    [[HZHYPRManager sharedManager] preloadContent];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[HZHYPRManager sharedManager] preloadContent];
+    });
 }
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options {

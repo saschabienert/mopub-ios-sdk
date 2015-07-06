@@ -32,8 +32,11 @@ char *HZNewBase64Encode(
 + (void) setPublisherID: (NSString *) publisherID;
 + (NSString *) publisherID;
 + (NSString *) internetStatus;
++ (NSString *) MD5ForString:(NSString*)string;
 
 NSArray *hzMap(NSArray *array, id (^block)(id object));
+NSArray *hzFilter(NSArray *array, BOOL(^block)(id object));
+NSOrderedSet *hzFilterOrderedSet(NSOrderedSet *set, BOOL(^block)(id object));
 
 BOOL hziOS8Plus(void);
 

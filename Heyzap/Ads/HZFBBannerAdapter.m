@@ -48,7 +48,7 @@
 #pragma mark - HBFBAdViewDelegate Protocol
 - (void)adViewDidClick:(HZFBAdView *)adView {
     // Report click
-    [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
+    [self.bannerReportingDelegate bannerAdapter:self wasClickedWithEventReporter:self.eventReporter];
     [self.bannerInteractionDelegate userDidClick];
     [self.bannerInteractionDelegate willPresentModalView];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: HZNetworkFacebook];
@@ -72,7 +72,7 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: HZNetworkFacebook];
 }
 - (void)adViewWillLogImpression:(HZFBAdView *)adView {
-    [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+    [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: @"banner-logging_impression" forNetwork: HZNetworkFacebook];
 }
 

@@ -26,6 +26,7 @@ NSString * const kHZAdapterAppLovinHumanized = @"AppLovin";
 NSString * const kHZAdapterUnityAdsHumanized = @"UnityAds";
 NSString * const kHZAdapterFacebookHumanized = @"Facebook Audience Network";
 NSString * const kHZAdapteriAdHumanized = @"iAd";
+NSString * const kHZAdapterHeyzapExchangeHumanized = @"Heyzap Exchange";
 
 #define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
 #define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
@@ -98,6 +99,46 @@ HZAdType hzAdTypeFromString(NSString *adUnit) {
         }
         case HZAdTypeBanner: {
             return HZBannerAdCreativeTypes;
+        }
+    }
+}
+
+NSString * const hzCreativeTypeIncentivized = @"INCENTIVIZED";
+NSString * const hzCreativeTypeVideo = @"VIDEO";
+NSString * const hzCreativeTypeBanner = @"BANNER";
+NSString * const hzCreativeTypeInterstitial = @"STATIC";
+
+
+
+HZAdType hzAdTypeFromCreativeTypeString(NSString *creativeTypeString) {
+    if ([creativeTypeString isEqualToString:@"INCENTIVIZED"]) {
+        return HZAdTypeIncentivized;
+    } else if ([creativeTypeString isEqualToString:@"VIDEO"]) {
+        return HZAdTypeVideo;
+    } else if ([creativeTypeString isEqualToString:@"BANNER"]) {
+        return HZAdTypeBanner;
+    } else {
+        return HZAdTypeInterstitial;
+    }
+}
+
+BOOL hzCreativeTypeSetContainsAdType(NSSet *const creativeTypes, const HZAdType adType) {
+    switch (adType) {
+        case HZAdTypeIncentivized: {
+            return [creativeTypes containsObject:hzCreativeTypeIncentivized];
+            break;
+        }
+        case HZAdTypeVideo: {
+            return [creativeTypes containsObject:hzCreativeTypeVideo];
+            break;
+        }
+        case HZAdTypeBanner: {
+            return [creativeTypes containsObject:hzCreativeTypeBanner];
+            break;
+        }
+        case HZAdTypeInterstitial: {
+            return [creativeTypes containsObject:hzCreativeTypeInterstitial];
+            break;
         }
     }
 }

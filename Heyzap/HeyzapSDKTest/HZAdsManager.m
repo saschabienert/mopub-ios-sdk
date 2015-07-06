@@ -175,7 +175,7 @@ static BOOL hzAdsIsEnabled = NO;
 
 #pragma mark - Is Available
 
-- (BOOL)isAvailableForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType
+- (BOOL)isAvailableForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType
 {
     BOOL iapAdsTimeout = [HeyzapMediation sharedInstance].adsTimeOut && adUnit != NSStringFromAdType(HZAdTypeIncentivized);
     
@@ -193,7 +193,7 @@ static BOOL hzAdsIsEnabled = NO;
     BOOL result = NO;
     NSError *error;
     
-    if ([self activeController] != nil) {
+    if (self.activeController) {
         if (options.completion) {
             options.completion(NO, [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 7 userInfo: @{NSLocalizedDescriptionKey: @"Another ad is currently displaying."}]);
         }
@@ -204,12 +204,16 @@ static BOOL hzAdsIsEnabled = NO;
     if (![[HZDevice currentDevice] HZConnectivityType]) {
         error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 1 userInfo: @{NSLocalizedDescriptionKey: @"No internet connection."}];
     } else {
-        HZAdModel *ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:options.tag auctionType:auctionType];
+        HZAdModel *ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit auctionType:auctionType];
         while (ad != nil && [ad isExpired]) {
-            ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit tag:options.tag auctionType:auctionType];
+            ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit auctionType:auctionType];
         }
         
         if (ad != nil) {
+            
+            // Tags are now set on show. TODO: This may need to find a better home?
+            ad.tag = options.tag;
+            
             Class controllerClass = [ad controller];
             
             if (controllerClass == [HZAdVideoViewController class]) {
@@ -243,7 +247,7 @@ static BOOL hzAdsIsEnabled = NO;
     if (!result || error) {
         // Not using the standard method here.
         [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag:options.tag andError: error];
-        [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification tag:options.tag adUnit:adUnit auctionType:auctionType];
+        [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification adUnit:adUnit auctionType:auctionType];
     }
     
     if (options.completion) {
@@ -252,9 +256,7 @@ static BOOL hzAdsIsEnabled = NO;
 }
 
 - (void) hideActiveAd {
-    if ([self activeController] != nil) {
-        [[self activeController] hide];
-    }
+    [self.activeController hide];
 }
 
 #pragma mark - Option Enabled?
@@ -326,8 +328,8 @@ static BOOL hzAdsIsEnabled = NO;
 
 // Send out NSNotifications so mediation can get more info than delegate callbacks provide (e.g. auctionType, easier access to adUnit).
 // See HZNotification for details.
-+ (void)postNotificationName:(NSString *const)notificationName tag:(NSString *)tag adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
-    HZAdInfo *const info = [[HZAdInfo alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
++ (void)postNotificationName:(NSString *const)notificationName adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
+    HZAdInfo *const info = [[HZAdInfo alloc] initWithAdUnit:adUnit auctionType:auctionType];
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationName
                                                         object:info];
 }

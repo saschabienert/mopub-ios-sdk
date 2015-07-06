@@ -65,7 +65,7 @@
     return [NSString stringWithFormat: @"%@", [UIDevice currentDevice].systemVersion];
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag {
+- (void)prefetchForType:(HZAdType)type {
     if (type != HZAdTypeInterstitial) {
         return;
     }
@@ -76,7 +76,7 @@
     }
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     if (type != HZAdTypeInterstitial) {
         return NO;

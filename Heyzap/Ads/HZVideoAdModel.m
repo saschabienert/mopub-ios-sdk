@@ -60,16 +60,41 @@
         if ([_staticURLs count] == 0 && [_streamingURLs count] == 0) {
             return nil;
         }
-    
-        // On-Screen Video Behaviors
-        _allowClick = [[HZDictionaryUtils hzObjectForKey: @"allow_click" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
-        _allowHide = [[HZDictionaryUtils hzObjectForKey: @"allow_hide" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
-        _allowSkip = [[HZDictionaryUtils hzObjectForKey: @"allow_skip" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
-        _lockoutTime = [HZDictionaryUtils hzObjectForKey: @"lockout_time" ofClass: [NSNumber class] default: @(0) withDict: video];
-        _postRollInterstitial = [[HZDictionaryUtils hzObjectForKey: @"post_roll_interstitial" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
         
-        _allowFallbacktoStreaming = [[HZDictionaryUtils hzObjectForKey: @"allow_streaming_fallback" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
-        _forceStreaming = [[HZDictionaryUtils hzObjectForKey: @"force_streaming" ofClass: [NSNumber class] default: @(0) withDict: video] boolValue];
+        /* 
+         Expected format of video dict (defaults at top level, overrides per ad unit underneath "ad_unit"):
+         {
+             ...
+         
+             "allow_hide" : true,
+             "allow_skip" : false,
+             "required_download_percent" : 100,
+             "allow_click" : true,
+             "skip_later_formatted_text" : "Skip in %is",
+         
+             ...
+         
+             "ad_unit" : {
+                 "incentivized" : {
+                     "allow_hide" : false,
+                     "allow_click" : false,
+                     ...
+                },
+                "video" : {...},
+                ...
+             }
+         }
+         */
+        [HZVideoAdDisplayOptions setDefaultsWithDict:video];
+        NSDictionary * adUnitVideoOptionsResponse = [HZDictionaryUtils hzObjectForKey: @"ad_unit" ofClass: [NSDictionary class] default: nil withDict: video];
+        // only save current ad unit display options, discard the others
+        NSDictionary * optionsForCurrentAdUnit = [HZDictionaryUtils hzObjectForKey:adUnit ofClass:[NSDictionary class] default:nil withDict:adUnitVideoOptionsResponse];
+        if(!optionsForCurrentAdUnit) {
+            HZDLog(@"HZVideoAdModel did not find video display options for adUnit=\"%@\" in response. Using defaults.", adUnit);
+            _displayOptions = [HZVideoAdDisplayOptions defaults];
+        } else {
+            _displayOptions = [[HZVideoAdDisplayOptions alloc] initWithDict:optionsForCurrentAdUnit];
+        }
         
         NSDictionary *meta = [HZDictionaryUtils hzObjectForKey: @"meta"  ofClass: [NSDictionary class] default: @{} withDict: video];
         
@@ -115,7 +140,7 @@
     
     [self initializeWebviewWithBaseURL:baseURL];
     
-    if (!self.forceStreaming) {
+    if (!self.displayOptions.forceStreaming) {
         __weak HZVideoAdModel *weakSelf = self;
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -140,7 +165,7 @@
                                                              __strong __typeof(&*weakSelf)strongSelf = weakSelf;
                                                             strongSelf.fileCached = result;
                                                             if (![strongSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
-                                                                if (strongSelf.allowFallbacktoStreaming) {
+                                                                if (strongSelf.displayOptions.allowFallbacktoStreaming) {
                                                                     completion(YES);
                                                                 } else {
                                                                     completion(result);
@@ -152,7 +177,7 @@
         
     }
     
-    if (self.forceStreaming || [self.adUnit isEqualToString: @"interstitial"]) {
+    if (self.displayOptions.forceStreaming || [self.adUnit isEqualToString: @"interstitial"]) {
         if (completion != nil) {
             completion(YES);
         }
@@ -176,7 +201,7 @@
         NSString *finishedStr = finished ? @"true" : @"false";
         [params setObject: finishedStr forKey: @"video_finished"];
         
-        NSTimeInterval lockoutTimeSeconds = [self.lockoutTime doubleValue]/1000.0;
+        NSTimeInterval lockoutTimeSeconds = [self.displayOptions.lockoutTime doubleValue]/1000.0;
         
         [params setObject: [NSString stringWithFormat: @"%f", lockoutTimeSeconds] forKey: @"lockout_time_seconds"];
         
@@ -207,10 +232,10 @@
 #pragma mark - Video Caching/Files
 
 - (NSURL *) URLForVideo {
-    if ([[NSFileManager defaultManager] fileExistsAtPath: [self filePathForCachedVideo]]) {
+    if (self.fileCached) {
         return [NSURL fileURLWithPath: [self filePathForCachedVideo]];
     } else {
-        if ([self.streamingURLs count] > 0 && (self.allowFallbacktoStreaming || self.forceStreaming)) {
+        if ([self.streamingURLs count] > 0 && (self.displayOptions.allowFallbacktoStreaming || self.displayOptions.forceStreaming)) {
             return [self.streamingURLs objectAtIndex: 0];
         }
     }

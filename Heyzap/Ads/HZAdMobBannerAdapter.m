@@ -50,7 +50,7 @@
     
     UIView *bannerView = (UIView *)self.banner;
     if (bannerView.superview) {
-        [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+        [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
     } else {
         self.waitingToBeAddedToScreen = YES;
     }
@@ -63,7 +63,7 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: [HZAdMobAdapter name]];
 }
 - (void)adViewWillPresentScreen:(HZGADBannerView *)adView {
-    [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
+    [self.bannerReportingDelegate bannerAdapter:self wasClickedWithEventReporter:self.eventReporter];
     [self.bannerInteractionDelegate userDidClick];
     [self.bannerInteractionDelegate willPresentModalView];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: [HZAdMobAdapter name]];
@@ -78,7 +78,7 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerHide forNetwork: [HZAdMobAdapter name]];
 }
 - (void)adViewWillLeaveApplication:(HZGADBannerView *)adView {
-    [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
+    [self.bannerReportingDelegate bannerAdapter:self wasClickedWithEventReporter:self.eventReporter];
     [self.bannerInteractionDelegate userDidClick];
     [self.bannerInteractionDelegate willLeaveApplication];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: [HZAdMobAdapter name]];
@@ -98,7 +98,7 @@
 
 - (void)bannerWasAddedToView {
     if (self.waitingToBeAddedToScreen) {
-        [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+        [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
         self.waitingToBeAddedToScreen = NO;
     }
 }

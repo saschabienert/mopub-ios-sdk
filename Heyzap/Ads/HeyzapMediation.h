@@ -11,13 +11,19 @@
 #import "HZShowOptions.h"
 #import "HZBannerAdapter.h"
 #import "HZMediationStarter.h"
+#import "HZMediationLoadManager.h"
+#import "HZMediateRequester.h"
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
 @protocol HZBannerReportingDelegate;
 @class HZBannerAdOptions;
 
-@interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting>
+@interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
+
+@property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
+
+@property (nonatomic, readonly) NSDictionary *remoteDataDictionary;
 
 + (instancetype)sharedInstance;
 
@@ -31,7 +37,7 @@
 
 #pragma mark - Showing Ads
 
-- (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
+- (void)fetchForAdType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
 
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options;
 
@@ -71,5 +77,7 @@ NSString * NSStringFromAdType(HZAdType type);
 
 - (void)pauseExpensiveWork;
 - (void)resumeExpensiveWork;
+
+- (void)showTestActivity;
 
 @end

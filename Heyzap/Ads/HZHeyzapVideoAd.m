@@ -36,19 +36,19 @@ static int HZVideoAdCreativeIDPin = 0;
     }
 }
 
-+ (void) fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion {
++ (void) fetchForAuctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion {
     if ([HZAdsManager isEnabled]) {
         
         NSDictionary *params = (HZVideoAdCreativeIDPin > 0) ? @{@"creative_id": [NSString stringWithFormat: @"%i", HZVideoAdCreativeIDPin]} : nil;
         
         HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:HZVideoAdCreativeTypes
                                                                              adUnit:HZVideoAdUnit
-                                                                                tag:tag
+                                                                                tag:nil
                                                                         auctionType:auctionType
                                                                 andAdditionalParams:params];
         
         [[HZAdsFetchManager sharedManager] fetch: request
-                                  withCompletion:^(HZAdModel *ad, NSString *tag, NSError *error) {
+                                  withCompletion:^(HZAdModel *ad, NSError *error) {
                                       if (completion) {
                                           BOOL result = YES;
                                           if (error != nil || ad == nil) {
@@ -63,7 +63,7 @@ static int HZVideoAdCreativeIDPin = 0;
 
 + (BOOL) isAvailableForTag: (NSString *) tag auctionType:(HZAuctionType)auctionType {
     if (![HZAdsManager isEnabled]) return NO;
-    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZVideoAdUnit tag:tag auctionType:auctionType];
+    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZVideoAdUnit auctionType:auctionType];
 }
 
 + (void) setCreativeID:(int)creativeID {

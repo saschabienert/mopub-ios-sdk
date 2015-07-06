@@ -32,10 +32,9 @@
 /**
  *  Fetches an interstitial ad for the given tag with an optional completion handler
  *
- *  @param tag        An identifier for the location of the ad which you can use to disable the ad from your dashboard.
  *  @param completion A block called when the ad is fetched or failed to fetch. result contains whether or not the fetch was successful, and if not, error contains the reason why.
  */
-+ (void) fetchForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion;
++ (void) fetchForAuctionType:(HZAuctionType)auctionType withCompletion: (void (^)(BOOL result, NSError *error))completion;
 
 
 /**

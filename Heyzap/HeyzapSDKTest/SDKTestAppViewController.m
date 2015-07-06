@@ -153,8 +153,18 @@ typedef enum {
     }
 }
 
-- (void) changeColorOfShowButton {
+- (void) customPublisherDataRefreshed: (NSNotification *)notification {
     
+    if(self.logCallbacksSwitch.isOn) {
+        if([notification.userInfo count] > 0) {
+            [self logToConsole: [NSString stringWithFormat:@"Remote publisher data refreshed. Data: %@", [HeyzapAds remoteData]]];
+        } else {
+            [self logToConsole: [NSString stringWithFormat:@"Remote publisher data refreshed (empty)"]];
+        }
+    }
+}
+
+- (void) changeColorOfShowButton {
     [self.bannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex != kAdUnitSegmentBanner) forKey:@"hidden"];
     [self.nonBannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex == kAdUnitSegmentBanner) forKey:@"hidden"];
     
@@ -317,7 +327,7 @@ const CGFloat kLeftMargin = 10;
                           action:@selector(creativeIDEditingChanged:)
                 forControlEvents:UIControlEventEditingChanged];
     [self.scrollView addSubview:self.adsTextField];
-    
+
     self.creativeTypeTextField = ({
         UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.showButton.frame) + 5, 320, 35)];
         tf.delegate = self;
@@ -495,7 +505,7 @@ const CGFloat kLeftMargin = 10;
     for (UIView *view in self.scrollView.subviews) {
         subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
     }
-    self.scrollView.contentSize = (CGSize) { CGRectGetWidth(self.view.frame), subviewContainingRect.size.height + 80 };
+    self.scrollView.contentSize = (CGSize) { subviewContainingRect.size.width, subviewContainingRect.size.height + 80 };
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{
@@ -757,7 +767,6 @@ const CGFloat kLeftMargin = 10;
 - (void)bannerDidReceiveAd:(HZBannerAd *)banner {
     NSLog(@"bannerDidReceiveAd");
     LOG_METHOD_NAME_TO_CONSOLE;
-    
 }
 
 - (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
@@ -845,6 +854,5 @@ const CGFloat kLeftMargin = 10;
         [HeyzapAds resumeExpensiveWork];
     }
 }
-
 
 @end

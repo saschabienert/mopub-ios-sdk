@@ -52,7 +52,7 @@
         NSMutableDictionary *params = [@{@"publisher_id": publisherID,
                                          @"publisher_sdk_key": publisherID,
                                          @"device_id": [HZUtils deviceID],
-                                         @"app_bundle_id": [[NSBundle mainBundle] bundleIdentifier],
+                                         @"app_bundle_id": [[HZDevice currentDevice] bundleIdentifier],
                                          @"app_version": versionString,
                                          @"device_form_factor": deviceFormFactor,
                                          @"platform": @"iphone",

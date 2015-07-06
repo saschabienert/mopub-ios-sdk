@@ -51,12 +51,8 @@
 + (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate
 {
     HZVersionCheck()
-
-    if ([HeyzapMediation isOnlyHeyzapSDK]){
-        [HZHeyzapIncentivizedAd setDelegate:delegate];
-    } else {
-        [[HeyzapMediation sharedInstance] setDelegate:delegate forAdType:HZAdTypeIncentivized];
-    }
+    
+    [[HeyzapMediation sharedInstance] setDelegate:delegate forAdType:HZAdTypeIncentivized];
 }
 
 #pragma mark - Showing Ads
@@ -79,11 +75,7 @@
         options = [HZShowOptions new];
     }
 
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapIncentivizedAd showForAuctionType:HZAuctionTypeMixed options:options];
-    } else {
-        [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized additionalParams:nil options:options];
-    }
+    [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized additionalParams:nil options:options];
 }
 
 #pragma mark - Fetching Ads
@@ -104,15 +96,9 @@
 {
     HZVersionCheck()
 
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        [HZHeyzapIncentivizedAd fetchForTag: tag auctionType:HZAuctionTypeMixed completion:completion];
-    } else {
-        [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeIncentivized
-                                                     tag:tag
-                                        additionalParams:nil
-                                              completion:completion];
-    }
-    
+    [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeIncentivized
+                                    additionalParams:nil
+                                          completion:completion];
 }
 
 #pragma mark - Querying Status
@@ -125,11 +111,7 @@
 {
     HZVersionCheckBool()
 
-    if ([HeyzapMediation isOnlyHeyzapSDK]) {
-        return [HZHeyzapIncentivizedAd isAvailableForTag:tag auctionType:HZAuctionTypeMixed];
-    } else {
-        return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeIncentivized tag:tag];
-    }
+    return [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:HZAdTypeIncentivized tag:tag];
 }
 
 #pragma mark - Heyzap specific

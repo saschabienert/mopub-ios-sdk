@@ -37,6 +37,7 @@ extern NSString * const kHZAdapterAppLovinHumanized;
 extern NSString * const kHZAdapterUnityAdsHumanized;
 extern NSString * const kHZAdapterFacebookHumanized;
 extern NSString * const kHZAdapteriAdHumanized;
+extern NSString * const kHZAdapterHeyzapExchangeHumanized;
 
 + (NSError *)errorWithAdapter:(NSString *)adapter
                        domain:(NSString *)domain
@@ -50,5 +51,9 @@ extern NSString * const kHZAdapteriAdHumanized;
 NSString * NSStringFromAdType(HZAdType type);
 HZAdType hzAdTypeFromString(NSString *adUnit);
 + (NSArray *)creativeTypesForAdType:(HZAdType)type;
+
+HZAdType hzAdTypeFromCreativeTypeString(NSString *creativeTypeString);
+
+BOOL hzCreativeTypeSetContainsAdType(NSSet *const creativeTypes, const HZAdType adType);
 
 @end

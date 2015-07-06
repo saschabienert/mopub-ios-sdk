@@ -117,7 +117,7 @@
 }
 
 // To support incentivized, I will need to have separate objects for the incentivized/interstial delegates because they received the same selectors
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     
     switch (type) {
@@ -146,7 +146,7 @@
     }
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     switch (type) {
         case HZAdTypeInterstitial: {

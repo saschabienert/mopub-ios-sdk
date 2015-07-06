@@ -20,6 +20,7 @@
 #import "HZiAdAdapter.h"
 #import "HZBannerAdapter.h"
 #import "HZHyprmxAdapter.h"
+#import "HZHeyzapExchangeAdapter.h"
 
 @implementation HZBaseAdapter
 
@@ -70,12 +71,12 @@
     ABSTRACT_METHOD_ERROR();
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     ABSTRACT_METHOD_ERROR();
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     ABSTRACT_METHOD_ERROR();
 }
@@ -157,13 +158,16 @@
 
 + (Class)adapterClassForName:(NSString *)adapterName
 {
-    for (Class klass in [self allAdapterClasses]) {
-        if ([[klass name] isEqualToString: adapterName]) {
-            return klass;
+    static NSMutableDictionary *nameToClassMapping;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        nameToClassMapping = [NSMutableDictionary dictionary];
+        for (Class klass in [self allAdapterClasses]) {
+            nameToClassMapping[[klass name]] = klass;
         }
-    }
+    });
     
-    return nil;
+    return nameToClassMapping[adapterName];
 }
 
 + (NSSet *)allAdapterClasses
@@ -181,6 +185,7 @@
             [HZFacebookAdapter class],
             [HZiAdAdapter class],
             [HZHyprmxAdapter class],
+            [HZHeyzapExchangeAdapter class],
             nil];
 }
 

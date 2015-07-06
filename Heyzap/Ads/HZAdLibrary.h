@@ -17,12 +17,12 @@
 
 #pragma mark - Ad Stack
 
-- (HZAdModel *)peekAtAdForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
+- (HZAdModel *)peekAtAdForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;
 - (NSArray *)peekAtAllAds;
 
-- (void)pushAd:(HZAdModel *)ad forAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
+- (void)pushAd:(HZAdModel *)ad forAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;
 
-- (HZAdModel *)popAdForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
+- (HZAdModel *)popAdForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;
 - (void)purgeAd:(HZAdModel *)ad;
 
 

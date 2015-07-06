@@ -34,6 +34,7 @@
 - (void) hide;
 
 - (void) didClickWithURL: (NSURL *) url;
+- (void) didClickWithURL: (NSURL *) url completion:(void(^)(BOOL result, NSError *error))completion;
 - (void) didImpression;
 - (void) didClickHeyzapInstall;
 

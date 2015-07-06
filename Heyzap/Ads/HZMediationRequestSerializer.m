@@ -8,6 +8,7 @@
 
 #import "HZMediationRequestSerializer.h"
 #import "HeyzapMediation.h"
+#import "HZDevice.h"
 
 @implementation HZMediationRequestSerializer
 
@@ -18,7 +19,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         mediationDefaults = @{
-                              @"external_package":[[NSBundle mainBundle] bundleIdentifier],
+                              @"external_package":[[HZDevice currentDevice] bundleIdentifier],
                               @"networks":[HeyzapMediation commaSeparatedAdapterList],
                               };
     });
