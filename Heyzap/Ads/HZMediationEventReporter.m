@@ -95,6 +95,7 @@ NSString *const kHZBannerOrdinalKey = @"banner_ordinal";
  *  The dictionary key for the position of a network within the list received from the server; for the list [chartboost, applovin], chartboost is 0.
  */
 NSString *const kHZOrdinalKey = @"ordinal";
+NSString *const kHZIncentivizedCompleteKey = @"complete";
 
 - (void)reportFetchWithSuccessfulAdapter:(HZBaseAdapter *)chosenAdapter
 {
@@ -168,6 +169,25 @@ NSString *const kHZOrdinalKey = @"ordinal";
     if (self.adType == HZAdTypeBanner) {
         self.bannerImpressionCount += 1;
     }
+}
+
+- (void)reportIncentivizedResult:(BOOL)success forAdapter:(HZBaseAdapter *)adapter {
+    const NSUInteger ordinal = [self.chosenAdapters indexOfObject:adapter];
+    NSMutableDictionary *const params = [self addParametersToDefaults:
+                                         @{
+                                           kHZIncentivizedCompleteKey: @(success),
+                                           kHZImpressionIDKey: self.impressionID,
+                                           kHZNetworkKey: [adapter name],
+                                           kHZOrdinalKey: @(ordinal),
+                                           kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                           }].mutableCopy;
+    
+    [[HZMediationAPIClient sharedClient] POST:@"complete" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
+        HZDLog(@"Success reporting incentivized complete");
+    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+        // The server hasn't implemented this endpoint yet, so don't bother logging the error for now.
+//        HZDLog(@"Error reporting incentivized complete = %@",error);
+    }];
 }
 
 NSString * sdkVersionOrDefault(NSString *const version) {
