@@ -224,7 +224,7 @@
     }
     long durationLong = [duration longValue];
     
-    // XML validation guarantees either a 1-3 digit number % or HH:MM:SS for this field
+    // XML validation guarantees either a 1-3 digit number % or HH:MM:SS for this field, or an empty string
     if([skipOffsetRaw containsString:@"%"]) {
         //process \d{1,3}%
         int percentageInt = [[skipOffsetRaw stringByReplacingOccurrencesOfString:@"%" withString:@""] intValue];
@@ -260,8 +260,18 @@
 #pragma mark - helper methods
 
 - (NSNumber *) secondsFromHHMMSS:(NSString *) str {
+    if([str length] == 0){
+        // nil or empty
+        return @(0);
+    }
+    
     //process HH:MM:SS
     NSArray *components = [str componentsSeparatedByString:@":"];
+    
+    if([components count] != 3){
+        // invalid format
+        return @(0);
+    }
     
     NSInteger hours   = [[components objectAtIndex:0] integerValue];
     NSInteger minutes = [[components objectAtIndex:1] integerValue];
