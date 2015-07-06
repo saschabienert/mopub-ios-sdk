@@ -109,7 +109,7 @@
                     NSDictionary *adMetaDict = self.responseDict[@"meta"];
                     self.adMediationId = adMetaDict[@"id"];
                     self.adScore = adMetaDict[@"score"];
-                    self.adDataHash = adMetaDict[@"data"];
+                    self.adDataHash = adMetaDict[@"data"];// monroe: key may be `auction_extras` soon instead of `data`
                     
                     self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@(0) withDict:adDict] intValue];
                     if(![self isSupportedFormat]) {
@@ -300,7 +300,7 @@
     return (int) [[[UIApplication sharedApplication] keyWindow] bounds].size.width;
 }
 
-// add additional params that HZHeyzapExchangeRequestSerializer doesn't cover that are necessary for every request to the exchange server
+// additional params to send to all endpoints that HZHeyzapExchangeRequestSerializer doesn't cover
 - (NSDictionary *) apiRequestParams {
     // in the future, if mediation is refactored to request creative type instead of adUnit, this will be unnecessary
     // also, the hardcoded mapping from interstitial => static below (missing out on blended opportunity) would be avoided
@@ -331,18 +331,28 @@
     NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
     [allRequestParams addEntriesFromDictionary:@{
                                                  @"mediation_id":self.adMediationId,
-                                                 @"data":self.adDataHash,
+                                                 @"auction_extras":self.adDataHash,
                                                  @"markup":self.adMarkup,
                                                  }];
     return allRequestParams;
 }
 
 - (NSDictionary *) clickParams {
-    return [self apiRequestParams]; //no special params necessary for click events yet
+    NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
+    [allRequestParams addEntriesFromDictionary:@{
+                                                 @"mediation_id":self.adMediationId,
+                                                 @"auction_extras":self.adDataHash,
+                                                 }];
+    return allRequestParams;
 }
 
 - (NSDictionary *) videoCompleteParams {
-    return [self apiRequestParams]; //no special params necessary for video complete events yet
+    NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
+    [allRequestParams addEntriesFromDictionary:@{
+                                                 @"mediation_id":self.adMediationId,
+                                                 @"auction_extras":self.adDataHash,
+                                                 }];
+    return allRequestParams;
 }
 
 @end

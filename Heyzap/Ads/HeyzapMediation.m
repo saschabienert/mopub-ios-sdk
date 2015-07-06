@@ -467,6 +467,7 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 {
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didCompleteAdWithTag:self.currentShownAd.tag];
+        [self.currentShownAd.eventReporter reportIncentivizedResult:YES forAdapter:adapter];
     }
 }
 
@@ -474,6 +475,7 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 {
     if (self.currentShownAd) {
         [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAdWithTag:self.currentShownAd.tag];
+        [self.currentShownAd.eventReporter reportIncentivizedResult:NO forAdapter:adapter];
     }
 }
 
