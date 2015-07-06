@@ -21,7 +21,6 @@
 
 @property (nonatomic) HZHeyzapExchangeAPIClient *apiClient;
 
-@property (nonatomic) NSDictionary *responseDict;
 @property (nonatomic) NSString *adMediationId;
 @property (nonatomic) NSNumber *adScore;
 @property (nonatomic) NSString *adMarkup;
@@ -85,18 +84,18 @@
                       },
                       }
                      */
-                     self.responseDict = [NSJSONSerialization JSONObjectWithData:data
+                     NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data
                                                                          options:NSJSONReadingMutableContainers
                                                                            error:&jsonError];
                      
                      
-                     if(jsonError || !self.responseDict){
+                     if(jsonError || !responseDict){
                          HZELog(@"JSON parse failed for exchange response. Error: %@", jsonError);
                          [self handleFailure];
                          return;
                      }
                      
-                     NSDictionary *adDict = [HZDictionaryUtils hzObjectForKey:@"ad" ofClass:[NSDictionary class] default:nil withDict:self.responseDict];
+                     NSDictionary *adDict = [HZDictionaryUtils hzObjectForKey:@"ad" ofClass:[NSDictionary class] default:nil withDict:responseDict];
                      
                      if(!adDict){
                          HZELog(@"JSON format unexpected for exchange response.");
@@ -105,10 +104,10 @@
                      }
                      
                      self.adMarkup = adDict[@"markup"];
-                     NSDictionary *adMetaDict = self.responseDict[@"meta"];
+                     NSDictionary *adMetaDict = responseDict[@"meta"];
                      self.adMediationId = adMetaDict[@"id"];
                      self.adScore = adMetaDict[@"score"];
-                     self.adDataHash = adMetaDict[@"data"];
+                     self.adDataHash = adMetaDict[@"data"];// monroe: key may be `auction_extras` soon instead of `data`
                      
                      self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@(0) withDict:adDict] intValue];
                      if(![self isSupportedFormat]) {
@@ -227,7 +226,7 @@
     return [[HZHeyzapExchangeBannerClient supportedFormats] componentsJoinedByString:@","];
 }
 
-// add additional params that HZHeyzapExchangeRequestSerializer doesn't cover for banners
+// additional params to send to all endpoints that HZHeyzapExchangeRequestSerializer doesn't cover for banners
 - (NSDictionary *) apiRequestParams {
     return @{
              @"banner_w":@([self currentBannerWidth]),
@@ -241,14 +240,19 @@
     NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
     [allRequestParams addEntriesFromDictionary:@{
                                                  @"mediation_id":self.adMediationId,
-                                                 @"data":self.adDataHash,
+                                                 @"auction_extras":self.adDataHash,
                                                  @"markup":self.adMarkup,
                                                  }];
     return allRequestParams;
 }
 
 - (NSDictionary *) clickParams {
-    return [self apiRequestParams]; //no special params necessary for click events yet
+    NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
+    [allRequestParams addEntriesFromDictionary:@{
+                                                 @"mediation_id":self.adMediationId,
+                                                 @"auction_extras":self.adDataHash,
+                                                 }];
+    return allRequestParams;
 }
 
 @end
