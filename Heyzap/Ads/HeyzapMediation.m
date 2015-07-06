@@ -82,7 +82,6 @@
 
 @property (nonatomic) NSSet *disabledTags;
 
-
 // State
 @property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
 @property (nonatomic) NSTimeInterval IAPAdDisableTime;
@@ -277,15 +276,6 @@ NSString * const kHZDataKey = @"data";
         return;
     }
     
-    [self mediateForAdType:adType
-           showImmediately:YES
-          additionalParams:additionalParams
-                   options:options];
-}
-
-// `mediateForSessionKey` and this method looks up the session.
-- (void)mediateForAdType:(HZAdType)adType showImmediately:(BOOL)showImmediately additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
-{
     // Getting /mediate and sending failure message can be part of the
     // TODO: tell the server if an outdated or cached mediate is being used. Potentially include the outdated time diff.
     NSDictionary *const latestMediate = [self.mediateRequester latestMediate];
@@ -386,9 +376,7 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 {
     tag = [HZAdModel normalizeTag:tag];
     
-    BOOL iapAdsTimeout = self.adsTimeOut && adType != HZAdTypeIncentivized;
-    
-    return ([[self availableAdaptersForAdType:adType tag:tag] count] != 0 && !iapAdsTimeout);
+    return [[self availableAdaptersForAdType:adType tag:tag] count] != 0;
 }
 
 - (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag network:(HZBaseAdapter *const)network {

@@ -25,7 +25,6 @@
 #import "HZWebViewPool.h"
 #import "HZDownloadHelper.h"
 #import "HZNSURLUtils.h"
-#import "HeyzapMediation.h"
 #import "HZPaymentTransactionObserver.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
@@ -183,10 +182,6 @@ static BOOL hzAdsIsEnabled = NO;
 #pragma mark - Show
 
 - (void) showForAdUnit: (NSString *) adUnit auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options  {
-    if ([HeyzapMediation sharedInstance].adsTimeOut) {
-        NSLog(@"Ads disabled because of an IAP");
-    }
-    
     BOOL result = NO;
     NSError *error;
     
