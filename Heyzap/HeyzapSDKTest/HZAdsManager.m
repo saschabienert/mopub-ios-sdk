@@ -177,10 +177,7 @@ static BOOL hzAdsIsEnabled = NO;
 
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType
 {
-    BOOL iapAdsTimeout = [HeyzapMediation sharedInstance].adsTimeOut && adUnit != NSStringFromAdType(HZAdTypeIncentivized);
-    
-    return ([[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:adUnit tag:tag auctionType:auctionType] != nil
-            && !iapAdsTimeout);
+    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:adUnit auctionType:auctionType] != nil;
 }
 
 #pragma mark - Show

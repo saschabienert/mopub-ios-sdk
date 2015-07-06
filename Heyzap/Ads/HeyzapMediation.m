@@ -80,6 +80,11 @@
 @property (nonatomic) HZMediationStartStatus startStatus;
 @property (nonatomic) BOOL hasLoadedFromCache;
 
+@property (nonatomic) NSSet *disabledTags;
+
+
+// State
+@property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
 @property (nonatomic) NSTimeInterval IAPAdDisableTime;
 
 @end
@@ -189,11 +194,17 @@ NSString * const kHZIAPAdDisableTime = @"iab_ad_disable_time";
                                                  default:@"zz" // Unknown or invalid; the server also uses this.
                                                 withDict:dictionary];
     
-    NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:dictionary];
-    [NSOrderedSet orderedSetWithArray:networks];
-    if (networks) {
-        [self setupMediators:networks];
-    } else {
+    NSArray *disabledTags = [HZDictionaryUtils hzObjectForKey:@"disabled_tags" ofClass:[NSArray class] default:@[] withDict:dictionary];
+    self.disabledTags = [NSSet setWithArray:disabledTags];
+    
+    NSString *jsonString = [HZDictionaryUtils hzObjectForKey:kHZMediationCustomPublisherDataKey
+                                                     ofClass:[NSString class]
+                                                     default: @"{}"
+                                                    withDict:dictionary];
+    
+    // converts string like "{\"test\":\"foo\"}" to dictionary
+    if(jsonString == nil) {
+        _remoteDataDictionary = @{};
         NSError *error;
         NSData *objectData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData options:kNilOptions error:&error];
@@ -260,14 +271,9 @@ NSString * const kHZDataKey = @"data";
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
     
-    NSError *preShowError = [self checkForPreShowError:options.tag];
+    NSError *preShowError = [self checkForPreShowError:options.tag adType:adType];
     if (preShowError) {
         [self sendShowFailureMessagesForAdType:adType options:options error:preShowError];
-        return;
-    }
-    
-    if (self.adsTimeOut && adType != HZAdTypeIncentivized) {
-        HZILog(@"Ads disabled because of an IAP");
         return;
     }
     
@@ -280,8 +286,6 @@ NSString * const kHZDataKey = @"data";
 // `mediateForSessionKey` and this method looks up the session.
 - (void)mediateForAdType:(HZAdType)adType showImmediately:(BOOL)showImmediately additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
-    NSString *adUnit = NSStringFromAdType(adType);
-    
     // Getting /mediate and sending failure message can be part of the
     // TODO: tell the server if an outdated or cached mediate is being used. Potentially include the outdated time diff.
     NSDictionary *const latestMediate = [self.mediateRequester latestMediate];
@@ -325,7 +329,7 @@ NSString * const kHZDataKey = @"data";
     [self haveAdapter:chosenAdapter showAdWithEventReporter:eventReporter options:options];
 }
 
-- (NSError *)checkForPreShowError:(NSString *)tag {
+- (NSError *)checkForPreShowError:(NSString *)tag adType:(HZAdType)adType {
     if (self.startStatus != HZMediationStartStatusSuccess) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"SDK hasn't finished starting."}];
     } else if (self.pausableQueueIsPaused) {
@@ -334,6 +338,8 @@ NSString * const kHZDataKey = @"data";
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad with a disabled tag"}];
     } else if (self.currentShownAd) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"An ad is already shown or attempting to be shown"}];
+    } else if (self.adsTimeOut && adType != HZAdTypeIncentivized) {
+        return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Ads are disabled because of a recent in-app-purchase."}];
     }
     
     return nil;
@@ -386,15 +392,18 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 }
 
 - (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag network:(HZBaseAdapter *const)network {
-    tag = tag ?: [HeyzapAds defaultTagName];
-    BOOL iapAdsTimeout = self.adsTimeOut && adType != HZAdTypeIncentivized;
-    return ([[self availableAdaptersForAdType:adType tag:tag] containsObject:network] && !iapAdsTimeout);
+    tag = [HZAdModel normalizeTag:tag];
+    return [[self availableAdaptersForAdType:adType tag:tag] containsObject:network]
+    && [self tagIsEnabled:tag];
+}
+
+- (BOOL)tagIsEnabled:(NSString *)tag {
+    HZParameterAssert(tag);
+    return ![self.disabledTags containsObject:tag];
 }
 
 - (NSOrderedSet *)availableAdaptersForAdType:(const HZAdType)adType tag:(NSString *)tag {
-    HZParameterAssert(tag);
-    
-    NSError *preShowError = [self checkForPreShowError:tag];
+    NSError *preShowError = [self checkForPreShowError:tag adType:adType];
     if (preShowError || !self.mediateRequester.latestMediate) {
         return [NSOrderedSet orderedSet];
     }

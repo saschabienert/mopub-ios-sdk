@@ -217,6 +217,20 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
     
 }
 
++ (NSDictionary *) remoteData {
+    HZVersionCheckNil();
+    return [[HeyzapMediation sharedInstance] remoteDataDictionary];
+}
+
++ (void)setBundleIdentifier:(NSString *)bundleIdentifier {
+    HZParameterAssert(bundleIdentifier);
+    if ([self isStarted]) {
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"You must call setBundleIdentifier before starting the SDK" userInfo:nil];
+    } else {
+        [HZDevice setBundleIdentifier:bundleIdentifier];
+    }
+}
+
 #pragma mark - Record IAP Transaction
 
 +(void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price {

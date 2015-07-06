@@ -25,6 +25,7 @@
 #import "HZBannerAd.h"
 #import "HZNoCaretTextField.h"
 
+#import "HZHeyzapExchangeAdapter.h"
 #import "TestAppPaymentTransactionObserver.h"
 
 #define kTagCreativeIDField 4393
@@ -256,6 +257,7 @@ const CGFloat kLeftMargin = 10;
     
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(downloadNotification:) name: kHZDownloadHelperSuccessNotification object: nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(customPublisherDataRefreshed:) name:HZRemoteDataRefreshedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(paymentTransactionErrorNotification:) name: kHZPaymentTransactionErrorNotification object: nil];
 
     
