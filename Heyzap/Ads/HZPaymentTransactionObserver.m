@@ -106,8 +106,8 @@ NSString * const kHZIAPMetricsEndPoint = @"in_game_api/metrics/iap";
     NSDictionary *params = @{
                              @"iab_id": productId,
                              @"name": productName,
-                             @"usd_price_cents": price,
-                             @"price_currency": currency
+                             @"price": price,
+                             @"currency_code": currency,
                              };
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
