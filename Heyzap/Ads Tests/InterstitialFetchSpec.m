@@ -45,7 +45,7 @@ describe(@"InterstitialFetch", ^{
             HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:@[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"] adUnit:@"interstitial" tag:nil auctionType:HZAuctionTypeMonetization andAdditionalParams:nil];
             
             __block HZAdModel *blockModel;
-            [[HZAdsFetchManager sharedManager] fetch:request withCompletion:^(HZAdModel *model, NSString *tag, NSError *error) {
+            [[HZAdsFetchManager sharedManager] fetch:request withCompletion:^(HZAdModel *model, NSError *error) {
                 blockModel = model;
             }];
             [[expectFutureValue(blockModel) shouldEventually] beNonNil];
