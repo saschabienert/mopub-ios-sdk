@@ -48,6 +48,9 @@
 
 #import "HZTestActivityViewController.h"
 
+#import "HZHeyzapExchangeAdapter.h"
+#import "HZHeyzapExchangeBannerAdapter.h"
+
 #define kHZMediationCustomPublisherDataKey @"custom_publisher_data"
 
 @interface HeyzapMediation()
@@ -271,7 +274,17 @@ NSString * const kHZDataKey = @"data";
     
     NSError *eventReporterError;
     
-    NSOrderedSet *adapters = [self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:adType];
+    NSMutableOrderedSet *adapters = [[self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:adType] mutableCopy];
+    
+    // sort adapters based on score, bringing in Heyzap Exchange's latest fetched ad's score if it has an ad available (ads have scores in the exchange, the currently stored score is per network)
+    if([adapters containsObject:[HZHeyzapExchangeAdapter sharedInstance]]){
+        [[HZHeyzapExchangeAdapter sharedInstance] setLatestMediationScore:([[HZHeyzapExchangeAdapter sharedInstance] adScoreForAdType:adType] ?: @(0)) forAdType:adType];
+        
+        [adapters sortUsingComparator:^(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
+            // [obj2 compare:obj1] will sort highest score first
+            return [[obj2 latestMediationScoreForAdType:adType] compare:[obj1 latestMediationScoreForAdType:adType]];
+        }];
+    }
     
     Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
     
@@ -622,8 +635,12 @@ const NSTimeInterval bannerPollInterval = 1;
                 return;
             }
             
+            NSMutableOrderedSet *adaptersWithAvailableAds = [[NSMutableOrderedSet alloc] init];
             
             dispatch_async(self.fetchQueue, ^{
+                __block BOOL heyzapExchangeAvailable = NO;
+                __block HZHeyzapExchangeBannerAdapter *heyzapExchangeBannerAdapter;
+                
                 for (HZBaseAdapter *baseAdapter in adapters) {
                     __block HZBannerAdapter *bannerAdapter;
                     dispatch_sync(dispatch_get_main_queue(), ^{
@@ -640,25 +657,37 @@ const NSTimeInterval bannerPollInterval = 1;
                     }, bannerTimeout);
                     
                     if (isAvailable) {
-                        dispatch_sync(dispatch_get_main_queue(), ^{
-                            
-                            
-                            bannerAdapter.eventReporter = eventReporter;
-                            [eventReporter reportFetchWithSuccessfulAdapter:baseAdapter];
-                            completion(nil, bannerAdapter);
-                        });
-                        
-                        break;
-                    } else if (baseAdapter == [adapters lastObject]) {
-                        dispatch_sync(dispatch_get_main_queue(), ^{
-                            [eventReporter reportFetchWithSuccessfulAdapter:nil];
-                            completion([[self class] bannerErrorWithDescription:@"None of the mediated ad networks had a banner available" underlyingError:nil], nil);
-                        });
+                        [adaptersWithAvailableAds addObject:bannerAdapter];
+                        if([bannerAdapter class] == [HZHeyzapExchangeBannerAdapter class]){
+                            heyzapExchangeAvailable = YES;
+                            heyzapExchangeBannerAdapter = (HZHeyzapExchangeBannerAdapter *)bannerAdapter;
+                        }
+                    }
+                }
+                
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    if([adaptersWithAvailableAds count] == 0){
+                        [eventReporter reportFetchWithSuccessfulAdapter:nil];
+                        completion([[self class] bannerErrorWithDescription:@"None of the mediated ad networks had a banner available" underlyingError:nil], nil);
+                        return;
                     }
                     
-                }
+                    // sort adapters with ads by score, also considering RTB score from heyzap exchange fetch
+                    if(heyzapExchangeAvailable){
+                        [heyzapExchangeBannerAdapter.parentAdapter setLatestMediationScore:(heyzapExchangeBannerAdapter.adScore ?: @(0)) forAdType:HZAdTypeBanner];
+                        
+                        [adaptersWithAvailableAds sortUsingComparator:^(HZBannerAdapter *obj1, HZBannerAdapter *obj2) {
+                            // [obj2 compare:obj1] will sort highest score first
+                            return [[obj2.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner] compare:[obj1.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner]];
+                        }];
+                    }
+                    
+                    HZBannerAdapter *finalAdapter = [adaptersWithAvailableAds objectAtIndex:0];
+                    finalAdapter.eventReporter = eventReporter;
+                    [eventReporter reportFetchWithSuccessfulAdapter:finalAdapter.parentAdapter];
+                    completion(nil, finalAdapter);
+                });
             });
-            
         });
     });
     

@@ -131,6 +131,15 @@
     [exchangeClient showWithOptions:options];
 }
 
+- (NSNumber *) adScoreForAdType:(HZAdType)adType {
+    if(![self hasAdForType:adType]){
+        return nil;
+    }
+    
+    HZHeyzapExchangeClient *client = [self.adTypeExchangeClients objectForKey:[self adTypeAsDictKey:adType]];
+    return client.adScore;
+}
+
 
 #pragma mark - Banners
 

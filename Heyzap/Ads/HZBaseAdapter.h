@@ -59,11 +59,16 @@
 
 @property (nonatomic, strong) HZAdapterDelegate *forwardingDelegate;
 
+
+
 + (instancetype)sharedInstance;
 
 - (void)prefetchForType:(HZAdType)type;
 
 - (BOOL)hasAdForType:(HZAdType)type;
+
+- (NSNumber *) latestMediationScoreForAdType:(HZAdType) adType;
+- (void) setLatestMediationScore:(NSNumber *)score forAdType:(HZAdType)adType;
 
 /**
  *  The adapter should show an ad for the given ad type.

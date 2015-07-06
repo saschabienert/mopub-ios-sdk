@@ -10,5 +10,5 @@
 #import "HZBaseAdapter.h"
 
 @interface HZHeyzapExchangeAdapter : HZBaseAdapter
-
+- (NSNumber *) adScoreForAdType:(HZAdType)adType;
 @end

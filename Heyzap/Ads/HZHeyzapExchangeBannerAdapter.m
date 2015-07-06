@@ -48,10 +48,19 @@
     return self.isLoaded;
 }
 
+- (NSNumber *) adScore{
+    if(![self isAvailable]){
+        return nil;
+    }
+    
+    return self.client.adScore;
+}
+
 
 #pragma mark - HZHeyzapExchangeBannerClientDelegate
 
 - (void) fetchSuccessWithClient:(HZHeyzapExchangeBannerClient *)client banner:(HZMRAIDView *)banner {}
+
 - (void) fetchFailedWithClient:(HZHeyzapExchangeBannerClient *)client {
     self.lastError = [NSError errorWithDomain:@"com.heyzap.ads.exchange.banners" code:1 userInfo:@{@"error":@"fetch_failed"}];
     [self mraidViewAdFailed:nil];

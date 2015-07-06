@@ -30,7 +30,7 @@
 }
 
 - (HZBaseAdapter *)firstAdapterWithAdForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters optionalForcedNetwork:(Class)forcedNetwork {
-        
+    
     NSOrderedSet *preferredMediatorList = [self availableAdaptersForAdType:adType adapters:adapters];
     
     if (forcedNetwork) {
@@ -102,13 +102,17 @@
         NSString *networkName = network[@"network"];
         NSSet *creativeTypes = [NSSet setWithArray:network[@"creative_types"]];
         Class adapter = [HZBaseAdapter adapterClassForName:networkName];
+        HZBaseAdapter *adapterInstance = [adapter sharedInstance];
+        
         if ([setupAdapterClasses containsObject:adapter]) {
             if (hzCreativeTypeSetContainsAdType(creativeTypes,adType)) {
-                [chosenNetworks addObject:[adapter sharedInstance]];
+                [adapterInstance setLatestMediationScore:network[@"score"] forAdType:adType];
+                [chosenNetworks addObject:adapterInstance];
             }
             // Interstitial video
             if (adType == HZAdTypeInterstitial && hzCreativeTypeSetContainsAdType(creativeTypes, HZAdTypeVideo)) {
-                [chosenNetworks addObject:[adapter sharedInstance]];
+                [adapterInstance setLatestMediationScore:network[@"score"] forAdType:HZAdTypeVideo];
+                [chosenNetworks addObject:adapterInstance];
             }
         }
     }
