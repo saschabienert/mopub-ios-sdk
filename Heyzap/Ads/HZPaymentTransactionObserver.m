@@ -73,7 +73,7 @@ NSString * const kHZIAPMetricsEndPoint = @"in_game_api/metrics/iap";
 - (void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price currency:(NSString *)currency {
     
     NSDictionary *params = @{
-                             @"iab_id": productId,
+                             @"iap_id": productId,
                              @"name": productName,
                              @"price": price,
                              @"currency_code": currency ?: [NSNull null], // It's possible for NSLocale to not have a currency code. I don't think this should happen because presumably purchased items have a currency associated with them.
