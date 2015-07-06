@@ -180,7 +180,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     }
 }
 
-NSString * const kHZIAPAdDisableTime = @"iab_ad_disable_time";
+NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
 - (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache {
     
     self.IAPAdDisableTime = [[HZDictionaryUtils hzObjectForKey:kHZIAPAdDisableTime
@@ -204,6 +204,7 @@ NSString * const kHZIAPAdDisableTime = @"iab_ad_disable_time";
     // converts string like "{\"test\":\"foo\"}" to dictionary
     if(jsonString == nil) {
         _remoteDataDictionary = @{};
+    } else {
         NSError *error;
         NSData *objectData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData options:kNilOptions error:&error];
