@@ -115,7 +115,7 @@ const NSTimeInterval hasAdPollInterval = 3;
                 
                 __block HZBaseAdapter *adapter;
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    adapter = [datum.adapterClass sharedInstance];
+                    adapter = (HZBaseAdapter *)[datum.adapterClass sharedInstance];
                 });
                 
                 dispatch_sync([self.delegate pausableMainQueue], ^{
@@ -157,7 +157,7 @@ const NSTimeInterval hasAdPollInterval = 3;
     for (NSUInteger i = 0; i <= idx; i++) {
         HZMediationLoadData *datum = loadData[i];
         NSLog(@"Instance = %@",[datum.adapterClass sharedInstance]);
-        if ([[datum.adapterClass sharedInstance] hasAdForType:adType]) {
+        if ([((HZBaseAdapter *)[datum.adapterClass sharedInstance]) hasAdForType:adType]) {
             NSLog(@"Adapter %@ has ad",[datum.adapterClass name]);
             NSLog(@"has ad!");
             return YES;
