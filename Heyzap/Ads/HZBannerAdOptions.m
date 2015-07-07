@@ -141,7 +141,9 @@ NSString *hzHeyzapExchangeBannerSizeDescription(HZHeyzapExchangeBannerSize size)
 + (NSArray *)heyzapExchangeBannerSizes {
     return @[
              hzHeyzapExchangeBannerSizeValue(HZHeyzapExchangeBannerSizeFlexibleWidthHeight50), // default value should be first
+             hzHeyzapExchangeBannerSizeValue(HZHeyzapExchangeBannerSizeFlexibleWidthHeight32),
              hzHeyzapExchangeBannerSizeValue(HZHeyzapExchangeBannerSizeFlexibleWidthHeight90),
+             hzHeyzapExchangeBannerSizeValue(HZHeyzapExchangeBannerSizeFlexibleWidthHeight100),
              ];
 }
 
@@ -202,15 +204,12 @@ NSString *hzFacebookBannerSizeDescription(HZFacebookBannerSize size) {
     switch (size) {
         case HZFacebookBannerSizeFlexibleWidthHeight50: {
             return @"Flex × 50";
-            break;
         }
         case HZFacebookBannerSizeFlexibleWidthHeight90: {
             return @"Flex × 90";
-            break;
         }
         case HZFacebookBannerSize320x50: {
             return @"320 × 50";
-            break;
         }
     }
 }
@@ -219,11 +218,15 @@ NSString *hzHeyzapExchangeBannerSizeDescription(HZHeyzapExchangeBannerSize size)
     switch (size) {
         case HZHeyzapExchangeBannerSizeFlexibleWidthHeight50: {
             return @"Flex × 50";
-            break;
+        }
+        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight32: {
+            return @"Flex x 32";
         }
         case HZHeyzapExchangeBannerSizeFlexibleWidthHeight90: {
             return @"Flex × 90";
-            break;
+        }
+        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight100: {
+            return @"Flex x 100";
         }
     }
 }

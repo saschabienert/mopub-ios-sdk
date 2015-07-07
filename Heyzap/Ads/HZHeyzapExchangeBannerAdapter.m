@@ -95,7 +95,7 @@
     self.isLoaded = NO;
     self.bannerView = nil;
     self.lastError = nil;
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerDismiss forNetwork: [HZHeyzapExchangeAdapter name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerHide forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
 @end

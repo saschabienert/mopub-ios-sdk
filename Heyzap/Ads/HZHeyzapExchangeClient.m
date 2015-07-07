@@ -65,7 +65,7 @@
                     NSData * data = (NSData *)responseObject;
                     if(!data || data.bytes == nil) {
                         HZELog(@"Fetch failed - data null or empty");
-                        [self.delegate client:self didFailToFetchAdWithType:adType];
+                        [self.delegate client:self didFailToFetchAdWithType:adType error:@"no data"];
                         return;
                     }
                     
@@ -93,7 +93,7 @@
                     
                     if(jsonError || !self.responseDict){
                         HZELog(@"JSON parse failed for exchange response. Error: %@", jsonError);
-                        [self handleFailure];
+                        [self.delegate client:self didFailToFetchAdWithType:self.adType error:@"bad data"];
                         return;
                     }
                     
@@ -101,7 +101,7 @@
                     
                     if(!adDict){
                         HZELog(@"JSON format unexpected for exchange response.");
-                        [self handleFailure];
+                        [self.delegate client:self didFailToFetchAdWithType:self.adType error:@"bad data"];
                         return;
                     }
                     
@@ -114,7 +114,7 @@
                     self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@(0) withDict:adDict] intValue];
                     if(![self isSupportedFormat]) {
                         HZELog(@"Format of Exchange response unsupported (%lu).", (unsigned long)self.format);
-                        [self handleFailure];
+                        [self.delegate client:self didFailToFetchAdWithType:self.adType error:@"bad ad format"];
                         return;
                     }
                     
@@ -139,7 +139,7 @@
                 failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
                 {
                     HZELog(@"Fetch failed. Error: %@", error);
-                    [self handleFailure];
+                    [self.delegate client:self didFailToFetchAdWithType:self.adType error:@"request failed"];
                 }
      ];
 }
@@ -183,10 +183,6 @@
                  }];
 }
 
-- (void)handleFailure {
-    [self.delegate client:self didFailToFetchAdWithType:self.adType];
-}
-
 - (void) showWithOptions:(HZShowOptions *)options {
     if(self.vastAdFetchedAndReady){
         self.vastVC.rootViewController = options.viewController;
@@ -206,7 +202,7 @@
 
 - (void)vastError:(HZSKVASTViewController *)vastVC error:(HZSKVASTError)error {
     if(!self.vastAdFetchedAndReady) {
-        [self.delegate client:self didFailToFetchAdWithType:vastVC.adType];
+        [self.delegate client:self didFailToFetchAdWithType:vastVC.adType error:[NSString stringWithFormat:@"VAST error: %i", error]];
     }else{
         [self.delegate client:self didHaveError:[NSString stringWithFormat:@"vast_playback_error: %i", error]];
     }
@@ -248,7 +244,7 @@
 
 - (void)mraidInterstitialAdFailed:(HZMRAIDInterstitial *)mraidInterstitial {
     self.mraidInterstitial = nil;
-    [self.delegate client:self didFailToFetchAdWithType:self.lastMRAIDAdType];
+    [self.delegate client:self didFailToFetchAdWithType:self.lastMRAIDAdType error:@"bad mraid data"];
 }
 
 - (void)mraidInterstitialWillShow:(HZMRAIDInterstitial *)mraidInterstitial {

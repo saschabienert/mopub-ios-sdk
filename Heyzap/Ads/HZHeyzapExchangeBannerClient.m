@@ -196,10 +196,14 @@
 #pragma mark - Utilities
 - (int) currentBannerHeight {
     switch (self.lastBannerAdOptions.heyzapExchangeBannerSize) {
+        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight32:
+            return 32;
         case HZHeyzapExchangeBannerSizeFlexibleWidthHeight50:
             return 50;
         case HZHeyzapExchangeBannerSizeFlexibleWidthHeight90:
             return 90;
+        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight100:
+            return 100;
     }
 }
 

@@ -148,9 +148,12 @@
     [self setError:nil forType:adType];
     [self.adTypeExchangeClients setObject:client forKey:[self adTypeAsDictKey:adType]];
     [self.exchangeClients removeObject:client];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
-- (void) client:(HZHeyzapExchangeClient *)client didFailToFetchAdWithType:(HZAdType)adType {
+- (void) client:(HZHeyzapExchangeClient *)client didFailToFetchAdWithType:(HZAdType)adType error:(NSString *)error{
+    [self setError:[NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}] forType:client.adType];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
     [self.exchangeClients removeObject:client];
 }
 
@@ -166,33 +169,40 @@
     
     if(client.isWithAudio){
         [self.delegate adapterWillPlayAudio:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
     }
     
-    self.currentlyPlayingClient = client;    
+    self.currentlyPlayingClient = client;
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
 }
 
 - (void) didEndAdWithClient:(HZHeyzapExchangeClient *)client successfullyFinished:(BOOL)successfullyFinished{
     self.currentlyPlayingClient = nil;
     [self.adTypeExchangeClients removeObjectForKey:[self adTypeAsDictKey:[client adType]]];
-
+    [self setError:nil forType:client.adType];
     
     if(client.isWithAudio){
         [self.delegate adapterDidFinishPlayingAudio:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
     }
     
     if(client.isIncentivized){
         if(successfullyFinished){
             [self.delegate adapterDidCompleteIncentivizedAd:self];
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
         }else{
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
         }
     }
     
     [self.delegate adapterDidDismissAd:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 - (void) adClickedWithClient:(HZHeyzapExchangeClient *)client {
     [self.delegate adapterWasClicked:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 

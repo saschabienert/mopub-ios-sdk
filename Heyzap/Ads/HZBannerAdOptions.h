@@ -69,9 +69,17 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeBannerSize) {
      */
     HZHeyzapExchangeBannerSizeFlexibleWidthHeight50,
     /**
+     *  A banner 32 pts in height whose width expands to fill its containing view.
+     */
+    HZHeyzapExchangeBannerSizeFlexibleWidthHeight32,
+    /**
      *  A banner 90 pts in height whose width expands to fill its containing view.
      */
     HZHeyzapExchangeBannerSizeFlexibleWidthHeight90,
+    /**
+     *  A banner 100 pts in height whose width expands to fill its containing view.
+     */
+    HZHeyzapExchangeBannerSizeFlexibleWidthHeight100,
 };
 
 @interface HZBannerAdOptions : NSObject <NSCopying>

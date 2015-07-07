@@ -15,7 +15,7 @@
 @protocol HZHeyzapExchangeClientDelegate <NSObject>
 
 - (void) client:(HZHeyzapExchangeClient *)client didFetchAdWithType:(HZAdType)adType;
-- (void) client:(HZHeyzapExchangeClient *)client didFailToFetchAdWithType:(HZAdType)adType;
+- (void) client:(HZHeyzapExchangeClient *)client didFailToFetchAdWithType:(HZAdType)adType error:(NSString *)error;
 - (void) client:(HZHeyzapExchangeClient *)client didHaveError:(NSString *)error;
 - (void) didStartAdWithClient:(HZHeyzapExchangeClient *)client;
 - (void) didEndAdWithClient:(HZHeyzapExchangeClient *)client successfullyFinished:(BOOL)successfullyFinished;
