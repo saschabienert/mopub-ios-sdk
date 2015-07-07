@@ -95,6 +95,13 @@
 
 + (BOOL)isSDKAvailable;
 
+/**
+ *  Enable the adapter with the given adapter-specific credentials.
+ *
+ * @param credentials The credentials necessary for the adapter to start the SDK.
+ *
+ *  Note: do all SDK-specific initialization here, not in init or sharedInstance. The adapter instance can exist before the SDK is enabled.
+ */
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials;
 
 #pragma mark - Banners

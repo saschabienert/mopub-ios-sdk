@@ -44,7 +44,6 @@
     if (self) {
         self.forwardingDelegate = [HZAdapterDelegate new];
         self.forwardingDelegate.adapter = self;
-        [[HZVungleSDK sharedSDK] setDelegate:self.forwardingDelegate];
     }
     return self;
 }
@@ -62,6 +61,7 @@
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         [[self sharedInstance] startWithPubAppID:appID];
+        [[HZVungleSDK sharedSDK] setDelegate:adapter.forwardingDelegate];
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     

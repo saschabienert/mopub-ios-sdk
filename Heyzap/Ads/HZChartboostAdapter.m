@@ -36,15 +36,6 @@
     return adapter;
 }
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        [HZChartboost setShouldPrefetchVideoContent:YES];
-    }
-    return self;
-}
-
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -67,6 +58,7 @@
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         [[self sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
+        [HZChartboost setShouldPrefetchVideoContent:YES];
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
