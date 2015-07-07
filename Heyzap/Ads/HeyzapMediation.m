@@ -361,19 +361,6 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     });
 }
 
-
-- (void)sendFailureMessagesForAdType:(HZAdType)adType wasAttemptingToShow:(BOOL)tryingToShow underlyingError:(NSError *)underlyingError options:(HZShowOptions *)options
-{
-    NSDictionary *userInfo = underlyingError ? @{NSUnderlyingErrorKey: underlyingError} : nil;
-    NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
-    
-    [[self delegateForAdType:adType] didFailToReceiveAdWithTag:nil];
-    if (options.completion) { options.completion(NO,error); }
-    if (tryingToShow) {
-        [[self delegateForAdType:adType] didFailToShowAdWithTag:options.tag andError:error];
-    }
-}
-
 #pragma mark - Querying adapters
 
 - (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag
