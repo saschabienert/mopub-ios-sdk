@@ -26,6 +26,7 @@
 #import "HZNoCaretTextField.h"
 
 #import "HZHeyzapExchangeAdapter.h"
+#import "TestAppPaymentTransactionObserver.h"
 
 #define kTagCreativeIDField 4393
 
@@ -71,7 +72,6 @@ typedef enum {
 @property (nonatomic) NSArray *nonBannerControls;
 
 @property (nonatomic) UITextField *creativeTypeTextField;
-
 
 @end
 
@@ -207,6 +207,18 @@ typedef enum {
     }
 }
 
+- (void)paymentTransactionErrorNotification:(NSNotification *)notification {
+    if ([notification.name isEqualToString:kHZPaymentTransactionErrorNotification] && [notification.object isKindOfClass:[NSError class]]) {
+        NSError *error = (NSError *)notification.object;
+        
+        [[[UIAlertView alloc] initWithTitle:error.domain
+                                    message:error.description
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil]
+         show];
+    }
+}
 
 NSString * const kCreativeIDTextFieldAccessibilityLabel = @"creative ID";
 NSString * const kShowAdButtonAccessibilityLabel = @"show ad";
@@ -217,6 +229,7 @@ NSString * const kViewAccessibilityLabel = @"testAppView";
 NSString * const kHZAPIClientDidReceiveResponseNotification = @"HZAPIClientDidReceiveResponse";
 NSString * const kHZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendRequest";
 NSString * const kHZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccessNotification";
+NSString * const kHZPaymentTransactionErrorNotification = @"HZPaymentTransactionErrorNotification";
 
 #pragma mark - View lifecycle
 
@@ -245,6 +258,7 @@ const CGFloat kLeftMargin = 10;
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(downloadNotification:) name: kHZDownloadHelperSuccessNotification object: nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(customPublisherDataRefreshed:) name:HZRemoteDataRefreshedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(paymentTransactionErrorNotification:) name: kHZPaymentTransactionErrorNotification object: nil];
 
     
     self.showButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
@@ -466,6 +480,27 @@ const CGFloat kLeftMargin = 10;
     [openLastFetchButton addTarget: self action: @selector(openLastFetch) forControlEvents: UIControlEventTouchUpInside];
     openLastFetchButton.frame =  CGRectMake(kLeftMargin, CGRectGetMaxY(debugSwitch.frame) + 5.0, 200.0, 50.0);
     [self.scrollView addSubview: openLastFetchButton];
+    
+    // IAP
+    UIButton *makeIAPButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
+    [makeIAPButton setTitle: @"Make IAP" forState: UIControlStateNormal];
+    [makeIAPButton addTarget: self action: @selector(makeIAP) forControlEvents: UIControlEventTouchUpInside];
+    makeIAPButton.frame = CGRectMake(kLeftMargin, CGRectGetMaxY(openLastFetchButton.frame), 200.0, 50.0);
+    [self.scrollView addSubview: makeIAPButton];
+    
+    // Add to payment queue
+    [[SKPaymentQueue defaultQueue] addTransactionObserver:[TestAppPaymentTransactionObserver sharedInstance]];
+    
+    // Spoof IAP
+    UIButton *spoofIAPButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
+    [spoofIAPButton setTitle: @"Spoof IAP" forState: UIControlStateNormal];
+    [spoofIAPButton addTarget: self action: @selector(spoofIAP) forControlEvents: UIControlEventTouchUpInside];
+    spoofIAPButton.frame = CGRectMake(kLeftMargin, CGRectGetMaxY(makeIAPButton.frame), 200.0, 50.0);
+    [self.scrollView addSubview: spoofIAPButton];
+    
+    // Add to payment queue
+    [[SKPaymentQueue defaultQueue] addTransactionObserver:[TestAppPaymentTransactionObserver sharedInstance]];
+
 
     // This approach avoids constant manual adjustment
     CGRect subviewContainingRect = CGRectZero;
@@ -673,6 +708,21 @@ const CGFloat kLeftMargin = 10;
 {
     [self dismissViewControllerAnimated:YES
                              completion:nil];
+}
+
+- (void) makeIAP {
+    if ([SKPaymentQueue canMakePayments]) {
+        SKMutablePayment *payment = [[SKMutablePayment alloc] init];
+        payment.productIdentifier = @"com.heyzap.mediationTest.product1";
+        [[SKPaymentQueue defaultQueue] addPayment:payment];
+        
+    } else {
+        NSLog(@"Unable to perform IAP");
+    }
+}
+
+- (void) spoofIAP {
+    [HeyzapAds onIAPPurchaseComplete:@"com.heyzap.product" productName:@"Test Product" price:[NSDecimalNumber decimalNumberWithString:@"12.36"]];
 }
 
 #pragma mark - Open

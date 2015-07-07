@@ -36,6 +36,7 @@
 #import "HZAdsManager.h"
 
 #import "HeyzapMediation.h"
+#import "HZPaymentTransactionObserver.h"
 
 #import "HZTestActivityViewController.h"
 #import "HZDevice.h"
@@ -228,6 +229,13 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
     } else {
         [HZDevice setBundleIdentifier:bundleIdentifier];
     }
+}
+
+#pragma mark - Record IAP Transaction
+
++(void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price {
+    HZVersionCheck();
+    [[HZPaymentTransactionObserver sharedInstance] onIAPPurchaseComplete:productId productName:productName price:price];
 }
 
 @end

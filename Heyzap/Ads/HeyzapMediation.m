@@ -84,10 +84,7 @@
 
 // State
 @property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
-
-// Latest /mediate response
-// Cached /mediate response
-//
+@property (nonatomic) NSTimeInterval IAPAdDisableTime;
 
 @end
 
@@ -144,6 +141,20 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     }
 }
 
+
+@synthesize adsTimeOut = _adsTimeOut;
+
+-(NSTimeInterval)adsTimeOut {
+    if (_adsTimeOut < [NSDate timeIntervalSinceReferenceDate]) {
+        _adsTimeOut = 0;
+    }
+    return _adsTimeOut;
+}
+
+-(void)setAdsTimeOut:(NSTimeInterval)adsTimeOut {
+    _adsTimeOut = [[NSDate dateWithTimeIntervalSinceNow:adsTimeOut] timeIntervalSinceReferenceDate];
+}
+
 #pragma mark - Setup
 
 - (void)start {
@@ -169,7 +180,14 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     }
 }
 
+NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
 - (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache {
+    
+    self.IAPAdDisableTime = [[HZDictionaryUtils hzObjectForKey:kHZIAPAdDisableTime
+                                                      ofClass:[NSNumber class]
+                                                      default:0
+                                                     withDict:dictionary] longLongValue] * 60; // in seconds
+
     self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
                                                  ofClass:[NSString class]
                                                  default:@"zz" // Unknown or invalid; the server also uses this.
@@ -253,7 +271,7 @@ NSString * const kHZDataKey = @"data";
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
     
-    NSError *preShowError = [self checkForPreShowError:options.tag];
+    NSError *preShowError = [self checkForPreShowError:options.tag adType:adType];
     if (preShowError) {
         [self sendShowFailureMessagesForAdType:adType options:options error:preShowError];
         return;
@@ -302,7 +320,7 @@ NSString * const kHZDataKey = @"data";
     [self haveAdapter:chosenAdapter showAdWithEventReporter:eventReporter options:options];
 }
 
-- (NSError *)checkForPreShowError:(NSString *)tag {
+- (NSError *)checkForPreShowError:(NSString *)tag adType:(HZAdType)adType {
     if (self.startStatus != HZMediationStartStatusSuccess) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"SDK hasn't finished starting."}];
     } else if (self.pausableQueueIsPaused) {
@@ -311,6 +329,8 @@ NSString * const kHZDataKey = @"data";
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad with a disabled tag"}];
     } else if (self.currentShownAd) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"An ad is already shown or attempting to be shown"}];
+    } else if (self.adsTimeOut && adType != HZAdTypeIncentivized) {
+        return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Ads are disabled because of a recent in-app-purchase."}];
     }
     
     return nil;
@@ -357,8 +377,7 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 {
     tag = [HZAdModel normalizeTag:tag];
     
-    return [[self availableAdaptersForAdType:adType tag:tag] count] != 0
-    && [self tagIsEnabled:tag];
+    return [[self availableAdaptersForAdType:adType tag:tag] count] != 0;
 }
 
 - (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag network:(HZBaseAdapter *const)network {
@@ -368,13 +387,12 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 }
 
 - (BOOL)tagIsEnabled:(NSString *)tag {
+    HZParameterAssert(tag);
     return ![self.disabledTags containsObject:tag];
 }
 
 - (NSOrderedSet *)availableAdaptersForAdType:(const HZAdType)adType tag:(NSString *)tag {
-    HZParameterAssert(tag);
-    
-    NSError *preShowError = [self checkForPreShowError:tag];
+    NSError *preShowError = [self checkForPreShowError:tag adType:adType];
     if (preShowError || !self.mediateRequester.latestMediate) {
         return [NSOrderedSet orderedSet];
     }
@@ -565,6 +583,13 @@ const NSTimeInterval bannerPollInterval = 1;
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion {
     HZParameterAssert(options);
     HZParameterAssert(completion);
+    
+    if (self.adsTimeOut) {
+        HZILog(@"Ads disabled because of an IAP");
+        completion([[self class] bannerErrorWithDescription:@"Ads disabled because of an IAP" underlyingError:nil], nil);
+        return;
+    }
+    
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
     if (self.startStatus == HZMediationStartStatusNotStarted) {

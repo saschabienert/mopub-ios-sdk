@@ -25,6 +25,7 @@
 #import "HZWebViewPool.h"
 #import "HZDownloadHelper.h"
 #import "HZNSURLUtils.h"
+#import "HZPaymentTransactionObserver.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
@@ -60,6 +61,10 @@ static BOOL hzAdsIsEnabled = NO;
 #pragma mark - Run Initial Tasks
 
 - (void) onStart {
+    
+    if (![self isOptionEnabled:HZAdOptionsDisableAutomaticIAPRecording]) {
+        [[SKPaymentQueue defaultQueue] addTransactionObserver:[HZPaymentTransactionObserver sharedInstance]];
+    }
     
     if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly]
         && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
