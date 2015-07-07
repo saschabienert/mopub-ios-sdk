@@ -849,12 +849,37 @@ const NSTimeInterval bannerPollInterval = 1;
     return adapterClasses;
 }
 
+/**
+ *  Called when /mediate returns with new data
+ */
 - (void)requesterUpdatedMediate {
     NSDictionary *json = self.mediateRequester.latestMediate;
     if (!self.availabilityChecker) {
         self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithMediateResponse:json];
     } else {
         [self.availabilityChecker updateWithMediateResponse:json];
+    }
+    
+    [self updateMediationScoresWithDict:json];
+}
+
+- (void)updateMediationScoresWithDict:(NSDictionary *)dict {
+    // update scores for every network
+    NSError *error;
+    NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:dict error:&error];
+    
+    if(!error){
+        for (NSDictionary *network in networks) {
+            NSString *networkName = network[@"network"];
+            NSSet *creativeTypes = [NSSet setWithArray:network[@"creative_types"]];
+            Class adapter = [HZBaseAdapter adapterClassForName:networkName];
+            HZBaseAdapter *adapterInstance = (HZBaseAdapter *)[adapter sharedInstance];
+            
+            for(NSString * creativeType in creativeTypes) {
+                HZAdType adType = hzAdTypeFromCreativeTypeString(creativeType);
+                [adapterInstance setLatestMediationScore:network[@"score"] forAdType:adType];
+            }
+        }
     }
 }
 

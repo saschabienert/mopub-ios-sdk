@@ -106,12 +106,10 @@
         
         if ([setupAdapterClasses containsObject:adapter]) {
             if (hzCreativeTypeSetContainsAdType(creativeTypes,adType)) {
-                [adapterInstance setLatestMediationScore:network[@"score"] forAdType:adType];
                 [chosenNetworks addObject:adapterInstance];
             }
             // Interstitial video
             if (adType == HZAdTypeInterstitial && hzCreativeTypeSetContainsAdType(creativeTypes, HZAdTypeVideo)) {
-                [adapterInstance setLatestMediationScore:network[@"score"] forAdType:HZAdTypeVideo];
                 [chosenNetworks addObject:adapterInstance];
             }
         }
