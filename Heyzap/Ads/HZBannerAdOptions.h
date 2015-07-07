@@ -62,18 +62,6 @@ typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
     HZAdMobBannerSizeFullBanner,
 };
 
-typedef NS_ENUM(NSUInteger, HZHeyzapExchangeBannerSize) {
-    /**
-     *  A banner 50 pts in height whose width expands to fill its containing view.
-     *  **Default value**
-     */
-    HZHeyzapExchangeBannerSizeFlexibleWidthHeight50,
-    /**
-     *  A banner 90 pts in height whose width expands to fill its containing view.
-     */
-    HZHeyzapExchangeBannerSizeFlexibleWidthHeight90,
-};
-
 @interface HZBannerAdOptions : NSObject <NSCopying>
 
 /**
@@ -84,10 +72,6 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeBannerSize) {
  *  The size to use for Admob banners.
  */
 @property (nonatomic) HZAdMobBannerSize admobBannerSize;
-/**
- *  The size to use for Heyzap Exchange banners.
- */
-@property (nonatomic) HZHeyzapExchangeBannerSize heyzapExchangeBannerSize;
 
 // iAds does not offer sizing options. Please refer to the `ADBannerView` documentation for information on ad sizes.
 

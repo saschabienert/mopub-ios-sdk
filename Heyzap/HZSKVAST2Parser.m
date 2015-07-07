@@ -64,10 +64,6 @@
         vastModel = nil;
         return VASTErrorTooManyWrappers;
     }
-    
-    // sanity check
-    NSString *content = [[NSString alloc] initWithData:vastData encoding:NSUTF8StringEncoding];
-    [HZSKLogger debug:@"VAST-Parser" withMessage:[NSString stringWithFormat:@"VAST file\n%@", content]];
 
     // Validate the basic XML syntax of the VAST document.
     BOOL isValid;

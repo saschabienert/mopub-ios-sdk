@@ -281,35 +281,46 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 }
 
 - (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"did show ad"];
     [[HeyzapMediation sharedInstance] adapterDidShowAd:adapter];
     
 }
 
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"clicked"];
     [[HeyzapMediation sharedInstance] adapterWasClicked:adapter];
 }
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"dismissed"];
     [self changeShowButtonColor];
     [[HeyzapMediation sharedInstance] adapterDidDismissAd:adapter];
 }
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"incentivized complete"];
     [self changeShowButtonColor];
     [[HeyzapMediation sharedInstance] adapterDidCompleteIncentivizedAd:adapter];
 }
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"incentivized failed"];
     [self changeShowButtonColor];
     [[HeyzapMediation sharedInstance] adapterDidFailToCompleteIncentivizedAd:adapter];
 }
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"will play audio"];
     [[HeyzapMediation sharedInstance] adapterWillPlayAudio:adapter];
 }
 
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"finished playing audio"];
     [[HeyzapMediation sharedInstance] adapterDidFinishPlayingAudio:adapter];
+}
+
+- (void)logAdCallback:(NSString *)callback {
+    [self appendStringToDebugLog:[@"Ad Callback: " stringByAppendingString:callback]];
 }
 
 #pragma mark - View creation utility methods
@@ -722,9 +733,6 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     } else if ([self.network.name isEqualToString: [HZAdMobAdapter name]]) {
         HZAdMobBannerSize size = hzAdMobBannerSizeFromValue(value);
         return hzAdMobBannerSizeDescription(size);
-    } else if([self.network.name isEqualToString:[HZHeyzapExchangeAdapter name]]){
-        HZHeyzapExchangeBannerSize size = hzHeyzapExchangeBannerSizeFromValue(value);
-        return hzHeyzapExchangeBannerSizeDescription(size);
     } else {
         return @"n/a";
     }
@@ -736,8 +744,6 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
         return [HZBannerAdOptions facebookBannerSizes];
     } else if ([name isEqualToString:[HZAdMobAdapter name]]) {
         return [HZBannerAdOptions admobBannerSizes];
-    } else if([name isEqualToString:[HZHeyzapExchangeAdapter name]]){
-         return [HZBannerAdOptions heyzapExchangeBannerSizes];
     } else {
         return @[];
     }
@@ -758,8 +764,6 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
         opts.facebookBannerSize = hzFacebookBannerSizeFromValue(self.chosenBannerSize);
     } else if ([self.network.name isEqualToString: [HZAdMobAdapter name]]) {
         opts.admobBannerSize = hzAdMobBannerSizeFromValue(self.chosenBannerSize);
-    } else if([self.network.name isEqualToString:[HZHeyzapExchangeAdapter name]]) {
-        opts.heyzapExchangeBannerSize = hzHeyzapExchangeBannerSizeFromValue(self.chosenBannerSize);
     }
     
     return opts;

@@ -18,19 +18,15 @@
 
 + (NSArray *)admobBannerSizes;
 + (NSArray *)facebookBannerSizes;
-+ (NSArray *)heyzapExchangeBannerSizes;
 
 NSValue *hzAdMobBannerSizeValue(HZAdMobBannerSize size);
 NSValue *hzFacebookBannerSizeValue(HZFacebookBannerSize size);
-NSValue *hzHeyzapExchangeBannerSizeValue(HZHeyzapExchangeBannerSize size);
 
 HZAdMobBannerSize hzAdMobBannerSizeFromValue(NSValue *value);
 HZFacebookBannerSize hzFacebookBannerSizeFromValue(NSValue *value);
-HZHeyzapExchangeBannerSize hzHeyzapExchangeBannerSizeFromValue(NSValue *value);
 
 NSString *hzFacebookBannerSizeDescription(HZFacebookBannerSize size);
 NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
-NSString *hzHeyzapExchangeBannerSizeDescription(HZHeyzapExchangeBannerSize size);
 
 /**
  *  Used by the test activity to override the ad network selection to 1 network.

@@ -27,6 +27,10 @@
 
 + (instancetype)sharedInstance;
 
+#pragma mark - Properties
+@property (nonatomic, readonly) NSTimeInterval IAPAdDisableTime;
+@property (nonatomic) NSTimeInterval adsTimeOut;
+
 #pragma mark - Setup
 
 - (void)start;

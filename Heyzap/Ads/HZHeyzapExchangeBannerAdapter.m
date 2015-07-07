@@ -63,7 +63,10 @@
 
 - (void) fetchFailedWithClient:(HZHeyzapExchangeBannerClient *)client {
     self.lastError = [NSError errorWithDomain:@"com.heyzap.ads.exchange.banners" code:1 userInfo:@{@"error":@"fetch_failed"}];
-    [self mraidViewAdFailed:nil];
+    self.bannerView = nil;
+    self.isLoaded = NO;
+    [self.bannerInteractionDelegate didFailToReceiveAd:nil];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
 - (void) bannerInteractionWillLeaveApplication:(BOOL)willLeaveApplication{
@@ -101,7 +104,7 @@
     self.isLoaded = NO;
     self.bannerView = nil;
     self.lastError = nil;
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerDismiss forNetwork: [HZHeyzapExchangeAdapter name]];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerHide forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
 @end

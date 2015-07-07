@@ -87,10 +87,7 @@
 
 // State
 @property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
-
-// Latest /mediate response
-// Cached /mediate response
-//
+@property (nonatomic) NSTimeInterval IAPAdDisableTime;
 
 @end
 
@@ -147,6 +144,20 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     }
 }
 
+
+@synthesize adsTimeOut = _adsTimeOut;
+
+-(NSTimeInterval)adsTimeOut {
+    if (_adsTimeOut < [NSDate timeIntervalSinceReferenceDate]) {
+        _adsTimeOut = 0;
+    }
+    return _adsTimeOut;
+}
+
+-(void)setAdsTimeOut:(NSTimeInterval)adsTimeOut {
+    _adsTimeOut = [[NSDate dateWithTimeIntervalSinceNow:adsTimeOut] timeIntervalSinceReferenceDate];
+}
+
 #pragma mark - Setup
 
 - (void)start {
@@ -172,7 +183,14 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     }
 }
 
+NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
 - (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache {
+    
+    self.IAPAdDisableTime = [[HZDictionaryUtils hzObjectForKey:kHZIAPAdDisableTime
+                                                      ofClass:[NSNumber class]
+                                                      default:0
+                                                     withDict:dictionary] longLongValue] * 60; // in seconds
+
     self.countryCode = [HZDictionaryUtils hzObjectForKey:@"countryCode"
                                                  ofClass:[NSString class]
                                                  default:@"zz" // Unknown or invalid; the server also uses this.
@@ -208,6 +226,7 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
             HZELog(@"Error initializing network preloader. Mediation won't be possible. %@",error);
         } else {
             self.startStatus = HZMediationStartStatusSuccess;
+            [self autoFetchAdType:HZAdTypeInterstitial];
         }
         
     });
@@ -237,13 +256,15 @@ NSString * const kHZUnknownMediatiorException = @"UnknownMediator";
     [self.loadManager fetchAdType:adType showOptions:options optionalForcedNetwork:optionalForcedNetwork];
 }
 
-- (void)autoFetchInterstitial
-{
-    // TODO implement this.
+- (void)autoFetchAdType:(HZAdType)adType {
     if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
-        //        HZShowOptions *options = [HZShowOptions new];
-        
-        
+        [self fetchForAdType:adType additionalParams:nil completion:^(BOOL result, NSError *error) {
+            if (error) {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [self autoFetchAdType:adType];
+                });
+            }
+        }];
     }
 }
 
@@ -256,7 +277,7 @@ NSString * const kHZDataKey = @"data";
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
     
-    NSError *preShowError = [self checkForPreShowError:options.tag];
+    NSError *preShowError = [self checkForPreShowError:options.tag adType:adType];
     if (preShowError) {
         [self sendShowFailureMessagesForAdType:adType options:options error:preShowError];
         return;
@@ -314,7 +335,7 @@ NSString * const kHZDataKey = @"data";
     [self haveAdapter:chosenAdapter showAdWithEventReporter:eventReporter options:options];
 }
 
-- (NSError *)checkForPreShowError:(NSString *)tag {
+- (NSError *)checkForPreShowError:(NSString *)tag adType:(HZAdType)adType {
     if (self.startStatus != HZMediationStartStatusSuccess) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"SDK hasn't finished starting."}];
     } else if (self.pausableQueueIsPaused) {
@@ -323,6 +344,8 @@ NSString * const kHZDataKey = @"data";
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad with a disabled tag"}];
     } else if (self.currentShownAd) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"An ad is already shown or attempting to be shown"}];
+    } else if (self.adsTimeOut && adType != HZAdTypeIncentivized) {
+        return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Ads are disabled because of a recent in-app-purchase."}];
     }
     
     return nil;
@@ -350,27 +373,13 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     });
 }
 
-
-- (void)sendFailureMessagesForAdType:(HZAdType)adType wasAttemptingToShow:(BOOL)tryingToShow underlyingError:(NSError *)underlyingError options:(HZShowOptions *)options
-{
-    NSDictionary *userInfo = underlyingError ? @{NSUnderlyingErrorKey: underlyingError} : nil;
-    NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
-    
-    [[self delegateForAdType:adType] didFailToReceiveAdWithTag:nil];
-    if (options.completion) { options.completion(NO,error); }
-    if (tryingToShow) {
-        [[self delegateForAdType:adType] didFailToShowAdWithTag:options.tag andError:error];
-    }
-}
-
 #pragma mark - Querying adapters
 
 - (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag
 {
     tag = [HZAdModel normalizeTag:tag];
     
-    return [[self availableAdaptersForAdType:adType tag:tag] count] != 0
-    && [self tagIsEnabled:tag];
+    return [[self availableAdaptersForAdType:adType tag:tag] count] != 0;
 }
 
 - (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag network:(HZBaseAdapter *const)network {
@@ -380,13 +389,12 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 }
 
 - (BOOL)tagIsEnabled:(NSString *)tag {
+    HZParameterAssert(tag);
     return ![self.disabledTags containsObject:tag];
 }
 
 - (NSOrderedSet *)availableAdaptersForAdType:(const HZAdType)adType tag:(NSString *)tag {
-    HZParameterAssert(tag);
-    
-    NSError *preShowError = [self checkForPreShowError:tag];
+    NSError *preShowError = [self checkForPreShowError:tag adType:adType];
     if (preShowError || !self.mediateRequester.latestMediate) {
         return [NSOrderedSet orderedSet];
     }
@@ -422,9 +430,11 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
                                 NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Adapter %@ was asked to show an ad, but we didn't Heyzap didn't get a callback from that network reporting that it did so within %llu seconds. Assuming it failed and sending a didFail callback",adapter.name, adapterDidShowAdTimeout]}];
         
         // Assume if we haven't shown yet, the show is broken and we should just log an error.
+        const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
         self.currentShownAd = nil;
         [[self delegateForAdType:reporter.adType] didFailToShowAdWithTag:reporter.tag andError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{}]];
         if (showOptions.completion) { showOptions.completion(NO,showError); }
+        [self autoFetchAdType:previousAdType];
     }
 }
 
@@ -443,7 +453,9 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter
 {
+    const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
     self.currentShownAd = nil;
+    [self autoFetchAdType:previousAdType];
 }
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter
@@ -577,6 +589,13 @@ const NSTimeInterval bannerPollInterval = 1;
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion {
     HZParameterAssert(options);
     HZParameterAssert(completion);
+    
+    if (self.adsTimeOut) {
+        HZILog(@"Ads disabled because of an IAP");
+        completion([[self class] bannerErrorWithDescription:@"Ads disabled because of an IAP" underlyingError:nil], nil);
+        return;
+    }
+    
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
     if (self.startStatus == HZMediationStartStatusNotStarted) {
@@ -619,13 +638,27 @@ const NSTimeInterval bannerPollInterval = 1;
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             
-            
-            NSOrderedSet *adapters1 = [self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:HZAdTypeBanner];
-            
-            // This should be factored out into a general way of saying "does the ad network have credentials for X ad format?
-            NSOrderedSet *adapters = hzFilterOrderedSet(adapters1, ^BOOL(HZBaseAdapter *adapter) {
-                return [adapter hasBannerCredentials];
+            NSOrderedSet *adapters = ({
+                NSOrderedSet *a1 = [self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:HZAdTypeBanner];
+                NSOrderedSet *a2 = hzFilterOrderedSet(a1, ^BOOL(HZBaseAdapter *adapter) {
+                    // This should be factored out into a general way of saying "does the ad network have credentials for X ad format?
+                    return [adapter hasBannerCredentials];
+                });
+                NSOrderedSet *a3 = hzFilterOrderedSet(a2, ^BOOL(HZBaseAdapter *adapter) {
+                    if (options.networkName) {
+                        return [[adapter name] isEqualToString:options.networkName];
+                    } else {
+                        return YES;
+                    }
+                });
+                
+                a3;
             });
+            
+            if ([adapters count] == 0) {
+                completion([NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey:@"No banner adapters were available"}], nil);
+                return;
+            }
             
             NSError *eventReporterError;
             HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:adapters adType:HZAdTypeBanner tag:options.tag error:&eventReporterError];

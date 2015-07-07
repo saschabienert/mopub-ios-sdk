@@ -120,7 +120,6 @@
 		504E9CA418C9337D00402BC3 /* libHeyzapAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9432A1758108700B8EACE /* libHeyzapAds.a */; };
 		504E9CA518C9338C00402BC3 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86234AAB185690410071957B /* MediaPlayer.framework */; };
 		504E9CA618C9339700402BC3 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
-		504E9CA718C9339B00402BC3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86309F8318873D960000B6E3 /* StoreKit.framework */; };
 		504E9CA818C933A000402BC3 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B7175830A600B8EACE /* AdSupport.framework */; };
 		505286E218E61BD90060C210 /* HZMediationAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 505286E018E61BD90060C210 /* HZMediationAPIClient.m */; };
 		505351ED18F76550003C531E /* DeviceInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514CB18B68EF600E00E6C /* DeviceInfoViewController.m */; };
@@ -145,7 +144,6 @@
 		5053520418F76550003C531E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
 		5053520518F76550003C531E /* libHeyzapAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9432A1758108700B8EACE /* libHeyzapAds.a */; };
 		5053520618F76550003C531E /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
-		5053520718F76550003C531E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86309F8318873D960000B6E3 /* StoreKit.framework */; };
 		5053520818F76550003C531E /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A18C04178B64E600536547 /* MessageUI.framework */; };
 		5053520918F76550003C531E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943BF1758347300B8EACE /* UIKit.framework */; };
 		5053520A18F76550003C531E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B8175830A700B8EACE /* QuartzCore.framework */; };
@@ -223,7 +221,6 @@
 		50A36AD918C9405A00FA84F0 /* SDKTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 862D5341176D12E900C4221F /* SDKTestAppViewController.m */; };
 		50A36ADB18C9405A00FA84F0 /* libHeyzapAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9432A1758108700B8EACE /* libHeyzapAds.a */; };
 		50A36ADC18C9405A00FA84F0 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
-		50A36ADD18C9405A00FA84F0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86309F8318873D960000B6E3 /* StoreKit.framework */; };
 		50A36ADE18C9405A00FA84F0 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86234AAB185690410071957B /* MediaPlayer.framework */; };
 		50A36ADF18C9405A00FA84F0 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A18C04178B64E600536547 /* MessageUI.framework */; };
 		50A36AE018C9405A00FA84F0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B941DF1758056B00B8EACE /* CoreGraphics.framework */; };
@@ -321,7 +318,6 @@
 		86234AB018581B800071957B /* HZVideoControlView.h in Headers */ = {isa = PBXBuildFile; fileRef = 86234AAE18581B800071957B /* HZVideoControlView.h */; };
 		86234AB118581B800071957B /* HZVideoControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = 86234AAF18581B800071957B /* HZVideoControlView.m */; };
 		862D5342176D12E900C4221F /* SDKTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 862D5341176D12E900C4221F /* SDKTestAppViewController.m */; };
-		86309F8418873D960000B6E3 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86309F8318873D960000B6E3 /* StoreKit.framework */; };
 		863E104D1B28BBBC00EBE9C9 /* HZMRAIDJS.h in Headers */ = {isa = PBXBuildFile; fileRef = 863E104B1B28BBBC00EBE9C9 /* HZMRAIDJS.h */; };
 		8641E1F018ADE0FE00CAAEE0 /* HZDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 8641E1E118AD997800CAAEE0 /* HZDevice.m */; };
 		866E39EF1850087B00B6E431 /* HZVideoAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 866E39ED1850087B00B6E431 /* HZVideoAd.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -413,10 +409,16 @@
 		86FF907A18583FF100BC48BF /* HZAdLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = 86FF907818583FF100BC48BF /* HZAdLibrary.m */; };
 		86FF907D185842D900BC48BF /* HZQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 86FF907B185842D900BC48BF /* HZQueue.h */; };
 		86FF907E185842D900BC48BF /* HZQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 86FF907C185842D900BC48BF /* HZQueue.m */; };
+		8A6417A71B1FB451003E8747 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6417A61B1FB451003E8747 /* StoreKit.framework */; };
+		8A6417AA1B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6417A91B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m */; };
+		8A6417AC1B1FC2C2003E8747 /* TestAppPaymentTransactionObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6417A91B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m */; };
+		8A6417AD1B1FC2C4003E8747 /* TestAppPaymentTransactionObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6417A91B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m */; };
 		8AA226471B3CCDDE00FA1428 /* HZActivityIndicatorView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AA226451B3CCDDE00FA1428 /* HZActivityIndicatorView.h */; };
 		8AA226481B3CCDDE00FA1428 /* HZActivityIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA226461B3CCDDE00FA1428 /* HZActivityIndicatorView.m */; };
 		8AA2264C1B3CCEEE00FA1428 /* HZWebViewActivityIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AA2264A1B3CCEEE00FA1428 /* HZWebViewActivityIndicator.h */; };
 		8AA2264D1B3CCEEE00FA1428 /* HZWebViewActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA2264B1B3CCEEE00FA1428 /* HZWebViewActivityIndicator.m */; };
+		8AA693151B1D13290074366D /* HZPaymentTransactionObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AA693131B1D13290074366D /* HZPaymentTransactionObserver.h */; };
+		8AA693161B1D13290074366D /* HZPaymentTransactionObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA693141B1D13290074366D /* HZPaymentTransactionObserver.m */; };
 		9930D7201B30F614003C3F3C /* HZVideoAdDisplayOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9930D71F1B30F614003C3F3C /* HZVideoAdDisplayOptions.m */; };
 		9930D7221B30F626003C3F3C /* HZVideoAdDisplayOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9930D7211B30F626003C3F3C /* HZVideoAdDisplayOptions.h */; };
 		995DF5531B4217E5000935BB /* HZHeyzapExchangeBannerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 995DF5521B4217E5000935BB /* HZHeyzapExchangeBannerAdapter.m */; };
@@ -790,7 +792,6 @@
 		86234AAF18581B800071957B /* HZVideoControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVideoControlView.m; sourceTree = "<group>"; };
 		862D5340176D12E900C4221F /* SDKTestAppViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKTestAppViewController.h; sourceTree = "<group>"; };
 		862D5341176D12E900C4221F /* SDKTestAppViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKTestAppViewController.m; sourceTree = "<group>"; };
-		86309F8318873D960000B6E3 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		863E104B1B28BBBC00EBE9C9 /* HZMRAIDJS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMRAIDJS.h; path = MRAID/HZMRAIDJS.h; sourceTree = "<group>"; };
 		863E104C1B28BBBC00EBE9C9 /* mraid.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = mraid.js; path = MRAID/mraid.js; sourceTree = "<group>"; };
 		8641E1E018AD997800CAAEE0 /* HZDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZDevice.h; sourceTree = "<group>"; };
@@ -893,10 +894,15 @@
 		86FF907818583FF100BC48BF /* HZAdLibrary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdLibrary.m; sourceTree = "<group>"; };
 		86FF907B185842D900BC48BF /* HZQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZQueue.h; sourceTree = "<group>"; };
 		86FF907C185842D900BC48BF /* HZQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZQueue.m; sourceTree = "<group>"; };
+		8A6417A61B1FB451003E8747 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		8A6417A81B1FBC86003E8747 /* TestAppPaymentTransactionObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAppPaymentTransactionObserver.h; sourceTree = "<group>"; };
+		8A6417A91B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAppPaymentTransactionObserver.m; sourceTree = "<group>"; };
 		8AA226451B3CCDDE00FA1428 /* HZActivityIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZActivityIndicatorView.h; path = HZActivityIndicator/HZActivityIndicatorView.h; sourceTree = "<group>"; };
 		8AA226461B3CCDDE00FA1428 /* HZActivityIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZActivityIndicatorView.m; path = HZActivityIndicator/HZActivityIndicatorView.m; sourceTree = "<group>"; };
 		8AA2264A1B3CCEEE00FA1428 /* HZWebViewActivityIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZWebViewActivityIndicator.h; sourceTree = "<group>"; };
 		8AA2264B1B3CCEEE00FA1428 /* HZWebViewActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZWebViewActivityIndicator.m; sourceTree = "<group>"; };
+		8AA693131B1D13290074366D /* HZPaymentTransactionObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZPaymentTransactionObserver.h; sourceTree = "<group>"; };
+		8AA693141B1D13290074366D /* HZPaymentTransactionObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZPaymentTransactionObserver.m; sourceTree = "<group>"; };
 		9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Integration Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9930D71F1B30F614003C3F3C /* HZVideoAdDisplayOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVideoAdDisplayOptions.m; sourceTree = "<group>"; };
 		9930D7211B30F626003C3F3C /* HZVideoAdDisplayOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVideoAdDisplayOptions.h; sourceTree = "<group>"; };
@@ -991,7 +997,6 @@
 				5011CE6018DBAE9400604B53 /* AVFoundation.framework in Frameworks */,
 				5011CE5E18DBAE4E00604B53 /* SystemConfiguration.framework in Frameworks */,
 				504E9CA818C933A000402BC3 /* AdSupport.framework in Frameworks */,
-				504E9CA718C9339B00402BC3 /* StoreKit.framework in Frameworks */,
 				504E9CA618C9339700402BC3 /* CoreTelephony.framework in Frameworks */,
 				504E9CA518C9338C00402BC3 /* MediaPlayer.framework in Frameworks */,
 				504E9CA418C9337D00402BC3 /* libHeyzapAds.a in Frameworks */,
@@ -1025,7 +1030,6 @@
 				5053520418F76550003C531E /* SystemConfiguration.framework in Frameworks */,
 				5053520518F76550003C531E /* libHeyzapAds.a in Frameworks */,
 				5053520618F76550003C531E /* CoreTelephony.framework in Frameworks */,
-				5053520718F76550003C531E /* StoreKit.framework in Frameworks */,
 				5053520818F76550003C531E /* MessageUI.framework in Frameworks */,
 				5053520918F76550003C531E /* UIKit.framework in Frameworks */,
 				5053520A18F76550003C531E /* QuartzCore.framework in Frameworks */,
@@ -1050,7 +1054,6 @@
 				50ECA1C918DB623A006284AB /* SystemConfiguration.framework in Frameworks */,
 				50A36ADB18C9405A00FA84F0 /* libHeyzapAds.a in Frameworks */,
 				50A36ADC18C9405A00FA84F0 /* CoreTelephony.framework in Frameworks */,
-				50A36ADD18C9405A00FA84F0 /* StoreKit.framework in Frameworks */,
 				50A36ADE18C9405A00FA84F0 /* MediaPlayer.framework in Frameworks */,
 				50A36ADF18C9405A00FA84F0 /* MessageUI.framework in Frameworks */,
 				50A36AE018C9405A00FA84F0 /* CoreGraphics.framework in Frameworks */,
@@ -1082,12 +1085,12 @@
 				50ECA1C818DB6234006284AB /* SystemConfiguration.framework in Frameworks */,
 				50BDD00218B819D600265212 /* libHeyzapAds.a in Frameworks */,
 				501F9D7418989B8A00127E49 /* CoreTelephony.framework in Frameworks */,
-				86309F8418873D960000B6E3 /* StoreKit.framework in Frameworks */,
 				72A18C05178B64E600536547 /* MessageUI.framework in Frameworks */,
 				86BDB4EB17585A9000D85F29 /* UIKit.framework in Frameworks */,
 				86B943BB175830AA00B8EACE /* QuartzCore.framework in Frameworks */,
 				86B941DE1758056B00B8EACE /* Foundation.framework in Frameworks */,
 				F4E5E35BFDC9CF400260FF2A /* libPods-HeyzapSDKTest.a in Frameworks */,
+				8A6417A71B1FB451003E8747 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1808,6 +1811,7 @@
 		86B9419D1757FD6300B8EACE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8A6417A61B1FB451003E8747 /* StoreKit.framework */,
 				E6BDB2981AB24FD700A9A22F /* WebKit.framework */,
 				86E439371AAA462500470E62 /* iAd.framework */,
 				E62181F819AFCEEE0099BE8C /* CoreData.framework */,
@@ -1827,7 +1831,6 @@
 				501F9D7318989B8A00127E49 /* CoreTelephony.framework */,
 				86B943B7175830A600B8EACE /* AdSupport.framework */,
 				86B943B8175830A700B8EACE /* QuartzCore.framework */,
-				86309F8318873D960000B6E3 /* StoreKit.framework */,
 				86234AAB185690410071957B /* MediaPlayer.framework */,
 				72A18C04178B64E600536547 /* MessageUI.framework */,
 				86B943BF1758347300B8EACE /* UIKit.framework */,
@@ -1865,6 +1868,8 @@
 				50AE54441AD333860099358E /* PersistentTestAppConfiguration.m */,
 				86C491351B279DCB00A84B2C /* DemandTestViewController.h */,
 				86C491361B279DCB00A84B2C /* DemandTestViewController.m */,
+				8A6417A81B1FBC86003E8747 /* TestAppPaymentTransactionObserver.h */,
+				8A6417A91B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m */,
 			);
 			name = "SDK Test App";
 			path = HeyzapSDKTest;
@@ -1909,6 +1914,7 @@
 			isa = PBXGroup;
 			children = (
 				860220001B211FA9004476A3 /* MRAID */,
+				8AF615D91B21099A00DA993F /* Metrics */,
 				5053E7EB1AEAB93B0090889B /* Caching */,
 				50A10DDE1AE9A3A100001C4C /* Networking */,
 				86C6E96F1ACB0F29006A8F33 /* Extensions */,
@@ -2056,6 +2062,15 @@
 				8AA226461B3CCDDE00FA1428 /* HZActivityIndicatorView.m */,
 			);
 			name = HZActivityIndicator;
+			sourceTree = "<group>";
+		};
+		8AF615D91B21099A00DA993F /* Metrics */ = {
+			isa = PBXGroup;
+			children = (
+				8AA693131B1D13290074366D /* HZPaymentTransactionObserver.h */,
+				8AA693141B1D13290074366D /* HZPaymentTransactionObserver.m */,
+			);
+			name = Metrics;
 			sourceTree = "<group>";
 		};
 		995DF5511B4217B6000935BB /* Banners */ = {
@@ -2227,6 +2242,7 @@
 				5019224E18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h in Headers */,
 				99D3C64A1B1FD40800DDEF7E /* HZTPPropertyAnimation.h in Headers */,
 				86D0A99C1851897200B3D870 /* HZDownloadHelper.h in Headers */,
+				8AA693151B1D13290074366D /* HZPaymentTransactionObserver.h in Headers */,
 				8680AC9F193ED2E60078B5CF /* HZTestDelegate.h in Headers */,
 				866E39F31850089C00B6E431 /* HZIncentivizedAd.h in Headers */,
 				5053E7EE1AEAB94D0090889B /* HZWebViewPool.h in Headers */,
@@ -2449,7 +2465,7 @@
 						DevelopmentTeam = A722HEF3XB;
 						SystemCapabilities = {
 							com.apple.InAppPurchase = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -2812,6 +2828,7 @@
 				86C491381B279E7700A84B2C /* DemandTestViewController.m in Sources */,
 				50B03A391A706C710086E444 /* NativeAdTableViewController.m in Sources */,
 				50B03A3A1A706C710086E444 /* NativeTableViewCell.m in Sources */,
+				8A6417AC1B1FC2C2003E8747 /* TestAppPaymentTransactionObserver.m in Sources */,
 				50B03A3B1A706C710086E444 /* NativeAdDetailsTableViewController.m in Sources */,
 				505351ED18F76550003C531E /* DeviceInfoViewController.m in Sources */,
 				505351EE18F76550003C531E /* main.m in Sources */,
@@ -2834,6 +2851,7 @@
 				50A36AD218C9405A00FA84F0 /* DeviceInfoViewController.m in Sources */,
 				50A10DEC1AE9BF0300001C4C /* UIImageView+AFNetworking.m in Sources */,
 				50A36AD418C9405A00FA84F0 /* main.m in Sources */,
+				8A6417AD1B1FC2C4003E8747 /* TestAppPaymentTransactionObserver.m in Sources */,
 				509B5BE718C94490003A7CB9 /* UIViewController+IntegrationTests.m in Sources */,
 				507A455A19BE762900C7AEEA /* NativeAdTableViewController.m in Sources */,
 				50A36AD518C9405A00FA84F0 /* ServerSelectionViewController.m in Sources */,
@@ -2858,6 +2876,7 @@
 				507A455E19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */,
 				86B941E81758056B00B8EACE /* main.m in Sources */,
 				509F000718EA17970011EAB3 /* NSArrayUtils.m in Sources */,
+				8A6417AA1B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m in Sources */,
 				504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */,
 				507A455919BE762900C7AEEA /* NativeAdTableViewController.m in Sources */,
 				50759D281AD3359F00AECC2B /* PersistentTestAppConfiguration.m in Sources */,
@@ -2983,6 +3002,7 @@
 				500F88E518E203A500E5D6F8 /* HZClassProxy.m in Sources */,
 				9930D7201B30F614003C3F3C /* HZVideoAdDisplayOptions.m in Sources */,
 				99D4C4401B389097004D24DE /* HZSKVASTUrlWithId.m in Sources */,
+				8AA693161B1D13290074366D /* HZPaymentTransactionObserver.m in Sources */,
 				86FF907A18583FF100BC48BF /* HZAdLibrary.m in Sources */,
 				50B46B2218F89C58005155B8 /* HZAppLovinDelegate.m in Sources */,
 				866E3A001850172100B6E431 /* HZInterstitialAdModel.m in Sources */,
@@ -3502,6 +3522,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Ads/Ads-Prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -3532,6 +3553,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Ads/Ads-Prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",

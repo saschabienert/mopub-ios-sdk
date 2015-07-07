@@ -166,16 +166,10 @@ const NSTimeInterval hasAdPollInterval = 3;
 }
 
 - (BOOL)adaptersFromLoadData:(NSArray *)loadData uptoIndexHasAd:(NSUInteger)idx ofType:(HZAdType)adType {
-    NSLog(@"Adapters = %@ idx = %lu adType = %@",loadData,(unsigned long)idx,NSStringFromAdType(adType));
     for (NSUInteger i = 0; i <= idx; i++) {
         HZMediationLoadData *datum = loadData[i];
-        NSLog(@"Instance = %@",[datum.adapterClass sharedInstance]);
         if ([((HZBaseAdapter *)[datum.adapterClass sharedInstance]) hasAdForType:adType]) {
-            NSLog(@"Adapter %@ has ad",[datum.adapterClass name]);
-            NSLog(@"has ad!");
             return YES;
-        } else {
-            NSLog(@"no ad");
         }
     }
     return NO;
