@@ -15,6 +15,7 @@
 #import "HZUtils.h"
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
+#import "HZHeyzapExchangeAdapter.h"
 
 #define CHECK_NOT_NIL1(value) do { \
 if (value == nil) { \
@@ -105,8 +106,14 @@ const NSTimeInterval hasAdPollInterval = 3;
     dispatch_async(self.fetchQueue, ^{
         
         __block BOOL fetchedAd = NO;
+        __block BOOL shouldNotifyDelegate = notifyDelegate;
         
         [loadData enumerateObjectsUsingBlock:^(HZMediationLoadData *datum, NSUInteger idx, BOOL *stop) {
+            // we always want the HeyzapExchange to start & fetch so it's bid can be considered in the waterfall on show later, but others shouldn't start unless necessary
+            if(fetchedAd && datum.adapterClass != [HZHeyzapExchangeAdapter class]){
+                return;
+            }
+            
             const BOOL setupSuccessful = [self.delegate setupAdapterNamed:datum.networkName];
             
             NSLog(@"Setup successful = %i",setupSuccessful);
@@ -128,13 +135,19 @@ const NSTimeInterval hasAdPollInterval = 3;
                 
                 if (anAdapterHasAnAd) {
                     fetchedAd = YES;
-                    *stop = YES;
+                    
+                    if(datum.adapterClass == [HZHeyzapExchangeAdapter class]){
+                        // stop iterating once the exchange succeeds
+                        *stop = YES;
+                    }
                     
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        if (notifyDelegate) {
+                        if (shouldNotifyDelegate) {
                             [self.delegate didFetchAdOfType:adType options:showOptions];
                         }
                     });
+                    
+                    shouldNotifyDelegate = NO; // no longer notify after first notification
                     
                     NSLog(@"An adapter has an ad!");
                     
@@ -143,7 +156,7 @@ const NSTimeInterval hasAdPollInterval = 3;
         }];
         if (!fetchedAd) {
             dispatch_sync(dispatch_get_main_queue(), ^{
-                if (notifyDelegate) {
+                if (shouldNotifyDelegate) {
                     [self.delegate didFailToFetchAdOfType:adType options:showOptions];
                 }
             });
