@@ -82,7 +82,7 @@
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeInterstitial | HZAdTypeIncentivized | HZAdTypeVideo | HZAdTypeBanner;
+    return HZAdTypeInterstitial | HZAdTypeIncentivized | HZAdTypeVideo;
 }
 
 - (BOOL)isVideoOnlyNetwork {
@@ -131,16 +131,6 @@
     [exchangeClient showWithOptions:options];
 }
 
-
-#pragma mark - Banners
-
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    return [[HZHeyzapExchangeBannerAdapter alloc] initWithAdUnitID:nil options:options reportingDelegate:reportingDelegate parentAdapter:self];
-}
-
-- (BOOL)hasBannerCredentials {
-    return YES;
-}
 
 #pragma mark - HZHeyzapExchangeClientDelegate
 

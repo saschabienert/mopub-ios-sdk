@@ -41,7 +41,6 @@
     self = [super init];
     if(self) {
         _lastBannerAdOptions = [[HZBannerAdOptions alloc] init];
-        _lastBannerAdOptions.heyzapExchangeBannerSize = HZHeyzapExchangeBannerSizeFlexibleWidthHeight50; //default
     }
     
     return self;
@@ -195,16 +194,18 @@
 
 #pragma mark - Utilities
 - (int) currentBannerHeight {
-    switch (self.lastBannerAdOptions.heyzapExchangeBannerSize) {
-        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight32:
-            return 32;
-        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight50:
-            return 50;
-        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight90:
-            return 90;
-        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight100:
-            return 100;
-    }
+    // uncomment below once banners are enabled
+//    switch (self.lastBannerAdOptions.heyzapExchangeBannerSize) {
+//        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight32:
+//            return 32;
+//        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight50:
+//            return 50;
+//        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight90:
+//            return 90;
+//        case HZHeyzapExchangeBannerSizeFlexibleWidthHeight100:
+//            return 100;
+//    }
+    return 50;//just here while banners are disabled so it'll compile
 }
 
 - (int) currentBannerWidth {
