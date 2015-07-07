@@ -55,7 +55,7 @@ NSString * const HZNetworkAdColony = @"adcolony";
 NSString * const HZNetworkAdMob = @"admob";
 NSString * const HZNetworkIAd = @"iad";
 NSString * const HZNetworkHyperMX = @"hyprmx";
-NSString * const HZNetworkHeyzapExchange = @"heyzap_demand";
+NSString * const HZNetworkHeyzapExchange = @"heyzap_exchange";
 
 // Warning! Read first please.
 // Do NOT change the values. They are shared
