@@ -48,6 +48,9 @@
             deviceType = @(4); // 4 == Phone
         }
         
+        NSNumber *deviceWidth =  [NSNumber numberWithInt:[[[UIApplication sharedApplication] keyWindow] bounds].size.width];
+        NSNumber *deviceHeight =  [NSNumber numberWithInt:[[[UIApplication sharedApplication] keyWindow] bounds].size.height];
+        
         UIWebView* webView = [[UIWebView alloc] initWithFrame:CGRectZero];
         NSString* userAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"] ?: @"";
         
@@ -60,7 +63,8 @@
                                          @"app_bundle": [[HZDevice currentDevice] bundleIdentifier],
                                          @"app_version": versionString,
                                          @"app_sdk_key": publisherID,
-                                         @"publisher_id": publisherID,//monroe: remove this later, server still expecting it
+                                         @"device_w": deviceWidth,
+                                         @"device_h": deviceHeight,
                                          @"device_ua": userAgent,
                                          @"device_carrier": [[HZDevice currentDevice] HZCarrierName],
                                          @"device_make": @"Apple",
