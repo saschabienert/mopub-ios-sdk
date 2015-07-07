@@ -639,13 +639,27 @@ const NSTimeInterval bannerPollInterval = 1;
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             
-            
-            NSOrderedSet *adapters1 = [self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:HZAdTypeBanner];
-            
-            // This should be factored out into a general way of saying "does the ad network have credentials for X ad format?
-            NSOrderedSet *adapters = hzFilterOrderedSet(adapters1, ^BOOL(HZBaseAdapter *adapter) {
-                return [adapter hasBannerCredentials];
+            NSOrderedSet *adapters = ({
+                NSOrderedSet *a1 = [self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:HZAdTypeBanner];
+                NSOrderedSet *a2 = hzFilterOrderedSet(a1, ^BOOL(HZBaseAdapter *adapter) {
+                    // This should be factored out into a general way of saying "does the ad network have credentials for X ad format?
+                    return [adapter hasBannerCredentials];
+                });
+                NSOrderedSet *a3 = hzFilterOrderedSet(a2, ^BOOL(HZBaseAdapter *adapter) {
+                    if (options.networkName) {
+                        return [[adapter name] isEqualToString:options.networkName];
+                    } else {
+                        return YES;
+                    }
+                });
+                
+                a3;
             });
+            
+            if ([adapters count] == 0) {
+                completion([NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey:@"No banner adapters were available"}], nil);
+                return;
+            }
             
             NSError *eventReporterError;
             HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:adapters adType:HZAdTypeBanner tag:options.tag error:&eventReporterError];
