@@ -296,10 +296,6 @@
     return [[HZHeyzapExchangeClient supportedFormats] componentsJoinedByString:@","];
 }
 
-- (int) screenWidth {
-    return (int) [[[UIApplication sharedApplication] keyWindow] bounds].size.width;
-}
-
 // additional params to send to all endpoints that HZHeyzapExchangeRequestSerializer doesn't cover
 - (NSDictionary *) apiRequestParams {
     // in the future, if mediation is refactored to request creative type instead of adUnit, this will be unnecessary
