@@ -223,6 +223,7 @@ NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
             HZELog(@"Error initializing network preloader. Mediation won't be possible. %@",error);
         } else {
             self.startStatus = HZMediationStartStatusSuccess;
+            [self autoFetchAdType:HZAdTypeInterstitial];
         }
         
     });
@@ -252,13 +253,15 @@ NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
     [self.loadManager fetchAdType:adType showOptions:options optionalForcedNetwork:optionalForcedNetwork];
 }
 
-- (void)autoFetchInterstitial
-{
-    // TODO implement this.
+- (void)autoFetchAdType:(HZAdType)adType {
     if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
-        //        HZShowOptions *options = [HZShowOptions new];
-        
-        
+        [self fetchForAdType:adType additionalParams:nil completion:^(BOOL result, NSError *error) {
+            if (error) {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [self autoFetchAdType:adType];
+                });
+            }
+        }];
     }
 }
 
@@ -428,9 +431,11 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
                                 NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Adapter %@ was asked to show an ad, but we didn't Heyzap didn't get a callback from that network reporting that it did so within %llu seconds. Assuming it failed and sending a didFail callback",adapter.name, adapterDidShowAdTimeout]}];
         
         // Assume if we haven't shown yet, the show is broken and we should just log an error.
+        const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
         self.currentShownAd = nil;
         [[self delegateForAdType:reporter.adType] didFailToShowAdWithTag:reporter.tag andError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{}]];
         if (showOptions.completion) { showOptions.completion(NO,showError); }
+        [self autoFetchAdType:previousAdType];
     }
 }
 
@@ -449,7 +454,9 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter
 {
+    const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
     self.currentShownAd = nil;
+    [self autoFetchAdType:previousAdType];
 }
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter
