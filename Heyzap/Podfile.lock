@@ -1,5 +1,5 @@
 PODS:
-  - AdColony (2.5.1)
+  - AdColony (2.5.2)
   - AppLovin (3.0.0)
   - Bugsnag (4.0.7):
     - Bugsnag/no-arc (= 4.0.7)
@@ -9,7 +9,7 @@ PODS:
   - GoogleMobileAds (7.3.1)
   - HyprMX (36)
   - Kiwi (2.3.1)
-  - Masonry (0.6.1)
+  - Masonry (0.6.2)
   - OCHamcrest (4.1.1)
   - OCMockito (1.4.0):
     - OCHamcrest (~> 4.0)
@@ -50,7 +50,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/inkling/Subliminal.git
 
 SPEC CHECKSUMS:
-  AdColony: 4e459b2634cf325ed32bbd8a12428366f09aa49a
+  AdColony: da5eeb1bb946f9f806917b9d9a27ea99542a475d
   AppLovin: 3db27d5a6b95bda65b63707cba2acab8ce044bac
   Bugsnag: 5861d8519d30063abe7b3fcdcf4114a6dddab27a
   ChartboostSDK: ffb7e0b6657a9c3188f870558dcf4da42ea12dd2
@@ -58,7 +58,7 @@ SPEC CHECKSUMS:
   GoogleMobileAds: fc34248ba511fbe238152a6f78c3af29403e387b
   HyprMX: 91b4ac0c0aad04fe04a4f320106d75af625becee
   Kiwi: f038a6c61f7a9e4d7766bff5717aa3b3fdb75f55
-  Masonry: 4972309f2f134de9dd312f4dc4a21359b50e6caa
+  Masonry: 362e8a1cc0beada4a4c4832d5e863da2a51533be
   OCHamcrest: 6f03ffa81d12feab872638490a44ab0a6d3aca10
   OCMockito: 4981140c9a9ec06c31af40f636e3c0f25f27e6b2
   OHHTTPStubs: dbd1957d414659783e07b49c961940b7564c23d9
