@@ -46,8 +46,8 @@ return nil; \
     return self;
 }
 
-- (NSString *)debugDescription {
-    NSMutableString *description = [NSMutableString stringWithString:[super debugDescription]];
+- (NSString *)description {
+    NSMutableString *description = [NSMutableString stringWithString:[super description]];
     [description appendFormat:@" load = %lu",(unsigned long)self.load];
     [description appendFormat:@" timeout = %g",self.timeout];
     [description appendFormat:@" network = %@",self.networkName];
