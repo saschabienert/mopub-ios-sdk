@@ -154,13 +154,13 @@ typedef enum {
     }
 }
 
-- (void) customPublisherDataRefreshed: (NSNotification *)notification {
+- (void) remoteDataRefreshed: (NSNotification *)notification {
     
     if(self.logCallbacksSwitch.isOn) {
         if([notification.userInfo count] > 0) {
-            [self logToConsole: [NSString stringWithFormat:@"Remote publisher data refreshed. Data: %@", [HeyzapAds remoteData]]];
+            [self logToConsole: [NSString stringWithFormat:@"Remote data refreshed. Data: %@", [HeyzapAds remoteData]]];
         } else {
-            [self logToConsole: [NSString stringWithFormat:@"Remote publisher data refreshed (empty)"]];
+            [self logToConsole: [NSString stringWithFormat:@"Remote data refreshed (empty)"]];
         }
     }
 }
@@ -257,7 +257,7 @@ const CGFloat kLeftMargin = 10;
     
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(downloadNotification:) name: kHZDownloadHelperSuccessNotification object: nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(customPublisherDataRefreshed:) name:HZRemoteDataRefreshedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(remoteDataRefreshed:) name:HZRemoteDataRefreshedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(paymentTransactionErrorNotification:) name: kHZPaymentTransactionErrorNotification object: nil];
 
     
