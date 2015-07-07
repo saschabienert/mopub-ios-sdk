@@ -252,10 +252,6 @@ typedef enum {
     return YES;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft  || interfaceOrientation ==  UIInterfaceOrientationLandscapeRight);
-}
-
 #pragma mark - Timers
 
 // playbackTimer - keeps track of currentPlayedPercentage

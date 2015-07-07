@@ -137,7 +137,7 @@
 }
 
 - (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController {
-    [self dismissModalViewControllerAnimated: YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
     [self applicationDidEnterForeground: nil];
 }
