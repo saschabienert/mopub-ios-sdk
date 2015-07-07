@@ -184,7 +184,7 @@ NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
 - (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache {
     
     self.IAPAdDisableTime = [[HZDictionaryUtils hzObjectForKey:kHZIAPAdDisableTime
-                                                      ofClass:[NSString class]
+                                                      ofClass:[NSNumber class]
                                                       default:0
                                                      withDict:dictionary] longLongValue] * 60; // in seconds
 
