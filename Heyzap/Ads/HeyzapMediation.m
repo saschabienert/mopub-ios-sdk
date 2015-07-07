@@ -278,13 +278,12 @@ NSString * const kHZDataKey = @"data";
     
     // sort adapters based on score, bringing in Heyzap Exchange's latest fetched ad's score if it has an ad available (ads have scores in the exchange, the currently stored score is per network)
     if([adapters containsObject:[HZHeyzapExchangeAdapter sharedInstance]]){
-        [[HZHeyzapExchangeAdapter sharedInstance] setLatestMediationScore:([[HZHeyzapExchangeAdapter sharedInstance] adScoreForAdType:adType] ?: @(0)) forAdType:adType];
-        
-        [adapters sortUsingComparator:^(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
-            // [obj2 compare:obj1] will sort highest score first
-            return [[obj2 latestMediationScoreForAdType:adType] compare:[obj1 latestMediationScoreForAdType:adType]];
-        }];
+        [[HZHeyzapExchangeAdapter sharedInstance] setLatestMediationScore:[[HZHeyzapExchangeAdapter sharedInstance] adScoreForAdType:adType] forAdType:adType];
     }
+    [adapters sortUsingComparator:^(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
+        // [obj2 compare:obj1] will sort highest score first
+        return [[obj2 latestMediationScoreForAdType:adType] compare:[obj1 latestMediationScoreForAdType:adType]];
+    }];
     
     Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
     
@@ -676,13 +675,13 @@ const NSTimeInterval bannerPollInterval = 1;
                     
                     // sort adapters with ads by score, also considering RTB score from heyzap exchange fetch
                     if(heyzapExchangeAvailable){
-                        [heyzapExchangeBannerAdapter.parentAdapter setLatestMediationScore:(heyzapExchangeBannerAdapter.adScore ?: @(0)) forAdType:HZAdTypeBanner];
-                        
-                        [adaptersWithAvailableAds sortUsingComparator:^(HZBannerAdapter *obj1, HZBannerAdapter *obj2) {
-                            // [obj2 compare:obj1] will sort highest score first
-                            return [[obj2.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner] compare:[obj1.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner]];
-                        }];
+                        [heyzapExchangeBannerAdapter.parentAdapter setLatestMediationScore:heyzapExchangeBannerAdapter.adScore forAdType:HZAdTypeBanner];
                     }
+                    
+                    [adaptersWithAvailableAds sortUsingComparator:^(HZBannerAdapter *obj1, HZBannerAdapter *obj2) {
+                        // [obj2 compare:obj1] will sort highest score first
+                        return [[obj2.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner] compare:[obj1.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner]];
+                    }];
                     
                     HZBannerAdapter *finalAdapter = [adaptersWithAvailableAds objectAtIndex:0];
                     finalAdapter.eventReporter = eventReporter;
