@@ -20,7 +20,6 @@
 #import "HZVASTSettings.h"
 #import "HZSKLogger.h"
 #import "HZSKVAST2Parser.h"
-#import "HZSKVASTModel.h"
 #import "HZSKVASTEventProcessor.h"
 #import "HZSKVASTUrlWithId.h"
 #import "HZSKVASTMediaFile.h"
@@ -138,16 +137,7 @@ typedef enum {
         self->clickTracking = [vastModel clickTracking];
         self->mediaFileURL = [HZSKVASTMediaFilePicker pick:[vastModel mediaFiles]].url;
         
-        NSNumber * skipOffsetSeconds = [vastModel skipOffsetSeconds];
-        if(!skipOffsetSeconds) {
-            //error parsing - leave skip seconds as default of 0
-            skipOffsetSeconds = @(0);
-            [HZSKLogger error:@"VAST - View Controller" withMessage:@"skipOffsetSeconds could not be parsed. Default left alone."];
-        } else {
-            [HZSKLogger debug:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"skipOffsetSeconds read as: %@", skipOffsetSeconds]];
-        }
-        
-        self.videoSettings = [[HZVASTVideoSettings alloc] initForAdType:self.adType skipOffset:skipOffsetSeconds];
+        self.videoSettings = [[HZVASTVideoSettings alloc] initForAdType:self.adType vastModel:vastModel];
         self.videoView.skipButtonEnabled = self.videoSettings.allowSkip;
         self.videoView.hideButtonEnabled = self.videoSettings.allowHide;
         self.videoView.timerLabelEnabled = self.videoSettings.allowTimer;
@@ -536,7 +526,7 @@ typedef enum {
 
 @implementation HZVASTVideoSettings
 
-- (instancetype) initForAdType:(HZAdType)adType skipOffset:(NSNumber *)skipOffsetSeconds {
+- (instancetype) initForAdType:(HZAdType)adType vastModel:(HZSKVASTModel *)vastModel {
     self = [super init];
     if(self) {
         // defaults
@@ -545,20 +535,38 @@ typedef enum {
         _allowSkip = YES;
         _allowTimer = YES;
         _allowInstallButton = NO;
-        _skipOffsetSeconds = skipOffsetSeconds;
+        
+        _skipOffsetSeconds = [vastModel skipOffsetSeconds];
+        if(!_skipOffsetSeconds) {
+            //error parsing - leave skip seconds as default of 0
+            _skipOffsetSeconds = @(0);
+            [HZSKLogger error:@"VAST - View Controller" withMessage:@"skipOffsetSeconds could not be parsed. Default left alone."];
+        } else {
+            [HZSKLogger debug:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"skipOffsetSeconds read as: %@", _skipOffsetSeconds]];
+        }
         
         if(adType == HZAdTypeIncentivized) {
             _allowSkip = NO;
             _allowHide = NO;
-            _skipOffsetSeconds = 0;
+            _skipOffsetSeconds = @(0);
         } else if(adType == HZAdTypeVideo) {
-            if(skipOffsetSeconds && [skipOffsetSeconds longValue] > 0){
-                _allowSkip = YES;
+            if(_skipOffsetSeconds && [_skipOffsetSeconds longValue] > 0){
+                double skipOffsetDouble = [_skipOffsetSeconds doubleValue];
+                double durationDouble = [[vastModel durationInSeconds] doubleValue];
+                
+                // if duration and skip offset are really close, don't show skip button
+                if(ABS(skipOffsetDouble - durationDouble) < 1) {
+                    _allowSkip = NO;
+                    _skipOffsetSeconds = @(0);
+                }else {
+                    _allowSkip = YES;
+                }
+                
                 _allowHide = NO;
             }else{
                 _allowSkip = NO;
                 _allowHide = YES;
-                _skipOffsetSeconds = 0;
+                _skipOffsetSeconds = @(0);
             }
         }
     }

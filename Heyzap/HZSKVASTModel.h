@@ -36,5 +36,6 @@
 - (NSArray *)mediaFiles;
 
 - (NSNumber *) skipOffsetSeconds;
+- (NSNumber *) durationInSeconds;
 
 @end

@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 #import "HZSKVASTError.h"
 #import "HZAdType.h"
+#import "HZSKVASTModel.h"
 
 @class HZSKVASTViewController;
 
@@ -67,5 +68,5 @@
 @property (nonatomic) BOOL allowTimer;
 @property (nonatomic) BOOL allowInstallButton;
 @property (nonatomic) NSNumber *skipOffsetSeconds;
-- (instancetype) initForAdType:(HZAdType)adType skipOffset:(NSNumber *)skipOffsetSeconds;
+- (instancetype) initForAdType:(HZAdType)adType vastModel:(HZSKVASTModel *)vastModel;
 @end

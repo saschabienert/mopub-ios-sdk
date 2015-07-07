@@ -224,7 +224,11 @@
     }
     long durationLong = [duration longValue];
     
-    // XML validation guarantees either a 1-3 digit number % or HH:MM:SS for this field, or an empty string
+    // XML validation guarantees one of:
+    // - a 1-3 digit number as a %
+    // - HH:MM:SS
+    // - HH:MM:SS.mmm
+    // for this field, or an empty string
     if([skipOffsetRaw containsString:@"%"]) {
         //process \d{1,3}%
         int percentageInt = [[skipOffsetRaw stringByReplacingOccurrencesOfString:@"%" withString:@""] intValue];
@@ -265,7 +269,7 @@
         return @(0);
     }
     
-    //process HH:MM:SS
+    //process HH:MM:SS or HH:MM:SS.mmm
     NSArray *components = [str componentsSeparatedByString:@":"];
     
     if([components count] != 3){
@@ -273,11 +277,21 @@
         return @(0);
     }
     
-    NSInteger hours   = [[components objectAtIndex:0] integerValue];
-    NSInteger minutes = [[components objectAtIndex:1] integerValue];
-    NSInteger seconds = [[components objectAtIndex:2] integerValue];
+    NSArray *secondsComponents = [[components objectAtIndex:2] componentsSeparatedByString:@"."];
+    if([secondsComponents count] != 1 && [secondsComponents count] != 2){
+        // invalid format
+        return @(0);
+    }
     
-    return [NSNumber numberWithInteger:(hours * 60 * 60) + (minutes * 60) + seconds];
+    NSInteger hours         = [[components objectAtIndex:0] integerValue];
+    NSInteger minutes       = [[components objectAtIndex:1] integerValue];
+    NSInteger seconds       = [[secondsComponents objectAtIndex:0] integerValue];
+    NSInteger milliseconds  = 0;
+    if([secondsComponents count] == 2) {
+        milliseconds = [[secondsComponents objectAtIndex:1] integerValue];
+    }
+    
+    return [NSNumber numberWithDouble:((hours * 60 * 60) + (minutes * 60) + seconds + (milliseconds / 1000.0))];
 }
 
 - (NSArray *)resultsForQuery:(NSString *)query

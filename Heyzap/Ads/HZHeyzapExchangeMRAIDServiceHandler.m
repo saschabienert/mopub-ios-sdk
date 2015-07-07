@@ -50,14 +50,14 @@
                  HZMRAIDSupportsTel,
                  HZMRAIDSupportsCalendar,
                  HZMRAIDSupportsStorePicture,
-                 //HZMRAIDSupportsInlineVideo,//not yet implemented
+                 HZMRAIDSupportsInlineVideo,
                  ];
     }else{
         return @[
                  HZMRAIDSupportsSMS,
                  HZMRAIDSupportsCalendar,
                  HZMRAIDSupportsStorePicture,
-                 //HZMRAIDSupportsInlineVideo,//not yet implemented
+                 HZMRAIDSupportsInlineVideo,
                  ];
     }
 }
@@ -105,9 +105,10 @@
     }];
 }
 
+// TODO
 - (void)mraidServicePlayVideoWithURL:(NSURL *)url {
     HZELog(@"MRAID UNIMPLEMENTED - play video at url: %@",url);
-    [self.delegate serviceEventProcessed:@"video" willLeaveApplication:NO];//would be YES if implemented
+    [self.delegate serviceEventProcessed:@"video" willLeaveApplication:NO];//could be YES if implemented
 }
 
 - (void)mraidServiceOpenBrowserWithURL:(NSURL *)url {

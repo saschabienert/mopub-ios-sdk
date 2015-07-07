@@ -172,7 +172,7 @@
 										        <xs:attribute name="skipoffset" use="optional" default="00:00:00"><!-- VAST3 standard-->
 													<xs:simpleType>
 										                <xs:restriction base="xs:string">
-															<xs:pattern value="\d{1,2}:\d{1,2}:\d{1,2}"/><!-- `HH:MM:SS`-->
+															<xs:pattern value="\d{1,2}:\d{1,2}:\d{1,2}(\.\d{3})?"/><!-- `HH:MM:SS` or `HH:MM:SS.mmm`-->
 															<xs:pattern value="(\d{1,3}%)?"/><!-- ex: `` or `40%`-->
 														</xs:restriction>
 										            </xs:simpleType>

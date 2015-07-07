@@ -106,6 +106,7 @@
                     }
                     
                     self.adMarkup = adDict[@"markup"];
+                    HZDLog(@"Ad markup received: %@", self.adMarkup);
                     NSDictionary *adMetaDict = self.responseDict[@"meta"];
                     self.adMediationId = adMetaDict[@"id"];
                     self.adScore = adMetaDict[@"score"];
