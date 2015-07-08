@@ -332,6 +332,10 @@ NSString * const kHZDataKey = @"data";
     
     self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithEventReporter:eventReporter tag:options.tag adapter:chosenAdapter];
     
+    if (adType == HZAdTypeInterstitial && [chosenAdapter isVideoOnlyNetwork]) {
+        [self.availabilityChecker didShowInterstitialVideo];
+    }
+    
     [self haveAdapter:chosenAdapter showAdWithEventReporter:eventReporter options:options];
 }
 
