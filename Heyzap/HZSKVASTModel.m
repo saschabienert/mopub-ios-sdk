@@ -219,26 +219,31 @@
     
     // use duration to calculate seconds
     NSNumber *duration = [self durationInSeconds];
-    if(!duration) {
+    if(!duration || !skipOffsetRaw) {
         return nil;
     }
-    long durationLong = [duration longValue];
+    double durationDouble = [duration doubleValue];
     
     // XML validation guarantees one of:
     // - a 1-3 digit number as a %
     // - HH:MM:SS
     // - HH:MM:SS.mmm
     // for this field, or an empty string
+    // Check here as well in case the validation is off
+    if([skipOffsetRaw rangeOfString:@"^((\\d{1,3}%)?|\\d{1,2}:\\d{1,2}:\\d{1,2}(\\.\\d{3})?)$" options:NSRegularExpressionSearch].location == NSNotFound){
+        return nil;
+    }
+    
     if([skipOffsetRaw containsString:@"%"]) {
         //process \d{1,3}%
         int percentageInt = [[skipOffsetRaw stringByReplacingOccurrencesOfString:@"%" withString:@""] intValue];
 
         //ensure that duration >= skipOffset
-        return [NSNumber numberWithDouble:MIN((durationLong * percentageInt / 100.0), durationLong)];
+        return [NSNumber numberWithDouble:MIN((durationDouble * percentageInt / 100.0), durationDouble)];
     } else {
-        long skipTime = [[self secondsFromHHMMSS:skipOffsetRaw] longValue];
+        double skipTime = [[self secondsFromHHMMSS:skipOffsetRaw] doubleValue];
         //ensure that duration >= skipOffset
-        return [NSNumber numberWithLong:MIN(skipTime, durationLong)];
+        return [NSNumber numberWithDouble:MIN(skipTime, durationDouble)];
     }
 }
 
