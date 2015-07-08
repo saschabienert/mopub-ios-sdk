@@ -23,6 +23,14 @@
 
 @end
 
+typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientState){
+    HZHeyzapExchangeClientStateNone,
+    HZHeyzapExchangeClientStateFetching,
+    HZHeyzapExchangeClientStateReady,
+    HZHeyzapExchangeClientStateFailure,
+    HZHeyzapExchangeClientStateFinished
+};
+
 @interface HZHeyzapExchangeClient : NSObject
 
 @property (nonatomic, weak) id<HZHeyzapExchangeClientDelegate> delegate;
@@ -30,7 +38,7 @@
 @property (nonatomic) BOOL isWithAudio;
 @property (nonatomic, readonly) HZAdType adType;
 @property (nonatomic, readonly) NSNumber *adScore;
-
+@property (nonatomic, readonly) HZHeyzapExchangeClientState state;
 
 - (void) fetchForAdType:(HZAdType)adType;
 - (void) showWithOptions:(HZShowOptions *)options;

@@ -22,10 +22,9 @@
 #import "HZHeyzapExchangeBannerAdapter.h"
 
 @interface HZHeyzapExchangeAdapter()<HZHeyzapExchangeClientDelegate>
-/* Just keeps reference to clients during their fetches. They will be added to the dict adTypeExchangeClients once they fetch (that's when we're certain of their adType)*/
-@property (nonatomic) NSMutableArray * exchangeClients;
-/* Maps adType to a client that has already fetched an ad for that type.*/
-@property (nonatomic) NSMutableDictionary *adTypeExchangeClients;
+
+/* Maps adType to a client for that type.*/
+@property (nonatomic) NSMutableDictionary *exchangeClientsPerAdType;
 
 @property (nonatomic) HZHeyzapExchangeClient *currentlyPlayingClient;
 @end
@@ -47,8 +46,7 @@
 - (instancetype) init {
     self = [super init];
     if(self){
-        _exchangeClients = [[NSMutableArray alloc] init];
-        _adTypeExchangeClients = [[NSMutableDictionary alloc] init];
+        _exchangeClientsPerAdType = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -96,10 +94,17 @@
         return;
     }
     
-    HZHeyzapExchangeClient *client = [[HZHeyzapExchangeClient alloc] init];
-    [client setDelegate:self];
-    [client fetchForAdType:type];
-    [self.exchangeClients addObject:client]; // keeps a strong ref to client until we get a callback
+    HZHeyzapExchangeClient * client = [self.exchangeClientsPerAdType objectForKey:[self adTypeAsDictKey:type]];
+    if(client && client.state == HZHeyzapExchangeClientStateFetching){
+        //already fetching
+        HZDLog(@"Already fetching adType=%lu.",(unsigned long)type);
+        return;
+    }
+    
+    HZHeyzapExchangeClient *newClient = [[HZHeyzapExchangeClient alloc] init];
+    [newClient setDelegate:self];
+    [newClient fetchForAdType:type];
+    [self.exchangeClientsPerAdType setObject:newClient forKey:[self adTypeAsDictKey:type]];
 }
 
 - (BOOL)hasAdForType:(HZAdType)type
@@ -107,8 +112,8 @@
     if(![self supportedAdFormats] & type){
         return false;
     }
-    
-    if([self.adTypeExchangeClients objectForKey:[self adTypeAsDictKey:type]]){
+    HZHeyzapExchangeClient * client = [self.exchangeClientsPerAdType objectForKey:[self adTypeAsDictKey:type]];
+    if(client && client.state == HZHeyzapExchangeClientStateReady){
         return true;
     }
     
@@ -122,8 +127,8 @@
         return;
     }
     
-    HZHeyzapExchangeClient * exchangeClient = [self.adTypeExchangeClients objectForKey:[self adTypeAsDictKey:type]];
-    if(!exchangeClient){
+    HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerAdType objectForKey:[self adTypeAsDictKey:type]];
+    if(!exchangeClient || exchangeClient.state != HZHeyzapExchangeClientStateReady){
         HZELog(@"HeyzapExchangeAdapter: No ad available for that type.")
         return;
     }
@@ -136,7 +141,7 @@
         return nil;
     }
     
-    HZHeyzapExchangeClient *client = [self.adTypeExchangeClients objectForKey:[self adTypeAsDictKey:adType]];
+    HZHeyzapExchangeClient *client = [self.exchangeClientsPerAdType objectForKey:[self adTypeAsDictKey:adType]];
     return client.adScore;
 }
 
@@ -145,21 +150,19 @@
 
 - (void) client:(HZHeyzapExchangeClient *)client didFetchAdWithType:(HZAdType)adType {
     [self setError:nil forType:adType];
-    [self.adTypeExchangeClients setObject:client forKey:[self adTypeAsDictKey:adType]];
-    [self.exchangeClients removeObject:client];
+    [self.exchangeClientsPerAdType setObject:client forKey:[self adTypeAsDictKey:adType]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (void) client:(HZHeyzapExchangeClient *)client didFailToFetchAdWithType:(HZAdType)adType error:(NSString *)error{
     [self setError:[NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}] forType:client.adType];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
-    [self.exchangeClients removeObject:client];
+    [self.exchangeClientsPerAdType removeObjectForKey:[self adTypeAsDictKey:adType]];
 }
 
 - (void) client:(HZHeyzapExchangeClient *)client didHaveError:(NSString *)error {
     [self setError:[NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}] forType:client.adType];
-    [self.adTypeExchangeClients removeObjectForKey:[self adTypeAsDictKey:[client adType]]];
-    [self.exchangeClients removeObject:client];
+    [self.exchangeClientsPerAdType removeObjectForKey:[self adTypeAsDictKey:[client adType]]];
     self.currentlyPlayingClient = nil;
 }
 
@@ -177,7 +180,7 @@
 
 - (void) didEndAdWithClient:(HZHeyzapExchangeClient *)client successfullyFinished:(BOOL)successfullyFinished{
     self.currentlyPlayingClient = nil;
-    [self.adTypeExchangeClients removeObjectForKey:[self adTypeAsDictKey:[client adType]]];
+    [self.exchangeClientsPerAdType removeObjectForKey:[self adTypeAsDictKey:[client adType]]];
     [self setError:nil forType:client.adType];
     
     if(client.isWithAudio){

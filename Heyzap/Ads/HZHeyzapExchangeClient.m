@@ -28,7 +28,6 @@
 
 @property (nonatomic) HZMRAIDInterstitial *mraidInterstitial;
 @property (nonatomic) BOOL mraidInterstitialFetchedAndReady;
-@property (nonatomic) HZAdType lastMRAIDAdType;
 
 @property (nonatomic) NSDictionary *responseDict;
 @property (nonatomic) NSString *adMediationId;
@@ -41,13 +40,14 @@
 @property (nonatomic) UIWebView *clickTrackingWebView;
 
 @property (nonatomic) HZHeyzapExchangeMRAIDServiceHandler *serviceHandler;
+
+@property (nonatomic) HZHeyzapExchangeClientState state;
 @end
 
 @implementation HZHeyzapExchangeClient
 
 - (void) fetchForAdType:(HZAdType)adType {
-    if(self.vastAdFetchedAndReady || self.mraidInterstitialFetchedAndReady) {
-        // already fetched
+    if(self.state == HZHeyzapExchangeClientStateFetching || self.state == HZHeyzapExchangeClientStateReady) {
         return;
     }
     
@@ -55,6 +55,8 @@
         HZELog(@"This is not the correct method to call for banner ad fetches. See HZHeyzapExchangeAdapter.");
         return;//wrong method to call
     }
+    
+    self.state = HZHeyzapExchangeClientStateFetching;
     
     self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
     _adType = adType;
@@ -65,7 +67,7 @@
                     NSData * data = (NSData *)responseObject;
                     if(!data || data.bytes == nil) {
                         HZELog(@"Fetch failed - data null or empty");
-                        [self.delegate client:self didFailToFetchAdWithType:adType error:@"no data"];
+                        [self handleFetchFailure:@"no data"];
                         return;
                     }
                     
@@ -93,7 +95,7 @@
                     
                     if(jsonError || !self.responseDict){
                         HZELog(@"JSON parse failed for exchange response. Error: %@", jsonError);
-                        [self.delegate client:self didFailToFetchAdWithType:self.adType error:@"bad data"];
+                        [self handleFetchFailure:@"bad data"];
                         return;
                     }
                     
@@ -101,7 +103,7 @@
                     
                     if(!adDict){
                         HZELog(@"JSON format unexpected for exchange response.");
-                        [self.delegate client:self didFailToFetchAdWithType:self.adType error:@"bad data"];
+                        [self handleFetchFailure:@"bad data"];
                         return;
                     }
                     
@@ -115,7 +117,7 @@
                     self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@(0) withDict:adDict] intValue];
                     if(![self isSupportedFormat]) {
                         HZELog(@"Format of Exchange response unsupported (%lu).", (unsigned long)self.format);
-                        [self.delegate client:self didFailToFetchAdWithType:self.adType error:@"bad ad format"];
+                        [self handleFetchFailure:@"bad ad format"];
                         return;
                     }
                     
@@ -128,7 +130,6 @@
                     }else if(self.format == HZHeyzapExchangeFormatMRAID_2){
                         UIViewController * viewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
                         self.serviceHandler = [[HZHeyzapExchangeMRAIDServiceHandler alloc]initWithDelegate:self];
-                        self.lastMRAIDAdType = adType;
                         self.mraidInterstitial = [[HZMRAIDInterstitial alloc] initWithSupportedFeatures:[self.serviceHandler supportedFeatures]
                                                                                            withHtmlData:self.adMarkup
                                                                                             withBaseURL:nil
@@ -140,11 +141,18 @@
                 failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
                 {
                     HZELog(@"Fetch failed. Error: %@", error);
-                    [self.delegate client:self didFailToFetchAdWithType:self.adType error:@"request failed"];
+                    [self handleFetchFailure:@"request failed"];
                 }
      ];
     
     HZDLog(@"Exchange fetch request URL: %@", request.request.URL);
+}
+
+- (void) handleFetchFailure:(NSString *)failureReason {
+    self.state = HZHeyzapExchangeClientStateFailure;
+    if(failureReason) {
+        [self.delegate client:self didFailToFetchAdWithType:self.adType error:failureReason];
+    }
 }
 
 - (void) reportImpression {
@@ -199,8 +207,9 @@
 #pragma mark - HZSKVASTViewControllerDelegate
 - (void) vastReady:(HZSKVASTViewController *)vastVC {
     self.vastVC = vastVC;
-    [self.delegate client:self didFetchAdWithType:self.vastVC.adType];
     self.vastAdFetchedAndReady = YES;
+    self.state = HZHeyzapExchangeClientStateReady;
+    [self.delegate client:self didFetchAdWithType:self.vastVC.adType];
 }
 
 - (void)vastError:(HZSKVASTViewController *)vastVC error:(HZSKVASTError)error {
@@ -249,7 +258,7 @@
     }
 
     if(!self.vastAdFetchedAndReady) {
-        [self.delegate client:self didFailToFetchAdWithType:vastVC.adType error:[NSString stringWithFormat:@"VAST error: %@", errorString]];
+        [self handleFetchFailure:[NSString stringWithFormat:@"VAST error: %@", errorString]];
     }else{
         [self.delegate client:self didHaveError:[NSString stringWithFormat:@"vast_playback_error: %@", errorString]];
     }
@@ -266,6 +275,7 @@
     self.responseDict = nil;
     
     self.vastAdFetchedAndReady = NO;
+    self.state = HZHeyzapExchangeClientStateFinished;
     [self.delegate didEndAdWithClient:self successfullyFinished:vastVC.didFinishSuccessfully];
     if(vastVC.didFinishSuccessfully){
         [self reportVideoComplete];
@@ -285,13 +295,14 @@
 
 - (void)mraidInterstitialAdReady:(HZMRAIDInterstitial *)mraidInterstitial {
     self.mraidInterstitial = mraidInterstitial;
-    [self.delegate client:self didFetchAdWithType:self.lastMRAIDAdType];
     self.mraidInterstitialFetchedAndReady = YES;
+    self.state = HZHeyzapExchangeClientStateReady;
+    [self.delegate client:self didFetchAdWithType:self.adType];
 }
 
 - (void)mraidInterstitialAdFailed:(HZMRAIDInterstitial *)mraidInterstitial {
     self.mraidInterstitial = nil;
-    [self.delegate client:self didFailToFetchAdWithType:self.lastMRAIDAdType error:@"bad mraid data"];
+    [self handleFetchFailure:@"bad mraid data"];
 }
 
 - (void)mraidInterstitialWillShow:(HZMRAIDInterstitial *)mraidInterstitial {
@@ -304,7 +315,7 @@
     self.mraidInterstitial = nil;
     self.format = HZHeyzapExchangeFormatUnknown;
     self.responseDict = nil;
-    
+    self.state = HZHeyzapExchangeClientStateFinished;
     [self.delegate didEndAdWithClient:self successfullyFinished:YES];
 }
 

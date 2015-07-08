@@ -408,6 +408,7 @@ typedef enum {
     self.videoView.frame=self.view.bounds;
     [self.view addSubview:self.videoView];
     [self.videoView setVideoURL:[self.videoCache URLForVideo]];
+    [self.videoView.player setInitialPlaybackTime:0];
     [self.videoView play];
     
     hasPlayerStarted=YES;

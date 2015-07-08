@@ -40,7 +40,8 @@
 }
 
 - (NSString *) filePathForCachedVideo {
-    NSString *filename = [NSString stringWithFormat: @"vast.%@.%@", [HZUtils MD5ForString:[self.sourceURL absoluteString]], self.fileExtension];
+    // starts with `imp` because HZDownloadHelper wants it to
+    NSString *filename = [NSString stringWithFormat: @"imp.vast.%@.%@", [HZUtils MD5ForString:[self.sourceURL absoluteString]], self.fileExtension];
     return [HZUtils cacheDirectoryWithFilename: filename];
 }
 
