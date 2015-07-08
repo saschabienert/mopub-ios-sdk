@@ -67,8 +67,6 @@ return nil; \
     return self;
 }
 
-const NSTimeInterval hasAdPollInterval = 3;
-
 - (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork {
     
     NSArray *networksForFetch = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
