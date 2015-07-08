@@ -11,5 +11,5 @@
 @interface HZHeyzapExchangeBannerAdapter : HZBannerAdapter
 
 - (instancetype)initWithAdUnitID:(NSString *)adUnitID options:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter;
-
+- (NSNumber *) adScore;
 @end

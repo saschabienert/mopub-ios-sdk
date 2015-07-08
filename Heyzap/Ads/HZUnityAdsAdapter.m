@@ -41,7 +41,6 @@
     if (self) {
         self.forwardingDelegate = [HZAdapterDelegate new];
         self.forwardingDelegate.adapter = self;
-        [[HZUnityAds sharedInstance] setDelegate:self.forwardingDelegate];
     }
     return self;
 }
@@ -91,6 +90,7 @@
     CHECK_CREDENTIALS_ERROR(error);
     
     HZUnityAdsAdapter *adapter = [self sharedInstance];
+    
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         [[self sharedInstance] setupUnityAdsWithAppID:appID
@@ -119,6 +119,7 @@ NSString * const kHZNetworkName = @"mobile";
         [[HZUnityAds sharedInstance] setNetworks:kHZNetworkName];
     }
     [[HZUnityAds sharedInstance] startWithGameId:appID andViewController:vc];
+    [[HZUnityAds sharedInstance] setDelegate:self.forwardingDelegate];
     
     //TODO: set view controller
 }

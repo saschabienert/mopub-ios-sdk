@@ -22,6 +22,11 @@
 #import "HZHyprmxAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 
+@interface HZBaseAdapter()
+//key: HZAdType value: NSNumber *
+@property (nonatomic, strong) NSMutableDictionary *latestMediationScores;
+@end
+
 @implementation HZBaseAdapter
 
 #define ABSTRACT_METHOD_ERROR() @throw [NSException exceptionWithName:@"AbstractMethodException" reason:@"Subclasses should override this method" userInfo:nil];
@@ -206,6 +211,22 @@
 
 + (BOOL)isHeyzapAdapter {
     return NO;
+}
+
+- (NSNumber *) latestMediationScoreForAdType:(HZAdType)adType {
+    if(!self.latestMediationScores){
+        self.latestMediationScores = [[NSMutableDictionary alloc] init];
+    }
+    
+    return self.latestMediationScores[@(adType)] ?: @(0);
+}
+
+- (void) setLatestMediationScore:(NSNumber *)score forAdType:(HZAdType)adType {
+    if(!self.latestMediationScores){
+        self.latestMediationScores = [[NSMutableDictionary alloc]init];
+    }
+    
+    self.latestMediationScores[@(adType)] = (score ?: @(0));
 }
 
 @end

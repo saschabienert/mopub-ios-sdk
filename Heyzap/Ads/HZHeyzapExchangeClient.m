@@ -297,7 +297,7 @@
 - (NSDictionary *) apiRequestParams {
     // in the future, if mediation is refactored to request creative type instead of adUnit, this will be unnecessary
     // also, the hardcoded mapping from interstitial => static below (missing out on blended opportunity) would be avoided
-    int creativeType = HZHeyzapExchangeFormatUnknown;
+    int creativeType = HZHeyzapExchangeCreativeTypeUnknown;
     switch (self.adType) {
         case HZAdTypeBanner://ignore here
             break;

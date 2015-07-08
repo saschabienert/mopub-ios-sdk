@@ -23,6 +23,7 @@
 @end
 
 @interface HZHeyzapExchangeBannerClient : NSObject
+@property (nonatomic, readonly) NSNumber *adScore;
 
 - (void) fetchWithOptions:(HZBannerAdOptions *)options delegate:(id<HZHeyzapExchangeBannerClientDelegate>)delegate;
 @end
