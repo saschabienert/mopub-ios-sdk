@@ -31,6 +31,8 @@
 
 #define ABSTRACT_METHOD_ERROR() @throw [NSException exceptionWithName:@"AbstractMethodException" reason:@"Subclasses should override this method" userInfo:nil];
 
+NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
+
 #pragma mark - Initialization
 
 + (instancetype)sharedInstance
@@ -227,6 +229,10 @@
     }
     
     self.latestMediationScores[@(adType)] = (score ?: @(0));
+}
+
++ (NSTimeInterval)isAvailablePollInterval {
+    return kHZIsAvailablePollIntervalSecondsDefault;
 }
 
 @end

@@ -171,6 +171,10 @@ NSString * const kHZNetworkName = @"mobile";
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
 }
 
++ (NSTimeInterval)isAvailablePollInterval {
+    // UnityAds uses expensive I/O operations to check if an ad is available.
+    return 3;
+}
 #pragma mark - AdColony Delegation
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol

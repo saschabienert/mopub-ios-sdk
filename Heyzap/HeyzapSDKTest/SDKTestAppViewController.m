@@ -247,6 +247,7 @@ const CGFloat kLeftMargin = 10;
     [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
         NSLog(@"Network: %@ Callback: %@", network, callback);
         [self logToConsole: [NSString stringWithFormat: @"[%@] %@", network, callback]];
+        [self changeColorOfShowButton];
     }];
     
     self.view.accessibilityLabel = kViewAccessibilityLabel;
