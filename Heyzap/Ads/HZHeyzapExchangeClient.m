@@ -59,7 +59,7 @@
     self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
     _adType = adType;
     
-    [self.apiClient fetchAdWithExtraParams:[self apiRequestParams]
+    HZAFHTTPRequestOperation *request = [self.apiClient fetchAdWithExtraParams:[self apiRequestParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
                 {
                     NSData * data = (NSData *)responseObject;
@@ -143,6 +143,8 @@
                     [self.delegate client:self didFailToFetchAdWithType:self.adType error:@"request failed"];
                 }
      ];
+    
+    HZDLog(@"Exchange fetch request URL: %@", request.request.URL);
 }
 
 - (void) reportImpression {
@@ -202,10 +204,54 @@
 }
 
 - (void)vastError:(HZSKVASTViewController *)vastVC error:(HZSKVASTError)error {
+    
+    NSString * errorString = @"unknown";
+    switch(error){
+        case VASTErrorNone:
+            errorString = @"VASTErrorNone";
+            break;
+        case VASTErrorXMLParse:
+            errorString = @"VASTErrorXMLParse";
+            break;
+        case VASTErrorSchemaValidation:
+            errorString = @"VASTErrorSchemaValidation";
+            break;
+        case VASTErrorTooManyWrappers:
+            errorString = @"VASTErrorTooManyWrappers";
+            break;
+        case VASTErrorNoCompatibleMediaFile:
+            errorString = @"VASTErrorNoCompatibleMediaFile";
+            break;
+        case VASTErrorNoInternetConnection:
+            errorString = @"VASTErrorNoInternetConnection";
+            break;
+        case VASTErrorLoadTimeout:
+            errorString = @"VASTErrorLoadTimeout";
+            break;
+        case VASTErrorPlayerNotReady:
+            errorString = @"VASTErrorPlayerNotReady";
+            break;
+        case VASTErrorPlaybackError:
+            errorString = @"VASTErrorPlaybackError";
+            break;
+        case VASTErrorMovieTooShort:
+            errorString = @"VASTErrorMovieTooShort";
+            break;
+        case VASTErrorPlayerHung:
+            errorString = @"VASTErrorPlayerHung";
+            break;
+        case VASTErrorPlaybackAlreadyInProgress:
+            errorString = @"VASTErrorPlaybackAlreadyInProgress";
+            break;
+        case VASTErrorCacheFailed:
+            errorString = @"VASTErrorCacheFailed";
+            break;
+    }
+
     if(!self.vastAdFetchedAndReady) {
-        [self.delegate client:self didFailToFetchAdWithType:vastVC.adType error:[NSString stringWithFormat:@"VAST error: %i", error]];
+        [self.delegate client:self didFailToFetchAdWithType:vastVC.adType error:[NSString stringWithFormat:@"VAST error: %@", errorString]];
     }else{
-        [self.delegate client:self didHaveError:[NSString stringWithFormat:@"vast_playback_error: %i", error]];
+        [self.delegate client:self didHaveError:[NSString stringWithFormat:@"vast_playback_error: %@", errorString]];
     }
 }
 
