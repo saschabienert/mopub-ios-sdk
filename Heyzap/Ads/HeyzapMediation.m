@@ -418,6 +418,8 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     NSLog(@"HeyzapMediation: ad shown from %@",[adapter name]);
     HZMediationCurrentShownAd *currentAd = self.currentShownAd;
     
+    [currentAd.eventReporter reportImpressionForAdapter:adapter];
+    
     if (currentAd && currentAd.adState == HZAdStateRequestedShow) {
         self.currentShownAd.adState = HZAdStateShown;
         [[self delegateForAdType:currentAd.eventReporter.adType] didShowAdWithTag:currentAd.tag];
