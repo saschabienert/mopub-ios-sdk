@@ -91,6 +91,7 @@
         _installButton.layer.cornerRadius = 2;
         _installButton.layer.borderWidth = 1;
         _installButton.layer.borderColor = [[UIColor whiteColor] CGColor];
+        _installButton.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3f];
         
         // make the hit area of the button larger than the button
         [_installButton setExtendedHitAreaMarginX:40];

@@ -1,5 +1,5 @@
-	//
-//  HZVideoPopup.m
+//
+//  HZVideoView.m
 //  Heyzap
 //
 //  Created by Daniel Rhodes on 12/9/13.
