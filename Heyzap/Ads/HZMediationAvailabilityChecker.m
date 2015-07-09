@@ -68,14 +68,14 @@
 }
 
 - (NSOrderedSet *)filterAdaptersForInterstitialVideo:(NSOrderedSet *)adapters adType:(HZAdType)adType {
-    if (!self.lastInterstitialVideoShownDate || adType != HZAdTypeInterstitial) {
+    if ((!self.lastInterstitialVideoShownDate && self.interstitialVideoEnabled) || adType != HZAdTypeInterstitial) {
         return adapters;
     }
     
-    const BOOL withinInterval = [self withinInterval];
+    const BOOL shouldAllowInterstitialVideo = [self withinInterval] && self.interstitialVideoEnabled;
     
     NSIndexSet *indexes = [adapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        return withinInterval || !adapter.isVideoOnlyNetwork;
+        return shouldAllowInterstitialVideo || !adapter.isVideoOnlyNetwork;
     }];
     
     return [NSOrderedSet orderedSetWithArray:[adapters objectsAtIndexes:indexes]];
