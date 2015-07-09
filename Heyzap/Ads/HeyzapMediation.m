@@ -365,10 +365,6 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 
 - (void)haveAdapter:(HZBaseAdapter *)adapter showAdWithEventReporter:(HZMediationEventReporter *)eventReporter options:(HZShowOptions *)options
 {
-    if ([adapter isVideoOnlyNetwork] && eventReporter.adType == HZAdTypeInterstitial) {
-        [self.availabilityChecker didShowInterstitialVideo];
-    }
-    
     [adapter showAdForType:eventReporter.adType options:options];
     
     // Check if the adapter has responded yet.
