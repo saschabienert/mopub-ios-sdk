@@ -35,6 +35,7 @@
 {
     HZAbstractHeyzapAdapter *adapter = [self sharedInstance];
     adapter.credentials = credentials;
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     return nil;
 }
 
@@ -153,6 +154,7 @@
 
 - (void)didShowAd:(NSNotification *)notification {
     [self.delegate adapterDidShowAd:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
 }
 
 - (void)didFailToShowAd:(NSNotification *)notification {
@@ -183,6 +185,8 @@
                 break;
             }
         }
+        
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
     }
 }
 - (void)didFailToReceiveAd:(NSNotification *)notification {
@@ -208,16 +212,20 @@
                 break;
             }
         }
+        
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
     }
 }
 - (void)didClickAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         [self.delegate adapterWasClicked:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
     }
 }
 - (void)didHideAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         [self.delegate adapterDidDismissAd:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
     }
 }
 
@@ -225,12 +233,14 @@
 - (void)willStartAudio:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         [self.delegate adapterWillPlayAudio:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
     }
 }
 
 - (void)didFinishAudio:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         [self.delegate adapterDidFinishPlayingAudio:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
     }
 }
 
@@ -238,11 +248,13 @@
 - (void)didCompleteIncentivizedAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         [self.delegate adapterDidCompleteIncentivizedAd:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
     }
 }
 - (void)didFailToCompleteIncentivizedAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
     }
 }
 
