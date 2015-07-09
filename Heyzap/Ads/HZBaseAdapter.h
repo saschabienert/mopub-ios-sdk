@@ -135,4 +135,10 @@
 
 + (BOOL)isHeyzapAdapter;
 
+/**
+ *  Subclasses can override.
+ *  @return The amount of time to wait, in seconds, between asking if this adapter has an ad. Increase this value for adapters/SDKs whose `isAvailable` calls are expensive, and decrease it for adapters/SDKs whose calls are inexpensive.
+ */
++ (NSTimeInterval)isAvailablePollInterval;
+
 @end

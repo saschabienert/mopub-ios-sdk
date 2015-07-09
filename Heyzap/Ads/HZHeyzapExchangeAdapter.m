@@ -97,7 +97,7 @@
     HZHeyzapExchangeClient * client = [self.exchangeClientsPerAdType objectForKey:[self adTypeAsDictKey:type]];
     if(client && client.state == HZHeyzapExchangeClientStateFetching){
         //already fetching
-        HZDLog(@"Already fetching adType=%lu.",(unsigned long)type);
+        HZDLog(@"Already fetching adType=%@", NSStringFromAdType(type));
         return;
     }
     

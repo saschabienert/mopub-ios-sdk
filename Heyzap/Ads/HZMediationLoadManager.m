@@ -67,8 +67,6 @@ return nil; \
     return self;
 }
 
-const NSTimeInterval hasAdPollInterval = 3;
-
 - (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork {
     
     NSArray *networksForFetch = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
@@ -129,7 +127,8 @@ const NSTimeInterval hasAdPollInterval = 3;
                     [adapter prefetchForType:adType];
                 });
                 
-                const BOOL anAdapterHasAnAd = hzWaitUntilInterval(hasAdPollInterval, ^BOOL{
+                NSTimeInterval pollingInterval = [datum.adapterClass isAvailablePollInterval];
+                const BOOL anAdapterHasAnAd = hzWaitUntilInterval(pollingInterval, ^BOOL{
                     return [self adaptersFromLoadData:loadData uptoIndexHasAd:idx ofType:adType];
                 }, datum.timeout);
                 
