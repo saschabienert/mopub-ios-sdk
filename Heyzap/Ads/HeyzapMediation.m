@@ -366,7 +366,7 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 - (void)haveAdapter:(HZBaseAdapter *)adapter showAdWithEventReporter:(HZMediationEventReporter *)eventReporter options:(HZShowOptions *)options
 {
     if ([adapter isVideoOnlyNetwork] && eventReporter.adType == HZAdTypeInterstitial) {
-        self.lastInterstitialVideoShownDate = [NSDate date];
+        [self.availabilityChecker didShowInterstitialVideo];
     }
     
     [adapter showAdForType:eventReporter.adType options:options];
