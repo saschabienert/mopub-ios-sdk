@@ -64,6 +64,8 @@
 @import MobileCoreServices;
 @import Security;
 @import SystemConfiguration;
+@import EventKit;
+@import EventKitUI;
 #endif
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
