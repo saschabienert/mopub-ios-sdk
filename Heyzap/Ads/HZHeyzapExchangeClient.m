@@ -66,8 +66,8 @@
                 {
                     NSData * data = (NSData *)responseObject;
                     if(!data || data.bytes == nil) {
-                        HZELog(@"Fetch failed - data null or empty");
-                        [self handleFetchFailure:@"no data"];
+                        HZELog(@"Fetch failed - data null or empty. Status code: %li", (long)operation.response.statusCode);
+                        [self handleFetchFailure:@"no data / no fill"];
                         return;
                     }
                     
