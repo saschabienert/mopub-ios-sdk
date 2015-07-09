@@ -196,6 +196,8 @@ NSString * sdkVersionOrDefault(NSString *const version) {
 
 - (NSDictionary *)addParametersToDefaults:(NSDictionary *const)parameters {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:self.mediateParams];
+    dict[@"ad_unit"] = NSStringFromAdType(self.adType);
+    dict[@"tag"] = self.tag;
     [dict addEntriesFromDictionary:parameters];
     return dict;
 }
