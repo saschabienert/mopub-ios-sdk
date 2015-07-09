@@ -35,6 +35,7 @@
 + (NSMutableDictionary *)defaultParams {
     // Profiling revealed this to be mildly expensive. The values never change so dispatch_once is a good optimization.
     static NSDictionary *defaultParams = nil;
+    static CGFloat screenScale;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         
@@ -48,8 +49,7 @@
             deviceType = @(4); // 4 == Phone
         }
         
-        NSNumber *deviceWidth =  [NSNumber numberWithInt:[[[UIApplication sharedApplication] keyWindow] bounds].size.width];
-        NSNumber *deviceHeight =  [NSNumber numberWithInt:[[[UIApplication sharedApplication] keyWindow] bounds].size.height];
+        screenScale = [[UIScreen mainScreen] scale]; //used to convert width and height from points to pixels
         
         UIWebView* webView = [[UIWebView alloc] initWithFrame:CGRectZero];
         NSString* userAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"] ?: @"";
@@ -63,8 +63,7 @@
                                          @"app_bundle": [[HZDevice currentDevice] bundleIdentifier],
                                          @"app_version": versionString,
                                          @"app_sdk_key": publisherID,
-                                         @"device_w": deviceWidth,
-                                         @"device_h": deviceHeight,
+                                         @"device_scale": @(screenScale),
                                          @"device_ua": userAgent,
                                          @"device_carrier": [[HZDevice currentDevice] HZCarrierName],
                                          @"device_make": @"Apple",
@@ -83,7 +82,16 @@
         defaultParams = params;
     });
     
-    return [defaultParams mutableCopy];
+    NSMutableDictionary *returnDict = [defaultParams mutableCopy];
+    
+    // these need to be determined on every request as to accurately report device orientation
+    NSNumber *deviceWidth =  @([[[UIApplication sharedApplication] keyWindow] bounds].size.width * screenScale);
+    NSNumber *deviceHeight =  @([[[UIApplication sharedApplication] keyWindow] bounds].size.height * screenScale);
+    [returnDict addEntriesFromDictionary:@{
+                                          @"device_w": deviceWidth,
+                                          @"device_h": deviceHeight,
+                                          }];
+    return returnDict;
 }
 
 + (NSMutableDictionary *) defaultParamsWithDictionary: (NSDictionary *) dictionary {

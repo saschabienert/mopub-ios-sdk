@@ -16,7 +16,7 @@
 #import "HZHeyzapExchangeMRAIDServiceHandler.h"
 #import "HZMRAIDInterstitial.h"
 #import "HZMRAIDServiceDelegate.h"
-
+#import "HZMediationConstants.h"
 
 
 @interface HZHeyzapExchangeClient() <HZSKVASTViewControllerDelegate, HZMRAIDInterstitialDelegate, HZHeyzapExchangeMRAIDServiceHandlerDelegate>
@@ -60,6 +60,9 @@
     
     self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
     _adType = adType;
+    if(adType == HZAdTypeIncentivized) {
+        self.isIncentivized = YES;
+    }
     
     HZAFHTTPRequestOperation *request = [self.apiClient fetchAdWithExtraParams:[self apiRequestParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
@@ -383,6 +386,7 @@
                                                  @"mediation_id":self.adMediationId,
                                                  @"auction_extras":self.adDataHash,
                                                  @"markup":self.adMarkup,
+                                                 @"ad_unit":NSStringFromAdType(self.adType),
                                                  }];
     return allRequestParams;
 }
@@ -392,6 +396,7 @@
     [allRequestParams addEntriesFromDictionary:@{
                                                  @"mediation_id":self.adMediationId,
                                                  @"auction_extras":self.adDataHash,
+                                                 @"ad_unit":NSStringFromAdType(self.adType),
                                                  }];
     return allRequestParams;
 }
@@ -401,6 +406,7 @@
     [allRequestParams addEntriesFromDictionary:@{
                                                  @"mediation_id":self.adMediationId,
                                                  @"auction_extras":self.adDataHash,
+                                                 @"ad_unit":NSStringFromAdType(self.adType),
                                                  }];
     return allRequestParams;
 }

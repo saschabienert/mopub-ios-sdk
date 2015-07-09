@@ -12,6 +12,7 @@
 #import "HZDictionaryUtils.h"
 #import "HZHeyzapExchangeConstants.h"
 #import "HZHeyzapExchangeMRAIDServiceHandler.h"
+#import "HZMediationConstants.h"
 
 @interface HZHeyzapExchangeBannerClient()<HZHeyzapExchangeMRAIDServiceHandlerDelegate, HZMRAIDViewDelegate>
 
@@ -247,6 +248,7 @@
                                                  @"mediation_id":self.adMediationId,
                                                  @"auction_extras":self.adDataHash,
                                                  @"markup":self.adMarkup,
+                                                 @"ad_unit":NSStringFromAdType(HZAdTypeBanner),
                                                  }];
     return allRequestParams;
 }
@@ -256,6 +258,7 @@
     [allRequestParams addEntriesFromDictionary:@{
                                                  @"mediation_id":self.adMediationId,
                                                  @"auction_extras":self.adDataHash,
+                                                 @"ad_unit":NSStringFromAdType(HZAdTypeBanner),
                                                  }];
     return allRequestParams;
 }
