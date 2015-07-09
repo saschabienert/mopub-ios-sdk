@@ -68,6 +68,7 @@ return nil; \
 }
 
 - (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork {
+    HZParameterAssert(showOptions);
     
     NSArray *networksForFetch = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
         if (forcedNetwork) {
@@ -80,7 +81,12 @@ return nil; \
     NSArray *matching = hzFilter(networksForFetch, ^BOOL(HZMediationLoadData *datum) {
         return hzCreativeTypeSetContainsAdType(datum.creativeTypeSet, adType);
     });
-    [self fetchAdType:adType loadData:matching showOptions:showOptions notifyDelegate:YES];
+    
+    
+    // If we're forcing a video only network to show an interstitial for the test activity, we need to notify the delegate for a video network and nto
+    const BOOL isForcedVideoOnlyNetwork = [[forcedNetwork sharedInstance] isVideoOnlyNetwork] && adType == HZAdTypeInterstitial;
+    
+    [self fetchAdType:adType loadData:matching showOptions:showOptions notifyDelegate:!isForcedVideoOnlyNetwork];
     
     // Should just take all STATIC and VIDEO?
     
@@ -88,7 +94,7 @@ return nil; \
         NSArray *videoNetworks = hzFilter(networksForFetch, ^BOOL(HZMediationLoadData *datum) {
             return hzCreativeTypeSetContainsAdType(datum.creativeTypeSet, HZAdTypeVideo);
         });
-        [self fetchAdType:HZAdTypeVideo loadData:videoNetworks showOptions:nil notifyDelegate:NO];
+        [self fetchAdType:HZAdTypeVideo loadData:videoNetworks showOptions:showOptions notifyDelegate:isForcedVideoOnlyNetwork];
         // Also load video, to allow for blending
     }
 }
@@ -100,6 +106,8 @@ return nil; \
 
 // For interstitial, this should ensure that a non-rate-limited network is started.
 - (void)fetchAdType:(HZAdType)adType loadData:(NSArray *)loadData showOptions:(HZShowOptions *)showOptions notifyDelegate:(BOOL)notifyDelegate {
+    HZParameterAssert(loadData);
+    HZParameterAssert(showOptions);
     
     dispatch_async(self.fetchQueue, ^{
         
