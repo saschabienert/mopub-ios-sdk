@@ -644,7 +644,6 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     if (pickerView == self.bannerPositionPickerView) {
         return 2;
     } else if (pickerView == self.bannerSizePickerView) {
-        NSLog(@"banner sizes are = %@",[self bannerSizes]);
         return [[self bannerSizes] count];
     } else {
         NSLog(@"Unknown picker view!!");
@@ -681,8 +680,6 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 }
 
 - (void)bannerPositionPickerDone:(UIBarButtonItem *)sender {
-    NSLog(@"Banner position done");
-    NSLog(@"Banner position text field = %@",self.bannerPositionTextField);
     [self.bannerPositionTextField resignFirstResponder];
 }
 

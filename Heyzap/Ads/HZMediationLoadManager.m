@@ -122,8 +122,6 @@ return nil; \
             
             const BOOL setupSuccessful = [self.delegate setupAdapterNamed:datum.networkName];
             
-            NSLog(@"Setup successful = %i",setupSuccessful);
-            
             if (setupSuccessful) {
                 
                 __block HZBaseAdapter *adapter;
@@ -155,9 +153,6 @@ return nil; \
                     });
                     
                     shouldNotifyDelegate = NO; // no longer notify after first notification
-                    
-                    NSLog(@"An adapter has an ad!");
-                    
                 }
             }
         }];

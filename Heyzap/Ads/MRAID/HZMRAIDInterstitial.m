@@ -10,6 +10,7 @@
 #import "HZMRAIDView.h"
 #import "HZSKLogger.h"
 #import "HZMRAIDServiceDelegate.h"
+#import "HZLog.h"
 
 @interface HZMRAIDInterstitial () <HZMRAIDViewDelegate, HZMRAIDServiceDelegate>
 
@@ -128,7 +129,7 @@
 
 - (void)mraidViewAdReady:(HZMRAIDView *)mraidView
 {
-    NSLog(@"%@ MRAIDViewDelegate %@", [[self class] description], NSStringFromSelector(_cmd));
+    HZDLog(@"%@ MRAIDViewDelegate %@", [[self class] description], NSStringFromSelector(_cmd));
     self.isReady = YES;
     if ([self.delegate respondsToSelector:@selector(mraidInterstitialAdReady:)]) {
         [self.delegate mraidInterstitialAdReady:self];
@@ -137,7 +138,7 @@
 
 - (void)mraidViewAdFailed:(HZMRAIDView *)mraidView
 {
-    NSLog(@"%@ MRAIDViewDelegate %@", [[self class] description], NSStringFromSelector(_cmd));
+    HZDLog(@"%@ MRAIDViewDelegate %@", [[self class] description], NSStringFromSelector(_cmd));
     self.isReady = YES;
     if ([self.delegate respondsToSelector:@selector(mraidInterstitialAdFailed:)]) {
         [self.delegate mraidInterstitialAdFailed:self];
@@ -146,7 +147,7 @@
 
 - (void)mraidViewWillExpand:(HZMRAIDView *)mraidView
 {
-    NSLog(@"%@ MRAIDViewDelegate %@", [[self class] description], NSStringFromSelector(_cmd));
+    HZDLog(@"%@ MRAIDViewDelegate %@", [[self class] description], NSStringFromSelector(_cmd));
     if ([self.delegate respondsToSelector:@selector(mraidInterstitialWillShow:)]) {
         [self.delegate mraidInterstitialWillShow:self];
     }
@@ -154,7 +155,7 @@
 
 - (void)mraidViewDidClose:(HZMRAIDView *)mv
 {
-    NSLog(@"%@ MRAIDViewDelegate %@", [[self class] description], NSStringFromSelector(_cmd));
+    HZDLog(@"%@ MRAIDViewDelegate %@", [[self class] description], NSStringFromSelector(_cmd));
     if ([self.delegate respondsToSelector:@selector(mraidInterstitialDidHide:)]) {
         [self.delegate mraidInterstitialDidHide:self];
     }
