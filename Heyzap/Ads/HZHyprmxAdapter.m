@@ -11,6 +11,7 @@
 #import "HZMediationConstants.h"
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
+#import "HZDevice.h"
 
 @interface HZHyprmxAdapter()
 @property (nonatomic, strong) NSString *distributorID;
@@ -33,7 +34,7 @@
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable {
-    return [HZHYPRManager hzProxiedClassIsAvailable];
+    return ([HZHYPRManager hzProxiedClassIsAvailable] && [HZDevice hzSystemVersionIsGreaterOrEqualTo: @"7.0"]);
 }
 
 + (NSString *)name {

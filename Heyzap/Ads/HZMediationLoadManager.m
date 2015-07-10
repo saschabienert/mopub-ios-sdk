@@ -84,7 +84,7 @@ return nil; \
     
     
     // If we're forcing a video only network to show an interstitial for the test activity, we need to notify the delegate for a video network and nto
-    const BOOL isForcedVideoOnlyNetwork = [[forcedNetwork sharedInstance] isVideoOnlyNetwork] && adType == HZAdTypeInterstitial;
+    const BOOL isForcedVideoOnlyNetwork = [(HZBaseAdapter *)[forcedNetwork sharedInstance] isVideoOnlyNetwork] && adType == HZAdTypeInterstitial;
     
     [self fetchAdType:adType loadData:matching showOptions:showOptions notifyDelegate:!isForcedVideoOnlyNetwork];
     
