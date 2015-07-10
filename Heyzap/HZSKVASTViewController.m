@@ -551,7 +551,7 @@ typedef enum {
             _allowHide = NO;
             _skipOffsetSeconds = @(0);
         } else if(adType == HZAdTypeVideo) {
-            if(_skipOffsetSeconds && [_skipOffsetSeconds longValue] > 0){
+            if(_skipOffsetSeconds && [_skipOffsetSeconds doubleValue] > 0){
                 double skipOffsetDouble = [_skipOffsetSeconds doubleValue];
                 double durationDouble = [[vastModel durationInSeconds] doubleValue];
                 

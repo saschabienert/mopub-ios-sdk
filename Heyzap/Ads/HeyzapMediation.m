@@ -887,6 +887,8 @@ const NSTimeInterval bannerPollInterval = 1;
  */
 - (void)requesterUpdatedMediate {
     NSDictionary *json = self.mediateRequester.latestMediate;
+    _mediationId = [HZDictionaryUtils hzObjectForKey:@"id" ofClass:[NSString class] default:@"" withDict:json];
+    
     if (!self.availabilityChecker) {
         self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithMediateResponse:json];
     } else {

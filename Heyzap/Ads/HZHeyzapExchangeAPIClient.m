@@ -10,7 +10,7 @@
 #import "HZAFURLResponseSerialization.h"
 #import "HZHeyzapExchangeRequestSerializer.h"
 
-NSString * const kHZHeyzapExchangeAPIBaseURLString = @"http://x.heyzap.com/"; // monroe: change from test endpoint later. also: https? certs are broken right now
+NSString * const kHZHeyzapExchangeAPIBaseURLString = @"https://x.heyzap.com/";
 
 @implementation HZHeyzapExchangeAPIClient
 

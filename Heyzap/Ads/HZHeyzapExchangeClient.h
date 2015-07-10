@@ -34,7 +34,6 @@ typedef NS_ENUM(NSUInteger, HZHeyzapExchangeClientState){
 @interface HZHeyzapExchangeClient : NSObject
 
 @property (nonatomic, weak) id<HZHeyzapExchangeClientDelegate> delegate;
-@property (nonatomic) BOOL isIncentivized;
 @property (nonatomic) BOOL isWithAudio;
 @property (nonatomic, readonly) HZAdType adType;
 @property (nonatomic, readonly) NSNumber *adScore;

@@ -17,7 +17,7 @@
 #import "HZMRAIDInterstitial.h"
 #import "HZMRAIDServiceDelegate.h"
 #import "HZMediationConstants.h"
-
+#import "HeyzapMediation.h"
 
 @interface HZHeyzapExchangeClient() <HZSKVASTViewControllerDelegate, HZMRAIDInterstitialDelegate, HZHeyzapExchangeMRAIDServiceHandlerDelegate>
 
@@ -30,18 +30,18 @@
 @property (nonatomic) BOOL mraidInterstitialFetchedAndReady;
 
 @property (nonatomic) NSDictionary *responseDict;
-@property (nonatomic) NSString *adMediationId;
+@property (nonatomic) NSString *adAuctionId;
 @property (nonatomic) NSNumber *adScore;
 @property (nonatomic) NSString *adMarkup;
-@property (nonatomic) NSString *adDataHash;//encryption hash for request validation
-
+@property (nonatomic) NSString *adExtrasHash;//encryption hash for request validation
+@property (nonatomic) NSString *mediationId;//mediationId at the time of the show call
 @property (nonatomic) HZHeyzapExchangeAPIClient *apiClient;
 
 @property (nonatomic) UIWebView *clickTrackingWebView;
-
 @property (nonatomic) HZHeyzapExchangeMRAIDServiceHandler *serviceHandler;
 
 @property (nonatomic) HZHeyzapExchangeClientState state;
+
 @end
 
 @implementation HZHeyzapExchangeClient
@@ -60,9 +60,6 @@
     
     self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
     _adType = adType;
-    if(adType == HZAdTypeIncentivized) {
-        self.isIncentivized = YES;
-    }
     
     HZAFHTTPRequestOperation *request = [self.apiClient fetchAdWithExtraParams:[self apiRequestParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
@@ -70,7 +67,7 @@
                     NSData * data = (NSData *)responseObject;
                     if(!data || data.bytes == nil) {
                         HZELog(@"Fetch failed - data null or empty. Status code: %li", (long)operation.response.statusCode);
-                        [self handleFetchFailure:@"no data / no fill"];
+                        [self handleFetchFailure:@"no data"];
                         return;
                     }
                     
@@ -79,11 +76,11 @@
                     /* expected format:
                      
                      {
-                        "meta":
+                        "auction":
                         {
                             "id": "123...",
                             "score":10000,
-                            "data":"{hash}"
+                            "extras":"{hash}"
                         }
                         "ad":
                         {
@@ -112,10 +109,10 @@
                     
                     self.adMarkup = adDict[@"markup"];
                     HZDLog(@"Ad markup received: %@", self.adMarkup);
-                    NSDictionary *adMetaDict = self.responseDict[@"meta"];
-                    self.adMediationId = adMetaDict[@"id"];
-                    self.adScore = adMetaDict[@"score"];
-                    self.adDataHash = adMetaDict[@"data"];// monroe: key may be `auction_extras` soon instead of `data`
+                    NSDictionary *adAuctionDict = self.responseDict[@"auction"];
+                    self.adAuctionId = adAuctionDict[@"id"];
+                    self.adScore = adAuctionDict[@"score"];
+                    self.adExtrasHash = adAuctionDict[@"extras"];
                     
                     self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@(0) withDict:adDict] intValue];
                     if(![self isSupportedFormat]) {
@@ -144,7 +141,7 @@
                 failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
                 {
                     HZELog(@"Fetch failed. Error: %@", error);
-                    [self handleFetchFailure:@"request failed"];
+                    [self handleFetchFailure:@"request failed / no fill"];
                 }
      ];
     
@@ -159,7 +156,7 @@
 }
 
 - (void) reportImpression {
-    [self.apiClient reportImpressionForAd:self.adMediationId
+    [self.apiClient reportImpressionForAd:self.adAuctionId
                           withExtraParams:[self impressionParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
                 {
@@ -172,7 +169,7 @@
 }
 
 - (void) reportClick {
-    [self.apiClient reportClickForAd:self.adMediationId
+    [self.apiClient reportClickForAd:self.adAuctionId
              withExtraParams:[self clickParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
                  {
@@ -185,7 +182,7 @@
 }
 
 - (void) reportVideoComplete {
-    [self.apiClient reportVideoCompletionForAd:self.adMediationId
+    [self.apiClient reportVideoCompletionForAd:self.adAuctionId
              withExtraParams:[self videoCompleteParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
                  {
@@ -198,6 +195,9 @@
 }
 
 - (void) showWithOptions:(HZShowOptions *)options {
+    //mediationId can change over time, we want to use the current id at the time of showing the ad for later reporting
+    self.mediationId = [[HeyzapMediation sharedInstance] mediationId];
+    
     if(self.vastAdFetchedAndReady){
         self.vastVC.rootViewController = options.viewController;
         [self.vastVC play];
@@ -383,8 +383,8 @@
 - (NSDictionary *) impressionParams {
     NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
     [allRequestParams addEntriesFromDictionary:@{
-                                                 @"mediation_id":self.adMediationId,
-                                                 @"auction_extras":self.adDataHash,
+                                                 @"mediation_id":self.mediationId,
+                                                 @"auction_extras":self.adExtrasHash,
                                                  @"markup":self.adMarkup,
                                                  @"ad_unit":NSStringFromAdType(self.adType),
                                                  }];
@@ -394,8 +394,8 @@
 - (NSDictionary *) clickParams {
     NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
     [allRequestParams addEntriesFromDictionary:@{
-                                                 @"mediation_id":self.adMediationId,
-                                                 @"auction_extras":self.adDataHash,
+                                                 @"mediation_id":self.mediationId,
+                                                 @"auction_extras":self.adExtrasHash,
                                                  @"ad_unit":NSStringFromAdType(self.adType),
                                                  }];
     return allRequestParams;
@@ -404,8 +404,8 @@
 - (NSDictionary *) videoCompleteParams {
     NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
     [allRequestParams addEntriesFromDictionary:@{
-                                                 @"mediation_id":self.adMediationId,
-                                                 @"auction_extras":self.adDataHash,
+                                                 @"mediation_id":self.mediationId,
+                                                 @"auction_extras":self.adExtrasHash,
                                                  @"ad_unit":NSStringFromAdType(self.adType),
                                                  }];
     return allRequestParams;

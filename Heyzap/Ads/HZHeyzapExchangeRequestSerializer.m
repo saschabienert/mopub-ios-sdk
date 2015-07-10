@@ -74,9 +74,12 @@
                                          @"device_connectiontype": @([[HZDevice currentDevice] getHZOpenRTBConnectionType]),
                                          @"device_ifa": [HZUtils deviceID],
                                          @"device_devicetype": deviceType,
+                                         @"device_dnt": @(![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]), // do not track
+                                         @"device_orientation":  @(0), //0 if orientation matches reported device_w/device_h, 1 if w&h are reversed
                                          @"sdk_version": SDK_VERSION,
                                          @"video_delivery": @"2",//comma separated list of delivery methods STREAMING(1),PROGRESSIVE(2)
                                          @"video_playbackmethod": @"1",//comma separated list of playback methods: AUTO_PLAY_SOUND_ON_VALUE(1), AUTO_PLAY_SOUND_OFF_VALUE(2), CLICK_TO_PLAY_VALUE(3), MOUSE_OVER_VALUE(4)
+                                         @"video_mime": @"video/mp4, video/quicktime", // supported video MIME types for iOS
                                          } mutableCopy];
         
         defaultParams = params;
@@ -84,7 +87,7 @@
     
     NSMutableDictionary *returnDict = [defaultParams mutableCopy];
     
-    // these need to be determined on every request as to accurately report device orientation
+    // these need to be determined on every request as they can change over time
     NSNumber *deviceWidth =  @([[[UIApplication sharedApplication] keyWindow] bounds].size.width * screenScale);
     NSNumber *deviceHeight =  @([[[UIApplication sharedApplication] keyWindow] bounds].size.height * screenScale);
     [returnDict addEntriesFromDictionary:@{

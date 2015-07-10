@@ -188,7 +188,7 @@
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
     }
     
-    if(client.isIncentivized){
+    if(client.adType == HZAdTypeIncentivized){
         if(successfullyFinished){
             [self.delegate adapterDidCompleteIncentivizedAd:self];
             [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];

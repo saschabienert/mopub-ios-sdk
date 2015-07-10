@@ -24,6 +24,7 @@
 @property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 
 @property (nonatomic, readonly) NSDictionary *remoteDataDictionary;
+@property (nonatomic, readonly) NSString *mediationId;
 
 + (instancetype)sharedInstance;
 

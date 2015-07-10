@@ -13,6 +13,7 @@
 #import "HZHeyzapExchangeConstants.h"
 #import "HZHeyzapExchangeMRAIDServiceHandler.h"
 #import "HZMediationConstants.h"
+#import "HeyzapMediation.h"
 
 @interface HZHeyzapExchangeBannerClient()<HZHeyzapExchangeMRAIDServiceHandlerDelegate, HZMRAIDViewDelegate>
 
@@ -22,10 +23,11 @@
 
 @property (nonatomic) HZHeyzapExchangeAPIClient *apiClient;
 
-@property (nonatomic) NSString *adMediationId;
+@property (nonatomic) NSString *adAuctionId;
 @property (nonatomic) NSNumber *adScore;
 @property (nonatomic) NSString *adMarkup;
-@property (nonatomic) NSString *adDataHash;//encryption hash for request validation
+@property (nonatomic) NSString *adExtrasHash;//encryption hash for request validation
+@property (nonatomic) NSString *mediationId;
 @property (nonatomic) HZHeyzapExchangeFormat format;
 
 @property (nonatomic) HZHeyzapExchangeMRAIDServiceHandler *serviceHandler;
@@ -104,10 +106,10 @@
                      }
                      
                      self.adMarkup = adDict[@"markup"];
-                     NSDictionary *adMetaDict = responseDict[@"meta"];
-                     self.adMediationId = adMetaDict[@"id"];
-                     self.adScore = adMetaDict[@"score"];
-                     self.adDataHash = adMetaDict[@"data"];// monroe: key may be `auction_extras` soon instead of `data`
+                     NSDictionary *adAuctionDict = responseDict[@"auction"];
+                     self.adAuctionId = adAuctionDict[@"id"];
+                     self.adScore = adAuctionDict[@"score"];
+                     self.adExtrasHash = adAuctionDict[@"extras"];
                      
                      self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@(0) withDict:adDict] intValue];
                      if(![self isSupportedFormat]) {
@@ -140,7 +142,7 @@
 }
 
 - (void) reportImpression {
-    [self.apiClient POST:[NSString stringWithFormat:@"_/0/ad/%@/impression", self.adMediationId]
+    [self.apiClient POST:[NSString stringWithFormat:@"_/0/ad/%@/impression", self.adAuctionId]
              parameters:[self impressionParams]
                  success:^(HZAFHTTPRequestOperation *operation, id responseObject){}
                 failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
@@ -150,7 +152,7 @@
 }
 
 - (void) reportClick {
-    [self.apiClient GET:[NSString stringWithFormat:@"_/0/ad/%@/click", self.adMediationId]
+    [self.apiClient GET:[NSString stringWithFormat:@"_/0/ad/%@/click", self.adAuctionId]
              parameters:[self clickParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject){}
                 failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
@@ -177,6 +179,9 @@
 }
 
 - (void)mraidViewWillExpand:(HZMRAIDView *)mraidView{
+    //mediationId can change over time, we want to use the current id at the time of showing the ad for later reporting
+    self.mediationId = [[HeyzapMediation sharedInstance] mediationId];
+    
     [self.delegate bannerWillShow];
     [self reportImpression];
 }
@@ -245,8 +250,8 @@
 - (NSDictionary *) impressionParams {
     NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
     [allRequestParams addEntriesFromDictionary:@{
-                                                 @"mediation_id":self.adMediationId,
-                                                 @"auction_extras":self.adDataHash,
+                                                 @"mediation_id":self.mediationId,
+                                                 @"auction_extras":self.adExtrasHash,
                                                  @"markup":self.adMarkup,
                                                  @"ad_unit":NSStringFromAdType(HZAdTypeBanner),
                                                  }];
@@ -256,8 +261,8 @@
 - (NSDictionary *) clickParams {
     NSMutableDictionary * allRequestParams = [[self apiRequestParams] mutableCopy];
     [allRequestParams addEntriesFromDictionary:@{
-                                                 @"mediation_id":self.adMediationId,
-                                                 @"auction_extras":self.adDataHash,
+                                                 @"mediation_id":self.mediationId,
+                                                 @"auction_extras":self.adExtrasHash,
                                                  @"ad_unit":NSStringFromAdType(HZAdTypeBanner),
                                                  }];
     return allRequestParams;
