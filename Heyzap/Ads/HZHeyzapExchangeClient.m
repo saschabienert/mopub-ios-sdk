@@ -345,6 +345,7 @@
 + (NSArray *) supportedFormats {
     return @[
              @(HZHeyzapExchangeFormatVAST_2_0),
+             @(HZHeyzapExchangeFormatVAST_2_0_WRAPPER),
              @(HZHeyzapExchangeFormatMRAID_2)
              ];
 }
