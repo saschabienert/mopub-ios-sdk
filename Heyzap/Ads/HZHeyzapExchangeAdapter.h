@@ -11,4 +11,5 @@
 
 @interface HZHeyzapExchangeAdapter : HZBaseAdapter
 - (NSNumber *) adScoreForAdType:(HZAdType)adType;
+- (void) setAllMediationScoresForReadyAds;
 @end
