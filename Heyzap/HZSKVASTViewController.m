@@ -539,9 +539,7 @@ typedef enum {
         
         _skipOffsetSeconds = [vastModel skipOffsetSeconds];
         if(!_skipOffsetSeconds) {
-            //error parsing - leave skip seconds as default of 0
-            _skipOffsetSeconds = @(0);
-            [HZSKLogger error:@"VAST - View Controller" withMessage:@"skipOffsetSeconds could not be parsed. Default left alone."];
+            [HZSKLogger error:@"VAST - View Controller" withMessage:@"skipOffsetSeconds could not be parsed."];
         } else {
             [HZSKLogger debug:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"skipOffsetSeconds read as: %@", _skipOffsetSeconds]];
         }
@@ -551,22 +549,9 @@ typedef enum {
             _allowHide = NO;
             _skipOffsetSeconds = @(0);
         } else if(adType == HZAdTypeVideo) {
-            if(_skipOffsetSeconds && [_skipOffsetSeconds doubleValue] > 0){
-                double skipOffsetDouble = [_skipOffsetSeconds doubleValue];
-                double durationDouble = [[vastModel durationInSeconds] doubleValue];
-                
-                // if duration and skip offset are really close, don't show skip button
-                if(ABS(skipOffsetDouble - durationDouble) < 1) {
-                    _allowSkip = NO;
-                    _skipOffsetSeconds = @(0);
-                }else {
-                    _allowSkip = YES;
-                }
-                
-                _allowHide = NO;
-            }else{
-                _allowSkip = NO;
-                _allowHide = YES;
+            _allowSkip = YES;
+            _allowHide = NO;
+            if(!_skipOffsetSeconds || [_skipOffsetSeconds doubleValue] < 0){
                 _skipOffsetSeconds = @(0);
             }
         }
