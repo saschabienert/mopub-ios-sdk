@@ -272,6 +272,8 @@ NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
 NSString * const kHZAdapterKey = @"name";
 NSString * const kHZDataKey = @"data";
 
+unsigned long long const adapterDidShowAdTimeout = 1.5;
+
 #pragma mark - Ads
 
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
@@ -310,6 +312,7 @@ NSString * const kHZDataKey = @"data";
     
     HZBaseAdapter *chosenAdapter = [self.availabilityChecker firstAdapterWithAdForAdType:adType adapters:adapters optionalForcedNetwork:optionalForcedNetwork];
     
+    /// Start event reporting
     HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:adapters adType:adType tag:options.tag error:&eventReporterError];
     
     if (eventReporterError) {
@@ -332,11 +335,19 @@ NSString * const kHZDataKey = @"data";
     
     self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithEventReporter:eventReporter tag:options.tag adapter:chosenAdapter];
     
+    /// Notify dependent objects of a show
     if (adType == HZAdTypeInterstitial && [chosenAdapter isVideoOnlyNetwork]) {
         [self.availabilityChecker didShowInterstitialVideo];
     }
+    [self.mediateRequester refreshMediate];
     
-    [self haveAdapter:chosenAdapter showAdWithEventReporter:eventReporter options:options];
+    /// Show ad
+    [chosenAdapter showAdForType:adType options:options];
+    
+    /// Check if the adapter has responded yet.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(adapterDidShowAdTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self checkIfAdapterShowedAd:chosenAdapter showOptions:options];
+    });
 }
 
 - (NSError *)checkForPreShowError:(NSString *)tag adType:(HZAdType)adType {
@@ -359,18 +370,6 @@ NSString * const kHZDataKey = @"data";
     HZELog(@"Error showing ad = %@",error);
     [[self delegateForAdType:adType] didFailToShowAdWithTag:options.tag andError:error];
     if (options.completion) { options.completion(NO,error); }
-}
-
-unsigned long long const adapterDidShowAdTimeout = 1.5;
-
-- (void)haveAdapter:(HZBaseAdapter *)adapter showAdWithEventReporter:(HZMediationEventReporter *)eventReporter options:(HZShowOptions *)options
-{
-    [adapter showAdForType:eventReporter.adType options:options];
-    
-    // Check if the adapter has responded yet.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(adapterDidShowAdTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self checkIfAdapterShowedAd:adapter showOptions:options];
-    });
 }
 
 #pragma mark - Querying adapters
