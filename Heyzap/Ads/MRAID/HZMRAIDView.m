@@ -20,7 +20,8 @@
 #import "HZMRAIDJS.h"
 #import "CloseButton.h"
 
-#define kCloseEventRegionSize 50
+#define kHZCloseEventRegionPadding 10
+
 #define SYSTEM_VERSION_LESS_THAN(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 
 typedef enum {
@@ -688,7 +689,7 @@ typedef enum {
 
 - (void)useCustomClose:(NSDictionary *)params {
     
-    BOOL isCustomClose = [(NSString *)[params objectForKey: @"isCustomClose"] boolValue];
+    BOOL isCustomClose = [(NSString *)[params objectForKey: @"useCustomClose"] boolValue];
     [HZSKLogger debug:@"MRAID - View" withMessage:[NSString stringWithFormat: @"JS callback %@ %@", NSStringFromSelector(_cmd), (isCustomClose ? @"YES" : @"NO")]];
     useCustomClose = isCustomClose;
 }
@@ -712,12 +713,17 @@ typedef enum {
         [closeEventRegion setBackgroundImage:closeButtonImage forState:UIControlStateNormal];
     }
     
-    closeEventRegion.frame = CGRectMake(0, 0, kCloseEventRegionSize, kCloseEventRegionSize);
+    int buttonSize = 30;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
+        buttonSize = 40;
+    }
+    
+    closeEventRegion.frame = CGRectMake(0, 0, buttonSize, buttonSize);
     CGRect frame = closeEventRegion.frame;
     
     // align on top right
-    int x = CGRectGetWidth(modalVC.view.frame) - CGRectGetWidth(frame);
-    frame.origin = CGPointMake(x, 0);
+    int x = CGRectGetWidth(modalVC.view.frame) - CGRectGetWidth(frame) - kHZCloseEventRegionPadding;
+    frame.origin = CGPointMake(x, kHZCloseEventRegionPadding);
     closeEventRegion.frame = frame;
     // autoresizing so it stays at top right (flexible left and flexible bottom margin)
     closeEventRegion.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
@@ -728,8 +734,13 @@ typedef enum {
 - (void)showResizeCloseRegion
 {
     if (!resizeCloseRegion) {
+        int buttonSize = 30;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
+            buttonSize = 40;
+        }
+        
         resizeCloseRegion = [UIButton buttonWithType:UIButtonTypeCustom];
-        resizeCloseRegion.frame = CGRectMake(0, 0, kCloseEventRegionSize, kCloseEventRegionSize);
+        resizeCloseRegion.frame = CGRectMake(0, 0, buttonSize, buttonSize);
         resizeCloseRegion.backgroundColor = [UIColor clearColor];
         [resizeCloseRegion addTarget:self action:@selector(closeFromResize) forControlEvents:UIControlEventTouchUpInside];
         [resizeView addSubview:resizeCloseRegion];
