@@ -254,6 +254,7 @@
                                                  @"auction_extras":self.adExtrasHash,
                                                  @"markup":self.adMarkup,
                                                  @"ad_unit":NSStringFromAdType(HZAdTypeBanner),
+                                                 @"mediation_tag":self.lastBannerAdOptions.tag,
                                                  }];
     return allRequestParams;
 }
@@ -264,6 +265,7 @@
                                                  @"mediation_id":self.mediationId,
                                                  @"auction_extras":self.adExtrasHash,
                                                  @"ad_unit":NSStringFromAdType(HZAdTypeBanner),
+                                                 @"mediation_tag":self.lastBannerAdOptions.tag,
                                                  }];
     return allRequestParams;
 }

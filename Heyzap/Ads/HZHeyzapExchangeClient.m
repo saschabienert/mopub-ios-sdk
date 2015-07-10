@@ -35,6 +35,7 @@
 @property (nonatomic) NSString *adMarkup;
 @property (nonatomic) NSString *adExtrasHash;//encryption hash for request validation
 @property (nonatomic) NSString *mediationId;//mediationId at the time of the show call
+@property (nonatomic) NSString  *adTag;
 @property (nonatomic) HZHeyzapExchangeAPIClient *apiClient;
 
 @property (nonatomic) UIWebView *clickTrackingWebView;
@@ -197,6 +198,7 @@
 - (void) showWithOptions:(HZShowOptions *)options {
     //mediationId can change over time, we want to use the current id at the time of showing the ad for later reporting
     self.mediationId = [[HeyzapMediation sharedInstance] mediationId];
+    self.adTag = options.tag;
     
     if(self.vastAdFetchedAndReady){
         self.vastVC.rootViewController = options.viewController;
@@ -388,6 +390,7 @@
                                                  @"auction_extras":self.adExtrasHash,
                                                  @"markup":self.adMarkup,
                                                  @"ad_unit":NSStringFromAdType(self.adType),
+                                                 @"mediation_tag":self.adTag,
                                                  }];
     return allRequestParams;
 }
@@ -398,6 +401,7 @@
                                                  @"mediation_id":self.mediationId,
                                                  @"auction_extras":self.adExtrasHash,
                                                  @"ad_unit":NSStringFromAdType(self.adType),
+                                                 @"mediation_tag":self.adTag,
                                                  }];
     return allRequestParams;
 }
@@ -408,6 +412,7 @@
                                                  @"mediation_id":self.mediationId,
                                                  @"auction_extras":self.adExtrasHash,
                                                  @"ad_unit":NSStringFromAdType(self.adType),
+                                                 @"mediation_tag":self.adTag,
                                                  }];
     return allRequestParams;
 }

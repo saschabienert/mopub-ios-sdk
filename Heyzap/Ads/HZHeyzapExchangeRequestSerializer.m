@@ -39,13 +39,10 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         
-        NSString *deviceModel;
         NSNumber *deviceType; //see table 6.16 of http://www.iab.net/media/file/OpenRTBAPISpecificationVersion2_2.pdf
         if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            deviceModel = @"iPad";
             deviceType = @(5); // 5 == Tablet
         } else {
-            deviceModel = @"iPhone";
             deviceType = @(4); // 4 == Phone
         }
         
@@ -67,7 +64,7 @@
                                          @"device_ua": userAgent,
                                          @"device_carrier": [[HZDevice currentDevice] HZCarrierName],
                                          @"device_make": @"Apple",
-                                         @"device_model": deviceModel,
+                                         @"device_model": [HZAvailability platform],
                                          @"device_language": [[NSLocale preferredLanguages] objectAtIndex:0],
                                          @"device_os": @"iOS",
                                          @"device_osv": [HZDevice systemVersion],
