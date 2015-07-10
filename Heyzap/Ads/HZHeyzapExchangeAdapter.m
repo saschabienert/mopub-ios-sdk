@@ -145,6 +145,16 @@
     return client.adScore;
 }
 
+- (void) setAllMediationScoresForReadyAds {
+    for(NSNumber * adTypeKey in self.exchangeClientsPerAdType){
+        HZAdType adType = [adTypeKey intValue];
+        NSNumber *adScore = [self adScoreForAdType:adType];
+        if(adScore){
+            [self setLatestMediationScore:adScore forAdType:adType];
+        }
+    }
+}
+
 
 #pragma mark - HZHeyzapExchangeClientDelegate
 

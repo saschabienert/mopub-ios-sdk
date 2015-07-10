@@ -299,14 +299,22 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     
     NSMutableOrderedSet *adapters = [[self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:adType] mutableCopy];
     
-    // sort adapters based on score, bringing in Heyzap Exchange's latest fetched ad's score if it has an ad available (ads have scores in the exchange, the currently stored score is per network)
-    if([adapters containsObject:[HZHeyzapExchangeAdapter sharedInstance]]){
-        [[HZHeyzapExchangeAdapter sharedInstance] setLatestMediationScore:[[HZHeyzapExchangeAdapter sharedInstance] adScoreForAdType:adType] forAdType:adType];
-    }
-    [adapters sortUsingComparator:^(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
-        // [obj2 compare:obj1] will sort highest score first
-        return [[obj2 latestMediationScoreForAdType:adType] compare:[obj1 latestMediationScoreForAdType:adType]];
-    }];
+    // update Heyzap Exchange's scores with latest fetched ad scores (ads have their own scores in the exchange, the currently stored score is per network)
+    [[HZHeyzapExchangeAdapter sharedInstance] setAllMediationScoresForReadyAds];
+    
+    /*  Sort the adapters, largest score first
+     *
+     *  TODO: Problem: we only sort here based on the requested adType's score.
+     *  To fully support interstitial video (blended) for the exchange, we could split this method into two parts:
+     *
+     *      1. decide if we're using video or interstitial (static)
+     *      2. use that adType that we decided on in #1 for the rest of the method instead of the requested adType (including in the sort & for the show call)
+     *
+     *  This way, we'd know which adType to compare the networks on in the sort, and the show call would be told to show the correct adType.
+     *  Right now, we are storing the mediationScore for video-only networks in both HZAdTypeInterstitial and HZAdTypeVideo to partially get around this,
+     *  but this still doesn't allow the exchange to participate in blended interstitials.
+     */
+    [self sortAdaptersByScore:adapters ifLatestMediateRequires:latestMediate forAdType:adType];
     
     Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
     
@@ -348,6 +356,27 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(adapterDidShowAdTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self checkIfAdapterShowedAd:chosenAdapter showOptions:options];
     });
+}
+
+- (void) sortAdaptersByScore:(NSMutableOrderedSet *)adapters ifLatestMediateRequires:(NSDictionary *)latestMediate forAdType:(HZAdType)adType {
+    BOOL shouldSortAdapters = [[HZDictionaryUtils hzObjectForKey:@"sort" ofClass:[NSNumber class] default:@(0) withDict:latestMediate] boolValue];
+    
+    if(shouldSortAdapters) {
+        [adapters sortUsingComparator:^(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
+            // [obj2 compare:obj1] will sort highest score first
+            return [[obj2 latestMediationScoreForAdType:adType] compare:[obj1 latestMediationScoreForAdType:adType]];
+        }];
+    }
+    
+    // avoid the loop if we don't want to print the scores
+    if([HZLog debugLevel] >= HZDebugLevelVerbose) {
+        NSMutableString *scoreStr = [NSMutableString stringWithFormat:@"Waterfall for adType=%@ (%@ order): ", NSStringFromAdType(adType), shouldSortAdapters ? @"Sorted" : @"UNSORTED"];
+        for(HZBaseAdapter *adapter in adapters) {
+            [scoreStr appendFormat:@"[%@: %@]", [adapter name], shouldSortAdapters ? [adapter latestMediationScoreForAdType:adType] : @"--"];
+        }
+        
+        HZDLog(@"%@",scoreStr);
+    }
 }
 
 - (NSError *)checkForPreShowError:(NSString *)tag adType:(HZAdType)adType {
@@ -707,15 +736,18 @@ const NSTimeInterval bannerPollInterval = 1;
                         return;
                     }
                     
-                    // sort adapters with ads by score, also considering RTB score from heyzap exchange fetch
-                    if(heyzapExchangeAvailable){
-                        [heyzapExchangeBannerAdapter.parentAdapter setLatestMediationScore:heyzapExchangeBannerAdapter.adScore forAdType:HZAdTypeBanner];
+                    BOOL shouldSortAdapters = [[HZDictionaryUtils hzObjectForKey:@"sort" ofClass:[NSNumber class] default:@(0) withDict:latestMediate] boolValue];
+                    if(shouldSortAdapters) {
+                        // sort adapters with ads by score, also considering RTB score from heyzap exchange fetch
+                        if(heyzapExchangeAvailable){
+                            [heyzapExchangeBannerAdapter.parentAdapter setLatestMediationScore:heyzapExchangeBannerAdapter.adScore forAdType:HZAdTypeBanner];
+                        }
+                        
+                        [adaptersWithAvailableAds sortUsingComparator:^(HZBannerAdapter *obj1, HZBannerAdapter *obj2) {
+                            // [obj2 compare:obj1] will sort highest score first
+                            return [[obj2.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner] compare:[obj1.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner]];
+                        }];
                     }
-                    
-                    [adaptersWithAvailableAds sortUsingComparator:^(HZBannerAdapter *obj1, HZBannerAdapter *obj2) {
-                        // [obj2 compare:obj1] will sort highest score first
-                        return [[obj2.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner] compare:[obj1.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner]];
-                    }];
                     
                     HZBannerAdapter *finalAdapter = [adaptersWithAvailableAds objectAtIndex:0];
                     finalAdapter.eventReporter = eventReporter;

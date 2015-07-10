@@ -228,7 +228,18 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
         self.latestMediationScores = [[NSMutableDictionary alloc]init];
     }
     
-    self.latestMediationScores[@(adType)] = (score ?: @(0));
+    // video-only networks need to store their scores in HZAdTypeInterstitial as well as HZAdTypeVideo
+    // in order to be properly sorted in the waterfall when compared to static creative scores
+    if([self isVideoOnlyNetwork]){
+        if(adType == HZAdTypeInterstitial || adType == HZAdTypeVideo) {
+            self.latestMediationScores[@(HZAdTypeInterstitial)] = (score ?: @(0));
+            self.latestMediationScores[@(HZAdTypeVideo)] = (score ?: @(0));
+        } else {
+            self.latestMediationScores[@(adType)] = (score ?: @(0));
+        }
+    } else {
+        self.latestMediationScores[@(adType)] = (score ?: @(0));
+    }
 }
 
 + (NSTimeInterval)isAvailablePollInterval {

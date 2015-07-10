@@ -22,6 +22,10 @@ static HZDebugLevel kHZGlobalDebugLevel = HZDebugLevelSilent;
     kHZGlobalDebugLevel = debugLevel;
 }
 
++ (HZDebugLevel) debugLevel {
+    return kHZGlobalDebugLevel;
+}
+
 #pragma mark - Debug Methods
 
 + (void) info:(NSString *)message {
