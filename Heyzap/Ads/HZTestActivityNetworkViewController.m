@@ -263,7 +263,15 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     options.viewController = self;
     options.completion = ^(BOOL result, NSError *error) {
         if (error) {
-            [self appendStringToDebugLog:@"Show failed"];
+            NSString *const errorMessage = ({
+                NSString *msg = @"Show failed";
+                if (error.localizedDescription) {
+                    msg = [msg stringByAppendingFormat:@": %@",error.localizedDescription];
+                }
+                msg;
+            });
+            
+            [self appendStringToDebugLog:errorMessage];
         } else {
             [self appendStringToDebugLog:@"Show succeeded"];
         }
