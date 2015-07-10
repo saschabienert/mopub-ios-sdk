@@ -389,7 +389,8 @@ static NSString *overriddenBundleIdentifier;
 }
 
 + (BOOL) hzSystemVersionIsGreaterOrEqualTo:(NSString *)version {
-    return ([[self systemVersion] compare: version options:NSNumericSearch] == NSOrderedAscending);
+    NSComparisonResult result = [[self systemVersion] compare:version options:NSNumericSearch];
+    return (result == NSOrderedDescending || result == NSOrderedSame);
 }
 
 + (NSString *)systemVersion {
