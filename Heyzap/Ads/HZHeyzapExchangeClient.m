@@ -348,7 +348,8 @@
     return @[
              @(HZHeyzapExchangeFormatVAST_2_0),
              @(HZHeyzapExchangeFormatVAST_2_0_WRAPPER),
-             @(HZHeyzapExchangeFormatMRAID_2)
+             @(HZHeyzapExchangeFormatMRAID_1),
+             @(HZHeyzapExchangeFormatMRAID_2),
              ];
 }
 

@@ -229,7 +229,8 @@
 // banners only supported via MRAID
 + (NSArray *) supportedFormats {
     return @[
-             @(HZHeyzapExchangeFormatMRAID_2)
+             @(HZHeyzapExchangeFormatMRAID_1),
+             @(HZHeyzapExchangeFormatMRAID_2),
             ];
 }
 
