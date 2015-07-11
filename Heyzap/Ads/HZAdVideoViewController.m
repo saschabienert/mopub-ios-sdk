@@ -179,23 +179,12 @@
     }
 }
 
-- (void) viewDidUnload {
-    [super viewDidUnload];
-    
-    [self.videoView removeFromSuperview];
-    [self.webView removeFromSuperview];
-}
-
 - (void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 }
 
 - (void) viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-}
-
-- (void) viewWillUnload {
-    [super viewWillUnload];
 }
 
 #pragma mark - Autorotation
@@ -218,10 +207,6 @@
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft  || interfaceOrientation ==  UIInterfaceOrientationLandscapeRight);
 }
 
 #pragma mark - Callbacks
@@ -274,7 +259,12 @@
     }
     
     if ([sender tag] == kHZWebViewTag) {
-        [self didClickWithURL: url];
+        self.webView.isLoading = YES;
+        __weak HZAdVideoViewController *weakSelf = self;
+        
+        [self didClickWithURL:url completion:^(BOOL result, NSError *error) {
+            [[weakSelf webView] setIsLoading:NO];
+        }];
     }
 }
 

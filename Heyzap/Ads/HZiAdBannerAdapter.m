@@ -43,7 +43,7 @@
 
 - (void)bannerViewDidLoadAd:(ADBannerView *)banner {
     if (banner.superview) {
-        [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+        [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
     } else {
         self.waitingToBeAddedToScreen = YES;
     }
@@ -62,7 +62,7 @@
 
 
 - (BOOL)bannerViewActionShouldBegin:(ADBannerView *)banner willLeaveApplication:(BOOL)willLeave {
-    [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
+    [self.bannerReportingDelegate bannerAdapter:self wasClickedWithEventReporter:self.eventReporter];
     [self.bannerInteractionDelegate userDidClick];
     
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: HZNetworkIAd];
@@ -88,7 +88,7 @@
 
 - (void)bannerWasAddedToView {
     if (self.waitingToBeAddedToScreen) {
-        [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+        [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
         self.waitingToBeAddedToScreen = NO;
     }
 }

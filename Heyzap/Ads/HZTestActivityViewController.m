@@ -36,8 +36,6 @@
 #import "HZAdFetchRequest.h"
 #import "HZMediationConstants.h"
 #import "HZMediationAPIClient.h"
-#import "HZMediationSession.h"
-#import "HZMediationSessionKey.h"
 #import "HZTestActivityViewController.h"
 #import "HZTestActivityNetworkViewController.h"
 #import "HZDispatch.h"

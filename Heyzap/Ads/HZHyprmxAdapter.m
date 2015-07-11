@@ -11,6 +11,7 @@
 #import "HZMediationConstants.h"
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
+#import "HZDevice.h"
 
 @interface HZHyprmxAdapter()
 @property (nonatomic, strong) NSString *distributorID;
@@ -33,7 +34,7 @@
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable {
-    return [HZHYPRManager hzProxiedClassIsAvailable];
+    return ([HZHYPRManager hzProxiedClassIsAvailable] && [HZDevice hzSystemVersionIsGreaterOrEqualTo: @"7.0"]);
 }
 
 + (NSString *)name {
@@ -100,7 +101,7 @@
 }
 
 static BOOL wasReady = NO;
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag {
+- (BOOL)hasAdForType:(HZAdType)type {
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
         wasReady = isOfferReady;
     }];
@@ -108,7 +109,7 @@ static BOOL wasReady = NO;
     return wasReady;
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag {
+- (void)prefetchForType:(HZAdType)type {
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
     

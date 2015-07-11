@@ -27,5 +27,9 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 
 - (void)start;
 @property (nonatomic, readonly) HZMediationStartStatus status;
+/**
+ *  Note: This property will be updated with the /start call from the network after the cached version is used.
+ */
+@property (nonatomic, readonly) NSDictionary *networkNameToCredentials;
 
 @end

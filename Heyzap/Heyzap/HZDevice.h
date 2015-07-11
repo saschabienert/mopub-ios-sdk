@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HZOpenRTBConnectionType.h"
 
 @interface HZDevice : NSObject
 
@@ -21,9 +22,13 @@
 - (NSString *) HZvendorDeviceIdentity;
 - (NSString *) HZmd5MacAddress;
 - (NSString *) HZmacaddress;
+- (NSString *) HZCarrierName;
 
+- (HZOpenRTBConnectionType) getHZOpenRTBConnectionType;
 
 + (BOOL) hzSystemVersionIsLessThan: (NSString *) version;
++ (BOOL) hzSystemVersionIsGreaterOrEqualTo:(NSString *)version;
++ (NSString *) systemVersion;
 + (BOOL)isIpad;
 + (BOOL)isPhone;
 

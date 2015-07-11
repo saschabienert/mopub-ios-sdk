@@ -11,18 +11,16 @@
 @implementation HZAdInfo
 
 - (instancetype)initWithProvider:(id<HZAdInfoProvider>)provider {
-    return [self initWithTag:[provider tag] adUnit:[provider adUnit] auctionType:[provider auctionType]];
+    return [self initWithAdUnit:[provider adUnit] auctionType:[provider auctionType]];
 }
 
 // Designated Initializer
-- (instancetype)initWithTag:(NSString *)tag adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType
+- (instancetype)initWithAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType
 {
-    HZParameterAssert(tag);
     HZParameterAssert(adUnit);
     
     self = [super init];
     if (self) {
-        _tag = tag;
         _adUnit = adUnit;
         _auctionType = auctionType;
     }
@@ -40,14 +38,13 @@
         return NO;
     }
     HZAdInfo *other = object;
-    return [other.tag isEqualToString:self.tag]
-    && [other.adUnit isEqualToString:self.adUnit]
+    return [other.adUnit isEqualToString:self.adUnit]
     && other.auctionType == self.auctionType;
 }
 
 - (NSUInteger)hash
 {
-    return self.tag.hash ^ self.adUnit.hash ^ self.auctionType;
+    return self.adUnit.hash ^ self.auctionType;
 }
 
 - (instancetype)copyWithZone:(NSZone *)zone
@@ -59,8 +56,8 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"HZAdInfo - tag = %@ adUnit = %@ auctionType = %@",
-            self.tag,self.adUnit,NSStringFromHZAuctionType(self.auctionType)];
+    return [NSString stringWithFormat:@"HZAdInfo - adUnit = %@ auctionType = %@",
+            self.adUnit, NSStringFromHZAuctionType(self.auctionType)];
 }
 
 

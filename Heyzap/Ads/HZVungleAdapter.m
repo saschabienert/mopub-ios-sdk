@@ -44,7 +44,6 @@
     if (self) {
         self.forwardingDelegate = [HZAdapterDelegate new];
         self.forwardingDelegate.adapter = self;
-        [[HZVungleSDK sharedSDK] setDelegate:self.forwardingDelegate];
     }
     return self;
 }
@@ -62,6 +61,7 @@
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         [[self sharedInstance] startWithPubAppID:appID];
+        [[HZVungleSDK sharedSDK] setDelegate:adapter.forwardingDelegate];
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
@@ -101,14 +101,24 @@
     return YES;
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
-    return [self supportedAdFormats] & type && [[HZVungleSDK sharedSDK] isCachedAdAvailable];
+    BOOL adPlayable = NO;
+    
+    // in v.3.1.0 `isAdPlayable` is added, `isCachedAdAvailable` is deprecated
+    if ([[HZVungleSDK sharedSDK] respondsToSelector:@selector(isAdPlayable)]) {
+        adPlayable = [[HZVungleSDK sharedSDK] isAdPlayable];
+        
+    } else {
+        adPlayable = [[HZVungleSDK sharedSDK] isCachedAdAvailable];
+    }
+    
+    return [self supportedAdFormats] & type && adPlayable;
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType
@@ -123,14 +133,21 @@
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
-    [self.delegate adapterWillPlayAudio:self];
+    // setup options
+    NSMutableDictionary *vungleOptions = [[NSMutableDictionary alloc] init];
     
     if (type == HZAdTypeIncentivized) {
         self.isShowingIncentivized = YES;
-        NSString *const incentivizedKey = [[self class] vunglePlayAdOptionKeyIncentivized];;
-        [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:@{incentivizedKey: @1}];
-    } else {
-        [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:@{}];
+        
+        NSString *const incentivizedKey = [[self class] vunglePlayAdOptionKeyIncentivized];
+        vungleOptions[incentivizedKey] = @1;
+    }
+    
+    NSError *error;
+    [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:vungleOptions error:&error];
+    
+    if (error) {
+        HZELog(@"Could not display vungle ad. Error = %@", error);
     }
 }
 
@@ -142,6 +159,7 @@
 
 - (void)vungleSDKwillShowAd {
     [self.delegate adapterDidShowAd:self];
+    [self.delegate adapterWillPlayAudio:self]; // adapterWillPlayAudio has to be called AFTER adapterDidShowAd
 }
 
 - (void)vungleSDKwillCloseAdWithViewInfo:(NSDictionary*)viewInfo willPresentProductSheet:(BOOL)willPresentProductSheet
@@ -157,7 +175,6 @@
             [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
         }
     }
-    
     
     if ([viewInfo[@"didDownload"] boolValue]) {
         [self.delegate adapterWasClicked:self];
@@ -185,7 +202,7 @@
 }
 
 + (NSString *)vunglePlayAdOptionKeyIncentivized {
-    return hzLookupStringConstant(@"VunglePlayAdOptionKeyIncentivized") ?: @"incentivized";
+    return @"incentivized";
 }
 
 @end

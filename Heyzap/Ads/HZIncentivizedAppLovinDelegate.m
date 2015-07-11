@@ -11,8 +11,11 @@
 #import "HZAppLovinAdapter.h"
 #import "HZDispatch.h"
 
-/* Pointer to this char is used as a unique key for the state stored as an associated object on the HZALAd*/
+/** Pointer to this char is used as a unique key for the state stored as an associated object on the HZALAd*/
 static char adStatusKey;
+
+/** A pointer to this char is used as a unique key for storing whether we've sent an incentivized callback for a given HZALAd. */
+static char adHasSentIncentivizedCallbackKey;
 
 @interface HZAppLovinRewardedAdState:NSObject
 
@@ -67,12 +70,17 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
         return;
     }
     
-    state.playbackState = HZAppLovinRewardedAdPlaybackStateFinished;
+    if (!wasFullyWatched) {
+        state.validationState = HZAppLovinRewardedAdValidationStateFailed;
+    }
+    
+    state.playbackState = wasFullyWatched ? HZAppLovinRewardedAdPlaybackStateFinished : HZAppLovinRewardedAdPlaybackStateWontFinish;
     [self notifyDelegateIfApplicableForAd:ad withState:state];
 }
 
 #pragma mark - Success conditions from AppLovin
 
+// WARNING: AppLovin will send `rewardValidationRequestForAd:didSucceedWithResponse:` and then later `rewardValidationRequestForAd:didFailWithError:`. Search their rewarded video docs (https://www.applovin.com/integration#iosRewardedVids) for `kALErrorCodeIncentivizedUserClosedVideo`.
 - (void)rewardValidationRequestForAd:(HZALAd *)ad didSucceedWithResponse:(NSDictionary *)response {
     ensureMainQueue(^{
         [self rewardValidationResult:YES forAd:ad];
@@ -130,6 +138,17 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
     });
 }
 
+#pragma mark - Warnings about AppLovin Incentivized Callbacks
+
+// Success-then-Failure callbacks: Note that AppLovin will send `rewardValidationRequestForAd:didSucceedWithResponse:` followed by `rewardValidationRequestForAd:wasRejectedWithResponse:` if the user closes the incentivized video† (This is documented as correct behavior at https://www.applovin.com/integration#iosRewardedVids (search "kALErrorCodeIncentivizedUserClosedVideo")).
+// To handle this case, we check in `videoPlaybackEndedInAd:atPlaybackPercent:fullyWatched:` if `fullyWatched` is NO, and if so treat that as incentivized failure.
+// Since we get "reward success", "playback began", "playback ended", "reward failed" as the chain of callbacks, it can be tricky to prevent sending duplicate callbacks. To workaround this we use an associated object on the ad (see `hasAdSentCallback:`).
+
+// † You can get an X button to appear during an incentivized video by pressing the home button, then returning to the app.
+
+// Callback Ordering:: AppLovin's incentivized callbacks are validated over the network, and are on a different thread than the video success callbacks, so the order the callbacks arrive is non-deterministic.
+
+
 #pragma mark - Processing AppLovin callbacks
 
 - (void) rewardValidationResult:(BOOL)success forAd:(HZALAd *)ad {
@@ -146,18 +165,24 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
 }
 
 - (void) notifyDelegateIfApplicableForAd:(HZALAd *)ad withState:(HZAppLovinRewardedAdState *)state {
-    if(state.validationState == HZAppLovinRewardedAdValidationStateSuccessful && state.playbackState == HZAppLovinRewardedAdPlaybackStateFinished){
+    if (state.validationState == HZAppLovinRewardedAdValidationStateSuccessful && state.playbackState == HZAppLovinRewardedAdPlaybackStateFinished) {
         // only send completion message once the video is finished and the reward is validated
-        [self.delegate didCompleteIncentivized];
-    }else if(state.validationState == HZAppLovinRewardedAdValidationStateFailed){
+        [self sendIncentivizedCallbackForAd:ad incentivizedSuccess:YES];
+    } else if (state.validationState == HZAppLovinRewardedAdValidationStateFailed) {
         // immediately send failure message when validation fails
-        [self.delegate didFailToCompleteIncentivized];
+        [self sendIncentivizedCallbackForAd:ad incentivizedSuccess:NO];
     }
-    
-    // remove state from ad if there won't be any more messages to send about it
-    if(state.validationState != HZAppLovinRewardedAdValidationStateWaiting && state.playbackState != HZAppLovinRewardedAdPlaybackStateNotFinished){
-        [HZIncentivizedAppLovinDelegate setAdState:nil forAd:ad];
+}
+
+- (void)sendIncentivizedCallbackForAd:(HZALAd *)ad incentivizedSuccess:(BOOL)wasSuccessful {
+    if (![[self class] hasAdSentCallback:ad]) {
+        if (wasSuccessful) {
+            [self.delegate didCompleteIncentivized];
+        } else {
+            [self.delegate didFailToCompleteIncentivized];
+        }
     }
+    [[self class] setHasSentCallbackForAd:ad];
 }
 
 #pragma mark - Helper methods
@@ -168,6 +193,15 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
 
 + (void) setAdState:(HZAppLovinRewardedAdState *)state forAd:(HZALAd *)ad {
     objc_setAssociatedObject(ad, &adStatusKey, state, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
++ (BOOL)hasAdSentCallback:(HZALAd *)ad {
+    NSNumber *hasSentCallback = objc_getAssociatedObject(ad, &adHasSentIncentivizedCallbackKey);
+    return [hasSentCallback isEqual:@YES];
+}
+
++ (void)setHasSentCallbackForAd:(HZALAd *)ad {
+    objc_setAssociatedObject(ad, &adHasSentIncentivizedCallbackKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

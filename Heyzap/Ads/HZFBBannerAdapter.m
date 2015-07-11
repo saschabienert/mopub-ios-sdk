@@ -26,16 +26,10 @@
     if (self) {
         self.parentAdapter = parentAdapter;
         self.bannerReportingDelegate = reportingDelegate;
-        HZFBAdSize adSize = options.internalFacebookAdSize;
         
-        _adView = [[HZFBAdView alloc] initWithPlacementID:adUnitId adSize:adSize rootViewController:options.presentingViewController];
+        _adView = [[HZFBAdView alloc] initWithPlacementID:adUnitId adSize:options.internalFacebookAdSize rootViewController:options.presentingViewController];
         
         _adView.delegate = self;
-        
-        // Hack to get bottom banners to work (the frame height of the banner is required by `HZBannerAd` -> `placeBannerInView`)
-        // The frame of FBAdView was set to `CGRectZero` since 4.1.0 (an explicit height was set before 4.1.0)
-        self.mediatedBanner.frame = CGRectMake(0, 0, 0, adSize.size.height);
-        
         [_adView loadAd];
     }
     return self;
@@ -48,7 +42,7 @@
 #pragma mark - HBFBAdViewDelegate Protocol
 - (void)adViewDidClick:(HZFBAdView *)adView {
     // Report click
-    [self.bannerReportingDelegate bannerAdapter:self wasClickedForSession:self.session];
+    [self.bannerReportingDelegate bannerAdapter:self wasClickedWithEventReporter:self.eventReporter];
     [self.bannerInteractionDelegate userDidClick];
     [self.bannerInteractionDelegate willPresentModalView];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: HZNetworkFacebook];
@@ -72,7 +66,7 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: HZNetworkFacebook];
 }
 - (void)adViewWillLogImpression:(HZFBAdView *)adView {
-    [self.bannerReportingDelegate bannerAdapter:self hadImpressionForSession:self.session];
+    [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: @"banner-logging_impression" forNetwork: HZNetworkFacebook];
 }
 

@@ -36,15 +36,6 @@
     return adapter;
 }
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        [HZChartboost setShouldPrefetchVideoContent:YES];
-    }
-    return self;
-}
-
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -67,6 +58,7 @@
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         [[self sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
+        [HZChartboost setShouldPrefetchVideoContent:YES];
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
     }
     
@@ -92,7 +84,7 @@
     return nil; // Chartboost doesn't provide the version.
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     switch (type) {
         case HZAdTypeInterstitial: {
@@ -110,7 +102,7 @@
     }
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     switch (type) {
         case HZAdTypeIncentivized: {

@@ -46,6 +46,7 @@
 
 #import "HZFacebookAdapter.h"
 #import "HZAdMobAdapter.h"
+#import "HZHeyzapExchangeAdapter.h"
 
 @interface HZTestActivityNetworkViewController() <HZMediationAdapterDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, HZBannerAdDelegate>
 
@@ -242,8 +243,8 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void) fetchAd {
     [self appendStringToDebugLog:@"Fetching ad (may take up to 10 seconds)"];
-    NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
-    [[HeyzapMediation sharedInstance] fetchForAdType:self.currentAdType tag:[HeyzapAds defaultTagName] additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
+    NSDictionary *additionalParams = @{ @"network": [[self.network class] name] };
+    [[HeyzapMediation sharedInstance] fetchForAdType:self.currentAdType additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
         if (error) {
             [self appendStringToDebugLog:@"Fetch failed"];
         } else {
@@ -256,13 +257,21 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void) showAd {
     [self appendStringToDebugLog:@"Showing ad"];
-    NSDictionary *additionalParams = @{ @"networks": [[self.network class] name] };
+    NSDictionary *additionalParams = @{ @"network": [[self.network class] name] };
 
     HZShowOptions *options = [HZShowOptions new];
     options.viewController = self;
     options.completion = ^(BOOL result, NSError *error) {
         if (error) {
-            [self appendStringToDebugLog:@"Show failed"];
+            NSString *const errorMessage = ({
+                NSString *msg = @"Show failed";
+                if (error.localizedDescription) {
+                    msg = [msg stringByAppendingFormat:@": %@",error.localizedDescription];
+                }
+                msg;
+            });
+            
+            [self appendStringToDebugLog:errorMessage];
         } else {
             [self appendStringToDebugLog:@"Show succeeded"];
         }
@@ -280,35 +289,46 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 }
 
 - (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"did show ad"];
     [[HeyzapMediation sharedInstance] adapterDidShowAd:adapter];
     
 }
 
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"clicked"];
     [[HeyzapMediation sharedInstance] adapterWasClicked:adapter];
 }
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"dismissed"];
     [self changeShowButtonColor];
     [[HeyzapMediation sharedInstance] adapterDidDismissAd:adapter];
 }
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"incentivized complete"];
     [self changeShowButtonColor];
     [[HeyzapMediation sharedInstance] adapterDidCompleteIncentivizedAd:adapter];
 }
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"incentivized failed"];
     [self changeShowButtonColor];
     [[HeyzapMediation sharedInstance] adapterDidFailToCompleteIncentivizedAd:adapter];
 }
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"will play audio"];
     [[HeyzapMediation sharedInstance] adapterWillPlayAudio:adapter];
 }
 
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter {
+    [self logAdCallback:@"finished playing audio"];
     [[HeyzapMediation sharedInstance] adapterDidFinishPlayingAudio:adapter];
+}
+
+- (void)logAdCallback:(NSString *)callback {
+    [self appendStringToDebugLog:[@"Ad Callback: " stringByAppendingString:callback]];
 }
 
 #pragma mark - View creation utility methods
@@ -632,7 +652,6 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     if (pickerView == self.bannerPositionPickerView) {
         return 2;
     } else if (pickerView == self.bannerSizePickerView) {
-        NSLog(@"banner sizes are = %@",[self bannerSizes]);
         return [[self bannerSizes] count];
     } else {
         NSLog(@"Unknown picker view!!");
@@ -669,8 +688,6 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 }
 
 - (void)bannerPositionPickerDone:(UIBarButtonItem *)sender {
-    NSLog(@"Banner position done");
-    NSLog(@"Banner position text field = %@",self.bannerPositionTextField);
     [self.bannerPositionTextField resignFirstResponder];
 }
 

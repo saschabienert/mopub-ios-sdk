@@ -41,24 +41,21 @@
 
 #pragma mark - Queueing Behavior
 
-- (HZAdModel *)peekAtAdForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType
+- (HZAdModel *)peekAtAdForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType
 {
-    tag = [HZAdModel normalizeTag: tag];
-    HZAdInfo *key = [[HZAdInfo alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
+    HZAdInfo *key = [[HZAdInfo alloc] initWithAdUnit:adUnit auctionType:auctionType];
     HZQueue *queue =  self.adDict[key];
     return [queue peekTail];
 }
 
-- (HZAdModel *) popAdForAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType {
-    tag = [HZAdModel normalizeTag: tag];
-    HZAdInfo *key = [[HZAdInfo alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
+- (HZAdModel *) popAdForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
+    HZAdInfo *key = [[HZAdInfo alloc] initWithAdUnit:adUnit auctionType:auctionType];
     HZQueue *queue =  self.adDict[key];
     return [queue dequeue];
 }
 
-- (void) pushAd:(HZAdModel *)ad forAdUnit:(NSString *)adUnit tag:(NSString *)tag auctionType:(HZAuctionType)auctionType {
-    tag = [HZAdModel normalizeTag: tag];
-    HZAdInfo *key = [[HZAdInfo alloc] initWithTag:tag adUnit:adUnit auctionType:auctionType];
+- (void) pushAd:(HZAdModel *)ad forAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
+    HZAdInfo *key = [[HZAdInfo alloc] initWithAdUnit:adUnit auctionType:auctionType];
     
     HZQueue *const queue = ({
         HZQueue *maybeQueue = self.adDict[key];

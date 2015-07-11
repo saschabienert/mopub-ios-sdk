@@ -28,8 +28,13 @@
 @property (nonatomic) NSTimeInterval playbackTime;
 @property (nonatomic) NSTimeInterval videoDuration;
 
+@property (nonatomic, readonly) MPMoviePlayerController *player;
+
 - (BOOL) setVideoURL: (NSURL *) url;
 - (void) pause;
 - (void) play;
+
+// use this method to revert the video view back to a clickable video with no install button and no fading controls
+- (void) shouldUseClickableVideoConfiguration;
 
 @end

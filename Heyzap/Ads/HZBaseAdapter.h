@@ -59,11 +59,16 @@
 
 @property (nonatomic, strong) HZAdapterDelegate *forwardingDelegate;
 
+
+
 + (instancetype)sharedInstance;
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag;
+- (void)prefetchForType:(HZAdType)type;
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag;
+- (BOOL)hasAdForType:(HZAdType)type;
+
+- (NSNumber *) latestMediationScoreForAdType:(HZAdType) adType;
+- (void) setLatestMediationScore:(NSNumber *)score forAdType:(HZAdType)adType;
 
 /**
  *  The adapter should show an ad for the given ad type.
@@ -90,6 +95,13 @@
 
 + (BOOL)isSDKAvailable;
 
+/**
+ *  Enable the adapter with the given adapter-specific credentials.
+ *
+ * @param credentials The credentials necessary for the adapter to start the SDK.
+ *
+ *  Note: do all SDK-specific initialization here, not in init or sharedInstance. The adapter instance can exist before the SDK is enabled.
+ */
 + (NSError *)enableWithCredentials:(NSDictionary *)credentials;
 
 #pragma mark - Banners
@@ -122,5 +134,11 @@
 + (NSArray *)testActivityAdapters;
 
 + (BOOL)isHeyzapAdapter;
+
+/**
+ *  Subclasses can override.
+ *  @return The amount of time to wait, in seconds, between asking if this adapter has an ad. Increase this value for adapters/SDKs whose `isAvailable` calls are expensive, and decrease it for adapters/SDKs whose calls are inexpensive.
+ */
++ (NSTimeInterval)isAvailablePollInterval;
 
 @end

@@ -112,26 +112,29 @@ static HZBannerAd *HZCurrentBannerAd = nil;
 
 extern "C" {
     void hz_ads_start_app(const char *publisher_id, HZAdOptions flags) {
-        NSString *publisherID = [NSString stringWithUTF8String: publisher_id];
-        
-        [HeyzapAds startWithPublisherID: publisherID andOptions: flags andFramework: HZ_FRAMEWORK_NAME];
-        
-        HZIncentivizedDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INCENTIVIZED_KLASS];
-        [HZIncentivizedAd setDelegate: HZIncentivizedDelegate];
-        
-        HZInterstitialDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INTERSTITIAL_KLASS];
-        [HZInterstitialAd setDelegate: HZInterstitialDelegate];
-        
-        HZVideoDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_VIDEO_KLASS];
-        [HZVideoAd setDelegate: HZVideoDelegate];
-        
-        HZBannerDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_BANNER_KLASS];
-
-        [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
-            NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", network, callback];
-            NSString *klassName = @"HeyzapAds";
-            UnitySendMessage([klassName UTF8String], "setNetworkCallbackMessage", [unityMessage UTF8String]);
-        }];
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            NSString *publisherID = [NSString stringWithUTF8String: publisher_id];
+            
+            [HeyzapAds startWithPublisherID: publisherID andOptions: flags andFramework: HZ_FRAMEWORK_NAME];
+            
+            HZIncentivizedDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INCENTIVIZED_KLASS];
+            [HZIncentivizedAd setDelegate: HZIncentivizedDelegate];
+            
+            HZInterstitialDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_INTERSTITIAL_KLASS];
+            [HZInterstitialAd setDelegate: HZInterstitialDelegate];
+            
+            HZVideoDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_VIDEO_KLASS];
+            [HZVideoAd setDelegate: HZVideoDelegate];
+            
+            HZBannerDelegate = [[HeyzapUnityAdDelegate alloc] initWithKlassName: HZ_BANNER_KLASS];
+            
+            [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
+                NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", network, callback];
+                NSString *klassName = @"HeyzapAds";
+                UnitySendMessage([klassName UTF8String], "setNetworkCallbackMessage", [unityMessage UTF8String]);
+            }];
+        });
     }
     
     void hz_ads_show_interstitial(const char *tag) {

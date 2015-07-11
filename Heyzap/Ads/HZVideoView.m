@@ -1,5 +1,5 @@
-	//
-//  HZVideoPopup.m
+//
+//  HZVideoView.m
 //  Heyzap
 //
 //  Created by Daniel Rhodes on 12/9/13.
@@ -12,15 +12,20 @@
 #import "HZLog.h"
 
 @interface HZVideoView()
-@property (nonatomic) MPMoviePlayerController *player;
+
 @property (nonatomic) UIInterfaceOrientation currOrientation;
 @property (nonatomic) BOOL didFinishVideo;
 @property (nonatomic) NSTimer *timer;
 @property (nonatomic) BOOL durationAvailableFireImmediately;
 @property (nonatomic) NSTimer *animationTimer;
 @property (nonatomic) BOOL timerDidFireAlready;
+@property (nonatomic) BOOL videoClickEnabled;
+
+@property (nonatomic) BOOL skipButtonTimeIntervalValidated;
 
 #define kHZVideoViewAutoFadeOutControlsTime 2
+#define kHZVideoViewMinumumSkippableSeconds 10 // minimum number of seconds a skip button should save a user in order for the button to be shown
+#define kHZVideoViewOverrideSpammySkipTimesSeconds 5 // how many seconds to set the skip button to if the time is determined to be spammy
 
 @end
 
@@ -94,7 +99,7 @@
     [self.player stop];
     [self.player.view removeFromSuperview];
 
-    self.player = nil;
+    _player = nil;
     _controlView = nil;
     self.actionDelegate = nil;
     
@@ -127,7 +132,11 @@
 }
 
 - (void) onTap: (id) sender {
-    [self animateControls: !self.showingAllVideoControls];
+    if(self.videoClickEnabled){
+        [self onInstall:nil];
+    }else{
+        [self animateControls: !self.showingAllVideoControls];
+    }
 }
 
 - (void) onHide: (id) sender {
@@ -175,8 +184,8 @@
  *  This method is called in order to automatically fade out video controls after a certain time period
  */
 - (void) animationTimerDidFire: (id) sender {
-    // fade out video controls after this timer fires, if they're still showing.
-    if(!self.showingAllVideoControls){
+    // fade out video controls after this timer fires, if they're still showing & we're using the new fading controls
+    if(!self.showingAllVideoControls || self.videoClickEnabled){
         return;
     }
     
@@ -244,7 +253,12 @@
 
 - (void) setSkipButtonEnabled:(BOOL)value {
     _skipButtonEnabled = value;
-    self.controlView.skipButton.hidden = !value;
+    [self updateSkipButtonHiddenStatus];
+}
+
+- (void) updateSkipButtonHiddenStatus {
+    BOOL shouldBeHidden = !(self.skipButtonEnabled && self.skipButtonTimeIntervalValidated);
+    self.controlView.skipButton.hidden = shouldBeHidden;
 }
 
 - (void) setInstallButtonEnabled:(BOOL)value {
@@ -260,6 +274,23 @@
 #pragma mark - Video Notifications
 
 - (void) mediaPlayerDurationAvailable: (id) notification {
+    if([self isSkipTimeSpammy:self.skipButtonTimeInterval]) {
+        //duration and skip interval are almost the same, or duration is shorter than skip interval. don't be spammy and just default the skip time to something reasonable
+        HZDLog(@"HZVideoView overriding a spammy skip button. Ad length: %f, skip interval: %f", self.player.duration, self.skipButtonTimeInterval);
+        
+        NSTimeInterval newSkipButtonTimeInterval = kHZVideoViewOverrideSpammySkipTimesSeconds;
+        if([self isSkipTimeSpammy:newSkipButtonTimeInterval]){
+            //really short video. just let them skip
+            self.skipButtonTimeInterval = 0;
+            HZDLog(@"HZVideoView video too short for a skip interval.");
+        } else {
+            self.skipButtonTimeInterval = newSkipButtonTimeInterval;
+        }
+    }
+    
+    self.skipButtonTimeIntervalValidated = YES;
+    [self updateSkipButtonHiddenStatus];
+    
     // show ad timer as soon as possible. if our timer is initialized, fire it right away to show ad timer.
     // if our timer isn't initialized yet, remember to fire the timer event immediately when it is.
     if(self.timer == nil) {
@@ -388,5 +419,21 @@
     [self.player play];
 }
 
+- (void) shouldUseClickableVideoConfiguration {
+    self.videoClickEnabled = YES;
+}
+
+#pragma mark - Utilities
+- (BOOL) isSkipTimeSpammy:(NSTimeInterval) skipTime {
+    if(skipTime <= 0) {
+        return NO;
+    }
+    
+    if(ABS(self.player.duration - skipTime) <= kHZVideoViewMinumumSkippableSeconds || self.player.duration < skipTime) {
+        return YES;
+    }
+    
+    return NO;
+}
 
 @end

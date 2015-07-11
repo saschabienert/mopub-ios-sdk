@@ -21,6 +21,7 @@
 
 NSValue *hzAdMobBannerSizeValue(HZAdMobBannerSize size);
 NSValue *hzFacebookBannerSizeValue(HZFacebookBannerSize size);
+
 HZAdMobBannerSize hzAdMobBannerSizeFromValue(NSValue *value);
 HZFacebookBannerSize hzFacebookBannerSizeFromValue(NSValue *value);
 

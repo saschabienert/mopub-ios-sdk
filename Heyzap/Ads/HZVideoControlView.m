@@ -91,11 +91,17 @@
         _installButton.layer.cornerRadius = 2;
         _installButton.layer.borderWidth = 1;
         _installButton.layer.borderColor = [[UIColor whiteColor] CGColor];
+        _installButton.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3f];
         
         // make the hit area of the button larger than the button
         [_installButton setExtendedHitAreaMarginX:40];
         [_installButton setExtendedHitAreaMarginY:40];
         [self addSubview: _installButton];
+        
+        //defaults
+        _skipNowText = @"Skip ▶︎";
+        _skipLaterFormatText = @"Skip in %is ▶︎";
+        _installButtonText = @"Install Now";
     }
     return self;
 }

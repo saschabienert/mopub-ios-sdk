@@ -15,12 +15,13 @@ target :MediationTestApp, :exclusive => true do
   pod 'ChartboostSDK', :inhibit_warnings => true # Maintained by Chartboost
   pod 'AdColony' # Maintained by AdColony
 
-  pod 'Google-AdMob-Ads-SDK' # In Cocoapods, but outdated. Vendored by Heyzap
+  pod 'GoogleMobileAds' # In Cocoapods, but outdated. Vendored by Heyzap
   pod 'VungleAdvertiserSDK' # In Cocoapods, but outdated. Vendored by Heyzap
   pod 'AppLovin' # Vendored by Heyzap
   pod 'UnityAds' # Vendored by Heyzap
   pod 'FacebookAudienceNetwork' # Vendored by Heyzap
   pod 'HyprMX' #Vendored by Heyzap
+  pod 'Masonry'
 end
 
 target :"Ads Tests", :exclusive => true do

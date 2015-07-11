@@ -41,7 +41,6 @@
     if (self) {
         self.forwardingDelegate = [HZAdapterDelegate new];
         self.forwardingDelegate.adapter = self;
-        [[HZUnityAds sharedInstance] setDelegate:self.forwardingDelegate];
     }
     return self;
 }
@@ -91,6 +90,7 @@
     CHECK_CREDENTIALS_ERROR(error);
     
     HZUnityAdsAdapter *adapter = [self sharedInstance];
+    
     if (!adapter.credentials) {
         adapter.credentials = credentials;
         [[self sharedInstance] setupUnityAdsWithAppID:appID
@@ -119,6 +119,7 @@ NSString * const kHZNetworkName = @"mobile";
         [[HZUnityAds sharedInstance] setNetworks:kHZNetworkName];
     }
     [[HZUnityAds sharedInstance] startWithGameId:appID andViewController:vc];
+    [[HZUnityAds sharedInstance] setDelegate:self.forwardingDelegate];
     
     //TODO: set view controller
 }
@@ -132,7 +133,7 @@ NSString * const kHZNetworkName = @"mobile";
     return YES;
 }
 
-- (BOOL)hasAdForType:(HZAdType)type tag:(NSString *)tag
+- (BOOL)hasAdForType:(HZAdType)type
 {
     if (![[[UIApplication sharedApplication] keyWindow] rootViewController]) {
         // This is important so we should always NSLog this.
@@ -150,7 +151,7 @@ NSString * const kHZNetworkName = @"mobile";
     }
 }
 
-- (void)prefetchForType:(HZAdType)type tag:(NSString *)tag
+- (void)prefetchForType:(HZAdType)type
 {
     // AdColony auto-prefetches
 }
@@ -170,6 +171,10 @@ NSString * const kHZNetworkName = @"mobile";
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
 }
 
++ (NSTimeInterval)isAvailablePollInterval {
+    // UnityAds uses expensive I/O operations to check if an ad is available.
+    return 3;
+}
 #pragma mark - AdColony Delegation
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol
