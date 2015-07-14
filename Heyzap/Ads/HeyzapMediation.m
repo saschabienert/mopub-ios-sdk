@@ -484,6 +484,11 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter
 {
     const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
+    
+    if (self.currentShownAd) {
+        [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didHideAdWithTag:self.currentShownAd.tag];
+    }
+    
     self.currentShownAd = nil;
     [self autoFetchAdType:previousAdType];
 }
