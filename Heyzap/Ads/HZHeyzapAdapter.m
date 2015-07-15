@@ -28,7 +28,6 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         proxy = [[HZHeyzapAdapter alloc] init];
-        [[HZAdsManager sharedManager] onStart];
     });
     return proxy;
 }

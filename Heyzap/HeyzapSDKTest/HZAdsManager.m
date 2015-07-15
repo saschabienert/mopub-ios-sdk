@@ -61,14 +61,8 @@ static BOOL hzAdsIsEnabled = NO;
 #pragma mark - Run Initial Tasks
 
 - (void) onStart {
-    
     if (![self isOptionEnabled:HZAdOptionsDisableAutomaticIAPRecording]) {
         [[SKPaymentQueue defaultQueue] addTransactionObserver:[HZPaymentTransactionObserver sharedInstance]];
-    }
-    
-    if (![self isOptionEnabled: HZAdOptionsInstallTrackingOnly]
-        && ![self isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
-        [HZInterstitialAd fetch];
     }
 }
 
