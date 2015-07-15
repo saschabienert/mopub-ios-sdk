@@ -70,15 +70,15 @@ return nil; \
 - (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork {
     HZParameterAssert(showOptions);
     
-    NSArray *networksForFetch = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
-        if (forcedNetwork) {
-            return forcedNetwork == datum.adapterClass;
-        } else {
-            return YES;
-        }
+    NSArray *const networksForFetch = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
+        return forcedNetwork ? forcedNetwork == datum.adapterClass : YES;
     });
     
-    NSArray *matching = hzFilter(networksForFetch, ^BOOL(HZMediationLoadData *datum) {
+    NSArray *const supportsAdType = hzFilter(networksForFetch, ^BOOL(HZMediationLoadData *datum) {
+        return [[datum.adapterClass sharedInstance] supportsAdType:adType];
+    });
+    
+    NSArray *const matching = hzFilter(supportsAdType, ^BOOL(HZMediationLoadData *datum) {
         return hzCreativeTypeSetContainsAdType(datum.creativeTypeSet, adType);
     });
     
