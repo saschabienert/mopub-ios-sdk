@@ -114,16 +114,16 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
         [HeyzapMediation forceOnlyHeyzapSDK];
     }
     
-    [[HeyzapMediation sharedInstance] start];
-    
-    if (framework && ![framework isEqualToString:@""]) {
-        [[HZAdsManager sharedManager] setFramework:framework];
-    }
-        
     [[HZAdsManager sharedManager] setPublisherID: publisherID];
     [[HZAdsManager sharedManager] setOptions: options];
     [[HZAdsManager sharedManager] setIsDebuggable: NO];
+    if (framework && ![framework isEqualToString:@""]) {
+        [[HZAdsManager sharedManager] setFramework:framework];
+    }
+    
     [[HZAdsManager sharedManager] onStart];
+    
+    [[HeyzapMediation sharedInstance] start];
 }
 
 + (BOOL) isStarted {

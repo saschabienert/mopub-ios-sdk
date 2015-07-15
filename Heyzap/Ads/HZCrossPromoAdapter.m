@@ -25,7 +25,6 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         adapter = [[HZCrossPromoAdapter alloc] init];
-        [[HZAdsManager sharedManager] onStart];
     });
     return adapter;
 }
