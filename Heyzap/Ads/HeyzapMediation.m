@@ -89,6 +89,8 @@
 @property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
 @property (nonatomic) NSTimeInterval IAPAdDisableTime;
 
++ (NSError *)wrapError:(NSError *)underlyingError;
+
 @end
 
 @implementation HeyzapMediation
@@ -272,7 +274,7 @@ NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
 NSString * const kHZAdapterKey = @"name";
 NSString * const kHZDataKey = @"data";
 
-unsigned long long const adapterDidShowAdTimeout = 1.5;
+unsigned long long const adapterDidShowAdTimeout = 3;
 
 #pragma mark - Ads
 
@@ -454,16 +456,16 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
 
 - (void)checkIfAdapterShowedAd:(HZBaseAdapter *)adapter showOptions:(HZShowOptions *)showOptions {
     if (self.currentShownAd && self.currentShownAd.adState == HZAdStateRequestedShow) {
-        HZMediationEventReporter *reporter = self.currentShownAd.eventReporter;
-        NSError *showError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:
+        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:
                               @{
-                                NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Adapter %@ was asked to show an ad, but we didn't Heyzap didn't get a callback from that network reporting that it did so within %llu seconds. Assuming it failed and sending a didFail callback",adapter.name, adapterDidShowAdTimeout]}];
+                                NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Network %@ was asked to show an ad, but it didn't; Heyzap didn't get a callback from that network reporting that it did so within %llu seconds. Assuming it failed and sending a didFail callback", adapter.name, adapterDidShowAdTimeout]
+                                }];
         
         // Assume if we haven't shown yet, the show is broken and we should just log an error.
+        if (showOptions.completion) { showOptions.completion(NO,error); }
+        [self adapterDidFailToShowAd:adapter withError:error];
+        
         const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
-        self.currentShownAd = nil;
-        [[self delegateForAdType:reporter.adType] didFailToShowAdWithTag:reporter.tag andError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{}]];
-        if (showOptions.completion) { showOptions.completion(NO,showError); }
         [self autoFetchAdType:previousAdType];
     }
 }
@@ -499,10 +501,21 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] willStartAudio];
     }
 }
+
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter
 {
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didFinishAudio];
+    }
+}
+
+- (void)adapterDidFailToShowAd:(HZBaseAdapter *)adapter withError:(NSError *)underlyingError {
+    if (self.currentShownAd) {
+        NSError *error = [[self class] wrapError:underlyingError];
+        HZMediationEventReporter *reporter = self.currentShownAd.eventReporter;
+        
+        [[self delegateForAdType:reporter.adType] didFailToShowAdWithTag:reporter.tag andError:error];
+        self.currentShownAd = nil;
     }
 }
 
@@ -571,6 +584,16 @@ static BOOL forceOnlyHeyzapSDK = NO;
 + (NSSet *)availableNonHeyzapAdapters
 {
     return [self availableAdaptersWithHeyzap:NO];
+}
+
++ (NSError *)wrapError:(NSError *)underlyingError {
+    if ([[underlyingError domain] isEqualToString:kHZMediationDomain]) {
+        return underlyingError;
+        
+    } else {
+        NSDictionary *userInfo = underlyingError ? @{ NSUnderlyingErrorKey: underlyingError } : nil;
+        return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
+    }
 }
 
 #pragma mark - Setters/Getters for delegates

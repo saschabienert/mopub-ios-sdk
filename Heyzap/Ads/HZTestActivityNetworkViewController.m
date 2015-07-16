@@ -327,6 +327,13 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     [[HeyzapMediation sharedInstance] adapterDidFinishPlayingAudio:adapter];
 }
 
+- (void)adapterDidFailToShowAd:(HZBaseAdapter *)adapter withError:(NSError *)underlyingError {
+    [[HeyzapMediation sharedInstance] adapterDidFailToShowAd:adapter withError:underlyingError];
+    
+    [self appendStringToDebugLog:@"Show Failed"];
+    [self changeShowButtonColor];
+}
+
 - (void)logAdCallback:(NSString *)callback {
     [self appendStringToDebugLog:[@"Ad Callback: " stringByAppendingString:callback]];
 }

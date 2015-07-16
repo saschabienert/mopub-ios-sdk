@@ -39,6 +39,8 @@
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter;
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter;
 
+- (void)adapterDidFailToShowAd:(HZBaseAdapter *)adapter withError: (NSError *)underlyingError;
+
 @end
 
 /**
