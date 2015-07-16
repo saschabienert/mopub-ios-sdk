@@ -75,7 +75,7 @@ return nil; \
     });
     
     NSArray *const supportsAdType = hzFilter(networksForFetch, ^BOOL(HZMediationLoadData *datum) {
-        return [[datum.adapterClass sharedInstance] supportsAdType:adType];
+        return [((HZBaseAdapter *)[datum.adapterClass sharedInstance]) supportsAdType:adType];
     });
     
     NSArray *const matching = hzFilter(supportsAdType, ^BOOL(HZMediationLoadData *datum) {
