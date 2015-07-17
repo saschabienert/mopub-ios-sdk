@@ -173,28 +173,30 @@
             [self.currentIncentivizedAd showOver:[[UIApplication sharedApplication] keyWindow]
                                        andNotify:self.incentivizedDelegate];
         } else {
-            NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-            NSMutableString *errorDescription = [NSMutableString stringWithString:@"Unable to load ad from applovin."];
-            
-            if (self.currentIncentivizedAd && ![self.currentIncentivizedAd isReadyForDisplay]) {
-                [errorDescription appendString:@"  Please call fetch first before showing an Ad, or remove the HZAdOptionsDisableAutoPrefetching option if it's set."];
-            }
-            
-            userInfo[NSLocalizedDescriptionKey] = errorDescription;
-            
-            if (self.incentivizedError) {
-                userInfo[NSUnderlyingErrorKey] = self.incentivizedError;
-            }
-            
-            NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
-            [self.delegate adapterDidFailToShowAd:self withError:error];
+            [self appLovinFailedToShowWithUnderlyingError:self.incentivizedError];
         }
     } else {
         HZALInterstitialAd *interstitial = [[HZALInterstitialAd alloc] initInterstitialAdWithSdk:self.sdk];
         interstitial.adDisplayDelegate = self.interstitialDelegate;
         interstitial.adVideoPlaybackDelegate = self.interstitialDelegate;
-        [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
+        
+        if ([interstitial isReadyForDisplay]) {
+            [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
+        } else {
+            [self appLovinFailedToShowWithUnderlyingError:self.interstitialError];
+        }
     }
+}
+
+- (void)appLovinFailedToShowWithUnderlyingError:(NSError *)underlyingError {
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+    userInfo[NSLocalizedDescriptionKey] = @"Unable to load ad from AppLovin.";
+    
+    if (underlyingError) {
+        userInfo[NSUnderlyingErrorKey] =underlyingError;
+    }
+    
+    [self.delegate adapterDidFailToShowAd:self withError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo]];
 }
 
 #pragma mark - AppLovinDelegateReceiver
