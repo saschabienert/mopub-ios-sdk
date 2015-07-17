@@ -36,7 +36,7 @@
     
     if (forcedNetwork) {
         preferredMediatorList = hzFilterOrderedSet(preferredMediatorList, ^BOOL(HZBaseAdapter *adapter) {
-            return adapter == forcedNetwork;
+            return [adapter isKindOfClass:forcedNetwork];
         });
     }
         
