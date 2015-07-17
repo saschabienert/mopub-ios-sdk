@@ -232,10 +232,6 @@ NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
     });
 }
 
-- (void)didFailStartRequest {
-    self.startStatus = HZMediationStartStatusFailure;
-}
-
 - (void)fetchForAdType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion
 {
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.

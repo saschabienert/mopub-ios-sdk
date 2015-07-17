@@ -86,7 +86,6 @@ const NSTimeInterval maxStartDelay     = 300;
             [self giveStartDictionaryToDelegate:json fromCache:NO];
             
         } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-            [self.startingDelegate didFailStartRequest];
             HZELog(@"Error! Failed to get networks from Heyzap. Retrying in %g seconds. Error = %@,",self.retryStartDelay, error);
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.retryStartDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 self.retryStartDelay *= 2;
