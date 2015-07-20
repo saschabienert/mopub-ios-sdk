@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HZShowOptions.h"
 
 @class HZBaseAdapter;
 @class HZMediationEventReporter;
@@ -22,7 +23,8 @@ typedef NS_ENUM(NSUInteger, HZAdState) {
 @property (nonatomic, readonly) NSString *tag;
 @property (nonatomic, readonly) HZBaseAdapter *adapter;
 @property (nonatomic) HZAdState adState; // Mutable
+@property (nonatomic, readonly) HZShowOptions *showOptions;
 
-- (instancetype)initWithEventReporter:(HZMediationEventReporter *)eventReporter tag:(NSString *)tag adapter:(HZBaseAdapter *)adapter;
+- (instancetype)initWithEventReporter:(HZMediationEventReporter *)eventReporter adapter:(HZBaseAdapter *)adapter withOptions:(HZShowOptions *)options;
 
 @end
