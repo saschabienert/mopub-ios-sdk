@@ -89,6 +89,8 @@
 @property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
 @property (nonatomic) NSTimeInterval IAPAdDisableTime;
 
+- (void)sendShowFailureMessagesForAdType:(HZAdType)adType options:(HZShowOptions *)options error:(NSError *)underlyingError;
+
 @end
 
 @implementation HeyzapMediation
@@ -268,7 +270,7 @@ NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
 NSString * const kHZAdapterKey = @"name";
 NSString * const kHZDataKey = @"data";
 
-unsigned long long const adapterDidShowAdTimeout = 1.5;
+unsigned long long const adapterDidShowAdTimeout = 3;
 
 #pragma mark - Ads
 
@@ -331,13 +333,13 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     [eventReporter reportFetchWithSuccessfulAdapter:chosenAdapter];
     if (!chosenAdapter) {
         // TODO: make that error message prettier.
-        NSString *const errorMessage = [NSString stringWithFormat:@"No ad network had an ad to show. Ad networks we checked were: %@",adapters];
+        NSString *const errorMessage = [NSString stringWithFormat:@"No ad network had an ad to show. Ad networks we checked were: %@", adapters];
         NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: errorMessage}];
         [self sendShowFailureMessagesForAdType:adType options:options error:error];
         return;
     }
     
-    self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithEventReporter:eventReporter tag:options.tag adapter:chosenAdapter];
+    self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithEventReporter:eventReporter adapter:chosenAdapter options:options];
     
     /// Notify dependent objects of a show
     if (adType == HZAdTypeInterstitial && [chosenAdapter isVideoOnlyNetwork]) {
@@ -350,7 +352,7 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     
     /// Check if the adapter has responded yet.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(adapterDidShowAdTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self checkIfAdapterShowedAd:chosenAdapter showOptions:options];
+        [self checkIfAdapterShowedAd:chosenAdapter];
     });
 }
 
@@ -391,10 +393,24 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     return nil;
 }
 
-- (void)sendShowFailureMessagesForAdType:(HZAdType)adType options:(HZShowOptions *)options error:(NSError *)error {
-    HZELog(@"Error showing ad = %@",error);
+- (void)sendShowFailureMessagesForAdType:(HZAdType)adType options:(HZShowOptions *)options error:(NSError *)underlyingError {
+    NSError *error;
+    
+    if ([[underlyingError domain] isEqualToString:kHZMediationDomain]) {
+        error = underlyingError;
+        
+    } else {
+        NSDictionary *userInfo = underlyingError ? @{ NSUnderlyingErrorKey: underlyingError } : nil;
+        error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
+    }
+    
+    HZELog(@"Error showing ad = %@", error);
+    
+    if ([options completion]) {
+        options.completion(NO, error);
+    }
+    
     [[self delegateForAdType:adType] didFailToShowAdWithTag:options.tag andError:error];
-    if (options.completion) { options.completion(NO,error); }
 }
 
 #pragma mark - Querying adapters
@@ -448,18 +464,17 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     }
 }
 
-- (void)checkIfAdapterShowedAd:(HZBaseAdapter *)adapter showOptions:(HZShowOptions *)showOptions {
+- (void)checkIfAdapterShowedAd:(HZBaseAdapter *)adapter {
     if (self.currentShownAd && self.currentShownAd.adState == HZAdStateRequestedShow) {
-        HZMediationEventReporter *reporter = self.currentShownAd.eventReporter;
-        NSError *showError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:
+        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:
                               @{
-                                NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Adapter %@ was asked to show an ad, but we didn't Heyzap didn't get a callback from that network reporting that it did so within %llu seconds. Assuming it failed and sending a didFail callback",adapter.name, adapterDidShowAdTimeout]}];
+                                NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Network %@ was asked to show an ad, but it didn't; Heyzap didn't get a callback from that network reporting that it did so within %llu seconds. Assuming it failed and sending a didFail callback", adapter.name, adapterDidShowAdTimeout]
+                                }];
         
         // Assume if we haven't shown yet, the show is broken and we should just log an error.
+        [self adapterDidFailToShowAd:adapter error:error];
+        
         const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
-        self.currentShownAd = nil;
-        [[self delegateForAdType:reporter.adType] didFailToShowAdWithTag:reporter.tag andError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{}]];
-        if (showOptions.completion) { showOptions.completion(NO,showError); }
         [self autoFetchAdType:previousAdType];
     }
 }
@@ -483,7 +498,7 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
     
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didHideAdWithTag:self.currentShownAd.tag];
-    }
+   }
     
     self.currentShownAd = nil;
     [self autoFetchAdType:previousAdType];
@@ -495,10 +510,21 @@ unsigned long long const adapterDidShowAdTimeout = 1.5;
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] willStartAudio];
     }
 }
+
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter
 {
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didFinishAudio];
+    }
+}
+
+- (void)adapterDidFailToShowAd:(HZBaseAdapter *)adapter error:(NSError *)underlyingError {
+    
+    if (self.currentShownAd) {
+        [self sendShowFailureMessagesForAdType:self.currentShownAd.eventReporter.adType
+                                       options:self.currentShownAd.showOptions
+                                         error:underlyingError];
+        self.currentShownAd = nil;
     }
 }
 
