@@ -178,6 +178,10 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
     }];
 }
 
+- (NSString *) dimensionsDescription {
+    return [NSString stringWithFormat:@"%f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height];
+}
+
 #pragma mark - UIView methods
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {

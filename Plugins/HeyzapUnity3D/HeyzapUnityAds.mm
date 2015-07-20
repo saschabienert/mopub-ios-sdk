@@ -192,7 +192,7 @@ extern "C" {
         }
         return [HZIncentivizedAd setUserIdentifier: userID];
     }
-        
+    
     void hz_ads_show_banner(const char *position, const char *tag) {
         if (HZCurrentBannerAd == nil) {
             HZBannerPosition pos = HZBannerPositionBottom;
@@ -222,7 +222,7 @@ extern "C" {
             [HZCurrentBannerAd setHidden: YES];
         }
     }
-
+    
     void hz_ads_destroy_banner(void) {
         if (HZCurrentBannerAd  != nil) {
             [HZCurrentBannerAd removeFromSuperview];
@@ -230,10 +230,18 @@ extern "C" {
         }
     }
     
+    char * hz_ads_banner_dimensions(void) {
+        if (HZCurrentBannerAd != nil) {
+            return [[HZCurrentBannerAd dimensionsDescription] UTF8String];
+        }
+        
+        return NULL;
+    }
+    
     void hz_ads_show_mediation_debug_view_controller(void) {
         [HeyzapAds presentMediationDebugViewController];
     }
-
+    
     bool hz_ads_is_network_initialized(const char *network) {
         return [HeyzapAds isNetworkInitialized: [NSString stringWithUTF8String: network]];
     }
@@ -245,7 +253,7 @@ extern "C" {
     void hz_resume_expensive_work(void) {
         [HeyzapAds resumeExpensiveWork];
     }
-
+    
     void hz_ads_show_debug_logs(void) {
         [HeyzapAds setDebugLevel:HZDebugLevelVerbose];
     }
