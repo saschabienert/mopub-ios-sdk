@@ -72,6 +72,7 @@ typedef enum {
 @property (nonatomic) NSArray *nonBannerControls;
 
 @property (nonatomic) UITextField *creativeTypeTextField;
+@property (nonatomic) UITextField *adTagField;
 
 @end
 
@@ -90,30 +91,42 @@ typedef enum {
 }
 
 #define LOG_METHOD_NAME_TO_CONSOLE [self logToConsole:NSStringFromSelector(_cmd)]
-
+#define LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(str) [self logToConsole:[NSString stringWithFormat:@"%@ %@", NSStringFromSelector(_cmd), str]]
 #pragma mark - Callbacks
 
 - (void)didReceiveAdWithTag:(NSString *)tag {
-    LOG_METHOD_NAME_TO_CONSOLE;
+    if(self.logCallbacksSwitch.isOn) {
+        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
+    }
     
     [self changeColorOfShowButton];
 }
 - (void)didShowAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
+    if(self.logCallbacksSwitch.isOn) {
+        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
+    }
     
     [self changeColorOfShowButton];
 }
-- (void)didClickAdWithTag:(NSString *)tag { LOG_METHOD_NAME_TO_CONSOLE;
-    
+- (void)didClickAdWithTag:(NSString *)tag {
+    if(self.logCallbacksSwitch.isOn) {
+        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
+    }
 }
 - (void)didHideAdWithTag:(NSString *)tag {
-    LOG_METHOD_NAME_TO_CONSOLE;
+    if(self.logCallbacksSwitch.isOn) {
+        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
+    }
     [self changeColorOfShowButton];
 }
-- (void)didFailToReceiveAdWithTag:(NSString *)tag { LOG_METHOD_NAME_TO_CONSOLE; }
+- (void)didFailToReceiveAdWithTag:(NSString *)tag {
+    if(self.logCallbacksSwitch.isOn) {
+        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
+    }
+}
 
 - (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error {
-    if(self.logCallbacksSwitch.isOn)[self logToConsole:[NSString stringWithFormat:@"%@:%@",NSStringFromSelector(_cmd),error]];
+    if(self.logCallbacksSwitch.isOn)[self logToConsole:[NSString stringWithFormat:@"%@ tag: %@ error: %@",NSStringFromSelector(_cmd),tag, error]];
 }
 
 - (void)willStartAudio {
@@ -123,9 +136,17 @@ typedef enum {
     if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
 }
 
-- (void)didCompleteAdWithTag:(NSString *)tag { LOG_METHOD_NAME_TO_CONSOLE; }
+- (void)didCompleteAdWithTag:(NSString *)tag {
+    if(self.logCallbacksSwitch.isOn) {
+        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
+    }
+}
 
-- (void) didFailToCompleteAdWithTag:(NSString *)tag { LOG_METHOD_NAME_TO_CONSOLE; }
+- (void) didFailToCompleteAdWithTag:(NSString *)tag {
+    if(self.logCallbacksSwitch.isOn) {
+        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
+    }
+}
 
 - (void)requestNotification:(NSNotification *)notification{
     if(self.logRequestsSwitch.isOn){
@@ -169,15 +190,17 @@ typedef enum {
     [self.bannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex != kAdUnitSegmentBanner) forKey:@"hidden"];
     [self.nonBannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex == kAdUnitSegmentBanner) forKey:@"hidden"];
     
+    NSString * adTag = [self adTagText];
+    
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
-            [self setShowButtonOn:[HZInterstitialAd isAvailable]];
+            [self setShowButtonOn:[HZInterstitialAd isAvailableForTag:adTag]];
             break;
         case kAdUnitSegmentVideo:
-            [self setShowButtonOn:[HZVideoAd isAvailable]];
+            [self setShowButtonOn:[HZVideoAd isAvailableForTag:adTag]];
             break;
         case kAdUnitSegmentIncentivized:
-            [self setShowButtonOn:[HZIncentivizedAd isAvailable]];
+            [self setShowButtonOn:[HZIncentivizedAd isAvailableForTag:adTag]];
             break;
         default:
             break;
@@ -221,6 +244,7 @@ typedef enum {
 }
 
 NSString * const kCreativeIDTextFieldAccessibilityLabel = @"creative ID";
+NSString * const kAdTagTextFieldAccessibilityLabel = @"ad tag";
 NSString * const kShowAdButtonAccessibilityLabel = @"show ad";
 NSString * const kFetchAdButtonAccessibilityLabel = @"fetchAd";
 NSString * const kViewAccessibilityLabel = @"testAppView";
@@ -332,7 +356,7 @@ const CGFloat kLeftMargin = 10;
     [self.scrollView addSubview:self.adsTextField];
 
     self.creativeTypeTextField = ({
-        UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.showButton.frame) + 5, 320, 35)];
+        UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.showButton.frame) + 5, 180, 35)];
         tf.delegate = self;
         tf.borderStyle = UITextBorderStyleRoundedRect;
         tf.textAlignment = NSTextAlignmentCenter;
@@ -359,6 +383,19 @@ const CGFloat kLeftMargin = 10;
     });
     [self setCreativeTypeTextFieldToNone];
     [self.scrollView addSubview:self.creativeTypeTextField];
+    
+    self.adTagField = [[UITextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, CGRectGetMaxY(self.adsTextField.frame) + 10.0, 110.0, 25.5)];
+    self.adTagField.delegate = self;
+    self.adTagField.borderStyle = UITextBorderStyleRoundedRect;
+    self.adTagField.keyboardType = UIKeyboardTypeNumberPad;
+    self.adTagField.placeholder = @"Ad Tag";
+    self.adTagField.textAlignment = NSTextAlignmentLeft;
+    self.adTagField.accessibilityLabel = kAdTagTextFieldAccessibilityLabel;
+    [self.adTagField addTarget:self
+                        action:@selector(adTagEditingChanged:)
+              forControlEvents:UIControlEventEditingChanged];
+    
+    [self.scrollView addSubview:self.adTagField];
     
     UIButton *nativeAdsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     nativeAdsButton.frame = CGRectMake(10.0, CGRectGetMaxY(self.creativeTypeTextField.frame) + 10, 120.0, 25.0);
@@ -554,15 +591,23 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void) fetchAd: (id) sender {
+    NSString *adTag = [self adTagText];
+    if (adTag) {
+        [self logToConsole:[NSString stringWithFormat:@"Fetching for tag: %@", adTag]];
+    } else {
+        [self logToConsole:@"Fetching for default tag"];
+        adTag = nil;
+    }
+    
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
-            [HZInterstitialAd fetch];
+            [HZInterstitialAd fetchForTag:adTag];
             break;
         case kAdUnitSegmentVideo:
-            [HZVideoAd fetch];
+            [HZVideoAd fetchForTag:adTag];
             break;
         case kAdUnitSegmentIncentivized:
-            [HZIncentivizedAd fetch];
+            [HZIncentivizedAd fetchForTag:adTag];
             break;
         default:
             break;
@@ -571,19 +616,26 @@ const CGFloat kLeftMargin = 10;
 
 - (void) showAd: (id) sender {
     [self.view endEditing:YES];
+    NSString *adTag = [self adTagText];
+    if (adTag) {
+        [self logToConsole:[NSString stringWithFormat:@"Showing for tag: %@", adTag]];
+    } else {
+        [self logToConsole:@"Showing for default tag"];
+        adTag = nil;
+    }
     
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
             NSLog(@"Showing Interstitial");
-            [HZInterstitialAd show];
+            [HZInterstitialAd showForTag:adTag];
             break;
         case kAdUnitSegmentVideo:
             NSLog(@"Showing Video");
-            [HZVideoAd show];
+            [HZVideoAd showForTag:adTag];
             break;
         case kAdUnitSegmentIncentivized:
             NSLog(@"Showing Incentivized");
-            [HZIncentivizedAd show];
+            [HZIncentivizedAd showForTag:adTag];
             break;
         default:
             break;
@@ -641,9 +693,22 @@ const CGFloat kLeftMargin = 10;
     [HeyzapAds presentMediationDebugViewController];
 }
 
-- (void)creativeIDEditingChanged:(UITextField *)sender
-{
+- (void)creativeIDEditingChanged:(UITextField *)sender {
     [self setCreativeID: [sender.text intValue]];
+}
+
+- (void)adTagEditingChanged:(UITextField *)sender {
+    NSLog(@"monroedebug: editing changed for ad tag. ad tag text: '%@'", [self adTagText]);
+    [self changeColorOfShowButton];
+}
+
+- (NSString *) adTagText {
+    NSString *text = [[self.adTagField text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if ([text isEqualToString:@""]) {
+        return nil;
+    }
+    
+    return text;
 }
 
 // @[@"Rand", @"PSS",@"SS",@"FI",@"PFI"]
@@ -847,7 +912,7 @@ const CGFloat kLeftMargin = 10;
 - (void)setCreativeTypeTextFieldToNone {
     self.creativeTypeTextField.font = [UIFont italicSystemFontOfSize:18];
     self.creativeTypeTextField.textColor = [UIColor lightGrayColor];
-    self.creativeTypeTextField.text = @"No creative type chosen";
+    self.creativeTypeTextField.text = @"Creative type";
 }
 
 - (void)pauseExpensiveWorkSwitchFlipped:(UISwitch *)theSwitch {
