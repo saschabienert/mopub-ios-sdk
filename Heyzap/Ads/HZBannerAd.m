@@ -179,7 +179,7 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
 }
 
 - (NSString *) dimensionsDescription {
-    return [NSString stringWithFormat:@"%f %f %f %f", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height];
+    return [NSString stringWithFormat:@"%f %f %f %f", self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height];
 }
 
 #pragma mark - UIView methods
