@@ -232,7 +232,14 @@ extern "C" {
     
     char * hz_ads_banner_dimensions(void) {
         if (HZCurrentBannerAd != nil) {
-            return [[HZCurrentBannerAd dimensionsDescription] UTF8String];
+            const char * dims = [[HZCurrentBannerAd dimensionsDescription] UTF8String];
+            if (dims == NULL) {
+                return NULL;
+            }
+            
+            char* returnValue = (char*)malloc(strlen(dims) + 1);
+            strcpy(returnValue, dims);
+            return returnValue;
         }
         
         return NULL;
