@@ -698,7 +698,6 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void)adTagEditingChanged:(UITextField *)sender {
-    NSLog(@"monroedebug: editing changed for ad tag. ad tag text: '%@'", [self adTagText]);
     [self changeColorOfShowButton];
 }
 
