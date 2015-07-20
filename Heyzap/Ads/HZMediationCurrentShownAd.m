@@ -10,7 +10,7 @@
 
 @implementation HZMediationCurrentShownAd
 
-- (instancetype)initWithEventReporter:(HZMediationEventReporter *)eventReporter adapter:(HZBaseAdapter *)adapter withOptions:(HZShowOptions *)options {
+- (instancetype)initWithEventReporter:(HZMediationEventReporter *)eventReporter adapter:(HZBaseAdapter *)adapter options:(HZShowOptions *)options {
     HZParameterAssert(eventReporter);
     HZParameterAssert(adapter);
     self = [super init];

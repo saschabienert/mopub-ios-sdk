@@ -147,7 +147,7 @@
     [[HZVungleSDK sharedSDK] playAd:options.viewController withOptions:vungleOptions error:&error];
     
     if (error) {
-        [self.delegate adapterDidFailToShowAd:self withError:error];
+        [self.delegate adapterDidFailToShowAd:self error:error];
     }
 }
 

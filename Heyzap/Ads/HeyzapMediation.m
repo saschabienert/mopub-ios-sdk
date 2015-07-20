@@ -343,7 +343,7 @@ unsigned long long const adapterDidShowAdTimeout = 3;
         return;
     }
     
-    self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithEventReporter:eventReporter adapter:chosenAdapter withOptions:options];
+    self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithEventReporter:eventReporter adapter:chosenAdapter options:options];
     
     /// Notify dependent objects of a show
     if (adType == HZAdTypeInterstitial && [chosenAdapter isVideoOnlyNetwork]) {
@@ -476,7 +476,7 @@ unsigned long long const adapterDidShowAdTimeout = 3;
                                 }];
         
         // Assume if we haven't shown yet, the show is broken and we should just log an error.
-        [self adapterDidFailToShowAd:adapter withError:error];
+        [self adapterDidFailToShowAd:adapter error:error];
         
         const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
         [self autoFetchAdType:previousAdType];
@@ -522,12 +522,12 @@ unsigned long long const adapterDidShowAdTimeout = 3;
     }
 }
 
-- (void)adapterDidFailToShowAd:(HZBaseAdapter *)adapter withError:(NSError *)underlyingError {
+- (void)adapterDidFailToShowAd:(HZBaseAdapter *)adapter error:(NSError *)underlyingError {
     
     if (self.currentShownAd) {
         [self sendShowFailureMessagesForAdType:self.currentShownAd.eventReporter.adType
-                                   withOptions:self.currentShownAd.showOptions
-                                      andError:underlyingError];
+                                       options:self.currentShownAd.showOptions
+                                         error:underlyingError];
         self.currentShownAd = nil;
     }
 }

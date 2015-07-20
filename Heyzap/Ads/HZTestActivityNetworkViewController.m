@@ -327,8 +327,8 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     [[HeyzapMediation sharedInstance] adapterDidFinishPlayingAudio:adapter];
 }
 
-- (void)adapterDidFailToShowAd:(HZBaseAdapter *)adapter withError:(NSError *)underlyingError {
-    [[HeyzapMediation sharedInstance] adapterDidFailToShowAd:adapter withError:underlyingError];
+- (void)adapterDidFailToShowAd:(HZBaseAdapter *)adapter error:(NSError *)underlyingError {
+    [[HeyzapMediation sharedInstance] adapterDidFailToShowAd:adapter error:underlyingError];
     
     [self appendStringToDebugLog:@"Show Failed"];
     [self changeShowButtonColor];

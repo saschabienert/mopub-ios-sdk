@@ -196,7 +196,7 @@
         userInfo[NSUnderlyingErrorKey] =underlyingError;
     }
     
-    [self.delegate adapterDidFailToShowAd:self withError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo]];
+    [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo]];
 }
 
 #pragma mark - AppLovinDelegateReceiver

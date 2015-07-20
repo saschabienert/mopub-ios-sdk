@@ -25,6 +25,6 @@ typedef NS_ENUM(NSUInteger, HZAdState) {
 @property (nonatomic) HZAdState adState; // Mutable
 @property (nonatomic, readonly) HZShowOptions *showOptions;
 
-- (instancetype)initWithEventReporter:(HZMediationEventReporter *)eventReporter adapter:(HZBaseAdapter *)adapter withOptions:(HZShowOptions *)options;
+- (instancetype)initWithEventReporter:(HZMediationEventReporter *)eventReporter adapter:(HZBaseAdapter *)adapter options:(HZShowOptions *)options;
 
 @end
