@@ -89,7 +89,7 @@
 @property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
 @property (nonatomic) NSTimeInterval IAPAdDisableTime;
 
-- (void)sendShowFailureMessagesForAdType:(HZAdType)adType withOptions:(HZShowOptions *)options andError:(NSError *)underlyingError;
+- (void)sendShowFailureMessagesForAdType:(HZAdType)adType options:(HZShowOptions *)options error:(NSError *)underlyingError;
 
 @end
 
@@ -283,7 +283,7 @@ unsigned long long const adapterDidShowAdTimeout = 3;
     
     NSError *preShowError = [self checkForPreShowError:options.tag adType:adType];
     if (preShowError) {
-        [self sendShowFailureMessagesForAdType:adType withOptions:options andError:preShowError];
+        [self sendShowFailureMessagesForAdType:adType options:options error:preShowError];
         return;
     }
     
@@ -293,7 +293,7 @@ unsigned long long const adapterDidShowAdTimeout = 3;
     NSDictionary *const latestMediateParams = [self.mediateRequester latestMediateParams];
     if (!latestMediate || !latestMediateParams) {
         NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Didn't get the waterfall from Heyzap's servers before a request to show an ad was made."}];
-        [self sendShowFailureMessagesForAdType:adType withOptions:options andError:error];
+        [self sendShowFailureMessagesForAdType:adType options:options error:error];
         return;
     }
     
@@ -330,7 +330,7 @@ unsigned long long const adapterDidShowAdTimeout = 3;
                                                                                        NSLocalizedDescriptionKey: @"Failed to parse /mediate response",
                                                                                        NSUnderlyingErrorKey:eventReporterError,
                                                                                        }];
-        [self sendShowFailureMessagesForAdType:adType withOptions:options andError:error];
+        [self sendShowFailureMessagesForAdType:adType options:options error:error];
         return;
     }
     
@@ -339,7 +339,7 @@ unsigned long long const adapterDidShowAdTimeout = 3;
         // TODO: make that error message prettier.
         NSString *const errorMessage = [NSString stringWithFormat:@"No ad network had an ad to show. Ad networks we checked were: %@", adapters];
         NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: errorMessage}];
-        [self sendShowFailureMessagesForAdType:adType withOptions:options andError:error];
+        [self sendShowFailureMessagesForAdType:adType options:options error:error];
         return;
     }
     
@@ -397,7 +397,7 @@ unsigned long long const adapterDidShowAdTimeout = 3;
     return nil;
 }
 
-- (void)sendShowFailureMessagesForAdType:(HZAdType)adType withOptions:(HZShowOptions *)options andError:(NSError *)underlyingError {
+- (void)sendShowFailureMessagesForAdType:(HZAdType)adType options:(HZShowOptions *)options error:(NSError *)underlyingError {
     NSError *error;
     
     if ([[underlyingError domain] isEqualToString:kHZMediationDomain]) {
