@@ -179,7 +179,8 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
 }
 
 - (NSString *) dimensionsDescription {
-    return [NSString stringWithFormat:@"%f %f %f %f", self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height];
+    CGFloat scale = [[UIScreen mainScreen] scale];
+    return [NSString stringWithFormat:@"%f %f %f %f", self.frame.origin.x * scale, self.frame.origin.y * scale, self.frame.size.width * scale, self.frame.size.height * scale];
 }
 
 #pragma mark - UIView methods

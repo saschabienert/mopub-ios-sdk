@@ -125,7 +125,7 @@ extern NSString * const kHZBannerAdNotificationErrorKey;
                          failure:(void (^)(NSError *error))failure;
 
 /**
- *  Returns a string describing the dimensions of the banner ad like `0 0 320 50` (`origin_x origin_y width height`). Used by our Unity SDK.
+ *  Returns a string describing the dimensions of the banner ad in pixels like `0.0 0.0 320.0 50.0` (`origin_x origin_y width height`). Used by our Unity SDK.
  */
 - (NSString *) dimensionsDescription;
 
