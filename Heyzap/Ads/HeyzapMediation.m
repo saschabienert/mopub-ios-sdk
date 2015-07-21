@@ -270,8 +270,6 @@ NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
 NSString * const kHZAdapterKey = @"name";
 NSString * const kHZDataKey = @"data";
 
-unsigned long long const adapterDidShowAdTimeout = 3;
-
 #pragma mark - Ads
 
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
@@ -351,9 +349,11 @@ unsigned long long const adapterDidShowAdTimeout = 3;
     [chosenAdapter showAdForType:adType options:options];
     
     /// Check if the adapter has responded yet.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(adapterDidShowAdTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self checkIfAdapterShowedAd:chosenAdapter];
-    });
+    if ([chosenAdapter showAdTimeout]) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)([chosenAdapter showAdTimeout] * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self checkIfAdapterShowedAd:chosenAdapter];
+        });
+    }
 }
 
 - (void) sortAdaptersByScore:(NSMutableOrderedSet *)adapters ifLatestMediateRequires:(NSDictionary *)latestMediate forAdType:(HZAdType)adType {
@@ -468,7 +468,7 @@ unsigned long long const adapterDidShowAdTimeout = 3;
     if (self.currentShownAd && self.currentShownAd.adState == HZAdStateRequestedShow) {
         NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:
                               @{
-                                NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Network %@ was asked to show an ad, but it didn't; Heyzap didn't get a callback from that network reporting that it did so within %llu seconds. Assuming it failed and sending a didFail callback", adapter.name, adapterDidShowAdTimeout]
+                                NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Network %@ was asked to show an ad, but it didn't; Heyzap didn't get a callback from that network reporting that it did so within %llu seconds. Assuming it failed and sending a didFail callback", adapter.name, [adapter showAdTimeout]]
                                 }];
         
         // Assume if we haven't shown yet, the show is broken and we should just log an error.

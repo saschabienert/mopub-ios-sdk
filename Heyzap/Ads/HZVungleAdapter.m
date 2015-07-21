@@ -151,6 +151,12 @@
     }
 }
 
+// Disabled since Vungle notifys if there is an error showing the ad
+// Override
+- (unsigned long long)showAdTimeout {
+    return 0;
+}
+
 #pragma mark - Vungle Delegate
 
 /* Note: There is a bug with the Vungle SDK. `willPresentProductSheet` method gets called first and then the `vungleSDKwillCloseAdWithViewInfo` method, even though their docs state the opposite order. This made us end up calling `adapterDidDismissAd` in `willPresentProductSheet` FIRST, which prevented any further callbacks for the session to be called (i.e. the `did*CompleteAdWithTag` for incentivized ads to be called).
