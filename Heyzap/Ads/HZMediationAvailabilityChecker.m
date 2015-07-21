@@ -10,6 +10,7 @@
 #import "HZDictionaryUtils.h"
 #import "HZBaseAdapter.h"
 #import "HZMediationConstants.h"
+#import "HZUtils.h"
 
 @interface HZMediationAvailabilityChecker()
 
@@ -34,8 +35,9 @@
     NSOrderedSet *preferredMediatorList = [self availableAdaptersForAdType:adType adapters:adapters];
     
     if (forcedNetwork) {
-        HZBaseAdapter *forcedAdapter = (HZBaseAdapter *)[forcedNetwork sharedInstance];
-        return [preferredMediatorList containsObject:forcedAdapter] ? forcedAdapter : nil;
+        preferredMediatorList = hzFilterOrderedSet(preferredMediatorList, ^BOOL(HZBaseAdapter *adapter) {
+            return [adapter isKindOfClass:forcedNetwork];
+        });
     }
         
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {

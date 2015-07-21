@@ -122,7 +122,6 @@
     
     switch (type) {
         case HZAdTypeInterstitial: {
-            self.interstitialDelegate = [[HZAppLovinDelegate alloc] initWithAdType:HZAdTypeInterstitial delegate:self.forwardingDelegate];
             [[self.sdk adService] loadNextAd:[HZALAdSize sizeInterstitial]
                                    andNotify:self.interstitialDelegate];
             break;
@@ -168,15 +167,36 @@
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
     if (type == HZAdTypeIncentivized) {
-        self.currentIncentivizedAd.adDisplayDelegate = self.incentivizedDelegate;
-        [self.currentIncentivizedAd showOver:[[UIApplication sharedApplication] keyWindow]
-                                   andNotify:self.incentivizedDelegate];
+        
+        if (self.currentIncentivizedAd && [self.currentIncentivizedAd isReadyForDisplay]) {
+            self.currentIncentivizedAd.adDisplayDelegate = self.incentivizedDelegate;
+            [self.currentIncentivizedAd showOver:[[UIApplication sharedApplication] keyWindow]
+                                       andNotify:self.incentivizedDelegate];
+        } else {
+            [self appLovinFailedToShowWithUnderlyingError:self.incentivizedError];
+        }
     } else {
         HZALInterstitialAd *interstitial = [[HZALInterstitialAd alloc] initInterstitialAdWithSdk:self.sdk];
         interstitial.adDisplayDelegate = self.interstitialDelegate;
         interstitial.adVideoPlaybackDelegate = self.interstitialDelegate;
-        [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
+        
+        if ([interstitial isReadyForDisplay]) {
+            [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
+        } else {
+            [self appLovinFailedToShowWithUnderlyingError:self.interstitialError];
+        }
     }
+}
+
+- (void)appLovinFailedToShowWithUnderlyingError:(NSError *)underlyingError {
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+    userInfo[NSLocalizedDescriptionKey] = @"Unable to load ad from AppLovin.";
+    
+    if (underlyingError) {
+        userInfo[NSUnderlyingErrorKey] =underlyingError;
+    }
+    
+    [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:userInfo]];
 }
 
 #pragma mark - AppLovinDelegateReceiver
@@ -203,6 +223,7 @@
     
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
+
 - (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error
 {
     switch (type) {
@@ -237,6 +258,7 @@
     [self.delegate adapterWasClicked:self];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
+
 - (void)didDismissAd
 {
     [self.delegate adapterDidDismissAd:self];
@@ -250,6 +272,7 @@
     [self.delegate adapterDidCompleteIncentivizedAd:self];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
 }
+
 - (void)didFailToCompleteIncentivized
 {
     [self clearIncentivizedState];
@@ -268,11 +291,21 @@
     [self.delegate adapterWillPlayAudio:self];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
 }
+
 - (void)didFinishAudio
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
 }
 
+#pragma mark - Setters/Getters
+
+- (HZAppLovinDelegate *)interstitialDelegate {
+    if (!_interstitialDelegate) {
+        _interstitialDelegate = [[HZAppLovinDelegate alloc] initWithAdType:HZAdTypeInterstitial delegate:self.forwardingDelegate];
+    }
+    
+    return _interstitialDelegate;
+}
 
 @end

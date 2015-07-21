@@ -10,15 +10,16 @@
 
 @implementation HZMediationCurrentShownAd
 
-- (instancetype)initWithEventReporter:(HZMediationEventReporter *)eventReporter tag:(NSString *)tag adapter:(HZBaseAdapter *)adapter {
+- (instancetype)initWithEventReporter:(HZMediationEventReporter *)eventReporter adapter:(HZBaseAdapter *)adapter options:(HZShowOptions *)options {
     HZParameterAssert(eventReporter);
     HZParameterAssert(adapter);
     self = [super init];
     if (self) {
         _eventReporter = eventReporter;
-        _tag = tag;
+        _tag = options.tag;
         _adapter = adapter;
         _adState = HZAdStateRequestedShow;
+        _showOptions = options;
     }
     return self;
 }

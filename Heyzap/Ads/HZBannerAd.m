@@ -178,6 +178,11 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
     }];
 }
 
+- (NSString *) dimensionsDescription {
+    CGFloat scale = [[UIScreen mainScreen] scale];
+    return [NSString stringWithFormat:@"%f %f %f %f", self.frame.origin.x * scale, self.frame.origin.y * scale, self.frame.size.width * scale, self.frame.size.height * scale];
+}
+
 #pragma mark - UIView methods
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
