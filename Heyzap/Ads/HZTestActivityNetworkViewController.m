@@ -301,20 +301,20 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {
     [self logAdCallback:@"dismissed"];
-    [self changeShowButtonColor];
     [[HeyzapMediation sharedInstance] adapterDidDismissAd:adapter];
+    [self changeShowButtonColor];
 }
 
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
     [self logAdCallback:@"incentivized complete"];
-    [self changeShowButtonColor];
     [[HeyzapMediation sharedInstance] adapterDidCompleteIncentivizedAd:adapter];
+    [self changeShowButtonColor];
 }
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
     [self logAdCallback:@"incentivized failed"];
-    [self changeShowButtonColor];
     [[HeyzapMediation sharedInstance] adapterDidFailToCompleteIncentivizedAd:adapter];
+    [self changeShowButtonColor];
 }
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter {
