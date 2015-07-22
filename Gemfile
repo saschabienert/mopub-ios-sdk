@@ -4,3 +4,4 @@ gem 'xcpretty'
 gem 'shenzhen'
 gem 'cocoapods'
 gem 'rake' # For subliminal install
+gem 'json'
