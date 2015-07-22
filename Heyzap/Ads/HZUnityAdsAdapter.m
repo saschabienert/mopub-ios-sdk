@@ -17,7 +17,7 @@
 @property (nonatomic, strong) NSString *videoZoneID;
 @property (nonatomic, strong) NSString *incentivizedZoneID;
 @property (nonatomic) BOOL isShowingIncentivized;
-@property (nonatomic) BOOL didSkipIncentivized;
+@property (nonatomic) BOOL didCompleteIncentivized;
 
 @end
 
@@ -190,25 +190,30 @@ NSString * const kHZNetworkName = @"mobile";
     [self.delegate adapterDidShowAd:self];
 }
 
+/**
+ * Note: There is a bug associated with the callback: When the app is moved to
+ * the background during an incentivized ad play, this callback is not fired.
+ */
 - (void)unityAdsVideoCompleted:(NSString *)rewardItemKey skipped:(BOOL)skipped {
     [self.delegate adapterDidFinishPlayingAudio:self];
-    self.didSkipIncentivized = skipped;
+    self.didCompleteIncentivized = !skipped;
 }
 
 - (void)unityAdsDidHide {
     if (self.isShowingIncentivized) {
-        if (self.didSkipIncentivized) {
-            [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
-            
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
-        } else {
+        if (self.didCompleteIncentivized) {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
             
             [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
+            
+        } else {
+            [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+            
+            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
         }
     }
     self.isShowingIncentivized = NO;
-    self.didSkipIncentivized = NO;
+    self.didCompleteIncentivized = NO;
     [self.delegate adapterDidDismissAd:self];
     
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
