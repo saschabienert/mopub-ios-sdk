@@ -551,20 +551,23 @@ NSString * const kHZDataKey = @"data";
 
 + (NSString *)commaSeparatedAdapterList
 {
+    NSMutableArray *adapterNames = [NSMutableArray array];
+    for (Class adapterClass in [HeyzapMediation availableAdapters]) {
+        [adapterNames addObject:[adapterClass name]];
+    }
+    return [adapterNames componentsJoinedByString:@","];
+}
+
++ (NSSet *) availableAdapters {
     // Profiling showed this to take > 1 ms; it's doing a decent amount of work checking if all the classes exist.
-    static NSString *commaSeparatedAdapters;
+    static NSSet *availableAdapters;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSMutableArray *adapterNames = [NSMutableArray array];
-        for (Class adapterClass in [HZBaseAdapter allAdapterClasses]) {
-            if ([adapterClass isSDKAvailable]) {
-                [adapterNames addObject:[adapterClass name]];
-            }
-        }
-        commaSeparatedAdapters = [adapterNames componentsJoinedByString:@","];
+        availableAdapters = [[HZBaseAdapter allAdapterClasses] objectsPassingTest: ^BOOL(Class adapter, BOOL *stop){
+            return [adapter isSDKAvailable];
+        }];
     });
-    
-    return commaSeparatedAdapters;
+    return availableAdapters;
 }
 
 static BOOL forceOnlyHeyzapSDK = NO;
@@ -585,8 +588,8 @@ static BOOL forceOnlyHeyzapSDK = NO;
 
 + (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap
 {
-    return [[HZBaseAdapter allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
-        return (includeHeyzap || ![adapterClass isHeyzapAdapter]) && [adapterClass isSDKAvailable];
+    return [[HeyzapMediation availableAdapters] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
+        return (includeHeyzap || ![adapterClass isHeyzapAdapter]);
     }]];
 }
 
