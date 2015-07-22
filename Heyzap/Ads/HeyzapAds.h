@@ -51,7 +51,7 @@
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif
 
-#define SDK_VERSION @"8.5.1"
+#define SDK_VERSION @"9.0.4"
 
 #if __has_feature(objc_modules)
 @import AdSupport;
@@ -320,7 +320,7 @@ extern NSString * const HZRemoteDataRefreshedNotification;
 /**
  * Call this method to record an In-App Purchase made from the user. This will disable Ads for the time interval set in your game settings. 
  *
- * Only call this method if automatic IAP recording is disabled* (i.e. `HZAdOptionsDisableIAPDataCollection` is enabled).
+ * Only call this method if automatic IAP recording is disabled* (i.e. `HZAdOptionsDisableAutomaticIAPRecording` is enabled).
  */
 + (void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price;
 
