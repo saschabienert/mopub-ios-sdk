@@ -151,7 +151,7 @@
     }
 }
 
-// Disabled since Vungle notifys if there is an error showing the ad
+// Disabled since Vungle notifies if there is an error showing the ad
 // Override
 - (unsigned long long)showAdTimeout {
     return 0;
