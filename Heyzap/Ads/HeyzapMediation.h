@@ -21,6 +21,9 @@
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
+extern NSString * const kHZMediationUserDefaultsKeyIncentivizedCounter;
+extern NSString * const kHZMediationUserDefaultsKeyIncentivizedDate;
+
 @property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 
 @property (nonatomic, readonly) NSDictionary *remoteDataDictionary;

@@ -266,6 +266,26 @@ NSString *const kNoInternet = @"no_internet";
             ];  
 }
 
++ (BOOL) dateIsToday:(NSDate *)otherDate {
+    NSDate *today = [HZUtils dateWithoutTimeFromDate:[NSDate date]];
+    NSDate *otherDateToCompare = [HZUtils dateWithoutTimeFromDate:otherDate];
+    
+    return [today isEqualToDate:otherDateToCompare];
+}
+
+/**
+ *  Returns a date object stripped of the current time, so dates can be compared for equality on a per-day granularity
+ */
++ (NSDate *) dateWithoutTimeFromDate:(NSDate *)date {
+    if(!date){
+        return nil;
+    }
+    
+    NSCalendar *cal = [NSCalendar currentCalendar];
+    NSDateComponents *components = [cal components:(NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay) fromDate:date];
+    return [cal dateFromComponents:components];
+}
+
 NSArray *hzMap(NSArray *array, id (^block)(id object)) {
     NSMutableArray *newArray = [[NSMutableArray alloc] initWithCapacity:array.count];
     for (id obj in array) {
