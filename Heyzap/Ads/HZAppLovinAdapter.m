@@ -222,8 +222,6 @@
             break;
         }
     }
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error
@@ -247,8 +245,6 @@
             break;
         }
     }
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)didShowAd {
