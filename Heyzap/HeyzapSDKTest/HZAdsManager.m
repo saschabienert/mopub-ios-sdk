@@ -30,6 +30,9 @@
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
 
+#define UNITY_FRAMEWORK @"unity3d"
+#define AIR_FRAMEWORK @"air"
+
 @interface HZAdsManager()
 @property (nonatomic, strong) HZDelegateProxy *interstitialDelegateProxy;
 @property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
@@ -163,7 +166,11 @@ static BOOL hzAdsIsEnabled = NO;
 }
 
 - (BOOL)isAdobeAir {
-    return [self.framework isEqualToString:@"air"];
+    return [self.framework isEqualToString:AIR_FRAMEWORK];
+}
+
+- (BOOL)isUnity3D {
+    return [self.framework isEqualToString:UNITY_FRAMEWORK];
 }
 
 #pragma mark - Is Available
