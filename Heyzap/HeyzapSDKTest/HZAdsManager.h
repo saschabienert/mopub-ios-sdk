@@ -39,7 +39,8 @@
 - (void) onStart;
 + (BOOL) isEnabled;
 + (BOOL) isVersionSupported;
-- (BOOL)isAdobeAir;
+- (BOOL) isAdobeAir;
+- (BOOL) isUnity3D;
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
 
 - (BOOL)isAvailableForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;

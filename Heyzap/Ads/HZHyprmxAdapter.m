@@ -12,6 +12,7 @@
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
 #import "HZDevice.h"
+#import "HZAdsManager.h"
 
 @interface HZHyprmxAdapter()
 @property (nonatomic, strong) NSString *distributorID;
@@ -144,10 +145,15 @@ static BOOL wasReady = NO;
     }];
 }
 
-// Disabled since it takes a long time to show an ad on unity and ane sdks
+// Disabled for unity sdk since it takes a long time to show an ad on unity
 // Override
 - (unsigned long long)showAdTimeout {
-    return 0;
+    if ([[HZAdsManager sharedManager] isUnity3D]) {
+        return 0;
+        
+    } else {
+        return [super showAdTimeout];
+    }
 }
 
 @end
