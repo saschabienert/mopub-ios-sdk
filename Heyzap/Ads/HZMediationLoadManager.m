@@ -70,12 +70,17 @@ return nil; \
 - (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork {
     HZParameterAssert(showOptions);
     
-    NSArray *const networksForFetch = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
+    NSArray *const networksToConsider = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
         return forcedNetwork ? forcedNetwork == datum.adapterClass : YES;
     });
     
-    NSArray *const supportsAdType = hzFilter(networksForFetch, ^BOOL(HZMediationLoadData *datum) {
-        return [((HZBaseAdapter *)[datum.adapterClass sharedInstance]) supportsAdType:adType];
+    NSSet *const availableAdapters = [HeyzapMediation availableAdaptersWithHeyzap:YES];
+    NSArray *const availableSDKsForFetch = hzFilter(networksToConsider, ^BOOL(HZMediationLoadData *datum) {
+        return [availableAdapters containsObject:datum.adapterClass];
+    });
+    
+    NSArray *const supportsAdType = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
+        return [[datum.adapterClass sharedInstance] supportsAdType:adType];
     });
     
     NSArray *const matching = hzFilter(supportsAdType, ^BOOL(HZMediationLoadData *datum) {
@@ -91,7 +96,7 @@ return nil; \
     // Should just take all STATIC and VIDEO?
     
     if (adType == HZAdTypeInterstitial) {
-        NSArray *videoNetworks = hzFilter(networksForFetch, ^BOOL(HZMediationLoadData *datum) {
+        NSArray *videoNetworks = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
             return hzCreativeTypeSetContainsAdType(datum.creativeTypeSet, HZAdTypeVideo);
         });
         [self fetchAdType:HZAdTypeVideo loadData:videoNetworks showOptions:showOptions notifyDelegate:isForcedVideoOnlyNetwork];
@@ -121,7 +126,7 @@ return nil; \
             }
             
             const BOOL setupSuccessful = [self.delegate setupAdapterNamed:datum.networkName];
-            
+
             if (setupSuccessful) {
                 
                 __block HZBaseAdapter *adapter;
