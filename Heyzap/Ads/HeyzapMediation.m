@@ -189,7 +189,6 @@ NSString * const kHZMediationUserDefaultsKeyIncentivizedDate = @"kHZMediationUse
 }
 
 NSString * const kHZIAPAdDisableTime = @"iap_ad_disable_time";
-
 - (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache {
     
     self.IAPAdDisableTime = [[HZDictionaryUtils hzObjectForKey:kHZIAPAdDisableTime
@@ -479,8 +478,6 @@ NSString * const kHZDataKey = @"data";
     HZMediationCurrentShownAd *currentAd = self.currentShownAd;
     
     [currentAd.eventReporter reportImpressionForAdapter:adapter];
-    
-    
     
     if (currentAd && currentAd.adState == HZAdStateRequestedShow) {
         self.currentShownAd.adState = HZAdStateShown;
