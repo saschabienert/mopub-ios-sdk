@@ -33,6 +33,8 @@ char *HZNewBase64Encode(
 + (NSString *) publisherID;
 + (NSString *) internetStatus;
 + (NSString *) MD5ForString:(NSString*)string;
++ (BOOL) dateIsToday:(NSDate *)otherDate;
++ (NSDate *) dateWithoutTimeFromDate:(NSDate *)date;
 
 NSArray *hzMap(NSArray *array, id (^block)(id object));
 NSArray *hzFilter(NSArray *array, BOOL(^block)(id object));

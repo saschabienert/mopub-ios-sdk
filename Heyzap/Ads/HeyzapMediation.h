@@ -13,6 +13,7 @@
 #import "HZMediationStarter.h"
 #import "HZMediationLoadManager.h"
 #import "HZMediateRequester.h"
+#import "HZMediationSettings.h"
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
@@ -21,16 +22,13 @@
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
-@property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 
-@property (nonatomic, readonly) NSDictionary *remoteDataDictionary;
+@property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 @property (nonatomic, readonly) NSString *mediationId;
+@property (nonatomic, readonly) HZMediationSettings *settings;
 
 + (instancetype)sharedInstance;
 
-#pragma mark - Properties
-@property (nonatomic, readonly) NSTimeInterval IAPAdDisableTime;
-@property (nonatomic) NSTimeInterval adsTimeOut;
 
 #pragma mark - Setup
 
@@ -51,6 +49,9 @@
 // We can handle the common scenarios by recursively finding the right view controller.
 
 + (BOOL)isOnlyHeyzapSDK;
+
+// HZMediationAdapterDelegate
+- (NSString *) countryCode;
 
 /**
  *  Call this method to force `isOnlyHeyzapSDK` to always return `YES`.

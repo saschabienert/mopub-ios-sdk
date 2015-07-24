@@ -36,6 +36,7 @@
 #import "HZAdsManager.h"
 
 #import "HeyzapMediation.h"
+#import "HZMediationSettings.h"
 #import "HZPaymentTransactionObserver.h"
 
 #import "HZTestActivityViewController.h"
@@ -219,7 +220,7 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
 
 + (NSDictionary *) remoteData {
     HZVersionCheckNil();
-    return [[HeyzapMediation sharedInstance] remoteDataDictionary];
+    return [[[HeyzapMediation sharedInstance] settings] remoteDataDictionary];
 }
 
 + (void)setBundleIdentifier:(NSString *)bundleIdentifier {

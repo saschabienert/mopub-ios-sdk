@@ -56,7 +56,7 @@
         
         NSString *publisherID = [HZUtils publisherID] ?: @"";
         
-        NSMutableDictionary *params = [@{@"app_platform": @(1),//iOS=1 (enum: ANDROID(0), IOS(1), AMAZON(2) )
+        NSMutableDictionary *params = [@{@"app_platform": @1,//iOS=1 (enum: ANDROID(0), IOS(1), AMAZON(2) )
                                          @"app_bundle": [[HZDevice currentDevice] bundleIdentifier],
                                          @"app_version": versionString,
                                          @"app_sdk_key": publisherID,

@@ -20,8 +20,8 @@
 @property (nonatomic) NSTimer *animationTimer;
 @property (nonatomic) BOOL timerDidFireAlready;
 @property (nonatomic) BOOL videoClickEnabled;
-
 @property (nonatomic) BOOL skipButtonTimeIntervalValidated;
+@property (nonatomic) BOOL didSendOnActionShowAlready;
 
 #define kHZVideoViewAutoFadeOutControlsTime 2
 #define kHZVideoViewMinumumSkippableSeconds 10 // minimum number of seconds a skip button should save a user in order for the button to be shown
@@ -42,6 +42,7 @@
         
         _showingAllVideoControls = YES;
         _timerDidFireAlready = NO;
+        _didSendOnActionShowAlready = NO;
         
         _player = [[MPMoviePlayerController alloc] init];
         _player.controlStyle = MPMovieControlStyleNone;
@@ -84,8 +85,6 @@
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerPlaybackStateDidChange:) name: MPMoviePlayerPlaybackStateDidChangeNotification object: nil];
     
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerScalingModeDidChange:) name: MPMoviePlayerScalingModeDidChangeNotification object: nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterBackground:) name: UIApplicationDidEnterBackgroundNotification object: nil];
     
     // This is only used in iOS 6...
     if (![HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
@@ -344,13 +343,6 @@
 }
 
 - (void) mediaPlayerPlaybackStateDidChange: (id) notification {
-    // HACK! If the app goes into the background, this will restart the video when it comes back.
-    if ([HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
-        if (self.player.playbackState == MPMoviePlaybackStatePaused) {
-            [self.player play];
-        }
-    }
-    
     self.videoDuration = self.player.duration;
 
     if (self.player.playbackState == MPMoviePlaybackStatePlaying) {
@@ -366,10 +358,9 @@
             [self animateControls:YES];
         }
         
-        self.videoDuration = self.player.duration;
-        
-        if (self.actionDelegate != nil) {
+        if (self.actionDelegate != nil && !self.didSendOnActionShowAlready) {
             [self.actionDelegate performSelector: @selector(onActionShow:) withObject: self];
+            self.didSendOnActionShowAlready = YES;
         }
     }
 }
@@ -407,12 +398,6 @@
     }
     
     return CGRectIntegral(newRect);
-}
-
-- (void) applicationDidEnterBackground: (id) notification {
-    if ([HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
-        [self.player pause];
-    }
 }
 
 - (void) play {
