@@ -153,8 +153,10 @@
 }
 
 - (void)didShowAd:(NSNotification *)notification {
-    [self.delegate adapterDidShowAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
+    if ([self correctAuctionType:notification]) {
+        [self.delegate adapterDidShowAd:self];
+        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
+    }
 }
 
 - (void)didFailToShowAd:(NSNotification *)notification {
