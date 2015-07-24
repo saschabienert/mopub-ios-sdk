@@ -547,12 +547,12 @@ typedef enum {
         if(adType == HZAdTypeIncentivized) {
             _allowSkip = NO;
             _allowHide = NO;
-            _skipOffsetSeconds = @(0);
+            _skipOffsetSeconds = @0;
         } else if(adType == HZAdTypeVideo) {
             _allowSkip = YES;
             _allowHide = NO;
             if(!_skipOffsetSeconds || [_skipOffsetSeconds doubleValue] < 0){
-                _skipOffsetSeconds = @(0);
+                _skipOffsetSeconds = @0;
             }
         }
     }

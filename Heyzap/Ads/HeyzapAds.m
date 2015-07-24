@@ -220,7 +220,7 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
 
 + (NSDictionary *) remoteData {
     HZVersionCheckNil();
-    return [[HZMediationSettings sharedSettings] remoteDataDictionary];
+    return [[[HeyzapMediation sharedInstance] settings] remoteDataDictionary];
 }
 
 + (void)setBundleIdentifier:(NSString *)bundleIdentifier {

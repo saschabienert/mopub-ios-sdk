@@ -111,7 +111,7 @@
                      self.adScore = adAuctionDict[@"score"];
                      self.adExtrasHash = adAuctionDict[@"extras"];
                      
-                     self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@(0) withDict:adDict] intValue];
+                     self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@0 withDict:adDict] intValue];
                      if(![self isSupportedFormat]) {
                          HZELog(@"Format of Exchange response unsupported (%lu).", (unsigned long)self.format);
                          [self handleFailure];

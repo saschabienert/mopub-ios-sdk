@@ -24,17 +24,6 @@ NSString * const kHZMediationUserDefaultsKeyIncentivizedDate = @"kHZMediationUse
 
 #pragma mark - Initialization
 
-+ (instancetype) sharedSettings
-{
-    static HZMediationSettings *settings;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        settings = [[HZMediationSettings alloc] init];
-    });
-    
-    return settings;
-}
-
 - (instancetype) init
 {
     self = [super init];
@@ -49,7 +38,7 @@ NSString * const kHZMediationUserDefaultsKeyIncentivizedDate = @"kHZMediationUse
 - (void) setupWithDict:(NSDictionary *)dictionary fromCache:(BOOL)fromCache{
     _IAPAdDisableTime = [[HZDictionaryUtils hzObjectForKey:kHZMediationIAPAdDisableTime
                                                        ofClass:[NSNumber class]
-                                                       default:0
+                                                       default:@0
                                                       withDict:dictionary] longLongValue] * 60; // in seconds
     
     _incentivizedDailyLimit = [HZDictionaryUtils hzObjectForKey:kHZMediationIncentivizedDailyLimit
@@ -139,10 +128,10 @@ NSString * const kHZMediationUserDefaultsKeyIncentivizedDate = @"kHZMediationUse
     
     // check if the currently stored incentivized count is stale or not
     if ([HZUtils dateIsToday:incentivizedDate]) {
-        incentivizedCount = [[NSUserDefaults standardUserDefaults] objectForKey:kHZMediationUserDefaultsKeyIncentivizedCounter] ?: @(0);
+        incentivizedCount = [[NSUserDefaults standardUserDefaults] objectForKey:kHZMediationUserDefaultsKeyIncentivizedCounter] ?: @0;
         incentivizedCount = @(incentivizedCount.intValue + 1);
     } else {
-        incentivizedCount = @(1);
+        incentivizedCount = @1;
     }
     
     [[NSUserDefaults standardUserDefaults] setObject:incentivizedCount forKey:kHZMediationUserDefaultsKeyIncentivizedCounter];

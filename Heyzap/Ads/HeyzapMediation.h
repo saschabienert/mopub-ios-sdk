@@ -13,6 +13,7 @@
 #import "HZMediationStarter.h"
 #import "HZMediationLoadManager.h"
 #import "HZMediateRequester.h"
+#import "HZMediationSettings.h"
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
@@ -23,8 +24,8 @@
 
 
 @property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
-
 @property (nonatomic, readonly) NSString *mediationId;
+@property (nonatomic, readonly) HZMediationSettings *settings;
 
 + (instancetype)sharedInstance;
 

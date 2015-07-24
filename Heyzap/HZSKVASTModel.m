@@ -271,7 +271,7 @@
 - (NSNumber *) secondsFromHHMMSS:(NSString *) str {
     if([str length] == 0){
         // nil or empty
-        return @(0);
+        return @0;
     }
     
     //process HH:MM:SS or HH:MM:SS.mmm
@@ -279,13 +279,13 @@
     
     if([components count] != 3){
         // invalid format
-        return @(0);
+        return @0;
     }
     
     NSArray *secondsComponents = [[components objectAtIndex:2] componentsSeparatedByString:@"."];
     if([secondsComponents count] != 1 && [secondsComponents count] != 2){
         // invalid format
-        return @(0);
+        return @0;
     }
     
     NSInteger hours         = [[components objectAtIndex:0] integerValue];

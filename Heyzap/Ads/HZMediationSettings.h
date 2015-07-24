@@ -20,8 +20,6 @@
 extern NSString * const kHZMediationUserDefaultsKeyIncentivizedCounter;
 extern NSString * const kHZMediationUserDefaultsKeyIncentivizedDate;
 
-+ (instancetype) sharedSettings;
-
 - (void) setupWithDict:(NSDictionary *)dict fromCache:(BOOL)fromCache;
 - (BOOL) tagIsEnabled:(NSString *)tag;
 - (BOOL) shouldAllowIncentivizedAd;
