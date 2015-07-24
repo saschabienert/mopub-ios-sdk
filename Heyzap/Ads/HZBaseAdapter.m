@@ -220,7 +220,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
         self.latestMediationScores = [[NSMutableDictionary alloc] init];
     }
     
-    return self.latestMediationScores[@(adType)] ?: @(0);
+    return self.latestMediationScores[@(adType)] ?: @0;
 }
 
 - (void) setLatestMediationScore:(NSNumber *)score forAdType:(HZAdType)adType {
@@ -232,13 +232,13 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     // in order to be properly sorted in the waterfall when compared to static creative scores
     if([self isVideoOnlyNetwork]){
         if(adType == HZAdTypeInterstitial || adType == HZAdTypeVideo) {
-            self.latestMediationScores[@(HZAdTypeInterstitial)] = (score ?: @(0));
-            self.latestMediationScores[@(HZAdTypeVideo)] = (score ?: @(0));
+            self.latestMediationScores[@(HZAdTypeInterstitial)] = (score ?: @0);
+            self.latestMediationScores[@(HZAdTypeVideo)] = (score ?: @0);
         } else {
-            self.latestMediationScores[@(adType)] = (score ?: @(0));
+            self.latestMediationScores[@(adType)] = (score ?: @0);
         }
     } else {
-        self.latestMediationScores[@(adType)] = (score ?: @(0));
+        self.latestMediationScores[@(adType)] = (score ?: @0);
     }
 }
 

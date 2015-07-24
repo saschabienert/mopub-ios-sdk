@@ -24,7 +24,7 @@
 #import "NativeAdTableViewController.h"
 #import "HZBannerAd.h"
 #import "HZNoCaretTextField.h"
-
+#import "HZMediationSettings.h"
 #import "HZHeyzapExchangeAdapter.h"
 #import "TestAppPaymentTransactionObserver.h"
 
@@ -499,6 +499,13 @@ const CGFloat kLeftMargin = 10;
     spoofIAPButton.frame = CGRectMake(kLeftMargin, CGRectGetMaxY(makeIAPButton.frame), 200.0, 50.0);
     [self.scrollView addSubview: spoofIAPButton];
     
+    // Clear Incentivized Daily Limit counter
+    UIButton *clearIncentivizedCountButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
+    [clearIncentivizedCountButton setTitle: @"Clear Incentivized Count" forState: UIControlStateNormal];
+    [clearIncentivizedCountButton addTarget: self action: @selector(clearIncentivizedCount) forControlEvents: UIControlEventTouchUpInside];
+    clearIncentivizedCountButton.frame = CGRectMake(kLeftMargin, CGRectGetMaxY(spoofIAPButton.frame), 200.0, 50.0);
+    [self.scrollView addSubview: clearIncentivizedCountButton];
+    
     // Add to payment queue
     [[SKPaymentQueue defaultQueue] addTransactionObserver:[TestAppPaymentTransactionObserver sharedInstance]];
 
@@ -716,7 +723,7 @@ const CGFloat kLeftMargin = 10;
         SKMutablePayment *payment = [[SKMutablePayment alloc] init];
         payment.productIdentifier = @"com.heyzap.mediationTest.product1";
         [[SKPaymentQueue defaultQueue] addPayment:payment];
-        
+        [self logToConsole:@"IAP made."];
     } else {
         NSLog(@"Unable to perform IAP");
     }
@@ -724,6 +731,13 @@ const CGFloat kLeftMargin = 10;
 
 - (void) spoofIAP {
     [HeyzapAds onIAPPurchaseComplete:@"com.heyzap.product" productName:@"Test Product" price:[NSDecimalNumber decimalNumberWithString:@"12.36"]];
+    [self logToConsole:@"IAP spoofed."];
+}
+
+- (void) clearIncentivizedCount {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kHZMediationUserDefaultsKeyIncentivizedCounter];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kHZMediationUserDefaultsKeyIncentivizedDate];
+    [self logToConsole:@"Incentivized daily limit counter cleared."];
 }
 
 #pragma mark - Open
