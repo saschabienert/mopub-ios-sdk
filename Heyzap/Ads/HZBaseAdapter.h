@@ -84,15 +84,6 @@
 
 - (BOOL)isVideoOnlyNetwork;
 
-/**
- * HeyzapMediation will use the timeout to determine if an ad was successfully shown or not.
- * For ad networks that *do* have a way of indicating whether an ad was shown the timeout
- * should be set to 0s to disable checking to see if an ad was displayed by HeyzapMediation.
- *
- * Default timeout = 3s
- */
-- (unsigned long long)showAdTimeout;
-
 + (NSString *)name;
 
 + (NSString *)humanizedName;

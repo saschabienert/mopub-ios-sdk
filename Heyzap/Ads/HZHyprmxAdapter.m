@@ -145,15 +145,4 @@ static BOOL wasReady = NO;
     }];
 }
 
-// Disabled for unity sdk since it takes a long time to show an ad on unity
-// Override
-- (unsigned long long)showAdTimeout {
-    if ([[HZAdsManager sharedManager] isUnity3D]) {
-        return 0;
-        
-    } else {
-        return [super showAdTimeout];
-    }
-}
-
 @end
