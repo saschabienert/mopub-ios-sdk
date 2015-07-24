@@ -24,7 +24,7 @@
 #import "NativeAdTableViewController.h"
 #import "HZBannerAd.h"
 #import "HZNoCaretTextField.h"
-#import "HeyzapMediation.h"
+#import "HZMediationSettings.h"
 #import "HZHeyzapExchangeAdapter.h"
 #import "TestAppPaymentTransactionObserver.h"
 

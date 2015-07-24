@@ -21,19 +21,13 @@
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
-extern NSString * const kHZMediationUserDefaultsKeyIncentivizedCounter;
-extern NSString * const kHZMediationUserDefaultsKeyIncentivizedDate;
 
 @property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 
-@property (nonatomic, readonly) NSDictionary *remoteDataDictionary;
 @property (nonatomic, readonly) NSString *mediationId;
 
 + (instancetype)sharedInstance;
 
-#pragma mark - Properties
-@property (nonatomic, readonly) NSTimeInterval IAPAdDisableTime;
-@property (nonatomic) NSTimeInterval adsTimeOut;
 
 #pragma mark - Setup
 
@@ -54,6 +48,9 @@ extern NSString * const kHZMediationUserDefaultsKeyIncentivizedDate;
 // We can handle the common scenarios by recursively finding the right view controller.
 
 + (BOOL)isOnlyHeyzapSDK;
+
+// HZMediationAdapterDelegate
+- (NSString *) countryCode;
 
 /**
  *  Call this method to force `isOnlyHeyzapSDK` to always return `YES`.

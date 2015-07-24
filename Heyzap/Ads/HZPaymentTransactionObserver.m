@@ -3,7 +3,7 @@
 #import "HZAPIClient.h"
 #import "HZLog.h"
 #import "HZDictionaryUtils.h"
-#import "HeyzapMediation.h"
+#import "HZMediationSettings.h"
 
 @interface HZPaymentTransactionObserver()<SKProductsRequestDelegate>
 
@@ -85,8 +85,7 @@ NSString * const kHZIAPMetricsEndPoint = @"in_game_api/metrics/iap";
             
             if ([json[@"success"] integerValue]) {
                 
-                HeyzapMediation *mediation = [HeyzapMediation sharedInstance];
-                mediation.adsTimeOut = mediation.IAPAdDisableTime;
+                [[HZMediationSettings sharedSettings] startAdsTimeOut];
                 [HZLog debug: [NSString stringWithFormat: @"(IAP Transaction) %@", json]];
                 
             } else {
