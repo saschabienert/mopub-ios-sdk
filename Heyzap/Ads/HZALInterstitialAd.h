@@ -41,6 +41,7 @@
 
 - (id)initInterstitialAdWithSdk:(HZALSdk *)anSdk;
 
+- (void)show;
 - (void)showOver:(UIWindow *)window;
 - (BOOL)isReadyForDisplay;
 

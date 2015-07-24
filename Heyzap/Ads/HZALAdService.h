@@ -16,5 +16,6 @@
 - (BOOL)hasPreloadedAdOfSize:(HZALAdSize *)adSize;
 
 - (void)loadNextAd:(HZALAdSize *)adSize andNotify:(id<HZALAdLoadDelegate>)delegate;
+- (void)preloadAdOfSize:(HZALAdSize *)adSize;
 
 @end
