@@ -38,8 +38,9 @@
 @property (nonatomic, strong) HZAppLovinDelegate *interstitialDelegate;
 @property (nonatomic, strong) HZIncentivizedAppLovinDelegate *incentivizedDelegate;
 
-@property (nonatomic, strong) NSError *interstitialError;
 @property (nonatomic, strong) NSError *incentivizedError;
+
+@property (nonatomic, strong) HZALInterstitialAd *currentInterstitialAd;
 
 @end
 
@@ -122,8 +123,7 @@
     
     switch (type) {
         case HZAdTypeInterstitial: {
-            [[self.sdk adService] loadNextAd:[HZALAdSize sizeInterstitial]
-                                   andNotify:self.interstitialDelegate];
+            [[self.sdk adService] preloadAdOfSize:[HZALAdSize sizeInterstitial]];
             break;
         }
         case HZAdTypeIncentivized: {
@@ -176,14 +176,16 @@
             [self appLovinFailedToShowWithUnderlyingError:self.incentivizedError];
         }
     } else {
-        HZALInterstitialAd *interstitial = [[HZALInterstitialAd alloc] initInterstitialAdWithSdk:self.sdk];
-        interstitial.adDisplayDelegate = self.interstitialDelegate;
-        interstitial.adVideoPlaybackDelegate = self.interstitialDelegate;
+        // We just need to keep a strong reference to the last HZALInterstitialAd to prevent it from being deallocated (this started being required in AppLovin 3.0.2)
+        self.currentInterstitialAd = [[HZALInterstitialAd alloc] initInterstitialAdWithSdk:self.sdk];
+        self.currentInterstitialAd.adDisplayDelegate = self.interstitialDelegate;
+        self.currentInterstitialAd.adVideoPlaybackDelegate = self.interstitialDelegate;
         
-        if ([interstitial isReadyForDisplay]) {
-            [interstitial showOver:[[UIApplication sharedApplication] keyWindow]];
+        if ([self.currentInterstitialAd isReadyForDisplay]) {
+            [self.currentInterstitialAd show];
         } else {
-            [self appLovinFailedToShowWithUnderlyingError:self.interstitialError];
+            self.currentInterstitialAd = nil;
+            [self appLovinFailedToShowWithUnderlyingError:nil];
         }
     }
 }
@@ -210,7 +212,7 @@
             break;
         }
         case HZAdTypeInterstitial: {
-            self.interstitialError = nil;
+            // This won't be called because we're not being notified for interstitials.
             break;
         }
             
@@ -220,8 +222,6 @@
             break;
         }
     }
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error
@@ -235,7 +235,7 @@
             break;
         }
         case HZAdTypeInterstitial: {
-            self.interstitialError = error;
+            // This won't be called because we're not being notified for interstitials.
             break;
         }
             
@@ -245,8 +245,6 @@
             break;
         }
     }
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)didShowAd {
