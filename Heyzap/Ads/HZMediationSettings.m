@@ -17,6 +17,13 @@
 #define kHZMediationCountryCode @"countryCode"
 #define kHZMediationDisabledTags @"disabled_tags"
 
+@interface HZMediationSettings()
+
+@property (nonatomic) NSTimeInterval IAPAdDisableTime;
+@property (nonatomic) NSTimeInterval IAPAdsTimeOut;
+
+@end
+
 @implementation HZMediationSettings
 
 NSString * const kHZMediationUserDefaultsKeyIncentivizedCounter = @"kHZMediationUserDefaultsKeyIncentivizedCounter";
@@ -79,17 +86,15 @@ NSString * const kHZMediationUserDefaultsKeyIncentivizedDate = @"kHZMediationUse
 
 #pragma mark - Settings
 
-@synthesize adsTimeOut = _adsTimeOut;
-
-- (NSTimeInterval) adsTimeOut {
-    if (_adsTimeOut < [NSDate timeIntervalSinceReferenceDate]) {
-        _adsTimeOut = 0;
+- (NSTimeInterval) IAPAdsTimeOut {
+    if (_IAPAdsTimeOut < [NSDate timeIntervalSinceReferenceDate]) {
+        _IAPAdsTimeOut = 0;
     }
-    return _adsTimeOut;
+    return _IAPAdsTimeOut;
 }
 
-- (void) startAdsTimeOut {
-    _adsTimeOut = [[NSDate dateWithTimeIntervalSinceNow:self.IAPAdDisableTime] timeIntervalSinceReferenceDate];
+- (void) startIAPAdsTimeOut {
+    self.IAPAdsTimeOut = [[NSDate dateWithTimeIntervalSinceNow:self.IAPAdDisableTime] timeIntervalSinceReferenceDate];
 }
 
 - (BOOL) tagIsEnabled:(NSString *)tag {

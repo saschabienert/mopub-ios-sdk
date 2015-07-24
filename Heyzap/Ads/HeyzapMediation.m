@@ -351,7 +351,7 @@ NSString * const kHZDataKey = @"data";
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad with a disabled tag"}];
     } else if (self.currentShownAd) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"An ad is already shown or attempting to be shown"}];
-    } else if ([[self settings] adsTimeOut] && adType != HZAdTypeIncentivized) {
+    } else if ([[self settings] IAPAdsTimeOut] && adType != HZAdTypeIncentivized) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Ads are disabled because of a recent in-app-purchase."}];
     } else if(adType == HZAdTypeIncentivized && ![[self settings] shouldAllowIncentivizedAd]) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"This user has reached their daily limit for incentivized ad views."}];
@@ -612,7 +612,7 @@ const NSTimeInterval bannerPollInterval = 1;
     HZParameterAssert(options);
     HZParameterAssert(completion);
     
-    if ([[self settings] adsTimeOut]) {
+    if ([[self settings] IAPAdsTimeOut]) {
         HZILog(@"Ads disabled because of an IAP");
         completion([[self class] bannerErrorWithDescription:@"Ads disabled because of an IAP" underlyingError:nil], nil);
         return;

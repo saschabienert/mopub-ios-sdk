@@ -85,7 +85,7 @@ NSString * const kHZIAPMetricsEndPoint = @"in_game_api/metrics/iap";
             
             if ([json[@"success"] integerValue]) {
                 
-                [[[HeyzapMediation sharedInstance] settings] startAdsTimeOut];
+                [[[HeyzapMediation sharedInstance] settings] startIAPAdsTimeOut];
                 [HZLog debug: [NSString stringWithFormat: @"(IAP Transaction) %@", json]];
                 
             } else {

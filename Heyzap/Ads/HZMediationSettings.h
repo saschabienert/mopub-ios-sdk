@@ -10,12 +10,11 @@
 
 @interface HZMediationSettings : NSObject
 
-@property (nonatomic, readonly) NSTimeInterval IAPAdDisableTime;
 @property (nonatomic, readonly) NSNumber *incentivizedDailyLimit;
 @property (nonatomic, readonly) NSDictionary *remoteDataDictionary;
 @property (nonatomic, readonly) NSSet *disabledTags;
 @property (nonatomic, readonly) NSString *countryCode;
-@property (nonatomic, readonly) NSTimeInterval adsTimeOut;
+@property (nonatomic, readonly) NSTimeInterval IAPAdsTimeOut;
 
 extern NSString * const kHZMediationUserDefaultsKeyIncentivizedCounter;
 extern NSString * const kHZMediationUserDefaultsKeyIncentivizedDate;
@@ -24,5 +23,5 @@ extern NSString * const kHZMediationUserDefaultsKeyIncentivizedDate;
 - (BOOL) tagIsEnabled:(NSString *)tag;
 - (BOOL) shouldAllowIncentivizedAd;
 - (void) incentivizedAdShown;
-- (void) startAdsTimeOut;
+- (void) startIAPAdsTimeOut;
 @end
