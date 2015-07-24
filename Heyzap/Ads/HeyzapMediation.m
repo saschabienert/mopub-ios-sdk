@@ -347,13 +347,6 @@ NSString * const kHZDataKey = @"data";
     
     /// Show ad
     [chosenAdapter showAdForType:adType options:options];
-    
-    /// Check if the adapter has responded yet.
-    if ([chosenAdapter showAdTimeout]) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)([chosenAdapter showAdTimeout] * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self checkIfAdapterShowedAd:chosenAdapter];
-        });
-    }
 }
 
 - (void) sortAdaptersByScore:(NSMutableOrderedSet *)adapters ifLatestMediateRequires:(NSDictionary *)latestMediate forAdType:(HZAdType)adType {
@@ -461,21 +454,6 @@ NSString * const kHZDataKey = @"data";
         [[self delegateForAdType:currentAd.eventReporter.adType] didShowAdWithTag:currentAd.tag];
     } else {
         HZELog(@"The network %@ reported that it showed an ad, but we weren't expecting this.",adapter.name);
-    }
-}
-
-- (void)checkIfAdapterShowedAd:(HZBaseAdapter *)adapter {
-    if (self.currentShownAd && self.currentShownAd.adState == HZAdStateRequestedShow) {
-        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:
-                              @{
-                                NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Network %@ was asked to show an ad, but it didn't; Heyzap didn't get a callback from that network reporting that it did so within %llu seconds. Assuming it failed and sending a didFail callback", adapter.name, [adapter showAdTimeout]]
-                                }];
-        
-        // Assume if we haven't shown yet, the show is broken and we should just log an error.
-        [self adapterDidFailToShowAd:adapter error:error];
-        
-        const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
-        [self autoFetchAdType:previousAdType];
     }
 }
 

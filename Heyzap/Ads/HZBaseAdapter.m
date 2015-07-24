@@ -100,10 +100,6 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return NO;
 }
 
-- (unsigned long long)showAdTimeout {
-    return 3;
-}
-
 #pragma mark - Inferred methods
 
 - (NSString *)sdkVersion
