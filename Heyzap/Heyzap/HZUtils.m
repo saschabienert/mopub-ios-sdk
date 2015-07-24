@@ -280,10 +280,12 @@ NSString *const kNoInternet = @"no_internet";
     if(!date){
         return nil;
     }
-    
-    NSCalendar *cal = [NSCalendar currentCalendar];
-    NSDateComponents *components = [cal components:(NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay) fromDate:date];
-    return [cal dateFromComponents:components];
+    NSDate *outputDate = nil;
+    if ([[NSCalendar currentCalendar] rangeOfUnit:NSDayCalendarUnit startDate:&outputDate interval:NULL forDate:date]) {
+        return outputDate;
+    } else {
+        return nil;
+    }
 }
 
 NSArray *hzMap(NSArray *array, id (^block)(id object)) {
