@@ -170,6 +170,7 @@
 
 
 - (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache {
+    self.settings = [[HZMediationSettings alloc] init];
     [[self settings] setupWithDict:dictionary fromCache:fromCache];
     
     static dispatch_once_t onceToken;
