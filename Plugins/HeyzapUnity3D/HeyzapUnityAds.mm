@@ -207,6 +207,8 @@ extern "C" {
             [HZBannerAd placeBannerInView:nil position:pos options:options success:^(HZBannerAd *banner) {
                 HZCurrentBannerAd = banner;
                 [HZCurrentBannerAd setDelegate: HZBannerDelegate];
+                NSString *unityMessage = [NSString stringWithFormat: @"loaded,%@", banner.options.tag];
+                UnitySendMessage([HZ_BANNER_KLASS UTF8String], "setDisplayState", [unityMessage UTF8String]);
             } failure:^(NSError *error) {
                 NSLog(@"Error fetching banner; error = %@",error);
                 [HZBannerDelegate bannerDidFailToReceiveAd: nil error: error];
