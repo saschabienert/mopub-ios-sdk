@@ -50,6 +50,7 @@
 
 #import "HZHeyzapExchangeAdapter.h"
 #import "HZHeyzapExchangeBannerAdapter.h"
+#import "HZCachingService.h"
 
 
 @interface HeyzapMediation()
@@ -72,6 +73,7 @@
 @property (nonatomic) BOOL pausableQueueIsPaused;
 
 // Child objects HeyzapMediation uses to avoid putting everything in this file
+@property (nonatomic, strong) HZCachingService *cachingService;
 @property (nonatomic, strong) HZMediationStarter *starter;
 @property (nonatomic, strong) HZMediateRequester *mediateRequester;
 @property (nonatomic, strong) HZMediationLoadManager *loadManager;
@@ -121,7 +123,8 @@
         dispatch_set_target_queue(self.pausableMainQueue, dispatch_get_main_queue());
         
         self.startStatus = HZMediationStartStatusNotStarted;
-        self.starter = [[HZMediationStarter alloc] initWithStartingDelegate:self];
+        _cachingService = [[HZCachingService alloc] init];
+        self.starter = [[HZMediationStarter alloc] initWithStartingDelegate:self cachingService:_cachingService];
         self.mediateRequester = [[HZMediateRequester alloc] initWithDelegate:self];
     }
     return self;
