@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-static HZDebugLevel kHZGlobalDebugLevel = HZDebugLevelSilent;
+static HZDebugLevel kHZGlobalDebugLevel = HZDebugLevelError;
 
 @interface HZLog()
 + (void) log: (NSString *) message atDebugLevel: (HZDebugLevel) debugLevel;
