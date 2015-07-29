@@ -109,7 +109,7 @@
     [NSTimer scheduledTimerWithTimeInterval:0.25 target:self selector:@selector(checkIfAdIsVisible:) userInfo:nil repeats:YES];
 }
 
-/* It turns out that the ADInterstitialAdDelegate don't work properly
+/* It turns out that the ADInterstitialAdDelegate callbacks don't work properly
  * The `interstitialAdDidUnload` callback does not fire when an ad is dismissed
  * Furthermore, the `interstitialAdActionDidFinish` *does* get fired when the ad is dismissed after clicking on it.
  * Therefore this timer will just check to see if the ad was dismissed by checking the ad's view controller.
