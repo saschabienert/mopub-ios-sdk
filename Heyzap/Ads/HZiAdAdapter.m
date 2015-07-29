@@ -82,11 +82,7 @@
         return NO;
     }
     
-    if (self.interstitialAd != nil) {
-        return self.interstitialAd.loaded;
-    }
-    
-    return NO;
+    return [self.interstitialAd isLoaded];
 }
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options {
@@ -101,14 +97,25 @@
     }
     
     if (!success) {
+        // Note: This should be changed once we support iOS 7+
+        // [UIViewController requestInterstitialAdPresentation] should be used instead (see ADInterstitialAd docs)
         [self.interstitialAd presentFromViewController:options.viewController];
     }
     
     [self.delegate adapterDidShowAd:self];
+    [self.delegate adapterWillPlayAudio:self];
 
     self.presentedViewController = options.viewController.presentedViewController;
     [NSTimer scheduledTimerWithTimeInterval:0.25 target:self selector:@selector(checkIfAdIsVisible:) userInfo:nil repeats:YES];
 }
+
+/* It turns out that the ADInterstitialAdDelegate don't work properly
+ * The `interstitialAdDidUnload` callback does not fire when an ad is dismissed
+ * Furthermore, the `interstitialAdActionDidFinish` *does* get fired when the ad is dismissed after clicking on it.
+ * Therefore this timer will just check to see if the ad was dismissed by checking the ad's view controller.
+ * Placing an `adWasDismissed` inside interstitialAdActionDidFinish ends up firing the dismissed callback twice
+ * See ADInterstitialAdDelegate docs
+ * Please git blame and revert changes after this bug is resolved. */
 
 - (void)checkIfAdIsVisible:(NSTimer *)timer {
     // It's possible we've already sent the dismiss callback via `interstitialAdDidUnload:`
@@ -116,7 +123,7 @@
     if (!self.interstitialAd) {
         [timer invalidate];
     }
-    if (!self.presentedViewController.presentingViewController) {
+    if (![self.presentedViewController presentingViewController]) {
         [timer invalidate];
         [self adWasDismissed];
     }
@@ -126,6 +133,7 @@
 {
     if ([HZDevice hzSystemVersionIsLessThan:@"7.0"] && [HZDevice isPhone]) {
         return HZAdTypeBanner;
+        
     } else {
         return HZAdTypeInterstitial | HZAdTypeBanner;
     }
@@ -138,7 +146,6 @@
 #pragma mark - ADInterstitialAdDelegate
 
 - (void)interstitialAdWillLoad:(ADInterstitialAd *)interstitialAd {
-    
 }
 
 - (void)interstitialAdDidLoad:(ADInterstitialAd *)interstitialAd {
@@ -147,14 +154,7 @@
 }
 
 - (void)interstitialAdDidUnload:(ADInterstitialAd *)interstitialAd {
-    [self.delegate adapterDidDismissAd: self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
-    if (self.presentedViewController) {
-        [self adWasDismissed];
-    } else {
-        self.interstitialAd = nil;
-        self.presentedViewController = nil;
-    }
+    [self adWasDismissed]; // Here just in case it fires due to an error (see ADInterstitialAdDelegate docs)
 }
 
 - (BOOL)interstitialAdActionShouldBegin:(ADInterstitialAd *)interstitialAd
@@ -170,13 +170,10 @@
 }
 
 - (void)interstitialAdActionDidFinish:(ADInterstitialAd *)interstitialAd {
-    [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self name]];
 }
 
 - (void)interstitialAd:(ADInterstitialAd *)interstitialAd
       didFailWithError:(NSError *)error {
-    
     
     self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain
                                                      code:1
@@ -195,6 +192,8 @@
 }
 
 - (void)adWasDismissed {
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self name]];
+    [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
     self.interstitialAd = nil;
     self.presentedViewController = nil;
