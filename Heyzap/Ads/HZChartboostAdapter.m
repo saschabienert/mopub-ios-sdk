@@ -306,31 +306,31 @@
 + (void)logError:(CBLoadError)error {
     switch(error){
         case CBLoadErrorInternetUnavailable: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, no Internet connection !");
+            HZELog(@"Chartboost: Failed to load Interstitial, no Internet connection !");
         } break;
         case CBLoadErrorInternal: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, internal error !");
+            HZELog(@"Chartboost: Failed to load Interstitial, internal error !");
         } break;
         case CBLoadErrorNetworkFailure: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, network error !");
+            HZELog(@"Chartboost: Failed to load Interstitial, network error !");
         } break;
         case CBLoadErrorWrongOrientation: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, wrong orientation !");
+            HZELog(@"Chartboost: Failed to load Interstitial, wrong orientation !");
         } break;
         case CBLoadErrorTooManyConnections: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, too many connections !");
+            HZELog(@"Chartboost: Failed to load Interstitial, too many connections !");
         } break;
         case CBLoadErrorFirstSessionInterstitialsDisabled: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, first session !");
+            HZELog(@"Chartboost: Failed to load Interstitial, first session !");
         } break;
         case CBLoadErrorNoAdFound : {
-            HZDLog(@"Chartboost: Failed to load Interstitial, no ad found !");
+            HZELog(@"Chartboost: Failed to load Interstitial, no ad found !");
         } break;
         case CBLoadErrorSessionNotStarted : {
-            HZDLog(@"Chartboost: Failed to load Interstitial, session not started !");
+            HZELog(@"Chartboost: Failed to load Interstitial, session not started !");
         } break;
         default: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, unknown error !");
+            HZELog(@"Chartboost: Failed to load Interstitial, unknown error !");
         }
     }
 }
