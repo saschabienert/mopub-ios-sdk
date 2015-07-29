@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+@class HZCachingService;
 
 typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
     HZMediationStartStatusNotStarted,
@@ -21,7 +22,7 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 
 @interface HZMediationStarter : NSObject
 
-- (instancetype)initWithStartingDelegate:(id<HZMediationStarting>)startingDelegate NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithStartingDelegate:(id<HZMediationStarting>)startingDelegate cachingService:(HZCachingService *)cachingService NS_DESIGNATED_INITIALIZER;
 
 - (void)start;
 @property (nonatomic, readonly) HZMediationStartStatus status;
@@ -29,5 +30,9 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
  *  Note: This property will be updated with the /start call from the network after the cached version is used.
  */
 @property (nonatomic, readonly) NSDictionary *networkNameToCredentials;
+
+#pragma mark - Testing
+
++ (NSString *)startFilename;
 
 @end
