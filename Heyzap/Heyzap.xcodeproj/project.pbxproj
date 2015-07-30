@@ -161,6 +161,9 @@
 		50666DA41B68381800995FE9 /* HZCachingService.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DA21B68381800995FE9 /* HZCachingService.m */; };
 		50666DA71B68405400995FE9 /* HZCachingServiceSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DA61B68405400995FE9 /* HZCachingServiceSpec.m */; };
 		50666DAB1B69A8F900995FE9 /* HZMediateRequesterSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DAA1B69A8F900995FE9 /* HZMediateRequesterSpec.m */; };
+		50666DE01B6AE97A00995FE9 /* HZInterstitialVideoConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 50666DDE1B6AE97A00995FE9 /* HZInterstitialVideoConfig.h */; };
+		50666DE11B6AE97A00995FE9 /* HZInterstitialVideoConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DDF1B6AE97A00995FE9 /* HZInterstitialVideoConfig.m */; };
+		50666DE41B6AEA4C00995FE9 /* HZInterstitialVideoConfigSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DE31B6AEA4C00995FE9 /* HZInterstitialVideoConfigSpec.m */; };
 		5072559D1B2F80DB00576059 /* HZMediateRequester.h in Headers */ = {isa = PBXBuildFile; fileRef = 5072559B1B2F80DB00576059 /* HZMediateRequester.h */; };
 		5072559E1B2F80DB00576059 /* HZMediateRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 5072559C1B2F80DB00576059 /* HZMediateRequester.m */; };
 		507255A21B30D56F00576059 /* HZMediationLoadData.h in Headers */ = {isa = PBXBuildFile; fileRef = 507255A01B30D56F00576059 /* HZMediationLoadData.h */; };
@@ -656,6 +659,9 @@
 		50666DA21B68381800995FE9 /* HZCachingService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZCachingService.m; sourceTree = "<group>"; };
 		50666DA61B68405400995FE9 /* HZCachingServiceSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZCachingServiceSpec.m; sourceTree = "<group>"; };
 		50666DAA1B69A8F900995FE9 /* HZMediateRequesterSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediateRequesterSpec.m; sourceTree = "<group>"; };
+		50666DDE1B6AE97A00995FE9 /* HZInterstitialVideoConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZInterstitialVideoConfig.h; sourceTree = "<group>"; };
+		50666DDF1B6AE97A00995FE9 /* HZInterstitialVideoConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZInterstitialVideoConfig.m; sourceTree = "<group>"; };
+		50666DE31B6AEA4C00995FE9 /* HZInterstitialVideoConfigSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZInterstitialVideoConfigSpec.m; sourceTree = "<group>"; };
 		506AE93219EF397300188B72 /* HeyzapSDKTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HeyzapSDKTest-Info.plist"; sourceTree = "<group>"; };
 		5072559B1B2F80DB00576059 /* HZMediateRequester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediateRequester.h; sourceTree = "<group>"; };
 		5072559C1B2F80DB00576059 /* HZMediateRequester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediateRequester.m; sourceTree = "<group>"; };
@@ -1358,6 +1364,14 @@
 			name = Management;
 			sourceTree = "<group>";
 		};
+		50666DE21B6AEA3200995FE9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				50666DE31B6AEA4C00995FE9 /* HZInterstitialVideoConfigSpec.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
 		5072559F1B30D55700576059 /* Loading */ = {
 			isa = PBXGroup;
 			children = (
@@ -1420,6 +1434,7 @@
 			isa = PBXGroup;
 			children = (
 				50666DA51B68403300995FE9 /* Management */,
+				50666DE21B6AEA3200995FE9 /* Models */,
 			);
 			name = Mediation;
 			sourceTree = "<group>";
@@ -1441,6 +1456,8 @@
 				5019224718EDFA6A002793A3 /* HZMediationEventReporter.m */,
 				50ABD5A81B2A2D65007A2801 /* HZMediationCurrentShownAd.h */,
 				50ABD5A91B2A2D65007A2801 /* HZMediationCurrentShownAd.m */,
+				50666DDE1B6AE97A00995FE9 /* HZInterstitialVideoConfig.h */,
+				50666DDF1B6AE97A00995FE9 /* HZInterstitialVideoConfig.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -2249,6 +2266,7 @@
 				509F003118EB6E2F0011EAB3 /* HZBaseAdapter.h in Headers */,
 				86C491761B2819C000A84B2C /* HZMRAIDUtil.h in Headers */,
 				50ABD5AA1B2A2D65007A2801 /* HZMediationCurrentShownAd.h in Headers */,
+				50666DE01B6AE97A00995FE9 /* HZInterstitialVideoConfig.h in Headers */,
 				86E439351AA7DCE400470E62 /* HZiAdAdapter.h in Headers */,
 				99D4C4191B38878C004D24DE /* HZSKVASTError.h in Headers */,
 				E621820D19BE669B0099BE8C /* HZUnityAds.h in Headers */,
@@ -2854,6 +2872,7 @@
 				50B0AF9A1AEAB39B003B8233 /* HZNSURLUtilsSpec.m in Sources */,
 				5020884219DA28DE005C3C1B /* HZNativeAdSpec.m in Sources */,
 				509B5BEC18C96CE2003A7CB9 /* TestJSON.m in Sources */,
+				50666DE41B6AEA4C00995FE9 /* HZInterstitialVideoConfigSpec.m in Sources */,
 				50AA624518CBF4DC0018A0B6 /* InterstitialFetchSpec.m in Sources */,
 				50666DA71B68405400995FE9 /* HZCachingServiceSpec.m in Sources */,
 				5053E7F21AEABCB50090889B /* HZWebViewPoolSpec.m in Sources */,
@@ -2967,6 +2986,7 @@
 				E67D8F201AB7B38B000B191C /* HZShowOptions.m in Sources */,
 				99752D541B3B860C0075B328 /* HZVASTVideoCache.m in Sources */,
 				866E3A0D18512F2500B6E431 /* HZAdViewController.m in Sources */,
+				50666DE11B6AE97A00995FE9 /* HZInterstitialVideoConfig.m in Sources */,
 				86F92C711B152E6B003DEAEE /* HZHYPRManager.m in Sources */,
 				995DF5571B421B3A000935BB /* HZHeyzapExchangeBannerClient.m in Sources */,
 				86BDB49B175853E100D85F29 /* HZAvailability.m in Sources */,
