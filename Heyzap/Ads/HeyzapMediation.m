@@ -587,6 +587,27 @@ static BOOL forceOnlyHeyzapSDK = NO;
     }
 }
 
+- (id)underlyingDelegateForAdType:(HZAdType)adType {
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            return self.interstitialDelegateProxy.forwardingTarget;
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            return self.incentivizedDelegateProxy.forwardingTarget;
+            break;
+        }
+        case HZAdTypeVideo: {
+            return self.videoDelegateProxy.forwardingTarget;
+            break;
+        }
+        case HZAdTypeBanner: {
+            // Banners use a different delegate system.
+            return nil;
+        }
+    }
+}
+
 const NSTimeInterval bannerTimeout = 10;
 const NSTimeInterval bannerPollInterval = 1;
 
