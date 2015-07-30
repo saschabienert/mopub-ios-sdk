@@ -97,8 +97,6 @@
     }
     
     if (!success) {
-        // Note: This should be changed once we support iOS 7+
-        // [UIViewController requestInterstitialAdPresentation] should be used instead (see ADInterstitialAd docs)
         [self.interstitialAd presentFromViewController:options.viewController];
     }
     
@@ -122,8 +120,8 @@
     // If so `interstitialAd` will be `nil` and we've already sent the `adapterDidDismissAd:` callback.
     if (!self.interstitialAd) {
         [timer invalidate];
-    }
-    if (![self.presentedViewController presentingViewController]) {
+        
+    }else if (![self.presentedViewController presentingViewController]) {
         [timer invalidate];
         [self adWasDismissed];
     }
@@ -154,7 +152,13 @@
 }
 
 - (void)interstitialAdDidUnload:(ADInterstitialAd *)interstitialAd {
-    [self adWasDismissed]; // Here just in case it fires due to an error (see ADInterstitialAdDelegate docs)
+    
+    if (self.presentedViewController) { // we showed an ad
+        [self adWasDismissed];
+        
+    } else {
+        self.interstitialAd = nil;
+    }
 }
 
 - (BOOL)interstitialAdActionShouldBegin:(ADInterstitialAd *)interstitialAd
