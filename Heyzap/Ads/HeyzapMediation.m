@@ -130,11 +130,6 @@
     return self;
 }
 
-#pragma mark - HZMediationAdapterDelegate
-- (NSString *)countryCode {
-    return [[self settings] countryCode];
-}
-
 #pragma mark - Getters / Setters
 
 - (void)setStartStatus:(HZMediationStartStatus)startStatus {

@@ -84,15 +84,17 @@
     return nil; // Chartboost doesn't provide the version.
 }
 
+NSString * const kHZCBLocationDefault = @"Default";
+
 - (void)prefetchForType:(HZAdType)type
 {
     switch (type) {
         case HZAdTypeInterstitial: {
-            [HZChartboost cacheInterstitial: [self.delegate countryCode]];
+            [HZChartboost cacheInterstitial:kHZCBLocationDefault];
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZChartboost cacheRewardedVideo:[self.delegate countryCode]];
+            [HZChartboost cacheRewardedVideo:kHZCBLocationDefault];
             break;
         }
         case HZAdTypeBanner:
@@ -106,10 +108,10 @@
 {
     switch (type) {
         case HZAdTypeIncentivized: {
-            return [HZChartboost hasRewardedVideo: [self.delegate countryCode]];
+            return [HZChartboost hasRewardedVideo:kHZCBLocationDefault];
         }
         case HZAdTypeInterstitial:
-            return [HZChartboost hasInterstitial: [self.delegate countryCode]];
+            return [HZChartboost hasInterstitial:kHZCBLocationDefault];
         case HZAdTypeBanner:
         case HZAdTypeVideo:
             return NO;
@@ -120,10 +122,10 @@
 {
     switch (type) {
         case HZAdTypeInterstitial:
-            [HZChartboost showInterstitial: [self.delegate countryCode]];
+            [HZChartboost showInterstitial:kHZCBLocationDefault];
             break;
         case HZAdTypeIncentivized:
-            [HZChartboost showRewardedVideo: [self.delegate countryCode]];
+            [HZChartboost showRewardedVideo:kHZCBLocationDefault];
             break;
         case HZAdTypeBanner:
         case HZAdTypeVideo:
