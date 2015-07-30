@@ -196,6 +196,7 @@ NSString * const kHZNetworkName = @"mobile";
  */
 - (void)unityAdsVideoCompleted:(NSString *)rewardItemKey skipped:(BOOL)skipped {
     [self.delegate adapterDidFinishPlayingAudio:self];
+    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
     self.didCompleteIncentivized = !skipped;
 }
 
