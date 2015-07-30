@@ -124,8 +124,8 @@
         
         self.startStatus = HZMediationStartStatusNotStarted;
         _cachingService = [[HZCachingService alloc] init];
-        self.starter = [[HZMediationStarter alloc] initWithStartingDelegate:self cachingService:_cachingService];
-        self.mediateRequester = [[HZMediateRequester alloc] initWithDelegate:self];
+        _starter = [[HZMediationStarter alloc] initWithStartingDelegate:self cachingService:_cachingService];
+        _mediateRequester = [[HZMediateRequester alloc] initWithDelegate:self cachingService:_cachingService];
     }
     return self;
 }

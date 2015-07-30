@@ -11,6 +11,7 @@
 #import "HZMediationAPIClient.h"
 #import "HZMediationConstants.h"
 #import "HZUtils.h"
+#import "HZCachingService.h"
 
 // Backoff time for /mediate?
 
@@ -22,6 +23,7 @@
 
 @property (nonatomic) NSUInteger consecutiveMediateFailures;
 @property (nonatomic, readonly) id<HZMediateRequesterDelegate>delegate;
+@property (nonatomic, strong) HZCachingService *cachingService;
 
 @end
 
@@ -30,23 +32,24 @@
 const NSTimeInterval initialMediateDelay = 3;
 const NSTimeInterval maxMediateDelay     = 300;
 
-+ (NSURL *)pathToMediatePlist {
-    return [NSURL fileURLWithPath:[HZUtils cacheDirectoryWithFilename:@"mediate.plist"] isDirectory:NO];
++ (NSString *)mediateFilename {
+    return @"mediate.plist";
 }
 
-+ (NSURL *)pathToMediateParamsPlist {
-    return [NSURL fileURLWithPath:[HZUtils cacheDirectoryWithFilename:@"mediateParams.plist"] isDirectory:NO];
++ (NSString *)mediateParamsFilename {
+    return @"mediateParams.plist";
 }
 
 - (void)setMediateRequestDelay:(NSTimeInterval)mediateRequestDelay {
     _mediateRequestDelay = MIN(mediateRequestDelay, maxMediateDelay);
 }
 
-- (instancetype)initWithDelegate:(id<HZMediateRequesterDelegate>)delegate {
+- (instancetype)initWithDelegate:(id<HZMediateRequesterDelegate>)delegate cachingService:(HZCachingService*)cachingService {
     self = [super init];
     if (self) {
         _mediateRequestDelay = initialMediateDelay;
         _delegate = delegate;
+        _cachingService = cachingService;
     }
     return self;
 }
@@ -82,8 +85,9 @@ const NSTimeInterval maxMediateDelay     = 300;
                                              // Background priority b/c we shouldn't need to use the cache often.
                                              dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
                                                  // TODO: These should be in 1 file so the operation is atomic.
-                                                 [json writeToURL:[[self class] pathToMediatePlist] atomically:YES];
-                                                 [mediateParams writeToURL:[[self class] pathToMediateParamsPlist] atomically:YES];
+                                                 
+                                                 [self.cachingService cacheDictionary:json filename:[[self class] mediateFilename]];
+                                                 [self.cachingService cacheDictionary:mediateParams filename:[[self class] mediateParamsFilename]];
                                                  HZDLog(@"Wrote /mediate to disk");
                                              });
                                          } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
@@ -117,8 +121,9 @@ const NSTimeInterval maxMediateDelay     = 300;
 
 - (void)restoreFromCache {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        NSDictionary *mediatePlist = [NSDictionary dictionaryWithContentsOfURL:[[self class] pathToMediatePlist]];
-        NSDictionary *mediateParamsPlist = [NSDictionary dictionaryWithContentsOfURL:[[self class] pathToMediateParamsPlist]];
+        
+        NSDictionary *mediatePlist = [self.cachingService dictionaryWithFilename:[[self class] mediateFilename]];
+        NSDictionary *mediateParamsPlist = [self.cachingService dictionaryWithFilename:[[self class] mediateParamsFilename]];
         
         if (mediatePlist && mediateParamsPlist) {
             dispatch_async(dispatch_get_main_queue(), ^{
