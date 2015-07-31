@@ -27,6 +27,7 @@ NSString * const kHZAdapterUnityAdsHumanized = @"UnityAds";
 NSString * const kHZAdapterFacebookHumanized = @"Facebook Audience Network";
 NSString * const kHZAdapteriAdHumanized = @"iAd";
 NSString * const kHZAdapterHeyzapExchangeHumanized = @"Heyzap Exchange";
+NSString * const kHZAdapterLeadboltHumanized = @"Leadbolt";
 
 #define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
 #define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]

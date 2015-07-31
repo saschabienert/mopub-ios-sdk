@@ -21,6 +21,7 @@
 #import "HZBannerAdapter.h"
 #import "HZHyprmxAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
+#import "HZLeadboltAdapter.h"
 
 @interface HZBaseAdapter()
 //key: HZAdType value: NSNumber *
@@ -193,6 +194,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
             [HZiAdAdapter class],
             [HZHyprmxAdapter class],
             [HZHeyzapExchangeAdapter class],
+            [HZLeadboltAdapter class],
             nil];
 }
 

@@ -9,6 +9,7 @@ PODS:
   - GoogleMobileAds (7.3.1)
   - HyprMX (36)
   - Kiwi (2.3.1)
+  - Leadbolt (5.2)
   - Masonry (0.6.2)
   - OCHamcrest (4.1.1)
   - OCMockito (1.4.0):
@@ -27,6 +28,7 @@ DEPENDENCIES:
   - GoogleMobileAds
   - HyprMX
   - Kiwi
+  - Leadbolt
   - Masonry
   - OCMockito
   - OHHTTPStubs
@@ -58,6 +60,7 @@ SPEC CHECKSUMS:
   GoogleMobileAds: fc34248ba511fbe238152a6f78c3af29403e387b
   HyprMX: 91b4ac0c0aad04fe04a4f320106d75af625becee
   Kiwi: f038a6c61f7a9e4d7766bff5717aa3b3fdb75f55
+  Leadbolt: 1e2703134831ec79a27145a80791efba1664ceba
   Masonry: 362e8a1cc0beada4a4c4832d5e863da2a51533be
   OCHamcrest: 6f03ffa81d12feab872638490a44ab0a6d3aca10
   OCMockito: 4981140c9a9ec06c31af40f636e3c0f25f27e6b2

@@ -38,6 +38,7 @@ extern NSString * const kHZAdapterUnityAdsHumanized;
 extern NSString * const kHZAdapterFacebookHumanized;
 extern NSString * const kHZAdapteriAdHumanized;
 extern NSString * const kHZAdapterHeyzapExchangeHumanized;
+extern NSString * const kHZAdapterLeadboltHumanized;
 
 + (NSError *)errorWithAdapter:(NSString *)adapter
                        domain:(NSString *)domain
