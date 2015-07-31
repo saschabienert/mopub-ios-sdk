@@ -61,6 +61,7 @@
 + (NSString *)commaSeparatedAdapterList;
 
 - (void)setDelegate:(id<HZAdsDelegate>)delegate forAdType:(HZAdType)adType;
+- (id)underlyingDelegateForAdType:(HZAdType)adType;
 
 - (void)setDelegate:(id)delegate forNetwork:(NSString *)network;
 - (id)delegateForNetwork:(NSString *)network;
