@@ -144,10 +144,12 @@
 
 - (void)interstitialWillPresentScreen:(HZGADInterstitial *)ad {
     [self.delegate adapterDidShowAd:self];
+    [self.delegate adapterWillPlayAudio:self];
 }
 
 - (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
 {
+    [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
     self.currentInterstitial = nil;
     
