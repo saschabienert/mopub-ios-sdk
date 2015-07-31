@@ -8,4 +8,4 @@ dependencies:
 
 test:
   override:
-    - ./runUnitTests.sh
+    - ./runUnitTests.sh 8.3
