@@ -81,16 +81,15 @@ describe(@"HZMediateRequester", ^{
         // To keep tests quick, rapidly retry.
         requester.mediateRequestDelay = 0.1;
         
-        [[expectFutureValue(requesterDelegate) shouldEventuallyBeforeTimingOutAfter(2)] receive:@selector(requesterUpdatedMediate)];
         [[expectFutureValue(cachingMock) shouldEventuallyBeforeTimingOutAfter(2)] receive:@selector(cacheDictionary:filename:) withArguments:fromNetworkJson,any()];
         
         [[cachingMock should] receive:@selector(dictionaryWithFilename:) andReturn:fromCacheJson withCountAtLeast:1];
         
-        [requester start];
-        
         [[expectFutureValue(requesterDelegate) shouldEventuallyBeforeTimingOutAfter(2)] receive:@selector(requesterUpdatedMediate) withCountAtLeast:2];
         
         [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheDictionary:filename:) withArguments:fromNetworkJson,any()];
+        
+        [requester start];
     });
     
     it(@"Returns the data from the network, even if the network is initially down",^{
