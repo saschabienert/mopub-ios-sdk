@@ -108,7 +108,7 @@
 }
 
 /**
- * We use this timer to poll for the iAd on on the view controller and call dismiss once we no longer see it.
+ * We use this timer to poll for the iAd on the view controller and call dismiss once we no longer see it.
  * This is done because the `interstitialAdDidUnload` doesn't necessarily get called when an interstitial gets dismissed after it's been displayed (see comment above `interstitialAdDidUnload`)
  */
 - (void)checkIfAdIsVisible:(NSTimer *)timer {
