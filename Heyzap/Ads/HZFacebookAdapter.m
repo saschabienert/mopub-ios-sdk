@@ -137,13 +137,11 @@
 
 - (void)interstitialAdDidClick:(HZFBInterstitialAd *)interstitialAd {
     [self.delegate adapterWasClicked:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)interstitialAdDidClose:(HZFBInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd:self];
     self.interstitialAd = nil;
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 - (void)interstitialAdWillClose:(HZFBInterstitialAd *)interstitialAd {

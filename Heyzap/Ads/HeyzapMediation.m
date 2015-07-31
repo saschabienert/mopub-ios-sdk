@@ -411,6 +411,8 @@ NSString * const kHZDataKey = @"data";
     [currentAd.eventReporter reportImpressionForAdapter:adapter];
     
     if (currentAd && currentAd.adState == HZAdStateRequestedShow) {
+        [self sendNetworkCallback: HZNetworkCallbackShow forNetwork: [adapter name]];
+        
         self.currentShownAd.adState = HZAdStateShown;
         [[self delegateForAdType:currentAd.eventReporter.adType] didShowAdWithTag:currentAd.tag];
     } else {
@@ -426,6 +428,7 @@ NSString * const kHZDataKey = @"data";
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter
 {
     if (self.currentShownAd) {
+        [self sendNetworkCallback: HZNetworkCallbackClick forNetwork: [adapter name]];
         [self.currentShownAd.eventReporter reportClickForAdapter:adapter];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didClickAdWithTag:self.currentShownAd.tag];
     }
@@ -436,6 +439,7 @@ NSString * const kHZDataKey = @"data";
     const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
     
     if (self.currentShownAd) {
+        [self sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [adapter name]];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didHideAdWithTag:self.currentShownAd.tag];
    }
     
@@ -446,6 +450,7 @@ NSString * const kHZDataKey = @"data";
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter
 {
     if (self.currentShownAd) {
+        [self sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [adapter name]];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] willStartAudio];
     }
 }
@@ -453,6 +458,7 @@ NSString * const kHZDataKey = @"data";
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter
 {
     if (self.currentShownAd) {
+        [self sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [adapter name]];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didFinishAudio];
     }
 }
@@ -473,6 +479,8 @@ NSString * const kHZDataKey = @"data";
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
     if (self.currentShownAd) {
+        [self sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [adapter name]];
+        
         [[self settings] incentivizedAdShown];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didCompleteAdWithTag:self.currentShownAd.tag];
         [self.currentShownAd.eventReporter reportIncentivizedResult:YES forAdapter:adapter];
@@ -482,6 +490,8 @@ NSString * const kHZDataKey = @"data";
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
     if (self.currentShownAd) {
+        [self sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [adapter name]];
+        
         [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAdWithTag:self.currentShownAd.tag];
         [self.currentShownAd.eventReporter reportIncentivizedResult:NO forAdapter:adapter];
     }
