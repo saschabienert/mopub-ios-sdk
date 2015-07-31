@@ -13,7 +13,6 @@
 @property (nonatomic, readonly) NSNumber *incentivizedDailyLimit;
 @property (nonatomic, readonly) NSDictionary *remoteDataDictionary;
 @property (nonatomic, readonly) NSSet *disabledTags;
-@property (nonatomic, readonly) NSString *countryCode;
 @property (nonatomic, readonly) NSTimeInterval IAPAdsTimeOut;
 
 extern NSString * const kHZMediationUserDefaultsKeyIncentivizedCounter;

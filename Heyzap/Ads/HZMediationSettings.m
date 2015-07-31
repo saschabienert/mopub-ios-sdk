@@ -14,7 +14,6 @@
 #define kHZMediationCustomPublisherDataKey @"custom_publisher_data"
 #define kHZMediationIncentivizedDailyLimit @"incentivized_daily_limit"
 #define kHZMediationIAPAdDisableTime @"iap_ad_disable_time"
-#define kHZMediationCountryCode @"countryCode"
 #define kHZMediationDisabledTags @"disabled_tags"
 
 @interface HZMediationSettings()
@@ -52,11 +51,6 @@ NSString * const kHZMediationUserDefaultsKeyIncentivizedDate = @"kHZMediationUse
                                                             ofClass:[NSNumber class]
                                                             default:nil
                                                            withDict:dictionary];
-    
-    _countryCode = [HZDictionaryUtils hzObjectForKey:kHZMediationCountryCode
-                                                 ofClass:[NSString class]
-                                                 default:@"zz" // Unknown or invalid; the server also uses this.
-                                                withDict:dictionary];
     
     NSArray *disabledTags = [HZDictionaryUtils hzObjectForKey:kHZMediationDisabledTags
                                                       ofClass:[NSArray class]

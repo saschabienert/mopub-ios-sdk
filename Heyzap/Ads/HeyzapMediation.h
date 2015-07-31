@@ -50,9 +50,6 @@
 
 + (BOOL)isOnlyHeyzapSDK;
 
-// HZMediationAdapterDelegate
-- (NSString *) countryCode;
-
 /**
  *  Call this method to force `isOnlyHeyzapSDK` to always return `YES`.
  */
