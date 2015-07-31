@@ -160,6 +160,7 @@
 		50666DA31B68381800995FE9 /* HZCachingService.h in Headers */ = {isa = PBXBuildFile; fileRef = 50666DA11B68381800995FE9 /* HZCachingService.h */; };
 		50666DA41B68381800995FE9 /* HZCachingService.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DA21B68381800995FE9 /* HZCachingService.m */; };
 		50666DA71B68405400995FE9 /* HZCachingServiceSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DA61B68405400995FE9 /* HZCachingServiceSpec.m */; };
+		50666DAB1B69A8F900995FE9 /* HZMediateRequesterSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DAA1B69A8F900995FE9 /* HZMediateRequesterSpec.m */; };
 		5072559D1B2F80DB00576059 /* HZMediateRequester.h in Headers */ = {isa = PBXBuildFile; fileRef = 5072559B1B2F80DB00576059 /* HZMediateRequester.h */; };
 		5072559E1B2F80DB00576059 /* HZMediateRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 5072559C1B2F80DB00576059 /* HZMediateRequester.m */; };
 		507255A21B30D56F00576059 /* HZMediationLoadData.h in Headers */ = {isa = PBXBuildFile; fileRef = 507255A01B30D56F00576059 /* HZMediationLoadData.h */; };
@@ -654,6 +655,7 @@
 		50666DA11B68381800995FE9 /* HZCachingService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZCachingService.h; sourceTree = "<group>"; };
 		50666DA21B68381800995FE9 /* HZCachingService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZCachingService.m; sourceTree = "<group>"; };
 		50666DA61B68405400995FE9 /* HZCachingServiceSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZCachingServiceSpec.m; sourceTree = "<group>"; };
+		50666DAA1B69A8F900995FE9 /* HZMediateRequesterSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediateRequesterSpec.m; sourceTree = "<group>"; };
 		506AE93219EF397300188B72 /* HeyzapSDKTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HeyzapSDKTest-Info.plist"; sourceTree = "<group>"; };
 		5072559B1B2F80DB00576059 /* HZMediateRequester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediateRequester.h; sourceTree = "<group>"; };
 		5072559C1B2F80DB00576059 /* HZMediateRequester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediateRequester.m; sourceTree = "<group>"; };
@@ -1351,6 +1353,7 @@
 			isa = PBXGroup;
 			children = (
 				509109341B66E5FB004464E7 /* HZMediationStarterSpec.m */,
+				50666DAA1B69A8F900995FE9 /* HZMediateRequesterSpec.m */,
 			);
 			name = Management;
 			sourceTree = "<group>";
@@ -2854,6 +2857,7 @@
 				50AA624518CBF4DC0018A0B6 /* InterstitialFetchSpec.m in Sources */,
 				50666DA71B68405400995FE9 /* HZCachingServiceSpec.m in Sources */,
 				5053E7F21AEABCB50090889B /* HZWebViewPoolSpec.m in Sources */,
+				50666DAB1B69A8F900995FE9 /* HZMediateRequesterSpec.m in Sources */,
 				50AA624C18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m in Sources */,
 				509109351B66E5FB004464E7 /* HZMediationStarterSpec.m in Sources */,
 			);

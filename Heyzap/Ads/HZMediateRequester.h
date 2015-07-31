@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class HZCachingService;
+
 @protocol HZMediateRequesterDelegate <NSObject>
 
 - (void)requesterUpdatedMediate;
@@ -19,7 +21,7 @@
  */
 @interface HZMediateRequester : NSObject
 
-- (instancetype)initWithDelegate:(id<HZMediateRequesterDelegate>)delegate;
+- (instancetype)initWithDelegate:(id<HZMediateRequesterDelegate>)delegate cachingService:(HZCachingService *)cachingService;
 
 @property (nonatomic, readonly) NSDictionary *latestMediate;
 @property (nonatomic, readonly) NSDictionary *latestMediateParams;
