@@ -107,14 +107,6 @@
     [NSTimer scheduledTimerWithTimeInterval:0.25 target:self selector:@selector(checkIfAdIsVisible:) userInfo:nil repeats:YES];
 }
 
-/* It turns out that the ADInterstitialAdDelegate callbacks don't work properly
- * The `interstitialAdDidUnload` callback does not fire when an ad is dismissed
- * Furthermore, the `interstitialAdActionDidFinish` *does* get fired when the ad is dismissed after clicking on it.
- * Therefore this timer will just check to see if the ad was dismissed by checking the ad's view controller.
- * Placing an `adWasDismissed` inside interstitialAdActionDidFinish ends up firing the dismissed callback twice
- * See ADInterstitialAdDelegate docs
- * Please git blame and revert changes after this bug is resolved. */
-
 - (void)checkIfAdIsVisible:(NSTimer *)timer {
     // It's possible we've already sent the dismiss callback via `interstitialAdDidUnload:`
     // If so `interstitialAd` will be `nil` and we've already sent the `adapterDidDismissAd:` callback.
@@ -151,6 +143,9 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
+/**
+ * Note: This gets called when an interstitial ad's data is unloaded (i.e. because of an error, memory issue, or the ad just expiring after it has been loaded for a long time). It does not necessarily get called when the ad gets dismissed after being presented.
+ */
 - (void)interstitialAdDidUnload:(ADInterstitialAd *)interstitialAd {
     
     if (self.presentedViewController) { // we showed an ad
