@@ -5,7 +5,7 @@ PODS:
     - Bugsnag/no-arc (= 4.0.7)
   - Bugsnag/no-arc (4.0.7)
   - ChartboostSDK (5.5.0)
-  - FacebookAudienceNetwork (4.3.0)
+  - FacebookAudienceNetwork (4.4.0)
   - GoogleMobileAds (7.3.1)
   - HyprMX (36)
   - Kiwi (2.3.1)
@@ -13,7 +13,7 @@ PODS:
   - OCHamcrest (4.1.1)
   - OCMockito (1.4.0):
     - OCHamcrest (~> 4.0)
-  - OHHTTPStubs (4.0.2)
+  - OHHTTPStubs (4.1.0)
   - Subliminal (1.1.0)
   - UnityAds (1.4.5)
   - VungleAdvertiserSDK (3.1.2)
@@ -43,7 +43,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Bugsnag:
-    :commit: 94779161ebb4122c1753946c45e8c5b8350f72b0
+    :commit: 10842c8160496dec55cf8c4f4fb9729ac3e3ea97
     :git: https://github.com/bugsnag/bugsnag-cocoa.git
   Subliminal:
     :commit: d99fef42529589373adc1948aede98aed0fbe9de
@@ -54,15 +54,15 @@ SPEC CHECKSUMS:
   AppLovin: ae28cdcb16636e3594c46488da16436bf4cc3af1
   Bugsnag: 5861d8519d30063abe7b3fcdcf4114a6dddab27a
   ChartboostSDK: ffb7e0b6657a9c3188f870558dcf4da42ea12dd2
-  FacebookAudienceNetwork: d28ea14de3b44f0837c8f28509dbd2c9322d0d76
+  FacebookAudienceNetwork: 7c23eaf82adb2b530106afaf50be44e3ed12250b
   GoogleMobileAds: fc34248ba511fbe238152a6f78c3af29403e387b
   HyprMX: 91b4ac0c0aad04fe04a4f320106d75af625becee
   Kiwi: f038a6c61f7a9e4d7766bff5717aa3b3fdb75f55
   Masonry: 362e8a1cc0beada4a4c4832d5e863da2a51533be
   OCHamcrest: 6f03ffa81d12feab872638490a44ab0a6d3aca10
   OCMockito: 4981140c9a9ec06c31af40f636e3c0f25f27e6b2
-  OHHTTPStubs: dbd1957d414659783e07b49c961940b7564c23d9
-  Subliminal: 5d9b445e84343d602fad3ce6ac14cff91e9bd618
+  OHHTTPStubs: f3473ab21dbf0815253ac96b977d5c36f1daad09
+  Subliminal: ce9b0a4b831f1abd12a6b71599178bd3a3658eb0
   UnityAds: a05bce9ad710707a267d66bb3f651e211f0dd74b
   VungleAdvertiserSDK: 2909d6e65c488799574ba028b84e64a95652127c
 
