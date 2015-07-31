@@ -14,6 +14,8 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
     HZMediationStartStatusSuccess,
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol HZMediationStarting <NSObject>
 
 - (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache;
@@ -29,10 +31,12 @@ typedef NS_ENUM(NSUInteger, HZMediationStartStatus) {
 /**
  *  Note: This property will be updated with the /start call from the network after the cached version is used.
  */
-@property (nonatomic, readonly) NSDictionary *networkNameToCredentials;
+@property (nonatomic, readonly, nullable) NSDictionary *networkNameToCredentials;
 
 #pragma mark - Testing
 
 + (NSString *)startFilename;
 
 @end
+
+NS_ASSUME_NONNULL_END
