@@ -1,3 +1,7 @@
+machine:
+  xcode:
+    version: "6.3.1" # We should try to use the latest Xcode available
+
 dependencies:
   override:
     - "cd Heyzap && pod install"
