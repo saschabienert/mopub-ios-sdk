@@ -406,13 +406,13 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
     NSLog(@"HeyzapMediation: ad shown from %@",[adapter name]);
+    [self sendNetworkCallback: HZNetworkCallbackShow forNetwork: [adapter name]];
+    
     HZMediationCurrentShownAd *currentAd = self.currentShownAd;
     
     [currentAd.eventReporter reportImpressionForAdapter:adapter];
     
     if (currentAd && currentAd.adState == HZAdStateRequestedShow) {
-        [self sendNetworkCallback: HZNetworkCallbackShow forNetwork: [adapter name]];
-        
         self.currentShownAd.adState = HZAdStateShown;
         [[self delegateForAdType:currentAd.eventReporter.adType] didShowAdWithTag:currentAd.tag];
     } else {
@@ -427,8 +427,9 @@ NSString * const kHZDataKey = @"data";
  */
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackClick forNetwork: [adapter name]];
+    
     if (self.currentShownAd) {
-        [self sendNetworkCallback: HZNetworkCallbackClick forNetwork: [adapter name]];
         [self.currentShownAd.eventReporter reportClickForAdapter:adapter];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didClickAdWithTag:self.currentShownAd.tag];
     }
@@ -436,12 +437,12 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [adapter name]];
     const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
     
     if (self.currentShownAd) {
-        [self sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [adapter name]];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didHideAdWithTag:self.currentShownAd.tag];
-   }
+    }
     
     self.currentShownAd = nil;
     [self autoFetchAdType:previousAdType];
@@ -449,16 +450,18 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [adapter name]];
+    
     if (self.currentShownAd) {
-        [self sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [adapter name]];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] willStartAudio];
     }
 }
 
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [adapter name]];
+    
     if (self.currentShownAd) {
-        [self sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [adapter name]];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didFinishAudio];
     }
 }
@@ -478,9 +481,9 @@ NSString * const kHZDataKey = @"data";
 // Issue: some networks tell you the user completed an incentivized ad only after a network request, potentially after the user has dismissed the ad (I think AppLovin does this).
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [adapter name]];
+    
     if (self.currentShownAd) {
-        [self sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [adapter name]];
-        
         [[self settings] incentivizedAdShown];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didCompleteAdWithTag:self.currentShownAd.tag];
         [self.currentShownAd.eventReporter reportIncentivizedResult:YES forAdapter:adapter];
@@ -489,9 +492,9 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [adapter name]];
+    
     if (self.currentShownAd) {
-        [self sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [adapter name]];
-        
         [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAdWithTag:self.currentShownAd.tag];
         [self.currentShownAd.eventReporter reportIncentivizedResult:NO forAdapter:adapter];
     }
