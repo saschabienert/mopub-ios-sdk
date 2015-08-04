@@ -181,11 +181,9 @@
     
     if(client.isWithAudio){
         [self.delegate adapterWillPlayAudio:self];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
     }
     
     self.currentlyPlayingClient = client;
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
 }
 
 - (void) didEndAdWithClient:(HZHeyzapExchangeClient *)client successfullyFinished:(BOOL)successfullyFinished{
@@ -195,26 +193,21 @@
     
     if(client.isWithAudio){
         [self.delegate adapterDidFinishPlayingAudio:self];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
     }
     
     if(client.adType == HZAdTypeIncentivized){
         if(successfullyFinished){
             [self.delegate adapterDidCompleteIncentivizedAd:self];
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
         }else{
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
         }
     }
     
     [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 - (void) adClickedWithClient:(HZHeyzapExchangeClient *)client {
     [self.delegate adapterWasClicked:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 

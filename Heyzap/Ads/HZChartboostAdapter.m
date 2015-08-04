@@ -186,13 +186,11 @@ NSString * const kHZCBLocationDefault = @"Default";
 
 - (void)didClickRewardedVideo:(CBLocation)location {
     [self.delegate adapterWasClicked: self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)didClickInterstitial:(CBLocation)location
 {
     [self.delegate adapterWasClicked:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (BOOL)shouldRequestInterstitial:(CBLocation)location {
@@ -202,13 +200,11 @@ NSString * const kHZCBLocationDefault = @"Default";
 - (void)didCompleteRewardedVideo:(CBLocation)location
                       withReward:(int)reward {
     [self.delegate adapterDidCompleteIncentivizedAd: self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
 }
 
 - (void)didDismissRewardedVideo:(CBLocation)location {
     [self maybeFinishPlayingAudio];
     [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
 }
 
 // Called before an interstitial will be displayed on the screen.
@@ -218,12 +214,10 @@ NSString * const kHZCBLocationDefault = @"Default";
 
 // Called after an interstitial has been displayed on the screen.
 - (void)didDisplayInterstitial:(CBLocation)location {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
     [self.delegate adapterDidShowAd:self];
 }
 
 - (void)didDisplayRewardedVideo:(CBLocation)location {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
     [self.delegate adapterDidShowAd:self];
 }
 
@@ -261,7 +255,6 @@ NSString * const kHZCBLocationDefault = @"Default";
 - (void)didDismissInterstitial:(CBLocation)location {
     [self maybeFinishPlayingAudio];
     [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 /**
@@ -340,7 +333,6 @@ NSString * const kHZCBLocationDefault = @"Default";
 - (void)maybeFinishPlayingAudio {
     if (self.isPlayingAudio) {
         [self.delegate adapterDidFinishPlayingAudio:self];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
     }
     self.isPlayingAudio = NO;
 }
@@ -348,8 +340,6 @@ NSString * const kHZCBLocationDefault = @"Default";
 - (void)willDisplayVideo:(CBLocation)location {
     self.isPlayingAudio = YES;
     [self.delegate adapterWillPlayAudio:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
 }
-
 
 @end
