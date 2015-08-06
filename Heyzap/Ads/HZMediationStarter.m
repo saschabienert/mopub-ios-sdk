@@ -11,12 +11,14 @@
 #import "HZUtils.h"
 #import "HZLog.h"
 #import "HZDictionaryUtils.h"
+#import "HZCachingService.h"
 
 @interface HZMediationStarter()
 
 @property (nonatomic) NSTimeInterval retryStartDelay;
 @property (nonatomic, weak) id<HZMediationStarting> startingDelegate;
 @property (nonatomic) NSDictionary *networkNameToCredentials;
+@property (nonatomic) HZCachingService *cachingService;
 @end
 
 @implementation HZMediationStarter
@@ -24,12 +26,14 @@
 const NSTimeInterval initialStartDelay = 10;
 const NSTimeInterval maxStartDelay     = 300;
 
-- (instancetype)initWithStartingDelegate:(id<HZMediationStarting>)startingDelegate {
+- (instancetype)initWithStartingDelegate:(id<HZMediationStarting>)startingDelegate cachingService:(HZCachingService *)cachingService {
     HZParameterAssert(startingDelegate);
+    HZParameterAssert(cachingService);
     self = [super init];
     if (self) {
         _retryStartDelay = initialStartDelay;
         _startingDelegate = startingDelegate;
+        _cachingService = cachingService;
     }
     return self;
 }
@@ -40,15 +44,11 @@ const NSTimeInterval maxStartDelay     = 300;
 
 - (void)start
 {
-    // Prevent duplicate start calls.
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [self startFromDisk];
-    });
+    [self startFromDisk];
 }
 
-+ (NSURL *)pathToStartInfo {
-    return [NSURL fileURLWithPath:[HZUtils cacheDirectoryWithFilename:@"start.plist"] isDirectory:NO];
++ (NSString *)startFilename {
+    return @"start.plist";
 }
 
 - (void)startFromDisk {
@@ -57,7 +57,8 @@ const NSTimeInterval maxStartDelay     = 300;
     // This avoids the performance overhead of starting them during gameplay
     // And allows faster fetches.
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        NSDictionary *startInfo = [NSDictionary dictionaryWithContentsOfURL:[[self class] pathToStartInfo]];
+        
+        NSDictionary *startInfo = [self.cachingService dictionaryWithFilename:[[self class] startFilename]];
         
         if (startInfo) {
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -78,7 +79,7 @@ const NSTimeInterval maxStartDelay     = 300;
             
             // store JSON to disk
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-                [json writeToURL:[[self class] pathToStartInfo] atomically:YES];
+                [self.cachingService cacheDictionary:json filename:[[self class] startFilename]];
                 HZDLog(@"Wrote start info to disk");
             });
             

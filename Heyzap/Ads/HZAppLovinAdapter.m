@@ -254,28 +254,23 @@
 - (void)didClickAd
 {
     [self.delegate adapterWasClicked:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)didDismissAd
 {
     [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 - (void)didCompleteIncentivized
 {
     [self clearIncentivizedState];
-    
     [self.delegate adapterDidCompleteIncentivizedAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
 }
 
 - (void)didFailToCompleteIncentivized
 {
     [self clearIncentivizedState];
     [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
 }
 
 - (void)clearIncentivizedState {
@@ -287,13 +282,11 @@
 - (void)willPlayAudio
 {
     [self.delegate adapterWillPlayAudio:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
 }
 
 - (void)didFinishAudio
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
 }
 
 #pragma mark - Setters/Getters

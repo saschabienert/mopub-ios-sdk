@@ -207,6 +207,7 @@ extern "C" {
             [HZBannerAd placeBannerInView:nil position:pos options:options success:^(HZBannerAd *banner) {
                 HZCurrentBannerAd = banner;
                 [HZCurrentBannerAd setDelegate: HZBannerDelegate];
+                [HZBannerDelegate sendMessageForKlass:[HZBannerDelegate klassName] withMessage:@"loaded" andTag:banner.options.tag];
             } failure:^(NSError *error) {
                 NSLog(@"Error fetching banner; error = %@",error);
                 [HZBannerDelegate bannerDidFailToReceiveAd: nil error: error];

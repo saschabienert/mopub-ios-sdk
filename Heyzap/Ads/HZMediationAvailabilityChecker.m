@@ -12,21 +12,22 @@
 #import "HZMediationConstants.h"
 #import "HZUtils.h"
 #import "HZSegmentationController.h"
+#import "HZInterstitialVideoConfig.h"
 
 @interface HZMediationAvailabilityChecker()
 
-@property (nonatomic) double interstitialVideoIntervalMillis;
-@property (nonatomic) BOOL interstitialVideoEnabled;
 @property (nonatomic, strong) NSDate *lastInterstitialVideoShownDate;
+
+@property (nonatomic) HZInterstitialVideoConfig *config;
 
 @end
 
 @implementation HZMediationAvailabilityChecker
 
-- (instancetype)initWithMediateResponse:(NSDictionary *)dictionary {
+- (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig {
     self = [super init];
     if (self) {
-        [self updateWithMediateResponse:dictionary];
+        _config = interstitialVideoConfig;
     }
     return self;
 }
@@ -57,7 +58,7 @@
         return YES;
     }
     const NSTimeInterval secondsSinceLastInterstitial = [[NSDate date] timeIntervalSinceDate:self.lastInterstitialVideoShownDate];
-    return (secondsSinceLastInterstitial * 1000) > self.interstitialVideoIntervalMillis;
+    return (secondsSinceLastInterstitial * 1000) > self.config.interstitialVideoIntervalMillis;
 }
 
 - (NSOrderedSet *)availableAdaptersForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters {
@@ -71,11 +72,11 @@
 }
 
 - (NSOrderedSet *)filterAdaptersForInterstitialVideo:(NSOrderedSet *)adapters adType:(HZAdType)adType {
-    if ((!self.lastInterstitialVideoShownDate && self.interstitialVideoEnabled) || adType != HZAdTypeInterstitial) {
+    if ((!self.lastInterstitialVideoShownDate && self.config.interstitialVideoEnabled) || adType != HZAdTypeInterstitial) {
         return adapters;
     }
     
-    const BOOL shouldAllowInterstitialVideo = [self withinInterval] && self.interstitialVideoEnabled;
+    const BOOL shouldAllowInterstitialVideo = [self withinInterval] && self.config.interstitialVideoEnabled;
     
     NSIndexSet *indexes = [adapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         return shouldAllowInterstitialVideo || !adapter.isVideoOnlyNetwork;
@@ -84,11 +85,8 @@
     return [NSOrderedSet orderedSetWithArray:[adapters objectsAtIndexes:indexes]];
 }
 
-- (void)updateWithMediateResponse:(NSDictionary *)json {
-    
-    self.interstitialVideoIntervalMillis = [[HZDictionaryUtils hzObjectForKey:@"interstitial_video_interval" ofClass:[NSNumber class] default:@(30 * 1000) withDict:json] doubleValue];;
-    
-    self.interstitialVideoEnabled = [[HZDictionaryUtils hzObjectForKey:@"interstitial_video_enabled" ofClass:[NSNumber class] default:@1 withDict:json] boolValue];
+- (void)updateWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig {
+    self.config = interstitialVideoConfig;
 }
 
 - (void)didShowInterstitialVideo {

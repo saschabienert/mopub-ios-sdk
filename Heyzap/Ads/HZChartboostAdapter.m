@@ -84,15 +84,17 @@
     return nil; // Chartboost doesn't provide the version.
 }
 
+NSString * const kHZCBLocationDefault = @"Default";
+
 - (void)prefetchForType:(HZAdType)type
 {
     switch (type) {
         case HZAdTypeInterstitial: {
-            [HZChartboost cacheInterstitial: [self.delegate countryCode]];
+            [HZChartboost cacheInterstitial:kHZCBLocationDefault];
             break;
         }
         case HZAdTypeIncentivized: {
-            [HZChartboost cacheRewardedVideo:[self.delegate countryCode]];
+            [HZChartboost cacheRewardedVideo:kHZCBLocationDefault];
             break;
         }
         case HZAdTypeBanner:
@@ -106,10 +108,10 @@
 {
     switch (type) {
         case HZAdTypeIncentivized: {
-            return [HZChartboost hasRewardedVideo: [self.delegate countryCode]];
+            return [HZChartboost hasRewardedVideo:kHZCBLocationDefault];
         }
         case HZAdTypeInterstitial:
-            return [HZChartboost hasInterstitial: [self.delegate countryCode]];
+            return [HZChartboost hasInterstitial:kHZCBLocationDefault];
         case HZAdTypeBanner:
         case HZAdTypeVideo:
             return NO;
@@ -120,10 +122,10 @@
 {
     switch (type) {
         case HZAdTypeInterstitial:
-            [HZChartboost showInterstitial: [self.delegate countryCode]];
+            [HZChartboost showInterstitial:kHZCBLocationDefault];
             break;
         case HZAdTypeIncentivized:
-            [HZChartboost showRewardedVideo: [self.delegate countryCode]];
+            [HZChartboost showRewardedVideo:kHZCBLocationDefault];
             break;
         case HZAdTypeBanner:
         case HZAdTypeVideo:
@@ -184,13 +186,11 @@
 
 - (void)didClickRewardedVideo:(CBLocation)location {
     [self.delegate adapterWasClicked: self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)didClickInterstitial:(CBLocation)location
 {
     [self.delegate adapterWasClicked:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (BOOL)shouldRequestInterstitial:(CBLocation)location {
@@ -200,13 +200,11 @@
 - (void)didCompleteRewardedVideo:(CBLocation)location
                       withReward:(int)reward {
     [self.delegate adapterDidCompleteIncentivizedAd: self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
 }
 
 - (void)didDismissRewardedVideo:(CBLocation)location {
     [self maybeFinishPlayingAudio];
     [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
 }
 
 // Called before an interstitial will be displayed on the screen.
@@ -216,12 +214,10 @@
 
 // Called after an interstitial has been displayed on the screen.
 - (void)didDisplayInterstitial:(CBLocation)location {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
     [self.delegate adapterDidShowAd:self];
 }
 
 - (void)didDisplayRewardedVideo:(CBLocation)location {
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
     [self.delegate adapterDidShowAd:self];
 }
 
@@ -259,7 +255,6 @@
 - (void)didDismissInterstitial:(CBLocation)location {
     [self maybeFinishPlayingAudio];
     [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 /**
@@ -306,31 +301,31 @@
 + (void)logError:(CBLoadError)error {
     switch(error){
         case CBLoadErrorInternetUnavailable: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, no Internet connection !");
+            HZELog(@"Chartboost: Failed to load Interstitial, no Internet connection !");
         } break;
         case CBLoadErrorInternal: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, internal error !");
+            HZELog(@"Chartboost: Failed to load Interstitial, internal error !");
         } break;
         case CBLoadErrorNetworkFailure: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, network error !");
+            HZELog(@"Chartboost: Failed to load Interstitial, network error !");
         } break;
         case CBLoadErrorWrongOrientation: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, wrong orientation !");
+            HZELog(@"Chartboost: Failed to load Interstitial, wrong orientation !");
         } break;
         case CBLoadErrorTooManyConnections: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, too many connections !");
+            HZELog(@"Chartboost: Failed to load Interstitial, too many connections !");
         } break;
         case CBLoadErrorFirstSessionInterstitialsDisabled: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, first session !");
+            HZELog(@"Chartboost: Failed to load Interstitial, first session !");
         } break;
         case CBLoadErrorNoAdFound : {
-            HZDLog(@"Chartboost: Failed to load Interstitial, no ad found !");
+            HZELog(@"Chartboost: Failed to load Interstitial, no ad found !");
         } break;
         case CBLoadErrorSessionNotStarted : {
-            HZDLog(@"Chartboost: Failed to load Interstitial, session not started !");
+            HZELog(@"Chartboost: Failed to load Interstitial, session not started !");
         } break;
         default: {
-            HZDLog(@"Chartboost: Failed to load Interstitial, unknown error !");
+            HZELog(@"Chartboost: Failed to load Interstitial, unknown error !");
         }
     }
 }
@@ -338,7 +333,6 @@
 - (void)maybeFinishPlayingAudio {
     if (self.isPlayingAudio) {
         [self.delegate adapterDidFinishPlayingAudio:self];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [self name]];
     }
     self.isPlayingAudio = NO;
 }
@@ -346,8 +340,6 @@
 - (void)willDisplayVideo:(CBLocation)location {
     self.isPlayingAudio = YES;
     [self.delegate adapterWillPlayAudio:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
 }
-
 
 @end

@@ -19,6 +19,8 @@
 
 @implementation HZSegmentationController
 
+#pragma mark - Init / Setup
+
 - (nullable instancetype) init {
     self = [super init];
     if (self) {
@@ -26,10 +28,6 @@
     }
     
     return self;
-}
-
-+ (HZAuctionType) auctionTypeForAdapter:(nonnull HZBaseAdapter *)adapter {
-    return [adapter class] == [HZCrossPromoAdapter class] ? HZAuctionTypeCrossPromo : HZAuctionTypeMonetization;
 }
 
 - (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary {
@@ -41,6 +39,9 @@
     HZDLog(@"Active segments for this user: %@", self.segments);
     
 }
+
+
+#pragma mark - Query
 
 - (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)adapter forType:(HZAdType)adType tag:(nonnull NSString *)adTag {
     return [adapter isAvailable] && [self isAdAllowedForType:HZAdTypeBanner auctionType:[HZSegmentationController auctionTypeForAdapter:adapter.parentAdapter] tag:adTag];
@@ -63,8 +64,18 @@
     return !didGetLimitied;
 }
 
+
+#pragma mark - Report
+
 - (BOOL) recordImpressionWithType:(HZAdType)adType andTag:(nonnull NSString *)tag fromAdapter:(nonnull HZBaseAdapter *)adapter {
     return [[HZImpressionHistory sharedInstance] recordImpressionWithType:adType andTag:tag andAuctionType:[HZSegmentationController auctionTypeForAdapter:adapter]];
+}
+
+
+#pragma mark - Utilities
+
++ (HZAuctionType) auctionTypeForAdapter:(nonnull HZBaseAdapter *)adapter {
+    return [adapter class] == [HZCrossPromoAdapter class] ? HZAuctionTypeCrossPromo : HZAuctionTypeMonetization;
 }
 
 @end

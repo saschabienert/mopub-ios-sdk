@@ -165,25 +165,21 @@
 - (void)vungleSDKwillCloseAdWithViewInfo:(NSDictionary*)viewInfo willPresentProductSheet:(BOOL)willPresentProductSheet
 {
     if (self.isShowingIncentivized) {
+        
         if ([viewInfo[@"completedView"] boolValue]) {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
             
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
         } else {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
-            
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
         }
     }
     
     if ([viewInfo[@"didDownload"] boolValue]) {
         [self.delegate adapterWasClicked:self];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
     }
     
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self name]];
     
     self.isShowingIncentivized = NO;
 }

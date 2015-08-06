@@ -82,11 +82,7 @@
         return NO;
     }
     
-    if (self.interstitialAd != nil) {
-        return self.interstitialAd.loaded;
-    }
-    
-    return NO;
+    return [self.interstitialAd isLoaded];
 }
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options {
@@ -105,18 +101,23 @@
     }
     
     [self.delegate adapterDidShowAd:self];
+    [self.delegate adapterWillPlayAudio:self];
 
     self.presentedViewController = options.viewController.presentedViewController;
     [NSTimer scheduledTimerWithTimeInterval:0.25 target:self selector:@selector(checkIfAdIsVisible:) userInfo:nil repeats:YES];
 }
 
+/**
+ * We use this timer to poll for the iAd on the view controller and call dismiss once we no longer see it.
+ * This is done because the `interstitialAdDidUnload` doesn't necessarily get called when an interstitial gets dismissed after it's been displayed (see comment above `interstitialAdDidUnload`)
+ */
 - (void)checkIfAdIsVisible:(NSTimer *)timer {
     // It's possible we've already sent the dismiss callback via `interstitialAdDidUnload:`
     // If so `interstitialAd` will be `nil` and we've already sent the `adapterDidDismissAd:` callback.
     if (!self.interstitialAd) {
         [timer invalidate];
-    }
-    if (!self.presentedViewController.presentingViewController) {
+        
+    }else if (![self.presentedViewController presentingViewController]) {
         [timer invalidate];
         [self adWasDismissed];
     }
@@ -126,6 +127,7 @@
 {
     if ([HZDevice hzSystemVersionIsLessThan:@"7.0"] && [HZDevice isPhone]) {
         return HZAdTypeBanner;
+        
     } else {
         return HZAdTypeInterstitial | HZAdTypeBanner;
     }
@@ -135,10 +137,16 @@
     return NO;
 }
 
+- (void)adWasDismissed {
+    [self.delegate adapterDidFinishPlayingAudio:self];
+    [self.delegate adapterDidDismissAd:self];
+    self.interstitialAd = nil;
+    self.presentedViewController = nil;
+}
+
 #pragma mark - ADInterstitialAdDelegate
 
 - (void)interstitialAdWillLoad:(ADInterstitialAd *)interstitialAd {
-    
 }
 
 - (void)interstitialAdDidLoad:(ADInterstitialAd *)interstitialAd {
@@ -146,21 +154,22 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
+/**
+ * Note: This gets called when an interstitial ad's data is unloaded (i.e. because of an error, memory issue, or the ad just expiring after it has been loaded for a long time). It does not necessarily get called when the ad gets dismissed after being presented.
+ */
 - (void)interstitialAdDidUnload:(ADInterstitialAd *)interstitialAd {
-    [self.delegate adapterDidDismissAd: self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
-    if (self.presentedViewController) {
+    
+    if (self.presentedViewController) { // this got called sometime after we displayed an Ad
         [self adWasDismissed];
+        
     } else {
         self.interstitialAd = nil;
-        self.presentedViewController = nil;
     }
 }
 
 - (BOOL)interstitialAdActionShouldBegin:(ADInterstitialAd *)interstitialAd
                    willLeaveApplication:(BOOL)willLeave {
     [self.delegate adapterWasClicked: self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
     
     if (willLeave) {
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: [self name]];
@@ -169,14 +178,14 @@
     return YES;
 }
 
+/*
+ * Called only after the Ad gets dismissed after being clicked on.
+ */
 - (void)interstitialAdActionDidFinish:(ADInterstitialAd *)interstitialAd {
-    [self.delegate adapterDidDismissAd:self];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [self name]];
 }
 
 - (void)interstitialAd:(ADInterstitialAd *)interstitialAd
       didFailWithError:(NSError *)error {
-    
     
     self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain
                                                      code:1
@@ -186,18 +195,14 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
+# pragma mark - Banners
+
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZiAdBannerAdapter alloc] initWithReportingDelegate:reportingDelegate parentAdapter:self options:options];
 }
 
 - (BOOL)hasBannerCredentials {
     return YES;
-}
-
-- (void)adWasDismissed {
-    [self.delegate adapterDidDismissAd:self];
-    self.interstitialAd = nil;
-    self.presentedViewController = nil;
 }
 
 @end

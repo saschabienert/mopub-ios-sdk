@@ -266,7 +266,8 @@ static NSString *overriddenBundleIdentifier;
     static NSString *bundleIdentifier;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        bundleIdentifier = overriddenBundleIdentifier ?: [[NSBundle mainBundle] bundleIdentifier];
+        // bundleForClass: allows this to work in test environments.
+        bundleIdentifier = overriddenBundleIdentifier ?: [[NSBundle bundleForClass:[self class]] bundleIdentifier];
     });
     return bundleIdentifier;
 }

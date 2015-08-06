@@ -214,7 +214,7 @@ char *HZNewBase64Encode(
     NSString *cachePath = [self cacheDirectoryPath];
     
     [[NSFileManager defaultManager] createDirectoryAtPath:cachePath
-                                   withIntermediateDirectories:NO
+                                   withIntermediateDirectories:YES
                                                     attributes:nil
                                                     error:nil];
 }

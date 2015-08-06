@@ -38,6 +38,8 @@
 #import "HZMediationLoadManager.h"
 #import "HZMediationAvailabilityChecker.h"
 #import "HZMediationSettings.h"
+#import "HZCachingService.h"
+#import "HZInterstitialVideoConfig.h"
 
 // Exchange
 #import "HZHeyzapExchangeAdapter.h"
@@ -68,6 +70,7 @@
 @property (nonatomic) BOOL pausableQueueIsPaused;
 
 // Child objects HeyzapMediation uses to avoid putting everything in this file
+@property (nonatomic, strong) HZCachingService *cachingService;
 @property (nonatomic, strong) HZMediationStarter *starter;
 @property (nonatomic, strong) HZMediateRequester *mediateRequester;
 @property (nonatomic, strong) HZMediationLoadManager *loadManager;
@@ -118,17 +121,14 @@
         dispatch_set_target_queue(self.pausableMainQueue, dispatch_get_main_queue());
         
         self.startStatus = HZMediationStartStatusNotStarted;
-        self.starter = [[HZMediationStarter alloc] initWithStartingDelegate:self];
-        self.mediateRequester = [[HZMediateRequester alloc] initWithDelegate:self];
-        self.settings = [[HZMediationSettings alloc] init];
-        self.segmentationController = [[HZSegmentationController alloc] init];
+
+        _settings = [[HZMediationSettings alloc] init];
+        _segmentationController = [[HZSegmentationController alloc] init];
+        _cachingService = [[HZCachingService alloc] init];
+        _starter = [[HZMediationStarter alloc] initWithStartingDelegate:self cachingService:_cachingService];
+        _mediateRequester = [[HZMediateRequester alloc] initWithDelegate:self cachingService:_cachingService];
     }
     return self;
-}
-
-#pragma mark - HZMediationAdapterDelegate
-- (NSString *)countryCode {
-    return [[self settings] countryCode];
 }
 
 #pragma mark - Getters / Setters
@@ -405,6 +405,8 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
     NSLog(@"HeyzapMediation: ad shown from %@",[adapter name]);
+    [self sendNetworkCallback: HZNetworkCallbackShow forNetwork: [adapter name]];
+    
     HZMediationCurrentShownAd *currentAd = self.currentShownAd;
     
     [currentAd.eventReporter reportImpressionForAdapter:adapter];
@@ -425,6 +427,8 @@ NSString * const kHZDataKey = @"data";
  */
 - (void)adapterWasClicked:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackClick forNetwork: [adapter name]];
+    
     if (self.currentShownAd) {
         [self.currentShownAd.eventReporter reportClickForAdapter:adapter];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didClickAdWithTag:self.currentShownAd.tag];
@@ -433,11 +437,12 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [adapter name]];
     const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
     
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didHideAdWithTag:self.currentShownAd.tag];
-   }
+    }
     
     self.currentShownAd = nil;
     [self autoFetchAdType:previousAdType];
@@ -445,6 +450,8 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [adapter name]];
+    
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] willStartAudio];
     }
@@ -452,6 +459,8 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [adapter name]];
+    
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didFinishAudio];
     }
@@ -472,6 +481,8 @@ NSString * const kHZDataKey = @"data";
 // Issue: some networks tell you the user completed an incentivized ad only after a network request, potentially after the user has dismissed the ad (I think AppLovin does this).
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [adapter name]];
+    
     if (self.currentShownAd) {
         [[self settings] incentivizedAdShown];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didCompleteAdWithTag:self.currentShownAd.tag];
@@ -481,6 +492,8 @@ NSString * const kHZDataKey = @"data";
 
 - (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter
 {
+    [self sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [adapter name]];
+    
     if (self.currentShownAd) {
         [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAdWithTag:self.currentShownAd.tag];
         [self.currentShownAd.eventReporter reportIncentivizedResult:NO forAdapter:adapter];
@@ -573,6 +586,27 @@ static BOOL forceOnlyHeyzapSDK = NO;
         }
         case HZAdTypeVideo: {
             return self.videoDelegateProxy;
+            break;
+        }
+        case HZAdTypeBanner: {
+            // Banners use a different delegate system.
+            return nil;
+        }
+    }
+}
+
+- (id)underlyingDelegateForAdType:(HZAdType)adType {
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            return self.interstitialDelegateProxy.forwardingTarget;
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            return self.incentivizedDelegateProxy.forwardingTarget;
+            break;
+        }
+        case HZAdTypeVideo: {
+            return self.videoDelegateProxy.forwardingTarget;
             break;
         }
         case HZAdTypeBanner: {
@@ -911,10 +945,12 @@ const NSTimeInterval bannerPollInterval = 1;
     NSDictionary *json = self.mediateRequester.latestMediate;
     _mediationId = [HZDictionaryUtils hzObjectForKey:@"id" ofClass:[NSString class] default:@"" withDict:json];
     
+    HZInterstitialVideoConfig *const interstitialVideoConfig = [[HZInterstitialVideoConfig alloc] initWithDictionary:json];
+    
     if (!self.availabilityChecker) {
-        self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithMediateResponse:json];
+        self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithInterstitialVideoConfig:interstitialVideoConfig];
     } else {
-        [self.availabilityChecker updateWithMediateResponse:json];
+        [self.availabilityChecker updateWithInterstitialVideoConfig:interstitialVideoConfig];
     }
     
     [self updateMediationScoresWithDict:json];

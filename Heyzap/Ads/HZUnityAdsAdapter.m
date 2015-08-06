@@ -167,8 +167,6 @@ NSString * const kHZNetworkName = @"mobile";
         [[HZUnityAds sharedInstance] setZone:self.videoZoneID];
     }
     [[HZUnityAds sharedInstance] show];
-
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackShow forNetwork: [self name]];
 }
 
 + (NSTimeInterval)isAvailablePollInterval {
@@ -204,31 +202,21 @@ NSString * const kHZNetworkName = @"mobile";
         if (self.didCompleteIncentivized) {
             [self.delegate adapterDidCompleteIncentivizedAd:self];
             
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultComplete forNetwork: [self name]];
-            
         } else {
             [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
-            
-            [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackIncentivizedResultIncomplete forNetwork: [self name]];
         }
     }
     self.isShowingIncentivized = NO;
     self.didCompleteIncentivized = NO;
     [self.delegate adapterDidDismissAd:self];
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 - (void)unityAdsWillLeaveApplication {
     [self.delegate adapterWasClicked:self];
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)unityAdsVideoStarted {
     [self.delegate adapterWillPlayAudio:self];
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [self name]];
 }
 
 @end

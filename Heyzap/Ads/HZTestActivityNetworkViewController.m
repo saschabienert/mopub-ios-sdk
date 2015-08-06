@@ -48,7 +48,7 @@
 #import "HZAdMobAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 
-@interface HZTestActivityNetworkViewController() <HZMediationAdapterDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, HZBannerAdDelegate>
+@interface HZTestActivityNetworkViewController() <UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, HZBannerAdDelegate, HZIncentivizedAdDelegate>
 
 @property (nonatomic) HZBaseAdapter *network;
 @property (nonatomic) UIViewController *rootVC;
@@ -85,6 +85,11 @@ NSValue *hzBannerPositionValue(HZBannerPosition position);
 HZBannerPosition hzBannerPositionFromNSValue(NSValue *value);
 NSString *hzBannerPositionName(HZBannerPosition position);
 
+@property (nonatomic, weak) id<HZAdsDelegate> previousInterstitialDelegate;
+@property (nonatomic, weak) id<HZAdsDelegate> previousVideoDelegate;
+@property (nonatomic, weak) id<HZAdsDelegate> previousIncentivizedDelegate;
+
+
 @end
 
 @implementation HZTestActivityNetworkViewController
@@ -101,7 +106,14 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     self.enabled = enabled;
     
     // set this adapter's delegate to us so we can get callbacks
-    self.network.delegate = self;
+    
+    _previousInterstitialDelegate = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeInterstitial];
+    _previousVideoDelegate        = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeVideo];
+    _previousIncentivizedDelegate = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeIncentivized];
+    
+    [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeInterstitial];
+    [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeVideo];
+    [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeIncentivized];
     
     // UnityAds starts with a view controller that is not us, need to set it since AppLovin apparently jacks it
     if ([[network name] isEqualToString:@"unityads"]) {
@@ -130,6 +142,16 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     [self showOrHideBannerControls];
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
+    if (self.isMovingFromParentViewController) {
+        [[HeyzapMediation sharedInstance] setDelegate:self.previousInterstitialDelegate forAdType:HZAdTypeInterstitial];
+        [[HeyzapMediation sharedInstance] setDelegate:self.previousVideoDelegate        forAdType:HZAdTypeVideo];
+        [[HeyzapMediation sharedInstance] setDelegate:self.previousIncentivizedDelegate forAdType:HZAdTypeIncentivized];
+    }
+}
+
 - (void)setChosenBannerPosition:(HZBannerPosition)chosenBannerPosition {
     _chosenBannerPosition = chosenBannerPosition;
     
@@ -142,18 +164,6 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 }
 
 #pragma mark - UI action methods
-
-- (void) back {
-    // reset this network adapter's delegate
-    self.network.delegate = [HeyzapMediation sharedInstance];
-    
-    // reset the UnityAds view controller
-    if ([[[self.network class] name] isEqualToString:@"unityads"]) {
-        [[HZUnityAds sharedInstance] setViewController:self.rootVC];
-    }
-    
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
-}
 
 - (void) refresh {
     // check available
@@ -282,61 +292,54 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     [[HeyzapMediation sharedInstance] showAdForAdUnitType:self.currentAdType additionalParams:additionalParams options:options];
 }
 
-#pragma mark - HZMediationAdapterDelegate methods
+#pragma mark - HZAdDelegate methods
 
-- (NSString *)countryCode{
-    return @"us";
+- (void)didShowAdWithTag: (NSString *) tag {
+    [self logCallback:_cmd];
 }
 
-- (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
-    [self logAdCallback:@"did show ad"];
-    [[HeyzapMediation sharedInstance] adapterDidShowAd:adapter];
-    
-}
-
-- (void)adapterWasClicked:(HZBaseAdapter *)adapter {
-    [self logAdCallback:@"clicked"];
-    [[HeyzapMediation sharedInstance] adapterWasClicked:adapter];
-}
-
-- (void)adapterDidDismissAd:(HZBaseAdapter *)adapter {
-    [self logAdCallback:@"dismissed"];
-    [[HeyzapMediation sharedInstance] adapterDidDismissAd:adapter];
+- (void)didFailToShowAdWithTag: (NSString *) tag andError: (NSError *)error {
     [self changeShowButtonColor];
+    [self logCallback:_cmd];
 }
 
-- (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
-    [self logAdCallback:@"incentivized complete"];
-    [[HeyzapMediation sharedInstance] adapterDidCompleteIncentivizedAd:adapter];
+- (void)didReceiveAdWithTag: (NSString *) tag {
+    [self logCallback:_cmd];
+}
+
+- (void)didFailToReceiveAdWithTag: (NSString *) tag {
+    [self logCallback:_cmd];
+}
+
+- (void)didClickAdWithTag: (NSString *) tag {
+    [self logCallback:_cmd];
+}
+
+- (void)didHideAdWithTag: (NSString *) tag {
     [self changeShowButtonColor];
+    [self logCallback:_cmd];
 }
 
-- (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter {
-    [self logAdCallback:@"incentivized failed"];
-    [[HeyzapMediation sharedInstance] adapterDidFailToCompleteIncentivizedAd:adapter];
-    [self changeShowButtonColor];
+- (void)willStartAudio {
+    [self logCallback:_cmd];
 }
 
-- (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter {
-    [self logAdCallback:@"will play audio"];
-    [[HeyzapMediation sharedInstance] adapterWillPlayAudio:adapter];
+- (void) didFinishAudio {
+    [self logCallback:_cmd];
 }
 
-- (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter {
-    [self logAdCallback:@"finished playing audio"];
-    [[HeyzapMediation sharedInstance] adapterDidFinishPlayingAudio:adapter];
+- (void)didCompleteAdWithTag: (NSString *) tag {
+    [self logCallback:_cmd];
 }
 
-- (void)adapterDidFailToShowAd:(HZBaseAdapter *)adapter error:(NSError *)underlyingError {
-    [[HeyzapMediation sharedInstance] adapterDidFailToShowAd:adapter error:underlyingError];
-    
-    [self appendStringToDebugLog:@"Show Failed"];
-    [self changeShowButtonColor];
+- (void)didFailToCompleteAdWithTag: (NSString *) tag {
+    [self logCallback:_cmd];
 }
 
-- (void)logAdCallback:(NSString *)callback {
-    [self appendStringToDebugLog:[@"Ad Callback: " stringByAppendingString:callback]];
+- (void)logCallback:(SEL)selector {
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Ad Callback: %@",NSStringFromSelector(selector)]];
 }
+
 
 #pragma mark - View creation utility methods
 

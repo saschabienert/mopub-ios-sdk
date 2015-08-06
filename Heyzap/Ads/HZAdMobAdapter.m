@@ -144,29 +144,25 @@
 
 - (void)interstitialWillPresentScreen:(HZGADInterstitial *)ad {
     [self.delegate adapterDidShowAd:self];
+    [self.delegate adapterWillPlayAudio:self];
 }
 
 - (void)interstitialDidDismissScreen:(HZGADInterstitial *)ad
 {
+    [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
     self.currentInterstitial = nil;
-    
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackHide forNetwork: [self name]];
 }
 
 // As far as I can tell, this means a click.
 - (void)interstitialWillLeaveApplication:(HZGADInterstitial *)ad
 {
     [self.delegate adapterWasClicked:self];
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackClick forNetwork: [self name]];
 }
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
     self.lastInterstitialError = nil;
-    
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
