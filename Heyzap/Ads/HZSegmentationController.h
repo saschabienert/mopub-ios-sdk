@@ -17,6 +17,6 @@
 - (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter forType:(HZAdType)adType tag:(nonnull NSString *)adTag;
 - (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)adapter forType:(HZAdType)adType tag:(nonnull NSString *)adTag;
 
-- (BOOL) recordImpressionWithType:(HZAdType)adType andTag:(nonnull NSString *)tag fromAdapter:(nonnull HZBaseAdapter *)adapter;
+- (BOOL) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag adapter:(nonnull HZBaseAdapter *)adapter;
 
 @end

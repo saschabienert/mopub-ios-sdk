@@ -10,6 +10,7 @@
 #import "HZImpressionHistory.h"
 #import "HZMediationConstants.h"
 
+
 @implementation HZSegmentationSegment
 
 - (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags adType:(HZAdType)adType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit {

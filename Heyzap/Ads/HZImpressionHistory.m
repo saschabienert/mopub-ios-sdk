@@ -54,7 +54,7 @@
 
 #pragma mark - Insert
 
-- (BOOL) recordImpressionWithType:(HZAdType)adType andTag:(nonnull NSString *)tag andAuctionType:(HZAuctionType)auctionType {
+- (BOOL) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag auctionType:(HZAuctionType)auctionType {
     NSDate *methodStart = [NSDate date];
     
     sqlite3 *db = [self impressionTableDatabaseConnection];

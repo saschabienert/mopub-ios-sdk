@@ -67,8 +67,8 @@
 
 #pragma mark - Report
 
-- (BOOL) recordImpressionWithType:(HZAdType)adType andTag:(nonnull NSString *)tag fromAdapter:(nonnull HZBaseAdapter *)adapter {
-    return [[HZImpressionHistory sharedInstance] recordImpressionWithType:adType andTag:tag andAuctionType:[HZSegmentationController auctionTypeForAdapter:adapter]];
+- (BOOL) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag adapter:(nonnull HZBaseAdapter *)adapter {
+    return [[HZImpressionHistory sharedInstance] recordImpressionWithType:adType tag:tag auctionType:[HZSegmentationController auctionTypeForAdapter:adapter]];
 }
 
 

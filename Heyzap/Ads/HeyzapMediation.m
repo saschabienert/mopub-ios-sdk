@@ -410,7 +410,7 @@ NSString * const kHZDataKey = @"data";
     HZMediationCurrentShownAd *currentAd = self.currentShownAd;
     
     [currentAd.eventReporter reportImpressionForAdapter:adapter];
-    [self.segmentationController recordImpressionWithType:currentAd.eventReporter.adType andTag:currentAd.tag fromAdapter:adapter];
+    [self.segmentationController recordImpressionWithType:currentAd.eventReporter.adType tag:currentAd.tag adapter:adapter];
     
     if (currentAd && currentAd.adState == HZAdStateRequestedShow) {
         self.currentShownAd.adState = HZAdStateShown;
@@ -788,7 +788,7 @@ const NSTimeInterval bannerPollInterval = 1;
 
 - (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter hadInitialImpressionWithEventReporter:(HZMediationEventReporter *)eventReporter {
     [eventReporter reportImpressionForAdapter:bannerAdapter.parentAdapter];
-    [self.segmentationController recordImpressionWithType:HZAdTypeBanner andTag:eventReporter.tag fromAdapter:bannerAdapter.parentAdapter];
+    [self.segmentationController recordImpressionWithType:HZAdTypeBanner tag:eventReporter.tag adapter:bannerAdapter.parentAdapter];
 }
 
 - (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter hadReloadedImpressionWithEventReporter:(HZMediationEventReporter *)eventReporter {
