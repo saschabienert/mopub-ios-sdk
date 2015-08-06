@@ -15,8 +15,8 @@ SPEC_BEGIN(HZInterstitialVideoConfigSpec)
 describe(@"HZInterstitialVideoConfig", ^{
     it(@"Parses correctly", ^{
         NSDictionary *params = @{
-                                 @"interstitial_video_interval": @1000000,
-                                 @"interstitial_video_enabled": @YES,
+                                 kHZInterstitialVideoIntervalKey: @1000000,
+                                 kHZInterstitialVideoEnabledKey: @YES,
                                  };
         HZInterstitialVideoConfig *config = [[HZInterstitialVideoConfig alloc] initWithDictionary:params];
         

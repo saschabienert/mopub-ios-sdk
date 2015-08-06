@@ -10,6 +10,9 @@
 
 @interface HZInterstitialVideoConfig : NSObject
 
+extern NSString * const kHZInterstitialVideoIntervalKey;
+extern NSString * const kHZInterstitialVideoEnabledKey;
+
 @property (nonatomic, readonly) double interstitialVideoIntervalMillis;
 @property (nonatomic, readonly) BOOL interstitialVideoEnabled;
 
