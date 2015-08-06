@@ -51,7 +51,7 @@
 #import "HZHeyzapExchangeAdapter.h"
 #import "HZHeyzapExchangeBannerAdapter.h"
 #import "HZCachingService.h"
-
+#import "HZInterstitialVideoConfig.h"
 
 @interface HeyzapMediation()
 
@@ -924,10 +924,12 @@ const NSTimeInterval bannerPollInterval = 1;
     NSDictionary *json = self.mediateRequester.latestMediate;
     _mediationId = [HZDictionaryUtils hzObjectForKey:@"id" ofClass:[NSString class] default:@"" withDict:json];
     
+    HZInterstitialVideoConfig *const interstitialVideoConfig = [[HZInterstitialVideoConfig alloc] initWithDictionary:json];
+    
     if (!self.availabilityChecker) {
-        self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithMediateResponse:json];
+        self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithInterstitialVideoConfig:interstitialVideoConfig];
     } else {
-        [self.availabilityChecker updateWithMediateResponse:json];
+        [self.availabilityChecker updateWithInterstitialVideoConfig:interstitialVideoConfig];
     }
     
     [self updateMediationScoresWithDict:json];
