@@ -164,6 +164,10 @@
 		50666DE01B6AE97A00995FE9 /* HZInterstitialVideoConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 50666DDE1B6AE97A00995FE9 /* HZInterstitialVideoConfig.h */; };
 		50666DE11B6AE97A00995FE9 /* HZInterstitialVideoConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DDF1B6AE97A00995FE9 /* HZInterstitialVideoConfig.m */; };
 		50666DE41B6AEA4C00995FE9 /* HZInterstitialVideoConfigSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DE31B6AEA4C00995FE9 /* HZInterstitialVideoConfigSpec.m */; };
+		50666DE81B6AF86A00995FE9 /* HZLeadboltAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50666DE61B6AF86A00995FE9 /* HZLeadboltAdapter.h */; };
+		50666DE91B6AF86A00995FE9 /* HZLeadboltAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DE71B6AF86A00995FE9 /* HZLeadboltAdapter.m */; };
+		50666DEC1B6AF8C300995FE9 /* HZAppTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 50666DEA1B6AF8C300995FE9 /* HZAppTracker.h */; };
+		50666DED1B6AF8C300995FE9 /* HZAppTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 50666DEB1B6AF8C300995FE9 /* HZAppTracker.m */; };
 		5072559D1B2F80DB00576059 /* HZMediateRequester.h in Headers */ = {isa = PBXBuildFile; fileRef = 5072559B1B2F80DB00576059 /* HZMediateRequester.h */; };
 		5072559E1B2F80DB00576059 /* HZMediateRequester.m in Sources */ = {isa = PBXBuildFile; fileRef = 5072559C1B2F80DB00576059 /* HZMediateRequester.m */; };
 		507255A21B30D56F00576059 /* HZMediationLoadData.h in Headers */ = {isa = PBXBuildFile; fileRef = 507255A01B30D56F00576059 /* HZMediationLoadData.h */; };
@@ -662,6 +666,10 @@
 		50666DDE1B6AE97A00995FE9 /* HZInterstitialVideoConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZInterstitialVideoConfig.h; sourceTree = "<group>"; };
 		50666DDF1B6AE97A00995FE9 /* HZInterstitialVideoConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZInterstitialVideoConfig.m; sourceTree = "<group>"; };
 		50666DE31B6AEA4C00995FE9 /* HZInterstitialVideoConfigSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZInterstitialVideoConfigSpec.m; sourceTree = "<group>"; };
+		50666DE61B6AF86A00995FE9 /* HZLeadboltAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZLeadboltAdapter.h; sourceTree = "<group>"; };
+		50666DE71B6AF86A00995FE9 /* HZLeadboltAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZLeadboltAdapter.m; sourceTree = "<group>"; };
+		50666DEA1B6AF8C300995FE9 /* HZAppTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAppTracker.h; sourceTree = "<group>"; };
+		50666DEB1B6AF8C300995FE9 /* HZAppTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAppTracker.m; sourceTree = "<group>"; };
 		506AE93219EF397300188B72 /* HeyzapSDKTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HeyzapSDKTest-Info.plist"; sourceTree = "<group>"; };
 		5072559B1B2F80DB00576059 /* HZMediateRequester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediateRequester.h; sourceTree = "<group>"; };
 		5072559C1B2F80DB00576059 /* HZMediateRequester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediateRequester.m; sourceTree = "<group>"; };
@@ -1372,6 +1380,17 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
+		50666DE51B6AF84E00995FE9 /* Leadbolt */ = {
+			isa = PBXGroup;
+			children = (
+				50666DE61B6AF86A00995FE9 /* HZLeadboltAdapter.h */,
+				50666DE71B6AF86A00995FE9 /* HZLeadboltAdapter.m */,
+				50666DEA1B6AF8C300995FE9 /* HZAppTracker.h */,
+				50666DEB1B6AF8C300995FE9 /* HZAppTracker.m */,
+			);
+			name = Leadbolt;
+			sourceTree = "<group>";
+		};
 		5072559F1B30D55700576059 /* Loading */ = {
 			isa = PBXGroup;
 			children = (
@@ -1673,6 +1692,7 @@
 		50ECA1CF18DB7340006284AB /* Adapters */ = {
 			isa = PBXGroup;
 			children = (
+				50666DE51B6AF84E00995FE9 /* Leadbolt */,
 				99752D5E1B3CCEC00075B328 /* HeyzapExchange */,
 				86DDE89F1B1520390088E593 /* HyprMX */,
 				86181B871AA7CD19007939F8 /* iAd */,
@@ -2306,6 +2326,7 @@
 				507A454D19BE318200C7AEEA /* HZNativeAd.h in Headers */,
 				86C4916E1B2819C000A84B2C /* HZMRAIDModalViewController.h in Headers */,
 				993A82FB1B61C004001B586C /* HZMediationSettings.h in Headers */,
+				50666DE81B6AF86A00995FE9 /* HZLeadboltAdapter.h in Headers */,
 				507A455119BE4E5100C7AEEA /* HZNativeAdCollection.h in Headers */,
 				507A454819BE29CC00C7AEEA /* HZNativeAdController.h in Headers */,
 				99D4C4371B38906F004D24DE /* HZSKVASTModel.h in Headers */,
@@ -2356,6 +2377,7 @@
 				86B09B92175975C80045AA54 /* HZLog.h in Headers */,
 				50A64F731B3A1D4A0094B702 /* HZMediationAvailabilityChecker.h in Headers */,
 				509E8D4219B9065500ABF2D2 /* HZNotifications.h in Headers */,
+				50666DEC1B6AF8C300995FE9 /* HZAppTracker.h in Headers */,
 				99D4C41C1B38878C004D24DE /* HZSKVASTMediaFilePicker.h in Headers */,
 				509E8D3919B7A96E00ABF2D2 /* HZAdInfo.h in Headers */,
 				5079F3CB1AC4B672008AB46B /* HZNoCaretTextField.h in Headers */,
@@ -2989,6 +3011,7 @@
 				50666DE11B6AE97A00995FE9 /* HZInterstitialVideoConfig.m in Sources */,
 				86F92C711B152E6B003DEAEE /* HZHYPRManager.m in Sources */,
 				995DF5571B421B3A000935BB /* HZHeyzapExchangeBannerClient.m in Sources */,
+				50666DED1B6AF8C300995FE9 /* HZAppTracker.m in Sources */,
 				86BDB49B175853E100D85F29 /* HZAvailability.m in Sources */,
 				86FF907E185842D900BC48BF /* HZQueue.m in Sources */,
 				99D4C4161B38878C004D24DE /* HZSKVAST2Parser.m in Sources */,
@@ -3050,6 +3073,7 @@
 				50B46B1E18F88C6B005155B8 /* HZALAd.m in Sources */,
 				509E8D3F19B7F15300ABF2D2 /* HZCrossPromoAdapter.m in Sources */,
 				50ED562D1AB8DFA6009D7504 /* HZAdMobBannerAdapter.m in Sources */,
+				50666DE91B6AF86A00995FE9 /* HZLeadboltAdapter.m in Sources */,
 				5046CE8718E3545E000395AA /* HZMediationConstants.m in Sources */,
 				8680AC9C193ED2DC0078B5CF /* HZDelegateProxy.m in Sources */,
 				995DF56C1B44A632000935BB /* HZHeyzapExchangeMRAIDServiceHandler.m in Sources */,
