@@ -11,6 +11,7 @@
 #import "HZBaseAdapter.h"
 #import "HZMediationConstants.h"
 #import "HZUtils.h"
+#import "HZSegmentationController.h"
 
 @interface HZMediationAvailabilityChecker()
 
@@ -30,7 +31,7 @@
     return self;
 }
 
-- (HZBaseAdapter *)firstAdapterWithAdForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters optionalForcedNetwork:(Class)forcedNetwork {
+- (HZBaseAdapter *)firstAdapterWithAdForAdType:(HZAdType)adType tag:(NSString *)tag  adapters:(NSOrderedSet *)adapters optionalForcedNetwork:(Class)forcedNetwork segmentationController:(HZSegmentationController *)segmentationController {
     
     NSOrderedSet *preferredMediatorList = [self availableAdaptersForAdType:adType adapters:adapters];
     
@@ -41,7 +42,7 @@
     }
         
     const NSUInteger idx = [preferredMediatorList indexOfObjectPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        return [adapter hasAdForType:adType];
+        return [segmentationController adapterHasAllowedAd:adapter forType:adType tag:tag];
     }];
         
     if (idx != NSNotFound) {

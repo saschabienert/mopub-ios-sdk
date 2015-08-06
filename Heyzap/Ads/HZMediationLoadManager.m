@@ -67,6 +67,7 @@ return nil; \
     return self;
 }
 
+// This method ignores the ad tag in `options.tag` - we fetch regardless of tag. the tag is checked before sending the success callback
 - (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork {
     HZParameterAssert(showOptions);
     
@@ -118,11 +119,16 @@ return nil; \
         
         __block BOOL fetchedAd = NO;
         __block BOOL shouldNotifyDelegate = notifyDelegate;
+        __block BOOL hasTriedFetchingHeyzapExchange = NO;
         
         [loadData enumerateObjectsUsingBlock:^(HZMediationLoadData *datum, NSUInteger idx, BOOL *stop) {
             // we always want the HeyzapExchange to start & fetch so it's bid can be considered in the waterfall on show later, but others shouldn't start unless necessary
             if(fetchedAd && datum.adapterClass != [HZHeyzapExchangeAdapter class]){
                 return;
+            }
+            
+            if (datum.adapterClass == [HZHeyzapExchangeAdapter class]) {
+                hasTriedFetchingHeyzapExchange = YES;
             }
             
             const BOOL setupSuccessful = [self.delegate setupAdapterNamed:datum.networkName];
@@ -139,21 +145,22 @@ return nil; \
                 });
                 
                 NSTimeInterval pollingInterval = [datum.adapterClass isAvailablePollInterval];
+                __block HZBaseAdapter *adapterWithAnAd = nil;
                 const BOOL anAdapterHasAnAd = hzWaitUntilInterval(pollingInterval, ^BOOL{
-                    return [self adaptersFromLoadData:loadData uptoIndexHasAd:idx ofType:adType];
+                    adapterWithAnAd = [self adapterFromLoadData:loadData uptoIndexThatHasAd:idx ofType:adType];
+                    return (adapterWithAnAd != nil);
                 }, datum.timeout);
                 
                 if (anAdapterHasAnAd) {
-                    fetchedAd = YES;
-                    
-                    if(datum.adapterClass == [HZHeyzapExchangeAdapter class]){
-                        // stop iterating once the exchange succeeds
+                    if (hasTriedFetchingHeyzapExchange){
+                        // stop iterating once the exchange has had a chance to fetch & there is an ad from any network available
                         *stop = YES;
                     }
                     
+                    fetchedAd = YES;
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         if (shouldNotifyDelegate) {
-                            [self.delegate didFetchAdOfType:adType options:showOptions];
+                            [self.delegate didFetchAdOfType:adType withAdapter:adapterWithAnAd options:showOptions];
                         }
                     });
                     
@@ -172,14 +179,16 @@ return nil; \
     });
 }
 
-- (BOOL)adaptersFromLoadData:(NSArray *)loadData uptoIndexHasAd:(NSUInteger)idx ofType:(HZAdType)adType {
+// Returns the first adapter, from index [0,idx] that has an ad of the given type, or nil if none in that range have an ad of the given type.
+- (HZBaseAdapter *)adapterFromLoadData:(NSArray *)loadData uptoIndexThatHasAd:(NSUInteger)idx ofType:(HZAdType)adType {
     for (NSUInteger i = 0; i <= idx; i++) {
         HZMediationLoadData *datum = loadData[i];
-        if ([((HZBaseAdapter *)[datum.adapterClass sharedInstance]) hasAdForType:adType]) {
-            return YES;
+        HZBaseAdapter *adapter = ((HZBaseAdapter *)[datum.adapterClass sharedInstance]);
+        if ([adapter hasAdForType:adType]) {
+            return adapter;
         }
     }
-    return NO;
+    return nil;
 }
 
 // If

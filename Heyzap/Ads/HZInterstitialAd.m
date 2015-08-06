@@ -95,7 +95,7 @@
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
     HZVersionCheck()
 
-    [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeInterstitial additionalParams:nil completion:completion];
+    [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeInterstitial tag:tag additionalParams:nil completion:completion];
 }
 
 + (BOOL) isAvailable {

@@ -97,6 +97,7 @@
     HZVersionCheck()
 
     [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeIncentivized
+                                                 tag:tag
                                     additionalParams:nil
                                           completion:completion];
 }

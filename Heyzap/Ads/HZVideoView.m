@@ -23,9 +23,9 @@
 @property (nonatomic) BOOL skipButtonTimeIntervalValidated;
 @property (nonatomic) BOOL didSendOnActionShowAlready;
 
-#define kHZVideoViewAutoFadeOutControlsTime 2
-#define kHZVideoViewMinumumSkippableSeconds 10 // minimum number of seconds a skip button should save a user in order for the button to be shown
-#define kHZVideoViewOverrideSpammySkipTimesSeconds 5 // how many seconds to set the skip button to if the time is determined to be spammy
+#define kHZVideoViewAutoFadeOutControlsTimeSeconds 2 // number of seconds to leave controls on the screen before fading them out
+#define kHZVideoViewMinumumSkippableSeconds 9 // minimum number of seconds a skip button should save a user in order for the button to be shown
+#define kHZVideoViewOverrideSpammySkipTimeSeconds 5 // how many seconds to try and set the skip button to if the original time is determined to be spammy
 
 @end
 
@@ -172,7 +172,7 @@
     }completion:^(BOOL finished){
         // if we're showing the controls, set a timer to hide them automatically later
         if(animateIn) {
-            self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: kHZVideoViewAutoFadeOutControlsTime target: self selector: @selector(animationTimerDidFire:) userInfo: nil repeats: NO];
+            self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: kHZVideoViewAutoFadeOutControlsTimeSeconds target: self selector: @selector(animationTimerDidFire:) userInfo: nil repeats: NO];
         }
     }];
     
@@ -277,7 +277,7 @@
         //duration and skip interval are almost the same, or duration is shorter than skip interval. don't be spammy and just default the skip time to something reasonable
         HZDLog(@"HZVideoView overriding a spammy skip button. Ad length: %f, skip interval: %f", self.player.duration, self.skipButtonTimeInterval);
         
-        NSTimeInterval newSkipButtonTimeInterval = kHZVideoViewOverrideSpammySkipTimesSeconds;
+        NSTimeInterval newSkipButtonTimeInterval = kHZVideoViewOverrideSpammySkipTimeSeconds;
         if([self isSkipTimeSpammy:newSkipButtonTimeInterval]){
             //really short video. just let them skip
             self.skipButtonTimeInterval = 0;

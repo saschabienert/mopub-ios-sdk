@@ -19,6 +19,7 @@
 @protocol HZIncentivizedAdDelegate;
 @protocol HZBannerReportingDelegate;
 @class HZBannerAdOptions;
+@class HZSegmentationController;
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
@@ -26,6 +27,7 @@
 @property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 @property (nonatomic, readonly) NSString *mediationId;
 @property (nonatomic, readonly) HZMediationSettings *settings;
+@property (nonatomic, readonly) HZSegmentationController *segmentationController;
 
 + (instancetype)sharedInstance;
 
@@ -36,7 +38,7 @@
 
 #pragma mark - Showing Ads
 
-- (void)fetchForAdType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
+- (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
 
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options;
 

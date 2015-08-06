@@ -97,7 +97,7 @@
 }
 
 - (void)bannerWillShow {
-    [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
+    [self.bannerReportingDelegate bannerAdapter:self hadInitialImpressionWithEventReporter:self.eventReporter];
 }
 
 - (void)bannerDidClose {

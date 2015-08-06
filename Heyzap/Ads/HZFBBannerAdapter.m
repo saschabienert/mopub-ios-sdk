@@ -12,10 +12,13 @@
 #import "HZBannerAdOptions_Private.h"
 #import "HeyzapMediation.h"
 
+#import "HZFBAdSettings.h"
+
 @interface HZFBBannerAdapter()
 
 @property (nonatomic, strong) HZFBAdView *adView;
 @property (nonatomic) BOOL isLoaded;
+@property (nonatomic) BOOL reportedMostRecentImpressionAsFirstImpression;
 
 @end
 
@@ -66,7 +69,12 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: HZNetworkFacebook];
 }
 - (void)adViewWillLogImpression:(HZFBAdView *)adView {
-    [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
+    if (self.reportedMostRecentImpressionAsFirstImpression) {
+        self.reportedMostRecentImpressionAsFirstImpression = NO;
+    } else {
+        [self.bannerReportingDelegate bannerAdapter:self hadReloadedImpressionWithEventReporter:self.eventReporter];
+    }
+    
     [[HeyzapMediation sharedInstance] sendNetworkCallback: @"banner-logging_impression" forNetwork: HZNetworkFacebook];
 }
 
@@ -80,6 +88,11 @@
     } else {
         return [super conformsToProtocol:aProtocol];
     }
+}
+
+- (void) bannerWasAddedToView {
+    self.reportedMostRecentImpressionAsFirstImpression = YES;
+    [self.bannerReportingDelegate bannerAdapter:self hadInitialImpressionWithEventReporter:self.eventReporter];
 }
 
 @end

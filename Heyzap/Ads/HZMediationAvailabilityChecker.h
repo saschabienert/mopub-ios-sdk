@@ -10,6 +10,7 @@
 #import "HZAdType.h"
 
 @class HZBaseAdapter;
+@class HZSegmentationController;
 
 /**
  *  This class handles checking if an ad is available, keeping track of relevant state like interstitial video rate limiting.
@@ -19,7 +20,7 @@
 - (instancetype)initWithMediateResponse:(NSDictionary *)dictionary;
 
 - (NSOrderedSet *)availableAdaptersForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters;
-- (HZBaseAdapter *)firstAdapterWithAdForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters optionalForcedNetwork:(Class)forcedNetwork;
+- (HZBaseAdapter *)firstAdapterWithAdForAdType:(HZAdType)adType tag:(NSString *)tag adapters:(NSOrderedSet *)adapters optionalForcedNetwork:(Class)forcedNetwork segmentationController:(HZSegmentationController *)segmentationController;
 
 
 - (void)updateWithMediateResponse:(NSDictionary *)json;

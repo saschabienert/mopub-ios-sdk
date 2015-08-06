@@ -27,6 +27,7 @@
 #import "HZMediationSettings.h"
 #import "HZHeyzapExchangeAdapter.h"
 #import "TestAppPaymentTransactionObserver.h"
+#import "HZImpressionHistory.h"
 
 #define kTagCreativeIDField 4393
 
@@ -387,7 +388,7 @@ const CGFloat kLeftMargin = 10;
     self.adTagField = [[UITextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, CGRectGetMaxY(self.adsTextField.frame) + 10.0, 110.0, 25.5)];
     self.adTagField.delegate = self;
     self.adTagField.borderStyle = UITextBorderStyleRoundedRect;
-    self.adTagField.keyboardType = UIKeyboardTypeNumberPad;
+    self.adTagField.keyboardType = UIKeyboardTypeAlphabet;
     self.adTagField.placeholder = @"Ad Tag";
     self.adTagField.textAlignment = NSTextAlignmentLeft;
     self.adTagField.accessibilityLabel = kAdTagTextFieldAccessibilityLabel;
@@ -542,6 +543,13 @@ const CGFloat kLeftMargin = 10;
     [clearIncentivizedCountButton addTarget: self action: @selector(clearIncentivizedCount) forControlEvents: UIControlEventTouchUpInside];
     clearIncentivizedCountButton.frame = CGRectMake(kLeftMargin, CGRectGetMaxY(spoofIAPButton.frame), 200.0, 50.0);
     [self.scrollView addSubview: clearIncentivizedCountButton];
+    
+    // Clear Impression History db (used for Segmentation)
+    UIButton *clearImpressionHistoryButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
+    [clearImpressionHistoryButton setTitle: @"Clear Impression History" forState: UIControlStateNormal];
+    [clearImpressionHistoryButton addTarget: self action: @selector(clearImpressionHistory) forControlEvents: UIControlEventTouchUpInside];
+    clearImpressionHistoryButton.frame = CGRectMake(kLeftMargin, CGRectGetMaxY(clearIncentivizedCountButton.frame), 200.0, 50.0);
+    [self.scrollView addSubview: clearImpressionHistoryButton];
     
     // Add to payment queue
     [[SKPaymentQueue defaultQueue] addTransactionObserver:[TestAppPaymentTransactionObserver sharedInstance]];
@@ -802,6 +810,11 @@ const CGFloat kLeftMargin = 10;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kHZMediationUserDefaultsKeyIncentivizedCounter];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kHZMediationUserDefaultsKeyIncentivizedDate];
     [self logToConsole:@"Incentivized daily limit counter cleared."];
+}
+
+- (void) clearImpressionHistory {
+    BOOL deleteSuccess = [[HZImpressionHistory sharedInstance] deleteHistory];
+    [self logToConsole:[NSString stringWithFormat:@"Impression history was %@successful.", (deleteSuccess ? @"" : @"NOT ")]];
 }
 
 #pragma mark - Open

@@ -8,12 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import "HZAdType.h"
+
 @class HZShowOptions;
+@class HZBaseAdapter;
 
 @protocol HZMediationLoadManagerDelegate <NSObject>
 
 - (BOOL)setupAdapterNamed:(NSString *)adapterName;
-- (void)didFetchAdOfType:(HZAdType)adType options:(HZShowOptions *)showOptions;
+- (void)didFetchAdOfType:(HZAdType)adType withAdapter:(HZBaseAdapter *)adapter options:(HZShowOptions *)showOptions;
 - (void)didFailToFetchAdOfType:(HZAdType)adType options:(HZShowOptions *)showOptions;
 - (dispatch_queue_t)pausableMainQueue;
 
