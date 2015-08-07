@@ -48,7 +48,7 @@
         }
         
         NSDictionary *response = request.lastResponse;
-        NSArray *adsArray = [HZDictionaryUtils hzObjectForKey:@"ads" ofClass:[NSArray class] withDict:response];
+        NSArray *adsArray = [HZDictionaryUtils objectForKey:@"ads" ofClass:[NSArray class] dict:response];
         
         HZNativeAdCollection *const collection = ({
             NSMutableArray *ads = [NSMutableArray array];

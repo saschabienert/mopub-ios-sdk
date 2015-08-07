@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 
 @interface HZDictionaryUtils : NSObject
-+ (id) hzObjectForKey:(id)key ofClass:(Class)class withDict: (NSDictionary *) dict;
-+ (id) hzObjectForKey:(id)key ofClass:(Class)class default:(id)_default withDict: (NSDictionary *) dict;
++ (id) objectForKey:(id)key ofClass:(Class)class dict: (NSDictionary *) dict;
++ (id) objectForKey:(id)key ofClass:(Class)class default:(id)_default dict: (NSDictionary *) dict;
 + (NSString*) hzUrlEncodedStringWithDict: (NSDictionary *) dic;
 
 + (id)objectForKey:(id)key ofClass:(Class)class dict:(NSDictionary *)dict error:(NSError **)error;

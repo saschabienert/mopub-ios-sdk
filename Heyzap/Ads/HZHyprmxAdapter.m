@@ -63,9 +63,9 @@
     CHECK_CREDENTIALS_ERROR(error);
     
     // Nullable
-    NSString *const propertyID = [HZDictionaryUtils hzObjectForKey:@"property_id"
+    NSString *const propertyID = [HZDictionaryUtils objectForKey:@"property_id"
                                                                   ofClass:[NSString class]
-                                                                 withDict:credentials];
+                                                                 dict:credentials];
     
     HZHyprmxAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {

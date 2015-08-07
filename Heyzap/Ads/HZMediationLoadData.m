@@ -33,9 +33,9 @@ return nil; \
             return nil;
         }
         
-        _load = [[HZDictionaryUtils hzObjectForKey:@"load" ofClass:[NSNumber class] default:@1 withDict:dictionary] unsignedIntegerValue];
+        _load = [[HZDictionaryUtils objectForKey:@"load" ofClass:[NSNumber class] default:@1 dict:dictionary] unsignedIntegerValue];
         
-        double timeoutMillis = [[HZDictionaryUtils hzObjectForKey:@"ttl" ofClass:[NSNumber class] default:@10000 withDict:dictionary] doubleValue];
+        double timeoutMillis = [[HZDictionaryUtils objectForKey:@"ttl" ofClass:[NSNumber class] default:@10000 dict:dictionary] doubleValue];
         _timeout = timeoutMillis / 1000;
         
         NSArray *creativeTypes = [HZDictionaryUtils objectForKey:@"creative_types" ofClass:[NSArray class] dict:dictionary error:error];

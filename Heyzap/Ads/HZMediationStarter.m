@@ -101,7 +101,7 @@ const NSTimeInterval maxStartDelay     = 300;
 }
 
 - (void)createNameToCredentialsMapping:(NSDictionary *)startResponse {
-    NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:startResponse];
+    NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:startResponse];
     if (!networks) {
         HZELog(@"Invalid /start response; missing 'networks' in JSON");
         return;
@@ -109,8 +109,8 @@ const NSTimeInterval maxStartDelay     = 300;
     
     NSMutableDictionary *nameToStartData = [NSMutableDictionary dictionary];
     for (NSDictionary *startInfo in networks) {
-        NSString *network = [HZDictionaryUtils hzObjectForKey:@"name" ofClass:[NSString class] withDict:startInfo];
-        NSString *credentials = [HZDictionaryUtils hzObjectForKey:@"data" ofClass:[NSDictionary class] withDict:startInfo];
+        NSString *network = [HZDictionaryUtils objectForKey:@"name" ofClass:[NSString class] dict:startInfo];
+        NSString *credentials = [HZDictionaryUtils objectForKey:@"data" ofClass:[NSDictionary class] dict:startInfo];
         if (network && credentials) {
             nameToStartData[network] = credentials;
         } else {

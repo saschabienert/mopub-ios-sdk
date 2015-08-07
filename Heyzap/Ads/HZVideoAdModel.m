@@ -26,15 +26,15 @@
 - (instancetype) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
     self = [super initWithDictionary: dict adUnit:adUnit auctionType:auctionType];
     if (self) {
-        NSDictionary *interstitial = [HZDictionaryUtils hzObjectForKey: @"interstitial" ofClass: [NSDictionary class] default: @{} withDict: dict];
+        NSDictionary *interstitial = [HZDictionaryUtils objectForKey: @"interstitial" ofClass: [NSDictionary class] default: @{} dict: dict];
         if ([interstitial objectForKey: @"html_data"] != nil) {
-            _HTMLContent = [HZDictionaryUtils hzObjectForKey: @"html_data" ofClass: [NSString class] default: @"" withDict: interstitial];
+            _HTMLContent = [HZDictionaryUtils objectForKey: @"html_data" ofClass: [NSString class] default: @"" dict: interstitial];
         }
         
-        NSDictionary *video = [HZDictionaryUtils hzObjectForKey: @"video" ofClass: [NSDictionary class] default: @{} withDict: dict];
+        NSDictionary *video = [HZDictionaryUtils objectForKey: @"video" ofClass: [NSDictionary class] default: @{} dict: dict];
         
         if ([video objectForKey: @"static_url"] != nil) {
-            NSArray *staticURLs = [HZDictionaryUtils hzObjectForKey: @"static_url" ofClass: [NSArray class] default: @[] withDict: video];
+            NSArray *staticURLs = [HZDictionaryUtils objectForKey: @"static_url" ofClass: [NSArray class] default: @[] dict: video];
             
             _staticURLs = [[NSMutableArray alloc] init];
             
@@ -46,7 +46,7 @@
         }
         
         if ([video objectForKey: @"streaming_url"] != nil) {
-            NSArray *streamingURLs = [HZDictionaryUtils hzObjectForKey: @"streaming_url" ofClass: [NSArray class] default: @[] withDict: video];
+            NSArray *streamingURLs = [HZDictionaryUtils objectForKey: @"streaming_url" ofClass: [NSArray class] default: @[] dict: video];
             
             _streamingURLs = [[NSMutableArray alloc] init];
             
@@ -86,9 +86,9 @@
          }
          */
         [HZVideoAdDisplayOptions setDefaultsWithDict:video];
-        NSDictionary * adUnitVideoOptionsResponse = [HZDictionaryUtils hzObjectForKey: @"ad_unit" ofClass: [NSDictionary class] default: nil withDict: video];
+        NSDictionary * adUnitVideoOptionsResponse = [HZDictionaryUtils objectForKey: @"ad_unit" ofClass: [NSDictionary class] default: nil dict: video];
         // only save current ad unit display options, discard the others
-        NSDictionary * optionsForCurrentAdUnit = [HZDictionaryUtils hzObjectForKey:adUnit ofClass:[NSDictionary class] default:nil withDict:adUnitVideoOptionsResponse];
+        NSDictionary * optionsForCurrentAdUnit = [HZDictionaryUtils objectForKey:adUnit ofClass:[NSDictionary class] default:nil dict:adUnitVideoOptionsResponse];
         if(!optionsForCurrentAdUnit) {
             HZDLog(@"HZVideoAdModel did not find video display options for adUnit=\"%@\" in response. Using defaults.", adUnit);
             _displayOptions = [HZVideoAdDisplayOptions defaults];
@@ -96,13 +96,13 @@
             _displayOptions = [[HZVideoAdDisplayOptions alloc] initWithDict:optionsForCurrentAdUnit];
         }
         
-        NSDictionary *meta = [HZDictionaryUtils hzObjectForKey: @"meta"  ofClass: [NSDictionary class] default: @{} withDict: video];
+        NSDictionary *meta = [HZDictionaryUtils objectForKey: @"meta"  ofClass: [NSDictionary class] default: @{} dict: video];
         
         // Video Meta
-        _videoWidth = [HZDictionaryUtils hzObjectForKey: @"width" ofClass: [NSNumber class] default: @0 withDict: meta];
-        _videoHeight = [HZDictionaryUtils hzObjectForKey: @"height" ofClass: [NSNumber class] default: @0 withDict: meta];
-        _videoSizeBytes = [HZDictionaryUtils hzObjectForKey: @"bytes" ofClass: [NSNumber class] default: @0 withDict: meta];
-        _videoDuration = [HZDictionaryUtils hzObjectForKey: @"length" ofClass: [NSNumber class] default: @0 withDict: meta];
+        _videoWidth = [HZDictionaryUtils objectForKey: @"width" ofClass: [NSNumber class] default: @0 dict: meta];
+        _videoHeight = [HZDictionaryUtils objectForKey: @"height" ofClass: [NSNumber class] default: @0 dict: meta];
+        _videoSizeBytes = [HZDictionaryUtils objectForKey: @"bytes" ofClass: [NSNumber class] default: @0 dict: meta];
+        _videoDuration = [HZDictionaryUtils objectForKey: @"length" ofClass: [NSNumber class] default: @0 dict: meta];
         
         // Other
         _fileCached = NO;
@@ -210,7 +210,7 @@
         }
         
         [[HZAdsAPIClient sharedClient] POST:@"event/video_impression_complete" parameters:params success:^(HZAFHTTPRequestOperation *operation, id JSON) {
-            if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @0 withDict: JSON] intValue] == 200) {
+            if ([[HZDictionaryUtils objectForKey: @"status" ofClass: [NSNumber class] default: @0 dict: JSON] intValue] == 200) {
                 self.sentComplete = YES;
             }
         } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {

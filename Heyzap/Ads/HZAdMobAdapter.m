@@ -52,7 +52,7 @@
     CHECK_CREDENTIALS_ERROR(error);
     
     // Nullable property.
-    NSString *bannerAdUnitId = [HZDictionaryUtils hzObjectForKey:@"banner_ad_unit_id" ofClass:[NSString class] withDict:credentials];
+    NSString *bannerAdUnitId = [HZDictionaryUtils objectForKey:@"banner_ad_unit_id" ofClass:[NSString class] dict:credentials];
     
     HZAdMobAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {

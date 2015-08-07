@@ -20,9 +20,9 @@
 - (instancetype) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
     self = [super initWithDictionary: dict adUnit:adUnit auctionType:auctionType];
     if (self) {
-        _HTMLContent = [HZDictionaryUtils hzObjectForKey: @"ad_html" ofClass: [NSString class] default: @"<html></html>" withDict: dict];
+        _HTMLContent = [HZDictionaryUtils objectForKey: @"ad_html" ofClass: [NSString class] default: @"<html></html>" dict: dict];
         
-        NSArray *dimensions = [HZDictionaryUtils hzObjectForKey:@"ad_dimensions" ofClass:[NSArray class] withDict: dict]; // Old model.
+        NSArray *dimensions = [HZDictionaryUtils objectForKey:@"ad_dimensions" ofClass:[NSArray class] dict: dict]; // Old model.
         id adHeight = [dict objectForKey:@"ad_height"];
         id adWidth = [dict objectForKey:@"ad_width"];
         

@@ -21,14 +21,14 @@ NSString * const kHZImageHeightKey = @"height";
     HZParameterAssert(error != NULL);
     self = [super init];
     if (self) {
-        _url = [NSURL URLWithString:[HZDictionaryUtils hzObjectForKey:kHZImageURLKey ofClass:[NSString class] withDict:dictionary]];
+        _url = [NSURL URLWithString:[HZDictionaryUtils objectForKey:kHZImageURLKey ofClass:[NSString class] dict:dictionary]];
         CHECK_NOT_NIL(_url,@"URL");
         
-        NSNumber *width = [HZDictionaryUtils hzObjectForKey:kHZImageWidthKey ofClass:[NSNumber class] withDict:dictionary];
+        NSNumber *width = [HZDictionaryUtils objectForKey:kHZImageWidthKey ofClass:[NSNumber class] dict:dictionary];
         CHECK_NOT_NIL(width,@"Width");
         _width = [width integerValue];
         
-        NSNumber *height = [HZDictionaryUtils hzObjectForKey:kHZImageHeightKey ofClass:[NSNumber class] withDict:dictionary];
+        NSNumber *height = [HZDictionaryUtils objectForKey:kHZImageHeightKey ofClass:[NSNumber class] dict:dictionary];
         CHECK_NOT_NIL(height,@"Height");
         _width = [width integerValue];
         

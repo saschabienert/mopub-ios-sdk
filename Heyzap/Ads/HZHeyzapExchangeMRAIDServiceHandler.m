@@ -92,10 +92,10 @@
     [store requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
         if (!granted) { return; }
         EKEvent *event = [EKEvent eventWithEventStore:store];
-        event.title = [HZDictionaryUtils hzObjectForKey:@"description" ofClass:[NSString class] default:@"New event" withDict:eventJSON];
-        event.location =[HZDictionaryUtils hzObjectForKey:@"location" ofClass:[NSString class] withDict:eventJSON];
-        event.startDate = [self dateWithString:[HZDictionaryUtils hzObjectForKey:@"start" ofClass:[NSString class] withDict:eventJSON]];
-        event.endDate = [self dateWithString:[HZDictionaryUtils hzObjectForKey:@"end" ofClass:[NSString class] withDict:eventJSON]];
+        event.title = [HZDictionaryUtils objectForKey:@"description" ofClass:[NSString class] default:@"New event" dict:eventJSON];
+        event.location =[HZDictionaryUtils objectForKey:@"location" ofClass:[NSString class] dict:eventJSON];
+        event.startDate = [self dateWithString:[HZDictionaryUtils objectForKey:@"start" ofClass:[NSString class] dict:eventJSON]];
+        event.endDate = [self dateWithString:[HZDictionaryUtils objectForKey:@"end" ofClass:[NSString class] dict:eventJSON]];
         event.calendar = [store defaultCalendarForNewEvents];
         NSError *err = nil;
         [store saveEvent:event span:EKSpanThisEvent commit:YES error:&err];

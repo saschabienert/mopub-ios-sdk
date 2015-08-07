@@ -26,19 +26,19 @@ static NSDictionary *defaults;
         NSMutableDictionary *overriddenDefaults = [defaults mutableCopy];
         [overriddenDefaults addEntriesFromDictionary:dict];
         
-        _allowHide = [[HZDictionaryUtils hzObjectForKey: @"allow_hide" ofClass: [NSNumber class] default: @0 withDict: overriddenDefaults] boolValue];
-        _allowSkip = [[HZDictionaryUtils hzObjectForKey: @"allow_skip" ofClass: [NSNumber class] default: @0 withDict: overriddenDefaults] boolValue];
-        _allowInstallButton = [[HZDictionaryUtils hzObjectForKey: @"allow_install_button" ofClass: [NSNumber class] default: @1 withDict: overriddenDefaults] boolValue];
-        _allowAdTimer = [[HZDictionaryUtils hzObjectForKey: @"allow_ad_timer" ofClass: [NSNumber class] default: @1 withDict: overriddenDefaults] boolValue];
-        _lockoutTime = [HZDictionaryUtils hzObjectForKey: @"lockout_time" ofClass: [NSNumber class] default: @0 withDict: overriddenDefaults];
-        _postRollInterstitial = [[HZDictionaryUtils hzObjectForKey: @"post_roll_interstitial" ofClass: [NSNumber class] default: @0 withDict: overriddenDefaults] boolValue];
+        _allowHide = [[HZDictionaryUtils objectForKey: @"allow_hide" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults] boolValue];
+        _allowSkip = [[HZDictionaryUtils objectForKey: @"allow_skip" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults] boolValue];
+        _allowInstallButton = [[HZDictionaryUtils objectForKey: @"allow_install_button" ofClass: [NSNumber class] default: @1 dict: overriddenDefaults] boolValue];
+        _allowAdTimer = [[HZDictionaryUtils objectForKey: @"allow_ad_timer" ofClass: [NSNumber class] default: @1 dict: overriddenDefaults] boolValue];
+        _lockoutTime = [HZDictionaryUtils objectForKey: @"lockout_time" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults];
+        _postRollInterstitial = [[HZDictionaryUtils objectForKey: @"post_roll_interstitial" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults] boolValue];
         
-        _installButtonText = [HZDictionaryUtils hzObjectForKey:@"install_button_text" ofClass:[NSString class] default:@"Install Now" withDict:overriddenDefaults];
-        _skipNowText = [HZDictionaryUtils hzObjectForKey:@"skip_now_text" ofClass:[NSString class] default:@"Skip" withDict:overriddenDefaults];
-        _skipLaterFormattedText = [HZDictionaryUtils hzObjectForKey:@"skip_later_formatted_text" ofClass:[NSString class] default:@"Skip in %is" withDict:overriddenDefaults];
+        _installButtonText = [HZDictionaryUtils objectForKey:@"install_button_text" ofClass:[NSString class] default:@"Install Now" dict:overriddenDefaults];
+        _skipNowText = [HZDictionaryUtils objectForKey:@"skip_now_text" ofClass:[NSString class] default:@"Skip" dict:overriddenDefaults];
+        _skipLaterFormattedText = [HZDictionaryUtils objectForKey:@"skip_later_formatted_text" ofClass:[NSString class] default:@"Skip in %is" dict:overriddenDefaults];
         
-        _allowFallbacktoStreaming = [[HZDictionaryUtils hzObjectForKey: @"allow_streaming_fallback" ofClass: [NSNumber class] default: @0 withDict: overriddenDefaults] boolValue];
-        _forceStreaming = [[HZDictionaryUtils hzObjectForKey: @"force_streaming" ofClass: [NSNumber class] default: @0 withDict: overriddenDefaults] boolValue];
+        _allowFallbacktoStreaming = [[HZDictionaryUtils objectForKey: @"allow_streaming_fallback" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults] boolValue];
+        _forceStreaming = [[HZDictionaryUtils objectForKey: @"force_streaming" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults] boolValue];
     }
     
     return self;

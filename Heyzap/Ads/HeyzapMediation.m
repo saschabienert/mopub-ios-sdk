@@ -314,7 +314,7 @@ NSString * const kHZDataKey = @"data";
 }
 
 - (void) sortAdaptersByScore:(NSMutableOrderedSet *)adapters ifLatestMediateRequires:(NSDictionary *)latestMediate forAdType:(HZAdType)adType {
-    BOOL shouldSortAdapters = [[HZDictionaryUtils hzObjectForKey:@"sort" ofClass:[NSNumber class] default:@0 withDict:latestMediate] boolValue];
+    BOOL shouldSortAdapters = [[HZDictionaryUtils objectForKey:@"sort" ofClass:[NSNumber class] default:@0 dict:latestMediate] boolValue];
     
     if(shouldSortAdapters) {
         [adapters sortUsingComparator:^(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
@@ -739,7 +739,7 @@ const NSTimeInterval bannerPollInterval = 1;
                         return;
                     }
                     
-                    BOOL shouldSortAdapters = [[HZDictionaryUtils hzObjectForKey:@"sort" ofClass:[NSNumber class] default:@0 withDict:latestMediate] boolValue];
+                    BOOL shouldSortAdapters = [[HZDictionaryUtils objectForKey:@"sort" ofClass:[NSNumber class] default:@0 dict:latestMediate] boolValue];
                     if(shouldSortAdapters) {
                         // sort adapters with ads by score, also considering RTB score from heyzap exchange fetch
                         if(heyzapExchangeAvailable){
@@ -904,7 +904,7 @@ const NSTimeInterval bannerPollInterval = 1;
     NSMutableOrderedSet *adapterClasses = [NSMutableOrderedSet orderedSet];
     
     for (NSDictionary *network in networks) {
-        NSArray *creativeTypes = [HZDictionaryUtils hzObjectForKey:@"creative_types" ofClass:[NSArray class] default:@[] withDict:network];
+        NSArray *creativeTypes = [HZDictionaryUtils objectForKey:@"creative_types" ofClass:[NSArray class] default:@[] dict:network];
         if ([creativeTypes containsObject:@"BANNER"]) {
             NSString *networkName = network[@"network"];
             Class adapter = [HZBaseAdapter adapterClassForName:networkName];
@@ -922,7 +922,7 @@ const NSTimeInterval bannerPollInterval = 1;
  */
 - (void)requesterUpdatedMediate {
     NSDictionary *json = self.mediateRequester.latestMediate;
-    _mediationId = [HZDictionaryUtils hzObjectForKey:@"id" ofClass:[NSString class] default:@"" withDict:json];
+    _mediationId = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] default:@"" dict:json];
     
     HZInterstitialVideoConfig *const interstitialVideoConfig = [[HZInterstitialVideoConfig alloc] initWithDictionary:json];
     
