@@ -52,23 +52,23 @@
 }
 
 - (BOOL) isAdAllowedForType:(HZAdType)adType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)adTag {
-    __block BOOL didGetLimitied = NO;
+    __block BOOL didGetLimited = NO;
     [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
         if([segment limitsImpressionWithAdType:adType auctionType:auctionType tag:adTag]) {
             HZDLog(@"HZSegmentation: ad not allowed for type: %@, auctionType: %@, tag: %@. Segment limiting impression: %@", NSStringFromAdType(adType), NSStringFromHZAuctionType(auctionType), adTag, segment);
-            didGetLimitied = YES;
+            didGetLimited = YES;
             *stop = YES;
         }
     }];
     
-    return !didGetLimitied;
+    return !didGetLimited;
 }
 
 
 #pragma mark - Report
 
-- (BOOL) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag adapter:(nonnull HZBaseAdapter *)adapter {
-    return [[HZImpressionHistory sharedInstance] recordImpressionWithType:adType tag:tag auctionType:[HZSegmentationController auctionTypeForAdapter:adapter]];
+- (void) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag adapter:(nonnull HZBaseAdapter *)adapter {
+    [[HZImpressionHistory sharedInstance] recordImpressionWithType:adType tag:tag auctionType:[HZSegmentationController auctionTypeForAdapter:adapter]];
 }
 
 

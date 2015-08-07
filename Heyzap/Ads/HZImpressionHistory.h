@@ -15,7 +15,7 @@
 + (nullable instancetype) sharedInstance;
 
 
-- (BOOL) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag auctionType:(HZAuctionType)auctionType;
+- (void) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag auctionType:(HZAuctionType)auctionType;
 
 /**
  *  Retrieve the number of impressions since a given date that had a given HZAdType, HZAuctionType, and tag. Passing `nil` for the tag means you don't care about searching based on tag.

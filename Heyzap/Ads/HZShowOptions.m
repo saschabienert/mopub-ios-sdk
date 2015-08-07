@@ -53,6 +53,10 @@
     return _tag;
 }
 
+- (void) setTag:(NSString *)tag {
+    _tag = [HZAdModel normalizeTag:tag];
+}
+
 - (UIViewController *)viewController {
     if (_viewController == nil) {
         _viewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];

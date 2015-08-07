@@ -814,7 +814,7 @@ const CGFloat kLeftMargin = 10;
 
 - (void) clearImpressionHistory {
     BOOL deleteSuccess = [[HZImpressionHistory sharedInstance] deleteHistory];
-    [self logToConsole:[NSString stringWithFormat:@"Impression history was %@successful.", (deleteSuccess ? @"" : @"NOT ")]];
+    [self logToConsole:[NSString stringWithFormat:@"Impression history delete was %@successful.", (deleteSuccess ? @"" : @"NOT ")]];
 }
 
 #pragma mark - Open
