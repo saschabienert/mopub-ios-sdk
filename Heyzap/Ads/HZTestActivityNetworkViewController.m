@@ -171,7 +171,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     
     // hit the /info endpoint for enabled status and initialization credentials
     [[HZMediationAPIClient sharedClient] GET:@"info" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
-        NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
+        NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:json];
         NSArray *thisNetworkArray = [networks filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSDictionary *mediator, NSDictionary *bindings) {
             return [mediator[@"name"] isEqualToString:[[self.network class] name]];
         }]];

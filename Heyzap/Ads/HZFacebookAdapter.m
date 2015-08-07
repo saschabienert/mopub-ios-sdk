@@ -70,9 +70,9 @@
     CHECK_CREDENTIALS_ERROR(error);
     
     // Nullable
-    NSString *const bannerPlacementID = [HZDictionaryUtils hzObjectForKey:@"banner_placement_id"
+    NSString *const bannerPlacementID = [HZDictionaryUtils objectForKey:@"banner_placement_id"
                                                                   ofClass:[NSString class]
-                                                                 withDict:credentials];
+                                                                 dict:credentials];
     
     HZFacebookAdapter *adapter = [self sharedInstance];
     if (!adapter.credentials) {

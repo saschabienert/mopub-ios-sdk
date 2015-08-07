@@ -115,10 +115,10 @@ static BOOL hzAdsIsEnabled = NO;
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
                 NSMutableArray *installedGames = [@[] mutableCopy];
                 for (NSDictionary *game in response) {
-                    NSNumber *const gameID = [HZDictionaryUtils hzObjectForKey:@"game_id" ofClass:[NSNumber class] withDict: game];
+                    NSNumber *const gameID = [HZDictionaryUtils objectForKey:@"game_id" ofClass:[NSNumber class] dict: game];
                     
                     NSURL *const launchURL = ({
-                        NSString *launchString = [HZDictionaryUtils hzObjectForKey:@"launch_uri" ofClass:[NSString class] withDict: game];
+                        NSString *launchString = [HZDictionaryUtils objectForKey:@"launch_uri" ofClass:[NSString class] dict: game];
                         if ([launchString rangeOfString:@"://"].location == NSNotFound) {
                             launchString = [launchString stringByAppendingString:@"://"];
                         }

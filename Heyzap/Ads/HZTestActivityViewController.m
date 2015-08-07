@@ -250,7 +250,7 @@
         
         NSMutableSet *enabledNetworks = [NSMutableSet set];
         NSMutableSet *initializedNetworks = [NSMutableSet set];
-        NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:json];
+        NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:json];
         for (NSDictionary *mediator in networks) {
             BOOL available = NO;
             BOOL enabled = NO;

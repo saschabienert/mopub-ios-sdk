@@ -45,7 +45,7 @@ return nil; \
         
         self.fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_CONCURRENT);
         
-        _maxConcurrency = [[HZDictionaryUtils hzObjectForKey:@"max_load" ofClass:[NSNumber class] default:@2 withDict:loadData] unsignedIntegerValue];
+        _maxConcurrency = [[HZDictionaryUtils objectForKey:@"max_load" ofClass:[NSNumber class] default:@2 dict:loadData] unsignedIntegerValue];
         
         NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:loadData error:error];
         CHECK_NOT_NIL1(networks);

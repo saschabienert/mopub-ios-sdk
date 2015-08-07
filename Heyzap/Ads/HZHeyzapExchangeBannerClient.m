@@ -97,7 +97,7 @@
                          return;
                      }
                      
-                     NSDictionary *adDict = [HZDictionaryUtils hzObjectForKey:@"ad" ofClass:[NSDictionary class] default:nil withDict:responseDict];
+                     NSDictionary *adDict = [HZDictionaryUtils objectForKey:@"ad" ofClass:[NSDictionary class] default:nil dict:responseDict];
                      
                      if(!adDict){
                          HZELog(@"JSON format unexpected for exchange response.");
@@ -111,7 +111,7 @@
                      self.adScore = adAuctionDict[@"score"];
                      self.adExtrasHash = adAuctionDict[@"extras"];
                      
-                     self.format = [[HZDictionaryUtils hzObjectForKey:@"format" ofClass:[NSNumber class] default:@0 withDict:adDict] intValue];
+                     self.format = [[HZDictionaryUtils objectForKey:@"format" ofClass:[NSNumber class] default:@0 dict:adDict] intValue];
                      if(![self isSupportedFormat]) {
                          HZELog(@"Format of Exchange response unsupported (%lu).", (unsigned long)self.format);
                          [self handleFailure];
