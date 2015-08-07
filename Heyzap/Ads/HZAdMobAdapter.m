@@ -41,27 +41,14 @@
     return proxy;
 }
 
+- (void)loadCredentials {
+    self.adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:self.credentials];
+    self.bannerAdUnitID = [HZDictionaryUtils objectForKey:@"banner_ad_unit_id" ofClass:[NSString class] dict:self.credentials];
+}
+
 #pragma mark - Adapter Protocol
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials
-{
-    HZParameterAssert(credentials);
-    
-    NSError *error;
-    NSString *adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:credentials error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
-    
-    // Nullable property.
-    NSString *bannerAdUnitId = [HZDictionaryUtils objectForKey:@"banner_ad_unit_id" ofClass:[NSString class] dict:credentials];
-    
-    HZAdMobAdapter *adapter = [self sharedInstance];
-    if (!adapter.credentials) {
-        adapter.credentials = credentials;
-        [[self sharedInstance] setAdUnitID:adUnitID];
-        [[self sharedInstance] setBannerAdUnitID:bannerAdUnitId];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
-    }
-    
+- (NSError *)initializeSDK {
     return nil;
 }
 
@@ -86,12 +73,39 @@
 
 - (BOOL)hasAdForType:(HZAdType)type
 {
-    return [self supportedAdFormats] & type && self.currentInterstitial.isReady;
+    switch (type) {
+        case HZAdTypeInterstitial: {
+            return self.currentInterstitial.isReady;
+        }
+        case HZAdTypeVideo:
+        case HZAdTypeIncentivized:
+        case HZAdTypeBanner: {
+            return NO;
+        }
+            
+    }
 }
 
 - (HZAdType)supportedAdFormats
 {
     return HZAdTypeInterstitial | HZAdTypeBanner;
+}
+
+- (BOOL)hasCredentialsForAdType:(HZAdType)adType {
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            return self.adUnitID != nil;
+        }
+        case HZAdTypeVideo: {
+            return NO;
+        }
+        case HZAdTypeBanner: {
+            return self.bannerAdUnitID != nil;
+        }
+        case HZAdTypeIncentivized: {
+            return NO;
+        }
+    }
 }
 
 - (BOOL)isVideoOnlyNetwork {
@@ -117,7 +131,16 @@
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
-    [self.currentInterstitial presentFromRootViewController:options.viewController];
+    switch (type) {
+        case HZAdTypeInterstitial: {
+            [self.currentInterstitial presentFromRootViewController:options.viewController];
+        }
+        case HZAdTypeVideo:
+        case HZAdTypeIncentivized:
+        case HZAdTypeBanner: {
+            // Ignored
+        }
+    }
 }
 
 #pragma mark - Delegate callbacks
@@ -168,10 +191,6 @@
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:self.bannerAdUnitID options:options reportingDelegate:reportingDelegate parentAdapter:self];
-}
-
-- (BOOL)hasBannerCredentials {
-    return self.bannerAdUnitID != nil;
 }
 
 @end

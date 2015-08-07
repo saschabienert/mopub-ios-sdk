@@ -42,8 +42,11 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
 #pragma mark - Adapter Protocol
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials
-{
+- (void)loadCredentials {
+    
+}
+
+- (NSError *)initializeSDK {
     ABSTRACT_METHOD_ERROR();
 }
 
@@ -96,9 +99,6 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return nil;
 }
-- (BOOL)hasBannerCredentials {
-    return NO;
-}
 
 #pragma mark - Inferred methods
 
@@ -115,6 +115,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 - (BOOL)supportsAdType:(HZAdType)adType
 {
     return [self supportedAdFormats] & adType;
+}
+
+- (BOOL)hasCredentialsForAdType:(HZAdType)adType {
+    return YES;
 }
 
 - (NSError *)lastErrorForAdType:(HZAdType)adType
@@ -239,6 +243,13 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
         }
     } else {
         self.latestMediationScores[@(adType)] = (score ?: @0);
+    }
+}
+
+- (void)setCredentials:(NSDictionary *const)credentials {
+    if (!_credentials) {
+        _credentials = credentials;
+        [self loadCredentials];
     }
 }
 

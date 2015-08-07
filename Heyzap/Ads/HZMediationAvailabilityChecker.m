@@ -64,7 +64,7 @@
     NSOrderedSet *filtered = [self filterAdaptersForInterstitialVideo:adapters adType:adType];
     
     NSIndexSet *indexes = [filtered indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        return [adapter supportsAdType:adType];
+        return [adapter supportsAdType:adType] && [adapter hasCredentialsForAdType:adType];
     }];
     
     return [NSOrderedSet orderedSetWithArray:[filtered objectsAtIndexes:indexes]];

@@ -28,6 +28,7 @@
  */
 @interface HZAppLovinAdapter()
 
+@property (nonatomic, strong) NSString *sdkKey;
 // (We either need to store the HZALSdk or the sdkKey because the ads take SDK instance as an argument)
 @property (nonatomic, strong) HZALSdk *sdk;
 
@@ -60,10 +61,8 @@
     return adapter;
 }
 
-- (void)initializeSDKWithKey:(NSString *)key
-{
-    _sdk = [HZALSdk sharedWithKey:key];
-    [self.sdk initializeSdk];
+- (void)loadCredentials {
+    self.sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:self.credentials];
 }
 
 #pragma mark - Adapter Protocol
@@ -91,20 +90,12 @@
     return [HZALSdk version];
 }
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials
-{
-    HZParameterAssert(credentials);
-    NSError *error;
-    NSString *sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:credentials error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
+- (NSError *)initializeSDK {
+    RETURN_ERROR_IF_NIL(self.sdkKey, @"sdk_key");
     
-    HZAppLovinAdapter *adapter = [self sharedInstance];
-    if (!adapter.credentials) {
-        adapter.credentials = credentials;
-       [[self sharedInstance] initializeSDKWithKey:sdkKey];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
-    }
-
+    self.sdk = [HZALSdk sharedWithKey:self.sdkKey];
+    [self.sdk initializeSdk];
+    
     return nil;
 }
 

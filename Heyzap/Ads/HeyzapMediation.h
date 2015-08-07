@@ -67,6 +67,7 @@
 - (id)delegateForNetwork:(NSString *)network;
 
 - (BOOL) isNetworkInitialized:(NSString *)network;
+- (BOOL)isAdapterInitialized:(HZBaseAdapter *)adapter;
 - (void) setNetworkCallbackBlock: (void (^)(NSString *network, NSString *callback))block;
 - (void) sendNetworkCallback: (NSString *) callback forNetwork: (NSString *) network;
 

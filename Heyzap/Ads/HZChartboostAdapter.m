@@ -16,6 +16,9 @@
 
 @interface HZChartboostAdapter()
 
+@property (nonatomic) NSString *appID;
+@property (nonatomic) NSString *appSignature;
+
 @property (nonatomic) BOOL isPlayingAudio;
 
 @end
@@ -36,6 +39,11 @@
     return adapter;
 }
 
+- (void)loadCredentials {
+    self.appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:self.credentials];
+    self.appSignature = [HZDictionaryUtils objectForKey:@"app_signature" ofClass:[NSString class] dict:self.credentials];
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -43,31 +51,14 @@
     return [HZChartboost hzProxiedClassIsAvailable];
 }
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials
-{
-    HZParameterAssert(credentials);
+- (NSError *)initializeSDK {
+    RETURN_ERROR_IF_NIL(self.appID, @"appID");
+    RETURN_ERROR_IF_NIL(self.appSignature, @"appSignature");
     
-    NSError *error;
-    NSString *appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:credentials error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
-    
-    NSString *appSignature = [HZDictionaryUtils objectForKey:@"app_signature" ofClass:[NSString class] dict:credentials error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
-    
-    HZChartboostAdapter *adapter = [self sharedInstance];
-    if (!adapter.credentials) {
-        adapter.credentials = credentials;
-        [[self sharedInstance] setupChartboostWithAppID:appID appSignature:appSignature];
-        [HZChartboost setShouldPrefetchVideoContent:YES];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
-    }
+    [HZChartboost startWithAppId:self.appID appSignature:self.appSignature delegate:self.forwardingDelegate];
+    [HZChartboost setShouldPrefetchVideoContent:YES];
     
     return nil;
-}
-
-- (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature
-{
-    [HZChartboost startWithAppId:appID appSignature:appSignature delegate:self.forwardingDelegate];
 }
 
 + (NSString *)name

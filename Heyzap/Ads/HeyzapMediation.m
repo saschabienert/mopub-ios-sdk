@@ -166,10 +166,38 @@
     }
 }
 
+- (void)addCredentialsToAdapters:(NSDictionary *const __nonnull)startDict {
+    NSArray *const networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:startDict];
+    if (!networks) {
+        HZELog(@"Invalid /start response; missing 'networks' in JSON");
+    }
+    
+    for (NSDictionary *networkInfo in networks) {
+        NSString *const network = [HZDictionaryUtils objectForKey:@"name" ofClass:[NSString class] dict:networkInfo];
+        
+        NSDictionary *const credentials = ({
+            // Remove credentials that are empty string. Empty string was sent for backwards compatability, but now that the SDK has true support for optional credentials we can just filter it.
+            NSDictionary *originalCreds = [HZDictionaryUtils objectForKey:@"data" ofClass:[NSDictionary class] dict:networkInfo];
+            NSDictionary *const filteredCredentials = [HZDictionaryUtils dictionaryByFilteringDictionary:originalCreds withBlock:^BOOL(NSString *key, NSString *credential, BOOL *stop) {
+                return ![credential isEqualToString:@""];
+            }];
+            filteredCredentials;
+        });
+        
+        if (network && credentials) {
+            HZBaseAdapter *const adapter = [[HZBaseAdapter adapterClassForName:network] sharedInstance];
+            adapter.credentials = credentials; // The adapter will prevent overriding existing credentials, to prevent them changing between the cached and non-cached /start response.
+        } else {
+            HZELog(@"Invalid network in /start response");
+        }
+    }
+}
 
-- (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache {
+
+- (void)startWithDictionary:(NSDictionary *const __nonnull)dictionary fromCache:(const BOOL)fromCache {
     self.settings = [[HZMediationSettings alloc] init];
     [[self settings] setupWithDict:dictionary fromCache:fromCache];
+    [self addCredentialsToAdapters:dictionary];
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -674,8 +702,7 @@ const NSTimeInterval bannerPollInterval = 1;
             NSOrderedSet *adapters = ({
                 NSOrderedSet *a1 = [self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:HZAdTypeBanner];
                 NSOrderedSet *a2 = hzFilterOrderedSet(a1, ^BOOL(HZBaseAdapter *adapter) {
-                    // This should be factored out into a general way of saying "does the ad network have credentials for X ad format?
-                    return [adapter hasBannerCredentials];
+                    return [adapter hasCredentialsForAdType:HZAdTypeBanner];
                 });
                 NSOrderedSet *a3 = hzFilterOrderedSet(a2, ^BOOL(HZBaseAdapter *adapter) {
                     if (options.networkName) {
@@ -807,13 +834,11 @@ const NSTimeInterval bannerPollInterval = 1;
         return NO;
     }
     
-    for(HZBaseAdapter *adapter in self.setupMediators) {
-        if ([[adapter name] isEqualToString: [network lowercaseString]]) {
-            return YES;
-        }
-    }
-    
-    return NO;
+    return [self.setupMediatorClasses containsObject:[HZBaseAdapter adapterClassForName:[network lowercaseString]]];
+}
+
+- (BOOL)isAdapterInitialized:(HZBaseAdapter *)adapter {
+    return [self.setupMediators containsObject:adapter];
 }
 
 - (void) setNetworkCallbackBlock: (void (^)(NSString *network, NSString *callback))block {
@@ -859,7 +884,7 @@ const NSTimeInterval bannerPollInterval = 1;
         } else if (forceOnlyHeyzapSDK && ![adapterClass isHeyzapAdapter]) {
             success = NO;
         } else {
-            NSError *credentialError = [adapterClass enableWithCredentials:credentials];
+            NSError *credentialError = [[adapterClass sharedInstance] initializeSDK];
             if (credentialError){
                 HZELog(@"Failed to initialize network %@, had error: %@",[adapterClass humanizedName], credentialError);
                 self.erroredMediatiorClasses = [self.erroredMediatiorClasses setByAddingObject:adapterClass];
@@ -869,6 +894,8 @@ const NSTimeInterval bannerPollInterval = 1;
                 adapter.delegate = self;
                 self.setupMediators = [self.setupMediators setByAddingObject:adapter];
                 self.setupMediatorClasses = [self.setupMediatorClasses setByAddingObject:adapterClass];
+                
+                [self sendNetworkCallback:HZNetworkCallbackInitialized forNetwork:adapterName];
             }
             success = credentialError == nil;
         }
