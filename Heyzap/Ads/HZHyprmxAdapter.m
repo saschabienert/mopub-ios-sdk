@@ -13,6 +13,7 @@
 #import "HeyzapAds.h"
 #import "HZDevice.h"
 #import "HZAdsManager.h"
+#import "HZInitMacros.h"
 
 @interface HZHyprmxAdapter()
 @property (nonatomic, strong) NSString *distributorID;
@@ -30,6 +31,17 @@
         proxy.forwardingDelegate.adapter = proxy;
     });
     return proxy;
+}
+
+- (void)loadCredentials {
+    self.distributorID = [HZDictionaryUtils
+                          objectForKey:@"distributor_id"
+                          ofClass:[NSString class]
+                          dict:self.credentials];
+    
+    self.propertyID = [HZDictionaryUtils objectForKey:@"property_id"
+                                              ofClass:[NSString class]
+                                                 dict:self.credentials];
 }
 
 #pragma mark - Adapter Protocol
@@ -50,47 +62,16 @@
     return [[HZHYPRManager sharedManager] versionString];
 }
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials {
-    HZParameterAssert(credentials);
-    NSError *error;
-    
-    NSString *distributorID = [HZDictionaryUtils
-                             objectForKey:@"distributor_id"
-                             ofClass:[NSString class]
-                             dict:credentials
-                             error:&error];
-    
-    CHECK_CREDENTIALS_ERROR(error);
-    
-    // Nullable
-    NSString *const propertyID = [HZDictionaryUtils objectForKey:@"property_id"
-                                                                  ofClass:[NSString class]
-                                                                 dict:credentials];
-    
-    HZHyprmxAdapter *adapter = [self sharedInstance];
-    if (!adapter.credentials) {
-        adapter.credentials = credentials;
-        adapter.distributorID = distributorID;
-        adapter.propertyID = propertyID;
-        
-        [[self sharedInstance] initializeWithDistributorID: distributorID andPropertyID: propertyID];
-        
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
-    }
-    
-    return nil;
-}
-
-- (void) initializeWithDistributorID: (NSString *) distributorID andPropertyID: (NSString *) propertyID {
-    HZParameterAssert(propertyID);
-    HZParameterAssert(distributorID);
+- (NSError *)initializeSDK {
+    RETURN_ERROR_IF_NIL(self.distributorID, @"distributorID");
     
     NSString *adID = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
     
     [HZHYPRManager disableAutomaticPreloading];
-    [[HZHYPRManager sharedManager] initializeWithDistributorId:distributorID
-                                                    propertyId:propertyID
+    [[HZHYPRManager sharedManager] initializeWithDistributorId:self.distributorID
+                                                    propertyId:self.propertyID
                                                         userId:adID];
+    return nil;
 }
 
 - (HZAdType)supportedAdFormats {

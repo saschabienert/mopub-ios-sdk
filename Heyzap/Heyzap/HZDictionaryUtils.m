@@ -65,4 +65,15 @@ NSString * const kHZMissingPropertyKey = @"missingProperty";
     }
 }
 
++ (NSDictionary *)dictionaryByFilteringDictionary:(NSDictionary *)dictionary withBlock:(BOOL (^)(id key, id obj, BOOL *stop))predicate {
+    NSSet *keysToKeep = [dictionary keysOfEntriesPassingTest:predicate];
+    NSMutableDictionary *filtered = [NSMutableDictionary dictionaryWithCapacity:[keysToKeep count]];
+    for (id key in dictionary) {
+        if([keysToKeep containsObject:key]) {
+            filtered[key] = dictionary[key];
+        }
+    }
+    return filtered;
+}
+
 @end

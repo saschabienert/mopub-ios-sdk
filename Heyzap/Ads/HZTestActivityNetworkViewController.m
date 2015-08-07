@@ -184,7 +184,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             self.enabled = [network[@"enabled"] boolValue];
 
             // check original initialization succeeded
-            if (self.network.credentials) {
+            if ([[HeyzapMediation sharedInstance] isAdapterInitialized:self.network]) {
                 self.initialized = YES;
             } else {
                 self.initialized = NO;
@@ -252,6 +252,12 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 }
 
 - (void) fetchAd {
+    
+    if (![self.network hasCredentialsForAdType:self.currentAdType]) {
+        [self appendStringToDebugLog:@"This network doesn't have credentials for this ad type. Make sure you've added credentials on the Heyzap dashboard."];
+        return;
+    }
+    
     [self appendStringToDebugLog:@"Fetching ad (may take up to 10 seconds)"];
     NSDictionary *additionalParams = @{ @"network": [[self.network class] name] };
     [[HeyzapMediation sharedInstance] fetchForAdType:self.currentAdType additionalParams:additionalParams completion:^(BOOL result, NSError *error) {

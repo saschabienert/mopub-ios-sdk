@@ -17,4 +17,6 @@
 
 extern NSString * const kHZMissingPropertyKey;
 
++ (NSDictionary *)dictionaryByFilteringDictionary:(NSDictionary *)dictionary withBlock:(BOOL (^)(id key, id obj, BOOL *stop))predicate;
+
 @end

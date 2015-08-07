@@ -83,7 +83,11 @@ return nil; \
         return [(HZBaseAdapter *)[datum.adapterClass sharedInstance] supportsAdType:adType];
     });
     
-    NSArray *const matching = hzFilter(supportsAdType, ^BOOL(HZMediationLoadData *datum) {
+    NSArray *const hasCredentials = hzFilter(supportsAdType, ^BOOL(HZMediationLoadData *datum) {
+        return [(HZBaseAdapter *)[datum.adapterClass sharedInstance] hasCredentialsForAdType:adType];
+    });
+    
+    NSArray *const matching = hzFilter(hasCredentials, ^BOOL(HZMediationLoadData *datum) {
         return hzCreativeTypeSetContainsAdType(datum.creativeTypeSet, adType);
     });
     

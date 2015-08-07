@@ -11,6 +11,4 @@
 
 @interface HZChartboostAdapter : HZBaseAdapter
 
-- (void)setupChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature;
-
 @end

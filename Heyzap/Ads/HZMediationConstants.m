@@ -45,13 +45,6 @@ NSString * const kHZAdapterLeadboltHumanized = @"Leadbolt";
     return [NSError errorWithDomain:domain code:1 userInfo:errorInfo];
 }
 
-+ (NSError *)credentialErrorForAdapter:(Class)adapter error:(NSError *)error
-{
-    return [HZMediationConstants errorWithAdapter:[adapter name]
-                                           domain:kHZMediationCredentialsDomain
-                                         userInfo:error.userInfo];
-}
-
 NSString * NSStringFromAdType(HZAdType type)
 {
     switch (type) {

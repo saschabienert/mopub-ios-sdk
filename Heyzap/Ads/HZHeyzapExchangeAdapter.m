@@ -58,9 +58,7 @@
     return YES;
 }
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials{
-    [HZHeyzapExchangeAdapter sharedInstance].credentials = @{};//exchange does not have credentials, but nil checks later will think there was a failure w/o this
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
+- (NSError *)initializeSDK {
     return nil;
 }
 

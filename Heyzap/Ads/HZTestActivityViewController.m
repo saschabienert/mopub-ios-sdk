@@ -279,8 +279,9 @@
             }
             
             // check original initialization succeeded
-            if (adapter.credentials || [adapter isKindOfClass:[HZAbstractHeyzapAdapter class]]) {
-                [initializedNetworks addObject:adapter];
+            
+            if ([[HeyzapMediation sharedInstance] isAdapterInitialized:adapter]
+                || [adapter isKindOfClass:[HZAbstractHeyzapAdapter class]]) {
                 initialized = YES;
             }
             

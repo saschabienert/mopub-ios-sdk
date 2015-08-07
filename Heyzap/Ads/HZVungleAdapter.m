@@ -19,6 +19,7 @@
 /**
  *  Because Vungle makes no differentiation between having an incentivized ad and having a video ad, we just store any error in a property shared between the ad types.
  */
+@property (nonatomic) NSString *appID;
 @property (nonatomic, strong) NSError *lastError;
 @property (nonatomic) BOOL isShowingIncentivized;
 
@@ -48,22 +49,17 @@
     return self;
 }
 
+- (void)loadCredentials {
+    self.appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:self.credentials];
+}
+
 #pragma mark - Adapter Protocol
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials
-{
-    HZParameterAssert(credentials);
-    NSError *error;
-    NSString *appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:credentials error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
+- (NSError *)initializeSDK {
+    RETURN_ERROR_IF_NIL(self.appID, @"app_id");
     
-    HZVungleAdapter *adapter = [self sharedInstance];
-    if (!adapter.credentials) {
-        adapter.credentials = credentials;
-        [[self sharedInstance] startWithPubAppID:appID];
-        [[HZVungleSDK sharedSDK] setDelegate:adapter.forwardingDelegate];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
-    }
+    [[HZVungleSDK sharedSDK] startWithAppId:self.appID];
+    [[HZVungleSDK sharedSDK] setDelegate:self.forwardingDelegate];
     
     return nil;
 }
@@ -85,11 +81,6 @@
 
 + (NSString *)sdkVersion {
     return hzLookupStringConstant(@"VungleSDKVersion");
-}
-
-- (void)startWithPubAppID:(NSString *)appID
-{
-    [[HZVungleSDK sharedSDK] startWithAppId:appID];
 }
 
 - (HZAdType)supportedAdFormats

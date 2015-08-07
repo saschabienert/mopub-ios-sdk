@@ -31,11 +31,7 @@
     return YES;
 }
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials
-{
-    HZAbstractHeyzapAdapter *adapter = [self sharedInstance];
-    adapter.credentials = credentials;
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
+- (NSError *)initializeSDK {
     return nil;
 }
 

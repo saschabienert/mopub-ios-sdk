@@ -44,10 +44,11 @@ extern NSString * const kHZAdapterLeadboltHumanized;
                        domain:(NSString *)domain
                      userInfo:(NSDictionary *)userInfo;
 
-+ (NSError *)credentialErrorForAdapter:(Class)adapter error:(NSError *)error;
-
-// Must be used from a class method of an adapter, presumably `enableWithCredentials:`
-#define CHECK_CREDENTIALS_ERROR(error) if (error) { return [HZMediationConstants credentialErrorForAdapter:self error:error]; }
+#define RETURN_ERROR_IF_NIL(value,name) do { \
+if (value == nil) { \
+return [NSError errorWithDomain:kHZMediationDomain code:3 userInfo:@{NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat: @"Missing value: %@",name]}]; \
+} \
+} while (0)
 
 NSString * NSStringFromAdType(HZAdType type);
 HZAdType hzAdTypeFromString(NSString *adUnit);
