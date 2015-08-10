@@ -283,6 +283,7 @@
             if ([[HeyzapMediation sharedInstance] isAdapterInitialized:adapter]
                 || [adapter isKindOfClass:[HZAbstractHeyzapAdapter class]]) {
                 initialized = YES;
+                [initializedNetworks addObject:adapter];
             }
             
             // update this network's integration status
