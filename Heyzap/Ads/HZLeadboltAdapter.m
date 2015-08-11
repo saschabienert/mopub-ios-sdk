@@ -142,7 +142,7 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     switch (adType) {
         case HZAdTypeInterstitial:
         case HZAdTypeIncentivized: {
-            return (BOOL)self.appAPIKey;
+            return (self.appAPIKey != nil);
             break;
         }
             
