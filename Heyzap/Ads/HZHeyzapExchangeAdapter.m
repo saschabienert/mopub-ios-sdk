@@ -90,7 +90,7 @@
 - (void)prefetchForType:(HZAdType)type
 {
     if([self hasAdForType:type]){
-        HZDLog(@"Prefetch called but an ad is already available.");
+        HZDLog(@"HZHeyzapExchangeAdapter: Prefetch called but an ad is already available.");
         return;
     }
     

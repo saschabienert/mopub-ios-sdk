@@ -21,7 +21,7 @@
     if(open != SQLITE_OK) {
         *error = [HZDatabaseHelper databaseErrorWithString:[NSString stringWithUTF8String:sqlite3_errmsg(database)]];
         sqlite3_close(database); // don't use `sqlite3_close_v2()` for now - http://stackoverflow.com/questions/31821375/sqlite3-close-v2-crashes-on-ios-sqlite3-close-doesnt
-        return nil;
+        return NULL;
     }
     return database;
 }

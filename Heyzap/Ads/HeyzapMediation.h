@@ -14,12 +14,12 @@
 #import "HZMediationLoadManager.h"
 #import "HZMediateRequester.h"
 #import "HZMediationSettings.h"
+#import "HZSegmentationController.h"
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
 @protocol HZBannerReportingDelegate;
 @class HZBannerAdOptions;
-@class HZSegmentationController;
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 

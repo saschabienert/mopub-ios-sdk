@@ -9,23 +9,35 @@
 #import <Foundation/Foundation.h>
 #import "HZEnums.h"
 #import "HZAdType.h"
+#import <sqlite3.h>
 
 @interface HZImpressionHistory : NSObject
 
 + (nullable instancetype) sharedInstance;
 
 
-- (void) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag auctionType:(HZAuctionType)auctionType;
+/**
+ *  Asynchronously stores an impression with the given attributes in the HZImpressionHistory database (returns immediately)
+ */
+- (void) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag auctionType:(HZAuctionType)auctionType date:(nonnull NSDate *)date;
 
 /**
- *  Retrieve the number of impressions since a given date that had a given HZAdType, HZAuctionType, and tag. Passing `nil` for the tag means you don't care about searching based on tag.
+ *  Returns an ordered set of NSDate*s (in the order specified with the mostRecentFirst param) with the given search parameters and database connection. If the tag is `nil`, impressions with any tag will count as a match.
  */
-- (NSUInteger) countImpressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType;
+- (nonnull NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType databaseConnection:(nonnull sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst;
 
 /**
- *  Retrieve the number of impressions since a given date that had a given HZAdType, HZAuctionType, and one of an array of tags. Passing `nil` for the tags array means you don't care about searching based on tags.
+ *  Returns an ordered set of NSDate*s (in the order specified with the mostRecentFirst param) with the given search parameters and database connection. If the tags array is `nil`, impressions with any tag will count as a match.
  */
-- (NSUInteger) countImpressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType;
+- (nonnull NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(nonnull sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst;
 
+/**
+ *  Returns a SQLite3 connection to the HZImpressionHistory database. It is "safe" in that the table will be created if it does not exist prior to returning.
+ */
+- (nullable sqlite3 *) safeImpressionTableDatabaseConnection;
+
+/**
+ *  Deletes the HZImpressionHistory table that tracks impressions.
+ */
 - (BOOL) deleteHistory;
 @end

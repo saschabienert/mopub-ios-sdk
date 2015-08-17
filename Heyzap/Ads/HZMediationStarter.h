@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithStartingDelegate:(id<HZMediationStarting>)startingDelegate cachingService:(HZCachingService *)cachingService NS_DESIGNATED_INITIALIZER;
 
 - (void)start;
-@property (nonatomic, readonly) HZMediationStartStatus status;
+
 /**
  *  Note: This property will be updated with the /start call from the network after the cached version is used.
  */

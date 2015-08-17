@@ -27,7 +27,7 @@
 #import "HZMediationSettings.h"
 #import "HZHeyzapExchangeAdapter.h"
 #import "TestAppPaymentTransactionObserver.h"
-#import "HZImpressionHistory.h"
+#import "HeyzapMediation.h"
 
 #define kTagCreativeIDField 4393
 
@@ -813,8 +813,9 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void) clearImpressionHistory {
-    BOOL deleteSuccess = [[HZImpressionHistory sharedInstance] deleteHistory];
+    BOOL deleteSuccess = [[[HeyzapMediation sharedInstance] segmentationController] clearImpressionHistory] ;
     [self logToConsole:[NSString stringWithFormat:@"Impression history delete was %@successful.", (deleteSuccess ? @"" : @"NOT ")]];
+    [self changeColorOfShowButton];
 }
 
 #pragma mark - Open

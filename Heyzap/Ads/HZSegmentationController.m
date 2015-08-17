@@ -14,7 +14,7 @@
 
 @interface HZSegmentationController()
 @property (nonnull, nonatomic) NSMutableSet *segments;
-
+@property (nonatomic) dispatch_queue_t impressionDbReadQueue;
 @end
 
 @implementation HZSegmentationController
@@ -25,19 +25,39 @@
     self = [super init];
     if (self) {
         _segments = [[NSMutableSet alloc] init];
+        _impressionDbReadQueue = dispatch_queue_create("com.heyzap.sdk.mediation.segmentation.impressiondbread", DISPATCH_QUEUE_CONCURRENT);
     }
     
     return self;
 }
 
 - (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary {
-    HZSegmentationSegment *s1 = [[HZSegmentationSegment alloc] initWithTimeInterval:90 forTags:@[@"on"] adType:HZAdTypeInterstitial auctionType:HZAuctionTypeMonetization limit:1];
-    HZSegmentationSegment *s2 = [[HZSegmentationSegment alloc] initWithTimeInterval:90 forTags:@[@"default"] adType:HZAdTypeVideo auctionType:HZAuctionTypeMonetization limit:1];
+    HZSegmentationSegment *s1 = [[HZSegmentationSegment alloc] initWithTimeInterval:90 forTags:@[@"default"] adType:HZAdTypeInterstitial auctionType:HZAuctionTypeMonetization limit:1];
+    HZSegmentationSegment *s2 = [[HZSegmentationSegment alloc] initWithTimeInterval:90 forTags:@[@"on"] adType:HZAdTypeVideo auctionType:HZAuctionTypeMonetization limit:1];
     HZSegmentationSegment *s3 = [[HZSegmentationSegment alloc] initWithTimeInterval:90 forTags:nil adType:HZAdTypeIncentivized auctionType:HZAuctionTypeMonetization limit:1];
     HZSegmentationSegment *s4 = [[HZSegmentationSegment alloc] initWithTimeInterval:60 forTags:nil adType:HZAdTypeBanner auctionType:HZAuctionTypeMonetization limit:1];
     self.segments = [NSMutableSet setWithArray:@[s1, s2, s3, s4]];
-    HZDLog(@"Active segments for this user: %@", self.segments);
     
+    // send segments off to retrieve their persisted history
+    [self loadSegmentsFromImpressionHistory];
+    
+}
+
+- (void) loadSegmentsFromImpressionHistory {
+    dispatch_async(self.impressionDbReadQueue, ^{
+        sqlite3 *db = [[HZImpressionHistory sharedInstance] safeImpressionTableDatabaseConnection];
+        if(!db) {
+            HZELog(@"HZSegmentationController failing to load db connection to read segment history.");
+            return;
+        }
+        
+        for(HZSegmentationSegment *segment in self.segments) {
+            [segment loadWithDb:db];
+        }
+        
+        sqlite3_close(db);
+        HZDLog(@"HZSegmentationController: Active segments for this user: %@", self.segments);
+    });
 }
 
 
@@ -55,7 +75,7 @@
     __block BOOL didGetLimited = NO;
     [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
         if([segment limitsImpressionWithAdType:adType auctionType:auctionType tag:adTag]) {
-            HZDLog(@"HZSegmentation: ad not allowed for type: %@, auctionType: %@, tag: %@. Segment limiting impression: %@", NSStringFromAdType(adType), NSStringFromHZAuctionType(auctionType), adTag, segment);
+            HZDLog(@"HZSegmentation: ad not allowed for type: %@, auctionType: %@, tag: %@. First segment limiting impression: %@", NSStringFromAdType(adType), NSStringFromHZAuctionType(auctionType), adTag, segment);
             didGetLimited = YES;
             *stop = YES;
         }
@@ -68,7 +88,12 @@
 #pragma mark - Report
 
 - (void) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag adapter:(nonnull HZBaseAdapter *)adapter {
-    [[HZImpressionHistory sharedInstance] recordImpressionWithType:adType tag:tag auctionType:[HZSegmentationController auctionTypeForAdapter:adapter]];
+    NSDate *date = [NSDate date];
+    for(HZSegmentationSegment *segment in self.segments) {
+        [segment recordImpressionWithAdType:adType auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] tag:tag date:date];
+    }
+    
+    [[HZImpressionHistory sharedInstance] recordImpressionWithType:adType tag:tag auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] date:date];
 }
 
 
@@ -76,6 +101,15 @@
 
 + (HZAuctionType) auctionTypeForAdapter:(nonnull HZBaseAdapter *)adapter {
     return [adapter class] == [HZCrossPromoAdapter class] ? HZAuctionTypeCrossPromo : HZAuctionTypeMonetization;
+}
+
+- (BOOL) clearImpressionHistory {
+    if (![[HZImpressionHistory sharedInstance] deleteHistory]) {
+        return NO;
+    }
+    
+    [self loadSegmentsFromImpressionHistory];
+    return YES;
 }
 
 @end

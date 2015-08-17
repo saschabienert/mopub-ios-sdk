@@ -32,7 +32,6 @@
 @end
 
 @interface HZImpressionHistory()
-@property (nonatomic) sqlite3 *mainThreadDatabase; // for use only on the main thread - sqlite3 connections are not to be shared across threads
 @property (nonatomic) dispatch_queue_t writeQueue;
 @end
 
@@ -42,9 +41,7 @@
     static HZImpressionHistory *history;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        
-            history = [[HZImpressionHistory alloc] init];
-        
+        history = [[HZImpressionHistory alloc] init];
     });
     
     return history;
@@ -54,38 +51,29 @@
 - (nullable instancetype) init {
     self = [super init];
     if (self) {
-        [self runOnMainQueue:^{
-            self.mainThreadDatabase = [self impressionTableDatabaseConnection];
-            if (!self.mainThreadDatabase || ![self createImpressionTableIfNotExistsInOpenDatabase:self.mainThreadDatabase]) {
-                HZELog(@"HZImpressionHistory: Error creating impression history.");
-            }
-        }];
-        
         _writeQueue = dispatch_queue_create("com.heyzap.sdk.mediation.impressionhistory", DISPATCH_QUEUE_SERIAL);
     }
     return self;
 }
 
 - (void) dealloc {
-    sqlite3_close(self.mainThreadDatabase);
 }
 
 #pragma mark - Insert
 // performs insertion on background thread asynchronously
-- (void) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag auctionType:(HZAuctionType)auctionType {
-    __block NSDate *methodStartPreQueue = [NSDate date];
+- (void) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag auctionType:(HZAuctionType)auctionType date:(nonnull NSDate *)date {
+//    __block NSDate *methodStartPreQueue = [NSDate date];
     dispatch_async(self.writeQueue, ^{
-        NSDate *methodStart = [NSDate date];
+//        NSDate *methodStart = [NSDate date];
         int returnCode;
         BOOL failed = NO;
-        NSString *query = [NSString stringWithFormat:@"INSERT INTO " TABLE_NAME " (" COLUMN_TIMESTAMP ", " COLUMN_ADTYPE ", " COLUMN_ADTAG ", " COLUMN_AUCTIONTYPE ") VALUES (%f, %lu, '%s', %lu)", [self databaseEntryForDate:nil], (unsigned long)adType, [tag UTF8String], (unsigned long)auctionType];
-        sqlite3 * insertDb = [self impressionTableDatabaseConnection];
+        NSString *query = [NSString stringWithFormat:@"INSERT INTO " TABLE_NAME " (" COLUMN_TIMESTAMP ", " COLUMN_ADTYPE ", " COLUMN_ADTAG ", " COLUMN_AUCTIONTYPE ") VALUES (%f, %lu, '%s', %lu)", [self databaseEntryForDate:date], (unsigned long)adType, [tag UTF8String], (unsigned long)auctionType];
+        sqlite3 * insertDb = [self safeImpressionTableDatabaseConnection];
         if(!insertDb) {
             failed = YES;
             return;
         }
         
-        for(int i = 0; i < 700; i++) {
         char *errorMessage;
         returnCode = sqlite3_exec(insertDb, [query UTF8String], NULL, NULL, &errorMessage);
         if (returnCode != SQLITE_OK) {
@@ -94,21 +82,21 @@
         }
         
         sqlite3_free(errorMessage);
-        }
-        NSDate *methodEnd = [NSDate date];
-        HZDLog(@"HZImpressionHistory: impression insert query %@took %f seconds after a %f second threading delay. Query: %@;", (failed ? @"FAILED and " : @""), [methodEnd timeIntervalSinceDate:methodStart], [methodStart timeIntervalSinceDate:methodStartPreQueue], query);
+        
+//        NSDate *methodEnd = [NSDate date];
+//        HZDLog(@"HZImpressionHistory: impression insert query %@took %f seconds after a %f second threading delay. Query: %@;", (failed ? @"FAILED and " : @""), [methodEnd timeIntervalSinceDate:methodStart], [methodStart timeIntervalSinceDate:methodStartPreQueue], query);
     });
 }
 
 
 #pragma mark - Query
 
-- (NSUInteger) countImpressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType {
+- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
     NSString *tagWhereClause = tag ? [NSString stringWithFormat:@"AND " COLUMN_ADTAG " = '%s'", [tag UTF8String]] : @"";
-    return [self countImpressionsSince:timestamp withType:adType tagWhereClause:tagWhereClause auctionType:auctionType];
+    return [self impressionsSince:timestamp withType:adType tagWhereClause:tagWhereClause auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
 }
 
-- (NSUInteger) countImpressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType {
+- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
     NSString *tagWhereClause = @"";
     
     if(tags) {
@@ -116,45 +104,42 @@
         NSArray * modifiedTags = hzMap(tags, ^NSString *(NSString *tag) {
             return [NSString stringWithFormat:@"'%s'", [tag UTF8String]];
         });
-    
+        
         tagWhereClause = [NSString stringWithFormat:@"AND " COLUMN_ADTAG " IN (%@)", [modifiedTags componentsJoinedByString:@","]];
     }
     
-    return [self countImpressionsSince:timestamp withType:adType tagWhereClause:tagWhereClause auctionType:auctionType];
+    return [self impressionsSince:timestamp withType:adType tagWhereClause:tagWhereClause auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
 }
 
-- (NSUInteger) countImpressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tagWhereClause:(NSString *)tagWhereClause auctionType:(HZAuctionType)auctionType {
-    if(!self.mainThreadDatabase) {
-        return 0;
+- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tagWhereClause:(NSString *)tagWhereClause auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
+    if (!db) {
+        HZELog(@"HZImpressionHistory: Can't count impressions without database connection.");
+        return [[NSMutableOrderedSet alloc] init];
     }
     
-    NSDate *methodStart = [NSDate date];
-    __block BOOL failed = NO;
-    __block NSUInteger impressionCount = 0;
-    __block NSString *query;
-    [self runOnMainQueue:^{     
-        query = [NSString stringWithFormat:@"SELECT count(*) FROM " TABLE_NAME " WHERE " COLUMN_ADTYPE " = %lu %@ AND " COLUMN_AUCTIONTYPE " = %lu AND " COLUMN_TIMESTAMP " BETWEEN %f AND %f", (unsigned long)adType, tagWhereClause, (unsigned long)auctionType, [self databaseEntryForDate:timestamp], [self databaseEntryForDate:nil]];
-        
-        
-        sqlite3_stmt *statement = NULL;
-        int returnCode = 0;
-        if((returnCode = sqlite3_prepare_v2(self.mainThreadDatabase, [query UTF8String], (int)strlen([query UTF8String])+1, &statement, NULL)) != SQLITE_OK || statement == NULL) {
-            HZELog(@"Failed to create query. code:%d",returnCode);
-            failed = YES;
-            return;
-        }
-        
-        while(sqlite3_step(statement) == SQLITE_ROW) {
-            impressionCount = sqlite3_column_int(statement, 0);
-        }
-        
-        sqlite3_finalize(statement);
-    }];
+//    NSDate *methodStart = [NSDate date];
     
-    NSDate *methodEnd = [NSDate date];
-    HZDLog(@"HZImpressionHistory: impression count query %@(result=%lu) took %f seconds. Query: %@;", (failed ? @"FAILED " : @""), impressionCount, [methodEnd timeIntervalSinceDate:methodStart], query);
+    NSString *query = [NSString stringWithFormat:@"SELECT " COLUMN_TIMESTAMP " FROM " TABLE_NAME " WHERE " COLUMN_ADTYPE " = %lu %@ AND " COLUMN_AUCTIONTYPE " = %lu AND " COLUMN_TIMESTAMP " BETWEEN %f AND %f ORDER BY " COLUMN_TIMESTAMP " %@", (unsigned long)adType, tagWhereClause, (unsigned long)auctionType, [self databaseEntryForDate:timestamp], [self databaseEntryForDate:nil], (mostRecentFirst ? @"DESC" : @"ASC")];
+    sqlite3_stmt *statement = NULL;
+    int returnCode = 0;
     
-    return impressionCount;
+    if((returnCode = sqlite3_prepare_v2(db, [query UTF8String], (int)strlen([query UTF8String])+1, &statement, NULL)) != SQLITE_OK || statement == NULL) {
+        HZELog(@"Failed to create query. code:%d",returnCode);
+        return [[NSMutableOrderedSet alloc] init];
+    }
+    
+    NSMutableOrderedSet *impressions = [[NSMutableOrderedSet alloc] init];
+    
+    while(sqlite3_step(statement) == SQLITE_ROW) {
+        [impressions addObject: [self dateFromDatabaseEntry:sqlite3_column_double(statement, 0)]]; // the second argument to sqlite3_column_double() is the column index in the expected result set
+    }
+    
+    sqlite3_finalize(statement);
+    
+//    NSDate *methodEnd = [NSDate date];
+//    HZDLog(@"HZImpressionHistory: impression list query (result size=%lu) took %f seconds. Query: %@;", (unsigned long)[impressions count], [methodEnd timeIntervalSinceDate:methodStart], query);
+    
+    return impressions;
 }
 
 #pragma mark - Connect
@@ -164,14 +149,25 @@
     sqlite3 *database = [HZDatabaseHelper openDatabaseWithName:@"HZImpressionHistory" error:&error];
     if(error) {
         HZELog(@"HZImpressionHistory: Error opening impression history. Segmentation settings may fail. Error: %@", error);
-        return nil;
+        return NULL;
     }
     
     return database;
 }
 
+- (sqlite3 *) safeImpressionTableDatabaseConnection {
+    sqlite3 *db = [self impressionTableDatabaseConnection];
+    if (!db || ![self createImpressionTableIfNotExistsInOpenDatabase:db]) {
+        HZELog(@"HZImpressionHistory: Error creating impression history connection.");
+        sqlite3_close(db);
+        return NULL;
+    }
+    
+    return db;
+}
+
 #pragma mark - Create/Delete
-// only call on the main thread
+
 - (BOOL) createImpressionTableIfNotExistsInOpenDatabase:(sqlite3 *)db {
     if(!db) {
         return NO;
@@ -200,35 +196,31 @@
 }
 
 - (BOOL) deleteHistory {
-    __block int returnCode;
-    __block BOOL failed = NO;
-    __block BOOL failed2 = NO;
-    __block NSString *query;
+    int returnCode;
+    BOOL failed = NO;
+    NSString *query;
     
-    [self runOnMainQueue:^{
-        if(!self.mainThreadDatabase) {
-            HZELog(@"HZImpressionHistory: Failed to delete impression table. Could not create database connection.");
-            failed = YES;
-            return;
-        }
-        
-        query = @"DROP TABLE IF EXISTS " TABLE_NAME;
-        char * errMsg;
-        returnCode = sqlite3_exec(self.mainThreadDatabase, [query UTF8String],NULL,NULL,&errMsg);
-        
-        if(SQLITE_OK != returnCode)
-        {
-            HZELog(@"HZImpressionHistory: Failed to delete impression table. Code: %d, Error: %s",returnCode,errMsg);
-            failed = YES;
-        }
-        
-        sqlite3_free(errMsg);
-        sqlite3_close(self.mainThreadDatabase);
+    sqlite3 *db = [self impressionTableDatabaseConnection];
     
-        failed2 = ![self createImpressionTableIfNotExistsInOpenDatabase:(self.mainThreadDatabase = [self impressionTableDatabaseConnection])];
-    }];
+    if(!db) {
+        HZELog(@"HZImpressionHistory: Failed to delete impression table. Could not create database connection.");
+        return NO;
+    }
     
-    return !(failed || failed2);
+    query = @"DROP TABLE IF EXISTS " TABLE_NAME;
+    char * errMsg;
+    returnCode = sqlite3_exec(db, [query UTF8String],NULL,NULL,&errMsg);
+    
+    if(SQLITE_OK != returnCode)
+    {
+        HZELog(@"HZImpressionHistory: Failed to delete impression table. Code: %d, Error: %s",returnCode,errMsg);
+        failed = YES;
+    }
+    
+    sqlite3_free(errMsg);
+    sqlite3_close(db);
+    
+    return !failed;
 }
 
 
@@ -241,6 +233,10 @@
 - (NSTimeInterval) databaseEntryForDate:(nullable NSDate *)date {
     if(!date) date = [NSDate date];
     return [date timeIntervalSince1970];
+}
+
+- (NSDate *) dateFromDatabaseEntry:(NSTimeInterval)dbEntry {
+    return [NSDate dateWithTimeIntervalSince1970:dbEntry];
 }
 
 - (void) runOnMainQueue:(dispatch_block_t)block {

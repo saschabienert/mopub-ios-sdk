@@ -47,7 +47,6 @@
 
 // Segmentation
 #import "HZImpressionHistory.h"
-#import "HZSegmentationController.h"
 
 
 @interface HeyzapMediation()
