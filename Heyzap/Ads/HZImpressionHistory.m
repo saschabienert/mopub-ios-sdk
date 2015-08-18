@@ -99,7 +99,7 @@
 - (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
     NSString *tagWhereClause = @"";
     
-    if(tags) {
+    if([tags count] > 0) {
         // surround tags with '' for the query string
         NSArray * modifiedTags = hzMap(tags, ^NSString *(NSString *tag) {
             return [NSString stringWithFormat:@"'%s'", [tag UTF8String]];
