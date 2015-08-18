@@ -246,6 +246,14 @@ extern "C" {
         return NULL;
     }
     
+    char * hz_ads_get_remote_data(void){
+      NSString *remoteData = [HeyzapAds getRemoteDataJsonString];
+      const char* remoteString = [remoteData UTF8String];
+      char* returnValue = (char*)malloc(sizeof(char)*(strlen(remoteString) + 1));
+      strcpy(returnValue, remoteString);
+      return returnValue;
+    }
+    
     void hz_ads_show_mediation_debug_view_controller(void) {
         [HeyzapAds presentMediationDebugViewController];
     }
