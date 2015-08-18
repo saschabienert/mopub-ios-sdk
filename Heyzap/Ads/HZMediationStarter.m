@@ -77,6 +77,11 @@ const NSTimeInterval maxStartDelay     = 300;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         [[HZMediationAPIClient sharedClient] GET:@"start" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
             
+            if ([operation.response allHeaderFields][@"heyzapLogging"]) {
+                NSLog(@"heyzapLogging header present; enabling verbose logging");
+                [HZLog setDebugLevel:HZDebugLevelVerbose];
+            }
+            
             // store JSON to disk
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
                 [self.cachingService cacheDictionary:json filename:[[self class] startFilename]];
