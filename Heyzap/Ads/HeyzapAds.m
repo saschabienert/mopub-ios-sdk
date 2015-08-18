@@ -232,6 +232,14 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
     }
 }
 
++ (NSString *) getRemoteDataJsonString{
+    NSString *remoteData = [[[HeyzapMediation sharedInstance] settings] remoteDataJsonString];
+    if (!remoteData) {
+      return @"{}";
+    }
+    return remoteData;
+}
+
 #pragma mark - Record IAP Transaction
 
 +(void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price {
