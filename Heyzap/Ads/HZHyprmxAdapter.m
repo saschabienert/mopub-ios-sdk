@@ -68,6 +68,7 @@
     NSString *adID = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
     
     [HZHYPRManager disableAutomaticPreloading];
+    HZDLog(@"Initializing HyprMX with Distributor ID: %@ and Property ID: %@",self.distributorID, self.propertyID);
     [[HZHYPRManager sharedManager] initializeWithDistributorId:self.distributorID
                                                     propertyId:self.propertyID
                                                         userId:adID];

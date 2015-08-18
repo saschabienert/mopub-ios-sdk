@@ -93,6 +93,7 @@
 - (NSError *)initializeSDK {
     RETURN_ERROR_IF_NIL(self.sdkKey, @"sdk_key");
     
+    HZDLog(@"Initializing AppLovin with SDK Key: %@",self.sdkKey);
     self.sdk = [HZALSdk sharedWithKey:self.sdkKey];
     [self.sdk initializeSdk];
     

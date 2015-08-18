@@ -87,6 +87,7 @@
         ids;
     });
     
+    HZDLog(@"Initializing AdColony with App ID: %@ and zoneIDs: %@",self.appID, zoneIDs);
     [HZAdColony configureWithAppID:self.appID
                            zoneIDs:zoneIDs
                           delegate:self.forwardingDelegate

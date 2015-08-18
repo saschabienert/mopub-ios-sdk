@@ -27,6 +27,7 @@
         self.parentAdapter = parentAdapter;
         self.bannerReportingDelegate = reportingDelegate;
         
+        HZDLog(@"Initializing Facebook Audience Network banner with placement ID: %@",adUnitId);
         _adView = [[HZFBAdView alloc] initWithPlacementID:adUnitId adSize:options.internalFacebookAdSize rootViewController:options.presentingViewController];
         
         _adView.delegate = self;

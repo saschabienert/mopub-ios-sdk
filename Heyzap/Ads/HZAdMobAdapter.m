@@ -123,6 +123,7 @@
     }
     
     self.currentInterstitial = [[HZGADInterstitial alloc] init];
+    HZDLog(@"Initializing AdMob ad with Ad Unit ID: %@",self.adUnitID);
     self.currentInterstitial.adUnitID = self.adUnitID;
     self.currentInterstitial.delegate = self.forwardingDelegate;
     
