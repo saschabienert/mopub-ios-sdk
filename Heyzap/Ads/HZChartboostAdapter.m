@@ -55,6 +55,7 @@
     RETURN_ERROR_IF_NIL(self.appID, @"appID");
     RETURN_ERROR_IF_NIL(self.appSignature, @"appSignature");
     
+    HZDLog(@"Initializing CB with appID: %@ appSignature: %@",self.appID, self.appSignature);
     [HZChartboost startWithAppId:self.appID appSignature:self.appSignature delegate:self.forwardingDelegate];
     [HZChartboost setShouldPrefetchVideoContent:YES];
     

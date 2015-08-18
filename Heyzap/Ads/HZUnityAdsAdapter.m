@@ -92,6 +92,7 @@ NSString * const kHZNetworkName = @"mobile";
     if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(setNetworks:)]) { // Asset Store version
         [[HZUnityAds sharedInstance] setNetworks:kHZNetworkName];
     }
+    HZDLog(@"Initializing UnityAds with Game ID: %@",self.appID);
     [[HZUnityAds sharedInstance] startWithGameId:self.appID andViewController:vc];
     [[HZUnityAds sharedInstance] setDelegate:self.forwardingDelegate];
     

@@ -115,6 +115,7 @@
         return;
     }
     
+    HZDLog(@"Initializing Facebook Audience Network interstitial ad with placement ID: %@",self.placementID);
     self.interstitialAd = [[HZFBInterstitialAd alloc] initWithPlacementID:self.placementID];
     self.interstitialAd.delegate = self.forwardingDelegate;
     [self.interstitialAd loadAd];

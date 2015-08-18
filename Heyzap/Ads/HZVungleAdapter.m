@@ -58,6 +58,7 @@
 - (NSError *)initializeSDK {
     RETURN_ERROR_IF_NIL(self.appID, @"app_id");
     
+    HZDLog(@"Initializing Vungle with App ID: %@",self.appID);
     [[HZVungleSDK sharedSDK] startWithAppId:self.appID];
     [[HZVungleSDK sharedSDK] setDelegate:self.forwardingDelegate];
     

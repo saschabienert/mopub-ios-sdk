@@ -31,6 +31,7 @@
         self.parentAdapter = parentAdapter;
         self.bannerReportingDelegate = reportingDelegate;
         
+        HZDLog(@"Initializing AdMob banner with Ad Unit ID: %@",adUnitID);
         _banner = [[HZGADBannerView alloc] initWithAdSize:options.internalAdMobSize];
         _banner.adUnitID = adUnitID;
         _banner.rootViewController = options.presentingViewController;
