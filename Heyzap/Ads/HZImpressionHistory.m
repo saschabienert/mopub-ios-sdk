@@ -91,12 +91,12 @@
 
 #pragma mark - Query
 
-- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
+- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(nullable HZAdType *)adType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
     NSString *tagWhereClause = tag ? [NSString stringWithFormat:@"AND " COLUMN_ADTAG " = '%s'", [tag UTF8String]] : @"";
     return [self impressionsSince:timestamp withType:adType tagWhereClause:tagWhereClause auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
 }
 
-- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
+- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(nullable HZAdType *)adType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
     NSString *tagWhereClause = @"";
     
     if([tags count] > 0) {
@@ -111,7 +111,7 @@
     return [self impressionsSince:timestamp withType:adType tagWhereClause:tagWhereClause auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
 }
 
-- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tagWhereClause:(NSString *)tagWhereClause auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
+- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(nullable HZAdType *)adType tagWhereClause:(NSString *)tagWhereClause auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
     if (!db) {
         HZELog(@"HZImpressionHistory: Can't count impressions without database connection.");
         return [[NSMutableOrderedSet alloc] init];
@@ -119,7 +119,12 @@
     
 //    NSDate *methodStart = [NSDate date];
     
-    NSString *query = [NSString stringWithFormat:@"SELECT " COLUMN_TIMESTAMP " FROM " TABLE_NAME " WHERE " COLUMN_ADTYPE " = %lu %@ AND " COLUMN_AUCTIONTYPE " = %lu AND " COLUMN_TIMESTAMP " BETWEEN %f AND %f ORDER BY " COLUMN_TIMESTAMP " %@", (unsigned long)adType, tagWhereClause, (unsigned long)auctionType, [self databaseEntryForDate:timestamp], [self databaseEntryForDate:nil], (mostRecentFirst ? @"DESC" : @"ASC")];
+    NSString *adTypeWhereClause = @"";
+    if (adType) {
+        adTypeWhereClause = [NSString stringWithFormat:@"AND " COLUMN_ADTYPE " = %lu", *adType];
+    }
+    
+    NSString *query = [NSString stringWithFormat:@"SELECT " COLUMN_TIMESTAMP " FROM " TABLE_NAME " WHERE " COLUMN_AUCTIONTYPE " = %lu %@ %@ AND " COLUMN_TIMESTAMP " BETWEEN %f AND %f ORDER BY " COLUMN_TIMESTAMP " %@", (unsigned long)auctionType, adTypeWhereClause, tagWhereClause, [self databaseEntryForDate:timestamp], [self databaseEntryForDate:nil], (mostRecentFirst ? @"DESC" : @"ASC")];
     sqlite3_stmt *statement = NULL;
     int returnCode = 0;
     

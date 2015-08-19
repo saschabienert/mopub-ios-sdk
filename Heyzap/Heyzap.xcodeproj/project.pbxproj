@@ -464,6 +464,8 @@
 		998B1C001B714DA6003C1437 /* HZDatabaseHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B1BFF1B714DA6003C1437 /* HZDatabaseHelper.h */; };
 		998B1C061B72BB4C003C1437 /* HZFBAdSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B1C051B72BB4C003C1437 /* HZFBAdSettings.h */; };
 		998B1C081B72BB61003C1437 /* HZFBAdSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 998B1C071B72BB61003C1437 /* HZFBAdSettings.m */; };
+		998B1C0E1B83A398003C1437 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E62181B219AFB3CC0099BE8C /* libsqlite3.dylib */; };
+		998B1C111B83A50B003C1437 /* HZSegmentationSegmentSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 998B1C101B83A50B003C1437 /* HZSegmentationSegmentSpec.m */; };
 		99D3C6131B1FBAC800DDEF7E /* HZExtendedHitAreaButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D3C6121B1FBAC800DDEF7E /* HZExtendedHitAreaButton.m */; };
 		99D3C6151B1FBADE00DDEF7E /* HZExtendedHitAreaButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D3C6141B1FBADE00DDEF7E /* HZExtendedHitAreaButton.h */; };
 		99D3C64A1B1FD40800DDEF7E /* HZTPPropertyAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D3C6461B1FD40800DDEF7E /* HZTPPropertyAnimation.h */; };
@@ -974,6 +976,8 @@
 		998B1C031B718A02003C1437 /* libdyld.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdyld.dylib; path = usr/lib/system/libdyld.dylib; sourceTree = SDKROOT; };
 		998B1C051B72BB4C003C1437 /* HZFBAdSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZFBAdSettings.h; sourceTree = "<group>"; };
 		998B1C071B72BB61003C1437 /* HZFBAdSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZFBAdSettings.m; sourceTree = "<group>"; };
+		998B1C0B1B83A364003C1437 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
+		998B1C101B83A50B003C1437 /* HZSegmentationSegmentSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSegmentationSegmentSpec.m; sourceTree = "<group>"; };
 		99D3C6121B1FBAC800DDEF7E /* HZExtendedHitAreaButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZExtendedHitAreaButton.m; sourceTree = "<group>"; };
 		99D3C6141B1FBADE00DDEF7E /* HZExtendedHitAreaButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZExtendedHitAreaButton.h; sourceTree = "<group>"; };
 		99D3C6461B1FD40800DDEF7E /* HZTPPropertyAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZTPPropertyAnimation.h; sourceTree = "<group>"; };
@@ -1036,6 +1040,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				998B1C0E1B83A398003C1437 /* libsqlite3.dylib in Frameworks */,
 				50A289DD1AAFBA4A00951E16 /* iAd.framework in Frameworks */,
 				5011CE6B18DBAEED00604B53 /* libz.1.2.5.dylib in Frameworks */,
 				5011CE6918DBAEDD00604B53 /* Social.framework in Frameworks */,
@@ -1388,6 +1393,7 @@
 		50666DA51B68403300995FE9 /* Management */ = {
 			isa = PBXGroup;
 			children = (
+				998B1C0F1B83A4DF003C1437 /* Segmentation */,
 				509109341B66E5FB004464E7 /* HZMediationStarterSpec.m */,
 				50666DAA1B69A8F900995FE9 /* HZMediateRequesterSpec.m */,
 			);
@@ -1910,6 +1916,7 @@
 		86B9419D1757FD6300B8EACE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				998B1C0B1B83A364003C1437 /* libxml2.dylib */,
 				998B1C031B718A02003C1437 /* libdyld.dylib */,
 				998B1C011B718561003C1437 /* libsqlite3.0.dylib */,
 				8A6417A61B1FB451003E8747 /* StoreKit.framework */,
@@ -2223,6 +2230,14 @@
 				995DF56B1B44A632000935BB /* HZHeyzapExchangeMRAIDServiceHandler.m */,
 			);
 			name = HeyzapExchange;
+			sourceTree = "<group>";
+		};
+		998B1C0F1B83A4DF003C1437 /* Segmentation */ = {
+			isa = PBXGroup;
+			children = (
+				998B1C101B83A50B003C1437 /* HZSegmentationSegmentSpec.m */,
+			);
+			name = Segmentation;
 			sourceTree = "<group>";
 		};
 		99D4C3F21B3885F4004D24DE /* SKVAST */ = {
@@ -2587,6 +2602,9 @@
 					505351E918F76550003C531E = {
 						DevelopmentTeam = A722HEF3XB;
 					};
+					50A36ACE18C9405A00FA84F0 = {
+						DevelopmentTeam = A722HEF3XB;
+					};
 					86B941DB1758056B00B8EACE = {
 						DevelopmentTeam = A722HEF3XB;
 						SystemCapabilities = {
@@ -2948,6 +2966,7 @@
 				50666DAB1B69A8F900995FE9 /* HZMediateRequesterSpec.m in Sources */,
 				50AA624C18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m in Sources */,
 				509109351B66E5FB004464E7 /* HZMediationStarterSpec.m in Sources */,
+				998B1C111B83A50B003C1437 /* HZSegmentationSegmentSpec.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3383,7 +3402,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3396,7 +3415,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "Integration Tests";
-				PROVISIONING_PROFILE = "65BB83E8-C41C-44AC-A496-91716DB0813D";
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3410,7 +3429,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

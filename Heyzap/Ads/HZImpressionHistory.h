@@ -22,14 +22,14 @@
 - (void) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag auctionType:(HZAuctionType)auctionType date:(nonnull NSDate *)date;
 
 /**
- *  Returns an ordered set of NSDate*s (in the order specified with the mostRecentFirst param) with the given search parameters and database connection. If the tag is `nil`, impressions with any tag will count as a match.
+ *  Returns an ordered set of NSDate*s (in the order specified with the mostRecentFirst param) with the given search parameters and database connection. If the tag is `nil`, impressions with any tag will count as a match. If adType is `NULL`, impressions with any ad type will count as a match.
  */
-- (nonnull NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType databaseConnection:(nonnull sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst;
+- (nonnull NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(nullable HZAdType *)adType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType databaseConnection:(nonnull sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst;
 
 /**
- *  Returns an ordered set of NSDate*s (in the order specified with the mostRecentFirst param) with the given search parameters and database connection. If the tags array is `nil`, impressions with any tag will count as a match.
+ *  Returns an ordered set of NSDate*s (in the order specified with the mostRecentFirst param) with the given search parameters and database connection. If the tags array is `nil`, impressions with any tag will count as a match. If adType is `NULL`, impressions with any ad type will count as a match.
  */
-- (nonnull NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(HZAdType)adType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(nonnull sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst;
+- (nonnull NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(nullable HZAdType *)adType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(nonnull sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst;
 
 /**
  *  Returns a SQLite3 connection to the HZImpressionHistory database. It is "safe" in that the table will be created if it does not exist prior to returning.

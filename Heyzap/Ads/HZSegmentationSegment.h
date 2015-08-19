@@ -13,10 +13,10 @@
 @interface HZSegmentationSegment : NSObject
 
 @property (nonatomic, readonly) NSTimeInterval timeInterval; // number of seconds back the segment should look for impressions that fit the  parameters defined below
-@property (nonatomic, readonly) HZAdType adType;
 @property (nonatomic, readonly, nullable) NSArray * adTags; // nil == applies to any tag
 @property (nonatomic, readonly) NSUInteger impressionLimit;
 @property (nonatomic, readonly) HZAuctionType auctionType;
+@property (nonatomic, readonly) BOOL adsEnabled; // will ignore the limit & interval if this is YES - it's an on/off switch for ads with the specified type/tag/auctionType
 
 @property (nonatomic, readonly) BOOL isLoaded; // whether or not the segment has loaded it's history from HZImpressionHistory yet
 @property (nonatomic, readonly, nullable) NSMutableOrderedSet *impressionHistory; // ordered set of timestamps at which impressions fitting this segment's search criteria occured, most recent first.
@@ -36,7 +36,7 @@
  * Cretes a segment with the given time interval, ad type, list of tags it applies to, and impression limit.
     @param tags If nil, the segment applies to all ad tags, otherwise, it only applies to the ad tags in this array
  */
-- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags adType:(HZAdType)adType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit;
+- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags adType:(nullable HZAdType *)adType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit  adsEnabled:(BOOL)adsEnabled;
 
 - (void) loadWithDb:(nonnull sqlite3 *)db;
 
