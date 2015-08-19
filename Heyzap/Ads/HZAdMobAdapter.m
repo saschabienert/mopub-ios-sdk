@@ -18,9 +18,10 @@
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
-@property (nonatomic, strong) HZGADInterstitial *currentInterstitial;
+@property (nonatomic, strong) NSMutableDictionary *adDictionary;
 
 @property (nonatomic, strong) NSString *adUnitID;
+@property (nonatomic, strong) NSString *videoAdUnitID;
 @property (nonatomic, strong) NSString *bannerAdUnitID;
 
 @end
@@ -41,8 +42,17 @@
     return proxy;
 }
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _adDictionary = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
 - (void)loadCredentials {
     self.adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:self.credentials];
+    self.videoAdUnitID = [HZDictionaryUtils objectForKey:@"video_ad_unit_id" ofClass:[NSString class] dict:self.credentials];
     self.bannerAdUnitID = [HZDictionaryUtils objectForKey:@"banner_ad_unit_id" ofClass:[NSString class] dict:self.credentials];
 }
 
@@ -74,21 +84,22 @@
 - (BOOL)hasAdForType:(HZAdType)type
 {
     switch (type) {
-        case HZAdTypeInterstitial: {
-            return self.currentInterstitial.isReady;
-        }
-        case HZAdTypeVideo:
+        
         case HZAdTypeIncentivized:
         case HZAdTypeBanner: {
             return NO;
         }
-            
+        case HZAdTypeInterstitial:
+        case HZAdTypeVideo: {
+            HZGADInterstitial *currentAd = self.adDictionary[@(type)];
+            return currentAd.isReady;
+        }
     }
 }
 
 - (HZAdType)supportedAdFormats
 {
-    return HZAdTypeInterstitial | HZAdTypeBanner;
+    return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeBanner;
 }
 
 - (BOOL)hasCredentialsForAdType:(HZAdType)adType {
@@ -97,7 +108,7 @@
             return self.adUnitID != nil;
         }
         case HZAdTypeVideo: {
-            return NO;
+            return self.videoAdUnitID != nil;
         }
         case HZAdTypeBanner: {
             return self.bannerAdUnitID != nil;
@@ -114,34 +125,47 @@
 
 - (void)prefetchForType:(HZAdType)type
 {
-    HZAssert(self.adUnitID, @"Need an ad unit ID by this point");
-    if (self.currentInterstitial
-        && !self.currentInterstitial.hasBeenUsed
-        && !self.lastInterstitialError) {
-        // If we have an interstitial already out fetching, don't start up a re-fetch.
+    switch (type) {
+        case HZAdTypeInterstitial: {
+            HZAssert(self.adUnitID, @"Need an ad unit ID by this point");
+            break;
+        }
+        case HZAdTypeVideo: {
+            HZAssert(self.videoAdUnitID, @"Need a video ad unit ID by this point");
+            break;
+        }
+        case HZAdTypeBanner:
+        case HZAdTypeIncentivized: {
+            return;
+        }
+    }
+    
+    HZGADInterstitial *currentAd = self.adDictionary[@(type)];
+    NSError *currentError = [self lastErrorForAdType:type];
+    if (currentAd
+        && !currentAd.hasBeenUsed
+        && !currentError) {
+        // If we have an ad already out fetching, don't start up a re-fetch.
         return;
     }
     
-    self.currentInterstitial = [[HZGADInterstitial alloc] init];
-    HZDLog(@"Initializing AdMob ad with Ad Unit ID: %@",self.adUnitID);
-    self.currentInterstitial.adUnitID = self.adUnitID;
-    self.currentInterstitial.delegate = self.forwardingDelegate;
+    HZGADInterstitial *newAd = [[HZGADInterstitial alloc] init];
+    self.adDictionary[@(type)] = newAd;
     
-    [self.currentInterstitial loadRequest:[HZGADRequest request]];
+    HZDLog(@"Initializing AdMob Ad with Ad Unit ID: %@",self.adUnitID);
+    
+    newAd.adUnitID = type == HZAdTypeInterstitial ? self.adUnitID : self.videoAdUnitID;
+    newAd.delegate = self.forwardingDelegate;
+    
+    HZGADRequest *request = [HZGADRequest request];
+    request.testDevices = @[ GAD_SIMULATOR_ID ];
+    [newAd loadRequest:request];
 }
 
 - (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
 {
-    switch (type) {
-        case HZAdTypeInterstitial: {
-            [self.currentInterstitial presentFromRootViewController:options.viewController];
-        }
-        case HZAdTypeVideo:
-        case HZAdTypeIncentivized:
-        case HZAdTypeBanner: {
-            // Ignored
-        }
-    }
+    HZGADInterstitial *ad = self.adDictionary[@(type)];
+    [ad presentFromRootViewController:options.viewController];
 }
 
 #pragma mark - Delegate callbacks
@@ -157,11 +181,18 @@
 
 - (void)interstitial:(HZGADInterstitial *)ad didFailToReceiveAdWithError:(HZGADRequestError *)error
 {
-    self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain
+    const HZAdType type = [self adTypeForAd:ad];
+    [self.adDictionary removeObjectForKey:@(type)];
+    
+    NSError *wrappedError = [NSError errorWithDomain:kHZMediationDomain
                                          code:1
                                      userInfo:@{kHZMediatorNameKey: @"AdMob",
                                                 NSUnderlyingErrorKey: error}];
-    self.currentInterstitial = nil;
+    if (type == HZAdTypeInterstitial) {
+        self.lastInterstitialError = wrappedError;
+    } else if (type == HZAdTypeVideo) {
+        self.lastVideoError = wrappedError;
+    }
     
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
@@ -175,7 +206,8 @@
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
-    self.currentInterstitial = nil;
+    
+    [self.adDictionary removeObjectForKey:@([self adTypeForAd:ad])];
 }
 
 // As far as I can tell, this means a click.
@@ -186,12 +218,21 @@
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
-    self.lastInterstitialError = nil;
+    [self clearErrorForAdType:[self adTypeForAd:ad]];
+    
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:self.bannerAdUnitID options:options reportingDelegate:reportingDelegate parentAdapter:self];
+}
+
+- (HZAdType)adTypeForAd:(HZGADInterstitial *)ad {
+    if ([ad.adUnitID isEqualToString:self.adUnitID]) {
+        return HZAdTypeInterstitial;
+    } else {
+        return HZAdTypeVideo;
+    }
 }
 
 @end
