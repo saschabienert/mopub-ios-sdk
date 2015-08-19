@@ -20,7 +20,7 @@
 
 @property (nonatomic, strong) NSMutableDictionary *adDictionary;
 
-@property (nonatomic, strong) NSString *adUnitID;
+@property (nonatomic, strong) NSString *interstitialAdUnitID;
 @property (nonatomic, strong) NSString *videoAdUnitID;
 @property (nonatomic, strong) NSString *bannerAdUnitID;
 
@@ -51,7 +51,7 @@
 }
 
 - (void)loadCredentials {
-    self.adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:self.credentials];
+    self.interstitialAdUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:self.credentials];
     self.videoAdUnitID = [HZDictionaryUtils objectForKey:@"video_ad_unit_id" ofClass:[NSString class] dict:self.credentials];
     self.bannerAdUnitID = [HZDictionaryUtils objectForKey:@"banner_ad_unit_id" ofClass:[NSString class] dict:self.credentials];
 }
@@ -105,7 +105,7 @@
 - (BOOL)hasCredentialsForAdType:(HZAdType)adType {
     switch (adType) {
         case HZAdTypeInterstitial: {
-            return self.adUnitID != nil;
+            return self.interstitialAdUnitID != nil;
         }
         case HZAdTypeVideo: {
             return self.videoAdUnitID != nil;
@@ -127,7 +127,7 @@
 {
     switch (type) {
         case HZAdTypeInterstitial: {
-            HZAssert(self.adUnitID, @"Need an ad unit ID by this point");
+            HZAssert(self.interstitialAdUnitID, @"Need an interstitial ad unit ID by this point");
             break;
         }
         case HZAdTypeVideo: {
@@ -152,9 +152,9 @@
     HZGADInterstitial *newAd = [[HZGADInterstitial alloc] init];
     self.adDictionary[@(type)] = newAd;
     
-    HZDLog(@"Initializing AdMob Ad with Ad Unit ID: %@",self.adUnitID);
+    HZDLog(@"Initializing AdMob Ad with interstitialAdUnitID Ad Unit ID: %@",self.interstitialAdUnitID);
     
-    newAd.adUnitID = type == HZAdTypeInterstitial ? self.adUnitID : self.videoAdUnitID;
+    newAd.adUnitID = type == HZAdTypeInterstitial ? self.interstitialAdUnitID : self.videoAdUnitID;
     newAd.delegate = self.forwardingDelegate;
     
     HZGADRequest *request = [HZGADRequest request];
@@ -228,7 +228,7 @@
 }
 
 - (HZAdType)adTypeForAd:(HZGADInterstitial *)ad {
-    if ([ad.adUnitID isEqualToString:self.adUnitID]) {
+    if ([ad.adUnitID isEqualToString:self.interstitialAdUnitID]) {
         return HZAdTypeInterstitial;
     } else {
         return HZAdTypeVideo;
