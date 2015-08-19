@@ -76,7 +76,8 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
 
 + (BOOL)isSDKAvailable
 {
-    return [HZAppTracker hzProxiedClassIsAvailable];
+    //return [HZAppTracker hzProxiedClassIsAvailable];
+    return NO; // SDK release 9.0.7 not fully tested with Leadbolt, disabling for now.
 }
 
 + (NSString *)name
