@@ -154,7 +154,7 @@
     
     HZDLog(@"Initializing AdMob Ad with interstitialAdUnitID Ad Unit ID: %@",self.interstitialAdUnitID);
     
-    newAd.adUnitID = type == HZAdTypeInterstitial ? self.interstitialAdUnitID : self.videoAdUnitID;
+    newAd.adUnitID = (type == HZAdTypeInterstitial) ? self.interstitialAdUnitID : self.videoAdUnitID;
     newAd.delegate = self.forwardingDelegate;
     
     HZGADRequest *request = [HZGADRequest request];
