@@ -82,8 +82,8 @@
         return NO;
     }
     
-    if(![self appliesToCreativeType:creativeType] || auctionType != self.auctionType) {
-        // creativeType or auctionType mismatch
+    if(auctionType != self.auctionType) {
+        // auctionType mismatch
         return NO;
     }
     
@@ -92,12 +92,18 @@
         return NO;
     }
     
-    // type and tag match, check if ads are enabled with these settings
+    // auctionType and tag match, check if ads are enabled with these settings
     if (!self.adsEnabled) {
         return YES;
     }
     
-    // type and tag match, ads enabled, check the counter over the time interval.
+    // only check creativeType if ads are enabled, since creative type might not have been specified if they're disabled
+    if(![self appliesToCreativeType:creativeType]) {
+        // creativeType mismatch
+        return NO;
+    }
+    
+    // this segment definitely applies to the pending impression check the counter over the time interval.
     return self.impressionCount >= self.impressionLimit;
 }
 
