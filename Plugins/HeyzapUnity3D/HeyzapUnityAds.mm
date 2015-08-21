@@ -30,6 +30,7 @@
 #import "HZVideoAd.h"
 #import "HZIncentivizedAd.h"
 #import "HZBannerAd.h"
+#import "HZUnityAdapterChartboostProxy.h"
 
 extern void UnitySendMessage(const char *, const char *, const char *);
 
@@ -291,5 +292,42 @@ extern "C" {
     
     void hz_ads_hide_debug_logs(void) {
         [HeyzapAds setDebugLevel:HZDebugLevelSilent];
+    }
+    
+    BOOL hz_chartboost_enabled(void) {
+        return [HeyzapAds isNetworkInitialized:HZNetworkChartboost];
+    }
+    
+    void hz_fetch_chartboost_for_location(const char *location) {
+        NSString *nsLocation = [NSString stringWithUTF8String:location];
+        
+        if (!hz_chartboost_enabled()) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                hz_fetch_chartboost_for_location(location);
+            });
+            return;
+        }
+        
+        
+        [HZUnityAdapterChartboostProxy cacheInterstitial:nsLocation];
+    }
+    
+    bool hz_chartboost_is_available_for_location(const char *location) {
+        NSString *nsLocation = [NSString stringWithUTF8String:location];
+        if (!hz_chartboost_enabled()) {
+            return NO;
+        }
+        return [HZUnityAdapterChartboostProxy hasInterstitial:nsLocation];
+    }
+    
+    void hz_show_chartboost_for_location(const char *location) {
+        NSString *nsLocation = [NSString stringWithUTF8String:location];
+        
+        if (!hz_chartboost_enabled()) {
+            NSLog(@"Chartboost not enabled yet; not able to show ad.");
+            return;
+        }
+        
+        [HZUnityAdapterChartboostProxy showInterstitial:nsLocation];
     }
 }
