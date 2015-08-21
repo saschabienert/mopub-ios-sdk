@@ -1,20 +1,32 @@
 PODS:
-  - AdColony (2.5.2)
+  - AdColony (2.5.3)
   - AppLovin (3.0.2)
   - Bugsnag (4.0.7):
     - Bugsnag/no-arc (= 4.0.7)
   - Bugsnag/no-arc (4.0.7)
-  - ChartboostSDK (5.5.0)
-  - FacebookAudienceNetwork (4.4.0)
-  - GoogleMobileAds (7.3.1)
+  - ChartboostSDK (5.5.3)
+  - FacebookAudienceNetwork (4.5.1)
+  - Google-Mobile-Ads-SDK (7.4.1)
   - HyprMX (36)
-  - Kiwi (2.3.1)
+  - Kiwi (2.4.0)
   - Leadbolt (5.2)
   - Masonry (0.6.2)
   - OCHamcrest (4.1.1)
   - OCMockito (1.4.0):
     - OCHamcrest (~> 4.0)
-  - OHHTTPStubs (4.1.0)
+  - OHHTTPStubs (4.2.0):
+    - OHHTTPStubs/Default (= 4.2.0)
+  - OHHTTPStubs/Core (4.2.0)
+  - OHHTTPStubs/Default (4.2.0):
+    - OHHTTPStubs/Core
+    - OHHTTPStubs/JSON
+    - OHHTTPStubs/NSURLSession
+    - OHHTTPStubs/OHPathHelpers
+  - OHHTTPStubs/JSON (4.2.0):
+    - OHHTTPStubs/Core
+  - OHHTTPStubs/NSURLSession (4.2.0):
+    - OHHTTPStubs/Core
+  - OHHTTPStubs/OHPathHelpers (4.2.0)
   - Subliminal (1.1.0)
   - UnityAds (1.4.5)
   - VungleAdvertiserSDK (3.1.2)
@@ -25,7 +37,7 @@ DEPENDENCIES:
   - Bugsnag (from `https://github.com/bugsnag/bugsnag-cocoa.git`)
   - ChartboostSDK
   - FacebookAudienceNetwork
-  - GoogleMobileAds
+  - Google-Mobile-Ads-SDK
   - HyprMX
   - Kiwi
   - Leadbolt
@@ -52,20 +64,20 @@ CHECKOUT OPTIONS:
     :git: https://github.com/inkling/Subliminal.git
 
 SPEC CHECKSUMS:
-  AdColony: da5eeb1bb946f9f806917b9d9a27ea99542a475d
+  AdColony: 389b39a185cf61a18cc7d4e1d910046246508e80
   AppLovin: ae28cdcb16636e3594c46488da16436bf4cc3af1
   Bugsnag: 5861d8519d30063abe7b3fcdcf4114a6dddab27a
-  ChartboostSDK: ffb7e0b6657a9c3188f870558dcf4da42ea12dd2
-  FacebookAudienceNetwork: 7c23eaf82adb2b530106afaf50be44e3ed12250b
-  GoogleMobileAds: fc34248ba511fbe238152a6f78c3af29403e387b
+  ChartboostSDK: 9bf9427b4c306773ea9f7d8cf974b4a3a0f1e61e
+  FacebookAudienceNetwork: 5e931961bef5030fd56b24a46af151b7c7ffd8ce
+  Google-Mobile-Ads-SDK: dce4c2728daa0bcbd88b6e3dc111b718a07b1eb6
   HyprMX: 91b4ac0c0aad04fe04a4f320106d75af625becee
-  Kiwi: f038a6c61f7a9e4d7766bff5717aa3b3fdb75f55
+  Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
   Leadbolt: 1e2703134831ec79a27145a80791efba1664ceba
   Masonry: 362e8a1cc0beada4a4c4832d5e863da2a51533be
   OCHamcrest: 6f03ffa81d12feab872638490a44ab0a6d3aca10
   OCMockito: 4981140c9a9ec06c31af40f636e3c0f25f27e6b2
-  OHHTTPStubs: f3473ab21dbf0815253ac96b977d5c36f1daad09
-  Subliminal: 5d9b445e84343d602fad3ce6ac14cff91e9bd618
+  OHHTTPStubs: f639130b83fb5f4f022d38f841141b0a6fa77249
+  Subliminal: ce9b0a4b831f1abd12a6b71599178bd3a3658eb0
   UnityAds: a05bce9ad710707a267d66bb3f651e211f0dd74b
   VungleAdvertiserSDK: 2909d6e65c488799574ba028b84e64a95652127c
 
