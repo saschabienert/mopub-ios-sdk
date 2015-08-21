@@ -19,6 +19,7 @@
 @protocol HZIncentivizedAdDelegate;
 @protocol HZBannerReportingDelegate;
 @class HZBannerAdOptions;
+@class HZMediationPersistentConfig;
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
@@ -26,6 +27,7 @@
 @property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 @property (nonatomic, readonly) NSString *mediationId;
 @property (nonatomic, readonly) HZMediationSettings *settings;
+@property (nonatomic, readonly) HZMediationPersistentConfig *persistentConfig;
 
 + (instancetype)sharedInstance;
 

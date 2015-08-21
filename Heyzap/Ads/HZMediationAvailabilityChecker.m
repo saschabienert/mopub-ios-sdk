@@ -12,21 +12,24 @@
 #import "HZMediationConstants.h"
 #import "HZUtils.h"
 #import "HZInterstitialVideoConfig.h"
+#import "HZMediationPersistentConfig.h"
 
 @interface HZMediationAvailabilityChecker()
 
 @property (nonatomic, strong) NSDate *lastInterstitialVideoShownDate;
 
 @property (nonatomic) HZInterstitialVideoConfig *config;
+@property (nonatomic) id<HZMediationPersistentConfigReadonly> persistentConfig;
 
 @end
 
 @implementation HZMediationAvailabilityChecker
 
-- (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig {
+- (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig {
     self = [super init];
     if (self) {
         _config = interstitialVideoConfig;
+        _persistentConfig = persistentConfig;
     }
     return self;
 }
@@ -64,7 +67,7 @@
     NSOrderedSet *filtered = [self filterAdaptersForInterstitialVideo:adapters adType:adType];
     
     NSIndexSet *indexes = [filtered indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        return [adapter supportsAdType:adType] && [adapter hasCredentialsForAdType:adType];
+        return [adapter supportsAdType:adType] && [adapter hasCredentialsForAdType:adType] && [self.persistentConfig isNetworkEnabled:[adapter name]];
     }];
     
     return [NSOrderedSet orderedSetWithArray:[filtered objectsAtIndexes:indexes]];

@@ -52,6 +52,7 @@
 #import "HZHeyzapExchangeBannerAdapter.h"
 #import "HZCachingService.h"
 #import "HZInterstitialVideoConfig.h"
+#import "HZMediationPersistentConfig.h"
 
 @interface HeyzapMediation()
 
@@ -126,6 +127,7 @@
         _cachingService = [[HZCachingService alloc] init];
         _starter = [[HZMediationStarter alloc] initWithStartingDelegate:self cachingService:_cachingService];
         _mediateRequester = [[HZMediateRequester alloc] initWithDelegate:self cachingService:_cachingService];
+        _persistentConfig = [[HZMediationPersistentConfig alloc] initWithCachingService:_cachingService isTestApp:[[HZDevice currentDevice] isHeyzapTestApp]];
     }
     return self;
 }
@@ -202,7 +204,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSError *error;
-        self.loadManager = [[HZMediationLoadManager alloc] initWithLoadData:dictionary[@"loader"] delegate:self error:&error];
+        self.loadManager = [[HZMediationLoadManager alloc] initWithLoadData:dictionary[@"loader"] delegate:self persistentConfig:self.persistentConfig error:&error];
         if (error) {
             HZELog(@"Error initializing network preloader. Mediation won't be possible. %@",error);
         } else {
@@ -954,7 +956,7 @@ const NSTimeInterval bannerPollInterval = 1;
     HZInterstitialVideoConfig *const interstitialVideoConfig = [[HZInterstitialVideoConfig alloc] initWithDictionary:json];
     
     if (!self.availabilityChecker) {
-        self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithInterstitialVideoConfig:interstitialVideoConfig];
+        self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithInterstitialVideoConfig:interstitialVideoConfig persistentConfig:self.persistentConfig];
     } else {
         [self.availabilityChecker updateWithInterstitialVideoConfig:interstitialVideoConfig];
     }
@@ -1018,6 +1020,10 @@ const NSTimeInterval bannerPollInterval = 1;
 + (Class)optionalForcedNetwork:(NSDictionary *)additionalParams {
     NSString *const forcedNetworkName = additionalParams[@"network"];
     return [HZBaseAdapter adapterClassForName:forcedNetworkName];
+}
+
+- (BOOL)isNetworkEnabledByPersistentConfig:(NSString *)network {
+    return [self.persistentConfig isNetworkEnabled:network];
 }
 
 @end
