@@ -88,7 +88,7 @@
                     [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:timeInterval forTags:tags creativeType:creativeType auctionType:auctionType limit:impressionLimit adsEnabled:adsEnabled]];
                 }
             } else {
-                // ads disabled - the frequency limits don't matter / might not even exist. The only settings we care about for this segment are the auctionType, the tags to apply them to, a limit of 0 since ads are disabled, and the fact that ads are disabled. (It should apply to all creativeTypes over any time period)
+                // ads disabled - the frequency limits don't matter / might not even exist. The only settings we care about for this segment are the auctionType & the tags to apply them to. We use a limit of 0 since ads are disabled. (It should apply to all creativeTypes over any time period)
                 [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:0 forTags:tags creativeType:HZCreativeTypeUnknown auctionType:auctionType limit:0 adsEnabled:NO]];
             }
         }

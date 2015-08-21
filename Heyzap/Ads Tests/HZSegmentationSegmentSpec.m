@@ -28,7 +28,7 @@
 
 SPEC_BEGIN(HZSegmentationSegmentSpec)
 
-#define SEGMENT_TIME_INTERVAL 0.2
+#define SEGMENT_TIME_INTERVAL 1
 
 describe(@"HZSegmentationSegment", ^{
     __block HZSegmentationSegment *segment;
@@ -39,7 +39,7 @@ describe(@"HZSegmentationSegment", ^{
     
     __block HZCreativeType const expectedCreativeType = HZCreativeTypeStatic;
     __block HZCreativeType const wrongCreativeType = HZCreativeTypeVideo;
-    __block HZCreativeType const allCreativeTypes = HZCreativeTypeUnknown; // todo test
+    __block HZCreativeType const allCreativeTypes = HZCreativeTypeUnknown;
     
     __block HZAuctionType const expectedAuctionType= HZAuctionTypeMonetization;
     __block HZAuctionType const wrongAuctionType = HZAuctionTypeCrossPromo;
@@ -55,10 +55,6 @@ describe(@"HZSegmentationSegment", ^{
         segment.impressionHistory = [[NSMutableOrderedSet alloc] init];
     });
     
-    afterEach(^{
-        
-    });
-    
     it(@"Loads from the HZImpressionHistory correctly", ^{
         
         NSArray * array = @[[NSDate date]];
@@ -69,6 +65,23 @@ describe(@"HZSegmentationSegment", ^{
         segment.impressionHistory = nil;
         [segment loadWithDb:(sqlite3 *)impressionHistoryMock]; // use pointer to mock as db pointer since it won't be used but can't be nil
         [[theValue([segment impressionCount]) should] equal:theValue(1)];
+    });
+    
+    it(@"Does not limit impressions if not loaded from the db yet, unless ads are disabled globally for the tag and auctionType or the limit is 0", ^{
+        segment = [[HZSegmentationSegment alloc] initWithTimeInterval:SEGMENT_TIME_INTERVAL forTags:nil creativeType:expectedCreativeType auctionType:expectedAuctionType limit:0 adsEnabled:YES];
+        
+        BOOL limited = [segment limitsImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag];
+        [[theValue(limited) should] equal:theValue(YES)]; // limit is 0, should still limit impression even though not loaded
+        
+        segment.impressionLimit = 1;
+        limited = [segment limitsImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag];
+        [[theValue(limited) should] equal:theValue(NO)]; // limit is 1, should not limit impression since not loaded
+        
+        segment.adsEnabled = NO;
+        limited = [segment limitsImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag];
+        [[theValue(limited) should] equal:theValue(YES)]; // ads disabled, should still limit impression even though not loaded & cap not hit
+        limited = [segment limitsImpressionWithCreativeType:wrongCreativeType auctionType:expectedAuctionType tag:tag];
+        [[theValue(limited) should] equal:theValue(YES)]; // creativeType shouldn't matter either since ads disabled
     });
     
     it(@"Limits an impression with matching creativeType and auctionType, no tag filter", ^{
@@ -179,8 +192,8 @@ describe(@"HZSegmentationSegment", ^{
         limited = [segment limitsImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag];
         [[theValue(limited) should] equal:theValue(YES)];
         
-        // wait for impression to expire
-        [NSThread sleepForTimeInterval:(SEGMENT_TIME_INTERVAL / 2)];
+        // wait longer than interval for impression to expire
+        [NSThread sleepForTimeInterval:(SEGMENT_TIME_INTERVAL)];
         
         // no longer limited
         [[theValue([segment impressionCount]) should] equal:theValue(0)];
@@ -326,6 +339,7 @@ describe(@"HZSegmentationSegment", ^{
         NSDate *const date = [NSDate date];
         NSDate *const date2 = [NSDate date];
         segment.creativeType = allCreativeTypes;
+        segment.timeInterval = 60; // since `[segment impressionCount]` prunes the segments if they're old, make sure the test has time to run
         
         BOOL recorded = [segment recordImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag date:date];
         [[theValue(recorded) should] equal:theValue(YES)];
@@ -355,6 +369,7 @@ describe(@"HZSegmentationSegment", ^{
         NSDate *const date2 = [NSDate date];
         segment.adTags = @[tag, other_tag];
         segment.creativeType = allCreativeTypes;
+        segment.timeInterval = 60; // since `[segment impressionCount]` prunes the segments if they're old, make sure the test has time to run
         
         BOOL recorded = [segment recordImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag date:date];
         [[theValue(recorded) should] equal:theValue(YES)];

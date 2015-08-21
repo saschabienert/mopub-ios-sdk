@@ -19,6 +19,10 @@
     return [self jsonForResource:@"ValidNativeAd"];
 }
 
++ (NSMutableDictionary *)mediationStartJSONThatShouldProduceFourSegments {
+    return [self jsonForResource:@"mediationStartResponseThatShouldProduceFourSegments"];
+}
+
 + (NSMutableDictionary *)jsonForResource:(NSString *)resource
 {
     NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:resource withExtension:@"json"];

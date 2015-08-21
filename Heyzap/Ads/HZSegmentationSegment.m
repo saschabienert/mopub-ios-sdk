@@ -76,12 +76,6 @@
 }
 
 - (BOOL) limitsImpressionWithCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag {
-    if(!self.isLoaded) {
-        // don't limit impressions if there is a failure with the impression history system
-        HZELog(@"HZSegmentationSegment: asked about limits before loaded.");
-        return NO;
-    }
-    
     if(auctionType != self.auctionType) {
         // auctionType mismatch
         return NO;
@@ -103,7 +97,7 @@
         return NO;
     }
     
-    // this segment definitely applies to the pending impression check the counter over the time interval.
+    // this segment definitely applies to the pending impression. check the counter over the time interval.
     return self.impressionCount >= self.impressionLimit;
 }
 
@@ -112,6 +106,7 @@
 
 - (NSUInteger) impressionCount {
     if (!self.isLoaded) {
+        HZELog(@"HZSegmentationSegment: asked about impressionCount before loaded.");
         return 0;
     }
     
