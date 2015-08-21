@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import "HZAdType.h"
+
 @class HZShowOptions;
+@protocol HZMediationPersistentConfigReadonly;
 
 @protocol HZMediationLoadManagerDelegate <NSObject>
 
@@ -21,7 +23,7 @@
 
 @interface HZMediationLoadManager : NSObject
 
-- (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate error:(NSError **)error;
+- (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig error:(NSError **)error;
 - (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork;
 
 @end

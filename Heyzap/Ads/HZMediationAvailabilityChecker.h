@@ -11,13 +11,14 @@
 
 @class HZBaseAdapter;
 @class HZInterstitialVideoConfig;
+@protocol HZMediationPersistentConfigReadonly;
 
 /**
  *  This class handles checking if an ad is available, keeping track of relevant state like interstitial video rate limiting.
  */
 @interface HZMediationAvailabilityChecker : NSObject
 
-- (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig;
+- (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig;
 
 - (NSOrderedSet *)availableAdaptersForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters;
 - (HZBaseAdapter *)firstAdapterWithAdForAdType:(HZAdType)adType adapters:(NSOrderedSet *)adapters optionalForcedNetwork:(Class)forcedNetwork;

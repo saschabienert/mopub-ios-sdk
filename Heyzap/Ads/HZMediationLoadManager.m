@@ -16,6 +16,7 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HZHeyzapExchangeAdapter.h"
+#import "HZMediationPersistentConfig.h"
 
 #define CHECK_NOT_NIL1(value) do { \
 if (value == nil) { \
@@ -24,6 +25,8 @@ return nil; \
 } while (0)
 
 @interface HZMediationLoadManager()
+
+@property (nonatomic) id<HZMediationPersistentConfigReadonly> persistentConfig;
 
 @property (nonatomic) NSUInteger maxConcurrency;
 @property (nonatomic) NSArray *networkList;
@@ -38,10 +41,13 @@ return nil; \
 
 @implementation HZMediationLoadManager
 
-- (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate error:(NSError **)error {
+- (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig error:(NSError **)error {
+    HZParameterAssert(delegate);
+    HZParameterAssert(persistentConfig);
     self = [super init];
     if (self) {
         _delegate = delegate;
+        _persistentConfig = persistentConfig;
         
         self.fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_CONCURRENT);
         
@@ -79,7 +85,11 @@ return nil; \
         return [availableAdapters containsObject:datum.adapterClass];
     });
     
-    NSArray *const supportsAdType = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
+    NSArray *const enabledByUser = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
+        return [self.persistentConfig isNetworkEnabled:[datum.adapterClass name]];
+    });
+    
+    NSArray *const supportsAdType = hzFilter(enabledByUser, ^BOOL(HZMediationLoadData *datum) {
         return [(HZBaseAdapter *)[datum.adapterClass sharedInstance] supportsAdType:adType];
     });
     

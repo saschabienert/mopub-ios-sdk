@@ -8,14 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface HZCachingService : NSObject
 
-- (void)cacheDictionary:(NSDictionary *)dictionary filename:(NSString *)filename;
-- (NSDictionary *)dictionaryWithFilename:(NSString *)filename;
+- (void)cacheRootObject:(id<NSCoding>)rootObject filename:(NSString *)filename;
+
+- (id __nullable)rootObjectWithFilename:(NSString *)filename;
 
 #pragma mark - Testing
 
-- (NSURL *)cacheUrlForFilename:(NSString *)filename;
+- (NSURL *__nullable)cacheUrlForFilename:(NSString *)filename;
+
+NS_ASSUME_NONNULL_END
 
 @end

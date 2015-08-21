@@ -43,6 +43,9 @@
 #import "HZDictionaryUtils.h"
 #import "HZDevice.h"
 #import "HZAbstractHeyzapAdapter.h"
+#import "HZMediationPersistentConfig.h"
+
+#import "HZTestActivityTableViewCell.h"
 
 @interface HZTestActivityViewController()
 
@@ -134,19 +137,13 @@
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     HZBaseAdapter *network = [self.allNetworks objectAtIndex:indexPath.row];
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
-    if(cell == nil){
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"reuseIdentifier"];
+    HZTestActivityTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
+    
+    if (cell == nil){
+        cell = [[HZTestActivityTableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"reuseIdentifier" persistentConfig:[HeyzapMediation sharedInstance].persistentConfig];
     }
-    cell.textLabel.text = [[network class] humanizedName];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    if ([self.integrationStatuses[indexPath.row] boolValue]) {
-        cell.detailTextLabel.text = @"☑︎";
-        cell.detailTextLabel.textColor = [UIColor greenColor];
-    } else {
-        cell.detailTextLabel.text = @"☒";
-        cell.detailTextLabel.textColor = [UIColor redColor];
-    }
+    
+    [cell configureWithNetwork:network integratedSuccessfully:[self.integrationStatuses[indexPath.row] boolValue]];
     
     return cell;
 }

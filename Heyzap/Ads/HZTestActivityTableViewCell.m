@@ -1,0 +1,83 @@
+//
+//  HZTestActivityTableViewCell.m
+//  Heyzap
+//
+//  Created by Maximilian Tagher on 8/21/15.
+//  Copyright (c) 2015 Heyzap. All rights reserved.
+//
+
+#import "HZTestActivityTableViewCell.h"
+#import "HZBaseAdapter.h"
+#import "HZMediationPersistentConfig.h"
+#import "HZDevice.h"
+
+@interface HZTestActivityTableViewCell()
+
+@property (nonatomic, strong) HZMediationPersistentConfig *config;
+@property (nonatomic, strong) UISwitch *networkOnSwitch;
+@property (nonatomic, weak) HZBaseAdapter *adapter;
+
+@end
+
+@implementation HZTestActivityTableViewCell
+
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier persistentConfig:(HZMediationPersistentConfig *)config {
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    HZParameterAssert(config);
+    if (self) {
+        _config = config;
+        
+        self.networkOnSwitch = [[UISwitch alloc] init];
+        [self.networkOnSwitch addTarget:self action:@selector(switchFlipped:) forControlEvents:UIControlEventValueChanged];
+        
+        if ([self showNetworkSwitch]) {
+            self.accessoryView = self.networkOnSwitch;
+        }
+        
+        
+        
+    }
+    return self;
+}
+
+- (BOOL)showNetworkSwitch {
+    return [[HZDevice currentDevice] isHeyzapTestApp];
+}
+
+#pragma mark - cellForRowAtIndexPath: configuration
+
+- (void)configureWithNetwork:(HZBaseAdapter *)adapter integratedSuccessfully:(BOOL)wasIntegratedSuccessfully {
+    self.adapter = adapter;
+    
+    self.textLabel.text = [[self.adapter class] humanizedName];
+    
+    self.detailTextLabel.text = wasIntegratedSuccessfully ? @"☑︎" : @"☒";
+    self.detailTextLabel.textColor = wasIntegratedSuccessfully ? [UIColor greenColor] : [UIColor redColor];
+    
+    self.networkOnSwitch.on = [self.config isNetworkEnabled:[adapter name]];
+}
+
+#pragma mark - Layout
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    if ([self showNetworkSwitch]) {
+        // Add padding between the checkmark / x and the UISwitch
+        CGRect frame = self.detailTextLabel.frame;
+        frame.origin.x -= 10;
+        self.detailTextLabel.frame = frame;
+    }
+}
+
+#pragma mark - Target-Action
+
+- (void)switchFlipped:(UISwitch *)theSwitch {
+    if (theSwitch.isOn) {
+        [self.config removeDisabledNetwork:[self.adapter name]];
+    } else {
+        [self.config addDisabledNetwork:[self.adapter name]];
+    }
+}
+
+@end

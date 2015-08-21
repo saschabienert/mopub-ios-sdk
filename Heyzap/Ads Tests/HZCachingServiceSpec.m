@@ -32,9 +32,9 @@ describe(@"HZCachingService", ^{
     
     it(@"Reads what it writes", ^{
         NSDictionary *const dictionary = @{@"foo":@"bar"};
-        [cachingService cacheDictionary:dictionary filename:filename];
+        [cachingService cacheRootObject:dictionary filename:filename];
         
-        [[dictionary should] equal:[cachingService dictionaryWithFilename:filename]];
+        [[dictionary should] equal:[cachingService rootObjectWithFilename:filename]];
     });
 });
 

@@ -40,7 +40,7 @@ describe(@"HZMediateRequester", ^{
         requesterDelegate = [KWMock mockForProtocol:@protocol(HZMediateRequesterDelegate)];
         cachingMock = [KWMock nullMockForClass:[HZCachingService class]];
         
-        [cachingMock stub:@selector(cacheDictionary:filename:) andReturn:nil];
+        [cachingMock stub:@selector(cacheRootObject:filename:) andReturn:nil];
         
         requester = [[HZMediateRequester alloc] initWithDelegate:requesterDelegate cachingService:cachingMock];
     });
@@ -54,7 +54,7 @@ describe(@"HZMediateRequester", ^{
         [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:fromNetworkJson];
         
         [[expectFutureValue(requesterDelegate) shouldEventually] receive:@selector(requesterUpdatedMediate)];
-        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheDictionary:filename:) withArguments:fromNetworkJson,any()];
+        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheRootObject:filename:) withArguments:fromNetworkJson,any()];
         
         [requester start];
         
@@ -81,13 +81,13 @@ describe(@"HZMediateRequester", ^{
         // To keep tests quick, rapidly retry.
         requester.mediateRequestDelay = 0.1;
         
-        [[expectFutureValue(cachingMock) shouldEventuallyBeforeTimingOutAfter(2)] receive:@selector(cacheDictionary:filename:) withArguments:fromNetworkJson,any()];
+        [[expectFutureValue(cachingMock) shouldEventuallyBeforeTimingOutAfter(2)] receive:@selector(cacheRootObject:filename:) withArguments:fromNetworkJson,any()];
         
-        [[cachingMock should] receive:@selector(dictionaryWithFilename:) andReturn:fromCacheJson withCountAtLeast:1];
+        [[cachingMock should] receive:@selector(rootObjectWithFilename:) andReturn:fromCacheJson withCountAtLeast:1];
         
         [[expectFutureValue(requesterDelegate) shouldEventuallyBeforeTimingOutAfter(2)] receive:@selector(requesterUpdatedMediate) withCountAtLeast:2];
         
-        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheDictionary:filename:) withArguments:fromNetworkJson,any()];
+        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheRootObject:filename:) withArguments:fromNetworkJson,any()];
         
         [requester start];
     });
@@ -113,8 +113,8 @@ describe(@"HZMediateRequester", ^{
         requester.mediateRequestDelay = 0.1;
         
         [[expectFutureValue(requesterDelegate) shouldEventuallyBeforeTimingOutAfter(2)] receive:@selector(requesterUpdatedMediate)];
-        [[expectFutureValue(cachingMock) shouldEventuallyBeforeTimingOutAfter(2)] receive:@selector(cacheDictionary:filename:) withArguments:fromNetworkJson,any()];
-        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheDictionary:filename:) withArguments:fromNetworkJson,any()];
+        [[expectFutureValue(cachingMock) shouldEventuallyBeforeTimingOutAfter(2)] receive:@selector(cacheRootObject:filename:) withArguments:fromNetworkJson,any()];
+        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheRootObject:filename:) withArguments:fromNetworkJson,any()];
         
         [requester start];
     });

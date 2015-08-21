@@ -48,7 +48,7 @@ const NSTimeInterval maxStartDelay     = 300;
 }
 
 + (NSString *)startFilename {
-    return @"start.plist";
+    return @"start-v2.plist";
 }
 
 - (void)startFromDisk {
@@ -58,7 +58,7 @@ const NSTimeInterval maxStartDelay     = 300;
     // And allows faster fetches.
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         
-        NSDictionary *startInfo = [self.cachingService dictionaryWithFilename:[[self class] startFilename]];
+        NSDictionary *startInfo = [self.cachingService rootObjectWithFilename:[[self class] startFilename]];
         
         if (startInfo) {
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -84,7 +84,7 @@ const NSTimeInterval maxStartDelay     = 300;
             
             // store JSON to disk
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-                [self.cachingService cacheDictionary:json filename:[[self class] startFilename]];
+                [self.cachingService cacheRootObject:json filename:[[self class] startFilename]];
                 HZDLog(@"Wrote start info to disk");
             });
             
