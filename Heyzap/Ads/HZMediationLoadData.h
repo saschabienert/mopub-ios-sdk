@@ -7,15 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZAdType.h"
-
-typedef NS_OPTIONS(NSUInteger, HZCreativeType) {
-    HZCreativeTypeUnknown = 1 << 0,
-    HZCreativeTypeStatic = 1 << 1,
-    HZCreativeTypeVideo = 1 << 2,
-    HZCreativeTypeIncentivized = 1 << 3,
-};
-
 
 @interface HZMediationLoadData : NSObject
 

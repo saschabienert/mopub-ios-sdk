@@ -68,41 +68,28 @@ return nil; \
 }
 
 // This method ignores the ad tag in `options.tag` - we fetch regardless of tag. the tag is checked before sending the success callback
-- (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork {
+- (void)fetchCreativeType:(HZCreativeType)creativeType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork notifyDelegate:(BOOL)notifyDelegate {
     HZParameterAssert(showOptions);
     
     NSArray *const networksToConsider = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
         return forcedNetwork ? forcedNetwork == datum.adapterClass : YES;
     });
     
+    // filter out the adapters whose SDKs are not integrated
     NSSet *const availableAdapters = [HeyzapMediation availableAdaptersWithHeyzap:YES];
     NSArray *const availableSDKsForFetch = hzFilter(networksToConsider, ^BOOL(HZMediationLoadData *datum) {
         return [availableAdapters containsObject:datum.adapterClass];
     });
     
-    NSArray *const supportsAdType = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
-        return [(HZBaseAdapter *)[datum.adapterClass sharedInstance] supportsAdType:adType];
+    NSArray *const supportsCreativeType = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
+        return [(HZBaseAdapter *)[datum.adapterClass sharedInstance] supportsCreativeType:creativeType];
     });
     
-    NSArray *const matching = hzFilter(supportsAdType, ^BOOL(HZMediationLoadData *datum) {
-        return hzCreativeTypeSetContainsAdType(datum.creativeTypeSet, adType);
+    NSArray *const matching = hzFilter(supportsCreativeType, ^BOOL(HZMediationLoadData *datum) {
+        return hzCreativeTypeStringSetContainsCreativeType(datum.creativeTypeSet, creativeType);
     });
     
-    
-    // If we're forcing a video only network to show an interstitial for the test activity, we need to notify the delegate for a video network and nto
-    const BOOL isForcedVideoOnlyNetwork = [(HZBaseAdapter *)[forcedNetwork sharedInstance] isVideoOnlyNetwork] && adType == HZAdTypeInterstitial;
-    
-    [self fetchAdType:adType loadData:matching showOptions:showOptions notifyDelegate:!isForcedVideoOnlyNetwork];
-    
-    // Should just take all STATIC and VIDEO?
-    
-    if (adType == HZAdTypeInterstitial) {
-        NSArray *videoNetworks = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
-            return hzCreativeTypeSetContainsAdType(datum.creativeTypeSet, HZAdTypeVideo);
-        });
-        [self fetchAdType:HZAdTypeVideo loadData:videoNetworks showOptions:showOptions notifyDelegate:isForcedVideoOnlyNetwork];
-        // Also load video, to allow for blending
-    }
+    [self fetchCreativeType:creativeType loadData:matching showOptions:showOptions notifyDelegate:notifyDelegate];
 }
 
 // At fetch time, check if we can show interstitial video
@@ -111,7 +98,7 @@ return nil; \
 //
 
 // For interstitial, this should ensure that a non-rate-limited network is started.
-- (void)fetchAdType:(HZAdType)adType loadData:(NSArray *)loadData showOptions:(HZShowOptions *)showOptions notifyDelegate:(BOOL)notifyDelegate {
+- (void)fetchCreativeType:(HZCreativeType)creativeType loadData:(NSArray *)loadData showOptions:(HZShowOptions *)showOptions notifyDelegate:(BOOL)notifyDelegate {
     HZParameterAssert(loadData);
     HZParameterAssert(showOptions);
     
@@ -141,13 +128,13 @@ return nil; \
                 });
                 
                 dispatch_sync([self.delegate pausableMainQueue], ^{
-                    [adapter prefetchForType:adType];
+                    [adapter prefetchForCreativeType:creativeType];
                 });
                 
                 NSTimeInterval pollingInterval = [datum.adapterClass isAvailablePollInterval];
                 __block HZBaseAdapter *adapterWithAnAd = nil;
                 const BOOL anAdapterHasAnAd = hzWaitUntilInterval(pollingInterval, ^BOOL{
-                    adapterWithAnAd = [self adapterFromLoadData:loadData uptoIndexThatHasAd:idx ofType:adType];
+                    adapterWithAnAd = [self adapterFromLoadData:loadData uptoIndexThatHasAd:idx ofCreativeType:creativeType];
                     return (adapterWithAnAd != nil);
                 }, datum.timeout);
                 
@@ -160,7 +147,7 @@ return nil; \
                     fetchedAd = YES;
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         if (shouldNotifyDelegate) {
-                            [self.delegate didFetchAdOfType:adType withAdapter:adapterWithAnAd options:showOptions];
+                            [self.delegate didFetchAdOfCreativeType:creativeType withAdapter:adapterWithAnAd options:showOptions];
                         }
                     });
                     
@@ -171,7 +158,7 @@ return nil; \
         if (!fetchedAd) {
             dispatch_sync(dispatch_get_main_queue(), ^{
                 if (shouldNotifyDelegate) {
-                    [self.delegate didFailToFetchAdOfType:adType options:showOptions];
+                    [self.delegate didFailToFetchAdOfCreativeType:creativeType options:showOptions];
                 }
             });
         }
@@ -180,11 +167,11 @@ return nil; \
 }
 
 // Returns the first adapter, from index [0,idx] that has an ad of the given type, or nil if none in that range have an ad of the given type.
-- (HZBaseAdapter *)adapterFromLoadData:(NSArray *)loadData uptoIndexThatHasAd:(NSUInteger)idx ofType:(HZAdType)adType {
+- (HZBaseAdapter *)adapterFromLoadData:(NSArray *)loadData uptoIndexThatHasAd:(NSUInteger)idx ofCreativeType:(HZCreativeType)creativeType {
     for (NSUInteger i = 0; i <= idx; i++) {
         HZMediationLoadData *datum = loadData[i];
         HZBaseAdapter *adapter = ((HZBaseAdapter *)[datum.adapterClass sharedInstance]);
-        if ([adapter hasAdForType:adType]) {
+        if ([[HeyzapMediation sharedInstance] isNetworkClassInitialized:[adapter class]] && [adapter hasAdForCreativeType:creativeType]) {
             return adapter;
         }
     }

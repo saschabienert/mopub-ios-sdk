@@ -124,17 +124,19 @@ NSString * const kHZNetworkName = @"mobile";
     //TODO: set view controller
 }
 
-- (HZAdType)supportedAdFormats
+- (HZCreativeType) supportedCreativeTypes
 {
-    return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;
+    return HZCreativeTypeVideo | HZCreativeTypeIncentivized;
 }
 
 - (BOOL)isVideoOnlyNetwork {
     return YES;
 }
 
-- (BOOL)hasAdForType:(HZAdType)type
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
+    if(![self supportsCreativeType:creativeType]) return NO;
+    
     if (![[[UIApplication sharedApplication] keyWindow] rootViewController]) {
         // This is important so we should always NSLog this.
         NSLog(@"UnityAds reqires a root view controller on the keyWindow to show ads. Make sure [[[UIApplication sharedApplication] keyWindow] rootViewController] does not return `nil`.");
@@ -151,15 +153,17 @@ NSString * const kHZNetworkName = @"mobile";
     }
 }
 
-- (void)prefetchForType:(HZAdType)type
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
-    // AdColony auto-prefetches
+    // UnityAds auto-prefetches
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
+    if(![self supportsCreativeType:creativeType]) return;
+    
     [[HZUnityAds sharedInstance] setViewController:options.viewController];
-    if (type == HZAdTypeIncentivized) {
+    if (creativeType == HZCreativeTypeIncentivized) {
         self.isShowingIncentivized = YES;
         [[HZUnityAds sharedInstance] setZone:self.incentivizedZoneID];
     } else {
@@ -173,7 +177,7 @@ NSString * const kHZNetworkName = @"mobile";
     // UnityAds uses expensive I/O operations to check if an ad is available.
     return 3;
 }
-#pragma mark - AdColony Delegation
+#pragma mark - UnityAds Delegation
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol
 {

@@ -302,6 +302,14 @@ NSArray *hzFilter(NSArray *array, BOOL(^block)(id object)) {
     return [array objectsAtIndexes:idxSet];
 }
 
+
+NSOrderedSet *hzMapOrderedSet(NSOrderedSet *set, id (^block)(id object)) {
+    NSMutableOrderedSet *newSet = [[NSMutableOrderedSet alloc] initWithCapacity:set.count];
+    for (id obj in set) {
+        [newSet addObject:block(obj)];
+    }
+    return newSet;
+}
 NSOrderedSet *hzFilterOrderedSet(NSOrderedSet *set, BOOL(^block)(id object)) {
     NSIndexSet *idxSet = [set indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
         return block(obj);

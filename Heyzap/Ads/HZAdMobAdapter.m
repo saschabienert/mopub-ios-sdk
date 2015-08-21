@@ -84,26 +84,30 @@
     return [HZGADRequest sdkVersion];
 }
 
-- (BOOL)hasAdForType:(HZAdType)type
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
-    return [self supportedAdFormats] & type && self.currentInterstitial.isReady;
+    return [self supportsCreativeType:creativeType] && self.currentInterstitial.isReady;
 }
 
-- (HZAdType)supportedAdFormats
+- (HZCreativeType) supportedCreativeTypes
 {
-    return HZAdTypeInterstitial | HZAdTypeBanner;
+    // We don't currently have a way to tell if an interstitial from AdMob is a static or video ad.
+    // Until we do, we will treat them as all static.
+    return HZCreativeTypeStatic | HZCreativeTypeBanner;
 }
 
 - (BOOL)isVideoOnlyNetwork {
     return NO;
 }
 
-- (void)prefetchForType:(HZAdType)type
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
+    if(![self supportsCreativeType:creativeType]) return;
+    
     HZAssert(self.adUnitID, @"Need an ad unit ID by this point");
     if (self.currentInterstitial
         && !self.currentInterstitial.hasBeenUsed
-        && !self.lastInterstitialError) {
+        && !self.lastStaticError) {
         // If we have an interstitial already out fetching, don't start up a re-fetch.
         return;
     }
@@ -115,8 +119,10 @@
     [self.currentInterstitial loadRequest:[HZGADRequest request]];
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
+    if(![self supportsCreativeType:creativeType]) return;
+    
     [self.currentInterstitial presentFromRootViewController:options.viewController];
 }
 
@@ -133,7 +139,7 @@
 
 - (void)interstitial:(HZGADInterstitial *)ad didFailToReceiveAdWithError:(HZGADRequestError *)error
 {
-    self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain
+    self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain
                                          code:1
                                      userInfo:@{kHZMediatorNameKey: @"AdMob",
                                                 NSUnderlyingErrorKey: error}];
@@ -162,7 +168,7 @@
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
-    self.lastInterstitialError = nil;
+    self.lastStaticError = nil;
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 

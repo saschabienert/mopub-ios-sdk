@@ -86,57 +86,62 @@
 
 NSString * const kHZCBLocationDefault = @"Default";
 
-- (void)prefetchForType:(HZAdType)type
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
-    switch (type) {
-        case HZAdTypeInterstitial: {
+    if(![self supportsCreativeType:creativeType]) return;
+    
+    switch (creativeType) {
+        case HZCreativeTypeStatic:
             [HZChartboost cacheInterstitial:kHZCBLocationDefault];
             break;
-        }
-        case HZAdTypeIncentivized: {
+        case HZCreativeTypeIncentivized:
             [HZChartboost cacheRewardedVideo:kHZCBLocationDefault];
             break;
-        }
-        case HZAdTypeBanner:
-        case HZAdTypeVideo: {
+        case HZCreativeTypeBanner:
+        case HZCreativeTypeNative:
+        case HZCreativeTypeVideo:
+        case HZCreativeTypeUnknown: {
             // Unsupported
         }
     }
 }
 
-- (BOOL)hasAdForType:(HZAdType)type
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
-    switch (type) {
-        case HZAdTypeIncentivized: {
+    if(![self supportsCreativeType:creativeType]) return NO;
+    
+    switch (creativeType) {
+        case HZCreativeTypeIncentivized:
             return [HZChartboost hasRewardedVideo:kHZCBLocationDefault];
-        }
-        case HZAdTypeInterstitial:
+        case HZCreativeTypeStatic:
             return [HZChartboost hasInterstitial:kHZCBLocationDefault];
-        case HZAdTypeBanner:
-        case HZAdTypeVideo:
+        default:
             return NO;
     }
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    switch (type) {
-        case HZAdTypeInterstitial:
+    if(![self supportsCreativeType:creativeType]) return;
+    
+    switch (creativeType) {
+        case HZCreativeTypeStatic:
             [HZChartboost showInterstitial:kHZCBLocationDefault];
             break;
-        case HZAdTypeIncentivized:
+        case HZCreativeTypeIncentivized:
             [HZChartboost showRewardedVideo:kHZCBLocationDefault];
             break;
-        case HZAdTypeBanner:
-        case HZAdTypeVideo:
+        default:
             // Unsupported
             break;
     }
 }
 
-- (HZAdType)supportedAdFormats
+- (HZCreativeType) supportedCreativeTypes
 {
-    return HZAdTypeInterstitial | HZAdTypeIncentivized;
+    // We don't currently have a way to tell if an interstitial from Chartboost is a static or video ad.
+    // Until we do, we will treat them as all static.
+    return HZCreativeTypeStatic | HZCreativeTypeIncentivized;
 }
 
 - (BOOL)isVideoOnlyNetwork {
@@ -168,7 +173,7 @@ NSString * const kHZCBLocationDefault = @"Default";
 
 - (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
     [[self class] logError:error];
-    self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Chartboost"}];
+    self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Chartboost"}];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
@@ -237,7 +242,7 @@ NSString * const kHZCBLocationDefault = @"Default";
  */
 
 - (void)didCacheInterstitial:(CBLocation)location {
-    self.lastInterstitialError = nil;
+    self.lastStaticError = nil;
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 

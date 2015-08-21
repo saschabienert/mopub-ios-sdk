@@ -61,7 +61,7 @@ const NSTimeInterval maxMediateDelay     = 300;
 - (void)loadMediateFromNetwork {
     // Should be all ad types? none?
     // HZAdFetchRequest requires the main queue; it's getting the status bar orientation and screen size and such.
-    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[HZMediationConstants creativeTypesForAdType:HZAdTypeInterstitial] // TODO ?
+    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[HZMediationConstants legacyCreativeTypesForAdType:HZAdTypeInterstitial] // TODO ?
                                                                          adUnit:@"all" // TODO ?
                                                                             tag:nil
                                                                     auctionType:HZAuctionTypeMixed

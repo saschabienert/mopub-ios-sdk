@@ -24,19 +24,19 @@
 /**
  *  Returns YES if this segment currently restricts an impression of the given types and tag, NO if the impression is allowed.
  */
-- (BOOL) limitsImpressionWithAdType:(HZAdType)adType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag;
+- (BOOL) limitsImpressionWithCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag;
 
 /**
- *  Call this method with every impression. The method returns YES if the impression matches the segment's search criteria, NO otherwise. If the impression is a match, the segement will add the impression to it's impressionHistory.
+ *  Call this method with every impression. The method returns YES if the impression matches the segment's criteria, NO otherwise. If the impression is a match, the segement will add the impression to it's impressionHistory.
  */
-- (BOOL) recordImpressionWithAdType:(HZAdType)adType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag date:(nonnull NSDate *)date;
+- (BOOL) recordImpressionWithCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag date:(nonnull NSDate *)date;
 
 /* Init */
 /**
  * Cretes a segment with the given time interval, ad type, list of tags it applies to, and impression limit.
     @param tags If nil, the segment applies to all ad tags, otherwise, it only applies to the ad tags in this array
  */
-- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags adType:(nullable HZAdType *)adType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit  adsEnabled:(BOOL)adsEnabled;
+- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags creativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit  adsEnabled:(BOOL)adsEnabled;
 
 - (void) loadWithDb:(nonnull sqlite3 *)db;
 

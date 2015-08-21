@@ -85,28 +85,28 @@
     return nil;
 }
 
-- (HZAdType)supportedAdFormats {
-    return HZAdTypeInterstitial | HZAdTypeBanner;
+- (HZCreativeType) supportedCreativeTypes {
+    return HZCreativeTypeStatic | HZCreativeTypeBanner;
 }
 
 - (BOOL)isVideoOnlyNetwork {
     return NO;
 }
 
-- (BOOL)hasAdForType:(HZAdType)type {
-    return type == HZAdTypeInterstitial && self.interstitialAd && self.interstitialAd.isAdValid;
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType {
+    return creativeType == HZCreativeTypeStatic && self.interstitialAd && self.interstitialAd.isAdValid;
 }
 
-- (void)prefetchForType:(HZAdType)type {
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
     HZAssert(self.placementID, @"Need a Placement ID by this point");
     
-    if (type != HZAdTypeInterstitial) {
+    if (creativeType != HZCreativeTypeStatic) {
         // only prefetch if they want an interstitial
         return;
     }
     
     if (self.interstitialAd
-        && !self.lastInterstitialError) {
+        && !self.lastStaticError) {
         // If we have an interstitial already out fetching, don't start up a re-fetch.
         return;
     }
@@ -116,8 +116,8 @@
     [self.interstitialAd loadAd];
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options {
-    if (type != HZAdTypeInterstitial) {
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
+    if (creativeType != HZCreativeTypeStatic) {
         //can only show interstitials
         return;
     }
@@ -149,12 +149,12 @@
 }
 
 - (void)interstitialAdDidLoad:(HZFBInterstitialAd *)interstitialAd {
-    self.lastInterstitialError = nil;
+    self.lastStaticError = nil;
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (void)interstitialAd:(HZFBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
-    self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain
+    self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain
                                                      code:1
                                                  userInfo:@{kHZMediatorNameKey: @"Facebook",
                                                             NSUnderlyingErrorKey: error}];

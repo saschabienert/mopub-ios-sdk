@@ -37,17 +37,10 @@
 }
 
 - (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary {
-//    HZSegmentationSegment *s1 = [[HZSegmentationSegment alloc] initWithTimeInterval:90 forTags:@[@"default"] adType:HZAdTypeInterstitial auctionType:HZAuctionTypeMonetization limit:1];
-//    HZSegmentationSegment *s2 = [[HZSegmentationSegment alloc] initWithTimeInterval:90 forTags:@[@"on"] adType:HZAdTypeVideo auctionType:HZAuctionTypeMonetization limit:1];
-//    HZSegmentationSegment *s3 = [[HZSegmentationSegment alloc] initWithTimeInterval:90 forTags:nil adType:HZAdTypeIncentivized auctionType:HZAuctionTypeMonetization limit:1];
-//    HZSegmentationSegment *s4 = [[HZSegmentationSegment alloc] initWithTimeInterval:60 forTags:nil adType:HZAdTypeBanner auctionType:HZAuctionTypeMonetization limit:1];
-//    self.segments = [NSSet setWithArray:@[s1, s2, s3, s4]];
-    
     NSMutableArray * loadedSegments = [[NSMutableArray alloc] init];
     
     NSArray * segmentsResponse = [HZDictionaryUtils hzObjectForKey:@"segments" ofClass:[NSArray class] default:@[] withDict:startDictionary];
     for (NSDictionary *segmentDict in segmentsResponse) {
-        if([loadedSegments count] == 2) break; // remove once server dupes are gone
         NSArray *tags = nil;
         
         NSMutableArray *rules = [HZDictionaryUtils hzObjectForKey:@"rules" ofClass:[NSArray class] default:@[] withDict:segmentDict];
@@ -90,15 +83,13 @@
                     NSTimeInterval timeInterval = [[HZDictionaryUtils hzObjectForKey:@"seconds" ofClass:[NSNumber class] default:@0 withDict:frequencyLimitOptions] doubleValue];
                     NSUInteger impressionLimit = [[HZDictionaryUtils hzObjectForKey:@"ads_quantity" ofClass:[NSNumber class] default:@0 withDict:frequencyLimitOptions] unsignedIntegerValue];
                     
-                    // ad_format = 0 means all adTypes. otherwise, it's a numerical enum value from the server describing the format
-                    NSUInteger adTypeServerEnum = [[HZDictionaryUtils hzObjectForKey:@"ad_format" ofClass:[NSNumber class] default:@0 withDict:frequencyLimitOptions] unsignedIntegerValue];
-                    BOOL specificAdType = (adTypeServerEnum != 0);
-                    HZAdType adType = HZAdTypeInterstitial; //(HZAdType)adTypeServerEnum; // TODO actually convert this enum to an adType later, server is sending down a creative type enum
+                    HZCreativeType creativeType = hzCreativeTypeFromNSNumber([HZDictionaryUtils hzObjectForKey:@"ad_format" ofClass:[NSNumber class] default:@(HZCreativeTypeUnknown) withDict:frequencyLimitOptions]);
                     
-                    [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:timeInterval forTags:tags adType:(specificAdType ? &adType : NULL) auctionType:auctionType limit:impressionLimit adsEnabled:adsEnabled]];
+                    [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:timeInterval forTags:tags creativeType:creativeType auctionType:auctionType limit:impressionLimit adsEnabled:adsEnabled]];
                 }
             } else {
-                // ads disabled - there might not be any frequency limits.
+                // ads disabled - the frequency limits don't matter / might not even exist. The only settings we care about for this segment are the auctionType, the tags to apply them to, a limit of 0 since ads are disabled, and the fact that ads are disabled. (It should apply to all creativeTypes over any time period)
+                [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:0 forTags:tags creativeType:HZCreativeTypeUnknown auctionType:auctionType limit:0 adsEnabled:NO]];
             }
         }
         
@@ -131,19 +122,19 @@
 
 #pragma mark - Query
 
-- (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)adapter forType:(HZAdType)adType tag:(nonnull NSString *)adTag {
-    return [adapter isAvailable] && [self isAdAllowedForType:HZAdTypeBanner auctionType:[HZSegmentationController auctionTypeForAdapter:adapter.parentAdapter] tag:adTag];
+- (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)adapter tag:(nonnull NSString *)adTag {
+    return [adapter isAvailable] && [self isAdAllowedForCreativeType:HZCreativeTypeBanner auctionType:[HZSegmentationController auctionTypeForAdapter:adapter.parentAdapter] tag:adTag];
 }
 
-- (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter forType:(HZAdType)adType tag:(nonnull NSString *)adTag {
-    return [adapter hasAdForType:adType] && [self isAdAllowedForType:adType auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] tag:adTag];
+- (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter forCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag {
+    return [adapter hasAdForCreativeType:creativeType] && [self isAdAllowedForCreativeType:creativeType auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] tag:adTag];
 }
 
-- (BOOL) isAdAllowedForType:(HZAdType)adType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)adTag {
+- (BOOL) isAdAllowedForCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)adTag {
     __block BOOL didGetLimited = NO;
     [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
-        if([segment limitsImpressionWithAdType:adType auctionType:auctionType tag:adTag]) {
-            HZDLog(@"HZSegmentation: ad not allowed for type: %@, auctionType: %@, tag: %@. First segment limiting impression: %@", NSStringFromAdType(adType), NSStringFromHZAuctionType(auctionType), adTag, segment);
+        if([segment limitsImpressionWithCreativeType:creativeType auctionType:auctionType tag:adTag]) {
+            HZDLog(@"HZSegmentation: ad not allowed for type: %@, auctionType: %@, tag: %@. First segment limiting impression: %@", NSStringFromCreativeType(creativeType), NSStringFromHZAuctionType(auctionType), adTag, segment);
             didGetLimited = YES;
             *stop = YES;
         }
@@ -155,13 +146,13 @@
 
 #pragma mark - Report
 
-- (void) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag adapter:(nonnull HZBaseAdapter *)adapter {
+- (void) recordImpressionWithCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)tag adapter:(nonnull HZBaseAdapter *)adapter {
     NSDate *date = [NSDate date];
     for(HZSegmentationSegment *segment in self.segments) {
-        [segment recordImpressionWithAdType:adType auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] tag:tag date:date];
+        [segment recordImpressionWithCreativeType:creativeType auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] tag:tag date:date];
     }
     
-    [[HZImpressionHistory sharedInstance] recordImpressionWithType:adType tag:tag auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] date:date];
+    [[HZImpressionHistory sharedInstance] recordImpressionWithCreativeType:creativeType tag:tag auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] date:date];
 }
 
 
@@ -187,7 +178,7 @@
         return HZAuctionTypeMonetization;
     }
     
-    HZELog(@"HZSegmentationController: unregcognized auctionType string from server: %@. Processing it as HZAuctionTypeMonetization.", auctionTypeString);
+    HZELog(@"HZSegmentationController: unregcognized auctionType string: %@. Processing it as HZAuctionTypeMonetization.", auctionTypeString);
     return HZAuctionTypeMonetization;
 }
 

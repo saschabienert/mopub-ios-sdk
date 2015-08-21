@@ -10,6 +10,6 @@
 #import "HZBaseAdapter.h"
 
 @interface HZHeyzapExchangeAdapter : HZBaseAdapter
-- (NSNumber *) adScoreForAdType:(HZAdType)adType;
+- (NSNumber *) adScoreForCreativeType:(HZCreativeType)creativeType;
 - (void) setAllMediationScoresForReadyAds;
 @end

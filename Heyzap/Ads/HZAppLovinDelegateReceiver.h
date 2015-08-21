@@ -6,14 +6,14 @@
 //  Copyright (c) 2015 Heyzap. All rights reserved.
 //
 
-#import "HZAdType.h"
+#import "HZCreativeType.h"
 
 // AppLovin uses the same delegate selectors for incentivized/interstitial, so we need separate objects to break down the messages by ad types.
 @protocol HZAppLovinDelegateReceiver <NSObject>
 
 - (void)didShowAd;
-- (void)didLoadAdOfType:(HZAdType)type;
-- (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error;
+- (void)didLoadAdOfType:(HZCreativeType)creativeType;
+- (void)didFailToLoadAdOfType:(HZCreativeType)creativeType error:(NSError *)error;
 
 - (void)didClickAd;
 - (void)didDismissAd;

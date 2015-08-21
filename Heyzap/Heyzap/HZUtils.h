@@ -38,6 +38,7 @@ char *HZNewBase64Encode(
 
 NSArray *hzMap(NSArray *array, id (^block)(id object));
 NSArray *hzFilter(NSArray *array, BOOL(^block)(id object));
+NSOrderedSet *hzMapOrderedSet(NSOrderedSet *set, id (^block)(id object));
 NSOrderedSet *hzFilterOrderedSet(NSOrderedSet *set, BOOL(^block)(id object));
 
 BOOL hziOS8Plus(void);

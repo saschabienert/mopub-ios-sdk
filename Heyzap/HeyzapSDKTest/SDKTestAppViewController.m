@@ -187,6 +187,12 @@ typedef enum {
     }
 }
 
+- (void) changeColorOfShowButtonAfterSeconds:(NSTimeInterval)seconds {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * seconds), dispatch_get_main_queue(), ^{
+        [self changeColorOfShowButton];
+    });
+}
+
 - (void) changeColorOfShowButton {
     [self.bannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex != kAdUnitSegmentBanner) forKey:@"hidden"];
     [self.nonBannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex == kAdUnitSegmentBanner) forKey:@"hidden"];
@@ -272,7 +278,8 @@ const CGFloat kLeftMargin = 10;
     [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
         NSLog(@"Network: %@ Callback: %@", network, callback);
         [self logToConsole: [NSString stringWithFormat: @"[%@] %@", network, callback]];
-        [self changeColorOfShowButton];
+        // wait a bit to change show button color for SDK to process whatever changed
+        [self changeColorOfShowButtonAfterSeconds:0.1];
     }];
     
     self.view.accessibilityLabel = kViewAccessibilityLabel;
@@ -815,7 +822,7 @@ const CGFloat kLeftMargin = 10;
 - (void) clearImpressionHistory {
     BOOL deleteSuccess = [[[HeyzapMediation sharedInstance] segmentationController] clearImpressionHistory] ;
     [self logToConsole:[NSString stringWithFormat:@"Impression history delete was %@successful.", (deleteSuccess ? @"" : @"NOT ")]];
-    [self changeColorOfShowButton];
+    [self changeColorOfShowButtonAfterSeconds:0.5];
 }
 
 #pragma mark - Open

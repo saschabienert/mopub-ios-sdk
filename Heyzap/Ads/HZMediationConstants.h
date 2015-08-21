@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
+#import "HZCreativeType.h"
+#import "HZAdType.h"
 
 @interface HZMediationConstants : NSObject
 
@@ -49,12 +51,8 @@ extern NSString * const kHZAdapterLeadboltHumanized;
 // Must be used from a class method of an adapter, presumably `enableWithCredentials:`
 #define CHECK_CREDENTIALS_ERROR(error) if (error) { return [HZMediationConstants credentialErrorForAdapter:self error:error]; }
 
-NSString * NSStringFromAdType(HZAdType type);
-HZAdType hzAdTypeFromString(NSString *adUnit);
-+ (NSArray *)creativeTypesForAdType:(HZAdType)type;
++ (NSArray *)legacyCreativeTypesForAdType:(HZAdType)type;
 
-HZAdType hzAdTypeFromCreativeTypeString(NSString *creativeTypeString);
-
-BOOL hzCreativeTypeSetContainsAdType(NSSet *const creativeTypes, const HZAdType adType);
-
+BOOL hzCreativeTypeStringSetContainsAdType(NSSet *const creativeTypes, const HZAdType adType);
+NSSet * hzCreativeTypesPossibleForAdType(HZAdType adType);
 @end

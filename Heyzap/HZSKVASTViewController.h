@@ -25,7 +25,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import "HZSKVASTError.h"
-#import "HZAdType.h"
+#import "HZCreativeType.h"
 #import "HZSKVASTModel.h"
 
 @class HZSKVASTViewController;
@@ -46,12 +46,12 @@
 
 
 @property (nonatomic, strong) NSURL *clickThrough;
-@property (nonatomic) HZAdType adType;
+@property (nonatomic) HZCreativeType creativeType;
 @property (nonatomic, readonly) BOOL didFinishSuccessfully;
 
 @property(nonatomic) UIViewController *rootViewController;
 
-- (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forAdType:(HZAdType)adType; // designated initializer for VASTViewController
+- (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forCreativeType:(HZCreativeType)creativeType; // designated initializer for VASTViewController
 
 - (void)loadVideoWithURL:(NSURL *)url;            // load and prepare to play a VAST video from a URL
 - (void)loadVideoWithData:(NSData *)xmlContent;   // load and prepare to play a VAST video from existing XML data
@@ -68,5 +68,5 @@
 @property (nonatomic) BOOL allowTimer;
 @property (nonatomic) BOOL allowInstallButton;
 @property (nonatomic) NSNumber *skipOffsetSeconds;
-- (instancetype) initForAdType:(HZAdType)adType vastModel:(HZSKVASTModel *)vastModel;
+- (instancetype) initForCreativeType:(HZCreativeType)creativeType vastModel:(HZSKVASTModel *)vastModel;
 @end

@@ -14,18 +14,17 @@
 
 @interface HZAppLovinDelegate()
 
-@property (nonatomic) HZAdType adType;
+@property (nonatomic) HZCreativeType creativeType;
 
 @end
 
 @implementation HZAppLovinDelegate
 
-- (id)initWithAdType:(HZAdType)adType delegate:(id<HZAppLovinDelegateReceiver>)delegate
-{
+- (id)initWithCreativeType:(HZCreativeType)creativeType delegate:(id<HZAppLovinDelegateReceiver>)delegate {
     self = [super init];
     if (self) {
         
-        _adType = adType;
+        _creativeType = creativeType;
         _delegate = delegate;
     }
     return self;
@@ -50,12 +49,12 @@
 
 - (void)adService:(HZALAdService *)adService didLoadAd:(HZALAd *)ad
 {
-    [self.delegate didLoadAdOfType:self.adType];
+    [self.delegate didLoadAdOfType:self.creativeType];
 }
 
 - (void)adService:(HZALAdService *)adService didFailToLoadAdWithError:(int)code
 {
-    [self.delegate didFailToLoadAdOfType:self.adType
+    [self.delegate didFailToLoadAdOfType:self.creativeType
                                    error:[NSError errorWithDomain:kHZMediationDomain code:code userInfo:nil]];
 }
 

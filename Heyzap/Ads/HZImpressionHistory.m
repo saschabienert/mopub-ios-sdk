@@ -15,7 +15,7 @@
 #define TABLE_NAME @"impressions"
 #define COLUMN_ID @"id"
 #define COLUMN_TIMESTAMP @"timestamp"
-#define COLUMN_ADTYPE @"adType"
+#define COLUMN_CREATIVETYPE @"creativeType"
 #define COLUMN_ADTAG @"adTag"
 #define COLUMN_AUCTIONTYPE @"auctionType"
 
@@ -26,7 +26,7 @@
 @interface HZImpressionEvent : NSObject
 
 @property (nonatomic, nonnull) NSDate *timestamp;
-@property (nonatomic) HZAdType adType;
+@property (nonatomic) HZCreativeType creativeType;
 @property (nonnull, nonatomic) NSString *adTag;
 @property (nonatomic) HZAuctionType auctionType;
 @end
@@ -61,13 +61,13 @@
 
 #pragma mark - Insert
 // performs insertion on background thread asynchronously
-- (void) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag auctionType:(HZAuctionType)auctionType date:(nonnull NSDate *)date {
+- (void) recordImpressionWithCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)tag auctionType:(HZAuctionType)auctionType date:(nonnull NSDate *)date {
 //    __block NSDate *methodStartPreQueue = [NSDate date];
     dispatch_async(self.writeQueue, ^{
 //        NSDate *methodStart = [NSDate date];
         int returnCode;
         BOOL failed = NO;
-        NSString *query = [NSString stringWithFormat:@"INSERT INTO " TABLE_NAME " (" COLUMN_TIMESTAMP ", " COLUMN_ADTYPE ", " COLUMN_ADTAG ", " COLUMN_AUCTIONTYPE ") VALUES (%f, %lu, '%s', %lu)", [self databaseEntryForDate:date], (unsigned long)adType, [tag UTF8String], (unsigned long)auctionType];
+        NSString *query = [NSString stringWithFormat:@"INSERT INTO " TABLE_NAME " (" COLUMN_TIMESTAMP ", " COLUMN_CREATIVETYPE ", " COLUMN_ADTAG ", " COLUMN_AUCTIONTYPE ") VALUES (%f, %lu, '%s', %lu)", [self databaseEntryForDate:date], (unsigned long)creativeType, [tag UTF8String], (unsigned long)auctionType];
         sqlite3 * insertDb = [self safeImpressionTableDatabaseConnection];
         if(!insertDb) {
             failed = YES;
@@ -91,12 +91,12 @@
 
 #pragma mark - Query
 
-- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(nullable HZAdType *)adType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
+- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withCreativeType:(HZCreativeType)creativeType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
     NSString *tagWhereClause = tag ? [NSString stringWithFormat:@"AND " COLUMN_ADTAG " = '%s'", [tag UTF8String]] : @"";
-    return [self impressionsSince:timestamp withType:adType tagWhereClause:tagWhereClause auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
+    return [self impressionsSince:timestamp withCreativeType:creativeType tagWhereClause:tagWhereClause auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
 }
 
-- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(nullable HZAdType *)adType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
+- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withCreativeType:(HZCreativeType)creativeType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
     NSString *tagWhereClause = @"";
     
     if([tags count] > 0) {
@@ -108,10 +108,10 @@
         tagWhereClause = [NSString stringWithFormat:@"AND " COLUMN_ADTAG " IN (%@)", [modifiedTags componentsJoinedByString:@","]];
     }
     
-    return [self impressionsSince:timestamp withType:adType tagWhereClause:tagWhereClause auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
+    return [self impressionsSince:timestamp withCreativeType:creativeType tagWhereClause:tagWhereClause auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
 }
 
-- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withType:(nullable HZAdType *)adType tagWhereClause:(NSString *)tagWhereClause auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
+- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withCreativeType:(HZCreativeType)creativeType tagWhereClause:(NSString *)tagWhereClause auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
     if (!db) {
         HZELog(@"HZImpressionHistory: Can't count impressions without database connection.");
         return [[NSMutableOrderedSet alloc] init];
@@ -119,12 +119,12 @@
     
 //    NSDate *methodStart = [NSDate date];
     
-    NSString *adTypeWhereClause = @"";
-    if (adType) {
-        adTypeWhereClause = [NSString stringWithFormat:@"AND " COLUMN_ADTYPE " = %lu", *adType];
+    NSString *creativeTypeWhereClause = @"";
+    if (creativeType != HZCreativeTypeUnknown) {
+        creativeTypeWhereClause = [NSString stringWithFormat:@"AND " COLUMN_CREATIVETYPE " = %lu", (unsigned long)creativeType];
     }
     
-    NSString *query = [NSString stringWithFormat:@"SELECT " COLUMN_TIMESTAMP " FROM " TABLE_NAME " WHERE " COLUMN_AUCTIONTYPE " = %lu %@ %@ AND " COLUMN_TIMESTAMP " BETWEEN %f AND %f ORDER BY " COLUMN_TIMESTAMP " %@", (unsigned long)auctionType, adTypeWhereClause, tagWhereClause, [self databaseEntryForDate:timestamp], [self databaseEntryForDate:nil], (mostRecentFirst ? @"DESC" : @"ASC")];
+    NSString *query = [NSString stringWithFormat:@"SELECT " COLUMN_TIMESTAMP " FROM " TABLE_NAME " WHERE " COLUMN_AUCTIONTYPE " = %lu %@ %@ AND " COLUMN_TIMESTAMP " BETWEEN %f AND %f ORDER BY " COLUMN_TIMESTAMP " %@", (unsigned long)auctionType, creativeTypeWhereClause, tagWhereClause, [self databaseEntryForDate:timestamp], [self databaseEntryForDate:nil], (mostRecentFirst ? @"DESC" : @"ASC")];
     sqlite3_stmt *statement = NULL;
     int returnCode = 0;
     
@@ -180,7 +180,7 @@
     
     // the trigger is a way to limit the number of rows in the table. currently limited to 1000 rows of impression data. http://www.sqlite.org/lang_createtrigger.html
     // the trigger is (conditionally) dropped before being created so that if we change the impression limit later the old one will be removed (since it won't replace it if one of the same name currently exists)
-    NSString * query =[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS " TABLE_NAME " ( " COLUMN_ID " INTEGER PRIMARY KEY AUTOINCREMENT, " COLUMN_TIMESTAMP " INTEGER, " COLUMN_ADTYPE " INTEGER, " COLUMN_ADTAG " TEXT, " COLUMN_AUCTIONTYPE " INTEGER);\
+    NSString * query =[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS " TABLE_NAME " ( " COLUMN_ID " INTEGER PRIMARY KEY AUTOINCREMENT, " COLUMN_TIMESTAMP " INTEGER, " COLUMN_CREATIVETYPE " INTEGER, " COLUMN_ADTAG " TEXT, " COLUMN_AUCTIONTYPE " INTEGER);\
     DROP TRIGGER IF EXISTS " TRIGGER_NAME ";\
     CREATE TRIGGER IF NOT EXISTS " TRIGGER_NAME " AFTER INSERT ON " TABLE_NAME " WHEN (SELECT count(*) from " TABLE_NAME ")>%d\
     BEGIN\

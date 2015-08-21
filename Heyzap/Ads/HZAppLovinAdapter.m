@@ -108,9 +108,11 @@
     return nil;
 }
 
-- (HZAdType)supportedAdFormats
+- (HZCreativeType) supportedCreativeTypes
 {
-    return HZAdTypeInterstitial | HZAdTypeIncentivized;
+    // We don't currently have a way to tell if an interstitial from AppLovin is a static or video ad.
+    // Until we do, we will treat them as all static.
+    return HZCreativeTypeStatic | HZCreativeTypeIncentivized;
 }
 
 - (BOOL)isVideoOnlyNetwork {
@@ -118,55 +120,55 @@
 }
 
 // To support incentivized, I will need to have separate objects for the incentivized/interstial delegates because they received the same selectors
-- (void)prefetchForType:(HZAdType)type
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
-    
-    switch (type) {
-        case HZAdTypeInterstitial: {
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
             [[self.sdk adService] preloadAdOfSize:[HZALAdSize sizeInterstitial]];
             break;
         }
-        case HZAdTypeIncentivized: {
+        case HZCreativeTypeIncentivized: {
             if (self.currentIncentivizedAd) {
                 return;
             }
             self.currentIncentivizedAd = [[HZALIncentivizedInterstitialAd alloc] initIncentivizedInterstitialWithSdk:self.sdk];
-            self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithAdType:HZAdTypeIncentivized delegate:self.forwardingDelegate];
+            self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithCreativeType:creativeType delegate:self.forwardingDelegate];
             [self.currentIncentivizedAd preloadAndNotify:self.incentivizedDelegate];
             self.currentIncentivizedAd.adVideoPlaybackDelegate = self.incentivizedDelegate;
             
             break;
         }
-        case HZAdTypeBanner:
-        case HZAdTypeVideo: {
-            // Not supported——I believe AppLovin shows videos as part of interstitials, like us.
+        case HZCreativeTypeVideo: // not supported right now since AppLovin doesn't differentiate between static and video interstitials
+        default: {
+            // Not supported
             break;
         }
     }
 }
 
-- (BOOL)hasAdForType:(HZAdType)type
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
-    switch (type) {
-        case HZAdTypeInterstitial: {
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
             return [[self.sdk adService] hasPreloadedAdOfSize:[HZALAdSize sizeInterstitial]];
             break;
         }
-        case HZAdTypeIncentivized: {
+        case HZCreativeTypeIncentivized: {
             return self.currentIncentivizedAd.isReadyForDisplay;
         }
-            
-        case HZAdTypeBanner:
-        case HZAdTypeVideo: {
+        case HZCreativeTypeVideo:
+        default: {
             return NO;
             break;
         }
     }
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if (type == HZAdTypeIncentivized) {
+    if(![self supportsCreativeType:creativeType]) return;
+    
+    if (creativeType == HZCreativeTypeIncentivized) {
         
         if (self.currentIncentivizedAd && [self.currentIncentivizedAd isReadyForDisplay]) {
             self.currentIncentivizedAd.adDisplayDelegate = self.incentivizedDelegate;
@@ -175,7 +177,7 @@
         } else {
             [self appLovinFailedToShowWithUnderlyingError:self.incentivizedError];
         }
-    } else {
+    } else if(creativeType == HZCreativeTypeStatic) {
         // We just need to keep a strong reference to the last HZALInterstitialAd to prevent it from being deallocated (this started being required in AppLovin 3.0.2)
         self.currentInterstitialAd = [[HZALInterstitialAd alloc] initInterstitialAdWithSdk:self.sdk];
         self.currentInterstitialAd.adDisplayDelegate = self.interstitialDelegate;
@@ -203,44 +205,46 @@
 
 #pragma mark - AppLovinDelegateReceiver
 
-- (void)didLoadAdOfType:(HZAdType)type
+- (void)didLoadAdOfType:(HZCreativeType)creativeType
 {
-    
-    switch (type) {
-        case HZAdTypeIncentivized: {
+    switch (creativeType) {
+        case HZCreativeTypeIncentivized: {
             self.incentivizedError = nil;
             break;
         }
-        case HZAdTypeInterstitial: {
+        case HZCreativeTypeStatic: {
             // This won't be called because we're not being notified for interstitials.
             break;
         }
-            
-        case HZAdTypeBanner:
-        case HZAdTypeVideo: {
+        case HZCreativeTypeBanner:
+        case HZCreativeTypeVideo:
+        case HZCreativeTypeNative:
+        case HZCreativeTypeUnknown: {
             // Ignored
             break;
         }
     }
 }
 
-- (void)didFailToLoadAdOfType:(HZAdType)type error:(NSError *)error
+- (void)didFailToLoadAdOfType:(HZCreativeType)creativeType error:(NSError *)error
 {
-    switch (type) {
-        case HZAdTypeIncentivized: {
+    switch (creativeType) {
+        case HZCreativeTypeIncentivized: {
             self.incentivizedDelegate = nil;
             self.currentIncentivizedAd = nil;
             self.incentivizedError = error;
             
             break;
         }
-        case HZAdTypeInterstitial: {
+        case HZCreativeTypeStatic: {
             // This won't be called because we're not being notified for interstitials.
             break;
         }
             
-        case HZAdTypeBanner:
-        case HZAdTypeVideo: {
+        case HZCreativeTypeBanner:
+        case HZCreativeTypeVideo:
+        case HZCreativeTypeNative:
+        case HZCreativeTypeUnknown: {
             // Ignored
             break;
         }
@@ -293,7 +297,7 @@
 
 - (HZAppLovinDelegate *)interstitialDelegate {
     if (!_interstitialDelegate) {
-        _interstitialDelegate = [[HZAppLovinDelegate alloc] initWithAdType:HZAdTypeInterstitial delegate:self.forwardingDelegate];
+        _interstitialDelegate = [[HZAppLovinDelegate alloc] initWithCreativeType:HZCreativeTypeStatic delegate:self.forwardingDelegate];
     }
     
     return _interstitialDelegate;

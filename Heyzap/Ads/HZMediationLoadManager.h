@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZAdType.h"
+#import "HZCreativeType.h"
 
 @class HZShowOptions;
 @class HZBaseAdapter;
@@ -15,8 +15,8 @@
 @protocol HZMediationLoadManagerDelegate <NSObject>
 
 - (BOOL)setupAdapterNamed:(NSString *)adapterName;
-- (void)didFetchAdOfType:(HZAdType)adType withAdapter:(HZBaseAdapter *)adapter options:(HZShowOptions *)showOptions;
-- (void)didFailToFetchAdOfType:(HZAdType)adType options:(HZShowOptions *)showOptions;
+- (void)didFetchAdOfCreativeType:(HZCreativeType)creativeType withAdapter:(HZBaseAdapter *)adapter options:(HZShowOptions *)showOptions;
+- (void)didFailToFetchAdOfCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)showOptions;
 - (dispatch_queue_t)pausableMainQueue;
 
 @end
@@ -24,6 +24,6 @@
 @interface HZMediationLoadManager : NSObject
 
 - (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate error:(NSError **)error;
-- (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork;
+- (void)fetchCreativeType:(HZCreativeType)creativeType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork notifyDelegate:(BOOL)notifyDelegate;
 
 @end

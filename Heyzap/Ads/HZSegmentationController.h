@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HZAdType.h"
+#import "HZCreativeType.h"
 #import "HZBaseAdapter.h"
 
 @interface HZSegmentationController : NSObject
@@ -20,16 +20,16 @@
 /**
  *  Returns YES if the given adapter both has an ad and is allowed to show one based on the current segmentation rules, NO otherwise.
  */
-- (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter forType:(HZAdType)adType tag:(nonnull NSString *)adTag;
+- (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter forCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag;
 /**
  *  Returns YES if the given banner adapter both has an ad and is allowed to show one based on the current segmentation rules, NO otherwise.
  */
-- (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)adapter forType:(HZAdType)adType tag:(nonnull NSString *)adTag;
+- (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)adapter tag:(nonnull NSString *)adTag;
 
 /**
  *  Call this method with every impression. It will update HZImpressionHistory and all of the currently loaded segments.
  */
-- (void) recordImpressionWithType:(HZAdType)adType tag:(nonnull NSString *)tag adapter:(nonnull HZBaseAdapter *)adapter;
+- (void) recordImpressionWithCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)tag adapter:(nonnull HZBaseAdapter *)adapter;
 
 /**
  *  Deletes the HZImpressionHistory and reloads all segments from the newly-cleared history. Returns YES if the delete worked, NO otherwise.

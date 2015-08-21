@@ -14,8 +14,7 @@
 @interface HZSegmentationSegment()
 
 @property (nonatomic) NSTimeInterval timeInterval; // number of seconds back the segment should look for impressions that fit the  parameters defined below
-@property (nonatomic) HZAdType adType; // don't access directly, check filteringForAdType first or use appliesToAdType:, since this param may be invalid
-@property (nonatomic, readonly) BOOL filteringForAdType; // segment can apply to all adTypes if this is NO
+@property (nonatomic) HZCreativeType creativeType;
 @property (nonatomic, nullable) NSArray * adTags; // nil == applies to any tag
 @property (nonatomic) NSUInteger impressionLimit;
 @property (nonatomic) HZAuctionType auctionType;
@@ -30,7 +29,7 @@
 
 #pragma mark - Init
 
-- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags adType:(nullable HZAdType *)adType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit adsEnabled:(BOOL)adsEnabled {
+- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags creativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit adsEnabled:(BOOL)adsEnabled {
     self = [super init];
     if (self) {
         _timeInterval = interval;
@@ -38,26 +37,20 @@
         _adTags = tags;
         _impressionLimit = limit;
         _adsEnabled = adsEnabled;
-        
-        if (adType == NULL) {
-            _filteringForAdType = NO;
-        } else {
-            _filteringForAdType = YES;
-            _adType = *adType;
-        }
+        _creativeType = creativeType;
     }
     
     return self;
 }
 
 - (void) loadWithDb:(nonnull sqlite3 *)db{
-    _impressionHistory = [[HZImpressionHistory sharedInstance] impressionsSince:self.startTime withType:(self.filteringForAdType ? &_adType : NULL) tags:self.adTags auctionType:self.auctionType databaseConnection:db mostRecentFirst:YES];
+    _impressionHistory = [[HZImpressionHistory sharedInstance] impressionsSince:self.startTime withCreativeType:self.creativeType tags:self.adTags auctionType:self.auctionType databaseConnection:db mostRecentFirst:YES];
 }
 
 
 #pragma mark - Query/Update
 
-- (BOOL) recordImpressionWithAdType:(HZAdType)adType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag date:(nonnull NSDate *)date {
+- (BOOL) recordImpressionWithCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag date:(nonnull NSDate *)date {
     if (!self.adsEnabled) {
         return NO;
     }
@@ -67,8 +60,8 @@
         return NO;
     }
     
-    if(![self appliesToAdType:adType] || auctionType != self.auctionType) {
-        // adType or auctionType mismatch
+    if(![self appliesToCreativeType:creativeType] || auctionType != self.auctionType) {
+        // creativeType or auctionType mismatch
         return NO;
     }
     
@@ -82,15 +75,15 @@
     return YES;
 }
 
-- (BOOL) limitsImpressionWithAdType:(HZAdType)adType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag {
+- (BOOL) limitsImpressionWithCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag {
     if(!self.isLoaded) {
         // don't limit impressions if there is a failure with the impression history system
         HZELog(@"HZSegmentationSegment: asked about limits before loaded.");
         return NO;
     }
     
-    if(![self appliesToAdType:adType] || auctionType != self.auctionType) {
-        // adType or auctionType mismatch
+    if(![self appliesToCreativeType:creativeType] || auctionType != self.auctionType) {
+        // creativeType or auctionType mismatch
         return NO;
     }
     
@@ -151,16 +144,16 @@
     return self.adTags != nil;
 }
 
-- (BOOL) appliesToAdType:(HZAdType)adType {
-    if (!self.filteringForAdType) {
+- (BOOL) appliesToCreativeType:(HZCreativeType)creativeType {
+    if (self.creativeType == HZCreativeTypeUnknown) {
         return YES;
     }
     
-    return self.adType == adType;
+    return self.creativeType == creativeType;
 }
 
 - (NSString *) description {
-    return [NSString stringWithFormat:@"{[Segment] time interval: %f seconds, adType: %@, auctionType: %@, adTags: [%@], ads enabled: %@, impression count/limit: %lu/%lu, limit counting from: %@ %@}", self.timeInterval, (self.filteringForAdType ? NSStringFromAdType(self.adType) : @"ALL"), NSStringFromHZAuctionType(self.auctionType), [self.adTags componentsJoinedByString:@", "], (self.adsEnabled ? @"yes" : @"no"), (unsigned long)self.impressionCount, (unsigned long)self.impressionLimit, [[self startTime] descriptionWithLocale:[NSLocale currentLocale]], (self.isLoaded ? @"" : @" -- Not yet loaded from db --")];
+    return [NSString stringWithFormat:@"{[Segment] time interval: %f seconds, creativeType: %@, auctionType: %@, adTags: [%@], ads enabled: %@, impression count/limit: %lu/%lu, limit counting from: %@ %@}", self.timeInterval, (self.creativeType == HZCreativeTypeUnknown ? @"ALL" : NSStringFromCreativeType(self.creativeType)), NSStringFromHZAuctionType(self.auctionType), [self.adTags componentsJoinedByString:@", "], (self.adsEnabled ? @"yes" : @"no"), (unsigned long)self.impressionCount, (unsigned long)self.impressionLimit, [[self startTime] descriptionWithLocale:[NSLocale currentLocale]], (self.isLoaded ? @"" : @" -- Not yet loaded from db --")];
 }
 
 @end

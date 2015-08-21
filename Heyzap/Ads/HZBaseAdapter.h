@@ -10,6 +10,7 @@
 #import "HZShowOptions.h"
 #import "HZBannerAdapter.h"
 #import "HZAdapterDelegate.h"
+#import "HZCreativeType.h"
 #import "HZAdType.h"
 
 @import UIKit;
@@ -44,7 +45,7 @@
 /**
  *  These properties exist for subclasses to use. Other callers must use `lastErrorForAdType:` and `clearErrorForAdType:`.
  */
-@property (nonatomic, strong) NSError *lastInterstitialError;
+@property (nonatomic, strong) NSError *lastStaticError;
 @property (nonatomic, strong) NSError *lastIncentivizedError;
 @property (nonatomic, strong) NSError *lastVideoError;
 
@@ -58,22 +59,22 @@
 
 + (instancetype)sharedInstance;
 
-- (void)prefetchForType:(HZAdType)type;
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType;
 
-- (BOOL)hasAdForType:(HZAdType)type;
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType;
 
-- (NSNumber *) latestMediationScoreForAdType:(HZAdType) adType;
-- (void) setLatestMediationScore:(NSNumber *)score forAdType:(HZAdType)adType;
+- (NSNumber *) latestMediationScoreForCreativeType:(HZCreativeType)creativeType;
+- (void) setLatestMediationScore:(NSNumber *)score forCreativeType:(HZCreativeType)creativeType;
 
 /**
  *  The adapter should show an ad for the given ad type.
  *
- *  @param type The type of ad (video, incentivized, interstitial) to show
+ *  @param creativeType The type of ad (video, incentivized, static) to show
  *  @param options Options to configure showing the ad
  */
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options;
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options;
 
-- (HZAdType)supportedAdFormats;
+- (HZCreativeType)supportedCreativeTypes;
 
 - (BOOL)isVideoOnlyNetwork;
 
@@ -110,16 +111,16 @@
 
 - (NSString *)name;
 
-- (BOOL)supportsAdType:(HZAdType)adType;
+- (BOOL)supportsCreativeType:(HZCreativeType)creativeType;
 
-- (NSError *)lastErrorForAdType:(HZAdType)adType;
+- (NSError *)lastErrorForCreativeType:(HZCreativeType)creativeType;
 
 /**
  *  Its possible this should be handled internally by the adapters, like when they fetch...
  *
  *  @param adType The type of ad to clear the error for.
  */
-- (void)clearErrorForAdType:(HZAdType)adType;
+- (void)clearErrorForCreativeType:(HZCreativeType)creativeType;
 
 #pragma mark - Implemented methods
 
@@ -135,5 +136,10 @@
  *  @return The amount of time to wait, in seconds, between asking if this adapter has an ad. Increase this value for adapters/SDKs whose `isAvailable` calls are expensive, and decrease it for adapters/SDKs whose calls are inexpensive.
  */
 + (NSTimeInterval)isAvailablePollInterval;
+
+/**
+ *  Returns a bitmask of all supported HZAdTypes (keeping blended interstitials in mind) derived from the adapters `supportedCreativeTypes` method.
+ */
+- (HZAdType) possibleSupportedAdTypes;
 
 @end

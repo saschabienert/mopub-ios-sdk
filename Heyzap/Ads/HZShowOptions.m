@@ -31,7 +31,7 @@
  */
 
 
-#import "HZShowOptions.h"
+#import "HZShowOptions_Private.h"
 #import "HZAdModel.h"
 
 @implementation HZShowOptions

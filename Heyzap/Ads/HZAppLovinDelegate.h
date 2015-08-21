@@ -23,6 +23,6 @@
  */
 @property (nonatomic, weak) id<HZAppLovinDelegateReceiver>delegate;
 
-- (id)initWithAdType:(HZAdType)adType delegate:(id<HZAppLovinDelegateReceiver>)delegate;
+- (id)initWithCreativeType:(HZCreativeType)creativeType delegate:(id<HZAppLovinDelegateReceiver>)delegate;
 
 @end

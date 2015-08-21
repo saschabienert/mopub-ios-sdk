@@ -405,7 +405,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     });
     
     // setup currentAdFormat and currentAdType
-    HZAdType supportedAdFormats = [self.network supportedAdFormats];
+    HZAdType supportedAdFormats = [self.network possibleSupportedAdTypes];
     NSMutableArray *formats = [[NSMutableArray alloc] init];
     if(supportedAdFormats & HZAdTypeInterstitial){
         [formats addObject:@"Interstitial"];
@@ -765,7 +765,7 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 }
 
 - (BOOL)showBanners {
-    return [self.network supportsAdType:HZAdTypeBanner];
+    return [self.network supportsCreativeType:HZCreativeTypeBanner];
 }
 
 - (HZBannerAdOptions *)bannerOptions {

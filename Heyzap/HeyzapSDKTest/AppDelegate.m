@@ -41,7 +41,7 @@
         }];
     }
     
-    [HZLog setDebugLevel: HZDebugLevelVerbose];
+    [HZLog setDebugLevel: HZDebugLevelSilent];
     
     SDKTestAppViewController *mainController = [[SDKTestAppViewController alloc] init];
     
