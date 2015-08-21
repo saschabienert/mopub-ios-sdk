@@ -344,9 +344,9 @@ NSString * const kHZDataKey = @"data";
         NSNumberFormatter  *formatter = [[NSNumberFormatter alloc] init];
         [formatter setMaximumFractionDigits:4];
         [formatter setNumberStyle:NSNumberFormatterScientificStyle];
-        for(HZMediationAdapterWithCreativeTypeScore *adaptersWithScore in adaptersWithScores) {
+        for(HZMediationAdapterWithCreativeTypeScore *adapterWithScore in adaptersWithScores) {
             
-            [scoreStr appendFormat:@"[%@ (%@): %@]", [[adaptersWithScore adapter] name], NSStringFromCreativeType([adaptersWithScore creativeType]), [formatter stringFromNumber:[adaptersWithScore score]]];
+            [scoreStr appendFormat:@"[%@ (%@): %@]", [[adapterWithScore adapter] name], NSStringFromCreativeType([adapterWithScore creativeType]), [formatter stringFromNumber:[adapterWithScore score]]];
         }
         
         HZDLog(@"%@",scoreStr);
@@ -682,15 +682,15 @@ const NSTimeInterval bannerPollInterval = 1;
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             
-            NSOrderedSet *adapters = ({
+            NSOrderedSet *adaptersWithScores = ({
                 NSOrderedSet *a1 = [self.availabilityChecker parseMediateIntoAdaptersForShow:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:HZAdTypeBanner];
-                NSOrderedSet *a2 = hzFilterOrderedSet(a1, ^BOOL(HZBaseAdapter *adapter) {
+                NSOrderedSet *a2 = hzFilterOrderedSet(a1, ^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {
                     // This should be factored out into a general way of saying "does the ad network have credentials for X ad format?
-                    return [adapter hasBannerCredentials];
+                    return [[adapterWithScore adapter] hasBannerCredentials];
                 });
-                NSOrderedSet *a3 = hzFilterOrderedSet(a2, ^BOOL(HZBaseAdapter *adapter) {
+                NSOrderedSet *a3 = hzFilterOrderedSet(a2, ^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {
                     if (options.networkName) {
-                        return [[adapter name] isEqualToString:options.networkName];
+                        return [[[adapterWithScore adapter] name] isEqualToString:options.networkName];
                     } else {
                         return YES;
                     }
@@ -699,13 +699,13 @@ const NSTimeInterval bannerPollInterval = 1;
                 a3;
             });
             
-            if ([adapters count] == 0) {
+            if ([adaptersWithScores count] == 0) {
                 completion([NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey:@"No banner adapters were available"}], nil);
                 return;
             }
             
             NSError *eventReporterError;
-            HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:adapters adType:HZAdTypeBanner creativeType:HZCreativeTypeBanner tag:options.tag error:&eventReporterError];
+            HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:hzMapOrderedSet(adaptersWithScores, ^HZBaseAdapter *(HZMediationAdapterWithCreativeTypeScore * adapterWithScore){return [adapterWithScore adapter];}) adType:HZAdTypeBanner creativeType:HZCreativeTypeBanner tag:options.tag error:&eventReporterError];
             
             if (eventReporterError) {
                 NSError *mediationError = [[self class] bannerErrorWithDescription:@"Couldn't create HZMediationEventReporter" underlyingError:error];
@@ -719,10 +719,10 @@ const NSTimeInterval bannerPollInterval = 1;
                 __block BOOL heyzapExchangeAvailable = NO;
                 __block HZHeyzapExchangeBannerAdapter *heyzapExchangeBannerAdapter;
                 
-                for (HZBaseAdapter *baseAdapter in adapters) {
+                for (HZMediationAdapterWithCreativeTypeScore *adapterWithScore in adaptersWithScores) {
                     __block HZBannerAdapter *bannerAdapter;
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        bannerAdapter = [baseAdapter fetchBannerWithOptions:options reportingDelegate:self];
+                        bannerAdapter = [[adapterWithScore adapter] fetchBannerWithOptions:options reportingDelegate:self];
                     });
                     
                     __block BOOL isAvailable = NO;
@@ -733,12 +733,12 @@ const NSTimeInterval bannerPollInterval = 1;
                             passedSegmentationTest = [self.segmentationController bannerAdapterHasAllowedAd:bannerAdapter tag:options.tag];
                             if (!passedSegmentationTest) {
                                 isAvailable = NO;
-                                HZDLog(@"Ad network %@ not allowed to show a banner under current segmentation rules.", baseAdapter.name);
+                                HZDLog(@"Ad network %@ not allowed to show a banner under current segmentation rules.", [[adapterWithScore adapter] name]);
                             }
                         }
                         
                         if (bannerAdapter.lastError) {
-                            HZELog(@"Ad Network %@ had an error loading a banner: %@",baseAdapter.name, bannerAdapter.lastError);
+                            HZELog(@"Ad Network %@ had an error loading a banner: %@", [[adapterWithScore adapter] name], bannerAdapter.lastError);
                         }
                         return isAvailable || (bannerAdapter.lastError != nil) || !passedSegmentationTest;
                     }, bannerTimeout);
@@ -770,6 +770,20 @@ const NSTimeInterval bannerPollInterval = 1;
                             // [obj2 compare:obj1] will sort highest score first
                             return [[obj2.parentAdapter latestMediationScoreForCreativeType:HZCreativeTypeBanner] compare:[obj1.parentAdapter latestMediationScoreForCreativeType:HZCreativeTypeBanner]];
                         }];
+                    }
+                    
+                    // avoid the loop if we don't want to print the scores
+                    if([HZLog debugLevel] >= HZDebugLevelVerbose) {
+                        NSMutableString *scoreStr = [NSMutableString stringWithFormat:@"Banner waterfall (%@ order): ", shouldSortAdapters ? @"Sorted" : @"UNSORTED"];
+                        NSNumberFormatter  *formatter = [[NSNumberFormatter alloc] init];
+                        [formatter setMaximumFractionDigits:4];
+                        [formatter setNumberStyle:NSNumberFormatterScientificStyle];
+                        for(HZBannerAdapter *adapter in adaptersWithAvailableAds) {
+                            
+                            [scoreStr appendFormat:@"[%@ %@]", [adapter.parentAdapter name], [formatter stringFromNumber:[adapter.parentAdapter latestMediationScoreForCreativeType:HZCreativeTypeBanner]]];
+                        }
+                        
+                        HZDLog(@"%@",scoreStr);
                     }
                     
                     HZBannerAdapter *finalAdapter = [adaptersWithAvailableAds objectAtIndex:0];
