@@ -28,7 +28,7 @@
 
 SPEC_BEGIN(HZSegmentationSegmentSpec)
 
-#define SEGMENT_TIME_INTERVAL 1
+#define SEGMENT_TIME_INTERVAL .5
 
 describe(@"HZSegmentationSegment", ^{
     __block HZSegmentationSegment *segment;
@@ -180,20 +180,12 @@ describe(@"HZSegmentationSegment", ^{
         [[theValue([segment impressionCount]) should] equal:theValue(1)];
         limited = [segment limitsImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag];
         [[theValue(limited) should] equal:theValue(YES)];
-        
-        // wait for impression to exist for half it's lifetime
-        [NSThread sleepForTimeInterval:(SEGMENT_TIME_INTERVAL / 2)];
-        
-        // limited after some time still
-        [[theValue([segment impressionCount]) should] equal:theValue(1)];
         for(NSDate *d in segment.impressionHistory) {
             [[d should]equal:date];
         }
-        limited = [segment limitsImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag];
-        [[theValue(limited) should] equal:theValue(YES)];
         
         // wait longer than interval for impression to expire
-        [NSThread sleepForTimeInterval:(SEGMENT_TIME_INTERVAL)];
+        [NSThread sleepForTimeInterval:(SEGMENT_TIME_INTERVAL*1.5)];
         
         // no longer limited
         [[theValue([segment impressionCount]) should] equal:theValue(0)];
@@ -339,7 +331,7 @@ describe(@"HZSegmentationSegment", ^{
         NSDate *const date = [NSDate date];
         NSDate *const date2 = [NSDate date];
         segment.creativeType = allCreativeTypes;
-        segment.timeInterval = 60; // since `[segment impressionCount]` prunes the segments if they're old, make sure the test has time to run
+        segment.timeInterval = 600; // since `[segment impressionCount]` prunes the segments if they're old, make sure the test has time to run
         
         BOOL recorded = [segment recordImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag date:date];
         [[theValue(recorded) should] equal:theValue(YES)];
@@ -369,7 +361,7 @@ describe(@"HZSegmentationSegment", ^{
         NSDate *const date2 = [NSDate date];
         segment.adTags = @[tag, other_tag];
         segment.creativeType = allCreativeTypes;
-        segment.timeInterval = 60; // since `[segment impressionCount]` prunes the segments if they're old, make sure the test has time to run
+        segment.timeInterval = 600; // since `[segment impressionCount]` prunes the segments if they're old, make sure the test has time to run
         
         BOOL recorded = [segment recordImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag date:date];
         [[theValue(recorded) should] equal:theValue(YES)];

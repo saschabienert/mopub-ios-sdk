@@ -252,7 +252,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 }
 
 - (void) fetchAd {
-    // monroe: this won't work with creativeType
+    // monroe: this won't work with creativeType - switch it to check if at least one of the supported creativeTypes from the adType has credentials, warn on the others / if none do
 //    if (![self.network hasCredentialsForAdType:self.currentAdType]) {
 //        [self appendStringToDebugLog:@"This network doesn't have credentials for this ad type. Make sure you've added credentials on the Heyzap dashboard."];
 //        return;

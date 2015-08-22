@@ -118,7 +118,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return [self supportedCreativeTypes] & creativeType;
 }
 
-- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType { // monroe: check concrete adatpers
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
     return YES;
 }
 
