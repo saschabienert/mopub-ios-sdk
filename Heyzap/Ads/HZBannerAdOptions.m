@@ -68,52 +68,86 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
 }
 
 - (HZFBAdSize)internalFacebookAdSize {
+    NSString *constantName = @"kFBAdSizeHeight50Banner";
+    
     switch (self.facebookBannerSize) {
         case HZFacebookBannerSize320x50: {
-            return (HZFBAdSize) { CGSizeMake(320, 50) };
-        }
+            constantName = @"kFBAdSize320x50";
+            HZELog(@"Warning: kFBAdSize320x50 is deprecated by Facebook.");
+        } break;
+            
         case HZFacebookBannerSizeFlexibleWidthHeight50: {
-            return (HZFBAdSize) { CGSizeMake(-1, 50) };
-        }
+            constantName = @"kFBAdSizeHeight50Banner";
+        } break;
+            
         case HZFacebookBannerSizeFlexibleWidthHeight90: {
-            return (HZFBAdSize) { CGSizeMake(-1, 90) };
+            constantName = @"kFBAdSizeHeight90Banner";
+        } break;
+    }
+    
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    
+    if (mainBundle) {
+        HZFBAdSize *adSize = CFBundleGetDataPointerForName(mainBundle, (__bridge CFStringRef)constantName);
+        if (adSize) {
+            return *adSize;
         }
     }
+
+    // The approach above doesn't work on air, so we always give the hard-coded value
+    if (![HZAdsManager sharedManager].isAdobeAir) {
+        HZELog(@"Could not find Facebook banner size constant: %@, using hard coded value.", constantName);
+    }
+    
+    HZFBAdSize hardcodedSize = { CGSizeMake(-1, 50) };
+    return hardcodedSize;
 }
 
 - (HZGADAdSize)internalAdMobSize {
-    const BOOL isAvailable = [HZHZAdMobBannerSupport hzProxiedClassIsAvailable];
-    if (!isAvailable) {
-        if ([HZAdsManager sharedManager].isAdobeAir) {
-            HZGADAdSize hardcodedSize = { {0,0}, 18};
-            return hardcodedSize;
-        } else {
-            NSString *const errorMessage = @"You need to add the `HZAdMobBannerSupport` class to your project to use AdMob banners. This class is available in the zip file that you got the Heyzap SDK from. If you're using Xcode, just drag the files into your project. If you're using Unity, add the files to the Plugins/iOS folder. (Sorry about this inconvenience; there's a technical limitation with loading AdMob's size constants that we're having trouble with http://stackoverflow.com/q/29136688/1176156)";
-            NSLog(errorMessage); // NSLog as well as thrown an exception, since some developers have a hard time getting exception messages, especially in Unity
-            @throw [NSException exceptionWithName:@"Missing HZAdMobBannerSupport class exception" reason:errorMessage userInfo:nil];
-        }
-    }
+    NSString *constantName = @"kGADAdSizeBanner";
     
     switch (self.admobBannerSize) {
         case HZAdMobBannerSizeFlexibleWidthPortrait: {
-            return [HZHZAdMobBannerSupport adSizeNamed:@"kGADAdSizeSmartBannerPortrait"];
-        }
+            constantName = @"kGADAdSizeSmartBannerPortrait";
+        } break;
+            
         case HZAdMobBannerSizeFlexibleWidthLandscape: {
-            return [HZHZAdMobBannerSupport adSizeNamed:@"kGADAdSizeSmartBannerLandscape"];
-        }
+            constantName = @"kGADAdSizeSmartBannerLandscape";
+        } break;
+            
         case HZAdMobBannerSizeBanner: {
-            return [HZHZAdMobBannerSupport adSizeNamed:@"kGADAdSizeBanner"];
-        }
+            constantName = @"kGADAdSizeBanner";
+        } break;
+            
         case HZAdMobBannerSizeLargeBanner: {
-            return [HZHZAdMobBannerSupport adSizeNamed:@"kGADAdSizeLargeBanner"];
-        }
+            constantName = @"kGADAdSizeLargeBanner";
+        } break;
+            
         case HZAdMobBannerSizeLeaderboard: {
-            return [HZHZAdMobBannerSupport adSizeNamed:@"kGADAdSizeLeaderboard"];
-        }
+            constantName = @"kGADAdSizeLeaderboard";
+        } break;
+            
         case HZAdMobBannerSizeFullBanner: {
-            return [HZHZAdMobBannerSupport adSizeNamed:@"kGADAdSizeFullBanner"];
+            constantName = @"kGADAdSizeFullBanner";
+        } break;
+    }
+    
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    
+    if (mainBundle) {
+        HZGADAdSize *adSize = CFBundleGetDataPointerForName(mainBundle, (__bridge CFStringRef)constantName);
+        if (adSize) {
+            return *adSize;
         }
     }
+    
+    // The approach above doesn't work on air, so we always give the hard-coded value
+    if (![HZAdsManager sharedManager].isAdobeAir) {
+        HZELog(@"Could not find AdMob banner size constant: %@, using hard coded value.", constantName);
+    }
+    
+    HZGADAdSize hardcodedSize = { {0,0}, 18};
+    return hardcodedSize;
 }
 
 + (NSArray *)admobBannerSizes {
