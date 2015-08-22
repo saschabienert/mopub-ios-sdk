@@ -16,6 +16,7 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HZHeyzapExchangeAdapter.h"
+#import "HZMediationPersistentConfig.h"
 
 #define CHECK_NOT_NIL1(value) do { \
 if (value == nil) { \
@@ -24,6 +25,8 @@ return nil; \
 } while (0)
 
 @interface HZMediationLoadManager()
+
+@property (nonatomic) id<HZMediationPersistentConfigReadonly> persistentConfig;
 
 @property (nonatomic) NSUInteger maxConcurrency;
 @property (nonatomic) NSArray *networkList;
@@ -38,14 +41,17 @@ return nil; \
 
 @implementation HZMediationLoadManager
 
-- (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate error:(NSError **)error {
+- (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig error:(NSError **)error {
+    HZParameterAssert(delegate);
+    HZParameterAssert(persistentConfig);
     self = [super init];
     if (self) {
         _delegate = delegate;
+        _persistentConfig = persistentConfig;
         
         self.fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_CONCURRENT);
         
-        _maxConcurrency = [[HZDictionaryUtils hzObjectForKey:@"max_load" ofClass:[NSNumber class] default:@2 withDict:loadData] unsignedIntegerValue];
+        _maxConcurrency = [[HZDictionaryUtils objectForKey:@"max_load" ofClass:[NSNumber class] default:@2 dict:loadData] unsignedIntegerValue];
         
         NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:loadData error:error];
         CHECK_NOT_NIL1(networks);
@@ -81,11 +87,19 @@ return nil; \
         return [availableAdapters containsObject:datum.adapterClass];
     });
     
-    NSArray *const supportsCreativeType = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
+    NSArray *const enabledByUser = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
+        return [self.persistentConfig isNetworkEnabled:[datum.adapterClass name]];
+    });
+    
+    NSArray *const supportsCreativeType = hzFilter(enabledByUser, ^BOOL(HZMediationLoadData *datum) {
         return [(HZBaseAdapter *)[datum.adapterClass sharedInstance] supportsCreativeType:creativeType];
     });
     
-    NSArray *const matching = hzFilter(supportsCreativeType, ^BOOL(HZMediationLoadData *datum) {
+    NSArray *const hasCredentials = hzFilter(supportsCreativeType, ^BOOL(HZMediationLoadData *datum) {
+        return [(HZBaseAdapter *)[datum.adapterClass sharedInstance] hasCredentialsForCreativeType:creativeType];
+    });
+    
+    NSArray *const matching = hzFilter(hasCredentials, ^BOOL(HZMediationLoadData *datum) {
         return hzCreativeTypeStringSetContainsCreativeType(datum.creativeTypeSet, creativeType);
     });
     

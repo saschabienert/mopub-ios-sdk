@@ -17,6 +17,8 @@
 @property (nonatomic) BOOL staticCached;
 @property (nonatomic) BOOL incentivizedCached;
 
+@property (nonatomic) NSString *appAPIKey;
+
 @end
 
 @implementation HZLeadboltAdapter
@@ -44,27 +46,15 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
 
 #pragma mark - Adapter Protocol
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials
-{
-    HZParameterAssert(credentials);
-    
-    NSError *error;
-    NSString *const appAPIKey = [HZDictionaryUtils objectForKey:@"app_api_key" ofClass:[NSString class] dict:credentials error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
-    
-    
-    HZLeadboltAdapter *adapter = [self sharedInstance];
-    if (!adapter.credentials) {
-        adapter.credentials = credentials;
-        [[self sharedInstance] setupLeadboltWithAppAPIKey:appAPIKey];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
-    }
-    
-    return nil;
+- (void)loadCredentials {
+    self.appAPIKey = [HZDictionaryUtils objectForKey:@"app_api_key"
+                                             ofClass:[NSString class]
+                                                dict:self.credentials];
 }
 
-- (void)setupLeadboltWithAppAPIKey:(NSString *const)appAPIKey
-{
+- (NSError *)initializeSDK {
+    RETURN_ERROR_IF_NIL(self.appAPIKey, @"app_api_key");
+    
     // These notifications aren't documented in AppTracker.h; this comes from http://help.leadbolt.com/ios-integration-guide/ and their sample app.
     
     NSNotificationCenter *const nc = [NSNotificationCenter defaultCenter];
@@ -76,9 +66,12 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     [nc addObserver:self selector:@selector(onModuleClicked:) name:@"onModuleClicked" object:object];
     [nc addObserver:self selector:@selector(onMediaFinished:) name:@"onMediaFinished" object:object];
     
-    [HZAppTracker startSession:appAPIKey]; // NB: Leadbolt must be started after registering for NSNotifications per docs.
+    HZDLog(@"Initializing Leadbolt with App API Key: %@",self.appAPIKey);
+    [HZAppTracker startSession:self.appAPIKey]; // NB: Leadbolt must be started after registering for NSNotifications per docs.
     
     [[HeyzapMediation sharedInstance] sendNetworkCallback:HZNetworkCallbackInitialized forNetwork:[self name]];
+    
+    return nil;
 }
 
 + (BOOL)isSDKAvailable
@@ -90,7 +83,6 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
 {
     return @"leadbolt";
 }
-
 
 + (NSString *)humanizedName {
     return @"Leadbolt";
@@ -145,6 +137,19 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
         }
         default: {
             // Unsupported
+            return NO;
+        }
+    }
+}
+
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeStatic:
+        case HZCreativeTypeIncentivized: {
+            return (self.appAPIKey != nil);
+        }
+        default: {
+            // Ad types not supported by this network
             return NO;
         }
     }

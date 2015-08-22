@@ -51,7 +51,15 @@
 
 @property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
 
+/**
+ *  The credentials should be set on adapters immediately after calling sharedInstance. Subclasses should ignore attempts to call this method if their credentials have already been set.
+ */
 @property (nonatomic, strong) NSDictionary *credentials;
+
+/**
+ *  Do not call this method directly. Subclasses should implement this method to read their credentials dictionary (`self.credentials`) into properties. The default implementation of this method does nothing, so can be left unimplemented for networks like iAds that don't have credentials.
+ */
+- (void)loadCredentials;
 
 @property (nonatomic, strong) HZAdapterDelegate *forwardingDelegate;
 
@@ -92,18 +100,13 @@
 + (BOOL)isSDKAvailable;
 
 /**
- *  Enable the adapter with the given adapter-specific credentials.
- *
- * @param credentials The credentials necessary for the adapter to start the SDK.
- *
- *  Note: do all SDK-specific initialization here, not in init or sharedInstance. The adapter instance can exist before the SDK is enabled.
+ *  Initialize the 3rd party SDK using the credentials it already has. This method should return an error if the SDK couldn't be initialized because it was missing a critical credential.
  */
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials;
+- (NSError *)initializeSDK;
 
 #pragma mark - Banners
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate;
-- (BOOL)hasBannerCredentials;
 
 #pragma mark - Inferred methods
 
@@ -113,7 +116,13 @@
 
 - (BOOL)supportsCreativeType:(HZCreativeType)creativeType;
 
+
 - (NSError *)lastErrorForCreativeType:(HZCreativeType)creativeType;
+
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType; // For networks that have multiple, optional credentials. This must be called after the network has been initialized.
+// Maybe pass credentials immediately on creating the instance, and store them there?
+// I really dislike how it's no longer possible to statically tell whether a network has been initialized or not.
+
 
 /**
  *  Its possible this should be handled internally by the adapters, like when they fetch...

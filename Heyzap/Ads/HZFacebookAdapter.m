@@ -39,6 +39,17 @@
     return proxy;
 }
 
+- (void)loadCredentials {
+    self.placementID = [HZDictionaryUtils
+                        objectForKey:@"placement_id"
+                        ofClass:[NSString class]
+                        dict:self.credentials];
+    self.bannerPlacementID = [HZDictionaryUtils
+                              objectForKey:@"distributor_id"
+                              ofClass:[NSString class]
+                              dict:self.credentials];
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable {
@@ -58,35 +69,28 @@
     return nil;
 }
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials {
-    HZParameterAssert(credentials);
-    NSError *error;
-    
-    NSString *placementID = [HZDictionaryUtils
-                             objectForKey:@"placement_id"
-                             ofClass:[NSString class]
-                             dict:credentials
-                             error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
-    
-    // Nullable
-    NSString *const bannerPlacementID = [HZDictionaryUtils hzObjectForKey:@"banner_placement_id"
-                                                                  ofClass:[NSString class]
-                                                                 withDict:credentials];
-    
-    HZFacebookAdapter *adapter = [self sharedInstance];
-    if (!adapter.credentials) {
-        adapter.credentials = credentials;
-        adapter.placementID = placementID;
-        adapter.bannerPlacementID = bannerPlacementID;
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
-    }
-    
+- (NSError *)initializeSDK {
     return nil;
 }
 
 - (HZCreativeType) supportedCreativeTypes {
     return HZCreativeTypeStatic | HZCreativeTypeBanner;
+}
+
+- (BOOL)hasCredentialsForAdType:(HZAdType)adType {
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            return self.placementID != nil;
+        }
+        case HZAdTypeBanner: {
+            return self.bannerPlacementID != nil;
+        }
+            
+        case HZAdTypeIncentivized:
+        case HZAdTypeVideo: {
+            return NO;
+        }
+    }
 }
 
 - (BOOL)isVideoOnlyNetwork {
@@ -111,6 +115,7 @@
         return;
     }
     
+    HZDLog(@"Initializing Facebook Audience Network interstitial ad with placement ID: %@",self.placementID);
     self.interstitialAd = [[HZFBInterstitialAd alloc] initWithPlacementID:self.placementID];
     self.interstitialAd.delegate = self.forwardingDelegate;
     [self.interstitialAd loadAd];
@@ -169,10 +174,6 @@
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZFBBannerAdapter alloc] initWithAdUnitId:self.bannerPlacementID options:options reportingDelegate:reportingDelegate parentAdapter:self];
-}
-
-- (BOOL)hasBannerCredentials {
-    return self.bannerPlacementID != nil;
 }
 
 @end

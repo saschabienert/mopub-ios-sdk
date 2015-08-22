@@ -48,7 +48,7 @@ const NSTimeInterval maxStartDelay     = 300;
 }
 
 + (NSString *)startFilename {
-    return @"start.plist";
+    return @"start-v2.plist";
 }
 
 - (void)startFromDisk {
@@ -58,7 +58,7 @@ const NSTimeInterval maxStartDelay     = 300;
     // And allows faster fetches.
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         
-        NSDictionary *startInfo = [self.cachingService dictionaryWithFilename:[[self class] startFilename]];
+        NSDictionary *startInfo = [self.cachingService rootObjectWithFilename:[[self class] startFilename]];
         
         if (startInfo) {
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -77,9 +77,14 @@ const NSTimeInterval maxStartDelay     = 300;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         [[HZMediationAPIClient sharedClient] GET:@"start" parameters:nil success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
             
+            if ([operation.response allHeaderFields][@"heyzapLogging"]) {
+                NSLog(@"heyzapLogging header present; enabling verbose logging");
+                [HZLog setDebugLevel:HZDebugLevelVerbose];
+            }
+            
             // store JSON to disk
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-                [self.cachingService cacheDictionary:json filename:[[self class] startFilename]];
+                [self.cachingService cacheRootObject:json filename:[[self class] startFilename]];
                 HZDLog(@"Wrote start info to disk");
             });
             
@@ -101,7 +106,7 @@ const NSTimeInterval maxStartDelay     = 300;
 }
 
 - (void)createNameToCredentialsMapping:(NSDictionary *)startResponse {
-    NSArray *networks = [HZDictionaryUtils hzObjectForKey:@"networks" ofClass:[NSArray class] withDict:startResponse];
+    NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:startResponse];
     if (!networks) {
         HZELog(@"Invalid /start response; missing 'networks' in JSON");
         return;
@@ -109,8 +114,8 @@ const NSTimeInterval maxStartDelay     = 300;
     
     NSMutableDictionary *nameToStartData = [NSMutableDictionary dictionary];
     for (NSDictionary *startInfo in networks) {
-        NSString *network = [HZDictionaryUtils hzObjectForKey:@"name" ofClass:[NSString class] withDict:startInfo];
-        NSString *credentials = [HZDictionaryUtils hzObjectForKey:@"data" ofClass:[NSDictionary class] withDict:startInfo];
+        NSString *network = [HZDictionaryUtils objectForKey:@"name" ofClass:[NSString class] dict:startInfo];
+        NSString *credentials = [HZDictionaryUtils objectForKey:@"data" ofClass:[NSDictionary class] dict:startInfo];
         if (network && credentials) {
             nameToStartData[network] = credentials;
         } else {

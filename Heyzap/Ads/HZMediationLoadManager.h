@@ -11,6 +11,7 @@
 
 @class HZShowOptions;
 @class HZBaseAdapter;
+@protocol HZMediationPersistentConfigReadonly;
 
 @protocol HZMediationLoadManagerDelegate <NSObject>
 
@@ -23,7 +24,7 @@
 
 @interface HZMediationLoadManager : NSObject
 
-- (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate error:(NSError **)error;
+- (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig error:(NSError **)error;
 - (void)fetchCreativeType:(HZCreativeType)creativeType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork notifyDelegate:(BOOL)notifyDelegate;
 
 @end

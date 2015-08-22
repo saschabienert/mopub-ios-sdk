@@ -315,6 +315,13 @@ extern NSString * const HZRemoteDataRefreshedNotification;
  */
 + (void)resumeExpensiveWork;
 
+/**
+ * Returns a raw json string of developer-settable data or an empty json string if no data is available.
+ * 
+ */
++ (NSString *) getRemoteDataJsonString;
+
+
 #pragma mark - Record IAP Transaction
 
 /**

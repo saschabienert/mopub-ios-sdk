@@ -39,17 +39,17 @@
 - (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary {
     NSMutableArray * loadedSegments = [[NSMutableArray alloc] init];
     
-    NSArray * segmentsResponse = [HZDictionaryUtils hzObjectForKey:@"segments" ofClass:[NSArray class] default:@[] withDict:startDictionary];
+    NSArray * segmentsResponse = [HZDictionaryUtils objectForKey:@"segments" ofClass:[NSArray class] default:@[] dict:startDictionary];
     for (NSDictionary *segmentDict in segmentsResponse) {
         NSArray *tags = nil;
         
-        NSMutableArray *rules = [HZDictionaryUtils hzObjectForKey:@"rules" ofClass:[NSArray class] default:@[] withDict:segmentDict];
+        NSMutableArray *rules = [HZDictionaryUtils objectForKey:@"rules" ofClass:[NSArray class] default:@[] dict:segmentDict];
         rules = [rules mutableCopy];
         
         // backend has crosspromo/monitization as two rules under the same segment, with the timeInterval, limit, type, enabled, and quantity under those divisions. we treat these as separate segments in the sdk
         // pull the auctiontype rules out, process the others (tags), and apply these to the per-auctiontype rules (time, limit, quantity, type, enabled) to create segments
         NSIndexSet *auctionTypeRuleIndexes = [rules indexesOfObjectsPassingTest:^BOOL(NSDictionary * rule, NSUInteger idx, BOOL *stop) {
-            NSString *ruleType = [HZDictionaryUtils hzObjectForKey:@"type" ofClass:[NSString class] default:@"" withDict:rule];
+            NSString *ruleType = [HZDictionaryUtils objectForKey:@"type" ofClass:[NSString class] default:@"" dict:rule];
             if ([AUCTIONTYPE_STRINGS containsObject:ruleType]) {
                 return YES;
             }
@@ -61,29 +61,29 @@
         
         for (NSDictionary * rule in rules) {
             // current non-auctiontype based rules: tags
-            NSString *ruleType = [HZDictionaryUtils hzObjectForKey:@"type" ofClass:[NSString class] default:@"" withDict:rule];
+            NSString *ruleType = [HZDictionaryUtils objectForKey:@"type" ofClass:[NSString class] default:@"" dict:rule];
             if ([ruleType isEqualToString:@"Tag"]) {
-                NSDictionary *options = [HZDictionaryUtils hzObjectForKey:@"options" ofClass:[NSDictionary class] default:@{} withDict:rule];
-                tags = [HZDictionaryUtils hzObjectForKey:@"tags" ofClass:[NSArray class] default:nil withDict:options];
+                NSDictionary *options = [HZDictionaryUtils objectForKey:@"options" ofClass:[NSDictionary class] default:@{} dict:rule];
+                tags = [HZDictionaryUtils objectForKey:@"tags" ofClass:[NSArray class] default:nil dict:options];
             }
         }
         
         // now that the non-auctiontype rules are pulled out, process each auctiontype rule and create segments with them
         for (NSDictionary *auctionTypeRule in auctionTypeRules) {
-           HZAuctionType auctionType = [self auctionTypeFromAuctionTypeString:[HZDictionaryUtils hzObjectForKey:@"type" ofClass:[NSString class] default:@"" withDict:auctionTypeRule]];
+           HZAuctionType auctionType = [self auctionTypeFromAuctionTypeString:[HZDictionaryUtils objectForKey:@"type" ofClass:[NSString class] default:@"" dict:auctionTypeRule]];
             
-            NSDictionary *options = [HZDictionaryUtils hzObjectForKey:@"options" ofClass:[NSDictionary class] default:@{} withDict:auctionTypeRule];
+            NSDictionary *options = [HZDictionaryUtils objectForKey:@"options" ofClass:[NSDictionary class] default:@{} dict:auctionTypeRule];
             
-            BOOL adsEnabled = [[HZDictionaryUtils hzObjectForKey:@"ads_enabled" ofClass:[NSNumber class] default:@0 withDict:options] boolValue];
+            BOOL adsEnabled = [[HZDictionaryUtils objectForKey:@"ads_enabled" ofClass:[NSNumber class] default:@0 dict:options] boolValue];
             
             if (adsEnabled) {
             
-                NSArray *frequencyLimits = [HZDictionaryUtils hzObjectForKey:@"frequency_limits" ofClass:[NSArray class] default:@[] withDict:options];
+                NSArray *frequencyLimits = [HZDictionaryUtils objectForKey:@"frequency_limits" ofClass:[NSArray class] default:@[] dict:options];
                 for (NSDictionary *frequencyLimitOptions in frequencyLimits) {
-                    NSTimeInterval timeInterval = [[HZDictionaryUtils hzObjectForKey:@"seconds" ofClass:[NSNumber class] default:@0 withDict:frequencyLimitOptions] doubleValue];
-                    NSUInteger impressionLimit = [[HZDictionaryUtils hzObjectForKey:@"ads_quantity" ofClass:[NSNumber class] default:@0 withDict:frequencyLimitOptions] unsignedIntegerValue];
+                    NSTimeInterval timeInterval = [[HZDictionaryUtils objectForKey:@"seconds" ofClass:[NSNumber class] default:@0 dict:frequencyLimitOptions] doubleValue];
+                    NSUInteger impressionLimit = [[HZDictionaryUtils objectForKey:@"ads_quantity" ofClass:[NSNumber class] default:@0 dict:frequencyLimitOptions] unsignedIntegerValue];
                     
-                    HZCreativeType creativeType = hzCreativeTypeFromNSNumber([HZDictionaryUtils hzObjectForKey:@"ad_format" ofClass:[NSNumber class] default:@(HZCreativeTypeUnknown) withDict:frequencyLimitOptions]);
+                    HZCreativeType creativeType = hzCreativeTypeFromNSNumber([HZDictionaryUtils objectForKey:@"ad_format" ofClass:[NSNumber class] default:@(HZCreativeTypeUnknown) dict:frequencyLimitOptions]);
                     
                     [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:timeInterval forTags:tags creativeType:creativeType auctionType:auctionType limit:impressionLimit adsEnabled:adsEnabled]];
                 }

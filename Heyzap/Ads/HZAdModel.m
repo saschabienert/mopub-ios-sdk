@@ -43,7 +43,7 @@
 }
 
 + (BOOL) isResponseValid:(NSDictionary *)response withError: (NSError**) error {
-    if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @0 withDict: response] intValue] != 200) {
+    if ([[HZDictionaryUtils objectForKey: @"status" ofClass: [NSNumber class] default: @0 dict: response] intValue] != 200) {
         if (error != NULL) {
             *error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.fetch" code: 10 userInfo: @{NSLocalizedDescriptionKey: @"Bad Response Status"}];
         }
@@ -51,7 +51,7 @@
         return NO;
     }
     
-    if ([[HZDictionaryUtils hzObjectForKey: @"impression_id" ofClass: [NSString class] default: @"" withDict: response] isEqualToString: @""] == YES) {
+    if ([[HZDictionaryUtils objectForKey: @"impression_id" ofClass: [NSString class] default: @"" dict: response] isEqualToString: @""] == YES) {
         if (error != NULL) {
             *error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.fetch" code: 10 userInfo: @{NSLocalizedDescriptionKey: @"Bad Impression ID"}];
         }
@@ -59,7 +59,7 @@
         return NO;
     }
     
-    if ([[HZDictionaryUtils hzObjectForKey: @"promoted_game_package" ofClass: [NSNumber class] default: @0 withDict: response] intValue] == 0) {
+    if ([[HZDictionaryUtils objectForKey: @"promoted_game_package" ofClass: [NSNumber class] default: @0 dict: response] intValue] == 0) {
         if (error != NULL) {
             *error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.fetch" code: 10 userInfo: @{NSLocalizedDescriptionKey: @"Bad Promoted Package"}];
         }
@@ -78,24 +78,24 @@
         _adUnit = adUnit;
         _auctionType = auctionType;
         
-        _impressionID = [HZDictionaryUtils hzObjectForKey: @"impression_id" ofClass: [NSString class] default: @"" withDict: dict];
-        _promotedGamePackage = [HZDictionaryUtils hzObjectForKey: @"promoted_game_package" ofClass: [NSNumber class] default: @0 withDict: dict];
-        _creativeType = [HZDictionaryUtils hzObjectForKey: @"creative_type" ofClass: [NSString class] default: @"" withDict: dict];
+        _impressionID = [HZDictionaryUtils objectForKey: @"impression_id" ofClass: [NSString class] default: @"" dict: dict];
+        _promotedGamePackage = [HZDictionaryUtils objectForKey: @"promoted_game_package" ofClass: [NSNumber class] default: @0 dict: dict];
+        _creativeType = [HZDictionaryUtils objectForKey: @"creative_type" ofClass: [NSString class] default: @"" dict: dict];
         
         _clickURL = ({
-            NSString *clickURLString = [HZDictionaryUtils hzObjectForKey: @"click_url" ofClass: [NSString class] default: @"" withDict: dict];
+            NSString *clickURLString = [HZDictionaryUtils objectForKey: @"click_url" ofClass: [NSString class] default: @"" dict: dict];
             NSString *noPlaceHolderURL = [HZNSURLUtils substituteGetParams:clickURLString impressionID:_impressionID];
             [NSURL URLWithString:noPlaceHolderURL];
         });
-        _refreshTime = [HZDictionaryUtils hzObjectForKey: @"refresh_time" ofClass: [NSNumber class] default: @0 withDict: dict];
-        _adStrategy = [HZDictionaryUtils hzObjectForKey: @"ad_strategy" ofClass: [NSString class] default: @"" withDict: dict];
-        _creativeID = [HZDictionaryUtils hzObjectForKey: @"creative_id" ofClass: [NSNumber class] default: @0 withDict: dict];
-        _launchURI = [NSURL URLWithString: [HZDictionaryUtils hzObjectForKey: @"launch_uri" ofClass: [NSString class] default: @"" withDict: dict]];
-        NSNumber *useSKStoreProduct = [HZDictionaryUtils hzObjectForKey: @"use_modal_app_store" ofClass: [NSNumber class] default: [NSNumber numberWithBool: NO] withDict: dict];
+        _refreshTime = [HZDictionaryUtils objectForKey: @"refresh_time" ofClass: [NSNumber class] default: @0 dict: dict];
+        _adStrategy = [HZDictionaryUtils objectForKey: @"ad_strategy" ofClass: [NSString class] default: @"" dict: dict];
+        _creativeID = [HZDictionaryUtils objectForKey: @"creative_id" ofClass: [NSNumber class] default: @0 dict: dict];
+        _launchURI = [NSURL URLWithString: [HZDictionaryUtils objectForKey: @"launch_uri" ofClass: [NSString class] default: @"" dict: dict]];
+        NSNumber *useSKStoreProduct = [HZDictionaryUtils objectForKey: @"use_modal_app_store" ofClass: [NSNumber class] default: [NSNumber numberWithBool: NO] dict: dict];
         _useModalAppStore = useSKStoreProduct ? [useSKStoreProduct boolValue] : YES; // default to YES
-        _hideOnOrientationChange = [[HZDictionaryUtils hzObjectForKey:@"hide_on_orientation_change" ofClass:[NSNumber class] default: @1 withDict: dict] boolValue];
+        _hideOnOrientationChange = [[HZDictionaryUtils objectForKey:@"hide_on_orientation_change" ofClass:[NSNumber class] default: @1 dict: dict] boolValue];
         
-        NSString *requiredOrientation = [HZDictionaryUtils hzObjectForKey: @"required_orientation" ofClass: [NSString class] default: @"portrait" withDict: dict];
+        NSString *requiredOrientation = [HZDictionaryUtils objectForKey: @"required_orientation" ofClass: [NSString class] default: @"portrait" dict: dict];
         if ([requiredOrientation isEqualToString: @"portrait"]) {
             _requiredAdOrientation = UIInterfaceOrientationMaskPortrait;
         } else {
@@ -108,10 +108,10 @@
         _fetchDate = [NSDate date];
         
         
-        _enable90DegreeTransform = [[HZDictionaryUtils hzObjectForKey:@"enable_90_degree_transform"
+        _enable90DegreeTransform = [[HZDictionaryUtils objectForKey:@"enable_90_degree_transform"
                                                               ofClass:[NSNumber class]
                                                               default:@(!hziOS8Plus())
-                                                             withDict:dict] boolValue];
+                                                             dict:dict] boolValue];
     }
     
     return self;
@@ -144,7 +144,7 @@
     NSMutableDictionary *params = [self paramsForEventCallback];
     
     [[HZAdsAPIClient sharedClient] POST:kHZRegisterClickEndpoint parameters:params success:^(HZAFHTTPRequestOperation *operation, id JSON) {
-        if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @0 withDict: JSON] intValue] == 200) {
+        if ([[HZDictionaryUtils objectForKey: @"status" ofClass: [NSNumber class] default: @0 dict: JSON] intValue] == 200) {
             self.sentClick = YES;
             [HZLog debug: [NSString stringWithFormat: @"(CLICK) %@", self]];
         }
@@ -162,7 +162,7 @@
     NSMutableDictionary *params = [self paramsForEventCallback];
     
     [[HZAdsAPIClient sharedClient] POST:kHZRegisterImpressionEndpoint parameters:params success:^(HZAFHTTPRequestOperation *operation, id JSON) {
-        if ([[HZDictionaryUtils hzObjectForKey: @"status" ofClass: [NSNumber class] default: @0 withDict: JSON] intValue] == 200) {
+        if ([[HZDictionaryUtils objectForKey: @"status" ofClass: [NSNumber class] default: @0 dict: JSON] intValue] == 200) {
             self.sentImpression = YES;
             [HZLog debug: [NSString stringWithFormat: @"(IMPRESSION) %@", self]];
         }
@@ -179,7 +179,7 @@
 
 #pragma mark - Factory
 + (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
-    NSString *creativeType = [HZDictionaryUtils hzObjectForKey: @"creative_type" ofClass: [NSString class] default: @"interstitial" withDict: response];
+    NSString *creativeType = [HZDictionaryUtils objectForKey: @"creative_type" ofClass: [NSString class] default: @"interstitial" dict: response];
     
     if ([HZVideoAdModel isValidForCreativeType: creativeType]) {
         return [[HZVideoAdModel alloc] initWithDictionary: response adUnit:adUnit auctionType:auctionType];

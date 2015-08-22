@@ -14,13 +14,14 @@
 @class HZSegmentationController;
 @class HZInterstitialVideoConfig;
 @class HZMediationAdapterWithCreativeTypeScore;
+@protocol HZMediationPersistentConfigReadonly;
 
 /**
  *  This class handles checking if an ad is available, keeping track of relevant state like interstitial video rate limiting.
  */
 @interface HZMediationAvailabilityChecker : NSObject
 
-- (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig;
+- (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig;
 
 - (NSOrderedSet *)availableAndAllowedAdaptersForAdType:(HZAdType)adType tag:(NSString *)tag adapters:(NSOrderedSet *)adapters segmentationController:(HZSegmentationController *)segmentationController;
 - (HZMediationAdapterWithCreativeTypeScore *)firstAdapterWithAdForAdType:(HZAdType)adType tag:(NSString *)tag adaptersWithScores:(NSOrderedSet *)adaptersWithScores optionalForcedNetwork:(Class)forcedNetwork segmentationController:(HZSegmentationController *)segmentationController;

@@ -17,11 +17,11 @@ static NSString *hzUrlEncode(id object);
 
 @implementation HZDictionaryUtils
 
-+ (id) hzObjectForKey:(id)key ofClass:(Class)class withDict: (NSDictionary *) dict {
-    return [self hzObjectForKey:key ofClass:class default:nil withDict: dict];
++ (id) objectForKey:(id)key ofClass:(Class)class dict: (NSDictionary *) dict {
+    return [self objectForKey:key ofClass:class default:nil dict: dict];
 }
 
-+ (id) hzObjectForKey:(id)key ofClass:(Class)class default:(id)_default withDict: (NSDictionary *) dict {
++ (id) objectForKey:(id)key ofClass:(Class)class default:(id)_default dict: (NSDictionary *) dict {
     id value = [dict objectForKey:key];
     if ([value isKindOfClass:class])
         return value;
@@ -56,13 +56,24 @@ NSString * const kHZMissingPropertyKey = @"missingProperty";
     HZParameterAssert(class);
     HZParameterAssert(dict);
     HZParameterAssert(error != NULL);
-    id value = [self hzObjectForKey:key ofClass:class withDict:dict];
+    id value = [self objectForKey:key ofClass:class dict:dict];
     if (value) {
         return value;
     } else {
         *error = [NSError errorWithDomain:@"heyzap" code:1 userInfo:@{kHZMissingPropertyKey: key}];
         return nil;
     }
+}
+
++ (NSDictionary *)dictionaryByFilteringDictionary:(NSDictionary *)dictionary withBlock:(BOOL (^)(id key, id obj, BOOL *stop))predicate {
+    NSSet *keysToKeep = [dictionary keysOfEntriesPassingTest:predicate];
+    NSMutableDictionary *filtered = [NSMutableDictionary dictionaryWithCapacity:[keysToKeep count]];
+    for (id key in dictionary) {
+        if([keysToKeep containsObject:key]) {
+            filtered[key] = dictionary[key];
+        }
+    }
+    return filtered;
 }
 
 @end

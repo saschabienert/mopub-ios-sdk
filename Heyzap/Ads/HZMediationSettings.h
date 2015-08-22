@@ -14,6 +14,7 @@
 @property (nonatomic, readonly) NSDictionary *remoteDataDictionary;
 @property (nonatomic, readonly) NSSet *disabledTags;
 @property (nonatomic, readonly) NSTimeInterval IAPAdsTimeOut;
+@property (nonatomic, readonly) NSString *remoteDataJsonString;
 
 extern NSString * const kHZMediationUserDefaultsKeyIncentivizedCounter;
 extern NSString * const kHZMediationUserDefaultsKeyIncentivizedDate;

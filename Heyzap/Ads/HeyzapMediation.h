@@ -20,6 +20,7 @@
 @protocol HZIncentivizedAdDelegate;
 @protocol HZBannerReportingDelegate;
 @class HZBannerAdOptions;
+@class HZMediationPersistentConfig;
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
@@ -28,6 +29,7 @@
 @property (nonatomic, readonly) NSString *mediationId;
 @property (nonatomic, readonly) HZMediationSettings *settings;
 @property (nonatomic, readonly) HZSegmentationController *segmentationController;
+@property (nonatomic, readonly) HZMediationPersistentConfig *persistentConfig;
 
 + (instancetype)sharedInstance;
 
@@ -70,6 +72,7 @@
 
 - (BOOL) isNetworkInitialized:(NSString *)network;
 - (BOOL) isNetworkClassInitialized:(Class)networkClass;
+- (BOOL)isAdapterInitialized:(HZBaseAdapter *)adapter;
 
 - (void) setNetworkCallbackBlock: (void (^)(NSString *network, NSString *callback))block;
 - (void) sendNetworkCallback: (NSString *) callback forNetwork: (NSString *) network;

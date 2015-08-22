@@ -22,6 +22,7 @@
 @property (nonatomic) BOOL videoClickEnabled;
 @property (nonatomic) BOOL skipButtonTimeIntervalValidated;
 @property (nonatomic) BOOL didSendOnActionShowAlready;
+@property (nonatomic) BOOL didSendOnActionReadyAlready; // MPMovieLoadState documentation is a bit unclear whether both MPMovieLoadStatePlayable and MPMovieLoadStatePlaythroughOK can be sent, but we probably only want to send onActionReady once no matter what
 
 #define kHZVideoViewAutoFadeOutControlsTimeSeconds 2 // number of seconds to leave controls on the screen before fading them out
 #define kHZVideoViewMinumumSkippableSeconds 9 // minimum number of seconds a skip button should save a user in order for the button to be shown
@@ -36,7 +37,6 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.autoresizesSubviews = YES;
-        [self registerForNotifications];
         
         self.backgroundColor = [UIColor clearColor];
         
@@ -51,6 +51,8 @@
         
         _player.repeatMode = MPMovieRepeatModeNone;
         _player.shouldAutoplay = YES;
+        
+        [self registerForNotifications];
         
         _playbackTime = 0.0;
         _videoDuration = 0.0;
@@ -74,22 +76,19 @@
 }
 
 - (void) registerForNotifications {
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerDurationAvailable:) name: MPMovieDurationAvailableNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerDurationAvailable:) name: MPMovieDurationAvailableNotification object: _player];
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerLoadStateDidChange:) name: MPMoviePlayerLoadStateDidChangeNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerLoadStateDidChange:) name: MPMoviePlayerLoadStateDidChangeNotification object: _player];
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerNowPlayingMovieDidChange:) name: MPMoviePlayerNowPlayingMovieDidChangeNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerNowPlayingMovieDidChange:) name: MPMoviePlayerNowPlayingMovieDidChangeNotification object: _player];
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerPlaybackDidFinish:) name: MPMoviePlayerPlaybackDidFinishNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerPlaybackDidFinish:) name: MPMoviePlayerPlaybackDidFinishNotification object: _player];
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerPlaybackStateDidChange:) name: MPMoviePlayerPlaybackStateDidChangeNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerPlaybackStateDidChange:) name: MPMoviePlayerPlaybackStateDidChangeNotification object: _player];
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerScalingModeDidChange:) name: MPMoviePlayerScalingModeDidChangeNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerScalingModeDidChange:) name: MPMoviePlayerScalingModeDidChangeNotification object: _player];
     
-    // This is only used in iOS 6...
-    if (![HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
-         [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerReadyForDisplayDidChange:) name: MPMoviePlayerReadyForDisplayDidChangeNotification object: nil];
-    }
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mediaPlayerReadyForDisplayDidChange:) name: MPMoviePlayerReadyForDisplayDidChangeNotification object: _player];
 }
 
 - (void) dealloc {
@@ -301,7 +300,6 @@
 - (void) mediaPlayerNowPlayingMovieDidChange: (id) notification {}
 
 - (void) mediaPlayerLoadStateDidChange: (id) notification {
-    
     switch (self.player.loadState) {
         case MPMovieLoadStateUnknown:
             [HZLog debug: @"Media Playback: Load State Unknown"];
@@ -310,11 +308,11 @@
             }
             break;
         case MPMovieLoadStatePlayable:
-            if (self.actionDelegate != nil) {
+        case MPMovieLoadStatePlaythroughOK:
+            if (self.actionDelegate != nil && !self.didSendOnActionReadyAlready) {
+                self.didSendOnActionReadyAlready = YES;
                 [self.actionDelegate performSelector: @selector(onActionReady:) withObject: self];
             }
-            break;
-        case MPMovieLoadStatePlaythroughOK:
             break;
         case MPMovieLoadStateStalled:
             break;

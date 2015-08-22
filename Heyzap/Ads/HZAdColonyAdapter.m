@@ -17,6 +17,7 @@
 
 @interface HZAdColonyAdapter() <HZAdColonyDelegate, HZAdColonyAdDelegate>
 
+@property (nonatomic, strong) NSString *appID;
 @property (nonatomic, strong) NSString *interstitialZoneID;
 @property (nonatomic, strong) NSString *incentivizedZoneID;
 
@@ -36,6 +37,20 @@
         proxy.forwardingDelegate.adapter = proxy;
     });
     return proxy;
+}
+
+- (void)loadCredentials {
+    self.appID = [HZDictionaryUtils objectForKey:@"app_id"
+                                         ofClass:[NSString class]
+                                            dict:self.credentials];
+    
+    self.interstitialZoneID = [HZDictionaryUtils objectForKey:@"interstitial_zone_id"
+                                                      ofClass:[NSString class]
+                                                         dict:self.credentials];
+    
+    self.incentivizedZoneID = [HZDictionaryUtils objectForKey:@"incentivized_zone_id"
+                                                      ofClass:[NSString class]
+                                                         dict:self.credentials];
 }
 
 #pragma mark - Adapter Protocol
@@ -60,53 +75,24 @@
 
 }
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials
-{
-    HZParameterAssert(credentials);
-    NSError *error;
-    NSString *appID = [HZDictionaryUtils objectForKey:@"app_id"
-                                              ofClass:[NSString class]
-                                                 dict:credentials
-                                                error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
+- (NSError *)initializeSDK {
+    RETURN_ERROR_IF_NIL(self.appID, @"app_id");
     
-    NSString *interstitialZoneID = [HZDictionaryUtils objectForKey:@"interstitial_zone_id"
-                                                     ofClass:[NSString class]
-                                                        dict:credentials
-                                                       error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
+    NSArray *const zoneIDs = ({
+        NSMutableArray *ids = [NSMutableArray array];
+        
+        if (self.interstitialZoneID) { [ids addObject:self.interstitialZoneID]; }
+        if (self.incentivizedZoneID) { [ids addObject:self.incentivizedZoneID]; }
+        
+        ids;
+    });
     
-    NSString *incentivizedZoneID = [HZDictionaryUtils objectForKey:@"incentivized_zone_id"
-                                                                 ofClass:[NSString class]
-                                                                    dict:credentials
-                                                                   error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
-    
-    HZAdColonyAdapter *adapter = [self sharedInstance];
-    if (!adapter.credentials) {
-        adapter.credentials = credentials;
-        [[self sharedInstance] setupAdColonyWithAppID:appID
-                                   interstitialZoneID:interstitialZoneID
-                                   incentivizedZoneID:incentivizedZoneID];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
-    }
-    
-    return nil;
-}
-
-- (void)setupAdColonyWithAppID:(NSString *)appID
-            interstitialZoneID:(NSString *)interstitialZoneID
-            incentivizedZoneID:(NSString *)incentivizedZoneID
-{
-    HZParameterAssert(appID);
-    HZParameterAssert(interstitialZoneID);
-    HZParameterAssert(incentivizedZoneID);
-    self.interstitialZoneID = interstitialZoneID;
-    self.incentivizedZoneID = incentivizedZoneID;
-    [HZAdColony configureWithAppID:appID
-                           zoneIDs:@[interstitialZoneID,incentivizedZoneID]
+    HZDLog(@"Initializing AdColony with App ID: %@ and zoneIDs: %@",self.appID, zoneIDs);
+    [HZAdColony configureWithAppID:self.appID
+                           zoneIDs:zoneIDs
                           delegate:self.forwardingDelegate
                            logging:NO];
+    return nil;
 }
 
 - (HZCreativeType) supportedCreativeTypes
@@ -139,6 +125,19 @@
         default: {
             return NO;
         }
+    }
+}
+
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeIncentivized: {
+            return self.incentivizedZoneID != nil;
+        }
+        case HZCreativeTypeVideo: {
+            return self.interstitialZoneID != nil;
+        }
+        default:
+            return NO;
     }
 }
 

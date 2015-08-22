@@ -49,29 +49,29 @@ NSString *const kHZNativeAdRatingKey = @"rating";
     if (self) {
         
         // Private properties
-        _impressionID = [HZDictionaryUtils hzObjectForKey:@"impression_id" ofClass:[NSString class] withDict:dictionary];
+        _impressionID = [HZDictionaryUtils objectForKey:@"impression_id" ofClass:[NSString class] dict:dictionary];
         CHECK_NOT_NIL(_impressionID,@"Impression ID");
         
-        _promotedGameAppStoreID = [HZDictionaryUtils hzObjectForKey:@"promoted_game_package" ofClass:[NSNumber class] withDict:dictionary];
+        _promotedGameAppStoreID = [HZDictionaryUtils objectForKey:@"promoted_game_package" ofClass:[NSNumber class] dict:dictionary];
         CHECK_NOT_NIL(_promotedGameAppStoreID,@"advertised game App Store ID");
         
         _clickURL = ({
-            NSString *clickURLString = [HZDictionaryUtils hzObjectForKey: @"click_url" ofClass: [NSString class] withDict: dictionary];
+            NSString *clickURLString = [HZDictionaryUtils objectForKey: @"click_url" ofClass: [NSString class] dict: dictionary];
             NSString *noPlaceHolderURL = [HZNSURLUtils substituteGetParams:clickURLString impressionID:_impressionID];
             [NSURL URLWithString:noPlaceHolderURL];
         });
         
-        _tag = [HZDictionaryUtils hzObjectForKey:@"tag" ofClass:[NSString class] withDict:dictionary];
+        _tag = [HZDictionaryUtils objectForKey:@"tag" ofClass:[NSString class] dict:dictionary];
         
         // Developer Visible properties
-        NSDictionary *const publicDictionary = [HZDictionaryUtils hzObjectForKey:@"data" ofClass:[NSDictionary class] withDict:dictionary];
+        NSDictionary *const publicDictionary = [HZDictionaryUtils objectForKey:@"data" ofClass:[NSDictionary class] dict:dictionary];
         _rawResponse = publicDictionary;
         
         // Non-nil properties
-        _appName = [HZDictionaryUtils hzObjectForKey:kHZNativeAdAppNameKey ofClass:[NSString class] withDict:publicDictionary];
+        _appName = [HZDictionaryUtils objectForKey:kHZNativeAdAppNameKey ofClass:[NSString class] dict:publicDictionary];
         CHECK_NOT_NIL(_appName, @"advertised app name");
 
-        _iconURL = [NSURL URLWithString:[HZDictionaryUtils hzObjectForKey:kHZNativeAdIconURLKey ofClass:[NSString class] withDict:publicDictionary]];
+        _iconURL = [NSURL URLWithString:[HZDictionaryUtils objectForKey:kHZNativeAdIconURLKey ofClass:[NSString class] dict:publicDictionary]];
         CHECK_NOT_NIL(_iconURL, @"icon URL");
         
         /// Nullable properties
@@ -79,20 +79,20 @@ NSString *const kHZNativeAdRatingKey = @"rating";
         // Large creatives
         NSError *error;
         
-        NSDictionary *landscapeImageDict = [HZDictionaryUtils hzObjectForKey:@"landscape_image" ofClass:[NSDictionary class] withDict:publicDictionary];
+        NSDictionary *landscapeImageDict = [HZDictionaryUtils objectForKey:@"landscape_image" ofClass:[NSDictionary class] dict:publicDictionary];
         _landscapeCreative = [[HZNativeAdImage alloc] initWithDictionary:landscapeImageDict error:&error];
         
-        NSDictionary *portraitImageDict = [HZDictionaryUtils hzObjectForKey:@"portrait_image" ofClass:[NSDictionary class] withDict:publicDictionary];
+        NSDictionary *portraitImageDict = [HZDictionaryUtils objectForKey:@"portrait_image" ofClass:[NSDictionary class] dict:publicDictionary];
         _portraitCreative = [[HZNativeAdImage alloc] initWithDictionary:portraitImageDict error:&error];
         
         
         _rating = ({
-            NSString *ratingString = [HZDictionaryUtils hzObjectForKey:kHZNativeAdRatingKey ofClass:[NSString class] withDict:publicDictionary];
+            NSString *ratingString = [HZDictionaryUtils objectForKey:kHZNativeAdRatingKey ofClass:[NSString class] dict:publicDictionary];
             ratingString ? [NSNumber numberWithFloat:[ratingString floatValue]] : nil;
         });
-        _category = [HZDictionaryUtils hzObjectForKey:kHZNativeAdCategoryKey ofClass:[NSString class] withDict:publicDictionary];
-        _appDescription = [HZDictionaryUtils hzObjectForKey:kHZNativeAdDescriptionKey ofClass:[NSString class] withDict:publicDictionary];
-        _developerName = [HZDictionaryUtils hzObjectForKey:kHZNativeAdDeveloperNameKey ofClass:[NSString class] withDict:publicDictionary];
+        _category = [HZDictionaryUtils objectForKey:kHZNativeAdCategoryKey ofClass:[NSString class] dict:publicDictionary];
+        _appDescription = [HZDictionaryUtils objectForKey:kHZNativeAdDescriptionKey ofClass:[NSString class] dict:publicDictionary];
+        _developerName = [HZDictionaryUtils objectForKey:kHZNativeAdDeveloperNameKey ofClass:[NSString class] dict:publicDictionary];
     }
     return self;
 }

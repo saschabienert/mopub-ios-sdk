@@ -18,9 +18,10 @@
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
-@property (nonatomic, strong) HZGADInterstitial *currentInterstitial;
+@property (nonatomic, strong) NSMutableDictionary *adDictionary;
 
-@property (nonatomic, strong) NSString *adUnitID;
+@property (nonatomic, strong) NSString *interstitialAdUnitID;
+@property (nonatomic, strong) NSString *videoAdUnitID;
 @property (nonatomic, strong) NSString *bannerAdUnitID;
 
 @end
@@ -41,27 +42,23 @@
     return proxy;
 }
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _adDictionary = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+- (void)loadCredentials {
+    self.interstitialAdUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:self.credentials];
+    self.videoAdUnitID = [HZDictionaryUtils objectForKey:@"video_ad_unit_id" ofClass:[NSString class] dict:self.credentials];
+    self.bannerAdUnitID = [HZDictionaryUtils objectForKey:@"banner_ad_unit_id" ofClass:[NSString class] dict:self.credentials];
+}
+
 #pragma mark - Adapter Protocol
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials
-{
-    HZParameterAssert(credentials);
-    
-    NSError *error;
-    NSString *adUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:credentials error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
-    
-    // Nullable property.
-    NSString *bannerAdUnitId = [HZDictionaryUtils hzObjectForKey:@"banner_ad_unit_id" ofClass:[NSString class] withDict:credentials];
-    
-    HZAdMobAdapter *adapter = [self sharedInstance];
-    if (!adapter.credentials) {
-        adapter.credentials = credentials;
-        [[self sharedInstance] setAdUnitID:adUnitID];
-        [[self sharedInstance] setBannerAdUnitID:bannerAdUnitId];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
-    }
-    
+- (NSError *)initializeSDK {
     return nil;
 }
 
@@ -86,14 +83,36 @@
 
 - (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
-    return [self supportsCreativeType:creativeType] && self.currentInterstitial.isReady;
+    switch (creativeType) {
+        case HZCreativeTypeStatic:
+        case HZCreativeTypeVideo: {
+            HZGADInterstitial *currentAd = self.adDictionary[@(creativeType)];
+            return currentAd && currentAd.isReady;
+        }
+        default:
+            return NO;
+    }
 }
 
 - (HZCreativeType) supportedCreativeTypes
 {
-    // We don't currently have a way to tell if an interstitial from AdMob is a static or video ad.
-    // Until we do, we will treat them as all static.
-    return HZCreativeTypeStatic | HZCreativeTypeBanner;
+    return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeBanner;
+}
+
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
+            return self.interstitialAdUnitID != nil;
+        }
+        case HZCreativeTypeVideo: {
+            return self.videoAdUnitID != nil;
+        }
+        case HZCreativeTypeBanner: {
+            return self.bannerAdUnitID != nil;
+        }
+        default:
+            return NO;
+    }
 }
 
 - (BOOL)isVideoOnlyNetwork {
@@ -102,28 +121,48 @@
 
 - (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
-    if(![self supportsCreativeType:creativeType]) return;
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
+            HZAssert(self.interstitialAdUnitID, @"Need an interstitial ad unit ID by this point");
+            break;
+        }
+        case HZCreativeTypeVideo: {
+            HZAssert(self.videoAdUnitID, @"Need a video ad unit ID by this point");
+            break;
+        }
+        default: {
+            return;
+        }
+    }
     
-    HZAssert(self.adUnitID, @"Need an ad unit ID by this point");
-    if (self.currentInterstitial
-        && !self.currentInterstitial.hasBeenUsed
-        && !self.lastStaticError) {
-        // If we have an interstitial already out fetching, don't start up a re-fetch.
+    HZGADInterstitial *currentAd = self.adDictionary[@(creativeType)];
+    NSError *currentError = [self lastErrorForCreativeType:creativeType];
+    if (currentAd
+        && !currentAd.hasBeenUsed
+        && !currentError) {
+        // If we have an ad already out fetching, don't start up a re-fetch.
         return;
     }
     
-    self.currentInterstitial = [[HZGADInterstitial alloc] init];
-    self.currentInterstitial.adUnitID = self.adUnitID;
-    self.currentInterstitial.delegate = self.forwardingDelegate;
+    HZGADInterstitial *newAd = [[HZGADInterstitial alloc] init];
+    self.adDictionary[@(creativeType)] = newAd;
     
-    [self.currentInterstitial loadRequest:[HZGADRequest request]];
+    HZDLog(@"Initializing AdMob Ad with interstitialAdUnitID Ad Unit ID: %@",self.interstitialAdUnitID);
+    
+    newAd.adUnitID = (creativeType == HZCreativeTypeStatic) ? self.interstitialAdUnitID : self.videoAdUnitID;
+    newAd.delegate = self.forwardingDelegate;
+    
+    HZGADRequest *request = [HZGADRequest request];
+    request.testDevices = @[ GAD_SIMULATOR_ID ];
+    [newAd loadRequest:request];
 }
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
     if(![self supportsCreativeType:creativeType]) return;
-    
-    [self.currentInterstitial presentFromRootViewController:options.viewController];
+
+    HZGADInterstitial *ad = self.adDictionary[@(creativeType)];
+    [ad presentFromRootViewController:options.viewController];
 }
 
 #pragma mark - Delegate callbacks
@@ -139,11 +178,18 @@
 
 - (void)interstitial:(HZGADInterstitial *)ad didFailToReceiveAdWithError:(HZGADRequestError *)error
 {
-    self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain
-                                         code:1
-                                     userInfo:@{kHZMediatorNameKey: @"AdMob",
-                                                NSUnderlyingErrorKey: error}];
-    self.currentInterstitial = nil;
+    const HZCreativeType creativeType = [self creativeTypeForAd:ad];
+    [self.adDictionary removeObjectForKey:@(creativeType)];
+    
+    NSError *wrappedError = [NSError errorWithDomain:kHZMediationDomain
+                                                code:1
+                                            userInfo:@{kHZMediatorNameKey: @"AdMob",
+                                                       NSUnderlyingErrorKey: error}];
+    if (creativeType == HZCreativeTypeStatic) {
+        self.lastStaticError = wrappedError;
+    } else if (creativeType == HZCreativeTypeVideo) {
+        self.lastVideoError = wrappedError;
+    }
     
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
@@ -157,7 +203,8 @@
 {
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
-    self.currentInterstitial = nil;
+    
+    [self.adDictionary removeObjectForKey:@([self creativeTypeForAd:ad])];
 }
 
 // As far as I can tell, this means a click.
@@ -168,7 +215,7 @@
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
-    self.lastStaticError = nil;
+    [self clearErrorForCreativeType:[self creativeTypeForAd:ad]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
@@ -176,8 +223,12 @@
     return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:self.bannerAdUnitID options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 
-- (BOOL)hasBannerCredentials {
-    return self.bannerAdUnitID != nil;
+- (HZCreativeType)creativeTypeForAd:(HZGADInterstitial *)ad {
+    if ([ad.adUnitID isEqualToString:self.interstitialAdUnitID]) {
+        return HZCreativeTypeStatic;
+    } else {
+        return HZCreativeTypeVideo;
+    }
 }
 
 @end

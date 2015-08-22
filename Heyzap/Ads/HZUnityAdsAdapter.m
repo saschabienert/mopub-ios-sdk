@@ -14,6 +14,7 @@
 
 @interface HZUnityAdsAdapter() <HZUnityAdsDelegate>
 
+@property (nonatomic, strong) NSString *appID;
 @property (nonatomic, strong) NSString *videoZoneID;
 @property (nonatomic, strong) NSString *incentivizedZoneID;
 @property (nonatomic) BOOL isShowingIncentivized;
@@ -45,6 +46,20 @@
     return self;
 }
 
+- (void)loadCredentials {
+    self.appID = [HZDictionaryUtils objectForKey:@"game_id"
+                                         ofClass:[NSString class]
+                                            dict:self.credentials];
+    
+    self.incentivizedZoneID = [HZDictionaryUtils objectForKey:@"incentivized_placement_id"
+                                                      ofClass:[NSString class]
+                                                         dict:self.credentials];
+    
+    self.videoZoneID = [HZDictionaryUtils objectForKey:@"video_placement_id"
+                                               ofClass:[NSString class]
+                                                  dict:self.credentials];
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -67,61 +82,21 @@
     return [HZUnityAds getSDKVersion];
 }
 
-+ (NSError *)enableWithCredentials:(NSDictionary *)credentials
-{
-    HZParameterAssert(credentials);
-    NSError *error;
-    NSString *appID = [HZDictionaryUtils objectForKey:@"game_id"
-                                              ofClass:[NSString class]
-                                                 dict:credentials
-                                                error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
-    
-    NSString *incentivizedZoneID = [HZDictionaryUtils objectForKey:@"incentivized_placement_id"
-                                                                 ofClass:[NSString class]
-                                                                    dict:credentials
-                                                                   error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
-    
-    NSString *videoZoneID = [HZDictionaryUtils objectForKey:@"video_placement_id"
-                                                          ofClass:[NSString class]
-                                                             dict:credentials
-                                                            error:&error];
-    CHECK_CREDENTIALS_ERROR(error);
-    
-    HZUnityAdsAdapter *adapter = [self sharedInstance];
-    
-    if (!adapter.credentials) {
-        adapter.credentials = credentials;
-        [[self sharedInstance] setupUnityAdsWithAppID:appID
-                                          videoZoneID:videoZoneID incentivizedZoneID:incentivizedZoneID];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackInitialized forNetwork: [self name]];
-    }
-    
-    return nil;
-}
-
 NSString * const kHZNetworkName = @"mobile";
 
-- (void)setupUnityAdsWithAppID:(NSString *)appID
-                    videoZoneID:(NSString *)videoZoneID
-             incentivizedZoneID:(NSString *)incentivizedZoneID
-{
-    HZParameterAssert(appID);
-    HZParameterAssert(videoZoneID);
-    HZParameterAssert(incentivizedZoneID);
-    self.videoZoneID = videoZoneID;
-    self.incentivizedZoneID = incentivizedZoneID;
+- (NSError *)initializeSDK {
+    RETURN_ERROR_IF_NIL(self.appID, @"game_id");
     
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     
     if ([[HZUnityAds sharedInstance] respondsToSelector:@selector(setNetworks:)]) { // Asset Store version
         [[HZUnityAds sharedInstance] setNetworks:kHZNetworkName];
     }
-    [[HZUnityAds sharedInstance] startWithGameId:appID andViewController:vc];
+    HZDLog(@"Initializing UnityAds with Game ID: %@",self.appID);
+    [[HZUnityAds sharedInstance] startWithGameId:self.appID andViewController:vc];
     [[HZUnityAds sharedInstance] setDelegate:self.forwardingDelegate];
     
-    //TODO: set view controller
+    return nil;
 }
 
 - (HZCreativeType) supportedCreativeTypes
@@ -150,6 +125,20 @@ NSString * const kHZNetworkName = @"mobile";
         return [[HZUnityAds sharedInstance] canShowAds:kHZNetworkName];
     } else {
         @throw [NSException exceptionWithName:@"UnsupportedSDKException" reason:@"This version of UnityAds doesn't respond to canShowAds or canShowAds:(NSString *)network and is not compatible with the Heyzap SDK." userInfo:nil];
+    }
+}
+
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeIncentivized: {
+            return self.incentivizedZoneID != nil;
+        }
+        case HZCreativeTypeVideo: {
+            return self.videoZoneID != nil;
+        }
+        default: {
+            return NO;
+        }
     }
 }
 

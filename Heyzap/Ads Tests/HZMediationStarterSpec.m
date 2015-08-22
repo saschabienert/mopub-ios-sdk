@@ -30,7 +30,7 @@ describe(@"HZMediationStarter", ^{
         starterMock = [KWMock mockForProtocol:@protocol(HZMediationStarting)];
         cachingMock = [KWMock nullMockForClass:[HZCachingService class]];
         
-        [cachingMock stub:@selector(cacheDictionary:filename:) andReturn:nil];
+        [cachingMock stub:@selector(cacheRootObject:filename:) andReturn:nil];
         
         starter = [[HZMediationStarter alloc] initWithStartingDelegate:starterMock cachingService:cachingMock];
     });
@@ -46,7 +46,7 @@ describe(@"HZMediationStarter", ^{
         [starter start];
         [[expectFutureValue(starterMock) shouldEventually] receive:@selector(startWithDictionary:fromCache:) withArguments:fromNetworkJson,theValue(NO)];
         
-        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheDictionary:filename:) withArguments:fromNetworkJson,any()];
+        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheRootObject:filename:) withArguments:fromNetworkJson,any()];
     });
     
     it(@"Returns the cached version, then the network one, then updates the cache",^{
@@ -55,13 +55,13 @@ describe(@"HZMediationStarter", ^{
         
         [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:fromNetworkJson];
         
-        [[cachingMock should] receive:@selector(dictionaryWithFilename:) andReturn:fromCacheJson];
+        [[cachingMock should] receive:@selector(rootObjectWithFilename:) andReturn:fromCacheJson];
         
         [starter start];
         [[expectFutureValue(starterMock) shouldEventually] receive:@selector(startWithDictionary:fromCache:) withArguments:fromCacheJson,theValue(YES)];
         [[expectFutureValue(starterMock) shouldEventually] receive:@selector(startWithDictionary:fromCache:) withArguments:fromNetworkJson,theValue(NO)];
         
-        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheDictionary:filename:) withArguments:fromNetworkJson,any()];
+        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheRootObject:filename:) withArguments:fromNetworkJson,any()];
     });
     
     it(@"Returns the data from network, even if the network is initially down", ^{
@@ -88,7 +88,7 @@ describe(@"HZMediationStarter", ^{
         [starter start];
         [[expectFutureValue(starterMock) shouldEventuallyBeforeTimingOutAfter(2)] receive:@selector(startWithDictionary:fromCache:) withArguments:fromNetworkJson,theValue(NO)];
         
-        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheDictionary:filename:) withArguments:fromNetworkJson,any()];
+        [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheRootObject:filename:) withArguments:fromNetworkJson,any()];
     });
     
     

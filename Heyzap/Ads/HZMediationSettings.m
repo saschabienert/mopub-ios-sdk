@@ -20,6 +20,7 @@
 
 @property (nonatomic) NSTimeInterval IAPAdDisableTime;
 @property (nonatomic) NSTimeInterval IAPAdsTimeOut;
+@property (nonatomic) NSString *remoteDataJsonString;
 
 @end
 
@@ -42,33 +43,34 @@ NSString * const kHZMediationUserDefaultsKeyIncentivizedDate = @"kHZMediationUse
 }
 
 - (void) setupWithDict:(NSDictionary *)dictionary fromCache:(BOOL)fromCache{
-    _IAPAdDisableTime = [[HZDictionaryUtils hzObjectForKey:kHZMediationIAPAdDisableTime
+    _IAPAdDisableTime = [[HZDictionaryUtils objectForKey:kHZMediationIAPAdDisableTime
                                                        ofClass:[NSNumber class]
                                                        default:@0
-                                                      withDict:dictionary] longLongValue] * 60; // in seconds
+                                                      dict:dictionary] longLongValue] * 60; // in seconds
     
-    _incentivizedDailyLimit = [HZDictionaryUtils hzObjectForKey:kHZMediationIncentivizedDailyLimit
+    _incentivizedDailyLimit = [HZDictionaryUtils objectForKey:kHZMediationIncentivizedDailyLimit
                                                             ofClass:[NSNumber class]
                                                             default:nil
-                                                           withDict:dictionary];
+                                                           dict:dictionary];
     
-    NSArray *disabledTags = [HZDictionaryUtils hzObjectForKey:kHZMediationDisabledTags
+    NSArray *disabledTags = [HZDictionaryUtils objectForKey:kHZMediationDisabledTags
                                                       ofClass:[NSArray class]
                                                       default:@[]
-                                                     withDict:dictionary];
+                                                     dict:dictionary];
     _disabledTags = [NSSet setWithArray:disabledTags];
     
-    NSString *jsonString = [HZDictionaryUtils hzObjectForKey:kHZMediationCustomPublisherDataKey
+    _remoteDataJsonString = [HZDictionaryUtils objectForKey:kHZMediationCustomPublisherDataKey
                                                      ofClass:[NSString class]
                                                      default: @"{}"
-                                                    withDict:dictionary];
+                                                    dict:dictionary];
     
     // converts string like "{\"test\":\"foo\"}" to dictionary
-    if(jsonString == nil) {
+    if(!_remoteDataJsonString) {
         _remoteDataDictionary = @{};
+        
     } else {
         NSError *error;
-        NSData *objectData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+        NSData *objectData = [_remoteDataJsonString dataUsingEncoding:NSUTF8StringEncoding];
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData options:kNilOptions error:&error];
         _remoteDataDictionary = (error ? @{} : json);
     }

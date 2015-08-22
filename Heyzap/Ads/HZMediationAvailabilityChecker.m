@@ -13,23 +13,27 @@
 #import "HZUtils.h"
 #import "HZSegmentationController.h"
 #import "HZInterstitialVideoConfig.h"
+#import "HZMediationPersistentConfig.h"
 
 @interface HZMediationAvailabilityChecker()
 
 @property (nonatomic, strong) NSDate *lastInterstitialVideoShownDate;
 @property (nonatomic) HZInterstitialVideoConfig *config;
+@property (nonatomic) id<HZMediationPersistentConfigReadonly> persistentConfig;
 
 @end
 
 
 @implementation HZMediationAvailabilityChecker
 
+
 #pragma mark - Init
 
-- (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig {
+- (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig {
     self = [super init];
     if (self) {
         _config = interstitialVideoConfig;
+        _persistentConfig = persistentConfig;
     }
     return self;
 }
@@ -51,10 +55,10 @@
 - (NSOrderedSet *)availableAndAllowedAdaptersForAdType:(HZAdType)adType tag:(NSString *)tag adapters:(NSOrderedSet *)adapters segmentationController:(HZSegmentationController *)segmentationController {
     NSSet *allowedCreativeTypes = [self creativeTypesAllowedForAdType:adType];
     
-    NSIndexSet *indexes = [/*filtered*/adapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
+    NSIndexSet *indexes = [adapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         for(NSNumber *allowedCreativeTypeNumber in allowedCreativeTypes) {
             HZCreativeType allowedCreativeType = hzCreativeTypeFromNSNumber(allowedCreativeTypeNumber);
-            if([adapter supportsCreativeType:allowedCreativeType] && [segmentationController adapterHasAllowedAd:adapter forCreativeType:allowedCreativeType tag:tag]) return YES;
+            if([adapter supportsCreativeType:allowedCreativeType] && [adapter hasCredentialsForCreativeType:allowedCreativeType] && [self.persistentConfig isNetworkEnabled:[adapter name]] && [segmentationController adapterHasAllowedAd:adapter forCreativeType:allowedCreativeType tag:tag]) return YES;
         }
         
         return NO;
@@ -86,7 +90,7 @@
             for (NSNumber * creativeTypeNumber in creativeTypesAllowed) {
                 HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeNumber);
                 
-                if (hzCreativeTypeStringSetContainsCreativeType(creativeTypeStringsForNetwork, creativeType) && [adapterInstance supportsCreativeType:creativeType]) {
+                if (hzCreativeTypeStringSetContainsCreativeType(creativeTypeStringsForNetwork, creativeType) && [adapterInstance supportsCreativeType:creativeType] && [adapterInstance hasCredentialsForCreativeType:creativeType] && [self.persistentConfig isNetworkEnabled:[adapterInstance name]]) {
                     [chosenNetworks addObject:[[HZMediationAdapterWithCreativeTypeScore alloc] initWithAdapter:adapterInstance creativeType:creativeType score:[adapterInstance latestMediationScoreForCreativeType:creativeType]]];
                 }
             }
