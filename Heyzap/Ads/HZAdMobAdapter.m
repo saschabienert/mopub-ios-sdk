@@ -147,8 +147,6 @@
     HZGADInterstitial *newAd = [[HZGADInterstitial alloc] init];
     self.adDictionary[@(creativeType)] = newAd;
     
-    HZDLog(@"Initializing AdMob Ad with interstitialAdUnitID Ad Unit ID: %@",self.interstitialAdUnitID);
-    
     newAd.adUnitID = (creativeType == HZCreativeTypeStatic) ? self.interstitialAdUnitID : self.videoAdUnitID;
     newAd.delegate = self.forwardingDelegate;
     

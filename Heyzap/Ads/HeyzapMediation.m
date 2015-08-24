@@ -203,18 +203,21 @@
     [self addCredentialsToAdapters:dictionary];
     [self.segmentationController setupFromMediationStart:dictionary];
     
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSError *error;
+    NSError *error;
+    if (!self.loadManager) {
         self.loadManager = [[HZMediationLoadManager alloc] initWithLoadData:dictionary[@"loader"] delegate:self persistentConfig:self.persistentConfig error:&error];
-        if (error) {
+        if (error || !self.loadManager) {
             HZELog(@"Error initializing network preloader. Mediation won't be possible. %@",error);
         } else {
             self.startStatus = HZMediationStartStatusSuccess;
             [self autoFetchAdType:HZAdTypeInterstitial];
         }
-        
-    });
+    } else {
+        if (![self.loadManager refreshWithLoadData:dictionary[@"loader"] error:&error] || error) {
+            HZELog(@"Error refreshing network preloader. Mediation may be out of date. %@", error);
+        }
+    }
+    
 }
 
 // Default to notifying the delegate

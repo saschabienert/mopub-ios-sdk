@@ -130,7 +130,7 @@
     
     HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
     if(!exchangeClient || exchangeClient.state != HZHeyzapExchangeClientStateReady){
-        HZELog(@"HeyzapExchangeAdapter: No ad available for that type.")
+        HZELog(@"HeyzapExchangeAdapter: No ad available for creativeType=%@", NSStringFromCreativeType(creativeType));
         return;
     }
     
