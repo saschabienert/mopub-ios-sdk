@@ -20,7 +20,7 @@
 @property (nonatomic) HZAuctionType auctionType;
 @property (nonatomic) BOOL adsEnabled; // will ignore the limit & interval if this is YES - it's an on/off switch for ads with the specified type/tag/auctionType
 
-@property (nonatomic, nullable) NSMutableOrderedSet *impressionHistory; // ordered set of timestamps at which impressions fitting this segment's search criteria occured, most
+@property (atomic, nullable) NSMutableOrderedSet *impressionHistory; // ordered set of timestamps at which impressions fitting this segment's search criteria occured, most recent first. atomic since `loadWithDb:` can be called on any thread, as can the methods that access this property
 
 @end
 
@@ -116,8 +116,7 @@
     // impressionHistory is ordered with most recent impressions first
     NSUInteger firstIndexToRemove = [self.impressionHistory indexOfObjectPassingTest:^BOOL(NSDate *obj, NSUInteger idx, BOOL *stop) {
         if ([earliestImpressionToKeep compare:obj] == NSOrderedDescending) {
-            //start time is later than the impression time
-            *stop = YES;
+            //start time is later than the impression times
             return YES;
         }
         return NO;

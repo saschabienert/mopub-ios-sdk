@@ -33,16 +33,16 @@ SPEC_BEGIN(HZSegmentationSegmentSpec)
 describe(@"HZSegmentationSegment", ^{
     __block HZSegmentationSegment *segment;
     
-    __block NSString *const tag = @"limited tag";
-    __block NSString *const other_tag = @"other tag!";
-    __block NSString *const not_matching_tag = @"not filtered out";
+    NSString *const tag = @"limited tag";
+    NSString *const other_tag = @"other tag!";
+    NSString *const not_matching_tag = @"not filtered out";
     
-    __block HZCreativeType const expectedCreativeType = HZCreativeTypeStatic;
-    __block HZCreativeType const wrongCreativeType = HZCreativeTypeVideo;
-    __block HZCreativeType const allCreativeTypes = HZCreativeTypeUnknown;
+    HZCreativeType const expectedCreativeType = HZCreativeTypeStatic;
+    HZCreativeType const wrongCreativeType = HZCreativeTypeVideo;
+    HZCreativeType const allCreativeTypes = HZCreativeTypeUnknown;
     
-    __block HZAuctionType const expectedAuctionType= HZAuctionTypeMonetization;
-    __block HZAuctionType const wrongAuctionType = HZAuctionTypeCrossPromo;
+    HZAuctionType const expectedAuctionType= HZAuctionTypeMonetization;
+    HZAuctionType const wrongAuctionType = HZAuctionTypeCrossPromo;
     
     __block HZImpressionHistory *impressionHistoryMock;
     
@@ -328,8 +328,8 @@ describe(@"HZSegmentationSegment", ^{
     });
     
     it(@"Adds impression to history that matches auctionType, no tag filter or creativeType filter", ^{
-        NSDate *const date = [NSDate date];
-        NSDate *const date2 = [NSDate date];
+        NSDate *const date = [NSDate dateWithTimeInterval:-5 sinceDate:[NSDate date]];
+        NSDate *const date2 = [NSDate dateWithTimeInterval:1 sinceDate:date];
         segment.creativeType = allCreativeTypes;
         segment.timeInterval = 600; // since `[segment impressionCount]` prunes the segments if they're old, make sure the test has time to run
         
@@ -357,8 +357,8 @@ describe(@"HZSegmentationSegment", ^{
     });
     
     it(@"Adds impression to history that matches auctionType with tag filter, no creativeType filter", ^{
-        NSDate *const date = [NSDate date];
-        NSDate *const date2 = [NSDate date];
+        NSDate *const date = [NSDate dateWithTimeInterval:-5 sinceDate:[NSDate date]];
+        NSDate *const date2 = [NSDate dateWithTimeInterval:1 sinceDate:date];
         segment.adTags = @[tag, other_tag];
         segment.creativeType = allCreativeTypes;
         segment.timeInterval = 600; // since `[segment impressionCount]` prunes the segments if they're old, make sure the test has time to run

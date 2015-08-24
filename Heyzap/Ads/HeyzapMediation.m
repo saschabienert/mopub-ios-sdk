@@ -323,7 +323,7 @@ NSString * const kHZDataKey = @"data";
     
     Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
     
-    HZMediationAdapterWithCreativeTypeScore *chosenAdapterWithScore = [self.availabilityChecker firstAdapterWithAdForAdType:adType tag:options.tag adaptersWithScores:adaptersWithScores optionalForcedNetwork:optionalForcedNetwork segmentationController:self.segmentationController];
+    HZMediationAdapterWithCreativeTypeScore *chosenAdapterWithScore = [self.availabilityChecker firstAdapterWithAdForTag:options.tag adaptersWithScores:adaptersWithScores optionalForcedNetwork:optionalForcedNetwork segmentationController:self.segmentationController];
     
     /// Start event reporting
     NSError *eventReporterError;

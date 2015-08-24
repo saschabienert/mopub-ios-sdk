@@ -19,7 +19,7 @@
     
     int open = sqlite3_open_v2([dbFilePath UTF8String], &database, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
     if(open != SQLITE_OK) {
-        *error = [HZDatabaseHelper databaseErrorWithString:[NSString stringWithUTF8String:sqlite3_errmsg(database)]];
+        if(error) *error = [HZDatabaseHelper databaseErrorWithString:[NSString stringWithUTF8String:sqlite3_errmsg(database)]];
         sqlite3_close(database); // don't use `sqlite3_close_v2()` for now - http://stackoverflow.com/questions/31821375/sqlite3-close-v2-crashes-on-ios-sqlite3-close-doesnt
         return NULL;
     }

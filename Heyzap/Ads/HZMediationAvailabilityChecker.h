@@ -24,7 +24,7 @@
 - (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig;
 
 - (NSOrderedSet *)availableAndAllowedAdaptersForAdType:(HZAdType)adType tag:(NSString *)tag adapters:(NSOrderedSet *)adapters segmentationController:(HZSegmentationController *)segmentationController;
-- (HZMediationAdapterWithCreativeTypeScore *)firstAdapterWithAdForAdType:(HZAdType)adType tag:(NSString *)tag adaptersWithScores:(NSOrderedSet *)adaptersWithScores optionalForcedNetwork:(Class)forcedNetwork segmentationController:(HZSegmentationController *)segmentationController;
+- (HZMediationAdapterWithCreativeTypeScore *)firstAdapterWithAdForTag:(NSString *)tag adaptersWithScores:(NSOrderedSet *)adaptersWithScores optionalForcedNetwork:(Class)forcedNetwork segmentationController:(HZSegmentationController *)segmentationController;
 
 
 - (void)updateWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig;

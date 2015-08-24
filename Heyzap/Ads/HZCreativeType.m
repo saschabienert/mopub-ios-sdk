@@ -37,7 +37,6 @@ HZCreativeType hzCreativeTypeFromNSNumber(NSNumber * number) {
             return HZCreativeTypeNative;
         default:
             return HZCreativeTypeUnknown;
-            
     }
 }
 

@@ -99,20 +99,17 @@
     return chosenNetworks;
 }
 
-- (HZMediationAdapterWithCreativeTypeScore *)firstAdapterWithAdForAdType:(HZAdType)adType tag:(NSString *)tag adaptersWithScores:(NSOrderedSet *)adaptersWithScores optionalForcedNetwork:(Class)forcedNetwork segmentationController:(HZSegmentationController *)segmentationController {
+- (HZMediationAdapterWithCreativeTypeScore *)firstAdapterWithAdForTag:(NSString *)tag adaptersWithScores:(NSOrderedSet *)adaptersWithScores optionalForcedNetwork:(Class)forcedNetwork segmentationController:(HZSegmentationController *)segmentationController {
     if (forcedNetwork) {
         adaptersWithScores = hzFilterOrderedSet(adaptersWithScores, ^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {
             return [[adapterWithScore adapter] isKindOfClass:forcedNetwork];
         });
     }
     
-    NSSet *allowedCreativeTypes = [self creativeTypesAllowedForAdType:adType];
-    
     const NSUInteger idx = [adaptersWithScores indexOfObjectPassingTest:^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore, NSUInteger idx, BOOL *stop) {
-        for(NSNumber *allowedCreativeType in allowedCreativeTypes) {
-            if([segmentationController adapterHasAllowedAd:[adapterWithScore adapter] forCreativeType:hzCreativeTypeFromNSNumber(allowedCreativeType) tag:tag]) return YES;
+        if([segmentationController adapterHasAllowedAd:[adapterWithScore adapter] forCreativeType:[adapterWithScore creativeType] tag:tag]) {
+           return YES;
         }
-        
         return NO;
     }];
         

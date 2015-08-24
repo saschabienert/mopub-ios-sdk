@@ -47,7 +47,6 @@
     return history;
 }
 
-
 - (nullable instancetype) init {
     self = [super init];
     if (self) {
@@ -56,35 +55,49 @@
     return self;
 }
 
-- (void) dealloc {
-}
 
 #pragma mark - Insert
 // performs insertion on background thread asynchronously
 - (void) recordImpressionWithCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)tag auctionType:(HZAuctionType)auctionType date:(nonnull NSDate *)date {
-//    __block NSDate *methodStartPreQueue = [NSDate date];
+    __block NSDate *methodStartPreQueue = [NSDate date];
     dispatch_async(self.writeQueue, ^{
-//        NSDate *methodStart = [NSDate date];
+        NSDate *methodStart = [NSDate date];
         int returnCode;
         BOOL failed = NO;
-        NSString *query = [NSString stringWithFormat:@"INSERT INTO " TABLE_NAME " (" COLUMN_TIMESTAMP ", " COLUMN_CREATIVETYPE ", " COLUMN_ADTAG ", " COLUMN_AUCTIONTYPE ") VALUES (%f, %lu, '%s', %lu)", [self databaseEntryForDate:date], (unsigned long)creativeType, [tag UTF8String], (unsigned long)auctionType];
+        
+        NSString *query = [NSString stringWithFormat:@"INSERT INTO " TABLE_NAME " (" COLUMN_TIMESTAMP ", " COLUMN_CREATIVETYPE ", " COLUMN_ADTAG ", " COLUMN_AUCTIONTYPE ") VALUES (%f, %lu, ?, %lu)", [self databaseEntryForDate:date], (unsigned long)creativeType, (unsigned long)auctionType];
         sqlite3 * insertDb = [self safeImpressionTableDatabaseConnection];
         if(!insertDb) {
             failed = YES;
-            return;
+            HZELog(@"HZImpressionHistory: Failed to record impression. DB connection could not be established.");
         }
         
-        char *errorMessage;
-        returnCode = sqlite3_exec(insertDb, [query UTF8String], NULL, NULL, &errorMessage);
-        if (returnCode != SQLITE_OK) {
-            HZELog(@"Failed to record impression. Code: %i, Error: %s", returnCode, errorMessage);
-            failed = YES;
+        sqlite3_stmt *compiledStatement;
+        if (!failed) {
+            if (!sqlite3_prepare_v2(insertDb, [query UTF8String], -1, &compiledStatement, NULL) == SQLITE_OK) {
+                failed = YES;
+                HZELog(@"HZImpressionHistory: Failed to record impression. DB statement could not be prepared.");
+            }
         }
         
-        sqlite3_free(errorMessage);
+        if (!failed) {
+            sqlite3_bind_text(compiledStatement, 1, [tag UTF8String], -1, SQLITE_TRANSIENT); // replaces `?` in query string with the ad tag (deals with escaping characters for us). (SQLITE_TRANSIENT tells the db to copy the string for memory management reasons). The second param (`1`) is the 1-based index of the question mark in the query string
+            returnCode = sqlite3_step(compiledStatement);
+            if (returnCode != SQLITE_DONE) {
+                HZELog(@"HZImpressionHistory: Failed to record impression. Code: %i", returnCode);
+                failed = YES;
+            }
+            
+            sqlite3_finalize(compiledStatement);
+        }
         
-//        NSDate *methodEnd = [NSDate date];
-//        HZDLog(@"HZImpressionHistory: impression insert query %@took %f seconds after a %f second threading delay. Query: %@;", (failed ? @"FAILED and " : @""), [methodEnd timeIntervalSinceDate:methodStart], [methodStart timeIntervalSinceDate:methodStartPreQueue], query);
+        NSDate *methodEnd = [NSDate date];
+        if (failed) {
+            HZELog(@"HZImpressionHistory: FAILED impression insert query took %f seconds after a %f second threading delay. Query: %@;", [methodEnd timeIntervalSinceDate:methodStart], [methodStart timeIntervalSinceDate:methodStartPreQueue], query);
+        } else {
+            HZDLog(@"HZImpressionHistory: impression insert query took %f seconds after a %f second threading delay. Query: %@;", [methodEnd timeIntervalSinceDate:methodStart], [methodStart timeIntervalSinceDate:methodStartPreQueue], query);
+        }
+        
     });
 }
 
@@ -92,36 +105,31 @@
 #pragma mark - Query
 
 - (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withCreativeType:(HZCreativeType)creativeType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
-    NSString *tagWhereClause = tag ? [NSString stringWithFormat:@"AND " COLUMN_ADTAG " = '%s'", [tag UTF8String]] : @"";
-    return [self impressionsSince:timestamp withCreativeType:creativeType tagWhereClause:tagWhereClause auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
+    return [self impressionsSince:timestamp withCreativeType:creativeType tags:(tag ? @[tag] : nil) auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
 }
 
 - (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withCreativeType:(HZCreativeType)creativeType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
-    NSString *tagWhereClause = @"";
-    
-    if([tags count] > 0) {
-        // surround tags with '' for the query string
-        NSArray * modifiedTags = hzMap(tags, ^NSString *(NSString *tag) {
-            return [NSString stringWithFormat:@"'%s'", [tag UTF8String]];
-        });
-        
-        tagWhereClause = [NSString stringWithFormat:@"AND " COLUMN_ADTAG " IN (%@)", [modifiedTags componentsJoinedByString:@","]];
-    }
-    
-    return [self impressionsSince:timestamp withCreativeType:creativeType tagWhereClause:tagWhereClause auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
-}
-
-- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withCreativeType:(HZCreativeType)creativeType tagWhereClause:(NSString *)tagWhereClause auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
     if (!db) {
         HZELog(@"HZImpressionHistory: Can't count impressions without database connection.");
         return [[NSMutableOrderedSet alloc] init];
     }
     
-//    NSDate *methodStart = [NSDate date];
+    NSDate *methodStart = [NSDate date];
     
     NSString *creativeTypeWhereClause = @"";
     if (creativeType != HZCreativeTypeUnknown) {
         creativeTypeWhereClause = [NSString stringWithFormat:@"AND " COLUMN_CREATIVETYPE " = %lu", (unsigned long)creativeType];
+    }
+    
+    NSString *tagWhereClause = @"";
+    if (tags && [tags count] > 0) {
+        // for instance, insert `?, ?, ?` into the WHERE clause if there are 3 tags
+        // the sqlite3_bind_text statement later will replace these with the tags (takes care of escaping for us)
+        NSArray *questionMarks = hzMap(tags, ^NSString *(NSString *tag){
+            return @"?";
+        });
+        
+        tagWhereClause = [NSString stringWithFormat:@"AND " COLUMN_ADTAG " IN (%@)", [questionMarks componentsJoinedByString:@","]];
     }
     
     NSString *query = [NSString stringWithFormat:@"SELECT " COLUMN_TIMESTAMP " FROM " TABLE_NAME " WHERE " COLUMN_AUCTIONTYPE " = %lu %@ %@ AND " COLUMN_TIMESTAMP " BETWEEN %f AND %f ORDER BY " COLUMN_TIMESTAMP " %@", (unsigned long)auctionType, creativeTypeWhereClause, tagWhereClause, [self databaseEntryForDate:timestamp], [self databaseEntryForDate:nil], (mostRecentFirst ? @"DESC" : @"ASC")];
@@ -129,8 +137,13 @@
     int returnCode = 0;
     
     if((returnCode = sqlite3_prepare_v2(db, [query UTF8String], (int)strlen([query UTF8String])+1, &statement, NULL)) != SQLITE_OK || statement == NULL) {
-        HZELog(@"Failed to create query. code:%d",returnCode);
+        HZELog(@"HZImpressionHistory: Failed to create query. code:%d",returnCode);
         return [[NSMutableOrderedSet alloc] init];
+    }
+    
+    // bind tags into statement, replacing `?`s from above
+    for(uint i = 0; i < [tags count]; i++) {
+        sqlite3_bind_text(statement, i + 1, [tags[i] UTF8String], -1, SQLITE_TRANSIENT); // replaces `?` in query string with the ad tag (deals with escaping characters for us). (SQLITE_TRANSIENT tells the db to copy the string for memory management reasons). The second param (`1`) is the 1-based index of the question mark in the query string
     }
     
     NSMutableOrderedSet *impressions = [[NSMutableOrderedSet alloc] init];
@@ -141,8 +154,8 @@
     
     sqlite3_finalize(statement);
     
-//    NSDate *methodEnd = [NSDate date];
-//    HZDLog(@"HZImpressionHistory: impression list query (result size=%lu) took %f seconds. Query: %@;", (unsigned long)[impressions count], [methodEnd timeIntervalSinceDate:methodStart], query);
+    NSDate *methodEnd = [NSDate date];
+    HZDLog(@"HZImpressionHistory: impression list query (result size=%lu) took %f seconds. Query: %@;", (unsigned long)[impressions count], [methodEnd timeIntervalSinceDate:methodStart], query);
     
     return impressions;
 }
@@ -243,14 +256,5 @@
 - (NSDate *) dateFromDatabaseEntry:(NSTimeInterval)dbEntry {
     return [NSDate dateWithTimeIntervalSince1970:dbEntry];
 }
-
-- (void) runOnMainQueue:(dispatch_block_t)block {
-    if([NSThread isMainThread]) {
-        block();
-    } else {
-        dispatch_sync(dispatch_get_main_queue(), block);
-    }
-}
-
 
 @end
