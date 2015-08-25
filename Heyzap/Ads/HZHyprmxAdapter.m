@@ -22,7 +22,7 @@
 
 @implementation HZHyprmxAdapter
 
-+ (instancetype)sharedInstance {
++ (instancetype)sharedAdapter {
     static HZHyprmxAdapter *proxy;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

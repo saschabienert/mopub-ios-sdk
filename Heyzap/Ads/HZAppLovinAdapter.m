@@ -49,7 +49,7 @@
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZAppLovinAdapter *adapter;
     static dispatch_once_t onceToken;

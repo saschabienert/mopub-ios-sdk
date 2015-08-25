@@ -33,7 +33,7 @@
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZHeyzapExchangeAdapter *proxy;
     static dispatch_once_t onceToken;

@@ -26,7 +26,7 @@
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZiAdAdapter *adapter;
     static dispatch_once_t onceToken;
