@@ -39,6 +39,10 @@
     return _disabledNetworks;
 }
 
+- (NSSet *) allDisabledNetworks {
+    return [NSSet setWithSet:[self disabledNetworks]];
+}
+
 - (void)addDisabledNetwork:(NSString *)disabledNetwork {
     if (!self.isTestApp) {
         return;

@@ -105,7 +105,6 @@
     [self.navigationItem setLeftBarButtonItem:button animated:NO];
     
     UISwitch *allNeworksEnableSwitch = [[UISwitch alloc] init];
-    allNeworksEnableSwitch.on = YES;
     [allNeworksEnableSwitch addTarget:self action:@selector(allNetworksEnableSwitchToggled:) forControlEvents:UIControlEventValueChanged];
     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc]initWithCustomView:allNeworksEnableSwitch]];
     
@@ -116,7 +115,11 @@
     [self makeView];
     
     //fetch ad list
-    [self checkNetworkInfo:self.refreshControl];
+    [self checkNetworkInfo:self.refreshControl completion:^(BOOL success){
+        // if more than half the networks are disabled already, default switch to off
+        // else default to on
+        allNeworksEnableSwitch.on = [[[HeyzapMediation sharedInstance].persistentConfig allDisabledNetworks] count] < (self.allNetworks.count/2);
+    }];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -219,9 +222,13 @@
     [self.refreshControl beginRefreshing];
 }
 
+
 #pragma mark - General utility methods
 
 - (void) checkNetworkInfo:(UIRefreshControl *)refreshControl {
+    [self checkNetworkInfo:refreshControl completion:nil];
+}
+- (void) checkNetworkInfo:(UIRefreshControl *)refreshControl completion:(void (^)(BOOL success))completion {
     
     // check available
     NSMutableSet *availableNetworks = [NSMutableSet set];
@@ -310,6 +317,9 @@
         }
         
         [refreshControl endRefreshing];
+        if(completion) {
+            completion(YES);
+        }
         
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         
@@ -324,6 +334,9 @@
          show];
         
         HZDLog(@"Error from /info: %@", error.localizedDescription);
+        if(completion) {
+            completion(NO);
+        }
     }];
 }
      

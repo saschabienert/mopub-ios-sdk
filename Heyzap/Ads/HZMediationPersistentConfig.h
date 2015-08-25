@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isNetworkEnabled:(NSString *)networkName;
 - (BOOL)isNetworkDisabled:(NSString *)networkName;
+- (NSSet *) allDisabledNetworks;
 
 @end
 
