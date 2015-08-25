@@ -683,6 +683,10 @@ const CGFloat kLeftMargin = 10;
          self.hideBannerButton.enabled = YES;
          self.wrapper = banner;
      } failure:^(NSError *error) {
+         NSString *errorMessage = @"Failed to fetch banner";
+         if (error.localizedDescription) {
+             errorMessage = [errorMessage stringByAppendingFormat:@"; error was: %@",error.localizedDescription];
+         }
          self.showBannerButton.enabled = YES;
      }];
 }
