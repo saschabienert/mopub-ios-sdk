@@ -28,7 +28,7 @@
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance {
++ (instancetype)sharedAdapter {
     static HZFacebookAdapter *proxy;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

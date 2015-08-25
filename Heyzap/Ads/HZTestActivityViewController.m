@@ -158,7 +158,7 @@
         return;
     }
     
-    HZBaseAdapter *network = (HZBaseAdapter *)[networkClass sharedInstance];
+    HZBaseAdapter *network = [networkClass sharedAdapter];
     HZDLog(@"Current network adapter: %@", network);
     
     HZTestActivityNetworkViewController *networkVC = [[HZTestActivityNetworkViewController alloc] initWithNetwork:network
@@ -221,7 +221,7 @@
     // check available
     NSMutableSet *availableNetworks = [NSMutableSet set];
     for (HZBaseAdapter *adapter in [HeyzapMediation availableAdaptersWithHeyzap:YES]) {
-        [availableNetworks addObject:[[adapter class] sharedInstance]];
+        [availableNetworks addObject:[[adapter class] sharedAdapter]];
     }
     self.availableNetworks = availableNetworks;
     self.chooseLabel.text = @"Loading...";
@@ -267,7 +267,7 @@
                 available = YES;
             }
             
-            HZBaseAdapter *adapter = (HZBaseAdapter *)[mediatorClass sharedInstance];
+            HZBaseAdapter *adapter = [mediatorClass sharedAdapter];
             
             // check enabled
             if([mediator[@"enabled"] boolValue]){
