@@ -34,7 +34,7 @@ NSString * const kHZLeadboltInterstitialModule = @"inapp";
  */
 NSString * const kHZLeadboltIncentivizedModule = @"video";
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZLeadboltAdapter *adapter;
     static dispatch_once_t onceToken;

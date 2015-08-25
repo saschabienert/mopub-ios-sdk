@@ -22,7 +22,7 @@
 
 @implementation HZHeyzapAdapter
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZHeyzapAdapter *proxy;
     static dispatch_once_t onceToken;

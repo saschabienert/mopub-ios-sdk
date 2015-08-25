@@ -36,7 +36,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     ABSTRACT_METHOD_ERROR();
 }

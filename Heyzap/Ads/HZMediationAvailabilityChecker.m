@@ -83,7 +83,7 @@
         NSString *networkName = network[@"network"];
         NSSet *creativeTypeStringsForNetwork = [NSSet setWithArray:network[@"creative_types"]]; // networks can have multiple creative types in the mediation response, or a separate entry per creative type. either way, they're in an array in the response.
         Class adapter = [HZBaseAdapter adapterClassForName:networkName];
-        HZBaseAdapter *adapterInstance = (HZBaseAdapter *)[adapter sharedInstance];
+        HZBaseAdapter *adapterInstance = [adapter sharedAdapter];
         
         if ([setupAdapterClasses containsObject:adapter]) {
             // add each network/score/creativeType triplet to the retrun value for each creativeType in the network's response set that matches a currently-allowed creativeType, if the network is setup & it supports the creativeType

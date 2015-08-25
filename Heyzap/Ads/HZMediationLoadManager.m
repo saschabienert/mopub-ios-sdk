@@ -110,7 +110,7 @@
     });
     
     NSArray *const supportsCreativeType = hzFilter(enabledByUser, ^BOOL(HZMediationLoadData *datum) {
-        if ([(HZBaseAdapter *)[datum.adapterClass sharedInstance] supportsCreativeType:creativeType]) {
+        if ([(HZBaseAdapter *)[datum.adapterClass sharedAdapter] supportsCreativeType:creativeType]) {
             return YES;
         } else if(logFilters) {
             HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because it does not support creativeType=%@", [datum.adapterClass name], NSStringFromCreativeType(creativeType));
@@ -119,7 +119,7 @@
     });
     
     NSArray *const hasCredentials = hzFilter(supportsCreativeType, ^BOOL(HZMediationLoadData *datum) {
-        if ([(HZBaseAdapter *)[datum.adapterClass sharedInstance] hasCredentialsForCreativeType:creativeType]) {
+        if ([(HZBaseAdapter *)[datum.adapterClass sharedAdapter] hasCredentialsForCreativeType:creativeType]) {
             return YES;
         } else if(logFilters) {
             HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because the adapter does not have credentials for creativeType=%@", [datum.adapterClass name], NSStringFromCreativeType(creativeType));
@@ -172,7 +172,7 @@
                 
                 __block HZBaseAdapter *adapter;
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    adapter = (HZBaseAdapter *)[datum.adapterClass sharedInstance];
+                    adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
                 });
                 
                 dispatch_sync([self.delegate pausableMainQueue], ^{
@@ -218,7 +218,7 @@
 - (HZBaseAdapter *)adapterFromLoadData:(NSArray *)loadData uptoIndexThatHasAd:(NSUInteger)idx ofCreativeType:(HZCreativeType)creativeType {
     for (NSUInteger i = 0; i <= idx; i++) {
         HZMediationLoadData *datum = loadData[i];
-        HZBaseAdapter *adapter = ((HZBaseAdapter *)[datum.adapterClass sharedInstance]);
+        HZBaseAdapter *adapter = ((HZBaseAdapter *)[datum.adapterClass sharedAdapter]);
         if ([[HeyzapMediation sharedInstance] isNetworkClassInitialized:[adapter class]] && [adapter hasAdForCreativeType:creativeType]) {
             return adapter;
         }

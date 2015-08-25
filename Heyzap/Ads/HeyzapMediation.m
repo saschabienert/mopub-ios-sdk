@@ -189,7 +189,7 @@
         });
         
         if (network && credentials) {
-            HZBaseAdapter *const adapter = [[HZBaseAdapter adapterClassForName:network] sharedInstance];
+            HZBaseAdapter *const adapter = [[HZBaseAdapter adapterClassForName:network] sharedAdapter];
             adapter.credentials = credentials; // The adapter will prevent overriding existing credentials, to prevent them changing between the cached and non-cached /start response.
         } else {
             HZELog(@"Invalid network in /start response");
@@ -311,7 +311,7 @@ NSString * const kHZDataKey = @"data";
     }
     
     // update Heyzap Exchange's scores with latest fetched ad scores (ads have their own scores in the exchange, the score currently on the adapter is the per network score all networks have)
-    [[HZHeyzapExchangeAdapter sharedInstance] setAllMediationScoresForReadyAds];
+    [[HZHeyzapExchangeAdapter sharedAdapter] setAllMediationScoresForReadyAds];
     
     // this returns a set of HZMediationAdapterWithCreativeTypeScore
     NSMutableOrderedSet *adaptersWithScores = [[self.availabilityChecker parseMediateIntoAdaptersForShow:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:adType] mutableCopy];
@@ -940,13 +940,13 @@ const NSTimeInterval bannerPollInterval = 1;
         } else if (forceOnlyHeyzapSDK && ![adapterClass isHeyzapAdapter]) {
             success = NO;
         } else {
-            NSError *credentialError = [[adapterClass sharedInstance] initializeSDK];
+            NSError *credentialError = [[adapterClass sharedAdapter] initializeSDK];
             if (credentialError){
                 HZELog(@"Failed to initialize network %@, had error: %@",[adapterClass humanizedName], credentialError);
                 self.erroredMediatiorClasses = [self.erroredMediatiorClasses setByAddingObject:adapterClass];
             } else {
                 HZILog(@"Setup adapter: %@",[adapterClass humanizedName]);
-                HZBaseAdapter *adapter = [adapterClass sharedInstance];
+                HZBaseAdapter *adapter = [adapterClass sharedAdapter];
                 adapter.delegate = self;
                 self.setupMediators = [self.setupMediators setByAddingObject:adapter];
                 self.setupMediatorClasses = [self.setupMediatorClasses setByAddingObject:adapterClass];
@@ -1034,7 +1034,7 @@ const NSTimeInterval bannerPollInterval = 1;
             NSString *networkName = network[@"network"];
             NSSet *creativeTypes = [NSSet setWithArray:network[@"creative_types"]];
             Class adapter = [HZBaseAdapter adapterClassForName:networkName];
-            HZBaseAdapter *adapterInstance = (HZBaseAdapter *)[adapter sharedInstance];
+            HZBaseAdapter *adapterInstance = [adapter sharedAdapter];
             
             for(NSString * creativeType in creativeTypes) {
                 [adapterInstance setLatestMediationScore:network[@"score"] forCreativeType:hzCreativeTypeFromString(creativeType)];

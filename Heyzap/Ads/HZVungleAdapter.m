@@ -29,7 +29,7 @@
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZVungleAdapter *proxy;
     static dispatch_once_t onceToken;

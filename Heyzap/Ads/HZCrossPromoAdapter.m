@@ -19,7 +19,7 @@
 
 @implementation HZCrossPromoAdapter
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZCrossPromoAdapter *adapter;
     static dispatch_once_t onceToken;
