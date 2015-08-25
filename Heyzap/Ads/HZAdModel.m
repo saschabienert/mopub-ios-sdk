@@ -135,7 +135,7 @@
 
 #pragma mark - Attribution Events
 - (BOOL) isInstalled {
-    return [[UIApplication sharedApplication] canOpenURL: self.launchURI];
+    return [HZDevice canCheckURLSchemes] && [[UIApplication sharedApplication] canOpenURL: self.launchURI];
 }
 
 - (BOOL) onClick {
