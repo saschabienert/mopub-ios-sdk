@@ -14,6 +14,7 @@
 #import "HZMediationLoadManager.h"
 #import "HZMediateRequester.h"
 #import "HZMediationSettings.h"
+#import "HZSegmentationController.h"
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
@@ -27,6 +28,7 @@
 @property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 @property (nonatomic, readonly) NSString *mediationId;
 @property (nonatomic, readonly) HZMediationSettings *settings;
+@property (nonatomic, readonly) HZSegmentationController *segmentationController;
 @property (nonatomic, readonly) HZMediationPersistentConfig *persistentConfig;
 
 + (instancetype)sharedInstance;
@@ -38,7 +40,7 @@
 
 #pragma mark - Showing Ads
 
-- (void)fetchForAdType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
+- (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
 
 - (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options;
 
@@ -69,12 +71,11 @@
 - (id)delegateForNetwork:(NSString *)network;
 
 - (BOOL) isNetworkInitialized:(NSString *)network;
+- (BOOL) isNetworkClassInitialized:(Class)networkClass;
 - (BOOL)isAdapterInitialized:(HZBaseAdapter *)adapter;
+
 - (void) setNetworkCallbackBlock: (void (^)(NSString *network, NSString *callback))block;
 - (void) sendNetworkCallback: (NSString *) callback forNetwork: (NSString *) network;
-
-HZAdType hzAdTypeFromString(NSString *adUnit);
-NSString * NSStringFromAdType(HZAdType type);
 
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion;
 

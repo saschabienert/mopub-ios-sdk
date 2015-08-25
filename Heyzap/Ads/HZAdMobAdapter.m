@@ -81,41 +81,37 @@
     return [HZGADRequest sdkVersion];
 }
 
-- (BOOL)hasAdForType:(HZAdType)type
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
-    switch (type) {
-        
-        case HZAdTypeIncentivized:
-        case HZAdTypeBanner: {
+    switch (creativeType) {
+        case HZCreativeTypeStatic:
+        case HZCreativeTypeVideo: {
+            HZGADInterstitial *currentAd = self.adDictionary[@(creativeType)];
+            return currentAd && currentAd.isReady;
+        }
+        default:
             return NO;
-        }
-        case HZAdTypeInterstitial:
-        case HZAdTypeVideo: {
-            HZGADInterstitial *currentAd = self.adDictionary[@(type)];
-            return currentAd.isReady;
-        }
     }
 }
 
-- (HZAdType)supportedAdFormats
+- (HZCreativeType) supportedCreativeTypes
 {
-    return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeBanner;
+    return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeBanner;
 }
 
-- (BOOL)hasCredentialsForAdType:(HZAdType)adType {
-    switch (adType) {
-        case HZAdTypeInterstitial: {
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
             return self.interstitialAdUnitID != nil;
         }
-        case HZAdTypeVideo: {
+        case HZCreativeTypeVideo: {
             return self.videoAdUnitID != nil;
         }
-        case HZAdTypeBanner: {
+        case HZCreativeTypeBanner: {
             return self.bannerAdUnitID != nil;
         }
-        case HZAdTypeIncentivized: {
+        default:
             return NO;
-        }
     }
 }
 
@@ -123,25 +119,24 @@
     return NO;
 }
 
-- (void)prefetchForType:(HZAdType)type
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
-    switch (type) {
-        case HZAdTypeInterstitial: {
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
             HZAssert(self.interstitialAdUnitID, @"Need an interstitial ad unit ID by this point");
             break;
         }
-        case HZAdTypeVideo: {
+        case HZCreativeTypeVideo: {
             HZAssert(self.videoAdUnitID, @"Need a video ad unit ID by this point");
             break;
         }
-        case HZAdTypeBanner:
-        case HZAdTypeIncentivized: {
+        default: {
             return;
         }
     }
     
-    HZGADInterstitial *currentAd = self.adDictionary[@(type)];
-    NSError *currentError = [self lastErrorForAdType:type];
+    HZGADInterstitial *currentAd = self.adDictionary[@(creativeType)];
+    NSError *currentError = [self lastErrorForCreativeType:creativeType];
     if (currentAd
         && !currentAd.hasBeenUsed
         && !currentError) {
@@ -150,11 +145,9 @@
     }
     
     HZGADInterstitial *newAd = [[HZGADInterstitial alloc] init];
-    self.adDictionary[@(type)] = newAd;
+    self.adDictionary[@(creativeType)] = newAd;
     
-    HZDLog(@"Initializing AdMob Ad with interstitialAdUnitID Ad Unit ID: %@",self.interstitialAdUnitID);
-    
-    newAd.adUnitID = (type == HZAdTypeInterstitial) ? self.interstitialAdUnitID : self.videoAdUnitID;
+    newAd.adUnitID = (creativeType == HZCreativeTypeStatic) ? self.interstitialAdUnitID : self.videoAdUnitID;
     newAd.delegate = self.forwardingDelegate;
     
     HZGADRequest *request = [HZGADRequest request];
@@ -162,9 +155,11 @@
     [newAd loadRequest:request];
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    HZGADInterstitial *ad = self.adDictionary[@(type)];
+    if(![self supportsCreativeType:creativeType]) return;
+
+    HZGADInterstitial *ad = self.adDictionary[@(creativeType)];
     [ad presentFromRootViewController:options.viewController];
 }
 
@@ -181,16 +176,16 @@
 
 - (void)interstitial:(HZGADInterstitial *)ad didFailToReceiveAdWithError:(HZGADRequestError *)error
 {
-    const HZAdType type = [self adTypeForAd:ad];
-    [self.adDictionary removeObjectForKey:@(type)];
+    const HZCreativeType creativeType = [self creativeTypeForAd:ad];
+    [self.adDictionary removeObjectForKey:@(creativeType)];
     
     NSError *wrappedError = [NSError errorWithDomain:kHZMediationDomain
-                                         code:1
-                                     userInfo:@{kHZMediatorNameKey: @"AdMob",
-                                                NSUnderlyingErrorKey: error}];
-    if (type == HZAdTypeInterstitial) {
-        self.lastInterstitialError = wrappedError;
-    } else if (type == HZAdTypeVideo) {
+                                                code:1
+                                            userInfo:@{kHZMediatorNameKey: @"AdMob",
+                                                       NSUnderlyingErrorKey: error}];
+    if (creativeType == HZCreativeTypeStatic) {
+        self.lastStaticError = wrappedError;
+    } else if (creativeType == HZCreativeTypeVideo) {
         self.lastVideoError = wrappedError;
     }
     
@@ -207,7 +202,7 @@
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
     
-    [self.adDictionary removeObjectForKey:@([self adTypeForAd:ad])];
+    [self.adDictionary removeObjectForKey:@([self creativeTypeForAd:ad])];
 }
 
 // As far as I can tell, this means a click.
@@ -218,8 +213,7 @@
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
-    [self clearErrorForAdType:[self adTypeForAd:ad]];
-    
+    [self clearErrorForCreativeType:[self creativeTypeForAd:ad]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
@@ -227,11 +221,11 @@
     return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:self.bannerAdUnitID options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 
-- (HZAdType)adTypeForAd:(HZGADInterstitial *)ad {
+- (HZCreativeType)creativeTypeForAd:(HZGADInterstitial *)ad {
     if ([ad.adUnitID isEqualToString:self.interstitialAdUnitID]) {
-        return HZAdTypeInterstitial;
+        return HZCreativeTypeStatic;
     } else {
-        return HZAdTypeVideo;
+        return HZCreativeTypeVideo;
     }
 }
 

@@ -448,6 +448,12 @@
 		995DF56C1B44A632000935BB /* HZHeyzapExchangeMRAIDServiceHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 995DF56B1B44A632000935BB /* HZHeyzapExchangeMRAIDServiceHandler.m */; };
 		995DF56E1B44A645000935BB /* HZHeyzapExchangeMRAIDServiceHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 995DF56D1B44A645000935BB /* HZHeyzapExchangeMRAIDServiceHandler.h */; };
 		995DF5701B44AA00000935BB /* HZOpenRTBConnectionType.h in Headers */ = {isa = PBXBuildFile; fileRef = 995DF56F1B44AA00000935BB /* HZOpenRTBConnectionType.h */; };
+		996B33AD1B702E91001D05DE /* HZSegmentationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B33AC1B702E91001D05DE /* HZSegmentationController.h */; };
+		996B33AF1B702EA5001D05DE /* HZSegmentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 996B33AE1B702EA5001D05DE /* HZSegmentationController.m */; };
+		996B33B11B702F24001D05DE /* HZSegmentationSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = 996B33B01B702F24001D05DE /* HZSegmentationSegment.m */; };
+		996B33B31B702F3D001D05DE /* HZSegmentationSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B33B21B702F3D001D05DE /* HZSegmentationSegment.h */; };
+		996B33B51B71277F001D05DE /* HZImpressionHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B33B41B71277F001D05DE /* HZImpressionHistory.h */; };
+		996B33B71B71278E001D05DE /* HZImpressionHistory.m in Sources */ = {isa = PBXBuildFile; fileRef = 996B33B61B71278E001D05DE /* HZImpressionHistory.m */; };
 		996D9AA5BB144F82A96FC8B0 /* libPods-Integration Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */; };
 		99752D541B3B860C0075B328 /* HZVASTVideoCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 99752D531B3B860C0075B328 /* HZVASTVideoCache.m */; };
 		99752D561B3B86230075B328 /* HZVASTVideoCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 99752D551B3B86230075B328 /* HZVASTVideoCache.h */; };
@@ -457,6 +463,15 @@
 		99752D641B3CD9250075B328 /* HZHeyzapExchangeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99752D631B3CD9240075B328 /* HZHeyzapExchangeClient.h */; };
 		99752D661B3DC2960075B328 /* HZHeyzapExchangeAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 99752D651B3DC2960075B328 /* HZHeyzapExchangeAPIClient.m */; };
 		99752D681B3DC2AB0075B328 /* HZHeyzapExchangeAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99752D671B3DC2AB0075B328 /* HZHeyzapExchangeAPIClient.h */; };
+		998B1BFE1B714D98003C1437 /* HZDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 998B1BFD1B714D98003C1437 /* HZDatabaseHelper.m */; };
+		998B1C001B714DA6003C1437 /* HZDatabaseHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B1BFF1B714DA6003C1437 /* HZDatabaseHelper.h */; };
+		998B1C061B72BB4C003C1437 /* HZFBAdSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B1C051B72BB4C003C1437 /* HZFBAdSettings.h */; };
+		998B1C081B72BB61003C1437 /* HZFBAdSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 998B1C071B72BB61003C1437 /* HZFBAdSettings.m */; };
+		998B1C0E1B83A398003C1437 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E62181B219AFB3CC0099BE8C /* libsqlite3.dylib */; };
+		998B1C111B83A50B003C1437 /* HZSegmentationSegmentSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 998B1C101B83A50B003C1437 /* HZSegmentationSegmentSpec.m */; };
+		998B1C191B84F9AD003C1437 /* HZCreativeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B1C181B84F9AD003C1437 /* HZCreativeType.h */; };
+		99B320661B87D1CF002632BF /* HZSegmentationControllerSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 99B320651B87D1CF002632BF /* HZSegmentationControllerSpec.m */; };
+		99B3206C1B87D6C9002632BF /* mediationStartResponseThatShouldProduceFourSegments.json in Resources */ = {isa = PBXBuildFile; fileRef = 99B3206B1B87D6C9002632BF /* mediationStartResponseThatShouldProduceFourSegments.json */; };
 		99D3C6131B1FBAC800DDEF7E /* HZExtendedHitAreaButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D3C6121B1FBAC800DDEF7E /* HZExtendedHitAreaButton.m */; };
 		99D3C6151B1FBADE00DDEF7E /* HZExtendedHitAreaButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D3C6141B1FBADE00DDEF7E /* HZExtendedHitAreaButton.h */; };
 		99D3C64A1B1FD40800DDEF7E /* HZTPPropertyAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D3C6461B1FD40800DDEF7E /* HZTPPropertyAnimation.h */; };
@@ -486,6 +501,9 @@
 		99D4C43F1B389097004D24DE /* HZSKVASTUrlWithId.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D4C43D1B389097004D24DE /* HZSKVASTUrlWithId.h */; };
 		99D4C4401B389097004D24DE /* HZSKVASTUrlWithId.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D4C43E1B389097004D24DE /* HZSKVASTUrlWithId.m */; };
 		99D4C4411B389F80004D24DE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
+		99DC6D341B879AA600BF7756 /* HZCreativeType.m in Sources */ = {isa = PBXBuildFile; fileRef = 99DC6D331B879AA600BF7756 /* HZCreativeType.m */; };
+		99DC6D361B87A1C600BF7756 /* HZAdType.m in Sources */ = {isa = PBXBuildFile; fileRef = 99DC6D351B87A1C600BF7756 /* HZAdType.m */; };
+		99FA59611B851B200076C088 /* HZShowOptions_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 99FA59601B851B200076C088 /* HZShowOptions_Private.h */; };
 		E62181B319AFB3CC0099BE8C /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E62181B219AFB3CC0099BE8C /* libsqlite3.dylib */; };
 		E62181B919AFBF520099BE8C /* HZVungleSDK.m in Sources */ = {isa = PBXBuildFile; fileRef = E62181B719AFBF520099BE8C /* HZVungleSDK.m */; };
 		E62181F919AFCEEE0099BE8C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E62181F819AFCEEE0099BE8C /* CoreData.framework */; };
@@ -950,6 +968,12 @@
 		995DF56B1B44A632000935BB /* HZHeyzapExchangeMRAIDServiceHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapExchangeMRAIDServiceHandler.m; sourceTree = "<group>"; };
 		995DF56D1B44A645000935BB /* HZHeyzapExchangeMRAIDServiceHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapExchangeMRAIDServiceHandler.h; sourceTree = "<group>"; };
 		995DF56F1B44AA00000935BB /* HZOpenRTBConnectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZOpenRTBConnectionType.h; sourceTree = "<group>"; };
+		996B33AC1B702E91001D05DE /* HZSegmentationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSegmentationController.h; sourceTree = "<group>"; };
+		996B33AE1B702EA5001D05DE /* HZSegmentationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSegmentationController.m; sourceTree = "<group>"; };
+		996B33B01B702F24001D05DE /* HZSegmentationSegment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSegmentationSegment.m; sourceTree = "<group>"; };
+		996B33B21B702F3D001D05DE /* HZSegmentationSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSegmentationSegment.h; sourceTree = "<group>"; };
+		996B33B41B71277F001D05DE /* HZImpressionHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZImpressionHistory.h; sourceTree = "<group>"; };
+		996B33B61B71278E001D05DE /* HZImpressionHistory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZImpressionHistory.m; sourceTree = "<group>"; };
 		99752D531B3B860C0075B328 /* HZVASTVideoCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVASTVideoCache.m; sourceTree = "<group>"; };
 		99752D551B3B86230075B328 /* HZVASTVideoCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVASTVideoCache.h; sourceTree = "<group>"; };
 		99752D5C1B3CCEB90075B328 /* HZHeyzapExchangeAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapExchangeAdapter.m; sourceTree = "<group>"; };
@@ -958,6 +982,17 @@
 		99752D631B3CD9240075B328 /* HZHeyzapExchangeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapExchangeClient.h; sourceTree = "<group>"; };
 		99752D651B3DC2960075B328 /* HZHeyzapExchangeAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapExchangeAPIClient.m; sourceTree = "<group>"; };
 		99752D671B3DC2AB0075B328 /* HZHeyzapExchangeAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapExchangeAPIClient.h; sourceTree = "<group>"; };
+		998B1BFD1B714D98003C1437 /* HZDatabaseHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZDatabaseHelper.m; sourceTree = "<group>"; };
+		998B1BFF1B714DA6003C1437 /* HZDatabaseHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZDatabaseHelper.h; sourceTree = "<group>"; };
+		998B1C011B718561003C1437 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		998B1C031B718A02003C1437 /* libdyld.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdyld.dylib; path = usr/lib/system/libdyld.dylib; sourceTree = SDKROOT; };
+		998B1C051B72BB4C003C1437 /* HZFBAdSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZFBAdSettings.h; sourceTree = "<group>"; };
+		998B1C071B72BB61003C1437 /* HZFBAdSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZFBAdSettings.m; sourceTree = "<group>"; };
+		998B1C0B1B83A364003C1437 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
+		998B1C101B83A50B003C1437 /* HZSegmentationSegmentSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSegmentationSegmentSpec.m; sourceTree = "<group>"; };
+		998B1C181B84F9AD003C1437 /* HZCreativeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZCreativeType.h; sourceTree = "<group>"; };
+		99B320651B87D1CF002632BF /* HZSegmentationControllerSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSegmentationControllerSpec.m; sourceTree = "<group>"; };
+		99B3206B1B87D6C9002632BF /* mediationStartResponseThatShouldProduceFourSegments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mediationStartResponseThatShouldProduceFourSegments.json; sourceTree = "<group>"; };
 		99D3C6121B1FBAC800DDEF7E /* HZExtendedHitAreaButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZExtendedHitAreaButton.m; sourceTree = "<group>"; };
 		99D3C6141B1FBADE00DDEF7E /* HZExtendedHitAreaButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZExtendedHitAreaButton.h; sourceTree = "<group>"; };
 		99D3C6461B1FD40800DDEF7E /* HZTPPropertyAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZTPPropertyAnimation.h; sourceTree = "<group>"; };
@@ -987,6 +1022,9 @@
 		99D4C43A1B38908C004D24DE /* HZSKVASTMediaFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKVASTMediaFile.m; sourceTree = "<group>"; };
 		99D4C43D1B389097004D24DE /* HZSKVASTUrlWithId.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZSKVASTUrlWithId.h; sourceTree = "<group>"; };
 		99D4C43E1B389097004D24DE /* HZSKVASTUrlWithId.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZSKVASTUrlWithId.m; sourceTree = "<group>"; };
+		99DC6D331B879AA600BF7756 /* HZCreativeType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZCreativeType.m; sourceTree = "<group>"; };
+		99DC6D351B87A1C600BF7756 /* HZAdType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdType.m; sourceTree = "<group>"; };
+		99FA59601B851B200076C088 /* HZShowOptions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZShowOptions_Private.h; sourceTree = "<group>"; };
 		B1D5F5ECB01E4EDFA33DE9B0 /* libPods-Ads Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ads Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9241C359E50B2D9005581FE /* Pods-Integration Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integration Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Integration Tests/Pods-Integration Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		E600E20C1ACB5715006CE286 /* HZAdapterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdapterDelegate.h; sourceTree = "<group>"; };
@@ -1020,6 +1058,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				998B1C0E1B83A398003C1437 /* libsqlite3.dylib in Frameworks */,
 				50A289DD1AAFBA4A00951E16 /* iAd.framework in Frameworks */,
 				5011CE6B18DBAEED00604B53 /* libz.1.2.5.dylib in Frameworks */,
 				5011CE6918DBAEDD00604B53 /* Social.framework in Frameworks */,
@@ -1185,6 +1224,9 @@
 				E600E20C1ACB5715006CE286 /* HZAdapterDelegate.h */,
 				E600E20E1ACB5764006CE286 /* HZAdapterDelegate.m */,
 				E600E2131ACB781C006CE286 /* HZAdType.h */,
+				99DC6D351B87A1C600BF7756 /* HZAdType.m */,
+				998B1C181B84F9AD003C1437 /* HZCreativeType.h */,
+				99DC6D331B879AA600BF7756 /* HZCreativeType.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -1389,13 +1431,13 @@
 		50608ACD1AF964DC00CFB9F6 /* Mediation Management */ = {
 			isa = PBXGroup;
 			children = (
+				5072559F1B30D55700576059 /* Loading */,
 				50ECA1C318DB618E006284AB /* HeyzapMediation.h */,
 				50ECA1C418DB618E006284AB /* HeyzapMediation.m */,
 				50608ACE1AF9650D00CFB9F6 /* HZMediationStarter.h */,
 				50608ACF1AF9650D00CFB9F6 /* HZMediationStarter.m */,
 				5072559B1B2F80DB00576059 /* HZMediateRequester.h */,
 				5072559C1B2F80DB00576059 /* HZMediateRequester.m */,
-				5072559F1B30D55700576059 /* Loading */,
 				50A64F711B3A1D4A0094B702 /* HZMediationAvailabilityChecker.h */,
 				50A64F721B3A1D4A0094B702 /* HZMediationAvailabilityChecker.m */,
 				993A82F81B61BFE3001B586C /* HZMediationSettings.m */,
@@ -1411,6 +1453,7 @@
 		50666DA51B68403300995FE9 /* Management */ = {
 			isa = PBXGroup;
 			children = (
+				998B1C0F1B83A4DF003C1437 /* Segmentation */,
 				509109341B66E5FB004464E7 /* HZMediationStarterSpec.m */,
 				50666DAA1B69A8F900995FE9 /* HZMediateRequesterSpec.m */,
 			);
@@ -1718,10 +1761,11 @@
 		50ECA1BC18DB6108006284AB /* Mediation */ = {
 			isa = PBXGroup;
 			children = (
-				50608ACD1AF964DC00CFB9F6 /* Mediation Management */,
 				50ECA1CF18DB7340006284AB /* Adapters */,
+				50608ACD1AF964DC00CFB9F6 /* Mediation Management */,
 				509F002A18EB62AE0011EAB3 /* Models */,
 				505286DE18E61BAD0060C210 /* Networking */,
+				996B33AB1B702E3E001D05DE /* Segmentation */,
 			);
 			name = Mediation;
 			sourceTree = "<group>";
@@ -1872,6 +1916,7 @@
 				866E39EE1850087B00B6E431 /* HZVideoAd.m */,
 				E67D8F1E1AB7B313000B191C /* HZShowOptions.h */,
 				E67D8F1F1AB7B38B000B191C /* HZShowOptions.m */,
+				99FA59601B851B200076C088 /* HZShowOptions_Private.h */,
 				507A454A19BE317000C7AEEA /* Native Ads */,
 			);
 			name = "Public Interface";
@@ -1884,6 +1929,8 @@
 				86CD0E8D17BB0C070005BD3D /* HZAdsAPIClient.m */,
 				86D0A99A1851897200B3D870 /* HZDownloadHelper.h */,
 				86D0A99B1851897200B3D870 /* HZDownloadHelper.m */,
+				998B1BFD1B714D98003C1437 /* HZDatabaseHelper.m */,
+				998B1BFF1B714DA6003C1437 /* HZDatabaseHelper.h */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -1927,6 +1974,9 @@
 		86B9419D1757FD6300B8EACE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				998B1C0B1B83A364003C1437 /* libxml2.dylib */,
+				998B1C031B718A02003C1437 /* libdyld.dylib */,
+				998B1C011B718561003C1437 /* libsqlite3.0.dylib */,
 				8A6417A61B1FB451003E8747 /* StoreKit.framework */,
 				E6BDB2981AB24FD700A9A22F /* WebKit.framework */,
 				86E439371AAA462500470E62 /* iAd.framework */,
@@ -2209,6 +2259,19 @@
 			name = Exchange;
 			sourceTree = "<group>";
 		};
+		996B33AB1B702E3E001D05DE /* Segmentation */ = {
+			isa = PBXGroup;
+			children = (
+				996B33AC1B702E91001D05DE /* HZSegmentationController.h */,
+				996B33AE1B702EA5001D05DE /* HZSegmentationController.m */,
+				996B33B01B702F24001D05DE /* HZSegmentationSegment.m */,
+				996B33B21B702F3D001D05DE /* HZSegmentationSegment.h */,
+				996B33B41B71277F001D05DE /* HZImpressionHistory.h */,
+				996B33B61B71278E001D05DE /* HZImpressionHistory.m */,
+			);
+			name = Segmentation;
+			sourceTree = "<group>";
+		};
 		99752D5E1B3CCEC00075B328 /* HeyzapExchange */ = {
 			isa = PBXGroup;
 			children = (
@@ -2224,6 +2287,24 @@
 				995DF56B1B44A632000935BB /* HZHeyzapExchangeMRAIDServiceHandler.m */,
 			);
 			name = HeyzapExchange;
+			sourceTree = "<group>";
+		};
+		998B1C0F1B83A4DF003C1437 /* Segmentation */ = {
+			isa = PBXGroup;
+			children = (
+				99B3206A1B87D686002632BF /* Segmentation JSON */,
+				998B1C101B83A50B003C1437 /* HZSegmentationSegmentSpec.m */,
+				99B320651B87D1CF002632BF /* HZSegmentationControllerSpec.m */,
+			);
+			name = Segmentation;
+			sourceTree = "<group>";
+		};
+		99B3206A1B87D686002632BF /* Segmentation JSON */ = {
+			isa = PBXGroup;
+			children = (
+				99B3206B1B87D6C9002632BF /* mediationStartResponseThatShouldProduceFourSegments.json */,
+			);
+			name = "Segmentation JSON";
 			sourceTree = "<group>";
 		};
 		99D4C3F21B3885F4004D24DE /* SKVAST */ = {
@@ -2304,6 +2385,8 @@
 				E6DBD5FC1A44AA4F00D9999D /* HZFacebookAdapter.m */,
 				E6DBD6031A44AAEA00D9999D /* HZFBInterstitialAd.h */,
 				E6DBD6041A44AAEA00D9999D /* HZFBInterstitialAd.m */,
+				998B1C051B72BB4C003C1437 /* HZFBAdSettings.h */,
+				998B1C071B72BB61003C1437 /* HZFBAdSettings.m */,
 			);
 			name = Facebook;
 			sourceTree = "<group>";
@@ -2348,6 +2431,7 @@
 				99D4C43B1B38908C004D24DE /* HZSKVASTMediaFile.h in Headers */,
 				86E3186E1B291C2800F2A314 /* HZMRAIDBridge.h in Headers */,
 				995DF5551B4217F8000935BB /* HZHeyzapExchangeBannerAdapter.h in Headers */,
+				996B33B31B702F3D001D05DE /* HZSegmentationSegment.h in Headers */,
 				507255A61B31F5A800576059 /* HZMediationLoadManager.h in Headers */,
 				50A10DE61AE9BABF00001C4C /* HZMediationRequestSerializer.h in Headers */,
 				86FF907918583FF100BC48BF /* HZAdLibrary.h in Headers */,
@@ -2356,6 +2440,7 @@
 				50CAB1991AE9752E00F9642D /* HZAFURLConnectionOperation.h in Headers */,
 				50ED564B1AC0BC910016F9FE /* HZiAdBannerAdapter.h in Headers */,
 				5019224E18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h in Headers */,
+				998B1C061B72BB4C003C1437 /* HZFBAdSettings.h in Headers */,
 				99D3C64A1B1FD40800DDEF7E /* HZTPPropertyAnimation.h in Headers */,
 				86D0A99C1851897200B3D870 /* HZDownloadHelper.h in Headers */,
 				8AA693151B1D13290074366D /* HZPaymentTransactionObserver.h in Headers */,
@@ -2378,6 +2463,7 @@
 				99752D681B3DC2AB0075B328 /* HZHeyzapExchangeAPIClient.h in Headers */,
 				863E104D1B28BBBC00EBE9C9 /* HZMRAIDJS.h in Headers */,
 				8AA2264C1B3CCEEE00FA1428 /* HZWebViewActivityIndicator.h in Headers */,
+				99FA59611B851B200076C088 /* HZShowOptions_Private.h in Headers */,
 				5019224818EDFA6A002793A3 /* HZMediationEventReporter.h in Headers */,
 				E621821119BE66A90099BE8C /* HZUnityAdsAdapter.h in Headers */,
 				866E39EF1850087B00B6E431 /* HZVideoAd.h in Headers */,
@@ -2386,6 +2472,7 @@
 				50D1598F18F34B0900734ABB /* HZHeyzapVideoAd.h in Headers */,
 				99D4C41E1B38878C004D24DE /* HZSKVASTViewController.h in Headers */,
 				50ECA1D218DB7373006284AB /* HZHeyzapAdapter.h in Headers */,
+				996B33AD1B702E91001D05DE /* HZSegmentationController.h in Headers */,
 				509E8D3519B79F8200ABF2D2 /* HZEnums.h in Headers */,
 				99D3C64C1B1FD40800DDEF7E /* HZKAProgressLabel.h in Headers */,
 				5046CE8A18E3B0C3000395AA /* HZDispatch.h in Headers */,
@@ -2424,6 +2511,7 @@
 				99D4C41C1B38878C004D24DE /* HZSKVASTMediaFilePicker.h in Headers */,
 				509E8D3919B7A96E00ABF2D2 /* HZAdInfo.h in Headers */,
 				5079F3CB1AC4B672008AB46B /* HZNoCaretTextField.h in Headers */,
+				996B33B51B71277F001D05DE /* HZImpressionHistory.h in Headers */,
 				50B46B1518F87B2C005155B8 /* HZALInterstitialAd.h in Headers */,
 				50ED56341AB8E392009D7504 /* HZGADRequestError.h in Headers */,
 				86C4916A1B2819C000A84B2C /* HZMRAIDSettings.h in Headers */,
@@ -2431,6 +2519,7 @@
 				504D82511AAA64CE004695C8 /* HZFBBannerAdapter.h in Headers */,
 				E626220919E707540094957B /* HZTestActivityViewController.h in Headers */,
 				99D4C4131B38878C004D24DE /* HZSKLogger.h in Headers */,
+				998B1C001B714DA6003C1437 /* HZDatabaseHelper.h in Headers */,
 				866E3A101851302C00B6E431 /* HZAdInterstitialViewController.h in Headers */,
 				50CAB1A51AE9758500F9642D /* HZAFSecurityPolicy.h in Headers */,
 				99D4C41A1B38878C004D24DE /* HZSKVASTEventProcessor.h in Headers */,
@@ -2453,6 +2542,7 @@
 				995DF5591B421B49000935BB /* HZHeyzapExchangeBannerClient.h in Headers */,
 				8680AC9B193ED2DC0078B5CF /* HZDelegateProxy.h in Headers */,
 				86C491711B2819C000A84B2C /* HZMRAIDCommand.h in Headers */,
+				998B1C191B84F9AD003C1437 /* HZCreativeType.h in Headers */,
 				86FF907D185842D900BC48BF /* HZQueue.h in Headers */,
 				E626228819F5BB6C0094957B /* HZTestActivityNetworkViewController.h in Headers */,
 			);
@@ -2583,6 +2673,9 @@
 					505351E918F76550003C531E = {
 						DevelopmentTeam = A722HEF3XB;
 					};
+					50A36ACE18C9405A00FA84F0 = {
+						DevelopmentTeam = A722HEF3XB;
+					};
 					86B941DB1758056B00B8EACE = {
 						DevelopmentTeam = A722HEF3XB;
 						SystemCapabilities = {
@@ -2627,6 +2720,7 @@
 			files = (
 				504E9C9B18C9322100402BC3 /* InfoPlist.strings in Resources */,
 				509B5BE918C968FA003A7CB9 /* portraitInterstitialRequest.json in Resources */,
+				99B3206C1B87D6C9002632BF /* mediationStartResponseThatShouldProduceFourSegments.json in Resources */,
 				5020884619DA2A87005C3C1B /* ValidNativeAd.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2938,12 +3032,14 @@
 				5020884219DA28DE005C3C1B /* HZNativeAdSpec.m in Sources */,
 				509B5BEC18C96CE2003A7CB9 /* TestJSON.m in Sources */,
 				50666DE41B6AEA4C00995FE9 /* HZInterstitialVideoConfigSpec.m in Sources */,
+				99B320661B87D1CF002632BF /* HZSegmentationControllerSpec.m in Sources */,
 				50AA624518CBF4DC0018A0B6 /* InterstitialFetchSpec.m in Sources */,
 				50666DA71B68405400995FE9 /* HZCachingServiceSpec.m in Sources */,
 				5053E7F21AEABCB50090889B /* HZWebViewPoolSpec.m in Sources */,
 				50666DAB1B69A8F900995FE9 /* HZMediateRequesterSpec.m in Sources */,
 				50AA624C18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m in Sources */,
 				509109351B66E5FB004464E7 /* HZMediationStarterSpec.m in Sources */,
+				998B1C111B83A50B003C1437 /* HZSegmentationSegmentSpec.m in Sources */,
 				501C706D1B87BF3F006E2440 /* HZMediationPersistentConfigSpec.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3046,6 +3142,7 @@
 				86C4916B1B2819C000A84B2C /* HZMRAIDSettings.m in Sources */,
 				86B09B89175973E60045AA54 /* HeyzapAds.m in Sources */,
 				50ED56351AB8E392009D7504 /* HZGADRequestError.m in Sources */,
+				996B33AF1B702EA5001D05DE /* HZSegmentationController.m in Sources */,
 				50CAB19A1AE9752E00F9642D /* HZAFURLConnectionOperation.m in Sources */,
 				E62181B919AFBF520099BE8C /* HZVungleSDK.m in Sources */,
 				E67D8F201AB7B38B000B191C /* HZShowOptions.m in Sources */,
@@ -3063,6 +3160,7 @@
 				8680ACA0193ED2E60078B5CF /* HZTestDelegate.m in Sources */,
 				507A455219BE4E5100C7AEEA /* HZNativeAdCollection.m in Sources */,
 				86E439361AA7DCE400470E62 /* HZiAdAdapter.m in Sources */,
+				996B33B11B702F24001D05DE /* HZSegmentationSegment.m in Sources */,
 				860FD47F187CC056008A35FD /* HZAdFetchRequest.m in Sources */,
 				501C70681B87A0DE006E2440 /* HZTestActivityTableViewCell.m in Sources */,
 				5011CE8A18DBBBF700604B53 /* HZAdMobAdapter.m in Sources */,
@@ -3100,11 +3198,13 @@
 				E621820E19BE669B0099BE8C /* HZUnityAds.m in Sources */,
 				E6DBD6061A44AAEA00D9999D /* HZFBInterstitialAd.m in Sources */,
 				86BDB4A9175853E100D85F29 /* HZLog.m in Sources */,
+				99DC6D341B879AA600BF7756 /* HZCreativeType.m in Sources */,
 				5072559E1B2F80DB00576059 /* HZMediateRequester.m in Sources */,
 				86D0A9991851808200B3D870 /* HZAdVideoViewController.m in Sources */,
 				50ECA1D318DB7373006284AB /* HZHeyzapAdapter.m in Sources */,
 				50CAB1AC1AE9758E00F9642D /* HZAFURLRequestSerialization.m in Sources */,
 				50D1599418F35CC600734ABB /* HZHeyzapInterstitialAd.m in Sources */,
+				99DC6D361B87A1C600BF7756 /* HZAdType.m in Sources */,
 				50DB884E1AB0C0D9003C5758 /* HZBannerAdOptions.m in Sources */,
 				99D4C4341B388FF7004D24DE /* HZSKLogger.m in Sources */,
 				50ABD5AB1B2A2D65007A2801 /* HZMediationCurrentShownAd.m in Sources */,
@@ -3141,8 +3241,11 @@
 				99D4C41F1B38878C004D24DE /* HZSKVASTViewController.m in Sources */,
 				50ECA1CE18DB684D006284AB /* HZChartboostAdapter.m in Sources */,
 				86C491741B2819C000A84B2C /* HZMRAIDResizeProperties.m in Sources */,
+				996B33B71B71278E001D05DE /* HZImpressionHistory.m in Sources */,
+				998B1BFE1B714D98003C1437 /* HZDatabaseHelper.m in Sources */,
 				50AC611F18FDD3E70046EBC6 /* HZALAdSize.m in Sources */,
 				86F92C761B1535C9003DEAEE /* HZHyprmxAdapter.m in Sources */,
+				998B1C081B72BB61003C1437 /* HZFBAdSettings.m in Sources */,
 				8AA2264D1B3CCEEE00FA1428 /* HZWebViewActivityIndicator.m in Sources */,
 				507255A31B30D56F00576059 /* HZMediationLoadData.m in Sources */,
 				866E39F41850089C00B6E431 /* HZIncentivizedAd.m in Sources */,
@@ -3312,6 +3415,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(SDKROOT)/usr/lib/system",
 				);
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = (
@@ -3352,6 +3456,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(SDKROOT)/usr/lib/system",
 				);
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = (
@@ -3373,7 +3478,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3386,7 +3491,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "Integration Tests";
-				PROVISIONING_PROFILE = "65BB83E8-C41C-44AC-A496-91716DB0813D";
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3400,7 +3505,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Daniel Rhodes (78U9TS6YD7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

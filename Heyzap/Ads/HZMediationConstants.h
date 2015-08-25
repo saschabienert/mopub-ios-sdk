@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
+#import "HZCreativeType.h"
+#import "HZAdType.h"
 
 @interface HZMediationConstants : NSObject
 
@@ -50,12 +52,8 @@ return [NSError errorWithDomain:kHZMediationDomain code:3 userInfo:@{NSLocalized
 } \
 } while (0)
 
-NSString * NSStringFromAdType(HZAdType type);
-HZAdType hzAdTypeFromString(NSString *adUnit);
-+ (NSArray *)creativeTypesForAdType:(HZAdType)type;
++ (NSArray *)legacyCreativeTypesForAdType:(HZAdType)type;
 
-HZAdType hzAdTypeFromCreativeTypeString(NSString *creativeTypeString);
-
-BOOL hzCreativeTypeSetContainsAdType(NSSet *const creativeTypes, const HZAdType adType);
-
+BOOL hzCreativeTypeStringSetContainsAdType(NSSet *const creativeTypes, const HZAdType adType);
+NSSet * hzCreativeTypesPossibleForAdType(HZAdType adType);
 @end

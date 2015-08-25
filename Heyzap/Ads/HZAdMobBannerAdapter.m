@@ -51,7 +51,7 @@
     
     UIView *bannerView = (UIView *)self.banner;
     if (bannerView.superview) {
-        [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
+        [self.bannerReportingDelegate bannerAdapter:self hadReloadedImpressionWithEventReporter:self.eventReporter];
     } else {
         self.waitingToBeAddedToScreen = YES;
     }
@@ -99,7 +99,7 @@
 
 - (void)bannerWasAddedToView {
     if (self.waitingToBeAddedToScreen) {
-        [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
+        [self.bannerReportingDelegate bannerAdapter:self hadInitialImpressionWithEventReporter:self.eventReporter];
         self.waitingToBeAddedToScreen = NO;
     }
 }

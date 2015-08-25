@@ -31,7 +31,7 @@
  */
 
 
-#import "HZShowOptions.h"
+#import "HZShowOptions_Private.h"
 #import "HZAdModel.h"
 
 @implementation HZShowOptions
@@ -51,6 +51,10 @@
     }
 
     return _tag;
+}
+
+- (void) setTag:(NSString *)tag {
+    _tag = [HZAdModel normalizeTag:tag];
 }
 
 - (UIViewController *)viewController {

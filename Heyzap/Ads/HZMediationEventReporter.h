@@ -12,6 +12,7 @@
 @interface HZMediationEventReporter : NSObject
 
 @property (nonatomic, readonly) HZAdType adType;
+@property (nonatomic, readonly) HZCreativeType creativeType;
 @property (nonatomic, readonly) NSString *adUnit;
 @property (nonatomic, strong, readonly) NSString *tag;
 @property (nonatomic, strong, readonly) NSString *impressionID;
@@ -28,7 +29,7 @@
  *
  *  @return The HZMediationEventReporter, or nil if there was an error.
  */
-- (instancetype)initWithJSON:(NSDictionary *)json mediateParams:(NSDictionary *)mediateParams potentialAdapters:(NSOrderedSet *)potentialAdapters adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error;
+- (instancetype)initWithJSON:(NSDictionary *)json mediateParams:(NSDictionary *)mediateParams potentialAdapters:(NSOrderedSet *)potentialAdapters adType:(HZAdType)adType creativeType:(HZCreativeType)creativeType tag:(NSString *)tag error:(NSError **)error;
 
 // ** Querying the session **
 

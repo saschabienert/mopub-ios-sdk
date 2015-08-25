@@ -252,15 +252,23 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 }
 
 - (void) fetchAd {
+    // check if at least one of the supported creativeTypes for this adType has credentials, warn if not
+    NSSet *creativeTypesToCheck = hzCreativeTypesPossibleForAdType(self.currentAdType);
+    BOOL foundCredentials = NO;
     
-    if (![self.network hasCredentialsForAdType:self.currentAdType]) {
-        [self appendStringToDebugLog:@"This network doesn't have credentials for this ad type. Make sure you've added credentials on the Heyzap dashboard."];
+    for(NSNumber *creativeTypeNum in creativeTypesToCheck) {
+        if ([self.network hasCredentialsForCreativeType:hzCreativeTypeFromNSNumber(creativeTypeNum)]) {
+            foundCredentials = YES;
+        }
+    }
+    if (!foundCredentials) {
+        [self appendStringToDebugLog:@"This network doesn't have credentials set for this ad type. Make sure you've added credentials on the Heyzap dashboard."];
         return;
     }
     
     [self appendStringToDebugLog:@"Fetching ad (may take up to 10 seconds)"];
     NSDictionary *additionalParams = @{ @"network": [[self.network class] name] };
-    [[HeyzapMediation sharedInstance] fetchForAdType:self.currentAdType additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
+    [[HeyzapMediation sharedInstance] fetchForAdType:self.currentAdType tag:nil additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
         if (error) {
             [self appendStringToDebugLog:@"Fetch failed"];
         } else {
@@ -411,7 +419,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     });
     
     // setup currentAdFormat and currentAdType
-    HZAdType supportedAdFormats = [self.network supportedAdFormats];
+    HZAdType supportedAdFormats = [self.network possibleSupportedAdTypes];
     NSMutableArray *formats = [[NSMutableArray alloc] init];
     if(supportedAdFormats & HZAdTypeInterstitial){
         [formats addObject:@"Interstitial"];
@@ -771,7 +779,7 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 }
 
 - (BOOL)showBanners {
-    return [self.network supportsAdType:HZAdTypeBanner];
+    return [self.network supportsCreativeType:HZCreativeTypeBanner];
 }
 
 - (HZBannerAdOptions *)bannerOptions {

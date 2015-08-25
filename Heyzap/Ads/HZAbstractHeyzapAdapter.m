@@ -39,71 +39,79 @@
     return SDK_VERSION;
 }
 
-- (HZAdType)supportedAdFormats
+- (HZCreativeType) supportedCreativeTypes
 {
-    return HZAdTypeInterstitial | HZAdTypeVideo | HZAdTypeIncentivized;
+    return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeIncentivized;
 }
 
 - (BOOL)isVideoOnlyNetwork {
     return NO;
 }
 
-- (void)prefetchForType:(HZAdType)type
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
+    if(![self supportsCreativeType:creativeType]) return;
+    
     const HZAuctionType auctionType = [self auctionType];
-    switch (type) {
-        case HZAdTypeInterstitial: {
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
             [HZHeyzapInterstitialAd fetchForAuctionType:auctionType withCompletion:nil];
             break;
         }
-        case HZAdTypeIncentivized: {
+        case HZCreativeTypeIncentivized: {
             [HZHeyzapIncentivizedAd fetchForAuctionType:auctionType completion:nil];
             break;
         }
-        case HZAdTypeVideo: {
+        case HZCreativeTypeVideo: {
             [HZHeyzapVideoAd fetchForAuctionType:auctionType withCompletion:nil];
             break;
         }
-        case HZAdTypeBanner: {
-            // Ignored; Heyzap doesn't support banners
+        default: {
+            // Ignored; Heyzap doesn't support banners, etc.
             break;
         }
     }
 }
 
-- (BOOL)hasAdForType:(HZAdType)type
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
+    if(![self supportsCreativeType:creativeType]) return NO;
+    
     const HZAuctionType auctionType = [self auctionType];
-    if (type & HZAdTypeVideo) {
+    if (creativeType & HZCreativeTypeVideo) {
         return [HZHeyzapVideoAd isAvailableForTag:nil auctionType:auctionType];
-    } else if (type & HZAdTypeInterstitial) {
+    } else if (creativeType & HZCreativeTypeStatic) {
         return [HZHeyzapInterstitialAd isAvailableForTag:nil auctionType:auctionType];
-    } else  {
+    } else if (creativeType & HZCreativeTypeIncentivized) {
         return [HZHeyzapIncentivizedAd isAvailableForTag:nil auctionType:auctionType];
+    } else {
+        return NO;
     }
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
+    if(![self supportsCreativeType:creativeType]) return;
+    
     // mediation has already called the completion block, so copy the options, excluding the block
     HZShowOptions *newOptions = [options copy];
 
     const HZAuctionType auctionType = [self auctionType];
-    switch (type) {
-        case HZAdTypeInterstitial: {
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
             [HZHeyzapInterstitialAd showForAuctionType:auctionType options:newOptions];
             break;
         }
-        case HZAdTypeIncentivized: {
+        case HZCreativeTypeIncentivized: {
             [HZHeyzapIncentivizedAd showForAuctionType:auctionType options:newOptions];
             break;
         }
-        case HZAdTypeVideo: {
+        case HZCreativeTypeVideo: {
             [HZHeyzapVideoAd showForAuctionType:auctionType options:newOptions];
             break;
         }
-        case HZAdTypeBanner: {
-            // Ignored; Heyzap doesn't support banners.
+        default: {
+            // Ignored; Heyzap doesn't support banners, etc.
             break;
         }
     }
@@ -166,7 +174,7 @@
         
         switch (type) {
             case HZAdTypeInterstitial: {
-                self.lastInterstitialError = nil;
+                self.lastStaticError = nil;
                 break;
             }
             case HZAdTypeIncentivized: {
@@ -193,7 +201,7 @@
         
         switch (type) {
             case HZAdTypeInterstitial: {
-                self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
+                self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
                 break;
             }
             case HZAdTypeIncentivized: {

@@ -27,6 +27,7 @@
 #import "HZMediationSettings.h"
 #import "HZHeyzapExchangeAdapter.h"
 #import "TestAppPaymentTransactionObserver.h"
+#import "HeyzapMediation.h"
 
 #define kTagCreativeIDField 4393
 
@@ -186,6 +187,12 @@ typedef enum {
     }
 }
 
+- (void) changeColorOfShowButtonAfterSeconds:(NSTimeInterval)seconds {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * seconds), dispatch_get_main_queue(), ^{
+        [self changeColorOfShowButton];
+    });
+}
+
 - (void) changeColorOfShowButton {
     [self.bannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex != kAdUnitSegmentBanner) forKey:@"hidden"];
     [self.nonBannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex == kAdUnitSegmentBanner) forKey:@"hidden"];
@@ -271,7 +278,8 @@ const CGFloat kLeftMargin = 10;
     [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
         NSLog(@"Network: %@ Callback: %@", network, callback);
         [self logToConsole: [NSString stringWithFormat: @"[%@] %@", network, callback]];
-        [self changeColorOfShowButton];
+        // wait a bit to change show button color for SDK to process whatever changed
+        [self changeColorOfShowButtonAfterSeconds:0.1];
     }];
     
     self.view.accessibilityLabel = kViewAccessibilityLabel;
@@ -387,7 +395,7 @@ const CGFloat kLeftMargin = 10;
     self.adTagField = [[UITextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, CGRectGetMaxY(self.adsTextField.frame) + 10.0, 110.0, 25.5)];
     self.adTagField.delegate = self;
     self.adTagField.borderStyle = UITextBorderStyleRoundedRect;
-    self.adTagField.keyboardType = UIKeyboardTypeNumberPad;
+    self.adTagField.keyboardType = UIKeyboardTypeAlphabet;
     self.adTagField.placeholder = @"Ad Tag";
     self.adTagField.textAlignment = NSTextAlignmentLeft;
     self.adTagField.accessibilityLabel = kAdTagTextFieldAccessibilityLabel;
@@ -542,6 +550,13 @@ const CGFloat kLeftMargin = 10;
     [clearIncentivizedCountButton addTarget: self action: @selector(clearIncentivizedCount) forControlEvents: UIControlEventTouchUpInside];
     clearIncentivizedCountButton.frame = CGRectMake(kLeftMargin, CGRectGetMaxY(spoofIAPButton.frame), 200.0, 50.0);
     [self.scrollView addSubview: clearIncentivizedCountButton];
+    
+    // Clear Impression History db (used for Segmentation)
+    UIButton *clearImpressionHistoryButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
+    [clearImpressionHistoryButton setTitle: @"Clear Impression History" forState: UIControlStateNormal];
+    [clearImpressionHistoryButton addTarget: self action: @selector(clearImpressionHistory) forControlEvents: UIControlEventTouchUpInside];
+    clearImpressionHistoryButton.frame = CGRectMake(kLeftMargin, CGRectGetMaxY(clearIncentivizedCountButton.frame), 200.0, 50.0);
+    [self.scrollView addSubview: clearImpressionHistoryButton];
     
     // Add to payment queue
     [[SKPaymentQueue defaultQueue] addTransactionObserver:[TestAppPaymentTransactionObserver sharedInstance]];
@@ -802,6 +817,12 @@ const CGFloat kLeftMargin = 10;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kHZMediationUserDefaultsKeyIncentivizedCounter];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kHZMediationUserDefaultsKeyIncentivizedDate];
     [self logToConsole:@"Incentivized daily limit counter cleared."];
+}
+
+- (void) clearImpressionHistory {
+    BOOL deleteSuccess = [[[HeyzapMediation sharedInstance] segmentationController] clearImpressionHistory] ;
+    [self logToConsole:[NSString stringWithFormat:@"Impression history delete was %@successful.", (deleteSuccess ? @"" : @"NOT ")]];
+    [self changeColorOfShowButtonAfterSeconds:0.5];
 }
 
 #pragma mark - Open

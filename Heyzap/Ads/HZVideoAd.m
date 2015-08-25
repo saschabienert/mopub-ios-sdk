@@ -102,7 +102,7 @@
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
     HZVersionCheck()
 
-    [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeVideo additionalParams:nil completion:completion];
+    [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeVideo tag:tag additionalParams:nil completion:completion];
 }
 
 #pragma mark - Querying

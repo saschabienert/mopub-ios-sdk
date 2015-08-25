@@ -43,7 +43,7 @@
 
 - (void)bannerViewDidLoadAd:(ADBannerView *)banner {
     if (banner.superview) {
-        [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
+        [self.bannerReportingDelegate bannerAdapter:self hadReloadedImpressionWithEventReporter:self.eventReporter];
     } else {
         self.waitingToBeAddedToScreen = YES;
     }
@@ -88,7 +88,7 @@
 
 - (void)bannerWasAddedToView {
     if (self.waitingToBeAddedToScreen) {
-        [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
+        [self.bannerReportingDelegate bannerAdapter:self hadInitialImpressionWithEventReporter:self.eventReporter];
         self.waitingToBeAddedToScreen = NO;
     }
 }

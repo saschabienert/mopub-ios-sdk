@@ -64,8 +64,8 @@
     return [NSString stringWithFormat: @"%@", [UIDevice currentDevice].systemVersion];
 }
 
-- (void)prefetchForType:(HZAdType)type {
-    if (type != HZAdTypeInterstitial) {
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
+    if (creativeType != HZCreativeTypeStatic) {
         return;
     }
     
@@ -75,17 +75,17 @@
     }
 }
 
-- (BOOL)hasAdForType:(HZAdType)type
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if (type != HZAdTypeInterstitial) {
+    if (creativeType != HZCreativeTypeStatic) {
         return NO;
     }
     
     return [self.interstitialAd isLoaded];
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options {
-    if (type != HZAdTypeInterstitial) {
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
+    if (creativeType != HZCreativeTypeStatic) {
         return;
     }
     
@@ -122,13 +122,13 @@
     }
 }
 
-- (HZAdType)supportedAdFormats
+- (HZCreativeType) supportedCreativeTypes
 {
     if ([HZDevice hzSystemVersionIsLessThan:@"7.0"] && [HZDevice isPhone]) {
-        return HZAdTypeBanner;
+        return HZCreativeTypeBanner;
         
     } else {
-        return HZAdTypeInterstitial | HZAdTypeBanner;
+        return HZCreativeTypeStatic | HZCreativeTypeBanner;
     }
 }
 
@@ -149,7 +149,7 @@
 }
 
 - (void)interstitialAdDidLoad:(ADInterstitialAd *)interstitialAd {
-    self.lastInterstitialError = nil;
+    self.lastStaticError = nil;
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
@@ -186,7 +186,7 @@
 - (void)interstitialAd:(ADInterstitialAd *)interstitialAd
       didFailWithError:(NSError *)error {
     
-    self.lastInterstitialError = [NSError errorWithDomain:kHZMediationDomain
+    self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain
                                                      code:1
                                                  userInfo:@{kHZMediatorNameKey: @"iAd",
                                                             NSUnderlyingErrorKey: error}];

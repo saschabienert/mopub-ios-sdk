@@ -18,6 +18,7 @@
 #import "HZMRAIDServiceDelegate.h"
 #import "HZMediationConstants.h"
 #import "HeyzapMediation.h"
+#import "HZShowOptions_Private.h"
 
 @interface HZHeyzapExchangeClient() <HZSKVASTViewControllerDelegate, HZMRAIDInterstitialDelegate, HZHeyzapExchangeMRAIDServiceHandlerDelegate>
 
@@ -35,7 +36,6 @@
 @property (nonatomic) NSString *adMarkup;
 @property (nonatomic) NSString *adExtrasHash;//encryption hash for request validation
 @property (nonatomic) NSString *mediationId;//mediationId at the time of the show call
-@property (nonatomic) NSString  *adTag;
 @property (nonatomic) HZHeyzapExchangeAPIClient *apiClient;
 
 @property (nonatomic) UIWebView *clickTrackingWebView;
@@ -43,16 +43,18 @@
 
 @property (nonatomic) HZHeyzapExchangeClientState state;
 
+@property (nonatomic) HZShowOptions *showOptions; // showOptions for currently showing ad
+
 @end
 
 @implementation HZHeyzapExchangeClient
 
-- (void) fetchForAdType:(HZAdType)adType {
+- (void) fetchForCreativeType:(HZCreativeType)creativeType {
     if(self.state == HZHeyzapExchangeClientStateFetching || self.state == HZHeyzapExchangeClientStateReady) {
         return;
     }
     
-    if(adType == HZAdTypeBanner){
+    if(creativeType == HZCreativeTypeBanner){
         HZELog(@"This is not the correct method to call for banner ad fetches. See HZHeyzapExchangeAdapter.");
         return;//wrong method to call
     }
@@ -60,7 +62,7 @@
     self.state = HZHeyzapExchangeClientStateFetching;
     
     self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
-    _adType = adType;
+    _creativeType = creativeType;
     
     HZAFHTTPRequestOperation *request = [self.apiClient fetchAdWithExtraParams:[self apiRequestParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
@@ -125,7 +127,7 @@
                     NSData *adMarkupData = [self.adMarkup dataUsingEncoding:NSUTF8StringEncoding];
                     
                     if(self.format == HZHeyzapExchangeFormatVAST_2_0){
-                        self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate:self forAdType:adType];
+                        self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate:self forCreativeType:creativeType];
                         [self.vastVC loadVideoWithData:adMarkupData];
                         self.isWithAudio = YES;
                     }else if(self.format == HZHeyzapExchangeFormatMRAID_2){
@@ -152,7 +154,7 @@
 - (void) handleFetchFailure:(NSString *)failureReason {
     self.state = HZHeyzapExchangeClientStateFailure;
     if(failureReason) {
-        [self.delegate client:self didFailToFetchAdWithType:self.adType error:failureReason];
+        [self.delegate client:self didFailToFetchAdWithCreativeType:self.creativeType error:failureReason];
     }
 }
 
@@ -198,7 +200,7 @@
 - (void) showWithOptions:(HZShowOptions *)options {
     //mediationId can change over time, we want to use the current id at the time of showing the ad for later reporting
     self.mediationId = [[HeyzapMediation sharedInstance] mediationId];
-    self.adTag = options.tag;
+    self.showOptions = options;
     
     if(self.vastAdFetchedAndReady){
         self.vastVC.rootViewController = options.viewController;
@@ -214,7 +216,7 @@
     self.vastVC = vastVC;
     self.vastAdFetchedAndReady = YES;
     self.state = HZHeyzapExchangeClientStateReady;
-    [self.delegate client:self didFetchAdWithType:self.vastVC.adType];
+    [self.delegate client:self didFetchAdWithCreativeType:self.vastVC.creativeType];
 }
 
 - (void)vastError:(HZSKVASTViewController *)vastVC error:(HZSKVASTError)error {
@@ -287,6 +289,7 @@
     }
 }
 - (void)vastOpenBrowseWithUrl:(NSURL *)url {
+    HZDLog(@"HZHeyzapExchangeClient VAST click url: '%@'", [url absoluteString]);
     self.clickTrackingWebView = [[UIWebView alloc] init];
     [self.clickTrackingWebView loadRequest:[NSURLRequest requestWithURL:url]];
     
@@ -302,7 +305,7 @@
     self.mraidInterstitial = mraidInterstitial;
     self.mraidInterstitialFetchedAndReady = YES;
     self.state = HZHeyzapExchangeClientStateReady;
-    [self.delegate client:self didFetchAdWithType:self.adType];
+    [self.delegate client:self didFetchAdWithCreativeType:self.creativeType];
 }
 
 - (void)mraidInterstitialAdFailed:(HZMRAIDInterstitial *)mraidInterstitial {
@@ -357,21 +360,22 @@
     return [[HZHeyzapExchangeClient supportedFormats] componentsJoinedByString:@","];
 }
 
-// additional params to send to all endpoints that HZHeyzapExchangeRequestSerializer doesn't cover
+/**
+ *  Returns additional params that should be sent to all exchange endpoints that HZHeyzapExchangeRequestSerializer doesn't/can't cover on it's own.
+ */
 - (NSDictionary *) apiRequestParams {
-    // in the future, if mediation is refactored to request creative type instead of adUnit, this will be unnecessary
-    // also, the hardcoded mapping from interstitial => static below (missing out on blended opportunity) would be avoided
-    int creativeType = HZHeyzapExchangeCreativeTypeUnknown;
-    switch (self.adType) {
-        case HZAdTypeBanner://ignore here
+    // this conversion may seem unnecessary but the exchange server might not always use the creative type enum values we use for other things
+    HZHeyzapExchangeCreativeType creativeType = HZHeyzapExchangeCreativeTypeUnknown;
+    switch (self.creativeType) {
+        case HZCreativeTypeBanner://ignore here
             break;
-        case HZAdTypeIncentivized:
+        case HZCreativeTypeIncentivized:
             creativeType = HZHeyzapExchangeCreativeTypeIncentivized;
             break;
-        case HZAdTypeVideo:
+        case HZCreativeTypeVideo:
             creativeType = HZHeyzapExchangeCreativeTypeVideo;
             break;
-        case HZAdTypeInterstitial:
+        case HZCreativeTypeStatic:
             creativeType = HZHeyzapExchangeCreativeTypeStatic;
             break;
         default:
@@ -390,8 +394,8 @@
                                                  @"mediation_id":self.mediationId,
                                                  @"auction_extras":self.adExtrasHash,
                                                  @"markup":self.adMarkup,
-                                                 @"ad_unit":NSStringFromAdType(self.adType),
-                                                 @"mediation_tag":self.adTag,
+                                                 @"ad_unit":NSStringFromAdType(self.showOptions.requestingAdType),
+                                                 @"mediation_tag":self.showOptions.tag,
                                                  }];
     return allRequestParams;
 }
@@ -401,8 +405,8 @@
     [allRequestParams addEntriesFromDictionary:@{
                                                  @"mediation_id":self.mediationId,
                                                  @"auction_extras":self.adExtrasHash,
-                                                 @"ad_unit":NSStringFromAdType(self.adType),
-                                                 @"mediation_tag":self.adTag,
+                                                 @"ad_unit":NSStringFromAdType(self.showOptions.requestingAdType),
+                                                 @"mediation_tag":self.showOptions.tag,
                                                  }];
     return allRequestParams;
 }
@@ -412,8 +416,8 @@
     [allRequestParams addEntriesFromDictionary:@{
                                                  @"mediation_id":self.mediationId,
                                                  @"auction_extras":self.adExtrasHash,
-                                                 @"ad_unit":NSStringFromAdType(self.adType),
-                                                 @"mediation_tag":self.adTag,
+                                                 @"ad_unit":NSStringFromAdType(self.showOptions.requestingAdType),
+                                                 @"mediation_tag":self.showOptions.tag,
                                                  }];
     return allRequestParams;
 }
