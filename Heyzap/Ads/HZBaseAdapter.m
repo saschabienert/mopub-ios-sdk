@@ -76,12 +76,6 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
-- (BOOL)isVideoOnlyNetwork
-{
-    // Return true for video-only networks like Vungle, whose interstitial support is faked via videos.
-    ABSTRACT_METHOD_ERROR();
-}
-
 - (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
     ABSTRACT_METHOD_ERROR();

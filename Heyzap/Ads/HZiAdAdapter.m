@@ -132,10 +132,6 @@
     }
 }
 
-- (BOOL)isVideoOnlyNetwork {
-    return NO;
-}
-
 - (void)adWasDismissed {
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];

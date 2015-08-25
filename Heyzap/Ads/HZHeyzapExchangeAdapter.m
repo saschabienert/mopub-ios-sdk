@@ -81,10 +81,6 @@
     return HZCreativeTypeStatic | HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (BOOL)isVideoOnlyNetwork {
-    return NO;
-}
-
 - (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
     if([self hasAdForCreativeType:creativeType]){

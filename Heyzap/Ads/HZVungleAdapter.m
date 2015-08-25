@@ -89,10 +89,6 @@
     return HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (BOOL)isVideoOnlyNetwork {
-    return YES;
-}
-
 - (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
