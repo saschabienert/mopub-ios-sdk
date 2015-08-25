@@ -25,6 +25,7 @@
 @implementation HZFBBannerAdapter
 
 - (instancetype)initWithAdUnitId:(NSString *)adUnitId options:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter {
+    HZAssert(adUnitId, @"Need a Banner Placement ID by this point");
     self = [super init];
     if (self) {
         self.parentAdapter = parentAdapter;
