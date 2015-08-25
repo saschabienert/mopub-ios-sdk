@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HZTestActivityViewController.h"
 
 @class HZBaseAdapter;
 @class HZMediationPersistentConfig;
@@ -16,8 +17,9 @@
  */
 @interface HZTestActivityTableViewCell : UITableViewCell
 
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier persistentConfig:(HZMediationPersistentConfig *)config;
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier persistentConfig:(HZMediationPersistentConfig *)config tableViewController:(HZTestActivityViewController *)tableViewController;
 
 - (void)configureWithNetwork:(HZBaseAdapter *)adapter integratedSuccessfully:(BOOL)wasIntegratedSuccesfully;
 
+- (void) updateNetworkEnableSwitch;
 @end

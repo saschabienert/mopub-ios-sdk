@@ -44,7 +44,7 @@
 #import "HZDevice.h"
 #import "HZAbstractHeyzapAdapter.h"
 #import "HZMediationPersistentConfig.h"
-
+#import "HZUtils.h"
 #import "HZTestActivityTableViewCell.h"
 
 @interface HZTestActivityViewController()
@@ -104,6 +104,11 @@
     UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(hide)];
     [self.navigationItem setLeftBarButtonItem:button animated:NO];
     
+    UISwitch *allNeworksEnableSwitch = [[UISwitch alloc] init];
+    allNeworksEnableSwitch.on = YES;
+    [allNeworksEnableSwitch addTarget:self action:@selector(allNetworksEnableSwitchToggled:) forControlEvents:UIControlEventValueChanged];
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc]initWithCustomView:allNeworksEnableSwitch]];
+    
     self.navigationController.navigationBar.titleTextAttributes = nil;
     
     self.view.backgroundColor = [UIColor whiteColor];
@@ -135,12 +140,12 @@
 }
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    HZBaseAdapter *network = [self.allNetworks objectAtIndex:indexPath.row];
+    HZBaseAdapter *network = (HZBaseAdapter *)[[self.allNetworks objectAtIndex:indexPath.row] sharedInstance];
     
     HZTestActivityTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
     
     if (cell == nil){
-        cell = [[HZTestActivityTableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"reuseIdentifier" persistentConfig:[HeyzapMediation sharedInstance].persistentConfig];
+        cell = [[HZTestActivityTableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"reuseIdentifier" persistentConfig:[HeyzapMediation sharedInstance].persistentConfig tableViewController:self];
     }
     
     [cell configureWithNetwork:network integratedSuccessfully:[self.integrationStatuses[indexPath.row] boolValue]];
@@ -320,6 +325,39 @@
         
         HZDLog(@"Error from /info: %@", error.localizedDescription);
     }];
+}
+     
+#pragma mark - Network enable/disable
+     
+- (BOOL) showNetworkEnableSwitch {
+    return [[HZDevice currentDevice] isHeyzapTestApp];
+}
+
+- (void)allNetworksEnableSwitchToggled:(UISwitch *)theSwitch {
+    NSSet * allNetworkNames = [[NSMutableSet alloc]initWithArray:hzMap(self.allNetworks, ^NSString *(Class klass){return [((HZBaseAdapter *)[klass sharedInstance]) name];})];
+    if(theSwitch.isOn) {
+        [[HeyzapMediation sharedInstance].persistentConfig removeDisabledNetworks:allNetworkNames];
+    } else {
+        [[HeyzapMediation sharedInstance].persistentConfig addDisabledNetworks:allNetworkNames];
+    }
+    
+    [self enumerateCellsUsingBlock:^(HZTestActivityTableViewCell *cell) {
+        [cell updateNetworkEnableSwitch];
+    }];
+}
+
+- (void) enumerateCellsUsingBlock:(void (^)(HZTestActivityTableViewCell *cell))cellBlock {
+    if (!cellBlock) return;
+    
+    for (int section = 0; section < [self.tableView numberOfSections]; section++) {
+        for (int row = 0; row < [self.tableView numberOfRowsInSection:section]; row++) {
+            NSIndexPath *cellPath = [NSIndexPath indexPathForRow:row inSection:section];
+            HZTestActivityTableViewCell *cell =  (HZTestActivityTableViewCell *)[self.tableView cellForRowAtIndexPath:cellPath];
+            if (cellBlock != nil) {
+                cellBlock(cell);
+            }
+        }
+    }
 }
 
 @end

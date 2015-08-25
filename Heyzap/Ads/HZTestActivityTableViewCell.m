@@ -16,32 +16,35 @@
 @property (nonatomic, strong) HZMediationPersistentConfig *config;
 @property (nonatomic, strong) UISwitch *networkOnSwitch;
 @property (nonatomic, weak) HZBaseAdapter *adapter;
-
+@property (nonatomic, weak) HZTestActivityViewController *tableViewController;
 @end
 
 @implementation HZTestActivityTableViewCell
 
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier persistentConfig:(HZMediationPersistentConfig *)config {
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier persistentConfig:(HZMediationPersistentConfig *)config tableViewController:(HZTestActivityViewController *)tableViewController{
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     HZParameterAssert(config);
     if (self) {
         _config = config;
+        _tableViewController = tableViewController;
         
         self.networkOnSwitch = [[UISwitch alloc] init];
-        [self.networkOnSwitch addTarget:self action:@selector(switchFlipped:) forControlEvents:UIControlEventValueChanged];
+        [self.networkOnSwitch addTarget:self action:@selector(networkEnableSwitchFlipped:) forControlEvents:UIControlEventValueChanged];
         
         if ([self showNetworkSwitch]) {
+            //self.networkOnSwitch
             self.accessoryView = self.networkOnSwitch;
         }
-        
-        
-        
     }
     return self;
 }
 
 - (BOOL)showNetworkSwitch {
-    return [[HZDevice currentDevice] isHeyzapTestApp];
+    if (self.tableViewController) {
+        return [self.tableViewController showNetworkEnableSwitch];
+    }
+    
+    return NO;
 }
 
 #pragma mark - cellForRowAtIndexPath: configuration
@@ -72,12 +75,16 @@
 
 #pragma mark - Target-Action
 
-- (void)switchFlipped:(UISwitch *)theSwitch {
+- (void)networkEnableSwitchFlipped:(UISwitch *)theSwitch {
     if (theSwitch.isOn) {
         [self.config removeDisabledNetwork:[self.adapter name]];
     } else {
         [self.config addDisabledNetwork:[self.adapter name]];
     }
+}
+
+- (void) updateNetworkEnableSwitch {
+    self.networkOnSwitch.on = [self.config isNetworkEnabled:[self.adapter name]];
 }
 
 @end

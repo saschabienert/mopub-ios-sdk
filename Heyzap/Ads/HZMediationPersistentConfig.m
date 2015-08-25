@@ -15,7 +15,7 @@
 @property (nonatomic, readonly) HZCachingService *cachingService;
 @property (nonatomic) NSMutableSet *disabledNetworks;
 @property (nonatomic, readonly) BOOL isTestApp;
-
+@property (nonatomic) NSUInteger writeVersion;
 @end
 
 @implementation HZMediationPersistentConfig
@@ -26,6 +26,7 @@
     if (self) {
         _cachingService = cachingService;
         _isTestApp = isTestApp;
+        _writeVersion = 0;
     }
     return self;
 }
@@ -47,12 +48,33 @@
     [self storeNetworksToDisk];
 }
 
+- (void)addDisabledNetworks:(NSSet *)disabledNetworks {
+    if (!self.isTestApp) {
+        return;
+    }
+    
+    [self.disabledNetworks unionSet:disabledNetworks];
+    [self storeNetworksToDisk];
+}
+
 - (void)removeDisabledNetwork:(NSString *)networkName {
     if (!self.isTestApp) {
         return;
     }
     
     [self.disabledNetworks removeObject:networkName];
+    [self storeNetworksToDisk];
+}
+
+- (void)removeDisabledNetworks:(NSSet *)networks {
+    if (!self.isTestApp) {
+        return;
+    }
+    
+    for(NSString * network in networks) {
+        [self.disabledNetworks removeObject:network];
+    }
+    
     [self storeNetworksToDisk];
 }
 
@@ -69,9 +91,14 @@
 }
 
 - (void)storeNetworksToDisk {
+    // async update should only proceed with write if it's the latest write to avoid overwriting a newer version of the file
+    NSUInteger const version = ++self.writeVersion;
     NSSet *disabledNetworksCopy = [self.disabledNetworks copy];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        [self.cachingService cacheRootObject:disabledNetworksCopy filename:[self disabledNetworksFilename]];
+        if(version == self.writeVersion) {
+            [self.cachingService cacheRootObject:disabledNetworksCopy filename:[self disabledNetworksFilename]];
+            NSLog(@"monroedebug: caching version %lu to disk: %@", version,disabledNetworksCopy);
+        }
     });
 }
 

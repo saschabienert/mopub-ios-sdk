@@ -30,8 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Support for disabling networks from the client
 
 - (void)addDisabledNetwork:(NSString *)disabledNetwork;
-
+- (void)addDisabledNetworks:(NSSet *)disabledNetworks;
 - (void)removeDisabledNetwork:(NSString *)networkName;
+- (void)removeDisabledNetworks:(NSSet *)networks;
 
 @end
 
