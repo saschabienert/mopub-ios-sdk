@@ -30,7 +30,7 @@
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZAdMobAdapter *proxy;
     static dispatch_once_t onceToken;

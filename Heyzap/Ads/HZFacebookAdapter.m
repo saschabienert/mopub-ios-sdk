@@ -45,7 +45,7 @@
                         ofClass:[NSString class]
                         dict:self.credentials];
     self.bannerPlacementID = [HZDictionaryUtils
-                              objectForKey:@"distributor_id"
+                              objectForKey:@"banner_placement_id"
                               ofClass:[NSString class]
                               dict:self.credentials];
 }

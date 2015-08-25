@@ -65,7 +65,7 @@
 
 
 
-+ (instancetype)sharedInstance;
++ (instancetype)sharedAdapter;
 
 - (void)prefetchForCreativeType:(HZCreativeType)creativeType;
 

@@ -26,7 +26,7 @@
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZUnityAdsAdapter *proxy;
     static dispatch_once_t onceToken;

@@ -437,6 +437,10 @@ NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKT
     return [self interfaceIdiom] == UIUserInterfaceIdiomPhone;
 }
 
++ (BOOL)canCheckURLSchemes {
+    return [self hzSystemVersionIsLessThan:@"9.0"];
+}
+
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self.notificationObserver];

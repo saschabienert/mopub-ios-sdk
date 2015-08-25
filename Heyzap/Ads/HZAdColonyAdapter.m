@@ -27,7 +27,7 @@
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZAdColonyAdapter *proxy;
     static dispatch_once_t onceToken;
