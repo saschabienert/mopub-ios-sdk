@@ -140,7 +140,7 @@
 }
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    HZBaseAdapter *network = (HZBaseAdapter *)[[self.allNetworks objectAtIndex:indexPath.row] sharedInstance];
+    HZBaseAdapter *network = (HZBaseAdapter *)[[self.allNetworks objectAtIndex:indexPath.row] sharedAdapter];
     
     HZTestActivityTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
     
@@ -163,7 +163,7 @@
         return;
     }
     
-    HZBaseAdapter *network = (HZBaseAdapter *)[networkClass sharedInstance];
+    HZBaseAdapter *network = (HZBaseAdapter *)[networkClass sharedAdapter];
     HZDLog(@"Current network adapter: %@", network);
     
     HZTestActivityNetworkViewController *networkVC = [[HZTestActivityNetworkViewController alloc] initWithNetwork:network
@@ -226,7 +226,7 @@
     // check available
     NSMutableSet *availableNetworks = [NSMutableSet set];
     for (HZBaseAdapter *adapter in [HeyzapMediation availableAdaptersWithHeyzap:YES]) {
-        [availableNetworks addObject:[[adapter class] sharedInstance]];
+        [availableNetworks addObject:[[adapter class] sharedAdapter]];
     }
     self.availableNetworks = availableNetworks;
     self.chooseLabel.text = @"Loading...";
@@ -272,7 +272,7 @@
                 available = YES;
             }
             
-            HZBaseAdapter *adapter = (HZBaseAdapter *)[mediatorClass sharedInstance];
+            HZBaseAdapter *adapter = (HZBaseAdapter *)[mediatorClass sharedAdapter];
             
             // check enabled
             if([mediator[@"enabled"] boolValue]){
@@ -334,7 +334,7 @@
 }
 
 - (void)allNetworksEnableSwitchToggled:(UISwitch *)theSwitch {
-    NSSet * allNetworkNames = [[NSMutableSet alloc]initWithArray:hzMap(self.allNetworks, ^NSString *(Class klass){return [((HZBaseAdapter *)[klass sharedInstance]) name];})];
+    NSSet * allNetworkNames = [[NSMutableSet alloc]initWithArray:hzMap(self.allNetworks, ^NSString *(Class klass){return [[klass sharedAdapter] name];})];
     if(theSwitch.isOn) {
         [[HeyzapMediation sharedInstance].persistentConfig removeDisabledNetworks:allNetworkNames];
     } else {

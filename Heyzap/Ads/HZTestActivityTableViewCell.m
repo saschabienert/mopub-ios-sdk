@@ -32,7 +32,6 @@
         [self.networkOnSwitch addTarget:self action:@selector(networkEnableSwitchFlipped:) forControlEvents:UIControlEventValueChanged];
         
         if ([self showNetworkSwitch]) {
-            //self.networkOnSwitch
             self.accessoryView = self.networkOnSwitch;
         }
     }
@@ -57,7 +56,7 @@
     self.detailTextLabel.text = wasIntegratedSuccessfully ? @"☑︎" : @"☒";
     self.detailTextLabel.textColor = wasIntegratedSuccessfully ? [UIColor greenColor] : [UIColor redColor];
     
-    self.networkOnSwitch.on = [self.config isNetworkEnabled:[adapter name]];
+    [self updateNetworkEnableSwitch];
 }
 
 #pragma mark - Layout

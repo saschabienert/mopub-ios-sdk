@@ -209,7 +209,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
     NSArray *sortedAdapters = [[filteredAdapters allObjects] sortedArrayUsingComparator:^
         NSComparisonResult(Class klass1, Class klass2) {
-        return [[((HZBaseAdapter *)[klass1 sharedInstance]) name] compare:[((HZBaseAdapter *)[klass2 sharedInstance]) name]];
+        return [[[klass1 sharedAdapter] name] compare:[[klass2 sharedAdapter] name]];
     }];
 
     return sortedAdapters;

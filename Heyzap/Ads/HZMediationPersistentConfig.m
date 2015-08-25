@@ -97,7 +97,6 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         if(version == self.writeVersion) {
             [self.cachingService cacheRootObject:disabledNetworksCopy filename:[self disabledNetworksFilename]];
-            NSLog(@"monroedebug: caching version %lu to disk: %@", version,disabledNetworksCopy);
         }
     });
 }
