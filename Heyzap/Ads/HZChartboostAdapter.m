@@ -136,10 +136,6 @@ NSString * const kHZCBLocationDefault = @"Default";
     return HZCreativeTypeStatic | HZCreativeTypeIncentivized;
 }
 
-- (BOOL)isVideoOnlyNetwork {
-    return NO;
-}
-
 #pragma mark - Chartboost Delegate
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol

@@ -107,10 +107,6 @@
     return HZCreativeTypeStatic | HZCreativeTypeIncentivized;
 }
 
-- (BOOL)isVideoOnlyNetwork {
-    return NO;
-}
-
 // To support incentivized, I will need to have separate objects for the incentivized/interstial delegates because they received the same selectors
 - (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {

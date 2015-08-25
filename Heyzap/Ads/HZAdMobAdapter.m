@@ -115,10 +115,6 @@
     }
 }
 
-- (BOOL)isVideoOnlyNetwork {
-    return NO;
-}
-
 - (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {

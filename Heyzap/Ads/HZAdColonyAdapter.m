@@ -100,10 +100,6 @@
     return HZCreativeTypeVideo | HZCreativeTypeIncentivized;
 }
 
-- (BOOL)isVideoOnlyNetwork {
-    return YES;
-}
-
 - (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
     if(![self supportsCreativeType:creativeType]) return NO;

@@ -84,8 +84,6 @@
 
 - (HZCreativeType)supportedCreativeTypes;
 
-- (BOOL)isVideoOnlyNetwork;
-
 + (NSString *)name;
 
 + (NSString *)humanizedName;

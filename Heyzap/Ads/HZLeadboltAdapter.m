@@ -100,11 +100,6 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     return HZCreativeTypeStatic | HZCreativeTypeIncentivized;
 }
 
-- (BOOL)isVideoOnlyNetwork
-{
-    return NO;
-}
-
 - (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {

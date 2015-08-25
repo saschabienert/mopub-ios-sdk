@@ -93,10 +93,6 @@
     }
 }
 
-- (BOOL)isVideoOnlyNetwork {
-    return NO;
-}
-
 - (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType {
     return creativeType == HZCreativeTypeStatic && self.interstitialAd && self.interstitialAd.isAdValid;
 }
