@@ -76,7 +76,7 @@
     return YES;
 }
 
-// This method ignores the ad tag in `options.tag` - we fetch regardless of tag. the tag is checked before sending the success callback
+// This method will fetch regardless of the ad tag in `options`. Instead, the tag is checked after fetching & before sending the success callback.
 - (void)fetchCreativeType:(HZCreativeType)creativeType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork notifyDelegate:(BOOL)notifyDelegate segmentationController:(HZSegmentationController *)segmentationController {
     HZParameterAssert(showOptions);
     const BOOL logFilters = YES;
