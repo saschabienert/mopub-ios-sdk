@@ -670,6 +670,7 @@ const CGFloat kLeftMargin = 10;
     [self.view endEditing:YES];
     
     HZBannerAdOptions *opts = [[HZBannerAdOptions alloc] init];
+    opts.tag = [self adTagText];
     opts.presentingViewController = self;
     if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
         opts.admobBannerSize = HZAdMobBannerSizeFlexibleWidthLandscape;
@@ -686,6 +687,7 @@ const CGFloat kLeftMargin = 10;
          NSString *errorMessage = @"Failed to fetch banner";
          if (error.localizedDescription) {
              errorMessage = [errorMessage stringByAppendingFormat:@"; error was: %@",error.localizedDescription];
+             [self logToConsole:errorMessage];
          }
          self.showBannerButton.enabled = YES;
      }];
@@ -824,9 +826,11 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void) clearImpressionHistory {
-    BOOL deleteSuccess = [[[HeyzapMediation sharedInstance] segmentationController] clearImpressionHistory] ;
-    [self logToConsole:[NSString stringWithFormat:@"Impression history delete was %@successful.", (deleteSuccess ? @"" : @"NOT ")]];
-    [self changeColorOfShowButtonAfterSeconds:0.5];
+    [[[HeyzapMediation sharedInstance] segmentationController] clearImpressionHistoryWithCompletion:^(BOOL successful){
+        [self logToConsole:[NSString stringWithFormat:@"Impression history delete was %@successful.", (successful ? @"" : @"NOT ")]];
+        [self changeColorOfShowButtonAfterSeconds:0.5];
+    }] ;
+    
 }
 
 #pragma mark - Open

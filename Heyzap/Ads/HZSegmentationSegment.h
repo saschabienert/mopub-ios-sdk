@@ -27,11 +27,6 @@
 - (BOOL) limitsImpressionWithCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag;
 
 /**
- *  Returns YES if an impression of any creativeType and tag could be allowed by a call to `limitsImpressionWithCreativeType:auctionType:tag:` right now, or NO if no combination of creativeType and tag would ever get past this filter.
- */
-- (BOOL) isAnAdImpressionPossibleRightNowForAuctionType:(HZAuctionType)auctionType;
-
-/**
  *  Call this method with every impression. The method returns YES if the impression matches the segment's criteria, NO otherwise. If the impression is a match, the segement will add the impression to it's impressionHistory.
  */
 - (BOOL) recordImpressionWithCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag date:(nonnull NSDate *)date;

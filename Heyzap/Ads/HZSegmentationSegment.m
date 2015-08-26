@@ -101,28 +101,6 @@
     return self.impressionCount >= self.impressionLimit;
 }
 
-- (BOOL) isAnAdImpressionPossibleRightNowForAuctionType:(HZAuctionType)auctionType {
-    if(auctionType != self.auctionType) {
-        // an ad can succeed since we aren't filtering for this auctionType
-        return YES;
-    }
-    if ([self isFilteringForTags]) {
-        // some ads can succeed if only some tags are filtered
-        return YES;
-    }
-    if (!self.adsEnabled) {
-        // ads are not enabled for any tag under this segment
-        return NO;
-    }
-    if (!self.creativeType == HZCreativeTypeUnknown) {
-        // some ads can succeed if creativeType is specified
-        return YES;
-    }
-    
-    return self.impressionCount < self.impressionLimit;
-}
-
-
 #pragma mark - Utilities
 
 - (NSUInteger) impressionCount {

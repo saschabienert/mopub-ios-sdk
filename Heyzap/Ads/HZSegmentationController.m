@@ -36,7 +36,7 @@
     return self;
 }
 
-- (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary {
+- (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary completion:(nullable void (^)(BOOL finished))completion{
     NSMutableArray * loadedSegments = [[NSMutableArray alloc] init];
     
     NSArray * segmentsResponse = [HZDictionaryUtils objectForKey:@"segments" ofClass:[NSArray class] default:@[] dict:startDictionary];
@@ -94,14 +94,17 @@
     self.segments = [NSSet setWithArray:loadedSegments];
     
     // send segments off to retrieve their persisted history
-    [self loadSegmentsFromImpressionHistory];
+    [self loadSegmentsFromImpressionHistoryWithCompletion:completion];
 }
 
-- (void) loadSegmentsFromImpressionHistory {
+- (void) loadSegmentsFromImpressionHistoryWithCompletion:(nullable void (^)(BOOL successful))completion {
     dispatch_async(self.impressionDbReadQueue, ^{
         sqlite3 *db = [[HZImpressionHistory sharedInstance] safeImpressionTableDatabaseConnection];
         if(!db) {
             HZELog(@"HZSegmentationController failing to load db connection to read segment history.");
+            dispatch_async(dispatch_get_main_queue() , ^{
+                completion(NO);
+            });
             return;
         }
         
@@ -111,39 +114,38 @@
         
         sqlite3_close(db);
         HZDLog(@"HZSegmentationController: Active segments for this user: %@", self.segments);
+        if (completion) {
+            dispatch_async(dispatch_get_main_queue() , ^{
+                completion(YES);
+            });
+        }
     });
 }
 
 
 #pragma mark - Query
 
-- (BOOL) isAdapterCompletelyDisabledRightNow:(HZBaseAdapter *)adapter {
-    return [self areAdsCompletelyDisabledForAuctionType:[HZSegmentationController auctionTypeForAdapter:adapter]];
-}
-- (BOOL) areAdsCompletelyDisabledForAuctionType:(HZAuctionType)auctionType {
-    __block BOOL areAdsCompletelyDisabled = NO;
-    [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
-        if (![segment isAnAdImpressionPossibleRightNowForAuctionType:auctionType]) {
-            *stop = YES;
-            areAdsCompletelyDisabled = YES;
-        }
-    }];
-    return areAdsCompletelyDisabled;
+- (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)bannerAdapter tag:(nonnull NSString *)adTag {
+    return [bannerAdapter isAvailable] && [self allowBannerAdapter:bannerAdapter toShowAdForTag:adTag];
 }
 
-- (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)adapter tag:(nonnull NSString *)adTag {
-    return [adapter isAvailable] && [self isAdAllowedForCreativeType:HZCreativeTypeBanner auctionType:[HZSegmentationController auctionTypeForAdapter:adapter.parentAdapter] tag:adTag];
+- (BOOL) allowBannerAdapter:(nonnull HZBannerAdapter *)bannerAdapter toShowAdForTag:(nonnull NSString *)adTag {
+    return [self isAdAllowedForCreativeType:HZCreativeTypeBanner auctionType:[HZSegmentationController auctionTypeForAdapter:bannerAdapter.parentAdapter] tag:adTag];
 }
 
 - (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter forCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag {
-    return [adapter hasAdForCreativeType:creativeType] && [self isAdAllowedForCreativeType:creativeType auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] tag:adTag];
+    return [adapter hasAdForCreativeType:creativeType] && [self allowAdapter:adapter toShowAdForCreativeType:creativeType tag:adTag];
+}
+
+- (BOOL) allowAdapter:(nonnull HZBaseAdapter *)adapter toShowAdForCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag {
+    return [self isAdAllowedForCreativeType:creativeType auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] tag:adTag];
 }
 
 - (BOOL) isAdAllowedForCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)adTag {
     __block BOOL didGetLimited = NO;
     [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
         if([segment limitsImpressionWithCreativeType:creativeType auctionType:auctionType tag:adTag]) {
-            HZDLog(@"HZSegmentation: ad not allowed for type: %@, auctionType: %@, tag: %@. First segment limiting impression: %@", NSStringFromCreativeType(creativeType), NSStringFromHZAuctionType(auctionType), adTag, segment);
+            //HZDLog(@"HZSegmentation: ad not allowed for type: %@, auctionType: %@, tag: %@. First segment limiting impression: %@", NSStringFromCreativeType(creativeType), NSStringFromHZAuctionType(auctionType), adTag, segment);
             didGetLimited = YES;
             *stop = YES;
         }
@@ -167,13 +169,13 @@
 
 #pragma mark - Utilities
 
-- (BOOL) clearImpressionHistory {
+- (void) clearImpressionHistoryWithCompletion:(nullable void (^)(BOOL successful))completion {
     if (![[HZImpressionHistory sharedInstance] deleteHistory]) {
-        return NO;
+        if(completion) completion(NO);
+        return;
     }
     
-    [self loadSegmentsFromImpressionHistory];
-    return YES;
+    [self loadSegmentsFromImpressionHistoryWithCompletion:completion];
 }
 
 + (HZAuctionType) auctionTypeForAdapter:(nonnull HZBaseAdapter *)adapter {

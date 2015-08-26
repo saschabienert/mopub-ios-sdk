@@ -19,6 +19,8 @@
 #import "HZAdMobAdapter.h"
 #import "HZFacebookAdapter.h"
 
+#import "HZAdModel.h"
+
 @interface HZBannerAdOptions()
 
 NSValue *hzAdMobBannerSizeValue(HZAdMobBannerSize size);
@@ -36,6 +38,7 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
 // TODO: Remove this after we remove HZFacebookBannerSize320x50.
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @implementation HZBannerAdOptions
+@synthesize tag = _tag;
 
 - (NSString *)tag {
     if (_tag == nil) {
@@ -43,6 +46,10 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
     }
     
     return _tag;
+}
+
+- (void) setTag:(NSString *)tag {
+    _tag = [HZAdModel normalizeTag:tag];
 }
 
 - (instancetype)init {
