@@ -166,7 +166,7 @@
         return;
     }
     
-    HZBaseAdapter *network = (HZBaseAdapter *)[networkClass sharedAdapter];
+    HZBaseAdapter *network = [networkClass sharedAdapter];
     HZDLog(@"Current network adapter: %@", network);
     
     HZTestActivityNetworkViewController *networkVC = [[HZTestActivityNetworkViewController alloc] initWithNetwork:network
@@ -279,7 +279,7 @@
                 available = YES;
             }
             
-            HZBaseAdapter *adapter = (HZBaseAdapter *)[mediatorClass sharedAdapter];
+            HZBaseAdapter *adapter = [mediatorClass sharedAdapter];
             
             // check enabled
             if([mediator[@"enabled"] boolValue]){

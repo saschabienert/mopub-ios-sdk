@@ -52,7 +52,7 @@
 @property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
 
 /**
- *  The credentials should be set on adapters immediately after calling sharedInstance. Subclasses should ignore attempts to call this method if their credentials have already been set.
+ *  The credentials should be set on adapters immediately after calling sharedAdapter. Subclasses should ignore attempts to call this method if their credentials have already been set.
  */
 @property (nonatomic, strong) NSDictionary *credentials;
 
