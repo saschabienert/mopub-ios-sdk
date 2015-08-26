@@ -70,7 +70,7 @@
         
         // now that the non-auctiontype rules are pulled out, process each auctiontype rule and create segments with them
         for (NSDictionary *auctionTypeRule in auctionTypeRules) {
-            HZAuctionType auctionType = [self auctionTypeFromAuctionTypeString:[HZDictionaryUtils objectForKey:@"type" ofClass:[NSString class] default:@"" dict:auctionTypeRule]];
+            HZAuctionType auctionType = [HZSegmentationController auctionTypeFromAuctionTypeString:[HZDictionaryUtils objectForKey:@"type" ofClass:[NSString class] default:@"" dict:auctionTypeRule]];
             NSDictionary *options = [HZDictionaryUtils objectForKey:@"options" ofClass:[NSDictionary class] default:@{} dict:auctionTypeRule];
             
             BOOL adsEnabled = [[HZDictionaryUtils objectForKey:@"ads_enabled" ofClass:[NSNumber class] default:@0 dict:options] boolValue];
@@ -117,6 +117,20 @@
 
 #pragma mark - Query
 
+- (BOOL) isAdapterCompletelyDisabledRightNow:(HZBaseAdapter *)adapter {
+    return [self areAdsCompletelyDisabledForAuctionType:[HZSegmentationController auctionTypeForAdapter:adapter]];
+}
+- (BOOL) areAdsCompletelyDisabledForAuctionType:(HZAuctionType)auctionType {
+    __block BOOL areAdsCompletelyDisabled = NO;
+    [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
+        if (![segment isAnAdImpressionPossibleRightNowForAuctionType:auctionType]) {
+            *stop = YES;
+            areAdsCompletelyDisabled = YES;
+        }
+    }];
+    return areAdsCompletelyDisabled;
+}
+
 - (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)adapter tag:(nonnull NSString *)adTag {
     return [adapter isAvailable] && [self isAdAllowedForCreativeType:HZCreativeTypeBanner auctionType:[HZSegmentationController auctionTypeForAdapter:adapter.parentAdapter] tag:adTag];
 }
@@ -153,10 +167,6 @@
 
 #pragma mark - Utilities
 
-+ (HZAuctionType) auctionTypeForAdapter:(nonnull HZBaseAdapter *)adapter {
-    return [adapter class] == [HZCrossPromoAdapter class] ? HZAuctionTypeCrossPromo : HZAuctionTypeMonetization;
-}
-
 - (BOOL) clearImpressionHistory {
     if (![[HZImpressionHistory sharedInstance] deleteHistory]) {
         return NO;
@@ -166,7 +176,11 @@
     return YES;
 }
 
-- (HZAuctionType) auctionTypeFromAuctionTypeString:(NSString *)auctionTypeString {
++ (HZAuctionType) auctionTypeForAdapter:(nonnull HZBaseAdapter *)adapter {
+    return [adapter class] == [HZCrossPromoAdapter class] ? HZAuctionTypeCrossPromo : HZAuctionTypeMonetization;
+}
+
++ (HZAuctionType) auctionTypeFromAuctionTypeString:(NSString *)auctionTypeString {
     if ([auctionTypeString isEqualToString:AUCTIONTYPE_STRING_CROSSPROMOFREQUENCY]) {
         return HZAuctionTypeCrossPromo;
     } else if([auctionTypeString isEqualToString:AUCTIONTYPE_STRING_FREQUENCY]) {

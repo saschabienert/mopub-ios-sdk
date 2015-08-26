@@ -18,6 +18,11 @@
 - (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary;
 
 /**
+ *  Returns YES if current segmentation rules make it pointless to fetch any ads at this time from the given adapter, or NO if it's possible for some ads to get through the current segmentation filters from the given adapter.
+ */
+- (BOOL) isAdapterCompletelyDisabledRightNow:(nonnull HZBaseAdapter *)adapter;
+
+/**
  *  Returns YES if the given adapter both has an ad and is allowed to show one based on the current segmentation rules, NO otherwise.
  */
 - (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter forCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag;

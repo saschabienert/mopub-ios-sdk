@@ -11,6 +11,7 @@
 
 @class HZShowOptions;
 @class HZBaseAdapter;
+@class HZSegmentationController;
 @protocol HZMediationPersistentConfigReadonly;
 
 @protocol HZMediationLoadManagerDelegate <NSObject>
@@ -27,6 +28,6 @@
 - (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig error:(NSError **)error;
 - (BOOL) refreshWithLoadData:(NSDictionary *)loadData error:(NSError **)error;
 
-- (void)fetchCreativeType:(HZCreativeType)creativeType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork notifyDelegate:(BOOL)notifyDelegate;
+- (void)fetchCreativeType:(HZCreativeType)creativeType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork notifyDelegate:(BOOL)notifyDelegate segmentationController:(HZSegmentationController *)segmentationController;
 
 @end

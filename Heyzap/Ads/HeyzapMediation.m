@@ -257,7 +257,7 @@
     BOOL alreadyNotifyingDelegate = NO; // only notify delegate once per fetch call regardless of #/creative types to be fetched
     for (NSNumber * creativeTypeToFetch in hzCreativeTypesPossibleForAdType(adType)) {
         HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeToFetch);
-        [self.loadManager fetchCreativeType:creativeType showOptions:options optionalForcedNetwork:optionalForcedNetwork notifyDelegate:(notifyDelegate && !alreadyNotifyingDelegate)];
+        [self.loadManager fetchCreativeType:creativeType showOptions:options optionalForcedNetwork:optionalForcedNetwork notifyDelegate:(notifyDelegate && !alreadyNotifyingDelegate) segmentationController:self.segmentationController];
         alreadyNotifyingDelegate = YES;
     }
     
