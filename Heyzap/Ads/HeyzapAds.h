@@ -113,7 +113,6 @@ extern NSString * const HZNetworkCallbackAudioStarting;
 extern NSString * const HZNetworkCallbackAudioFinished;
 extern NSString * const HZNetworkCallbackLeaveApplication;
 
-// Since banner ads are instantiated on a per-instance basis, callbacks from banners should be gotten by instantiating a banner from 3rd party networks yourself.
 extern NSString * const HZNetworkCallbackBannerLoaded DEPRECATED_ATTRIBUTE;
 extern NSString * const HZNetworkCallbackBannerClick DEPRECATED_ATTRIBUTE;
 extern NSString * const HZNetworkCallbackBannerHide DEPRECATED_ATTRIBUTE;
