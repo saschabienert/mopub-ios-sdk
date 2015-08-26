@@ -84,4 +84,9 @@
 
 - (void)showTestActivity;
 
+/**
+ *  Used to disable Segmentation for the mediation test activity
+ */
+- (void)enableSegmentation:(BOOL)enabled;
+
 @end

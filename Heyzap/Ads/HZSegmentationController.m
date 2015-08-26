@@ -31,12 +31,18 @@
     if (self) {
         _segments = [[NSMutableSet alloc] init];
         _impressionDbReadQueue = dispatch_queue_create("com.heyzap.sdk.mediation.segmentation.impressiondbread", DISPATCH_QUEUE_CONCURRENT);
+        _enabled = YES;
     }
     
     return self;
 }
 
-- (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary completion:(nullable void (^)(BOOL finished))completion{
+- (void) setEnabled:(BOOL)enabled {
+    _enabled = enabled;
+    HZDLog(@"HZSegmentationController %@", enabled ? @"enabled." : @"disabled!");
+}
+
+- (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary completion:(nullable void (^)(BOOL finished))completion {
     NSMutableArray * loadedSegments = [[NSMutableArray alloc] init];
     
     NSArray * segmentsResponse = [HZDictionaryUtils objectForKey:@"segments" ofClass:[NSArray class] default:@[] dict:startDictionary];
@@ -145,6 +151,10 @@
 }
 
 - (BOOL) isAdAllowedForCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)adTag {
+    if (!self.enabled) {
+        return YES;
+    }
+    
     __block BOOL didGetLimited = NO;
     [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
         if([segment limitsImpressionWithCreativeType:creativeType auctionType:auctionType tag:adTag]) {
@@ -161,6 +171,10 @@
 #pragma mark - Report
 
 - (void) recordImpressionWithCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)tag adapter:(nonnull HZBaseAdapter *)adapter {
+    if (!self.enabled) {
+        return;
+    }
+    
     NSDate *date = [NSDate date];
     for(HZSegmentationSegment *segment in self.segments) {
         [segment recordImpressionWithCreativeType:creativeType auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] tag:tag date:date];

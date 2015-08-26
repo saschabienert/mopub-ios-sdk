@@ -51,6 +51,7 @@
     const HZAuctionType auctionType = [self auctionType];
     switch (creativeType) {
         case HZCreativeTypeStatic: {
+            // TODO: refactor heyzap network to respect creativeTypes. right now the below call will show videos and statics.
             [HZHeyzapInterstitialAd fetchForAuctionType:auctionType withCompletion:nil];
             break;
         }
