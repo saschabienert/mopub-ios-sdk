@@ -21,5 +21,4 @@
 
 - (void)configureWithNetwork:(HZBaseAdapter *)adapter integratedSuccessfully:(BOOL)wasIntegratedSuccesfully;
 
-- (void) updateNetworkEnableSwitch;
 @end

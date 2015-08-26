@@ -15,7 +15,7 @@
 @property (nonatomic, readonly) HZCachingService *cachingService;
 @property (nonatomic) NSMutableSet *disabledNetworks;
 @property (nonatomic, readonly) BOOL isTestApp;
-@property (nonatomic) NSUInteger writeVersion;
+@property (atomic) NSUInteger writeVersion;
 @end
 
 @implementation HZMediationPersistentConfig
@@ -75,10 +75,7 @@
         return;
     }
     
-    for(NSString * network in networks) {
-        [self.disabledNetworks removeObject:network];
-    }
-    
+    [self.disabledNetworks minusSet:networks];
     [self storeNetworksToDisk];
 }
 

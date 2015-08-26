@@ -347,30 +347,14 @@
 }
 
 - (void)allNetworksEnableSwitchToggled:(UISwitch *)theSwitch {
-    NSSet * allNetworkNames = [[NSMutableSet alloc]initWithArray:hzMap(self.allNetworks, ^NSString *(Class klass){return [[klass sharedAdapter] name];})];
+    NSSet * allNetworkNames = [[NSSet alloc]initWithArray:hzMap(self.allNetworks, ^NSString *(Class klass){return [[klass sharedAdapter] name];})];
     if(theSwitch.isOn) {
         [[HeyzapMediation sharedInstance].persistentConfig removeDisabledNetworks:allNetworkNames];
     } else {
         [[HeyzapMediation sharedInstance].persistentConfig addDisabledNetworks:allNetworkNames];
     }
     
-    [self enumerateCellsUsingBlock:^(HZTestActivityTableViewCell *cell) {
-        [cell updateNetworkEnableSwitch];
-    }];
-}
-
-- (void) enumerateCellsUsingBlock:(void (^)(HZTestActivityTableViewCell *cell))cellBlock {
-    if (!cellBlock) return;
-    
-    for (int section = 0; section < [self.tableView numberOfSections]; section++) {
-        for (int row = 0; row < [self.tableView numberOfRowsInSection:section]; row++) {
-            NSIndexPath *cellPath = [NSIndexPath indexPathForRow:row inSection:section];
-            HZTestActivityTableViewCell *cell =  (HZTestActivityTableViewCell *)[self.tableView cellForRowAtIndexPath:cellPath];
-            if (cellBlock != nil) {
-                cellBlock(cell);
-            }
-        }
-    }
+    [self.tableView reloadData];
 }
 
 @end

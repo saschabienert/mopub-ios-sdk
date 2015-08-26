@@ -39,11 +39,7 @@
 }
 
 - (BOOL)showNetworkSwitch {
-    if (self.tableViewController) {
-        return [self.tableViewController showNetworkEnableSwitch];
-    }
-    
-    return NO;
+    return [self.tableViewController showNetworkEnableSwitch];
 }
 
 #pragma mark - cellForRowAtIndexPath: configuration
