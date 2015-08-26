@@ -51,7 +51,7 @@ describe(@"HZSegmentationSegment", ^{
     });
     
     beforeEach(^{
-        segment = [[HZSegmentationSegment alloc] initWithTimeInterval:SEGMENT_TIME_INTERVAL forTags:nil creativeType:expectedCreativeType auctionType:expectedAuctionType limit:0 adsEnabled:YES];
+        segment = [[HZSegmentationSegment alloc] initWithTimeInterval:SEGMENT_TIME_INTERVAL forTags:nil creativeType:expectedCreativeType auctionType:expectedAuctionType limit:0 adsEnabled:YES name:@"test segment"];
         segment.impressionHistory = [[NSMutableOrderedSet alloc] init];
     });
     
@@ -68,7 +68,7 @@ describe(@"HZSegmentationSegment", ^{
     });
     
     it(@"Does not limit impressions if not loaded from the db yet, unless ads are disabled globally for the tag and auctionType or the limit is 0", ^{
-        segment = [[HZSegmentationSegment alloc] initWithTimeInterval:SEGMENT_TIME_INTERVAL forTags:nil creativeType:expectedCreativeType auctionType:expectedAuctionType limit:0 adsEnabled:YES];
+        segment = [[HZSegmentationSegment alloc] initWithTimeInterval:SEGMENT_TIME_INTERVAL forTags:nil creativeType:expectedCreativeType auctionType:expectedAuctionType limit:0 adsEnabled:YES name:@"tester"];
         
         BOOL limited = [segment limitsImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag];
         [[theValue(limited) should] equal:theValue(YES)]; // limit is 0, should still limit impression even though not loaded
