@@ -29,7 +29,7 @@
 
 #pragma mark - Init
 
-- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags creativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit adsEnabled:(BOOL)adsEnabled {
+- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags creativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit adsEnabled:(BOOL)adsEnabled name:(nullable NSString *)name {
     self = [super init];
     if (self) {
         _timeInterval = interval;
@@ -38,6 +38,7 @@
         _impressionLimit = limit;
         _adsEnabled = adsEnabled;
         _creativeType = creativeType;
+        _name = name;
     }
     
     return self;
@@ -101,7 +102,6 @@
     return self.impressionCount >= self.impressionLimit;
 }
 
-
 #pragma mark - Utilities
 
 - (NSUInteger) impressionCount {
@@ -153,7 +153,7 @@
 }
 
 - (NSString *) description {
-    return [NSString stringWithFormat:@"{[Segment] time interval: %f seconds, creativeType: %@, auctionType: %@, adTags: [%@], ads enabled: %@, impression count/limit: %lu/%lu, limit counting from: %@ %@}", self.timeInterval, (self.creativeType == HZCreativeTypeUnknown ? @"ALL" : NSStringFromCreativeType(self.creativeType)), NSStringFromHZAuctionType(self.auctionType), [self.adTags componentsJoinedByString:@", "], (self.adsEnabled ? @"yes" : @"no"), (unsigned long)self.impressionCount, (unsigned long)self.impressionLimit, [[self startTime] descriptionWithLocale:[NSLocale currentLocale]], (self.isLoaded ? @"" : @" -- Not yet loaded from db --")];
+    return [NSString stringWithFormat:@"{[Segment] time interval: %i seconds, creativeType: %@, auctionType: %@, adTags: [%@], ads enabled: %@, impression count/limit: %lu/%lu name: \"%@\" %@}", (int)self.timeInterval, (self.creativeType == HZCreativeTypeUnknown ? @"ALL" : NSStringFromCreativeType(self.creativeType)), NSStringFromHZAuctionType(self.auctionType), [self.adTags componentsJoinedByString:@", "], (self.adsEnabled ? @"yes" : @"no"), (unsigned long)self.impressionCount, (unsigned long)self.impressionLimit, self.name, (self.isLoaded ? @"" : @" -- Not yet loaded from db --")];
 }
 
 @end

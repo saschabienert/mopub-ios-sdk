@@ -58,7 +58,13 @@
     NSIndexSet *indexes = [adapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         for(NSNumber *allowedCreativeTypeNumber in allowedCreativeTypes) {
             HZCreativeType allowedCreativeType = hzCreativeTypeFromNSNumber(allowedCreativeTypeNumber);
-            if([adapter supportsCreativeType:allowedCreativeType] && [adapter hasCredentialsForCreativeType:allowedCreativeType] && [self.persistentConfig isNetworkEnabled:[adapter name]] && [segmentationController adapterHasAllowedAd:adapter forCreativeType:allowedCreativeType tag:tag]) return YES;
+            if([adapter supportsCreativeType:allowedCreativeType]
+               && [adapter hasCredentialsForCreativeType:allowedCreativeType]
+               && [self.persistentConfig isNetworkEnabled:[adapter name]]
+               && [segmentationController adapterHasAllowedAd:adapter forCreativeType:allowedCreativeType tag:tag]) {
+                
+                return YES;
+            }
         }
         
         return NO;
@@ -90,7 +96,11 @@
             for (NSNumber * creativeTypeNumber in creativeTypesAllowed) {
                 HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeNumber);
                 
-                if (hzCreativeTypeStringSetContainsCreativeType(creativeTypeStringsForNetwork, creativeType) && [adapterInstance supportsCreativeType:creativeType] && [adapterInstance hasCredentialsForCreativeType:creativeType] && [self.persistentConfig isNetworkEnabled:[adapterInstance name]]) {
+                if (hzCreativeTypeStringSetContainsCreativeType(creativeTypeStringsForNetwork, creativeType)
+                    && [adapterInstance supportsCreativeType:creativeType]
+                    && [adapterInstance hasCredentialsForCreativeType:creativeType]
+                    && [self.persistentConfig isNetworkEnabled:[adapterInstance name]]) {
+                    
                     [chosenNetworks addObject:[[HZMediationAdapterWithCreativeTypeScore alloc] initWithAdapter:adapterInstance creativeType:creativeType score:[adapterInstance latestMediationScoreForCreativeType:creativeType]]];
                 }
             }

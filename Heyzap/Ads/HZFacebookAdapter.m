@@ -77,17 +77,16 @@
     return HZCreativeTypeStatic | HZCreativeTypeBanner;
 }
 
-- (BOOL)hasCredentialsForAdType:(HZAdType)adType {
-    switch (adType) {
-        case HZAdTypeInterstitial: {
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
             return self.placementID != nil;
         }
-        case HZAdTypeBanner: {
+        case HZCreativeTypeBanner: {
             return self.bannerPlacementID != nil;
         }
             
-        case HZAdTypeIncentivized:
-        case HZAdTypeVideo: {
+        default: {
             return NO;
         }
     }

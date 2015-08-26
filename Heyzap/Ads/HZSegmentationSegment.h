@@ -12,6 +12,7 @@
 
 @interface HZSegmentationSegment : NSObject
 
+@property (nonatomic, readonly, nullable) NSString *name;
 @property (nonatomic, readonly) NSTimeInterval timeInterval; // number of seconds back the segment should look for impressions that fit the  parameters defined below
 @property (nonatomic, readonly, nullable) NSArray * adTags; // nil == applies to any tag
 @property (nonatomic, readonly) NSUInteger impressionLimit;
@@ -33,10 +34,10 @@
 
 /* Init */
 /**
- * Cretes a segment with the given time interval, ad type, list of tags it applies to, and impression limit.
+ * Cretes a segment with the given time interval, ad type, list of tags it applies to, impression limit, enabled switch, and name.
     @param tags If nil, the segment applies to all ad tags, otherwise, it only applies to the ad tags in this array
  */
-- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags creativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit  adsEnabled:(BOOL)adsEnabled;
+- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags creativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit adsEnabled:(BOOL)adsEnabled name:(nullable NSString *)name;
 
 - (void) loadWithDb:(nonnull sqlite3 *)db;
 

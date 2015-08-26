@@ -36,12 +36,13 @@
     return self;
 }
 
-- (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary {
+- (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary completion:(nullable void (^)(BOOL finished))completion{
     NSMutableArray * loadedSegments = [[NSMutableArray alloc] init];
     
     NSArray * segmentsResponse = [HZDictionaryUtils objectForKey:@"segments" ofClass:[NSArray class] default:@[] dict:startDictionary];
     for (NSDictionary *segmentDict in segmentsResponse) {
         NSArray *tags = nil;
+        NSString *name = [HZDictionaryUtils objectForKey:@"name" ofClass:[NSString class] default:nil dict:segmentDict];
         
         NSMutableArray *rules = [HZDictionaryUtils objectForKey:@"rules" ofClass:[NSArray class] default:@[] dict:segmentDict];
         rules = [rules mutableCopy];
@@ -70,7 +71,7 @@
         
         // now that the non-auctiontype rules are pulled out, process each auctiontype rule and create segments with them
         for (NSDictionary *auctionTypeRule in auctionTypeRules) {
-            HZAuctionType auctionType = [self auctionTypeFromAuctionTypeString:[HZDictionaryUtils objectForKey:@"type" ofClass:[NSString class] default:@"" dict:auctionTypeRule]];
+            HZAuctionType auctionType = [HZSegmentationController auctionTypeFromAuctionTypeString:[HZDictionaryUtils objectForKey:@"type" ofClass:[NSString class] default:@"" dict:auctionTypeRule]];
             NSDictionary *options = [HZDictionaryUtils objectForKey:@"options" ofClass:[NSDictionary class] default:@{} dict:auctionTypeRule];
             
             BOOL adsEnabled = [[HZDictionaryUtils objectForKey:@"ads_enabled" ofClass:[NSNumber class] default:@0 dict:options] boolValue];
@@ -82,11 +83,11 @@
                     
                     HZCreativeType creativeType = hzCreativeTypeFromNSNumber([HZDictionaryUtils objectForKey:@"ad_format" ofClass:[NSNumber class] default:@(HZCreativeTypeUnknown) dict:frequencyLimitOptions]);
                     
-                    [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:timeInterval forTags:tags creativeType:creativeType auctionType:auctionType limit:impressionLimit adsEnabled:adsEnabled]];
+                    [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:timeInterval forTags:tags creativeType:creativeType auctionType:auctionType limit:impressionLimit adsEnabled:adsEnabled name:name]];
                 }
             } else {
                 // ads disabled - the frequency limits don't matter / might not even exist. The only settings we care about for this segment are the auctionType & the tags to apply them to. We use a limit of 0 since ads are disabled. (It should apply to all creativeTypes over any time period)
-                [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:0 forTags:tags creativeType:HZCreativeTypeUnknown auctionType:auctionType limit:0 adsEnabled:NO]];
+                [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:0 forTags:tags creativeType:HZCreativeTypeUnknown auctionType:auctionType limit:0 adsEnabled:NO name:name]];
             }
         }
     }
@@ -94,14 +95,19 @@
     self.segments = [NSSet setWithArray:loadedSegments];
     
     // send segments off to retrieve their persisted history
-    [self loadSegmentsFromImpressionHistory];
+    [self loadSegmentsFromImpressionHistoryWithCompletion:completion];
 }
 
-- (void) loadSegmentsFromImpressionHistory {
+- (void) loadSegmentsFromImpressionHistoryWithCompletion:(nullable void (^)(BOOL successful))completion {
     dispatch_async(self.impressionDbReadQueue, ^{
         sqlite3 *db = [[HZImpressionHistory sharedInstance] safeImpressionTableDatabaseConnection];
         if(!db) {
             HZELog(@"HZSegmentationController failing to load db connection to read segment history.");
+            if (completion) {
+                dispatch_async(dispatch_get_main_queue() , ^{
+                    completion(NO);
+                });
+            }
             return;
         }
         
@@ -111,25 +117,38 @@
         
         sqlite3_close(db);
         HZDLog(@"HZSegmentationController: Active segments for this user: %@", self.segments);
+        if (completion) {
+            dispatch_async(dispatch_get_main_queue() , ^{
+                completion(YES);
+            });
+        }
     });
 }
 
 
 #pragma mark - Query
 
-- (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)adapter tag:(nonnull NSString *)adTag {
-    return [adapter isAvailable] && [self isAdAllowedForCreativeType:HZCreativeTypeBanner auctionType:[HZSegmentationController auctionTypeForAdapter:adapter.parentAdapter] tag:adTag];
+- (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)bannerAdapter tag:(nonnull NSString *)adTag {
+    return [bannerAdapter isAvailable] && [self allowBannerAdapter:bannerAdapter toShowAdForTag:adTag];
+}
+
+- (BOOL) allowBannerAdapter:(nonnull HZBannerAdapter *)bannerAdapter toShowAdForTag:(nonnull NSString *)adTag {
+    return [self isAdAllowedForCreativeType:HZCreativeTypeBanner auctionType:[HZSegmentationController auctionTypeForAdapter:bannerAdapter.parentAdapter] tag:adTag];
 }
 
 - (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter forCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag {
-    return [adapter hasAdForCreativeType:creativeType] && [self isAdAllowedForCreativeType:creativeType auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] tag:adTag];
+    return [adapter hasAdForCreativeType:creativeType] && [self allowAdapter:adapter toShowAdForCreativeType:creativeType tag:adTag];
+}
+
+- (BOOL) allowAdapter:(nonnull HZBaseAdapter *)adapter toShowAdForCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag {
+    return [self isAdAllowedForCreativeType:creativeType auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] tag:adTag];
 }
 
 - (BOOL) isAdAllowedForCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)adTag {
     __block BOOL didGetLimited = NO;
     [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
         if([segment limitsImpressionWithCreativeType:creativeType auctionType:auctionType tag:adTag]) {
-            HZDLog(@"HZSegmentation: ad not allowed for type: %@, auctionType: %@, tag: %@. First segment limiting impression: %@", NSStringFromCreativeType(creativeType), NSStringFromHZAuctionType(auctionType), adTag, segment);
+            //HZDLog(@"HZSegmentation: ad not allowed for type: %@, auctionType: %@, tag: %@. First segment limiting impression: %@", NSStringFromCreativeType(creativeType), NSStringFromHZAuctionType(auctionType), adTag, segment);
             didGetLimited = YES;
             *stop = YES;
         }
@@ -153,20 +172,20 @@
 
 #pragma mark - Utilities
 
+- (void) clearImpressionHistoryWithCompletion:(nullable void (^)(BOOL successful))completion {
+    if (![[HZImpressionHistory sharedInstance] deleteHistory]) {
+        if(completion) completion(NO);
+        return;
+    }
+    
+    [self loadSegmentsFromImpressionHistoryWithCompletion:completion];
+}
+
 + (HZAuctionType) auctionTypeForAdapter:(nonnull HZBaseAdapter *)adapter {
     return [adapter class] == [HZCrossPromoAdapter class] ? HZAuctionTypeCrossPromo : HZAuctionTypeMonetization;
 }
 
-- (BOOL) clearImpressionHistory {
-    if (![[HZImpressionHistory sharedInstance] deleteHistory]) {
-        return NO;
-    }
-    
-    [self loadSegmentsFromImpressionHistory];
-    return YES;
-}
-
-- (HZAuctionType) auctionTypeFromAuctionTypeString:(NSString *)auctionTypeString {
++ (HZAuctionType) auctionTypeFromAuctionTypeString:(NSString *)auctionTypeString {
     if ([auctionTypeString isEqualToString:AUCTIONTYPE_STRING_CROSSPROMOFREQUENCY]) {
         return HZAuctionTypeCrossPromo;
     } else if([auctionTypeString isEqualToString:AUCTIONTYPE_STRING_FREQUENCY]) {
