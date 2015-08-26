@@ -66,7 +66,6 @@
     self.bannerView = nil;
     self.isLoaded = NO;
     [self.bannerInteractionDelegate didFailToReceiveAd:nil];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
 - (void) bannerInteractionWillLeaveApplication:(BOOL)willLeaveApplication{
@@ -74,9 +73,7 @@
     [self.bannerInteractionDelegate userDidClick];
     if(willLeaveApplication){
         [self.bannerInteractionDelegate willLeaveApplication];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: [HZHeyzapExchangeAdapter name]];
     }
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
 - (void)bannerReady:(HZMRAIDView *)banner {
@@ -84,7 +81,6 @@
     self.isLoaded = YES;
     self.lastError = nil;
     [self.bannerInteractionDelegate didReceiveAd];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerLoaded forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
 // sent when html is invalid for ad
@@ -93,7 +89,6 @@
     self.isLoaded = NO;
     self.lastError = [NSError errorWithDomain:@"com.heyzap.ads.exchange.banners" code:1 userInfo:@{@"error":@"fetch_failed_bad_ad"}];
     [self.bannerInteractionDelegate didFailToReceiveAd:nil];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
 - (void)bannerWillShow {
@@ -104,7 +99,6 @@
     self.isLoaded = NO;
     self.bannerView = nil;
     self.lastError = nil;
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerHide forNetwork: [HZHeyzapExchangeAdapter name]];
 }
 
 @end
