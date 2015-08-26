@@ -55,34 +55,27 @@
     } else {
         self.waitingToBeAddedToScreen = YES;
     }
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerLoaded forNetwork: [HZAdMobAdapter name]];
 }
 - (void)adView:(HZGADBannerView *)view didFailToReceiveAdWithError:(HZGADRequestError *)error {
     self.lastError = (NSError *)error;
     [self.bannerInteractionDelegate didFailToReceiveAd:(NSError *)error];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: [HZAdMobAdapter name]];
 }
 - (void)adViewWillPresentScreen:(HZGADBannerView *)adView {
     [self.bannerReportingDelegate bannerAdapter:self wasClickedWithEventReporter:self.eventReporter];
     [self.bannerInteractionDelegate userDidClick];
     [self.bannerInteractionDelegate willPresentModalView];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: [HZAdMobAdapter name]];
 }
 - (void)adViewWillDismissScreen:(HZGADBannerView *)adView {
     // Not reporting this because other FAN doesn't also report it
     // (And its pretty much covered by `didDismissScreen`)
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerDismiss forNetwork: [HZAdMobAdapter name]];
 }
 - (void)adViewDidDismissScreen:(HZGADBannerView *)adView {
     [self.bannerInteractionDelegate didDismissModalView];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerHide forNetwork: [HZAdMobAdapter name]];
 }
 - (void)adViewWillLeaveApplication:(HZGADBannerView *)adView {
     [self.bannerReportingDelegate bannerAdapter:self wasClickedWithEventReporter:self.eventReporter];
     [self.bannerInteractionDelegate userDidClick];
     [self.bannerInteractionDelegate willLeaveApplication];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: [HZAdMobAdapter name]];
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol {
