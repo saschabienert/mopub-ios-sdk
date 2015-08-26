@@ -13,6 +13,11 @@
 @interface HZSegmentationController : NSObject
 
 /**
+ *  If YES, rules will be checked and impressions will be recorded. If NO, all segment rules will pass and no impressions will be recorded.
+ */
+@property (nonatomic) BOOL enabled;
+
+/**
  *  Reads current segments from /start dictionary and loads them from HZImpressionHistory asynchronously.
  */
 - (void) setupFromMediationStart:(nonnull NSDictionary *)startDictionary completion:(nullable void (^)(BOOL finished))completion;

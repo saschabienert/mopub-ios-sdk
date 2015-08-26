@@ -1080,6 +1080,13 @@ const NSTimeInterval bannerPollInterval = 1;
     }
 }
 
+/**
+ *  Used to disable Segmentation for the mediation test activity
+ */
+- (void)enableSegmentation:(BOOL)enabled {
+    [self.segmentationController setEnabled:enabled];
+}
+
 - (void)setupAllAdapters:(void(^)(void))completion {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         for (Class class in [HZBaseAdapter allAdapterClasses]) {

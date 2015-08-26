@@ -112,6 +112,9 @@
     
     self.view.backgroundColor = [UIColor whiteColor];
     
+    // disable segmentation for the test activity
+    [[HeyzapMediation sharedInstance] enableSegmentation:NO];
+    
     [self makeView];
     
     //fetch ad list
@@ -131,6 +134,9 @@
 
 - (void) hide {
     HZDLog(@"Hiding test activity view controller");
+    
+    // re-enable segmentation after the test activity closes
+    [[HeyzapMediation sharedInstance] enableSegmentation:YES];
     
     [self.rootVC dismissViewControllerAnimated:YES completion:nil];
     [[UIApplication sharedApplication] setStatusBarHidden:self.statusBarHidden];
