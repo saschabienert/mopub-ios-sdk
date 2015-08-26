@@ -16,32 +16,30 @@
 @property (nonatomic, strong) HZMediationPersistentConfig *config;
 @property (nonatomic, strong) UISwitch *networkOnSwitch;
 @property (nonatomic, weak) HZBaseAdapter *adapter;
-
+@property (nonatomic, weak) HZTestActivityViewController *tableViewController;
 @end
 
 @implementation HZTestActivityTableViewCell
 
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier persistentConfig:(HZMediationPersistentConfig *)config {
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier persistentConfig:(HZMediationPersistentConfig *)config tableViewController:(HZTestActivityViewController *)tableViewController{
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     HZParameterAssert(config);
     if (self) {
         _config = config;
+        _tableViewController = tableViewController;
         
         self.networkOnSwitch = [[UISwitch alloc] init];
-        [self.networkOnSwitch addTarget:self action:@selector(switchFlipped:) forControlEvents:UIControlEventValueChanged];
+        [self.networkOnSwitch addTarget:self action:@selector(networkEnableSwitchFlipped:) forControlEvents:UIControlEventValueChanged];
         
         if ([self showNetworkSwitch]) {
             self.accessoryView = self.networkOnSwitch;
         }
-        
-        
-        
     }
     return self;
 }
 
 - (BOOL)showNetworkSwitch {
-    return [[HZDevice currentDevice] isHeyzapTestApp];
+    return [self.tableViewController showNetworkEnableSwitch];
 }
 
 #pragma mark - cellForRowAtIndexPath: configuration
@@ -54,7 +52,7 @@
     self.detailTextLabel.text = wasIntegratedSuccessfully ? @"☑︎" : @"☒";
     self.detailTextLabel.textColor = wasIntegratedSuccessfully ? [UIColor greenColor] : [UIColor redColor];
     
-    self.networkOnSwitch.on = [self.config isNetworkEnabled:[adapter name]];
+    [self updateNetworkEnableSwitch];
 }
 
 #pragma mark - Layout
@@ -72,12 +70,16 @@
 
 #pragma mark - Target-Action
 
-- (void)switchFlipped:(UISwitch *)theSwitch {
+- (void)networkEnableSwitchFlipped:(UISwitch *)theSwitch {
     if (theSwitch.isOn) {
         [self.config removeDisabledNetwork:[self.adapter name]];
     } else {
         [self.config addDisabledNetwork:[self.adapter name]];
     }
+}
+
+- (void) updateNetworkEnableSwitch {
+    self.networkOnSwitch.on = [self.config isNetworkEnabled:[self.adapter name]];
 }
 
 @end

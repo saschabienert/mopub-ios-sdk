@@ -36,5 +36,5 @@
 @interface HZTestActivityViewController : UITableViewController
 
 + (void) show;
-
+- (BOOL) showNetworkEnableSwitch;
 @end

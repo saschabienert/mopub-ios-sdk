@@ -23,7 +23,7 @@ describe(@"HZMediationPersistentConfig", ^{
     });
     
     
-    context(@"When it's the test app", ^{
+    context(@"When it's not the test app", ^{
         it(@"Networks should always be enabled", ^{
             HZMediationPersistentConfig *config = [[HZMediationPersistentConfig alloc] initWithCachingService:cachingService isTestApp:NO];
             [config addDisabledNetwork:kNetworkName];
@@ -32,13 +32,13 @@ describe(@"HZMediationPersistentConfig", ^{
         });
     });
     
-    context(@"When it's not the test app", ^{
+    context(@"When it is the test app", ^{
         
         it(@"Should allow disabling networks", ^{
             [cachingService stub:@selector(rootObjectWithFilename:) andReturn:[NSSet set]];
             
             HZMediationPersistentConfig *config = [[HZMediationPersistentConfig alloc] initWithCachingService:cachingService isTestApp:YES];
-            [[expectFutureValue(cachingService) shouldEventually] receive:@selector(cacheRootObject:filename:) withCount:2];
+            [[expectFutureValue(cachingService) shouldEventually] receive:@selector(cacheRootObject:filename:) withCountAtLeast:1];
             
             [config addDisabledNetwork:kNetworkName];
             

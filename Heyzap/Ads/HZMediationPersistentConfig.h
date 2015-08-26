@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isNetworkEnabled:(NSString *)networkName;
 - (BOOL)isNetworkDisabled:(NSString *)networkName;
+- (NSSet *) allDisabledNetworks;
 
 @end
 
@@ -30,8 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Support for disabling networks from the client
 
 - (void)addDisabledNetwork:(NSString *)disabledNetwork;
-
+- (void)addDisabledNetworks:(NSSet *)disabledNetworks;
 - (void)removeDisabledNetwork:(NSString *)networkName;
+- (void)removeDisabledNetworks:(NSSet *)networks;
 
 @end
 
