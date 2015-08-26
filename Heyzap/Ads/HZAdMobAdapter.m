@@ -140,11 +140,29 @@
         return;
     }
     
-    HZGADInterstitial *newAd = [[HZGADInterstitial alloc] init];
-    self.adDictionary[@(creativeType)] = newAd;
+    NSString *adUnitID;
     
-    newAd.adUnitID = (creativeType == HZCreativeTypeStatic) ? self.interstitialAdUnitID : self.videoAdUnitID;
+    if (creativeType == HZCreativeTypeStatic) {
+        adUnitID = self.interstitialAdUnitID;
+        HZDLog(@"Initializing AdMob Ad with interstitialAdUnitID: %@", adUnitID);
+        
+    } else {
+        adUnitID = self.videoAdUnitID;
+        HZDLog(@"Initializing AdMob Ad with videoAdUnitID: %@", adUnitID);
+    }
+    
+    HZGADInterstitial *newAd;
+    
+    if ([HZGADInterstitial respondsToSelector:@selector(initWithAdUnitID:)]) {
+        newAd = [[HZGADInterstitial alloc] initWithAdUnitID:adUnitID];
+    } else {
+        newAd = [[HZGADInterstitial alloc] init];
+        [newAd setAdUnitID:adUnitID];
+    }
+    
     newAd.delegate = self.forwardingDelegate;
+    self.adDictionary[@(creativeType)] = newAd;
+
     
     HZGADRequest *request = [HZGADRequest request];
     request.testDevices = @[ GAD_SIMULATOR_ID ];

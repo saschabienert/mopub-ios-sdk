@@ -13,16 +13,24 @@
 
 @interface HZGADInterstitial : HZClassProxy
 
-@property(nonatomic, copy) NSString *adUnitID;
+@property(nonatomic, readonly, copy) NSString *adUnitID;
 @property(nonatomic, readonly, assign) BOOL isReady;
 @property(nonatomic, readonly, assign) BOOL hasBeenUsed;
 
 @property(nonatomic, weak) NSObject<HZGADInterstitialDelegate> *delegate;
 
-- (id)init;
+- (instancetype)initWithAdUnitID:(NSString *)adUnitID NS_DESIGNATED_INITIALIZER;
 
 - (void)loadRequest:(HZGADRequest *)request;
 
 - (void)presentFromRootViewController:(UIViewController *)rootViewController;
+
+#pragma mark Deprecated
+
+/// Deprecated intializer. Use initWithAdUnitID: instead.
+- (instancetype)init;
+
+/// Deprecated setter, use initWithAdUnitID: instead.
+- (void)setAdUnitID:(NSString *)adUnitID;
 
 @end

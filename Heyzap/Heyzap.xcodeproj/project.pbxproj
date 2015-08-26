@@ -294,7 +294,6 @@
 		50CAB1AC1AE9758E00F9642D /* HZAFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 50CAB1A81AE9758E00F9642D /* HZAFURLRequestSerialization.m */; };
 		50CAB1AD1AE9758E00F9642D /* HZAFURLResponseSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 50CAB1A91AE9758E00F9642D /* HZAFURLResponseSerialization.h */; };
 		50CAB1AE1AE9758E00F9642D /* HZAFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 50CAB1AA1AE9758E00F9642D /* HZAFURLResponseSerialization.m */; };
-		50CD94411AD5DF6700C9B32F /* HZAdMobBannerSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 50CD94401AD5DF6700C9B32F /* HZAdMobBannerSupport.m */; };
 		50D1598F18F34B0900734ABB /* HZHeyzapVideoAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1598D18F34B0900734ABB /* HZHeyzapVideoAd.h */; };
 		50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */; };
 		50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */; };
@@ -799,8 +798,6 @@
 		50CAB1A81AE9758E00F9642D /* HZAFURLRequestSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAFURLRequestSerialization.m; sourceTree = "<group>"; };
 		50CAB1A91AE9758E00F9642D /* HZAFURLResponseSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAFURLResponseSerialization.h; sourceTree = "<group>"; };
 		50CAB1AA1AE9758E00F9642D /* HZAFURLResponseSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAFURLResponseSerialization.m; sourceTree = "<group>"; };
-		50CD943F1AD5DF6700C9B32F /* HZAdMobBannerSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdMobBannerSupport.h; sourceTree = "<group>"; };
-		50CD94401AD5DF6700C9B32F /* HZAdMobBannerSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdMobBannerSupport.m; sourceTree = "<group>"; };
 		50CE4B391AB39DD8007B6949 /* HZBannerAdOptions_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZBannerAdOptions_Private.h; sourceTree = "<group>"; };
 		50D1598D18F34B0900734ABB /* HZHeyzapVideoAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapVideoAd.h; sourceTree = "<group>"; };
 		50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapVideoAd.m; sourceTree = "<group>"; };
@@ -1741,16 +1738,6 @@
 			name = Reachability;
 			sourceTree = "<group>";
 		};
-		50CD943E1AD5DA8D00C9B32F /* Mediation Extras */ = {
-			isa = PBXGroup;
-			children = (
-				50CD943F1AD5DF6700C9B32F /* HZAdMobBannerSupport.h */,
-				50CD94401AD5DF6700C9B32F /* HZAdMobBannerSupport.m */,
-			);
-			name = "Mediation Extras";
-			path = MediationExtras;
-			sourceTree = "<group>";
-		};
 		50E76E1119A29F9200FD2639 /* Metrics */ = {
 			isa = PBXGroup;
 			children = (
@@ -1947,7 +1934,6 @@
 		86B941921757FD6300B8EACE = {
 			isa = PBXGroup;
 			children = (
-				50CD943E1AD5DA8D00C9B32F /* Mediation Extras */,
 				50ECA1BE18DB6157006284AB /* Mediation Frameworks */,
 				86B942891758087E00B8EACE /* Vendor */,
 				86B941E11758056B00B8EACE /* SDK Test App */,
@@ -3056,7 +3042,6 @@
 				505351ED18F76550003C531E /* DeviceInfoViewController.m in Sources */,
 				505351EE18F76550003C531E /* main.m in Sources */,
 				50A10DED1AE9BF0300001C4C /* UIImageView+AFNetworking.m in Sources */,
-				50CD94411AD5DF6700C9B32F /* HZAdMobBannerSupport.m in Sources */,
 				505351F018F76550003C531E /* ServerSelectionViewController.m in Sources */,
 				50759D261AD3359E00AECC2B /* PersistentTestAppConfiguration.m in Sources */,
 				505351F118F76550003C531E /* AppDelegate.m in Sources */,
