@@ -718,8 +718,8 @@ const NSTimeInterval bannerPollInterval = 1;
         }
         
         NSError *error;
-        NSOrderedSet *const adapterClasses = [self getBannerClasses:latestMediate error:&error];
-        if (!adapterClasses) {
+        NSMutableOrderedSet *adapterClasses = [[self getBannerClasses:latestMediate tag:options.tag error:&error] mutableCopy];
+        if (!adapterClasses || [adapterClasses count] == 0) {
             NSError *timeoutError = [[self class] bannerErrorWithDescription:@"No banner adapters available to show an ad." underlyingError:error];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completion(timeoutError, nil);
@@ -731,9 +731,11 @@ const NSTimeInterval bannerPollInterval = 1;
             [self setupAdapterNamed:[adapterClass name]];
         }
         
+        [adapterClasses intersectSet:self.setupMediatorClasses];
+        
         dispatch_sync(dispatch_get_main_queue(), ^{
             NSOrderedSet *adaptersWithScores = ({
-                NSOrderedSet *a1 = [self.availabilityChecker parseMediateIntoAdaptersForShow:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:HZAdTypeBanner];
+                NSOrderedSet *a1 = [self.availabilityChecker parseMediateIntoAdaptersForShow:latestMediate setupAdapterClasses:[adapterClasses set] adType:HZAdTypeBanner];
                 NSOrderedSet *a2 = hzFilterOrderedSet(a1, ^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {
                     if (options.networkName) {
                         return [[[adapterWithScore adapter] name] isEqualToString:options.networkName];
@@ -975,11 +977,11 @@ const NSTimeInterval bannerPollInterval = 1;
 }
 
 - (void)didFetchAdOfCreativeType:(HZCreativeType)creativeType withAdapter:(HZBaseAdapter *)adapter options:(HZShowOptions *)showOptions {
-    if ([self.segmentationController adapterHasAllowedAd:adapter forCreativeType:creativeType tag:showOptions.tag]) {
+    if ([self.settings tagIsEnabled:showOptions.tag]) {
         [[self delegateForAdType:showOptions.requestingAdType] didReceiveAdWithTag:showOptions.tag];
         if (showOptions.completion) { showOptions.completion(YES, nil); }
     } else {
-        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Segmentation settings are preventing this user from seeing an ad for creative type: %@ and tag: %@ right now via ad type: %@.", NSStringFromCreativeType(creativeType), showOptions.tag, NSStringFromAdType(showOptions.requestingAdType)]}];
+        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"A disabled ad tag (%@) is preventing you from fetching an ad right now via ad type: %@.", showOptions.tag, NSStringFromAdType(showOptions.requestingAdType)]}];
         
         [[self delegateForAdType:showOptions.requestingAdType] didFailToReceiveAdWithTag:showOptions.tag];
         if (showOptions.completion) { showOptions.completion(NO, error); }
@@ -993,7 +995,7 @@ const NSTimeInterval bannerPollInterval = 1;
     if (showOptions.completion) { showOptions.completion(NO, error); }
 }
 
-- (NSOrderedSet *)getBannerClasses:(NSDictionary *)json error:(NSError **)error {
+- (NSOrderedSet *)getBannerClasses:(NSDictionary *)json tag:(NSString *)tag error:(NSError **)error {
     HZParameterAssert(json);
     HZParameterAssert(error);
     
@@ -1016,6 +1018,7 @@ const NSTimeInterval bannerPollInterval = 1;
                 && [availableAdapters containsObject:adapterClass]
                 && [[adapterClass sharedAdapter] supportsCreativeType:HZCreativeTypeBanner]
                 && [[adapterClass sharedAdapter] hasCredentialsForCreativeType:HZCreativeTypeBanner]
+                && [self.segmentationController allowAdapter:[adapterClass sharedAdapter] toShowAdForCreativeType:HZCreativeTypeBanner tag:tag]
                 && [self isNetworkEnabledByPersistentConfig:networkName]) {
                 [adapterClasses addObject:adapterClass];
             }
