@@ -233,7 +233,7 @@
     @synchronized(self) {
         if (self.hasLoadManagerSetupSucceeded && self.hasSegmentationSetupFinished && self.startStatus != HZMediationStartStatusSuccess) {
             self.startStatus = HZMediationStartStatusSuccess;
-            [self autoFetchAdType:HZAdTypeInterstitial];
+            [self autoFetchAdType:HZAdTypeInterstitial tag:nil];
         }
     }
 }
@@ -280,9 +280,9 @@
     
 }
 
-- (void)autoFetchAdType:(HZAdType)adType {
+- (void)autoFetchAdType:(HZAdType)adType tag:(NSString *)tag {
     if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
-        [self fetchForAdType:adType tag:nil additionalParams:nil completion:^(BOOL result, NSError *error) {
+        [self fetchForAdType:adType tag:tag additionalParams:nil completion:^(BOOL result, NSError *error) {
             if(adType == HZAdTypeIncentivized && ![[self settings] shouldAllowIncentivizedAd]) {
                 // don't keep autofetching if it'll keep failing because of the daily limit
                 return;
@@ -290,7 +290,7 @@
             
             if (error) {
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    [self autoFetchAdType:adType];
+                    [self autoFetchAdType:adType tag:tag];
                 });
             }
         } notifyDelegate:NO];
@@ -506,8 +506,9 @@ NSString * const kHZDataKey = @"data";
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didHideAdWithTag:self.currentShownAd.tag];
     }
     
+    NSString *tag = self.currentShownAd.tag;
     self.currentShownAd = nil;
-    [self autoFetchAdType:previousAdType];
+    [self autoFetchAdType:previousAdType tag:tag];
 }
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter
