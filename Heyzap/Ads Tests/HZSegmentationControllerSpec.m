@@ -34,7 +34,7 @@ describe(@"HZSegmentationSegment", ^{
     
     it(@"Should correctly parse the start response from med.heyzap.com", ^{
         [[[segmentationController segments] should] beEmpty];
-        [segmentationController setupFromMediationStart:startDictionary];
+        [segmentationController setupFromMediationStart:startDictionary completion:nil];
         [[theValue([[segmentationController segments] count]) should] equal:theValue(numberOfSegmentsInStartDictionary)];
     });
 
