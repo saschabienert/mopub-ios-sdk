@@ -494,6 +494,8 @@ NSString * const kHZDataKey = @"data";
     if (self.currentShownAd) {
         [self.currentShownAd.eventReporter reportClickForAdapter:adapter];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didClickAdWithTag:self.currentShownAd.tag];
+    } else {
+        HZELog(@"Ad network %@ reported that an ad was clicked, but we weren't expecting this.",adapter.name);
     }
 }
 
@@ -504,6 +506,8 @@ NSString * const kHZDataKey = @"data";
     
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didHideAdWithTag:self.currentShownAd.tag];
+    } else {
+        HZELog(@"Ad network %@ reported that an ad was closed, but we weren't expecting this.",adapter.name);
     }
     
     NSString *tag = self.currentShownAd.tag;
@@ -517,6 +521,8 @@ NSString * const kHZDataKey = @"data";
     
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] willStartAudio];
+    } else {
+        HZELog(@"Ad network %@ reported that an ad played audio, but we weren't expecting this.",adapter.name);
     }
 }
 
@@ -526,6 +532,8 @@ NSString * const kHZDataKey = @"data";
     
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didFinishAudio];
+    } else {
+        HZELog(@"Ad network %@ reported that an ad finished playing audio, but we weren't expecting this.",adapter.name);
     }
 }
 
@@ -536,6 +544,8 @@ NSString * const kHZDataKey = @"data";
                                        options:self.currentShownAd.showOptions
                                          error:underlyingError];
         self.currentShownAd = nil;
+    } else {
+        HZELog(@"Ad network %@ reported that an ad failed to show, but we weren't expecting this.",adapter.name);
     }
 }
 
@@ -550,6 +560,8 @@ NSString * const kHZDataKey = @"data";
         [[self settings] incentivizedAdShown];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didCompleteAdWithTag:self.currentShownAd.tag];
         [self.currentShownAd.eventReporter reportIncentivizedResult:YES forAdapter:adapter];
+    } else {
+        HZELog(@"Ad network %@ reported that an incentivized ad was completed, but we weren't expecting this.",adapter.name);
     }
 }
 
@@ -560,6 +572,8 @@ NSString * const kHZDataKey = @"data";
     if (self.currentShownAd) {
         [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAdWithTag:self.currentShownAd.tag];
         [self.currentShownAd.eventReporter reportIncentivizedResult:NO forAdapter:adapter];
+    } else {
+        HZELog(@"Ad network %@ reported that an incentivized ad wasn't completed, but we weren't expecting this.",adapter.name);
     }
 }
 
