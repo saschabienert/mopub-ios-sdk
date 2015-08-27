@@ -27,6 +27,7 @@
 #import "HZSKVASTError.h"
 #import "HZCreativeType.h"
 #import "HZSKVASTModel.h"
+#import "HZActivityIndicator.h"
 
 @class HZSKVASTViewController;
 
@@ -50,6 +51,8 @@
 @property (nonatomic, readonly) BOOL didFinishSuccessfully;
 
 @property(nonatomic) UIViewController *rootViewController;
+
+@property (nonatomic) HZActivityIndicator *activityIndicator;
 
 - (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forCreativeType:(HZCreativeType)creativeType; // designated initializer for VASTViewController
 

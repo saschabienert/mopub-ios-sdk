@@ -19,14 +19,12 @@
 #import "HZMediationConstants.h"
 #import "HeyzapMediation.h"
 #import "HZShowOptions_Private.h"
-#import "HZActivityIndicator.h"
 
-@interface HZHeyzapExchangeClient() <HZSKVASTViewControllerDelegate, HZMRAIDInterstitialDelegate, HZHeyzapExchangeMRAIDServiceHandlerDelegate, UIWebViewDelegate>
+@interface HZHeyzapExchangeClient() <HZSKVASTViewControllerDelegate, HZMRAIDInterstitialDelegate, HZHeyzapExchangeMRAIDServiceHandlerDelegate>
 
 @property (nonatomic) HZHeyzapExchangeFormat format;
 
 @property (nonatomic) HZSKVASTViewController *vastVC;
-@property (nonatomic) HZActivityIndicator *activityIndicator;
 @property (nonatomic) BOOL vastAdFetchedAndReady;
 
 @property (nonatomic) HZMRAIDInterstitial *mraidInterstitial;
@@ -50,18 +48,6 @@
 @end
 
 @implementation HZHeyzapExchangeClient
-
-- (instancetype)init {
-    self = [super init];
-    
-    if (self) {
-        _activityIndicator = [[HZActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
-        _activityIndicator.labelText = @"Please Wait...";
-        _activityIndicator.fadeBackground = YES;
-    }
-    
-    return self;
-}
 
 - (void) fetchForCreativeType:(HZCreativeType)creativeType {
     if(self.state == HZHeyzapExchangeClientStateFetching || self.state == HZHeyzapExchangeClientStateReady) {
@@ -142,7 +128,6 @@
                     
                     if(self.format == HZHeyzapExchangeFormatVAST_2_0){
                         self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate:self forCreativeType:creativeType];
-                        [self.vastVC.view addSubview:self.activityIndicator];
                         [self.vastVC loadVideoWithData:adMarkupData];
                         self.isWithAudio = YES;
                     }else if(self.format == HZHeyzapExchangeFormatMRAID_2){
@@ -305,30 +290,14 @@
 }
 - (void)vastOpenBrowseWithUrl:(NSURL *)url {
     HZDLog(@"HZHeyzapExchangeClient VAST click url: '%@'", [url absoluteString]);
-    [self.vastVC handlePauseState];
-    [self.vastVC.view bringSubviewToFront:self.activityIndicator];
-    [self.activityIndicator startAnimating];
     
     self.clickTrackingWebView = [[UIWebView alloc] init];
-    self.clickTrackingWebView.delegate = self;
     [self.clickTrackingWebView loadRequest:[NSURLRequest requestWithURL:url]];
     
     [self.delegate adClickedWithClient:self];
     [self reportClick];
 }
 - (void)vastTrackingEvent:(NSString *)eventName { }
-
-#pragma mark - UIWebViewDelegate
-
-- (void)webViewDidFinishLoad:(UIWebView *)webView {
-    [self.activityIndicator stopAnimating];
-    [self.vastVC handleResumeState];
-}
-
-- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    [self.activityIndicator stopAnimating];
-    [self.vastVC handleResumeState];
-}
 
 #pragma mark - HZMRAIDInterstitialDelegate
 

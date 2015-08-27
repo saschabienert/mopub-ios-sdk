@@ -67,6 +67,10 @@ typedef enum {
 @property(nonatomic, strong) HZVideoView *videoView;
 @property(nonatomic, strong) HZVASTVideoSettings *videoSettings;
 @property(nonatomic, strong) HZVASTVideoCache *videoCache;
+@property(nonatomic) BOOL didClick;
+
+- (void) applicationDidEnterForeground: (id) notification;
+- (void) applicationDidEnterBackground: (id) notification;
 
 @end
 
@@ -88,8 +92,21 @@ typedef enum {
         _videoView = [[HZVideoView alloc] initWithFrame:CGRectZero];
         _videoView.actionDelegate = self;
         _videoView.player.shouldAutoplay = NO;
+        
+        _activityIndicator = [[HZActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
+        _activityIndicator.labelText = @"Please Wait...";
+        _activityIndicator.fadeBackground = YES;
+        [self.view addSubview:_activityIndicator];
+        
+        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterForeground:) name: UIApplicationDidBecomeActiveNotification object: nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterBackground:) name: UIApplicationDidEnterBackgroundNotification object: nil];
     }
     return self;
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 #pragma mark - Load methods
@@ -195,7 +212,7 @@ typedef enum {
 {
     [super viewDidAppear:animated];
     isViewOnScreen=YES;
-
+    self.didClick = NO;
     [self handleResumeState];
 }
 
@@ -218,6 +235,20 @@ typedef enum {
 {
     [HZSKLogger debug:@"VAST - View Controller" withMessage:@"applicationDidBecomeActive"];
     [self handleResumeState];
+}
+
+- (void) applicationDidEnterForeground: (id) notification {
+    
+    if (self.didClick) {
+        [self.activityIndicator stopAnimating];
+        self.didClick = NO;
+    }
+    
+    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"applicationDidBecomeActive"];
+    [self handleResumeState];
+}
+
+- (void) applicationDidEnterBackground: (id) notification {
 }
 
 #pragma mark - Orientation handling
@@ -412,6 +443,7 @@ typedef enum {
     [self.videoView play];
     
     hasPlayerStarted=YES;
+    isPlaying = YES;
     
     if (impressions) {
         [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending Impressions requests"];
@@ -420,7 +452,6 @@ typedef enum {
     [self.eventProcessor trackEvent:VASTEventTrackStart];
 }
 
-// not used right now, but could be in the future if there's a reason to pause
 - (void)handlePauseState
 {
     @synchronized (self) {
@@ -476,6 +507,11 @@ typedef enum {
             [self.eventProcessor sendVASTUrlsWithId:clickTracking];
         }
         if ([self.delegate respondsToSelector:@selector(vastOpenBrowseWithUrl:)]) {
+            self.didClick = YES;
+            [self handlePauseState];
+            [self.view bringSubviewToFront:self.activityIndicator];
+            [self.activityIndicator startAnimating];
+            
             [self.delegate vastOpenBrowseWithUrl:self.clickThrough];
         }
     }
