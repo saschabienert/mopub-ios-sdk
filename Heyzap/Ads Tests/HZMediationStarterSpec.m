@@ -45,6 +45,7 @@ describe(@"HZMediationStarter", ^{
         
         [starter start];
         [[expectFutureValue(starterMock) shouldEventually] receive:@selector(startWithDictionary:fromCache:) withArguments:fromNetworkJson,theValue(NO)];
+        [[expectFutureValue(starterMock) shouldEventually] receive:@selector(receivedStartHeaders:) withArguments:any()];
         
         [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheRootObject:filename:) withArguments:fromNetworkJson,any()];
     });
@@ -56,6 +57,8 @@ describe(@"HZMediationStarter", ^{
         [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:fromNetworkJson];
         
         [[cachingMock should] receive:@selector(rootObjectWithFilename:) andReturn:fromCacheJson];
+        
+        [[expectFutureValue(starterMock) shouldEventually] receive:@selector(receivedStartHeaders:) withArguments:any()];
         
         [starter start];
         [[expectFutureValue(starterMock) shouldEventually] receive:@selector(startWithDictionary:fromCache:) withArguments:fromCacheJson,theValue(YES)];
@@ -87,6 +90,7 @@ describe(@"HZMediationStarter", ^{
         
         [starter start];
         [[expectFutureValue(starterMock) shouldEventuallyBeforeTimingOutAfter(2)] receive:@selector(startWithDictionary:fromCache:) withArguments:fromNetworkJson,theValue(NO)];
+        [[expectFutureValue(starterMock) shouldEventually] receive:@selector(receivedStartHeaders:)];
         
         [[expectFutureValue(cachingMock) shouldEventually] receive:@selector(cacheRootObject:filename:) withArguments:fromNetworkJson,any()];
     });
