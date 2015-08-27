@@ -28,11 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)start;
 
-/**
- *  Note: This property will be updated with the /start call from the network after the cached version is used.
- */
-@property (nonatomic, readonly, nullable) NSDictionary *networkNameToCredentials;
-
 #pragma mark - Testing
 
 + (NSString *)startFilename;
