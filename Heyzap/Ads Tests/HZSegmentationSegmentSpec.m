@@ -44,20 +44,14 @@ describe(@"HZSegmentationSegment", ^{
     HZAuctionType const expectedAuctionType= HZAuctionTypeMonetization;
     HZAuctionType const wrongAuctionType = HZAuctionTypeCrossPromo;
     
-    __block HZImpressionHistory *impressionHistoryMock;
-    
-    beforeAll(^{
-        impressionHistoryMock = [KWMock mockForClass:[HZImpressionHistory class]];
-    });
-    
     beforeEach(^{
         segment = [[HZSegmentationSegment alloc] initWithTimeInterval:SEGMENT_TIME_INTERVAL forTags:nil creativeType:expectedCreativeType auctionType:expectedAuctionType limit:0 adsEnabled:YES name:@"test segment"];
         segment.impressionHistory = [[NSMutableOrderedSet alloc] init];
     });
     
     it(@"Loads from the HZImpressionHistory correctly", ^{
-        
         NSArray * array = @[[NSDate date]];
+        HZImpressionHistory *impressionHistoryMock = [KWMock mockForClass:[HZImpressionHistory class]];
         
         [[HZImpressionHistory should] receive:@selector(sharedInstance) andReturn:impressionHistoryMock];
         [[impressionHistoryMock should] receive:@selector(impressionsSince:withCreativeType:tags:auctionType:databaseConnection:mostRecentFirst:) andReturn:[[NSMutableOrderedSet alloc] initWithArray:array] withCount:1 arguments:any(), theValue(expectedCreativeType), any(), theValue(expectedAuctionType), any(), theValue(YES)];
