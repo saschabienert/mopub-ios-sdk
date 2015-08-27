@@ -148,9 +148,9 @@
 
 #pragma mark - Superclass Overrides
 
-#define kHZActivityIndicatorBackgroundWidthPadding 20.0f
-#define kHZActivityIndicatorBackgroundHeightPadding 20.0f
-#define kHZActivityIndicatorBottomPadding 10.0f
+#define kHZActivityIndicatorBackgroundWidthPadding 25.0f
+#define kHZActivityIndicatorBackgroundHeightPadding 25.0f
+#define kHZActivityIndicatorBottomPadding 12.0f
 
 // Override
 - (void)layoutSubviews {

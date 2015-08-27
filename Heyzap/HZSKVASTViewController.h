@@ -59,6 +59,9 @@
 - (void)play;// command to play the video, this is only valid after receiving the vastReady: callback (which will be called after a loadVideo...: call)
 - (BOOL)vastVideoCached; // returns whether or not the video (sent to one of the loadVideoWith...: methods) has been cached yet
 
+- (void)handlePauseState;
+- (void)handleResumeState;
+
 @end
 
 @interface HZVASTVideoSettings : NSObject
