@@ -12,7 +12,7 @@
 @interface HZActivityIndicator()
 
 @property (nonatomic) UILabel *labelView;
-@property (nonatomic) UIView *activityIndicatorBackground;
+@property (nonatomic) UIView *backgroundBox;
 
 - (HZActivityIndicatorView *) createActivityIndicatorView;
 - (UIView *) createBackgroundBox;
@@ -21,6 +21,17 @@
 @end
 
 @implementation HZActivityIndicator
+
+#pragma mark - Constants
+
+#define kHZbackgroundBoxWidthPadding 20.0f
+#define kHZbackgroundBoxHeightPadding 20.0f
+#define kHZActivityLabelAndActivityIndicatorPadding 5.0f // space between label and spinner
+
+UIViewAutoresizing const kHZActivityIndicatorDefaultAutoResizingMask = UIViewAutoresizingFlexibleTopMargin |
+                                                                        UIViewAutoresizingFlexibleBottomMargin |
+                                                                        UIViewAutoresizingFlexibleLeftMargin |
+                                                                        UIViewAutoresizingFlexibleRightMargin;
 
 #pragma mark - Init
 
@@ -37,30 +48,25 @@
     
     if (self) {
         
-        self.autoresizingMask = UIViewAutoresizingFlexibleTopMargin |
-                                UIViewAutoresizingFlexibleBottomMargin |
-                                UIViewAutoresizingFlexibleLeftMargin |
-                                UIViewAutoresizingFlexibleRightMargin;
+        self.autoresizingMask = kHZActivityIndicatorDefaultAutoResizingMask;
         
+        self.opaque = NO;
+        self.hidden = YES;
+        
+        // Add Subviews
         UIView *parent = self;
         
-        
         if (withBackgroundBox) {
-            _activityIndicatorBackground = [self createBackgroundBox];
-            [parent addSubview:_activityIndicatorBackground];
-            parent = _activityIndicatorBackground;
+            _backgroundBox = [self createBackgroundBox];
+            [parent addSubview:_backgroundBox];
+            parent = _backgroundBox;
         }
         
         _activityIndicatorView = [self createActivityIndicatorView];
         [parent addSubview:_activityIndicatorView];
         
         _labelView = [self createLabelView];
-        [parent insertSubview:_labelView belowSubview:_activityIndicatorView];
-        
-        // Other properties
-        self.userInteractionEnabled = NO;
-        self.opaque = NO;
-        self.hidden = YES;
+        [parent addSubview:_labelView];
     }
     
     return self;
@@ -77,10 +83,7 @@
     activityIndicatorView.color = [UIColor whiteColor];
     activityIndicatorView.direction = HZActivityIndicatorDirectionClockwise;
     activityIndicatorView.hidesWhenStopped = YES;
-    activityIndicatorView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin |
-                                                UIViewAutoresizingFlexibleBottomMargin |
-                                                UIViewAutoresizingFlexibleLeftMargin |
-                                                UIViewAutoresizingFlexibleRightMargin;
+    activityIndicatorView.autoresizingMask = kHZActivityIndicatorDefaultAutoResizingMask;
     
     // device specific
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
@@ -101,10 +104,7 @@
     UIView *activityIndicatorBackground = [[UIView alloc] initWithFrame:CGRectZero];
     activityIndicatorBackground.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
     activityIndicatorBackground.layer.cornerRadius = 7;
-    activityIndicatorBackground.autoresizingMask = UIViewAutoresizingFlexibleTopMargin |
-                                                    UIViewAutoresizingFlexibleBottomMargin |
-                                                    UIViewAutoresizingFlexibleLeftMargin |
-                                                    UIViewAutoresizingFlexibleRightMargin;
+    activityIndicatorBackground.autoresizingMask = kHZActivityIndicatorDefaultAutoResizingMask;
     return activityIndicatorBackground;
 }
 
@@ -123,6 +123,50 @@
     }
     
     return labelView;
+}
+
+#pragma mark - Superclass Overrides
+
+// Override
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    self.frame = CGRectMake(0, 0, CGRectGetWidth(self.superview.bounds), CGRectGetHeight(self.superview.bounds));
+    self.center = self.superview.center;
+    
+    if (self.labelText.length) {
+        [self.labelView sizeToFit];
+    }
+    
+    CGSize activityIndicatorSize = self.activityIndicatorView.frame.size;
+    CGSize labelSize = self.labelView.frame.size;
+    
+    if (self.backgroundBox) {
+        CGFloat activityIndicatorBackgroundWidth = MAX(labelSize.width, activityIndicatorSize.width) + kHZbackgroundBoxWidthPadding;
+        
+        CGFloat activityIndicatorBackgroundHeight = activityIndicatorSize.height + labelSize.height + kHZbackgroundBoxHeightPadding;
+        
+        if (self.labelText.length) {
+            activityIndicatorBackgroundHeight += kHZActivityLabelAndActivityIndicatorPadding;
+        }
+        
+        self.backgroundBox.frame = CGRectMake(0, 0, activityIndicatorBackgroundWidth, activityIndicatorBackgroundHeight);
+        self.activityIndicatorView.center = self.backgroundBox.center;
+        self.backgroundBox.center = self.center;
+        
+    } else {
+        self.activityIndicatorView.center = self.center;
+    }
+    
+    if (self.labelText.length != 0) {
+        // Re-position activity indicator to accomodate label
+        self.activityIndicatorView.center = CGPointMake(self.activityIndicatorView.center.x,
+                                                        self.activityIndicatorView.center.y - kHZActivityLabelAndActivityIndicatorPadding/2 - labelSize.height/2);
+        // Position label
+        self.labelView.center = CGPointMake(self.activityIndicatorView.center.x,
+                                            self.activityIndicatorView.center.y + activityIndicatorSize.height/2 + labelSize.height/2 + kHZActivityLabelAndActivityIndicatorPadding);
+    }
+    
 }
 
 #pragma mark - Animate
@@ -146,45 +190,6 @@
     }
 }
 
-#pragma mark - Superclass Overrides
-
-#define kHZActivityIndicatorBackgroundWidthPadding 25.0f
-#define kHZActivityIndicatorBackgroundHeightPadding 25.0f
-#define kHZActivityIndicatorBottomPadding 12.0f
-
-// Override
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    
-    self.frame = CGRectMake(0, 0, CGRectGetWidth(self.superview.bounds), CGRectGetHeight(self.superview.bounds));
-    
-    [self.labelView sizeToFit];
-    
-    if (self.activityIndicatorBackground) {
-        CGFloat activityIndicatorBackgroundWidth = MAX(self.labelView.frame.size.width, self.activityIndicatorView.frame.size.width) + kHZActivityIndicatorBackgroundWidthPadding;
-        
-        CGFloat activityIndicatorBackgroundHeight = self.activityIndicatorView.frame.size.height + self.labelView.frame.size.height + kHZActivityIndicatorBackgroundHeightPadding;
-        
-        self.activityIndicatorBackground.frame = CGRectMake(0,0, activityIndicatorBackgroundWidth, activityIndicatorBackgroundHeight);
-        
-        self.activityIndicatorBackground.center = self.center;
-        
-    } else {
-        self.activityIndicatorView.center = self.center;
-    }
-    
-    // Center label relative to parent and add bottom padding
-    self.labelView.center = CGPointMake(self.activityIndicatorView.center.x,
-                                        self.activityIndicatorView.center.y + self.activityIndicatorView.frame.size.height/2 + 5);
-    
-    if (self.labelView.text.length != 0) {
-        // center activity indicator relative to parent and shift up for label
-        self.activityIndicatorView.center = CGPointMake(self.activityIndicatorView.center.x,
-                                                        self.activityIndicatorView.center.y - kHZActivityIndicatorBottomPadding);
-    }
-    
-}
-
 # pragma mark - Setters/Getters
 
 - (void)setLabelText:(NSString *)labelText {
@@ -195,6 +200,7 @@
 - (void)setFadeBackground:(BOOL)fadeBackground {
     if (fadeBackground) {
         self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
+
     } else {
         self.backgroundColor = [UIColor colorWithWhite:0 alpha:1.0];
     }
