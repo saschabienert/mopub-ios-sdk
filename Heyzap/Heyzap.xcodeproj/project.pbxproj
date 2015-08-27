@@ -2837,7 +2837,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "";
+			shellScript = "python ${SRCROOT}/Coverage/export_build_vars.py object_file_dir=${OBJECT_FILE_DIR}-normal/x86_64 build_dir=${OBJROOT}";
 		};
 		86C491411B27E76300A84B2C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3332,6 +3332,8 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Ads Tests/Ads Tests-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3363,6 +3365,8 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Ads Tests/Ads Tests-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -3742,6 +3746,8 @@
 					"$(PROJECT_DIR)/vunglepub.embeddedframework",
 					"$(PROJECT_DIR)",
 				);
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Ads/Ads-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
@@ -3773,6 +3779,8 @@
 					"$(PROJECT_DIR)/vunglepub.embeddedframework",
 					"$(PROJECT_DIR)",
 				);
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Ads/Ads-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
