@@ -102,13 +102,7 @@
     }
 }
 
-- (void) didClickWithURL: (NSURL *) url {
-    [self didClickWithURL:url
-               completion:^(BOOL result, NSError *error) {
-               }];
-}
-
-- (void)didClickWithURL:(NSURL *)url completion:(void (^)(BOOL, NSError *))completion {
+- (void)didClickWithURL:(NSURL *)url {
     
     if ([self.ad onClick]) {
         [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didClickAdWithTag:self.ad.tag];
@@ -131,8 +125,7 @@
                                            useModalAppStore:self.ad.useModalAppStore
                                                    clickURL:clickURL
                                                impressionID:self.ad.impressionID
-                                                 completion: ^(BOOL result, NSError *error) {
-                                                     completion(result, error);
+                                                 completion:^(BOOL result, NSError *error) {
                                                  }];
 }
 

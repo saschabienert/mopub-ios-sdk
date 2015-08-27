@@ -6,21 +6,21 @@
 //  Copyright (c) 2015 Heyzap. All rights reserved.
 //
 
-#import "HZWebViewActivityIndicator.h"
+#import "HZActivityIndicator.h"
 #import "HZActivityIndicatorView.h"
 
-@interface HZWebViewActivityIndicator()
+@interface HZActivityIndicator()
 
 @property (nonatomic) UILabel *labelView;
 @property (nonatomic) UIView *activityIndicatorBackground;
 
 - (HZActivityIndicatorView *) createActivityIndicatorView;
-- (UIView *) createBackgroundView;
+- (UIView *) createBackgroundBox;
 - (UILabel *) createLabelView;
 
 @end
 
-@implementation HZWebViewActivityIndicator
+@implementation HZActivityIndicator
 
 #pragma mark - Init
 
@@ -44,8 +44,9 @@
         
         UIView *parent = self;
         
+        
         if (withBackgroundBox) {
-            _activityIndicatorBackground = [self createBackgroundView];
+            _activityIndicatorBackground = [self createBackgroundBox];
             [parent addSubview:_activityIndicatorBackground];
             parent = _activityIndicatorBackground;
         }
@@ -96,7 +97,7 @@
     return activityIndicatorView;
 }
 
-- (UIView *)createBackgroundView {
+- (UIView *)createBackgroundBox {
     UIView *activityIndicatorBackground = [[UIView alloc] initWithFrame:CGRectZero];
     activityIndicatorBackground.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
     activityIndicatorBackground.layer.cornerRadius = 7;
@@ -127,6 +128,11 @@
 #pragma mark - Animate
 
 - (void)startAnimating {
+    if (!self.enableInteraction) {
+        self.userInteractionEnabled = NO;
+        [self.superview setUserInteractionEnabled:NO];
+    }
+    
     [self.activityIndicatorView startAnimating];
     self.hidden = NO;
 }
@@ -134,6 +140,10 @@
 - (void)stopAnimating {
     self.hidden = YES;
     [self.activityIndicatorView stopAnimating];
+    if (!self.enableInteraction) {
+        self.userInteractionEnabled = YES;
+        [self.superview setUserInteractionEnabled:YES];
+    }
 }
 
 #pragma mark - Superclass Overrides
@@ -180,6 +190,16 @@
 - (void)setLabelText:(NSString *)labelText {
     _labelText = labelText;
     self.labelView.text = _labelText;
+}
+
+- (void)setFadeBackground:(BOOL)fadeBackground {
+    if (fadeBackground) {
+        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
+    } else {
+        self.backgroundColor = [UIColor colorWithWhite:0 alpha:1.0];
+    }
+    
+    _fadeBackground = fadeBackground;
 }
 
 @end

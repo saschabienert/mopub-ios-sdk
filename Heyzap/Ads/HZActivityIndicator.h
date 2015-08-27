@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "HZActivityIndicatorView.h"
 
-@interface HZWebViewActivityIndicator : UIView
+@interface HZActivityIndicator : UIView
 
+@property (nonatomic) BOOL fadeBackground;
+@property (nonatomic) BOOL enableInteraction; // allow users to interact with the background view
 @property (nonatomic) NSString *labelText;
-@property (nonatomic) HZActivityIndicatorView *activityIndicatorView;
+@property (nonatomic, readonly) HZActivityIndicatorView *activityIndicatorView;
 
 - (instancetype) initWithFrame:(CGRect)frame withBackgroundBox:(BOOL)withBackgroundBox;
 
