@@ -38,7 +38,13 @@ typedef enum {
     kAdUnitSegmentBanner,
 } kAdUnitSegment;
 
-@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, HZBannerAdDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+
+
+@property (nonatomic) SDKTestAppViewControllerHZAdsDelegate *interstitialDelegate;
+@property (nonatomic) SDKTestAppViewControllerHZAdsDelegate *videoDelegate;
+@property (nonatomic) SDKTestAppViewControllerHZIncentivizedAdDelegate *incentivizedDelegate;
+@property (nonatomic) SDKTestAppViewControllerHZBannerAdDelegate *bannerDelegate;
 
 @property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl1;
 @property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl2;
@@ -77,6 +83,12 @@ typedef enum {
 
 @end
 
+#define METHOD_NAME NSStringFromSelector(_cmd)
+#define MERGE_TWO_STRINGS(str1, str2) [NSString stringWithFormat:@"%@ %@", str1, str2]
+#define LOG_METHOD_NAME_TO_CONSOLE [self logToConsole:METHOD_NAME]
+#define LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(str) [self logToConsole:MERGE_TWO_STRINGS(METHOD_NAME, str)]
+
+
 @implementation SDKTestAppViewController
 
 - (id) init {
@@ -91,63 +103,10 @@ typedef enum {
     return self;
 }
 
-#define LOG_METHOD_NAME_TO_CONSOLE [self logToConsole:NSStringFromSelector(_cmd)]
-#define LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(str) [self logToConsole:[NSString stringWithFormat:@"%@ %@", NSStringFromSelector(_cmd), str]]
-#pragma mark - Callbacks
 
-- (void)didReceiveAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-    
-    [self changeColorOfShowButton];
-}
-- (void)didShowAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-    
-    [self changeColorOfShowButton];
-}
-- (void)didClickAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-}
-- (void)didHideAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-    [self changeColorOfShowButton];
-}
-- (void)didFailToReceiveAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-}
 
-- (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error {
-    if(self.logCallbacksSwitch.isOn)[self logToConsole:[NSString stringWithFormat:@"%@ tag: %@ error: %@",NSStringFromSelector(_cmd),tag, error]];
-}
 
-- (void)willStartAudio {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-}
-- (void)didFinishAudio {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)didCompleteAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-}
-
-- (void) didFailToCompleteAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-}
+#pragma mark - Notifications
 
 - (void)requestNotification:(NSNotification *)notification{
     if(self.logRequestsSwitch.isOn){
@@ -270,9 +229,18 @@ const CGFloat kLeftMargin = 10;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [HZInterstitialAd setDelegate:self];
-    [HZVideoAd setDelegate:self];
-    [HZIncentivizedAd setDelegate:self];
+    self.interstitialDelegate = [[SDKTestAppViewControllerHZAdsDelegate alloc] initWthSDKTestAppViewController:self];
+    self.interstitialDelegate.name = @"--HZInterstitialAd--";
+    self.videoDelegate = [[SDKTestAppViewControllerHZAdsDelegate alloc] initWthSDKTestAppViewController:self];
+    self.videoDelegate.name = @"--HZVideoAd--";
+    self.incentivizedDelegate = [[SDKTestAppViewControllerHZIncentivizedAdDelegate alloc] initWthSDKTestAppViewController:self];
+    self.incentivizedDelegate.name = @"--HZIncentivizedAd--";
+    self.bannerDelegate = [[SDKTestAppViewControllerHZBannerAdDelegate alloc] initWthSDKTestAppViewController:self];
+    self.bannerDelegate.name = @"--HZBannerAd--";
+    
+    [HZInterstitialAd setDelegate:self.interstitialDelegate];
+    [HZVideoAd setDelegate:self.videoDelegate];
+    [HZIncentivizedAd setDelegate:self.incentivizedDelegate];
     
     
     [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
@@ -613,23 +581,28 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void) fetchAd: (id) sender {
-    NSString *adTag = [self adTagText];
-    if (adTag) {
-        [self logToConsole:[NSString stringWithFormat:@"Fetching for tag: %@", adTag]];
+    NSString *adTagText = [self adTagText];
+    if (adTagText) {
+        [self logToConsole:[NSString stringWithFormat:@"Fetching for tag: %@", adTagText]];
     } else {
         [self logToConsole:@"Fetching for default tag"];
-        adTag = nil;
+        adTagText = nil;
     }
+    
+    void (^completion)(BOOL, NSError *) = ^void (BOOL result, NSError *error){
+        if (!result || error) [self logToConsole:[NSString stringWithFormat:@"Fetch ad failed. Error: %@", error.localizedDescription]];
+    };
+    
     
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
-            [HZInterstitialAd fetchForTag:adTag];
+            [HZInterstitialAd fetchForTag:adTagText withCompletion:completion];
             break;
         case kAdUnitSegmentVideo:
-            [HZVideoAd fetchForTag:adTag];
+            [HZVideoAd fetchForTag:adTagText withCompletion:completion];
             break;
         case kAdUnitSegmentIncentivized:
-            [HZIncentivizedAd fetchForTag:adTag];
+            [HZIncentivizedAd fetchForTag:adTagText withCompletion:completion];
             break;
         default:
             break;
@@ -645,6 +618,7 @@ const CGFloat kLeftMargin = 10;
         [self logToConsole:@"Showing for default tag"];
         adTag = nil;
     }
+    
     
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
@@ -680,7 +654,7 @@ const CGFloat kLeftMargin = 10;
                          position:HZBannerPositionBottom
                           options:opts
      success:^(HZBannerAd *banner) {
-         banner.delegate = self;
+         banner.delegate = self.bannerDelegate;
          self.hideBannerButton.enabled = YES;
          self.wrapper = banner;
      } failure:^(NSError *error) {
@@ -689,6 +663,7 @@ const CGFloat kLeftMargin = 10;
              errorMessage = [errorMessage stringByAppendingFormat:@"; error was: %@",error.localizedDescription];
              [self logToConsole:errorMessage];
          }
+         
          self.showBannerButton.enabled = YES;
      }];
 }
@@ -872,40 +847,8 @@ const CGFloat kLeftMargin = 10;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-#undef APPEND_METHOD_NAME_TO_CONSOLE
 
-- (void)bannerDidReceiveAd:(HZBannerAd *)banner {
-    NSLog(@"bannerDidReceiveAd");
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
-    NSLog(@"bannerDidFailtoReceiveAd:%@",error);
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)bannerWasClicked:(HZBannerAd *)banner {
-    NSLog(@"bannerWasClicked");
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)bannerWillPresentModalView:(HZBannerAd *)banner {
-    NSLog(@"bannerWillPresentModalView");
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)bannerDidDismissModalView:(HZBannerAd *)banner {
-    NSLog(@"bannerDidDismissModalView");
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)bannerWillLeaveApplication:(HZBannerAd *)banner {
-    NSLog(@"bannerWillLeaveApplication");
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-
-#pragma mark - Creative Type support
+#pragma mark - Legacy Creative Type support
 
 - (NSArray *)humanizedCreativeTypes {
     return @[@"None",
@@ -965,4 +908,91 @@ const CGFloat kLeftMargin = 10;
     }
 }
 
+- (void) logCallback:(NSString *)callbackName {
+    [self logToConsole:callbackName];
+    [self changeColorOfShowButton];
+}
+- (void) logCallback:(NSString *)callbackName withString:(NSString *)string {
+    [self logToConsole:[NSString stringWithFormat:@"%@ %@", callbackName, string]];
+    [self changeColorOfShowButton];
+}
+
+
+@end
+
+
+#pragma mark - Delegate Callbacks
+
+@implementation SDKTestAppViewControllerAdCallbackDelegate
+- (instancetype) initWthSDKTestAppViewController:(SDKTestAppViewController *)vc {
+    self = [super init];
+    if (self) {
+        _vc = vc;
+    }
+    return self;
+}
+@end
+
+@implementation SDKTestAppViewControllerHZAdsDelegate
+- (void)didReceiveAdWithTag:(NSString *)tag {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
+}
+- (void)didShowAdWithTag:(NSString *)tag {
+   [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
+}
+- (void)didClickAdWithTag:(NSString *)tag {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
+}
+- (void)didHideAdWithTag:(NSString *)tag {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
+}
+- (void)didFailToReceiveAdWithTag:(NSString *)tag {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
+}
+
+- (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:[NSString stringWithFormat:@"tag: %@ error: %@",tag, error]];
+}
+- (void)willStartAudio {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME)];
+}
+- (void)didFinishAudio {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME)];
+}
+@end
+
+@implementation SDKTestAppViewControllerHZIncentivizedAdDelegate
+- (void)didCompleteAdWithTag:(NSString *)tag {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
+}
+
+- (void) didFailToCompleteAdWithTag:(NSString *)tag {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
+}
+@end
+
+@implementation SDKTestAppViewControllerHZBannerAdDelegate
+- (void)bannerDidReceiveAd:(HZBannerAd *)banner {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
+}
+
+- (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
+}
+
+- (void)bannerWasClicked:(HZBannerAd *)banner {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
+}
+
+- (void)bannerWillPresentModalView:(HZBannerAd *)banner {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
+}
+
+- (void)bannerDidDismissModalView:(HZBannerAd *)banner {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
+}
+
+- (void)bannerWillLeaveApplication:(HZBannerAd *)banner {
+    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
+}
 @end

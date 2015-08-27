@@ -267,16 +267,22 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     }
     
     [self appendStringToDebugLog:@"Fetching ad (may take up to 10 seconds)"];
-    NSDictionary *additionalParams = @{ @"network": [[self.network class] name] };
-    [[HeyzapMediation sharedInstance] fetchForAdType:self.currentAdType tag:nil additionalParams:additionalParams completion:^(BOOL result, NSError *error) {
+    
+    HZFetchOptions *fetchOptions = [HZFetchOptions new];
+    fetchOptions.requestingAdType = self.currentAdType;
+    fetchOptions.tag = nil;
+    fetchOptions.additionalParameters = @{ @"network": [[self.network class] name] };
+    fetchOptions.completion = ^(BOOL result, NSError *error) {
         if (error) {
             [self appendStringToDebugLog:@"Fetch failed"];
         } else {
             [self appendStringToDebugLog:@"Fetch succeeded"];
         }
-
+        
         [self changeShowButtonColor];
-    }];
+    };
+    
+    [[HeyzapMediation sharedInstance] fetchWithOptions:fetchOptions];
 }
 
 - (void) showAd {
@@ -303,7 +309,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
         [self changeShowButtonColor];
     };
 
-    [[HeyzapMediation sharedInstance] showAdForAdUnitType:self.currentAdType additionalParams:additionalParams options:options];
+    [[HeyzapMediation sharedInstance] showForAdType:self.currentAdType additionalParams:additionalParams options:options];
 }
 
 #pragma mark - HZAdDelegate methods

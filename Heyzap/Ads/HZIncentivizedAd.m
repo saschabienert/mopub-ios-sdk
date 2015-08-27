@@ -75,7 +75,7 @@
         options = [HZShowOptions new];
     }
 
-    [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeIncentivized additionalParams:nil options:options];
+    [[HeyzapMediation sharedInstance] showForAdType:HZAdTypeIncentivized additionalParams:nil options:options];
 }
 
 #pragma mark - Fetching Ads
@@ -92,14 +92,30 @@
     [[self class] fetchForTag:[HeyzapAds defaultTagName] withCompletion:completion];
 }
 
++ (void) fetchForTags:(NSArray *)tags {
+    [self fetchForTags:tags withCompletion:nil];
+}
+
++ (void) fetchForTags:(NSArray *)tags withCompletion:(void (^)(BOOL, NSError *))completion {
+    for(id tag in tags) {
+        if([tag isKindOfClass:[NSString class]]) {
+            [self fetchForTag:tag withCompletion:completion];
+        } else {
+            HZELog(@"Only NSStrings should be passed via the NSArray accepted by `fetchForTags:` and its variants. You passed a: %@", [tag class]);
+        }
+    }
+}
+
 + (void) fetchForTag: (NSString *) tag withCompletion:(void (^)(BOOL, NSError *))completion
 {
     HZVersionCheck()
 
-    [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeIncentivized
-                                                 tag:tag
-                                    additionalParams:nil
-                                          completion:completion];
+    HZFetchOptions *fetchOptions = [HZFetchOptions new];
+    fetchOptions.requestingAdType = HZAdTypeIncentivized;
+    fetchOptions.tag = tag;
+    fetchOptions.completion = completion;
+    
+    [[HeyzapMediation sharedInstance] fetchWithOptions:fetchOptions];
 }
 
 #pragma mark - Querying Status

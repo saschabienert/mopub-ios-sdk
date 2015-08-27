@@ -15,6 +15,7 @@
 #import "HeyzapAds.h"
 #import "HZTestActivityViewController.h"
 #import "HZShowOptions_Private.h"
+#import "HZFetchOptions_HeyzapMediationPrivate.h"
 
 // Util
 #import "HZDispatch.h"
@@ -87,7 +88,6 @@
 
 // State
 @property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
-
 
 - (void)sendShowFailureMessagesForAdType:(HZAdType)adType options:(HZShowOptions *)options error:(NSError *)underlyingError;
 
@@ -238,51 +238,55 @@
     }
 }
 
+
+#pragma mark - Fetching
+
 // Default to notifying the delegate
-- (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion
+- (void) fetchWithOptions:(HZFetchOptions *)fetchOptions
 {
-    [self fetchForAdType:adType tag:tag additionalParams:additionalParams completion:completion notifyDelegate:YES];
+    [self fetchWithOptions:fetchOptions notifyDelegate:YES];
 }
 
-- (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion notifyDelegate:(BOOL)notifyDelegate
+- (void) fetchWithOptions:(HZFetchOptions *)fetchOptions notifyDelegate:(BOOL)notifyDelegate
 {
+    HZParameterAssert(fetchOptions);
+    HZParameterAssert(fetchOptions.requestingAdType);
+    
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
     if (self.startStatus == HZMediationStartStatusNotStarted) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self fetchForAdType:adType tag:tag additionalParams:additionalParams completion:completion notifyDelegate:notifyDelegate];
+            [self fetchWithOptions:fetchOptions notifyDelegate:notifyDelegate];
         });
         return;
     }
     
     HZParameterAssert(self.loadManager);
-    HZShowOptions *options = [HZShowOptions new];
-    options.completion = completion;
-    options.tag = tag;
-    options.requestingAdType = adType;
     
-    if(adType == HZAdTypeIncentivized && ![[self settings] shouldAllowIncentivizedAd]) {
-        [[self delegateForAdType:adType] didFailToReceiveAdWithTag:options.tag];
-        if(completion) {
-            completion(NO, [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"This user has reached their daily limit for incentivized ad views."}]);
+    if(fetchOptions.requestingAdType == HZAdTypeIncentivized && ![[self settings] shouldAllowIncentivizedAd]) {
+        [[self delegateForAdType:fetchOptions.requestingAdType] didFailToReceiveAdWithTag:fetchOptions.tag];
+        if(fetchOptions.completion) {
+            fetchOptions.completion(NO, [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"This user has reached their daily limit for incentivized ad views."}]);
         }
         return;
     }
     
-    Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
+    Class optionalForcedNetwork = [[self class] optionalForcedNetwork:fetchOptions.additionalParameters];
+    fetchOptions.creativeTypesToFetch = hzCreativeTypesPossibleForAdType(fetchOptions.requestingAdType);
     
-    BOOL alreadyNotifyingDelegate = NO; // only notify delegate once per fetch call regardless of #/creative types to be fetched
-    for (NSNumber * creativeTypeToFetch in hzCreativeTypesPossibleForAdType(adType)) {
+    for (NSNumber * creativeTypeToFetch in fetchOptions.creativeTypesToFetch) {
         HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeToFetch);
-        [self.loadManager fetchCreativeType:creativeType showOptions:options optionalForcedNetwork:optionalForcedNetwork notifyDelegate:(notifyDelegate && !alreadyNotifyingDelegate)];
-        alreadyNotifyingDelegate = YES;
+        [self.loadManager fetchCreativeType:creativeType fetchOptions:fetchOptions optionalForcedNetwork:optionalForcedNetwork notifyDelegate:notifyDelegate];
     }
-    
 }
 
 - (void)autoFetchAdType:(HZAdType)adType tag:(NSString *)tag {
     if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
-        [self fetchForAdType:adType tag:tag additionalParams:nil completion:^(BOOL result, NSError *error) {
+        HZFetchOptions *fetchOptions = [HZFetchOptions new];
+        fetchOptions.tag = tag;
+        fetchOptions.requestingAdType = adType;
+        fetchOptions.additionalParameters = nil;
+        fetchOptions.completion = ^void (BOOL result, NSError *error){
             if(adType == HZAdTypeIncentivized && ![[self settings] shouldAllowIncentivizedAd]) {
                 // don't keep autofetching if it'll keep failing because of the daily limit
                 return;
@@ -293,17 +297,48 @@
                     [self autoFetchAdType:adType tag:tag];
                 });
             }
-        } notifyDelegate:NO];
+        };
+        
+        [self fetchWithOptions:fetchOptions notifyDelegate:NO];
     }
 }
 
-// Dictionary keys
-NSString * const kHZAdapterKey = @"name";
-NSString * const kHZDataKey = @"data";
 
-#pragma mark - Ads
+#pragma mark - Fetch (LoadManager) callbacks
 
-- (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
+- (void)didFetchAdOfCreativeType:(HZCreativeType)creativeType withAdapter:(HZBaseAdapter *)adapter options:(HZFetchOptions *)fetchOptions {
+    if ([self.settings tagIsEnabled:fetchOptions.tag]) {
+        @synchronized(fetchOptions) {
+            fetchOptions.creativeTypesFetchesFinished = [fetchOptions.creativeTypesFetchesFinished setByAddingObject:@(creativeType)];
+            if (!fetchOptions.alreadyNotifiedDelegateOfSuccess){
+                fetchOptions.alreadyNotifiedDelegateOfSuccess = YES;
+                [[self delegateForAdType:fetchOptions.requestingAdType] didReceiveAdWithTag:fetchOptions.tag];
+                if (fetchOptions.completion) { fetchOptions.completion(YES, nil); }
+            }
+        }
+    } else {
+        [self didFailToFetchAdOfCreativeType:creativeType options:fetchOptions];
+    }
+}
+
+- (void)didFailToFetchAdOfCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)fetchOptions {
+    @synchronized(fetchOptions) {
+        fetchOptions.creativeTypesFetchesFinished = [fetchOptions.creativeTypesFetchesFinished setByAddingObject:@(creativeType)];
+        NSMutableSet *creativeTypesLeftToFetch = [fetchOptions.creativeTypesToFetch mutableCopy];
+        [creativeTypesLeftToFetch minusSet:fetchOptions.creativeTypesFetchesFinished];
+        if ([creativeTypesLeftToFetch count] == 0) {
+            NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Heyzap was unable to fetch an ad from any of the available networks for creative types: [%@] and tag: [%@] via ad type: %@.", [ hzMap([fetchOptions.creativeTypesToFetch allObjects], ^NSString *(NSNumber * number){return NSStringFromCreativeType(hzCreativeTypeFromNSNumber(number));}) componentsJoinedByString:@", "], fetchOptions.tag, NSStringFromAdType(fetchOptions.requestingAdType)]}];
+            
+            [[self delegateForAdType:fetchOptions.requestingAdType] didFailToReceiveAdWithTag:fetchOptions.tag];
+            if (fetchOptions.completion) { fetchOptions.completion(NO, error); }
+        }
+    }
+}
+
+
+#pragma mark - Showing
+
+- (void)showForAdType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
     if (!options) {
         options = [HZShowOptions new];
@@ -462,6 +497,7 @@ NSString * const kHZDataKey = @"data";
     
     return [self.availabilityChecker availableAndAllowedAdaptersForAdType:adType tag:tag adapters:[NSOrderedSet orderedSetWithSet:self.setupMediators] segmentationController:self.segmentationController];
 }
+
 
 #pragma mark - Adapter Callbacks
 
@@ -975,25 +1011,6 @@ const NSTimeInterval bannerPollInterval = 1;
     });
     
     return success;
-}
-
-- (void)didFetchAdOfCreativeType:(HZCreativeType)creativeType withAdapter:(HZBaseAdapter *)adapter options:(HZShowOptions *)showOptions {
-    if ([self.settings tagIsEnabled:showOptions.tag]) {
-        [[self delegateForAdType:showOptions.requestingAdType] didReceiveAdWithTag:showOptions.tag];
-        if (showOptions.completion) { showOptions.completion(YES, nil); }
-    } else {
-        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"A disabled ad tag (%@) is preventing you from fetching an ad right now via ad type: %@.", showOptions.tag, NSStringFromAdType(showOptions.requestingAdType)]}];
-        
-        [[self delegateForAdType:showOptions.requestingAdType] didFailToReceiveAdWithTag:showOptions.tag];
-        if (showOptions.completion) { showOptions.completion(NO, error); }
-    }
-}
-
-- (void)didFailToFetchAdOfCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)showOptions {
-    NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Heyzap was unable to fetch an ad from any of the available networks for creative type: %@ and tag: %@ via ad type: %@.", NSStringFromCreativeType(creativeType), showOptions.tag, NSStringFromAdType(showOptions.requestingAdType)]}];
-    
-    [[self delegateForAdType:showOptions.requestingAdType] didFailToReceiveAdWithTag:showOptions.tag];
-    if (showOptions.completion) { showOptions.completion(NO, error); }
 }
 
 - (NSOrderedSet *)getBannerClasses:(NSDictionary *)json tag:(NSString *)tag error:(NSError **)error {
