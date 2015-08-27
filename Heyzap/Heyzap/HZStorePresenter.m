@@ -10,13 +10,11 @@
 #import "HZDevice.h"
 #import "HZAdsAPIClient.h"
 #import "HZUtils.h"
-#import "HZActivityIndicator.h"
 @import StoreKit;
 
 @interface HZStorePresenter() <UIWebViewDelegate>
 
 @property (nonatomic, strong) UIWebView *clickTrackingWebView;
-@property (nonatomic) HZActivityIndicator *activityIndicator;
 
 @end
 
@@ -30,18 +28,6 @@
     });
     
     return sharedInstance;
-}
-
-- (instancetype)init {
-    self = [super init];
-    
-    if (self) {
-        _activityIndicator = [[HZActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
-        _activityIndicator.labelText = @"Loading App Store";
-        _activityIndicator.fadeBackground = YES;
-    }
-    
-    return self;
 }
 
 // Completion for 'didOpenAppStore'
@@ -60,11 +46,6 @@
     }
     
     if(NSClassFromString(@"SKStoreProductViewController") && appStoreID && useModalAppStore) { // Checks for iOS 6 feature.
-        // start activity indicator
-        [viewController.view addSubview:self.activityIndicator];
-        [viewController.view bringSubviewToFront:self.activityIndicator];
-        [self.activityIndicator startAnimating];
-        
         if (clickURL) {
             self.clickTrackingWebView = [[UIWebView alloc] init];
             self.clickTrackingWebView.delegate = self;
@@ -102,10 +83,6 @@
         UIViewController *__weak weakViewController = viewController;
         [storeController loadProductWithParameters:productParameters
                                    completionBlock:^(BOOL result, NSError *error) {
-                                       
-            [self.activityIndicator stopAnimating];
-            [self.activityIndicator removeFromSuperview];
-            
             if (!result || error) {
                 
                 // You can check how often we run into this w/ this Kibana query @message="Error showing SKStoreProductViewController(modal app store)"

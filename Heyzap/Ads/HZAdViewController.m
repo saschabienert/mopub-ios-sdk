@@ -13,11 +13,13 @@
 #import "HZAdsManager.h"
 #import "HZAdsAPIClient.h"
 #import "HZStorePresenter.h"
+#import "HZActivityIndicator.h"
 #import "HZEnums.h"
 
 @interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
 
 @property (nonatomic) UIWebView *clickTrackingWebView;
+@property (nonatomic) HZActivityIndicator *activityIndicator;
 
 @property (nonatomic) BOOL statusBarHidden;
 
@@ -29,6 +31,10 @@
     self = [super init];
     if (self) {
         self.ad = ad;
+        
+        _activityIndicator = [[HZActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
+        _activityIndicator.labelText = @"Loading App Store";
+        _activityIndicator.fadeBackground = YES;
     }
     
     return self;
@@ -119,6 +125,15 @@
         clickURL = self.ad.clickURL;
     }
     
+    // start activity indicator
+    if (self.ad.useModalAppStore) {
+        [self.view addSubview:_activityIndicator];
+        [self.view bringSubviewToFront:self.activityIndicator];
+        [self.activityIndicator startAnimating];
+    }
+    
+    __weak HZAdViewController *weakSelf = self;
+    
     [[HZStorePresenter sharedInstance] presentAppStoreForID:self.ad.promotedGamePackage
                                    presentingViewController:self
                                                    delegate:self
@@ -126,6 +141,10 @@
                                                    clickURL:clickURL
                                                impressionID:self.ad.impressionID
                                                  completion:^(BOOL result, NSError *error) {
+                                                     if ([[weakSelf ad] useModalAppStore]) {
+                                                         [[weakSelf activityIndicator] stopAnimating];
+                                                         [[weakSelf activityIndicator] removeFromSuperview];
+                                                     }
                                                  }];
 }
 
