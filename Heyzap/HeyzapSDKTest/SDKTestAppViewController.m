@@ -28,6 +28,7 @@
 #import "HZHeyzapExchangeAdapter.h"
 #import "TestAppPaymentTransactionObserver.h"
 #import "HeyzapMediation.h"
+#import "SDKTestAppViewControllerAdCallbackDelegate.h"
 
 #define kTagCreativeIDField 4393
 
@@ -104,8 +105,6 @@ typedef enum {
 }
 
 
-
-
 #pragma mark - Notifications
 
 - (void)requestNotification:(NSNotification *)notification{
@@ -146,38 +145,6 @@ typedef enum {
     }
 }
 
-- (void) changeColorOfShowButtonAfterSeconds:(NSTimeInterval)seconds {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * seconds), dispatch_get_main_queue(), ^{
-        [self changeColorOfShowButton];
-    });
-}
-
-- (void) changeColorOfShowButton {
-    [self.bannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex != kAdUnitSegmentBanner) forKey:@"hidden"];
-    [self.nonBannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex == kAdUnitSegmentBanner) forKey:@"hidden"];
-    
-    NSString * adTag = [self adTagText];
-    
-    switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
-        case kAdUnitSegmentInterstitial:
-            [self setShowButtonOn:[HZInterstitialAd isAvailableForTag:adTag]];
-            break;
-        case kAdUnitSegmentVideo:
-            [self setShowButtonOn:[HZVideoAd isAvailableForTag:adTag]];
-            break;
-        case kAdUnitSegmentIncentivized:
-            [self setShowButtonOn:[HZIncentivizedAd isAvailableForTag:adTag]];
-            break;
-        default:
-            break;
-    }
-}
-
-- (void)setShowButtonOn:(BOOL)on
-{
-    self.showButton.backgroundColor = (on ? [UIColor greenColor] : [UIColor redColor]);
-}
-
 - (void)responseNotification:(NSNotification *)notification{
     if(self.logResponsesSwitch.isOn){
         NSString * title, * logText;
@@ -209,6 +176,9 @@ typedef enum {
     }
 }
 
+
+#pragma mark - View lifecycle
+
 NSString * const kCreativeIDTextFieldAccessibilityLabel = @"creative ID";
 NSString * const kAdTagTextFieldAccessibilityLabel = @"ad tag";
 NSString * const kShowAdButtonAccessibilityLabel = @"show ad";
@@ -220,8 +190,6 @@ NSString * const kHZAPIClientDidReceiveResponseNotification = @"HZAPIClientDidRe
 NSString * const kHZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendRequest";
 NSString * const kHZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccessNotification";
 NSString * const kHZPaymentTransactionErrorNotification = @"HZPaymentTransactionErrorNotification";
-
-#pragma mark - View lifecycle
 
 const CGFloat kLeftMargin = 10;
 
@@ -562,6 +530,40 @@ const CGFloat kLeftMargin = 10;
     return YES;
 }
 
+#pragma mark - Button/UI handlers
+
+- (void) changeColorOfShowButtonAfterSeconds:(NSTimeInterval)seconds {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * seconds), dispatch_get_main_queue(), ^{
+        [self changeColorOfShowButton];
+    });
+}
+
+- (void) changeColorOfShowButton {
+    [self.bannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex != kAdUnitSegmentBanner) forKey:@"hidden"];
+    [self.nonBannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex == kAdUnitSegmentBanner) forKey:@"hidden"];
+    
+    NSString * adTag = [self adTagText];
+    
+    switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
+        case kAdUnitSegmentInterstitial:
+            [self setShowButtonOn:[HZInterstitialAd isAvailableForTag:adTag]];
+            break;
+        case kAdUnitSegmentVideo:
+            [self setShowButtonOn:[HZVideoAd isAvailableForTag:adTag]];
+            break;
+        case kAdUnitSegmentIncentivized:
+            [self setShowButtonOn:[HZIncentivizedAd isAvailableForTag:adTag]];
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)setShowButtonOn:(BOOL)on
+{
+    self.showButton.backgroundColor = (on ? [UIColor greenColor] : [UIColor redColor]);
+}
+
 - (void) toggleDebuggable: (UISwitch *) sender {
     [HeyzapAds setDebug: sender.on];
 }
@@ -675,8 +677,6 @@ const CGFloat kLeftMargin = 10;
     self.hideBannerButton.enabled = NO;
     self.showBannerButton.enabled = YES;
 }
-
-#pragma mark - Target-Action
 
 - (void)showNativeAds {
     [HZNativeAdController fetchAds:20 tag:nil completion:^(NSError *error, HZNativeAdCollection *collection) {
@@ -808,6 +808,15 @@ const CGFloat kLeftMargin = 10;
     
 }
 
+- (void)pauseExpensiveWorkSwitchFlipped:(UISwitch *)theSwitch {
+    if (theSwitch.isOn) {
+        [HeyzapAds pauseExpensiveWork];
+    } else {
+        [HeyzapAds resumeExpensiveWork];
+    }
+}
+
+
 #pragma mark - Open
 
 - (void) openLastFetch {
@@ -816,6 +825,9 @@ const CGFloat kLeftMargin = 10;
     }
 }
 
+
+#pragma mark Orientation
+
 - (BOOL)shouldAutorotate {
     return YES;
 }
@@ -823,6 +835,7 @@ const CGFloat kLeftMargin = 10;
 - (NSUInteger)supportedInterfaceOrientations {
     return UIInterfaceOrientationMaskAll;
 }
+
 
 #pragma mark - Console
 
@@ -837,6 +850,15 @@ const CGFloat kLeftMargin = 10;
     if (self.scrollSwitch.isOn) {
         [self.consoleTextView scrollRangeToVisible:NSMakeRange(self.consoleTextView.text.length, 0)];
     }
+}
+
+- (void) logCallback:(NSString *)callbackName {
+    [self logToConsole:callbackName];
+    [self changeColorOfShowButton];
+}
+- (void) logCallback:(NSString *)callbackName withString:(NSString *)string {
+    [self logToConsole:[NSString stringWithFormat:@"%@ %@", callbackName, string]];
+    [self changeColorOfShowButton];
 }
 
 
@@ -900,99 +922,4 @@ const CGFloat kLeftMargin = 10;
     self.creativeTypeTextField.text = @"Creative type";
 }
 
-- (void)pauseExpensiveWorkSwitchFlipped:(UISwitch *)theSwitch {
-    if (theSwitch.isOn) {
-        [HeyzapAds pauseExpensiveWork];
-    } else {
-        [HeyzapAds resumeExpensiveWork];
-    }
-}
-
-- (void) logCallback:(NSString *)callbackName {
-    [self logToConsole:callbackName];
-    [self changeColorOfShowButton];
-}
-- (void) logCallback:(NSString *)callbackName withString:(NSString *)string {
-    [self logToConsole:[NSString stringWithFormat:@"%@ %@", callbackName, string]];
-    [self changeColorOfShowButton];
-}
-
-
-@end
-
-
-#pragma mark - Delegate Callbacks
-
-@implementation SDKTestAppViewControllerAdCallbackDelegate
-- (instancetype) initWthSDKTestAppViewController:(SDKTestAppViewController *)vc {
-    self = [super init];
-    if (self) {
-        _vc = vc;
-    }
-    return self;
-}
-@end
-
-@implementation SDKTestAppViewControllerHZAdsDelegate
-- (void)didReceiveAdWithTag:(NSString *)tag {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
-}
-- (void)didShowAdWithTag:(NSString *)tag {
-   [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
-}
-- (void)didClickAdWithTag:(NSString *)tag {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
-}
-- (void)didHideAdWithTag:(NSString *)tag {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
-}
-- (void)didFailToReceiveAdWithTag:(NSString *)tag {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
-}
-
-- (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:[NSString stringWithFormat:@"tag: %@ error: %@",tag, error]];
-}
-- (void)willStartAudio {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME)];
-}
-- (void)didFinishAudio {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME)];
-}
-@end
-
-@implementation SDKTestAppViewControllerHZIncentivizedAdDelegate
-- (void)didCompleteAdWithTag:(NSString *)tag {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
-}
-
-- (void) didFailToCompleteAdWithTag:(NSString *)tag {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:tag];
-}
-@end
-
-@implementation SDKTestAppViewControllerHZBannerAdDelegate
-- (void)bannerDidReceiveAd:(HZBannerAd *)banner {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
-}
-
-- (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
-}
-
-- (void)bannerWasClicked:(HZBannerAd *)banner {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
-}
-
-- (void)bannerWillPresentModalView:(HZBannerAd *)banner {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
-}
-
-- (void)bannerDidDismissModalView:(HZBannerAd *)banner {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
-}
-
-- (void)bannerWillLeaveApplication:(HZBannerAd *)banner {
-    [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME) withString:banner.options.tag];
-}
 @end

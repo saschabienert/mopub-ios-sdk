@@ -454,6 +454,9 @@
 		996B33B51B71277F001D05DE /* HZImpressionHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B33B41B71277F001D05DE /* HZImpressionHistory.h */; };
 		996B33B71B71278E001D05DE /* HZImpressionHistory.m in Sources */ = {isa = PBXBuildFile; fileRef = 996B33B61B71278E001D05DE /* HZImpressionHistory.m */; };
 		996D9AA5BB144F82A96FC8B0 /* libPods-Integration Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */; };
+		996E9A611B8FB73C001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 996E9A5F1B8FB737001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m */; };
+		996E9A621B8FB74B001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 996E9A5F1B8FB737001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m */; };
+		996E9A641B8FB75B001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 996E9A5F1B8FB737001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m */; };
 		99752D541B3B860C0075B328 /* HZVASTVideoCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 99752D531B3B860C0075B328 /* HZVASTVideoCache.m */; };
 		99752D561B3B86230075B328 /* HZVASTVideoCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 99752D551B3B86230075B328 /* HZVASTVideoCache.h */; };
 		99752D5D1B3CCEB90075B328 /* HZHeyzapExchangeAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 99752D5C1B3CCEB90075B328 /* HZHeyzapExchangeAdapter.m */; };
@@ -972,6 +975,8 @@
 		996B33B41B71277F001D05DE /* HZImpressionHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZImpressionHistory.h; sourceTree = "<group>"; };
 		996B33B61B71278E001D05DE /* HZImpressionHistory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZImpressionHistory.m; sourceTree = "<group>"; };
 		996E9A5D1B8F86C5001BCFDF /* HZFetchOptions_HeyzapMediationPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZFetchOptions_HeyzapMediationPrivate.h; sourceTree = "<group>"; };
+		996E9A5E1B8FB71A001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDKTestAppViewControllerAdCallbackDelegate.h; sourceTree = "<group>"; };
+		996E9A5F1B8FB737001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKTestAppViewControllerAdCallbackDelegate.m; sourceTree = "<group>"; };
 		99752D531B3B860C0075B328 /* HZVASTVideoCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVASTVideoCache.m; sourceTree = "<group>"; };
 		99752D551B3B86230075B328 /* HZVASTVideoCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVASTVideoCache.h; sourceTree = "<group>"; };
 		99752D5C1B3CCEB90075B328 /* HZHeyzapExchangeAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapExchangeAdapter.m; sourceTree = "<group>"; };
@@ -2028,6 +2033,8 @@
 				86C491361B279DCB00A84B2C /* DemandTestViewController.m */,
 				8A6417A81B1FBC86003E8747 /* TestAppPaymentTransactionObserver.h */,
 				8A6417A91B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m */,
+				996E9A5E1B8FB71A001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.h */,
+				996E9A5F1B8FB737001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m */,
 			);
 			name = "SDK Test App";
 			path = HeyzapSDKTest;
@@ -3039,6 +3046,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				996E9A611B8FB73C001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m in Sources */,
 				86C491381B279E7700A84B2C /* DemandTestViewController.m in Sources */,
 				50B03A391A706C710086E444 /* NativeAdTableViewController.m in Sources */,
 				50B03A3A1A706C710086E444 /* NativeTableViewCell.m in Sources */,
@@ -3060,6 +3068,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				996E9A641B8FB75B001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m in Sources */,
 				50A36AD218C9405A00FA84F0 /* DeviceInfoViewController.m in Sources */,
 				50A10DEC1AE9BF0300001C4C /* UIImageView+AFNetworking.m in Sources */,
 				50A36AD418C9405A00FA84F0 /* main.m in Sources */,
@@ -3083,6 +3092,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				996E9A621B8FB74B001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m in Sources */,
 				504514CC18B68EF600E00E6C /* DeviceInfoViewController.m in Sources */,
 				50A10DEB1AE9BF0300001C4C /* UIImageView+AFNetworking.m in Sources */,
 				507A455E19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */,

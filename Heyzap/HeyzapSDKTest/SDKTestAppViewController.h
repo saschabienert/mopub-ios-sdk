@@ -24,23 +24,3 @@ extern NSString * const kViewAccessibilityLabel;
 - (void) logCallback:(NSString *)callbackName withString:(NSString *)string;
 
 @end
-
-
-@interface SDKTestAppViewControllerAdCallbackDelegate : NSObject
-@property (nonatomic) SDKTestAppViewController *vc;
-@property (nonatomic) NSString *name;
-
-- (instancetype) initWthSDKTestAppViewController:(SDKTestAppViewController *)vc;
-
-@end
-
-@interface SDKTestAppViewControllerHZAdsDelegate : SDKTestAppViewControllerAdCallbackDelegate <HZAdsDelegate>
-
-@end
-
-@interface SDKTestAppViewControllerHZIncentivizedAdDelegate : SDKTestAppViewControllerHZAdsDelegate <HZIncentivizedAdDelegate>
-@end
-
-@interface SDKTestAppViewControllerHZBannerAdDelegate : SDKTestAppViewControllerAdCallbackDelegate <HZBannerAdDelegate>
-
-@end
