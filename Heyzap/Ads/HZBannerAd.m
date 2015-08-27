@@ -110,8 +110,10 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
     
     
     [[HeyzapMediation sharedInstance] requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdapter *adapter) {
-        if (error && failure) {
-            failure(error);
+        if (error) {
+            if (failure) failure(error);
+            [[NSNotificationCenter defaultCenter] postNotificationName:kHZBannerAdDidFailToReceiveAdNotification object:self userInfo:@{kHZBannerAdNotificationErrorKey: error}];
+            
         } else if (adapter) {
             HZBannerAd *wrapper = [[HZBannerAd alloc] initWithBanner:adapter options:options];
             success(wrapper);

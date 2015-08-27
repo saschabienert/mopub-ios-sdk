@@ -78,8 +78,8 @@
     return YES;
 }
 
-- (void)fetchCreativeType:(HZCreativeType)creativeType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork notifyDelegate:(BOOL)notifyDelegate {
-    HZParameterAssert(showOptions);
+- (void)fetchCreativeType:(HZCreativeType)creativeType fetchOptions:(HZFetchOptions *)fetchOptions optionalForcedNetwork:(Class)forcedNetwork notifyDelegate:(BOOL)notifyDelegate {
+    HZParameterAssert(fetchOptions);
     const BOOL logFilters = YES;
     
     if (logFilters && forcedNetwork) {
@@ -138,22 +138,22 @@
     });
     
     NSArray *const matching = hzFilter(serverSupportedCreativeType, ^BOOL(HZMediationLoadData *datum) {
-        if ([self.segmentationController allowAdapter:[datum.adapterClass sharedAdapter] toShowAdForCreativeType:creativeType tag:showOptions.tag]) {
+        if ([self.segmentationController allowAdapter:[datum.adapterClass sharedAdapter] toShowAdForCreativeType:creativeType tag:fetchOptions.tag]) {
             return YES;
         } else if(logFilters) {
-            HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because segmentation says it won't allow an ad of creativeType=%@ right now for tag=%@.", [datum.adapterClass name], NSStringFromCreativeType(creativeType), showOptions.tag);
+            HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because segmentation says it won't allow an ad of creativeType=%@ right now for tag=%@.", [datum.adapterClass name], NSStringFromCreativeType(creativeType), fetchOptions.tag);
         }
         return NO;
     });
     
     HZDLog(@"HZMediationLoadManager: fetching for creativeType=%@ from networks:\n%@", NSStringFromCreativeType(creativeType), matching);
-    [self fetchCreativeType:creativeType loadData:matching showOptions:showOptions notifyDelegate:notifyDelegate];
+    [self fetchCreativeType:creativeType loadData:matching fetchOptions:fetchOptions notifyDelegate:notifyDelegate];
 }
 
 // For interstitial, this should ensure that a non-rate-limited network is started.
-- (void)fetchCreativeType:(HZCreativeType)creativeType loadData:(NSArray *)loadData showOptions:(HZShowOptions *)showOptions notifyDelegate:(BOOL)notifyDelegate {
+- (void)fetchCreativeType:(HZCreativeType)creativeType loadData:(NSArray *)loadData fetchOptions:(HZFetchOptions *)fetchOptions notifyDelegate:(BOOL)notifyDelegate {
     HZParameterAssert(loadData);
-    HZParameterAssert(showOptions);
+    HZParameterAssert(fetchOptions);
 
     dispatch_async(self.fetchQueue, ^{
         __block BOOL fetchedAd = NO;
@@ -187,7 +187,7 @@
                 NSTimeInterval pollingInterval = [datum.adapterClass isAvailablePollInterval];
                 __block HZBaseAdapter *adapterWithAnAd = nil;
                 hzWaitUntilInterval(pollingInterval, ^BOOL{
-                    adapterWithAnAd = [self adapterFromLoadData:loadData uptoIndexThatHasAd:idx ofCreativeType:creativeType tag:showOptions.tag];
+                    adapterWithAnAd = [self adapterFromLoadData:loadData uptoIndexThatHasAd:idx ofCreativeType:creativeType tag:fetchOptions.tag];
                     return (adapterWithAnAd != nil); // stop waiting if we found an adapter
                 }, datum.timeout);
                 
@@ -200,7 +200,7 @@
                     fetchedAd = YES;
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         if (shouldNotifyDelegate) {
-                            [self.delegate didFetchAdOfCreativeType:creativeType withAdapter:adapterWithAnAd options:showOptions];
+                            [self.delegate didFetchAdOfCreativeType:creativeType withAdapter:adapterWithAnAd options:fetchOptions];
                         }
                     });
                     
@@ -211,7 +211,7 @@
         if (!fetchedAd) {
             dispatch_sync(dispatch_get_main_queue(), ^{
                 if (shouldNotifyDelegate) {
-                    [self.delegate didFailToFetchAdOfCreativeType:creativeType options:showOptions];
+                    [self.delegate didFailToFetchAdOfCreativeType:creativeType options:fetchOptions];
                 }
             });
         }

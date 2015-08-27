@@ -41,7 +41,7 @@
         }];
     }
     
-    [HZLog setDebugLevel: HZDebugLevelError];
+    [HZLog setDebugLevel: HZDebugLevelVerbose];
     
     SDKTestAppViewController *mainController = [[SDKTestAppViewController alloc] init];
     
@@ -54,10 +54,6 @@
 //    [HeyzapAds pauseExpensiveWork];
 #endif
     
-    
-    [HZInterstitialAd setDelegate:mainController];
-    [HZIncentivizedAd setDelegate:mainController];
-    [HZVideoAd setDelegate:mainController];
     [HeyzapAds setDelegate:mainController forNetwork:HZNetworkChartboost];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];

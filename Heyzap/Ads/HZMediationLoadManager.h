@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "HZCreativeType.h"
 
-@class HZShowOptions;
+@class HZFetchOptions;
 @class HZBaseAdapter;
 @class HZSegmentationController;
 @protocol HZMediationPersistentConfigReadonly;
@@ -17,8 +17,8 @@
 @protocol HZMediationLoadManagerDelegate <NSObject>
 
 - (BOOL)setupAdapterNamed:(NSString *)adapterName;
-- (void)didFetchAdOfCreativeType:(HZCreativeType)creativeType withAdapter:(HZBaseAdapter *)adapter options:(HZShowOptions *)showOptions;
-- (void)didFailToFetchAdOfCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)showOptions;
+- (void)didFetchAdOfCreativeType:(HZCreativeType)creativeType withAdapter:(HZBaseAdapter *)adapter options:(HZFetchOptions *)fetchOptions;
+- (void)didFailToFetchAdOfCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)fetchOptions;
 - (dispatch_queue_t)pausableMainQueue;
 
 @end
@@ -28,6 +28,6 @@
 - (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig segmentationController:( HZSegmentationController *)segmentationController error:(NSError **)error;
 - (BOOL) refreshWithLoadData:(NSDictionary *)loadData error:(NSError **)error;
 
-- (void)fetchCreativeType:(HZCreativeType)creativeType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork notifyDelegate:(BOOL)notifyDelegate;
+- (void)fetchCreativeType:(HZCreativeType)creativeType fetchOptions:(HZFetchOptions *)fetchOptions optionalForcedNetwork:(Class)forcedNetwork notifyDelegate:(BOOL)notifyDelegate;
 
 @end
