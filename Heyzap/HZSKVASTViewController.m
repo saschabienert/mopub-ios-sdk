@@ -69,8 +69,8 @@ typedef enum {
 @property(nonatomic, strong) HZVASTVideoCache *videoCache;
 @property(nonatomic) BOOL didClick;
 
-- (void) applicationDidEnterForeground: (id) notification;
-- (void) applicationDidEnterBackground: (id) notification;
+- (void) UIApplicationDidBecomeActive: (id) notification;
+- (void) UIApplicationDidEnterBackground: (id) notification;
 
 @end
 
@@ -98,9 +98,9 @@ typedef enum {
         _activityIndicator.fadeBackground = YES;
         [self.view addSubview:_activityIndicator];
         
-        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterForeground:) name: UIApplicationDidBecomeActiveNotification object: nil];
+        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(UIApplicationDidBecomeActive:) name: UIApplicationDidBecomeActiveNotification object: nil];
         
-        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterBackground:) name: UIApplicationDidEnterBackgroundNotification object: nil];
+        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(UIApplicationDidEnterBackground:) name: UIApplicationDidEnterBackgroundNotification object: nil];
     }
     return self;
 }
@@ -237,7 +237,9 @@ typedef enum {
     [self handleResumeState];
 }
 
-- (void) applicationDidEnterForeground: (id) notification {
+#pragma mark - UIApplication Notifications
+
+- (void) UIApplicationDidBecomeActive: (id) notification {
     
     if (self.didClick) {
         [self.activityIndicator stopAnimating];
@@ -248,7 +250,7 @@ typedef enum {
     [self handleResumeState];
 }
 
-- (void) applicationDidEnterBackground: (id) notification {
+- (void) UIApplicationDidEnterBackground: (id) notification {
 }
 
 #pragma mark - Orientation handling
