@@ -221,6 +221,26 @@
     }
 }
 
+- (void)receivedStartHeaders:(NSDictionary *)headers {
+    if (headers[@"heyzapLogging"]) {
+        NSLog(@"heyzapLogging header present; enabling verbose logging");
+        [HZLog setDebugLevel:HZDebugLevelVerbose];
+    }
+    
+    if (headers[@"showMediationDebugSuite"]) {
+        // Allow delaying the time to show the mediation debug suite to accommodate long app load times.
+        NSString *delayString = headers[@"showMediationDebugSuiteDelay"];
+        NSInteger delayTime = delayString ? [delayString integerValue] : 7;
+        
+        NSLog(@"showMediationDebugSuite header present; showing mediation debug suite after a delay");
+        NSLog(@"showMediationDebugSuiteDelay = %li",(long)delayTime);
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self showTestActivity];
+        });
+    }
+}
+
 - (void) setHasLoadManagerSetupSucceeded:(BOOL)hasLoadManagerSetupSucceeded {
     _hasLoadManagerSetupSucceeded = hasLoadManagerSetupSucceeded;
     [self evaluateStartStatus];

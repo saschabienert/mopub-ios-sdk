@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol HZMediationStarting <NSObject>
 
 - (void)startWithDictionary:(NSDictionary *)dictionary fromCache:(BOOL)fromCache;
+- (void)receivedStartHeaders:(NSDictionary *)headers;
 
 @end
 
