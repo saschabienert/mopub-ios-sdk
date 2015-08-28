@@ -558,17 +558,17 @@
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter
 {
     [self sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [adapter name]];
-    const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
     
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didHideAdWithTag:self.currentShownAd.tag];
+        
+        const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
+        NSString *const tag = self.currentShownAd.tag;
+        self.currentShownAd = nil;
+        [self autoFetchAdType:previousAdType tag:tag];
     } else {
         HZELog(@"Ad network %@ reported that an ad was closed, but we weren't expecting this.",adapter.name);
     }
-    
-    NSString *tag = self.currentShownAd.tag;
-    self.currentShownAd = nil;
-    [self autoFetchAdType:previousAdType tag:tag];
 }
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter
