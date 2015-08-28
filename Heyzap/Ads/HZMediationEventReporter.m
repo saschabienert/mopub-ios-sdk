@@ -17,6 +17,7 @@
 
 #pragma mark - Properties from the client
 @property (nonatomic) HZAdType adType;
+@property (nonatomic) HZCreativeType creativeType;
 @property (nonatomic, strong) NSString *tag;
 
 #pragma mark - Properties from the server
@@ -58,7 +59,7 @@ return nil; \
 } while (0)
 
 
-- (instancetype)initWithJSON:(NSDictionary *)json mediateParams:(NSDictionary *)mediateParams potentialAdapters:(NSOrderedSet *)potentialAdapters adType:(HZAdType)adType tag:(NSString *)tag error:(NSError **)error
+- (instancetype)initWithJSON:(NSDictionary *)json mediateParams:(NSDictionary *)mediateParams potentialAdapters:(NSOrderedSet *)potentialAdapters adType:(HZAdType)adType creativeType:(HZCreativeType)creativeType tag:(NSString *)tag error:(NSError **)error
 {
     HZParameterAssert(error != NULL);
     HZParameterAssert(mediateParams);
@@ -68,6 +69,7 @@ return nil; \
         _originalJSON = json;
         CHECK_NOT_NIL(_originalJSON);
         _adType = adType;
+        _creativeType = creativeType;
         _tag = tag;
         CHECK_NOT_NIL(_tag);
         _mediateParams = mediateParams;

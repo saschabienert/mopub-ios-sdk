@@ -1,0 +1,55 @@
+{
+        "segments": [{
+                 "name": "off tag",
+                 "rules": [{
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["offtag"]
+                           }
+                           }, {
+                           "type": "Frequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 1,
+                                                "time_quantity": 1,
+                                                "time_unit": "minute",
+                                                "ad_format": 1,
+                                                "seconds": 60
+                                                }],
+                           "ads_enabled": false
+                           }
+                           }, {
+                           "type": "CrossPromoFrequency",
+                           "options": {
+                           "ads_enabled": false
+                           }
+                           }]
+                 }, {
+                 "name": "1 ad per minute",
+                 "rules": [{
+                           "type": "Frequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 1,
+                                                "time_quantity": 1,
+                                                "time_unit": "minute",
+                                                "ad_format": 0,
+                                                "seconds": 60
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }, {
+                           "type": "CrossPromoFrequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 1,
+                                                "time_quantity": 1,
+                                                "time_unit": "minute",
+                                                "ad_format": 0,
+                                                "seconds": 60
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }]
+                 }]
+}

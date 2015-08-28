@@ -111,12 +111,13 @@ extern NSString * const HZNetworkCallbackIncentivizedResultIncomplete;
 extern NSString * const HZNetworkCallbackIncentivizedResultComplete;
 extern NSString * const HZNetworkCallbackAudioStarting;
 extern NSString * const HZNetworkCallbackAudioFinished;
-extern NSString * const HZNetworkCallbackBannerLoaded;
-extern NSString * const HZNetworkCallbackBannerClick;
-extern NSString * const HZNetworkCallbackBannerHide;
-extern NSString * const HZNetworkCallbackBannerDismiss;
-extern NSString * const HZNetworkCallbackBannerFetchFailed;
 extern NSString * const HZNetworkCallbackLeaveApplication;
+
+extern NSString * const HZNetworkCallbackBannerLoaded DEPRECATED_ATTRIBUTE;
+extern NSString * const HZNetworkCallbackBannerClick DEPRECATED_ATTRIBUTE;
+extern NSString * const HZNetworkCallbackBannerHide DEPRECATED_ATTRIBUTE;
+extern NSString * const HZNetworkCallbackBannerDismiss DEPRECATED_ATTRIBUTE;
+extern NSString * const HZNetworkCallbackBannerFetchFailed DEPRECATED_ATTRIBUTE;
 
 // Chartboost Specific Callbacks
 extern NSString * const HZNetworkCallbackChartboostMoreAppsFetchFailed;

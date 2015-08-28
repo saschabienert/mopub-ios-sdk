@@ -32,6 +32,10 @@
 + (BOOL)isIpad;
 + (BOOL)isPhone;
 
+- (BOOL)isHeyzapTestApp;
+
++ (BOOL)canCheckURLSchemes;
+
 #pragma mark - Overriding the bundle ID
 
 + (void)setBundleIdentifier:(NSString *)bundleIdentifier;

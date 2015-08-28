@@ -14,7 +14,7 @@
 
 @interface HZLeadboltAdapter()
 
-@property (nonatomic) BOOL interstitialCached;
+@property (nonatomic) BOOL staticCached;
 @property (nonatomic) BOOL incentivizedCached;
 
 @property (nonatomic) NSString *appAPIKey;
@@ -34,7 +34,7 @@ NSString * const kHZLeadboltInterstitialModule = @"inapp";
  */
 NSString * const kHZLeadboltIncentivizedModule = @"video";
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZLeadboltAdapter *adapter;
     static dispatch_once_t onceToken;
@@ -94,87 +94,80 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     return nil;
 }
 
-- (HZAdType)supportedAdFormats
+- (HZCreativeType)supportedCreativeTypes
 {
-    return HZAdTypeInterstitial | HZAdTypeIncentivized;
+    // We don't currently have a way to tell if an interstitial from Leadbolt is a static or video ad.
+    // Until we do, we will treat them as all static.
+    return HZCreativeTypeStatic | HZCreativeTypeIncentivized;
 }
 
-- (BOOL)isVideoOnlyNetwork
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
-    return NO;
-}
-
-- (void)prefetchForType:(HZAdType)type
-{
-    HZDLog(@"Prefetching Leadbolt ad of type: %@",NSStringFromAdType(type));
-    switch (type) {
-        case HZAdTypeInterstitial: {
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
+            HZDLog(@"Prefetching Leadbolt ad of type: %@",NSStringFromCreativeType(creativeType));
             [HZAppTracker loadModuleToCache:kHZLeadboltInterstitialModule];
             break;
         }
-        case HZAdTypeIncentivized: {
+        case HZCreativeTypeIncentivized: {
+            HZDLog(@"Prefetching Leadbolt ad of type: %@",NSStringFromCreativeType(creativeType));
             [HZAppTracker loadModuleToCache:kHZLeadboltIncentivizedModule];
             break;
         }
-        case HZAdTypeVideo:
-        case HZAdTypeBanner: {
+        default: {
             // Unsupported
+            HZDLog(@"Can't prefetch Leadbolt ad of unsupported type: %@",NSStringFromCreativeType(creativeType));
             break;
         }
     }
 }
 
-- (BOOL)hasAdForType:(HZAdType)type
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
-    switch (type) {
-        case HZAdTypeInterstitial: {
-            return self.interstitialCached;
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
+            return self.staticCached;
         }
-        case HZAdTypeIncentivized: {
+        case HZCreativeTypeIncentivized: {
             return self.incentivizedCached;
         }
-        case HZAdTypeVideo:
-        case HZAdTypeBanner: {
+        default: {
+            // Unsupported
             return NO;
         }
     }
 }
 
-- (BOOL)hasCredentialsForAdType:(HZAdType)adType {
-    switch (adType) {
-        case HZAdTypeInterstitial:
-        case HZAdTypeIncentivized: {
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeStatic:
+        case HZCreativeTypeIncentivized: {
             return (self.appAPIKey != nil);
-            break;
         }
-            
-        case HZAdTypeVideo:
-        case HZAdTypeBanner:
         default: {
             // Ad types not supported by this network
             return NO;
-            break;
         }
     }
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    HZDLog(@"Requesting that Leadbolt show an ad of type: %@",NSStringFromAdType(type));
-    switch (type) {
-        case HZAdTypeInterstitial: {
-            self.interstitialCached = NO;
+    HZDLog(@"Requesting that Leadbolt show an ad of type: %@",NSStringFromCreativeType(creativeType));
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
+            self.staticCached = NO;
             [HZAppTracker loadModule:kHZLeadboltInterstitialModule viewController:options.viewController];
             break;
         }
-        case HZAdTypeIncentivized: {
+        case HZCreativeTypeIncentivized: {
             self.incentivizedCached = NO;
             [HZAppTracker loadModule:kHZLeadboltIncentivizedModule viewController:options.viewController];
             break;
         }
-        case HZAdTypeVideo:
-        case HZAdTypeBanner: {
-            // Ignored
+        default: {
+            // Unsupported
+            HZDLog(@"Can't show Leadbolt ad of unsupported type: %@",NSStringFromCreativeType(creativeType));
             break;
         }
     }
@@ -206,7 +199,7 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     NSString *const placement = notification.userInfo[@"placement"];
     
     if ([placement isEqualToString:kHZLeadboltInterstitialModule]) {
-        self.interstitialCached = YES;
+        self.staticCached = YES;
     } else if ([placement isEqualToString:kHZLeadboltIncentivizedModule]) {
         self.incentivizedCached = YES;
     } else {

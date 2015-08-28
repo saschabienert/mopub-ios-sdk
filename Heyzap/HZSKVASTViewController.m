@@ -75,11 +75,11 @@ typedef enum {
 #pragma mark - Init & dealloc
 
 // designated initializer
-- (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forAdType:(HZAdType)adType
+- (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forCreativeType:(HZCreativeType)creativeType
 {
     self = [super init];
     if (self) {
-        _adType = adType;
+        _creativeType = creativeType;
         _delegate = delegate;
         currentQuartile=VASTFirstQuartile;
         hasReportedEngagedView = NO;
@@ -137,7 +137,7 @@ typedef enum {
         self->clickTracking = [vastModel clickTracking];
         self->mediaFileURL = [HZSKVASTMediaFilePicker pick:[vastModel mediaFiles]].url;
         
-        self.videoSettings = [[HZVASTVideoSettings alloc] initForAdType:self.adType vastModel:vastModel];
+        self.videoSettings = [[HZVASTVideoSettings alloc] initForCreativeType:self.creativeType vastModel:vastModel];
         self.videoView.skipButtonEnabled = self.videoSettings.allowSkip;
         self.videoView.hideButtonEnabled = self.videoSettings.allowHide;
         self.videoView.timerLabelEnabled = self.videoSettings.allowTimer;
@@ -527,7 +527,7 @@ typedef enum {
 
 @implementation HZVASTVideoSettings
 
-- (instancetype) initForAdType:(HZAdType)adType vastModel:(HZSKVASTModel *)vastModel {
+- (instancetype) initForCreativeType:(HZCreativeType)creativeType vastModel:(HZSKVASTModel *)vastModel {
     self = [super init];
     if(self) {
         // defaults
@@ -544,11 +544,11 @@ typedef enum {
             [HZSKLogger debug:@"VAST - View Controller" withMessage:[NSString stringWithFormat:@"skipOffsetSeconds read as: %@", _skipOffsetSeconds]];
         }
         
-        if(adType == HZAdTypeIncentivized) {
+        if(creativeType == HZCreativeTypeIncentivized) {
             _allowSkip = NO;
             _allowHide = NO;
             _skipOffsetSeconds = @0;
-        } else if(adType == HZAdTypeVideo) {
+        } else if(creativeType == HZCreativeTypeVideo) {
             _allowSkip = YES;
             _allowHide = NO;
             if(!_skipOffsetSeconds || [_skipOffsetSeconds doubleValue] < 0){

@@ -11,7 +11,7 @@
 #import "HeyzapAds.h"
 #import "Chartboost.h"
 
-@interface SDKTestAppViewController : BaseTestAppViewController <HZAdsDelegate,UITextFieldDelegate, HZIncentivizedAdDelegate>
+@interface SDKTestAppViewController : BaseTestAppViewController <UITextFieldDelegate>
 
 extern NSString * const kCreativeIDTextFieldAccessibilityLabel;
 extern NSString * const kShowAdButtonAccessibilityLabel;
@@ -19,5 +19,8 @@ extern NSString * const kFetchAdButtonAccessibilityLabel;
 extern NSString * const kViewAccessibilityLabel;
 
 @property (nonatomic) UITextField * adsTextField ;
+
+- (void) logCallback:(NSString *)callbackName;
+- (void) logCallback:(NSString *)callbackName withString:(NSString *)string;
 
 @end

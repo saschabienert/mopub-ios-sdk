@@ -11,11 +11,16 @@
 
 @implementation HZCachingService
 
-- (void)cacheDictionary:(NSDictionary *)dictionary filename:(NSString *)filename {
-    [dictionary writeToURL:[self cacheUrlForFilename:filename] atomically:YES];
+#pragma mark - NSCoding
+
+- (void)cacheRootObject:(id<NSCoding>)rootObject filename:(NSString *)filename {
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:rootObject];
+    [data writeToURL:[self cacheUrlForFilename:filename] atomically:YES];
 }
-- (NSDictionary *)dictionaryWithFilename:(NSString *)filename {
-    return [NSDictionary dictionaryWithContentsOfURL:[self cacheUrlForFilename:filename]];
+
+- (id)rootObjectWithFilename:(NSString *)filename {
+    NSData *data = [NSData dataWithContentsOfURL:[self cacheUrlForFilename:filename]];
+    return data ? [NSKeyedUnarchiver unarchiveObjectWithData:data] : nil;
 }
 
 - (NSURL *)cacheUrlForFilename:(NSString *)filename {

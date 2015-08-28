@@ -14,3 +14,6 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
     // placeholder for moreapps
     HZAdTypeBanner = 1 << 4,
 };
+
+NSString * NSStringFromAdType(HZAdType type);
+HZAdType hzAdTypeFromString(NSString *adUnit);

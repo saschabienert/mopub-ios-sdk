@@ -12,16 +12,20 @@
 #import "HZBannerAdOptions_Private.h"
 #import "HeyzapMediation.h"
 
+#import "HZFBAdSettings.h"
+
 @interface HZFBBannerAdapter()
 
 @property (nonatomic, strong) HZFBAdView *adView;
 @property (nonatomic) BOOL isLoaded;
+@property (nonatomic) BOOL reportedMostRecentImpressionAsFirstImpression;
 
 @end
 
 @implementation HZFBBannerAdapter
 
 - (instancetype)initWithAdUnitId:(NSString *)adUnitId options:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter {
+    HZAssert(adUnitId, @"Need a Banner Placement ID by this point");
     self = [super init];
     if (self) {
         self.parentAdapter = parentAdapter;
@@ -46,29 +50,28 @@
     [self.bannerReportingDelegate bannerAdapter:self wasClickedWithEventReporter:self.eventReporter];
     [self.bannerInteractionDelegate userDidClick];
     [self.bannerInteractionDelegate willPresentModalView];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: HZNetworkFacebook];
 }
 
 - (void)adViewDidFinishHandlingClick:(HZFBAdView *)adView {
     [self.bannerInteractionDelegate didDismissModalView];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerHide forNetwork: HZNetworkFacebook];
 }
 - (void)adViewDidLoad:(HZFBAdView *)adView {
     // if on screen, then register impression
     // else monitor view for superview
     self.isLoaded = YES;
     [self.bannerInteractionDelegate didReceiveAd];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerLoaded forNetwork: HZNetworkFacebook];
 }
 - (void)adView:(HZFBAdView *)adView didFailWithError:(NSError *)error {
     self.isLoaded = NO;
     self.lastError = error;
     [self.bannerInteractionDelegate didFailToReceiveAd:error];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: HZNetworkFacebook];
 }
 - (void)adViewWillLogImpression:(HZFBAdView *)adView {
-    [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: @"banner-logging_impression" forNetwork: HZNetworkFacebook];
+    if (self.reportedMostRecentImpressionAsFirstImpression) {
+        self.reportedMostRecentImpressionAsFirstImpression = NO;
+    } else {
+        [self.bannerReportingDelegate bannerAdapter:self hadReloadedImpressionWithEventReporter:self.eventReporter];
+    }
 }
 
 - (UIView *)mediatedBanner {
@@ -81,6 +84,11 @@
     } else {
         return [super conformsToProtocol:aProtocol];
     }
+}
+
+- (void) bannerWasAddedToView {
+    self.reportedMostRecentImpressionAsFirstImpression = YES;
+    [self.bannerReportingDelegate bannerAdapter:self hadInitialImpressionWithEventReporter:self.eventReporter];
 }
 
 @end

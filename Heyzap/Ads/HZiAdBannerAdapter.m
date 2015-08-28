@@ -43,21 +43,17 @@
 
 - (void)bannerViewDidLoadAd:(ADBannerView *)banner {
     if (banner.superview) {
-        [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
+        [self.bannerReportingDelegate bannerAdapter:self hadReloadedImpressionWithEventReporter:self.eventReporter];
     } else {
         self.waitingToBeAddedToScreen = YES;
     }
     
     [self.bannerInteractionDelegate didReceiveAd];
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerLoaded forNetwork: HZNetworkIAd];
 }
 
 - (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error {
     self.lastError = error;
     [self.bannerInteractionDelegate didFailToReceiveAd:error];
-    
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerFetchFailed forNetwork: HZNetworkIAd];
 }
 
 
@@ -65,11 +61,9 @@
     [self.bannerReportingDelegate bannerAdapter:self wasClickedWithEventReporter:self.eventReporter];
     [self.bannerInteractionDelegate userDidClick];
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerClick forNetwork: HZNetworkIAd];
     
     if (willLeave) {
         [self.bannerInteractionDelegate willLeaveApplication];
-        [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackLeaveApplication forNetwork: HZNetworkIAd];
     } else {
         [self.bannerInteractionDelegate willPresentModalView];
     }
@@ -79,7 +73,6 @@
 
 - (void)bannerViewActionDidFinish:(ADBannerView *)banner {
     [self.bannerInteractionDelegate didDismissModalView];
-    [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackBannerDismiss forNetwork: HZNetworkIAd];
 }
 
 - (BOOL)isAvailable {
@@ -88,7 +81,7 @@
 
 - (void)bannerWasAddedToView {
     if (self.waitingToBeAddedToScreen) {
-        [self.bannerReportingDelegate bannerAdapter:self hadImpressionWithEventReporter:self.eventReporter];
+        [self.bannerReportingDelegate bannerAdapter:self hadInitialImpressionWithEventReporter:self.eventReporter];
         self.waitingToBeAddedToScreen = NO;
     }
 }

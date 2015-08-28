@@ -36,7 +36,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     ABSTRACT_METHOD_ERROR();
 }
@@ -71,28 +71,22 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
-- (HZAdType)supportedAdFormats
+- (HZCreativeType)supportedCreativeTypes
 {
     ABSTRACT_METHOD_ERROR();
 }
 
-- (BOOL)isVideoOnlyNetwork
-{
-    // Return true for video-only networks like Vungle, whose interstitial support is faked via videos.
-    ABSTRACT_METHOD_ERROR();
-}
-
-- (void)prefetchForType:(HZAdType)type
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
     ABSTRACT_METHOD_ERROR();
 }
 
-- (BOOL)hasAdForType:(HZAdType)type
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
     ABSTRACT_METHOD_ERROR();
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
     ABSTRACT_METHOD_ERROR();
 }
@@ -113,53 +107,57 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return [[self class] name];
 }
 
-- (BOOL)supportsAdType:(HZAdType)adType
+- (BOOL)supportsCreativeType:(HZCreativeType)creativeType
 {
-    return [self supportedAdFormats] & adType;
+    return [self supportedCreativeTypes] & creativeType;
 }
 
-- (BOOL)hasCredentialsForAdType:(HZAdType)adType {
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
     return YES;
 }
 
-- (NSError *)lastErrorForAdType:(HZAdType)adType
+- (NSError *)lastErrorForCreativeType:(HZCreativeType)creativeType
 {
-    switch (adType) {
-        case HZAdTypeInterstitial: {
-            return self.lastInterstitialError;
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
+            return self.lastStaticError;
             break;
         }
-        case HZAdTypeIncentivized: {
+        case HZCreativeTypeIncentivized: {
             return self.lastIncentivizedError;
             break;
         }
-        case HZAdTypeVideo: {
+        case HZCreativeTypeVideo: {
             return self.lastVideoError;
             break;
         }
-        case HZAdTypeBanner: {
+        case HZCreativeTypeBanner:
+        case HZCreativeTypeNative:
+        case HZCreativeTypeUnknown: {
             // ignored
             return nil;
         }
     }
 }
 
-- (void)clearErrorForAdType:(HZAdType)adType
+- (void)clearErrorForCreativeType:(HZCreativeType)creativeType
 {
-    switch (adType) {
-        case HZAdTypeInterstitial: {
-            self.lastInterstitialError = nil;
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
+            self.lastStaticError = nil;
             break;
         }
-        case HZAdTypeIncentivized: {
+        case HZCreativeTypeIncentivized: {
             self.lastIncentivizedError = nil;
             break;
         }
-        case HZAdTypeVideo: {
+        case HZCreativeTypeVideo: {
             self.lastVideoError = nil;
             break;
         }
-        case HZAdTypeBanner: {
+        case HZCreativeTypeBanner:
+        case HZCreativeTypeNative:
+        case HZCreativeTypeUnknown: {
             // ignored for now
             break;
         }
@@ -204,48 +202,30 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
 + (NSArray *)testActivityAdapters
 {
-    NSSet *filteredAdapters = [[self allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^
-        BOOL(HZBaseAdapter *adapter, NSDictionary *bindings) {
-        return [adapter class] != [HZCrossPromoAdapter class];
-    }]];
-
-    NSArray *sortedAdapters = [[filteredAdapters allObjects] sortedArrayUsingComparator:^
-        NSComparisonResult(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
-        return [[obj1 name] compare:[obj2 name]];
+    return [[[self allAdapterClasses] allObjects] sortedArrayUsingComparator:^
+        NSComparisonResult(Class klass1, Class klass2) {
+        return [[[klass1 sharedAdapter] name] compare:[[klass2 sharedAdapter] name]];
     }];
-
-    return sortedAdapters;
 }
 
 + (BOOL)isHeyzapAdapter {
     return NO;
 }
 
-- (NSNumber *) latestMediationScoreForAdType:(HZAdType)adType {
+- (NSNumber *) latestMediationScoreForCreativeType:(HZCreativeType)creativeType {
     if(!self.latestMediationScores){
         self.latestMediationScores = [[NSMutableDictionary alloc] init];
     }
     
-    return self.latestMediationScores[@(adType)] ?: @0;
+    return self.latestMediationScores[@(creativeType)] ?: @0;
 }
 
-- (void) setLatestMediationScore:(NSNumber *)score forAdType:(HZAdType)adType {
+- (void) setLatestMediationScore:(NSNumber *)score forCreativeType:(HZCreativeType)creativeType {
     if(!self.latestMediationScores){
         self.latestMediationScores = [[NSMutableDictionary alloc]init];
     }
     
-    // video-only networks need to store their scores in HZAdTypeInterstitial as well as HZAdTypeVideo
-    // in order to be properly sorted in the waterfall when compared to static creative scores
-    if([self isVideoOnlyNetwork]){
-        if(adType == HZAdTypeInterstitial || adType == HZAdTypeVideo) {
-            self.latestMediationScores[@(HZAdTypeInterstitial)] = (score ?: @0);
-            self.latestMediationScores[@(HZAdTypeVideo)] = (score ?: @0);
-        } else {
-            self.latestMediationScores[@(adType)] = (score ?: @0);
-        }
-    } else {
-        self.latestMediationScores[@(adType)] = (score ?: @0);
-    }
+    self.latestMediationScores[@(creativeType)] = (score ?: @0);
 }
 
 - (void)setCredentials:(NSDictionary *const)credentials {
@@ -257,6 +237,28 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
 + (NSTimeInterval)isAvailablePollInterval {
     return kHZIsAvailablePollIntervalSecondsDefault;
+}
+
+- (HZAdType) possibleSupportedAdTypes {
+    HZAdType returnVal = 0;
+    HZCreativeType supportedCreativeTypes = [self supportedCreativeTypes];
+    if (supportedCreativeTypes & HZCreativeTypeStatic) {
+        returnVal |= HZAdTypeInterstitial;
+    }
+    
+    if (supportedCreativeTypes & HZCreativeTypeVideo) {
+        returnVal |= (HZAdTypeInterstitial | HZAdTypeVideo); // blended interstitials
+    }
+    
+    if(supportedCreativeTypes & HZCreativeTypeIncentivized) {
+        returnVal |= HZAdTypeIncentivized;
+    }
+    
+    if(supportedCreativeTypes & HZCreativeTypeBanner) {
+        returnVal |= HZAdTypeBanner;
+    }
+    
+    return returnVal;
 }
 
 @end

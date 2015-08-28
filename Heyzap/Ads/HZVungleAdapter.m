@@ -29,7 +29,7 @@
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZVungleAdapter *proxy;
     static dispatch_once_t onceToken;
@@ -84,22 +84,20 @@
     return hzLookupStringConstant(@"VungleSDKVersion");
 }
 
-- (HZAdType)supportedAdFormats
+- (HZCreativeType) supportedCreativeTypes
 {
-    return HZAdTypeInterstitial | HZAdTypeIncentivized | HZAdTypeVideo;
+    return HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (BOOL)isVideoOnlyNetwork {
-    return YES;
-}
-
-- (void)prefetchForType:(HZAdType)type
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
 
-- (BOOL)hasAdForType:(HZAdType)type
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
+    if(![self supportsCreativeType:creativeType]) return NO;
+    
     BOOL adPlayable = NO;
     
     // in v.3.1.0 `isAdPlayable` is added, `isCachedAdAvailable` is deprecated
@@ -110,25 +108,27 @@
         adPlayable = [[HZVungleSDK sharedSDK] isCachedAdAvailable];
     }
     
-    return [self supportedAdFormats] & type && adPlayable;
+    return [self supportedCreativeTypes] & creativeType && adPlayable;
 }
 
-- (NSError *)lastErrorForAdType:(HZAdType)adType
+- (NSError *)lastErrorForCreativeType:(HZCreativeType)creativeType
 {
     return self.lastError;
 }
 
-- (void)clearErrorForAdType:(HZAdType)adType
+- (void)clearErrorForCreativeType:(HZCreativeType)creativeType
 {
     self.lastError = nil;
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
+    if(![self supportsCreativeType:creativeType]) return;
+    
     // setup options
     NSMutableDictionary *vungleOptions = [[NSMutableDictionary alloc] init];
     
-    if (type == HZAdTypeIncentivized) {
+    if (creativeType == HZCreativeTypeIncentivized) {
         self.isShowingIncentivized = YES;
         
         NSString *const incentivizedKey = [[self class] vunglePlayAdOptionKeyIncentivized];

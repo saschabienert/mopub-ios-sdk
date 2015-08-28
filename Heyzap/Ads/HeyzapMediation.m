@@ -8,20 +8,14 @@
 
 #import "HeyzapMediation.h"
 #import "HZBaseAdapter.h"
-
-// Proxies
-#import "HZChartboostAdapter.h"
-#import "HZAbstractHeyzapAdapter.h"
-#import "HZHeyzapAdapter.h"
-#import "HZAdColonyAdapter.h"
-#import "HZVungleAdapter.h"
-#import "HZAdMobAdapter.h"
-#import "HZFacebookAdapter.h"
 #import "HZMediationAPIClient.h"
 #import "HZDictionaryUtils.h"
 #import "HZMediationConstants.h"
 #import "HZAdFetchRequest.h"
 #import "HeyzapAds.h"
+#import "HZTestActivityViewController.h"
+#import "HZShowOptions_Private.h"
+#import "HZFetchOptions_HeyzapMediationPrivate.h"
 
 // Util
 #import "HZDispatch.h"
@@ -37,21 +31,27 @@
 #import "HZMediationConstants.h"
 #import "HZDevice.h"
 
-#import "HZiAdBannerAdapter.h"
-#import "HZiAdAdapter.h"
 #import "HZBannerAdOptions_Private.h"
+
+// Helper classes
 #import "HZMediationStarter.h"
 #import "HZMediationCurrentShownAd.h"
 #import "HZMediateRequester.h"
 #import "HZMediationLoadManager.h"
 #import "HZMediationAvailabilityChecker.h"
-
-#import "HZTestActivityViewController.h"
-
-#import "HZHeyzapExchangeAdapter.h"
-#import "HZHeyzapExchangeBannerAdapter.h"
+#import "HZMediationSettings.h"
 #import "HZCachingService.h"
 #import "HZInterstitialVideoConfig.h"
+#import "HZCachingService.h"
+#import "HZInterstitialVideoConfig.h"
+#import "HZMediationPersistentConfig.h"
+
+// Exchange
+#import "HZHeyzapExchangeAdapter.h"
+#import "HZHeyzapExchangeBannerAdapter.h"
+
+// Segmentation
+#import "HZImpressionHistory.h"
 
 @interface HeyzapMediation()
 
@@ -79,13 +79,15 @@
 @property (nonatomic, strong) HZMediationLoadManager *loadManager;
 @property (nonatomic, strong) HZMediationAvailabilityChecker *availabilityChecker;
 @property (nonatomic, strong) HZMediationSettings *settings;
+@property (nonatomic, strong) HZSegmentationController *segmentationController;
 
 @property (nonatomic) HZMediationStartStatus startStatus;
-@property (nonatomic) BOOL hasLoadedFromCache;
+
+@property (nonatomic) BOOL hasLoadManagerSetupSucceeded;
+@property (nonatomic) BOOL hasSegmentationSetupFinished;
 
 // State
 @property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
-
 
 - (void)sendShowFailureMessagesForAdType:(HZAdType)adType options:(HZShowOptions *)options error:(NSError *)underlyingError;
 
@@ -123,9 +125,13 @@
         dispatch_set_target_queue(self.pausableMainQueue, dispatch_get_main_queue());
         
         self.startStatus = HZMediationStartStatusNotStarted;
+
+        _settings = [[HZMediationSettings alloc] init];
+        _segmentationController = [[HZSegmentationController alloc] init];
         _cachingService = [[HZCachingService alloc] init];
         _starter = [[HZMediationStarter alloc] initWithStartingDelegate:self cachingService:_cachingService];
         _mediateRequester = [[HZMediateRequester alloc] initWithDelegate:self cachingService:_cachingService];
+        _persistentConfig = [[HZMediationPersistentConfig alloc] initWithCachingService:_cachingService isTestApp:[[HZDevice currentDevice] isHeyzapTestApp]];
     }
     return self;
 }
@@ -185,7 +191,7 @@
         });
         
         if (network && credentials) {
-            HZBaseAdapter *const adapter = [[HZBaseAdapter adapterClassForName:network] sharedInstance];
+            HZBaseAdapter *const adapter = [[HZBaseAdapter adapterClassForName:network] sharedAdapter];
             adapter.credentials = credentials; // The adapter will prevent overriding existing credentials, to prevent them changing between the cached and non-cached /start response.
         } else {
             HZELog(@"Invalid network in /start response");
@@ -193,57 +199,114 @@
     }
 }
 
-
 - (void)startWithDictionary:(NSDictionary *const __nonnull)dictionary fromCache:(const BOOL)fromCache {
-    self.settings = [[HZMediationSettings alloc] init];
     [[self settings] setupWithDict:dictionary fromCache:fromCache];
     [self addCredentialsToAdapters:dictionary];
+    [self.segmentationController setupFromMediationStart:dictionary completion:^void(BOOL successful){
+        self.hasSegmentationSetupFinished = YES;
+    }];
     
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSError *error;
-        self.loadManager = [[HZMediationLoadManager alloc] initWithLoadData:dictionary[@"loader"] delegate:self error:&error];
-        if (error) {
+    NSError *error;
+    if (!self.loadManager) {
+        self.loadManager = [[HZMediationLoadManager alloc] initWithLoadData:dictionary[@"loader"] delegate:self persistentConfig:self.persistentConfig segmentationController:self.segmentationController error:&error];
+        if (error || !self.loadManager) {
             HZELog(@"Error initializing network preloader. Mediation won't be possible. %@",error);
         } else {
-            self.startStatus = HZMediationStartStatusSuccess;
-            [self autoFetchAdType:HZAdTypeInterstitial];
+            self.hasLoadManagerSetupSucceeded = YES;
         }
-        
-    });
+    } else {
+        if (![self.loadManager refreshWithLoadData:dictionary[@"loader"] error:&error] || error) {
+            HZELog(@"Error refreshing network preloader. Mediation may be out of date. %@", error);
+        }
+    }
 }
 
-- (void)fetchForAdType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion
+- (void)receivedStartHeaders:(NSDictionary *)headers {
+    if (headers[@"heyzapLogging"]) {
+        NSLog(@"heyzapLogging header present; enabling verbose logging");
+        [HZLog setDebugLevel:HZDebugLevelVerbose];
+    }
+    
+    if (headers[@"showMediationDebugSuite"]) {
+        // Allow delaying the time to show the mediation debug suite to accommodate long app load times.
+        NSString *delayString = headers[@"showMediationDebugSuiteDelay"];
+        NSInteger delayTime = delayString ? [delayString integerValue] : 7;
+        
+        NSLog(@"showMediationDebugSuite header present; showing mediation debug suite after a delay");
+        NSLog(@"showMediationDebugSuiteDelay = %li",(long)delayTime);
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self showTestActivity];
+        });
+    }
+}
+
+- (void) setHasLoadManagerSetupSucceeded:(BOOL)hasLoadManagerSetupSucceeded {
+    _hasLoadManagerSetupSucceeded = hasLoadManagerSetupSucceeded;
+    [self evaluateStartStatus];
+}
+- (void) setHasSegmentationSetupFinished:(BOOL)hasSegmentationSetupFinished {
+    _hasSegmentationSetupFinished = hasSegmentationSetupFinished;
+    [self evaluateStartStatus];
+}
+- (void) evaluateStartStatus {
+    @synchronized(self) {
+        if (self.hasLoadManagerSetupSucceeded && self.hasSegmentationSetupFinished && self.startStatus != HZMediationStartStatusSuccess) {
+            self.startStatus = HZMediationStartStatusSuccess;
+            [self autoFetchAdType:HZAdTypeInterstitial tag:nil];
+        }
+    }
+}
+
+
+#pragma mark - Fetching
+
+// Default to notifying the delegate
+- (void) fetchWithOptions:(HZFetchOptions *)fetchOptions
 {
+    [self fetchWithOptions:fetchOptions notifyDelegate:YES];
+}
+
+- (void) fetchWithOptions:(HZFetchOptions *)fetchOptions notifyDelegate:(BOOL)notifyDelegate
+{
+    HZParameterAssert(fetchOptions);
+    HZParameterAssert(fetchOptions.requestingAdType);
+    
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
     if (self.startStatus == HZMediationStartStatusNotStarted) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self fetchForAdType:adType additionalParams:additionalParams completion:completion];
+            [self fetchWithOptions:fetchOptions notifyDelegate:notifyDelegate];
         });
         return;
     }
     
     HZParameterAssert(self.loadManager);
-    HZShowOptions *options = [HZShowOptions new];
-    options.completion = completion;
     
-    if(adType == HZAdTypeIncentivized && ![[self settings] shouldAllowIncentivizedAd]) {
-        [[self delegateForAdType:adType] didFailToReceiveAdWithTag:options.tag];
-        if(completion) {
-            completion(NO, [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"This user has reached their daily limit for incentivized ad views."}]);
+    if(fetchOptions.requestingAdType == HZAdTypeIncentivized && ![[self settings] shouldAllowIncentivizedAd]) {
+        [[self delegateForAdType:fetchOptions.requestingAdType] didFailToReceiveAdWithTag:fetchOptions.tag];
+        if(fetchOptions.completion) {
+            fetchOptions.completion(NO, [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"This user has reached their daily limit for incentivized ad views."}]);
         }
         return;
     }
     
-    Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
+    Class optionalForcedNetwork = [[self class] optionalForcedNetwork:fetchOptions.additionalParameters];
+    fetchOptions.creativeTypesToFetch = hzCreativeTypesPossibleForAdType(fetchOptions.requestingAdType);
     
-    [self.loadManager fetchAdType:adType showOptions:options optionalForcedNetwork:optionalForcedNetwork];
+    for (NSNumber * creativeTypeToFetch in fetchOptions.creativeTypesToFetch) {
+        HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeToFetch);
+        [self.loadManager fetchCreativeType:creativeType fetchOptions:fetchOptions optionalForcedNetwork:optionalForcedNetwork notifyDelegate:notifyDelegate];
+    }
 }
 
-- (void)autoFetchAdType:(HZAdType)adType {
+- (void)autoFetchAdType:(HZAdType)adType tag:(NSString *)tag {
     if (![[HZAdsManager sharedManager] isOptionEnabled: HZAdOptionsDisableAutoPrefetching]) {
-        [self fetchForAdType:adType additionalParams:nil completion:^(BOOL result, NSError *error) {
+        HZFetchOptions *fetchOptions = [HZFetchOptions new];
+        fetchOptions.tag = tag;
+        fetchOptions.requestingAdType = adType;
+        fetchOptions.additionalParameters = nil;
+        fetchOptions.completion = ^void (BOOL result, NSError *error){
             if(adType == HZAdTypeIncentivized && ![[self settings] shouldAllowIncentivizedAd]) {
                 // don't keep autofetching if it'll keep failing because of the daily limit
                 return;
@@ -251,21 +314,57 @@
             
             if (error) {
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    [self autoFetchAdType:adType];
+                    [self autoFetchAdType:adType tag:tag];
                 });
             }
-        }];
+        };
+        
+        [self fetchWithOptions:fetchOptions notifyDelegate:NO];
     }
 }
 
-// Dictionary keys
-NSString * const kHZAdapterKey = @"name";
-NSString * const kHZDataKey = @"data";
 
-#pragma mark - Ads
+#pragma mark - Fetch (LoadManager) callbacks
 
-- (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
+- (void)didFetchAdOfCreativeType:(HZCreativeType)creativeType withAdapter:(HZBaseAdapter *)adapter options:(HZFetchOptions *)fetchOptions {
+    if ([self.settings tagIsEnabled:fetchOptions.tag]) {
+        @synchronized(fetchOptions) {
+            fetchOptions.creativeTypesFetchesFinished = [fetchOptions.creativeTypesFetchesFinished setByAddingObject:@(creativeType)];
+            if (!fetchOptions.alreadyNotifiedDelegateOfSuccess){
+                fetchOptions.alreadyNotifiedDelegateOfSuccess = YES;
+                [[self delegateForAdType:fetchOptions.requestingAdType] didReceiveAdWithTag:fetchOptions.tag];
+                if (fetchOptions.completion) { fetchOptions.completion(YES, nil); }
+            }
+        }
+    } else {
+        [self didFailToFetchAdOfCreativeType:creativeType options:fetchOptions];
+    }
+}
+
+- (void)didFailToFetchAdOfCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)fetchOptions {
+    @synchronized(fetchOptions) {
+        fetchOptions.creativeTypesFetchesFinished = [fetchOptions.creativeTypesFetchesFinished setByAddingObject:@(creativeType)];
+        NSMutableSet *creativeTypesLeftToFetch = [fetchOptions.creativeTypesToFetch mutableCopy];
+        [creativeTypesLeftToFetch minusSet:fetchOptions.creativeTypesFetchesFinished];
+        if ([creativeTypesLeftToFetch count] == 0) {
+            NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Heyzap was unable to fetch an ad from any of the available networks for creative types: [%@] and tag: [%@] via ad type: %@.", [ hzMap([fetchOptions.creativeTypesToFetch allObjects], ^NSString *(NSNumber * number){return NSStringFromCreativeType(hzCreativeTypeFromNSNumber(number));}) componentsJoinedByString:@", "], fetchOptions.tag, NSStringFromAdType(fetchOptions.requestingAdType)]}];
+            
+            [[self delegateForAdType:fetchOptions.requestingAdType] didFailToReceiveAdWithTag:fetchOptions.tag];
+            if (fetchOptions.completion) { fetchOptions.completion(NO, error); }
+        }
+    }
+}
+
+
+#pragma mark - Showing
+
+- (void)showForAdType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options
 {
+    if (!options) {
+        options = [HZShowOptions new];
+    }
+    
+    options.requestingAdType = adType;
     
     NSError *preShowError = [self checkForPreShowError:options.tag adType:adType];
     if (preShowError) {
@@ -283,33 +382,26 @@ NSString * const kHZDataKey = @"data";
         return;
     }
     
-    NSError *eventReporterError;
+    // update Heyzap Exchange's scores with latest fetched ad scores (ads have their own scores in the exchange, the score currently on the adapter is the per network score all networks have)
+    [[HZHeyzapExchangeAdapter sharedAdapter] setAllMediationScoresForReadyAds];
     
-    NSMutableOrderedSet *adapters = [[self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:adType] mutableCopy];
+    // this returns a set of HZMediationAdapterWithCreativeTypeScore
+    NSMutableOrderedSet *adaptersWithScores = [[self.availabilityChecker parseMediateIntoAdaptersForShow:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:adType] mutableCopy];
     
-    // update Heyzap Exchange's scores with latest fetched ad scores (ads have their own scores in the exchange, the currently stored score is per network)
-    [[HZHeyzapExchangeAdapter sharedInstance] setAllMediationScoresForReadyAds];
-    
-    /*  Sort the adapters, largest score first
+    /*  Sort the adapters, largest score first. The objects in the set obtained above contain their creative type and score.
      *
-     *  TODO: Problem: we only sort here based on the requested adType's score.
-     *  To fully support interstitial video (blended) for the exchange, we could split this method into two parts:
-     *
-     *      1. decide if we're using video or interstitial (static)
-     *      2. use that adType that we decided on in #1 for the rest of the method instead of the requested adType (including in the sort & for the show call)
-     *
-     *  This way, we'd know which adType to compare the networks on in the sort, and the show call would be told to show the correct adType.
-     *  Right now, we are storing the mediationScore for video-only networks in both HZAdTypeInterstitial and HZAdTypeVideo to partially get around this,
-     *  but this still doesn't allow the exchange to participate in blended interstitials.
      */
-    [self sortAdaptersByScore:adapters ifLatestMediateRequires:latestMediate forAdType:adType];
+    [self sortAdaptersByScore:adaptersWithScores ifLatestMediateRequires:latestMediate];
     
     Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
     
-    HZBaseAdapter *chosenAdapter = [self.availabilityChecker firstAdapterWithAdForAdType:adType adapters:adapters optionalForcedNetwork:optionalForcedNetwork];
+    HZMediationAdapterWithCreativeTypeScore *chosenAdapterWithScore = [self.availabilityChecker firstAdapterWithAdForTag:options.tag adaptersWithScores:adaptersWithScores optionalForcedNetwork:optionalForcedNetwork segmentationController:self.segmentationController];
     
     /// Start event reporting
-    HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:adapters adType:adType tag:options.tag error:&eventReporterError];
+    NSError *eventReporterError;
+    NSOrderedSet * plainAdapters = hzMapOrderedSet(adaptersWithScores, ^HZBaseAdapter *(HZMediationAdapterWithCreativeTypeScore * adapterWithScore) { return [adapterWithScore adapter]; });
+    
+    HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:plainAdapters adType:adType creativeType:[chosenAdapterWithScore creativeType] tag:options.tag error:&eventReporterError];
     
     if (eventReporterError) {
         NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{
@@ -320,42 +412,47 @@ NSString * const kHZDataKey = @"data";
         return;
     }
     
-    [eventReporter reportFetchWithSuccessfulAdapter:chosenAdapter];
-    if (!chosenAdapter) {
-        // TODO: make that error message prettier.
-        NSString *const errorMessage = [NSString stringWithFormat:@"No ad network had an ad to show. Ad networks we checked were: %@", adapters];
+    [eventReporter reportFetchWithSuccessfulAdapter:[chosenAdapterWithScore adapter]];
+    if (!chosenAdapterWithScore) {
+        NSString *const errorMessage = [NSString stringWithFormat:@"An ad cannot be shown at this time. Either no available networks had an ad or segmentation settings prevented the show. Ad networks we checked: [%@]", [hzMap([plainAdapters array], ^NSString *(HZBaseAdapter *adapter){return [[adapter class] humanizedName];}) componentsJoinedByString:@", "]];
         NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: errorMessage}];
         [self sendShowFailureMessagesForAdType:adType options:options error:error];
         return;
     }
     
-    self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithEventReporter:eventReporter adapter:chosenAdapter options:options];
+    self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithEventReporter:eventReporter adapter:[chosenAdapterWithScore adapter] options:options];
     
-    /// Notify dependent objects of a show
-    if (adType == HZAdTypeInterstitial && [chosenAdapter isVideoOnlyNetwork]) {
+    // Notify dependent objects of a show
+    if (adType == HZAdTypeInterstitial && [chosenAdapterWithScore creativeType] == HZCreativeTypeVideo) {
         [self.availabilityChecker didShowInterstitialVideo];
     }
+    
     [self.mediateRequester refreshMediate];
     
-    /// Show ad
-    [chosenAdapter showAdForType:adType options:options];
+    // Show ad
+    HZDLog(@"HeyzapMediation: %@ adapter will now show an ad of creativeType: %@. Requested adType: %@", [[chosenAdapterWithScore adapter] name], NSStringFromCreativeType([chosenAdapterWithScore creativeType]), NSStringFromAdType(adType));
+    [[chosenAdapterWithScore adapter] showAdForCreativeType:[chosenAdapterWithScore creativeType] options:options];
 }
 
-- (void) sortAdaptersByScore:(NSMutableOrderedSet *)adapters ifLatestMediateRequires:(NSDictionary *)latestMediate forAdType:(HZAdType)adType {
+- (void) sortAdaptersByScore:(NSMutableOrderedSet *)adaptersWithScores ifLatestMediateRequires:(NSDictionary *)latestMediate {
     BOOL shouldSortAdapters = [[HZDictionaryUtils objectForKey:@"sort" ofClass:[NSNumber class] default:@0 dict:latestMediate] boolValue];
     
     if(shouldSortAdapters) {
-        [adapters sortUsingComparator:^(HZBaseAdapter *obj1, HZBaseAdapter *obj2) {
+        [adaptersWithScores sortUsingComparator:^(HZMediationAdapterWithCreativeTypeScore *obj1, HZMediationAdapterWithCreativeTypeScore *obj2) {
             // [obj2 compare:obj1] will sort highest score first
-            return [[obj2 latestMediationScoreForAdType:adType] compare:[obj1 latestMediationScoreForAdType:adType]];
+            return [[obj2 score] compare:[obj1 score]];
         }];
     }
     
     // avoid the loop if we don't want to print the scores
     if([HZLog debugLevel] >= HZDebugLevelVerbose) {
-        NSMutableString *scoreStr = [NSMutableString stringWithFormat:@"Waterfall for adType=%@ (%@ order): ", NSStringFromAdType(adType), shouldSortAdapters ? @"Sorted" : @"UNSORTED"];
-        for(HZBaseAdapter *adapter in adapters) {
-            [scoreStr appendFormat:@"[%@: %@]", [adapter name], shouldSortAdapters ? [adapter latestMediationScoreForAdType:adType] : @"--"];
+        NSMutableString *scoreStr = [NSMutableString stringWithFormat:@"Waterfall (%@ order): ", shouldSortAdapters ? @"Sorted" : @"UNSORTED"];
+        NSNumberFormatter  *formatter = [[NSNumberFormatter alloc] init];
+        [formatter setMaximumFractionDigits:4];
+        [formatter setNumberStyle:NSNumberFormatterScientificStyle];
+        for(HZMediationAdapterWithCreativeTypeScore *adapterWithScore in adaptersWithScores) {
+            
+            [scoreStr appendFormat:@"[%@ (%@): %@]", [[adapterWithScore adapter] name], NSStringFromCreativeType([adapterWithScore creativeType]), [formatter stringFromNumber:[adapterWithScore score]]];
         }
         
         HZDLog(@"%@",scoreStr);
@@ -367,7 +464,7 @@ NSString * const kHZDataKey = @"data";
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"SDK hasn't finished starting."}];
     } else if (self.pausableQueueIsPaused) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad when the SDK is paused."}];
-    } else if ([[[self settings] disabledTags] containsObject:[HZAdModel normalizeTag:tag]]) {
+    } else if ([[[self settings] disabledTags] containsObject:tag]) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad with a disabled tag"}];
     } else if (self.currentShownAd) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"An ad is already shown or attempting to be shown"}];
@@ -402,17 +499,14 @@ NSString * const kHZDataKey = @"data";
 
 #pragma mark - Querying adapters
 
-- (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag
-{
+- (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag {
     tag = [HZAdModel normalizeTag:tag];
-    
     return [[self availableAdaptersForAdType:adType tag:tag] count] != 0;
 }
 
 - (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag network:(HZBaseAdapter *const)network {
     tag = [HZAdModel normalizeTag:tag];
-    return [[self availableAdaptersForAdType:adType tag:tag] containsObject:network]
-    && [[self settings] tagIsEnabled:tag];
+    return [[self availableAdaptersForAdType:adType tag:tag] containsObject:network];
 }
 
 - (NSOrderedSet *)availableAdaptersForAdType:(const HZAdType)adType tag:(NSString *)tag {
@@ -421,14 +515,9 @@ NSString * const kHZDataKey = @"data";
         return [NSOrderedSet orderedSet];
     }
     
-    NSOrderedSet *const availableAdapters = [self.availabilityChecker availableAdaptersForAdType:adType adapters:[NSOrderedSet orderedSetWithSet:self.setupMediators]];
-    
-    NSIndexSet *const adapterIndexes = [availableAdapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter * adapter, NSUInteger idx, BOOL *stop) {
-        return [adapter hasAdForType:adType];
-    }];
-    
-    return [NSOrderedSet orderedSetWithArray:[availableAdapters objectsAtIndexes:adapterIndexes]];
+    return [self.availabilityChecker availableAndAllowedAdaptersForAdType:adType tag:tag adapters:[NSOrderedSet orderedSetWithSet:self.setupMediators] segmentationController:self.segmentationController];
 }
+
 
 #pragma mark - Adapter Callbacks
 
@@ -439,6 +528,7 @@ NSString * const kHZDataKey = @"data";
     HZMediationCurrentShownAd *currentAd = self.currentShownAd;
     
     [currentAd.eventReporter reportImpressionForAdapter:adapter];
+    [self.segmentationController recordImpressionWithCreativeType:currentAd.eventReporter.creativeType tag:currentAd.tag adapter:adapter];
     
     if (currentAd && currentAd.adState == HZAdStateRequestedShow) {
         self.currentShownAd.adState = HZAdStateShown;
@@ -460,20 +550,25 @@ NSString * const kHZDataKey = @"data";
     if (self.currentShownAd) {
         [self.currentShownAd.eventReporter reportClickForAdapter:adapter];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didClickAdWithTag:self.currentShownAd.tag];
+    } else {
+        HZELog(@"Ad network %@ reported that an ad was clicked, but we weren't expecting this.",adapter.name);
     }
 }
 
 - (void)adapterDidDismissAd:(HZBaseAdapter *)adapter
 {
     [self sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [adapter name]];
-    const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
     
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didHideAdWithTag:self.currentShownAd.tag];
+        
+        const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
+        NSString *const tag = self.currentShownAd.tag;
+        self.currentShownAd = nil;
+        [self autoFetchAdType:previousAdType tag:tag];
+    } else {
+        HZELog(@"Ad network %@ reported that an ad was closed, but we weren't expecting this.",adapter.name);
     }
-    
-    self.currentShownAd = nil;
-    [self autoFetchAdType:previousAdType];
 }
 
 - (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter
@@ -482,6 +577,8 @@ NSString * const kHZDataKey = @"data";
     
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] willStartAudio];
+    } else {
+        HZELog(@"Ad network %@ reported that an ad played audio, but we weren't expecting this.",adapter.name);
     }
 }
 
@@ -491,6 +588,8 @@ NSString * const kHZDataKey = @"data";
     
     if (self.currentShownAd) {
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didFinishAudio];
+    } else {
+        HZELog(@"Ad network %@ reported that an ad finished playing audio, but we weren't expecting this.",adapter.name);
     }
 }
 
@@ -501,6 +600,8 @@ NSString * const kHZDataKey = @"data";
                                        options:self.currentShownAd.showOptions
                                          error:underlyingError];
         self.currentShownAd = nil;
+    } else {
+        HZELog(@"Ad network %@ reported that an ad failed to show, but we weren't expecting this.",adapter.name);
     }
 }
 
@@ -515,6 +616,8 @@ NSString * const kHZDataKey = @"data";
         [[self settings] incentivizedAdShown];
         [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didCompleteAdWithTag:self.currentShownAd.tag];
         [self.currentShownAd.eventReporter reportIncentivizedResult:YES forAdapter:adapter];
+    } else {
+        HZELog(@"Ad network %@ reported that an incentivized ad was completed, but we weren't expecting this.",adapter.name);
     }
 }
 
@@ -525,6 +628,8 @@ NSString * const kHZDataKey = @"data";
     if (self.currentShownAd) {
         [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAdWithTag:self.currentShownAd.tag];
         [self.currentShownAd.eventReporter reportIncentivizedResult:NO forAdapter:adapter];
+    } else {
+        HZELog(@"Ad network %@ reported that an incentivized ad wasn't completed, but we weren't expecting this.",adapter.name);
     }
 }
 
@@ -651,18 +756,18 @@ const NSTimeInterval bannerPollInterval = 1;
     HZParameterAssert(options);
     HZParameterAssert(completion);
     
-    if ([[self settings] IAPAdsTimeOut]) {
-        HZILog(@"Ads disabled because of an IAP");
-        completion([[self class] bannerErrorWithDescription:@"Ads disabled because of an IAP" underlyingError:nil], nil);
-        return;
-    }
-    
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
     if (self.startStatus == HZMediationStartStatusNotStarted) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self requestBannerWithOptions:options completion:completion];
         });
+        return;
+    }
+    
+    NSError *preShowError = [self checkForPreShowError:options.tag adType:HZAdTypeBanner];
+    if (preShowError) {
+        completion(preShowError, nil);
         return;
     }
     
@@ -676,7 +781,7 @@ const NSTimeInterval bannerPollInterval = 1;
         }, 4);
         
         if (!withinTimeout) {
-            NSError *timeoutError = [[self class] bannerErrorWithDescription:@"Couldn't get /mediate waterfall from Heyzap." underlyingError:nil];
+            NSError *timeoutError = [[self class] bannerErrorWithDescription:@"Couldn't get /mediate waterfall from Heyzap in time to show a banner ad." underlyingError:nil];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completion(timeoutError, nil);
             });
@@ -684,9 +789,9 @@ const NSTimeInterval bannerPollInterval = 1;
         }
         
         NSError *error;
-        NSOrderedSet *const adapterClasses = [self getBannerClasses:latestMediate error:&error];
-        if (!adapterClasses) {
-            NSError *timeoutError = [[self class] bannerErrorWithDescription:@"Couldn't get adapter classes to use" underlyingError:error];
+        NSMutableOrderedSet *adapterClasses = [[self getBannerClasses:latestMediate tag:options.tag error:&error] mutableCopy];
+        if (!adapterClasses || [adapterClasses count] == 0) {
+            NSError *timeoutError = [[self class] bannerErrorWithDescription:@"No banner adapters available to show an ad." underlyingError:error];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completion(timeoutError, nil);
             });
@@ -697,31 +802,29 @@ const NSTimeInterval bannerPollInterval = 1;
             [self setupAdapterNamed:[adapterClass name]];
         }
         
+        [adapterClasses intersectSet:self.setupMediatorClasses];
+        
         dispatch_sync(dispatch_get_main_queue(), ^{
-            
-            NSOrderedSet *adapters = ({
-                NSOrderedSet *a1 = [self.availabilityChecker parseMediateIntoAdapters:latestMediate setupAdapterClasses:self.setupMediatorClasses adType:HZAdTypeBanner];
-                NSOrderedSet *a2 = hzFilterOrderedSet(a1, ^BOOL(HZBaseAdapter *adapter) {
-                    return [adapter hasCredentialsForAdType:HZAdTypeBanner];
-                });
-                NSOrderedSet *a3 = hzFilterOrderedSet(a2, ^BOOL(HZBaseAdapter *adapter) {
+            NSOrderedSet *adaptersWithScores = ({
+                NSOrderedSet *a1 = [self.availabilityChecker parseMediateIntoAdaptersForShow:latestMediate setupAdapterClasses:[adapterClasses set] adType:HZAdTypeBanner];
+                NSOrderedSet *a2 = hzFilterOrderedSet(a1, ^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {
                     if (options.networkName) {
-                        return [[adapter name] isEqualToString:options.networkName];
+                        return [[[adapterWithScore adapter] name] isEqualToString:options.networkName];
                     } else {
                         return YES;
                     }
                 });
                 
-                a3;
+                a2;
             });
             
-            if ([adapters count] == 0) {
+            if ([adaptersWithScores count] == 0) {
                 completion([NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey:@"No banner adapters were available"}], nil);
                 return;
             }
             
             NSError *eventReporterError;
-            HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:adapters adType:HZAdTypeBanner tag:options.tag error:&eventReporterError];
+            HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate mediateParams:latestMediateParams potentialAdapters:hzMapOrderedSet(adaptersWithScores, ^HZBaseAdapter *(HZMediationAdapterWithCreativeTypeScore * adapterWithScore){return [adapterWithScore adapter];}) adType:HZAdTypeBanner creativeType:HZCreativeTypeBanner tag:options.tag error:&eventReporterError];
             
             if (eventReporterError) {
                 NSError *mediationError = [[self class] bannerErrorWithDescription:@"Couldn't create HZMediationEventReporter" underlyingError:error];
@@ -735,19 +838,28 @@ const NSTimeInterval bannerPollInterval = 1;
                 __block BOOL heyzapExchangeAvailable = NO;
                 __block HZHeyzapExchangeBannerAdapter *heyzapExchangeBannerAdapter;
                 
-                for (HZBaseAdapter *baseAdapter in adapters) {
+                for (HZMediationAdapterWithCreativeTypeScore *adapterWithScore in adaptersWithScores) {
                     __block HZBannerAdapter *bannerAdapter;
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        bannerAdapter = [baseAdapter fetchBannerWithOptions:options reportingDelegate:self];
+                        bannerAdapter = [[adapterWithScore adapter] fetchBannerWithOptions:options reportingDelegate:self];
                     });
                     
                     __block BOOL isAvailable = NO;
                     hzWaitUntilInterval(bannerPollInterval, ^BOOL{
                         isAvailable = [bannerAdapter isAvailable];
-                        if (bannerAdapter.lastError) {
-                            HZELog(@"Ad Network %@ had an error loading a banner: %@",baseAdapter.name, bannerAdapter.lastError);
+                        BOOL passedSegmentationTest = YES; // default to YES so that the return statement below only tells the wait block to stop waiting if we actually fail the test below
+                        if (isAvailable) {
+                            passedSegmentationTest = [self.segmentationController allowBannerAdapter:bannerAdapter toShowAdForTag:options.tag];
+                            if (!passedSegmentationTest) {
+                                isAvailable = NO;
+                                HZDLog(@"Ad network %@ not allowed to show a banner under current segmentation rules.", [[adapterWithScore adapter] name]);
+                            }
                         }
-                        return isAvailable || (bannerAdapter.lastError != nil);
+                        
+                        if (bannerAdapter.lastError) {
+                            HZELog(@"Ad Network %@ had an error loading a banner: %@", [[adapterWithScore adapter] name], bannerAdapter.lastError);
+                        }
+                        return isAvailable || (bannerAdapter.lastError != nil) || !passedSegmentationTest;
                     }, bannerTimeout);
                     
                     if (isAvailable) {
@@ -762,7 +874,7 @@ const NSTimeInterval bannerPollInterval = 1;
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     if([adaptersWithAvailableAds count] == 0){
                         [eventReporter reportFetchWithSuccessfulAdapter:nil];
-                        completion([[self class] bannerErrorWithDescription:@"None of the mediated ad networks had a banner available" underlyingError:nil], nil);
+                        completion([[self class] bannerErrorWithDescription:@"None of the mediated ad networks had a banner available that was allowed to show" underlyingError:nil], nil);
                         return;
                     }
                     
@@ -770,18 +882,33 @@ const NSTimeInterval bannerPollInterval = 1;
                     if(shouldSortAdapters) {
                         // sort adapters with ads by score, also considering RTB score from heyzap exchange fetch
                         if(heyzapExchangeAvailable){
-                            [heyzapExchangeBannerAdapter.parentAdapter setLatestMediationScore:heyzapExchangeBannerAdapter.adScore forAdType:HZAdTypeBanner];
+                            [heyzapExchangeBannerAdapter.parentAdapter setLatestMediationScore:heyzapExchangeBannerAdapter.adScore forCreativeType:HZCreativeTypeBanner];
                         }
                         
                         [adaptersWithAvailableAds sortUsingComparator:^(HZBannerAdapter *obj1, HZBannerAdapter *obj2) {
                             // [obj2 compare:obj1] will sort highest score first
-                            return [[obj2.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner] compare:[obj1.parentAdapter latestMediationScoreForAdType:HZAdTypeBanner]];
+                            return [[obj2.parentAdapter latestMediationScoreForCreativeType:HZCreativeTypeBanner] compare:[obj1.parentAdapter latestMediationScoreForCreativeType:HZCreativeTypeBanner]];
                         }];
+                    }
+                    
+                    // avoid the loop if we don't want to print the scores
+                    if([HZLog debugLevel] >= HZDebugLevelVerbose) {
+                        NSMutableString *scoreStr = [NSMutableString stringWithFormat:@"Banner waterfall (%@ order): ", shouldSortAdapters ? @"Sorted" : @"UNSORTED"];
+                        NSNumberFormatter  *formatter = [[NSNumberFormatter alloc] init];
+                        [formatter setMaximumFractionDigits:4];
+                        [formatter setNumberStyle:NSNumberFormatterScientificStyle];
+                        for(HZBannerAdapter *adapter in adaptersWithAvailableAds) {
+                            
+                            [scoreStr appendFormat:@"[%@ %@]", [adapter.parentAdapter name], [formatter stringFromNumber:[adapter.parentAdapter latestMediationScoreForCreativeType:HZCreativeTypeBanner]]];
+                        }
+                        
+                        HZDLog(@"%@",scoreStr);
                     }
                     
                     HZBannerAdapter *finalAdapter = [adaptersWithAvailableAds objectAtIndex:0];
                     finalAdapter.eventReporter = eventReporter;
                     [eventReporter reportFetchWithSuccessfulAdapter:finalAdapter.parentAdapter];
+                    [self.mediateRequester refreshMediate];
                     completion(nil, finalAdapter);
                 });
             });
@@ -804,9 +931,15 @@ const NSTimeInterval bannerPollInterval = 1;
 
 // TODO *** need to implement functionality so that the ad loading only counts as an impression after it is added to the screen, which is mildly tricky (best I have so far is an NStimer to check the superview property).
 
-- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter hadImpressionWithEventReporter:(HZMediationEventReporter *)eventReporter {
+- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter hadInitialImpressionWithEventReporter:(HZMediationEventReporter *)eventReporter {
+    [eventReporter reportImpressionForAdapter:bannerAdapter.parentAdapter];
+    [self.segmentationController recordImpressionWithCreativeType:HZCreativeTypeBanner tag:eventReporter.tag adapter:bannerAdapter.parentAdapter];
+}
+
+- (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter hadReloadedImpressionWithEventReporter:(HZMediationEventReporter *)eventReporter {
     [eventReporter reportImpressionForAdapter:bannerAdapter.parentAdapter];
 }
+
 - (void)bannerAdapter:(HZBannerAdapter *)bannerAdapter wasClickedWithEventReporter:(HZMediationEventReporter *)eventReporter {
     [eventReporter reportClickForAdapter:bannerAdapter.parentAdapter];
 }
@@ -834,7 +967,17 @@ const NSTimeInterval bannerPollInterval = 1;
         return NO;
     }
     
-    return [self.setupMediatorClasses containsObject:[HZBaseAdapter adapterClassForName:[network lowercaseString]]];
+    return [self isNetworkClassInitialized:[HZBaseAdapter adapterClassForName:[network lowercaseString]]];
+}
+
+- (BOOL) isNetworkClassInitialized:(Class)networkClass {
+    for(Class klass in self.setupMediatorClasses) {
+        if (klass == networkClass) {
+            return YES;
+        }
+    }
+    
+    return NO;
 }
 
 - (BOOL)isAdapterInitialized:(HZBaseAdapter *)adapter {
@@ -884,13 +1027,13 @@ const NSTimeInterval bannerPollInterval = 1;
         } else if (forceOnlyHeyzapSDK && ![adapterClass isHeyzapAdapter]) {
             success = NO;
         } else {
-            NSError *credentialError = [[adapterClass sharedInstance] initializeSDK];
+            NSError *credentialError = [[adapterClass sharedAdapter] initializeSDK];
             if (credentialError){
                 HZELog(@"Failed to initialize network %@, had error: %@",[adapterClass humanizedName], credentialError);
                 self.erroredMediatiorClasses = [self.erroredMediatiorClasses setByAddingObject:adapterClass];
             } else {
                 HZILog(@"Setup adapter: %@",[adapterClass humanizedName]);
-                HZBaseAdapter *adapter = [adapterClass sharedInstance];
+                HZBaseAdapter *adapter = [adapterClass sharedAdapter];
                 adapter.delegate = self;
                 self.setupMediators = [self.setupMediators setByAddingObject:adapter];
                 self.setupMediatorClasses = [self.setupMediatorClasses setByAddingObject:adapterClass];
@@ -904,20 +1047,7 @@ const NSTimeInterval bannerPollInterval = 1;
     return success;
 }
 
-- (void)didFetchAdOfType:(HZAdType)adType options:(HZShowOptions *)showOptions {
-    [[self delegateForAdType:adType] didReceiveAdWithTag:showOptions.tag];
-    if (showOptions.completion) { showOptions.completion(YES, nil); }
-}
-
-- (void)didFailToFetchAdOfType:(HZAdType)adType options:(HZShowOptions *)showOptions {
-    // TODO: can we improve this error somehow?
-    NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
-    
-    [[self delegateForAdType:adType] didFailToReceiveAdWithTag:showOptions.tag];
-    if (showOptions.completion) { showOptions.completion(NO, error); }
-}
-
-- (NSOrderedSet *)getBannerClasses:(NSDictionary *)json error:(NSError **)error {
+- (NSOrderedSet *)getBannerClasses:(NSDictionary *)json tag:(NSString *)tag error:(NSError **)error {
     HZParameterAssert(json);
     HZParameterAssert(error);
     
@@ -929,14 +1059,20 @@ const NSTimeInterval bannerPollInterval = 1;
     }
     
     NSMutableOrderedSet *adapterClasses = [NSMutableOrderedSet orderedSet];
+    NSSet *const availableAdapters = [HeyzapMediation availableAdaptersWithHeyzap:YES];
     
     for (NSDictionary *network in networks) {
-        NSArray *creativeTypes = [HZDictionaryUtils objectForKey:@"creative_types" ofClass:[NSArray class] default:@[] dict:network];
-        if ([creativeTypes containsObject:@"BANNER"]) {
+        NSSet *creativeTypes = [NSSet setWithArray:[HZDictionaryUtils objectForKey:@"creative_types" ofClass:[NSArray class] default:@[] dict:network]];
+        if (hzCreativeTypeStringSetContainsCreativeType(creativeTypes, HZCreativeTypeBanner)){
             NSString *networkName = network[@"network"];
-            Class adapter = [HZBaseAdapter adapterClassForName:networkName];
-            if (adapter && [adapter isSDKAvailable]) { // TODO: check supported ad types
-                [adapterClasses addObject:adapter];
+            Class adapterClass = [HZBaseAdapter adapterClassForName:networkName];
+            if (adapterClass
+                && [availableAdapters containsObject:adapterClass]
+                && [[adapterClass sharedAdapter] supportsCreativeType:HZCreativeTypeBanner]
+                && [[adapterClass sharedAdapter] hasCredentialsForCreativeType:HZCreativeTypeBanner]
+                && [self.segmentationController allowAdapter:[adapterClass sharedAdapter] toShowAdForCreativeType:HZCreativeTypeBanner tag:tag]
+                && [self isNetworkEnabledByPersistentConfig:networkName]) {
+                [adapterClasses addObject:adapterClass];
             }
         }
     }
@@ -954,7 +1090,7 @@ const NSTimeInterval bannerPollInterval = 1;
     HZInterstitialVideoConfig *const interstitialVideoConfig = [[HZInterstitialVideoConfig alloc] initWithDictionary:json];
     
     if (!self.availabilityChecker) {
-        self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithInterstitialVideoConfig:interstitialVideoConfig];
+        self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithInterstitialVideoConfig:interstitialVideoConfig persistentConfig:self.persistentConfig];
     } else {
         [self.availabilityChecker updateWithInterstitialVideoConfig:interstitialVideoConfig];
     }
@@ -972,11 +1108,10 @@ const NSTimeInterval bannerPollInterval = 1;
             NSString *networkName = network[@"network"];
             NSSet *creativeTypes = [NSSet setWithArray:network[@"creative_types"]];
             Class adapter = [HZBaseAdapter adapterClassForName:networkName];
-            HZBaseAdapter *adapterInstance = (HZBaseAdapter *)[adapter sharedInstance];
+            HZBaseAdapter *adapterInstance = [adapter sharedAdapter];
             
             for(NSString * creativeType in creativeTypes) {
-                HZAdType adType = hzAdTypeFromCreativeTypeString(creativeType);
-                [adapterInstance setLatestMediationScore:network[@"score"] forAdType:adType];
+                [adapterInstance setLatestMediationScore:network[@"score"] forCreativeType:hzCreativeTypeFromString(creativeType)];
             }
         }
     }
@@ -995,6 +1130,13 @@ const NSTimeInterval bannerPollInterval = 1;
             [HZTestActivityViewController show];
         }];
     }
+}
+
+/**
+ *  Used to disable Segmentation for the mediation test activity
+ */
+- (void)enableSegmentation:(BOOL)enabled {
+    [self.segmentationController setEnabled:enabled];
 }
 
 - (void)setupAllAdapters:(void(^)(void))completion {
@@ -1018,6 +1160,10 @@ const NSTimeInterval bannerPollInterval = 1;
 + (Class)optionalForcedNetwork:(NSDictionary *)additionalParams {
     NSString *const forcedNetworkName = additionalParams[@"network"];
     return [HZBaseAdapter adapterClassForName:forcedNetworkName];
+}
+
+- (BOOL)isNetworkEnabledByPersistentConfig:(NSString *)network {
+    return [self.persistentConfig isNetworkEnabled:network];
 }
 
 @end

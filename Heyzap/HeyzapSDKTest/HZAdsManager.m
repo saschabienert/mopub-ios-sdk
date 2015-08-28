@@ -100,6 +100,9 @@ static BOOL hzAdsIsEnabled = NO;
 
 + (void)reportInstalledGames
 {
+    if (![HZDevice canCheckURLSchemes]) {
+        return;
+    }
     // There are some frightening reports of the `canOpenURL:` method being really slow on iOS 7 devices with a SIM card. I wasn't able to replicate this on my 5S running 7.0.3, and even based on the person reporting 1700 URLs taking 22 seconds to check, we should take < 1 second, so I'm figuring we'll be ok.
     // http://vntin.com/openradar.appspot.com/15020847 https://github.com/danielamitay/iHasApp/issues/16 https://twitter.com/agiletortoise/status/371650061416931329
     

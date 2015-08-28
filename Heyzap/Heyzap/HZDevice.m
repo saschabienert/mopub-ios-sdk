@@ -272,6 +272,12 @@ static NSString *overriddenBundleIdentifier;
     return bundleIdentifier;
 }
 
+NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKTest";
+
+- (BOOL)isHeyzapTestApp {
+    return [[self bundleIdentifier] isEqualToString:kZHMediationTestAppBundleID];
+}
+
 #pragma mark - Device Identifiers
 
 - (NSString *) HZuniqueDeviceIdentifier{
@@ -429,6 +435,10 @@ static NSString *overriddenBundleIdentifier;
 
 + (BOOL)isPhone {
     return [self interfaceIdiom] == UIUserInterfaceIdiomPhone;
+}
+
++ (BOOL)canCheckURLSchemes {
+    return [self hzSystemVersionIsLessThan:@"9.0"];
 }
 
 - (void)dealloc

@@ -23,8 +23,8 @@
 
 @interface HZHeyzapExchangeAdapter()<HZHeyzapExchangeClientDelegate>
 
-/* Maps adType to a client for that type.*/
-@property (nonatomic) NSMutableDictionary *exchangeClientsPerAdType;
+/* Maps creativeType to a client for that type.*/
+@property (nonatomic) NSMutableDictionary *exchangeClientsPerCreativeType;
 
 @property (nonatomic) HZHeyzapExchangeClient *currentlyPlayingClient;
 @end
@@ -33,7 +33,7 @@
 
 #pragma mark - Initialization
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedAdapter
 {
     static HZHeyzapExchangeAdapter *proxy;
     static dispatch_once_t onceToken;
@@ -46,7 +46,7 @@
 - (instancetype) init {
     self = [super init];
     if(self){
-        _exchangeClientsPerAdType = [[NSMutableDictionary alloc] init];
+        _exchangeClientsPerCreativeType = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -76,79 +76,78 @@
     return nil;
 }
 
-- (HZAdType)supportedAdFormats
+- (HZCreativeType)supportedCreativeTypes
 {
-    return HZAdTypeInterstitial | HZAdTypeIncentivized | HZAdTypeVideo;
+    return HZCreativeTypeStatic | HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (BOOL)isVideoOnlyNetwork {
-    return NO;
-}
-
-- (void)prefetchForType:(HZAdType)type
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType
 {
-    if([self hasAdForType:type]){
-        HZDLog(@"Prefetch called but an ad is already available.");
+    if([self hasAdForCreativeType:creativeType]){
+        HZDLog(@"HZHeyzapExchangeAdapter: Prefetch called but an ad is already available for creativeType: %@.", NSStringFromCreativeType(creativeType));
         return;
     }
     
-    HZHeyzapExchangeClient * client = [self.exchangeClientsPerAdType objectForKey:[self adTypeAsDictKey:type]];
+    if(![self supportsCreativeType:creativeType]) return;
+    
+    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
     if(client && client.state == HZHeyzapExchangeClientStateFetching){
         //already fetching
-        HZDLog(@"Already fetching adType=%@", NSStringFromAdType(type));
+        HZDLog(@"Already fetching creativeType=%@", NSStringFromCreativeType(creativeType));
         return;
     }
     
     HZHeyzapExchangeClient *newClient = [[HZHeyzapExchangeClient alloc] init];
     [newClient setDelegate:self];
-    [newClient fetchForAdType:type];
-    [self.exchangeClientsPerAdType setObject:newClient forKey:[self adTypeAsDictKey:type]];
+    [newClient fetchForCreativeType:creativeType];
+    [self.exchangeClientsPerCreativeType setObject:newClient forKey:[self creativeTypeAsDictKey:creativeType]];
 }
 
-- (BOOL)hasAdForType:(HZAdType)type
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if(![self supportedAdFormats] & type){
-        return false;
-    }
-    HZHeyzapExchangeClient * client = [self.exchangeClientsPerAdType objectForKey:[self adTypeAsDictKey:type]];
+    if(![self supportsCreativeType:creativeType]) return NO;
+    
+    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
     if(client && client.state == HZHeyzapExchangeClientStateReady){
-        return true;
+        return YES;
     }
     
-    return false;
+    return NO;
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
     if(self.currentlyPlayingClient != nil){
         HZELog(@"HeyzapExchangeAdapter: Already showing an ad.");
         return;
     }
     
-    HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerAdType objectForKey:[self adTypeAsDictKey:type]];
+    if(![self supportsCreativeType:creativeType]) return;
+    
+    HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
     if(!exchangeClient || exchangeClient.state != HZHeyzapExchangeClientStateReady){
-        HZELog(@"HeyzapExchangeAdapter: No ad available for that type.")
+        HZELog(@"HeyzapExchangeAdapter: No ad available for creativeType=%@", NSStringFromCreativeType(creativeType));
         return;
     }
     
     [exchangeClient showWithOptions:options];
 }
 
-- (NSNumber *) adScoreForAdType:(HZAdType)adType {
-    if(![self hasAdForType:adType]){
+- (NSNumber *) adScoreForCreativeType:(HZCreativeType)creativeType {
+    if(![self hasAdForCreativeType:creativeType]){
         return nil;
     }
     
-    HZHeyzapExchangeClient *client = [self.exchangeClientsPerAdType objectForKey:[self adTypeAsDictKey:adType]];
+    HZHeyzapExchangeClient *client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
     return client.adScore;
 }
 
 - (void) setAllMediationScoresForReadyAds {
-    for(NSNumber * adTypeKey in self.exchangeClientsPerAdType){
-        HZAdType adType = [adTypeKey intValue];
-        NSNumber *adScore = [self adScoreForAdType:adType];
+    for(NSNumber * creativeTypeKey in self.exchangeClientsPerCreativeType){
+        HZCreativeType creativeType = [creativeTypeKey intValue];
+        NSNumber *adScore = [self adScoreForCreativeType:creativeType];
         if(adScore){
-            [self setLatestMediationScore:adScore forAdType:adType];
+            [self setLatestMediationScore:adScore forCreativeType:creativeType];
         }
     }
 }
@@ -156,21 +155,21 @@
 
 #pragma mark - HZHeyzapExchangeClientDelegate
 
-- (void) client:(HZHeyzapExchangeClient *)client didFetchAdWithType:(HZAdType)adType {
-    [self setError:nil forType:adType];
-    [self.exchangeClientsPerAdType setObject:client forKey:[self adTypeAsDictKey:adType]];
+- (void) client:(HZHeyzapExchangeClient *)client didFetchAdWithCreativeType:(HZCreativeType)creativeType {
+    [self setError:nil forCreativeType:creativeType];
+    [self.exchangeClientsPerCreativeType setObject:client forKey:[self creativeTypeAsDictKey:creativeType]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
-- (void) client:(HZHeyzapExchangeClient *)client didFailToFetchAdWithType:(HZAdType)adType error:(NSString *)error{
-    [self setError:[NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}] forType:client.adType];
+- (void) client:(HZHeyzapExchangeClient *)client didFailToFetchAdWithCreativeType:(HZCreativeType)creativeType error:(NSString *)error {
+    [self setError:[NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}] forCreativeType:creativeType];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
-    [self.exchangeClientsPerAdType removeObjectForKey:[self adTypeAsDictKey:adType]];
+    [self.exchangeClientsPerCreativeType removeObjectForKey:[self creativeTypeAsDictKey:creativeType]];
 }
 
 - (void) client:(HZHeyzapExchangeClient *)client didHaveError:(NSString *)error {
-    [self setError:[NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}] forType:client.adType];
-    [self.exchangeClientsPerAdType removeObjectForKey:[self adTypeAsDictKey:[client adType]]];
+    [self setError:[NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}] forCreativeType:client.creativeType];
+    [self.exchangeClientsPerCreativeType removeObjectForKey:[self creativeTypeAsDictKey:[client creativeType]]];
     self.currentlyPlayingClient = nil;
 }
 
@@ -186,14 +185,14 @@
 
 - (void) didEndAdWithClient:(HZHeyzapExchangeClient *)client successfullyFinished:(BOOL)successfullyFinished{
     self.currentlyPlayingClient = nil;
-    [self.exchangeClientsPerAdType removeObjectForKey:[self adTypeAsDictKey:[client adType]]];
-    [self setError:nil forType:client.adType];
+    [self.exchangeClientsPerCreativeType removeObjectForKey:[self creativeTypeAsDictKey:[client creativeType]]];
+    [self setError:nil forCreativeType:client.creativeType];
     
     if(client.isWithAudio){
         [self.delegate adapterDidFinishPlayingAudio:self];
     }
     
-    if(client.adType == HZAdTypeIncentivized){
+    if(client.creativeType == HZCreativeTypeIncentivized){
         if(successfullyFinished){
             [self.delegate adapterDidCompleteIncentivizedAd:self];
         }else{
@@ -211,22 +210,22 @@
 
 #pragma mark - Utilities
 
-- (NSNumber *) adTypeAsDictKey:(HZAdType)adType {
-    return [NSNumber numberWithInt:adType];
+- (NSNumber *) creativeTypeAsDictKey:(HZCreativeType)creativeType {
+    return [NSNumber numberWithInt:creativeType];
 }
 
-- (void) setError:(NSError *)error forType:(HZAdType)type {
-    switch(type) {
-        case HZAdTypeInterstitial:
-            self.lastInterstitialError = error;
+- (void) setError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
+    switch(creativeType) {
+        case HZCreativeTypeStatic:
+            self.lastStaticError = error;
         break;
-        case HZAdTypeIncentivized:
+        case HZCreativeTypeIncentivized:
             self.lastIncentivizedError = error;
         break;
-        case HZAdTypeVideo:
+        case HZCreativeTypeVideo:
             self.lastVideoError = error;
         break;
-        default://ignore banners here
+        default://ignore banners, native, etc. here
         break;
     }
 }

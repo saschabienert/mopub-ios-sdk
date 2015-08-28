@@ -10,6 +10,7 @@
 #import "HZShowOptions.h"
 #import "HZBannerAdapter.h"
 #import "HZAdapterDelegate.h"
+#import "HZCreativeType.h"
 #import "HZAdType.h"
 
 @import UIKit;
@@ -44,14 +45,14 @@
 /**
  *  These properties exist for subclasses to use. Other callers must use `lastErrorForAdType:` and `clearErrorForAdType:`.
  */
-@property (nonatomic, strong) NSError *lastInterstitialError;
+@property (nonatomic, strong) NSError *lastStaticError;
 @property (nonatomic, strong) NSError *lastIncentivizedError;
 @property (nonatomic, strong) NSError *lastVideoError;
 
 @property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
 
 /**
- *  The credentials should be set on adapters immediately after calling sharedInstance. Subclasses should ignore attempts to call this method if their credentials have already been set.
+ *  The credentials should be set on adapters immediately after calling sharedAdapter. Subclasses should ignore attempts to call this method if their credentials have already been set.
  */
 @property (nonatomic, strong) NSDictionary *credentials;
 
@@ -64,26 +65,24 @@
 
 
 
-+ (instancetype)sharedInstance;
++ (instancetype)sharedAdapter;
 
-- (void)prefetchForType:(HZAdType)type;
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType;
 
-- (BOOL)hasAdForType:(HZAdType)type;
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType;
 
-- (NSNumber *) latestMediationScoreForAdType:(HZAdType) adType;
-- (void) setLatestMediationScore:(NSNumber *)score forAdType:(HZAdType)adType;
+- (NSNumber *) latestMediationScoreForCreativeType:(HZCreativeType)creativeType;
+- (void) setLatestMediationScore:(NSNumber *)score forCreativeType:(HZCreativeType)creativeType;
 
 /**
  *  The adapter should show an ad for the given ad type.
  *
- *  @param type The type of ad (video, incentivized, interstitial) to show
+ *  @param creativeType The type of ad (video, incentivized, static) to show
  *  @param options Options to configure showing the ad
  */
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options;
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options;
 
-- (HZAdType)supportedAdFormats;
-
-- (BOOL)isVideoOnlyNetwork;
+- (HZCreativeType)supportedCreativeTypes;
 
 + (NSString *)name;
 
@@ -113,20 +112,22 @@
 
 - (NSString *)name;
 
-- (BOOL)supportsAdType:(HZAdType)adType;
+- (BOOL)supportsCreativeType:(HZCreativeType)creativeType;
 
-- (BOOL)hasCredentialsForAdType:(HZAdType)adType; // For networks that have multiple, optional credentials. This must be called after the network has been initialized.
+
+- (NSError *)lastErrorForCreativeType:(HZCreativeType)creativeType;
+
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType; // For networks that have multiple, optional credentials. This must be called after the network has been initialized.
 // Maybe pass credentials immediately on creating the instance, and store them there?
 // I really dislike how it's no longer possible to statically tell whether a network has been initialized or not.
 
-- (NSError *)lastErrorForAdType:(HZAdType)adType;
 
 /**
  *  Its possible this should be handled internally by the adapters, like when they fetch...
  *
  *  @param adType The type of ad to clear the error for.
  */
-- (void)clearErrorForAdType:(HZAdType)adType;
+- (void)clearErrorForCreativeType:(HZCreativeType)creativeType;
 
 #pragma mark - Implemented methods
 
@@ -142,5 +143,10 @@
  *  @return The amount of time to wait, in seconds, between asking if this adapter has an ad. Increase this value for adapters/SDKs whose `isAvailable` calls are expensive, and decrease it for adapters/SDKs whose calls are inexpensive.
  */
 + (NSTimeInterval)isAvailablePollInterval;
+
+/**
+ *  Returns a bitmask of all supported HZAdTypes (keeping blended interstitials in mind) derived from the adapters `supportedCreativeTypes` method.
+ */
+- (HZAdType) possibleSupportedAdTypes;
 
 @end

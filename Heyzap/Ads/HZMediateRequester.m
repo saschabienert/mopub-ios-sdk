@@ -33,11 +33,11 @@ const NSTimeInterval initialMediateDelay = 3;
 const NSTimeInterval maxMediateDelay     = 300;
 
 + (NSString *)mediateFilename {
-    return @"mediate.plist";
+    return @"mediate-v2.plist";
 }
 
 + (NSString *)mediateParamsFilename {
-    return @"mediateParams.plist";
+    return @"mediateParams-v2.plist";
 }
 
 - (void)setMediateRequestDelay:(NSTimeInterval)mediateRequestDelay {
@@ -61,7 +61,7 @@ const NSTimeInterval maxMediateDelay     = 300;
 - (void)loadMediateFromNetwork {
     // Should be all ad types? none?
     // HZAdFetchRequest requires the main queue; it's getting the status bar orientation and screen size and such.
-    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[HZMediationConstants creativeTypesForAdType:HZAdTypeInterstitial] // TODO ?
+    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[HZMediationConstants legacyCreativeTypesForAdType:HZAdTypeInterstitial] // TODO ?
                                                                          adUnit:@"all" // TODO ?
                                                                             tag:nil
                                                                     auctionType:HZAuctionTypeMixed
@@ -86,8 +86,8 @@ const NSTimeInterval maxMediateDelay     = 300;
                                              dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
                                                  // TODO: These should be in 1 file so the operation is atomic.
                                                  
-                                                 [self.cachingService cacheDictionary:json filename:[[self class] mediateFilename]];
-                                                 [self.cachingService cacheDictionary:mediateParams filename:[[self class] mediateParamsFilename]];
+                                                 [self.cachingService cacheRootObject:json filename:[[self class] mediateFilename]];
+                                                 [self.cachingService cacheRootObject:mediateParams filename:[[self class] mediateParamsFilename]];
                                                  HZDLog(@"Wrote /mediate to disk");
                                              });
                                          } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
@@ -122,8 +122,8 @@ const NSTimeInterval maxMediateDelay     = 300;
 - (void)restoreFromCache {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         
-        NSDictionary *mediatePlist = [self.cachingService dictionaryWithFilename:[[self class] mediateFilename]];
-        NSDictionary *mediateParamsPlist = [self.cachingService dictionaryWithFilename:[[self class] mediateParamsFilename]];
+        NSDictionary *mediatePlist = [self.cachingService rootObjectWithFilename:[[self class] mediateFilename]];
+        NSDictionary *mediateParamsPlist = [self.cachingService rootObjectWithFilename:[[self class] mediateParamsFilename]];
         
         if (mediatePlist && mediateParamsPlist) {
             dispatch_async(dispatch_get_main_queue(), ^{

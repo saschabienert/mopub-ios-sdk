@@ -16,15 +16,13 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HZHeyzapExchangeAdapter.h"
+#import "HZMediationPersistentConfig.h"
 
-#define CHECK_NOT_NIL1(value) do { \
-if (value == nil) { \
-return nil; \
-} \
-} while (0)
 
 @interface HZMediationLoadManager()
 
+@property (nonatomic) id<HZMediationPersistentConfigReadonly> persistentConfig;
+@property (nonatomic) HZSegmentationController *segmentationController;
 @property (nonatomic) NSUInteger maxConcurrency;
 @property (nonatomic) NSArray *networkList;
 
@@ -38,95 +36,139 @@ return nil; \
 
 @implementation HZMediationLoadManager
 
-- (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate error:(NSError **)error {
+- (instancetype)initWithLoadData:(NSDictionary *)loadData delegate:(id<HZMediationLoadManagerDelegate>)delegate persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig segmentationController:(HZSegmentationController *)segmentationController error:(NSError **)error {
+    HZParameterAssert(delegate);
+    HZParameterAssert(persistentConfig);
+    HZParameterAssert(segmentationController);
     self = [super init];
     if (self) {
         _delegate = delegate;
-        
-        self.fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_CONCURRENT);
-        
-        _maxConcurrency = [[HZDictionaryUtils objectForKey:@"max_load" ofClass:[NSNumber class] default:@2 dict:loadData] unsignedIntegerValue];
-        
-        NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:loadData error:error];
-        CHECK_NOT_NIL1(networks);
-        
-        NSMutableArray *const networkList = [NSMutableArray array];
-        
-        for (NSDictionary *network in networks) {
-            NSError *error;
-            HZMediationLoadData *const loadData = [[HZMediationLoadData alloc] initWithDictionary:network error:&error];
-            if (!loadData) {
-                HZELog(@"Error creating HZMediationLoadData: %@",error);
-            } else {
-                [networkList addObject:loadData];
-            }
+        _persistentConfig = persistentConfig;
+        _segmentationController = segmentationController;
+        _fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_CONCURRENT);
+        if (![self refreshWithLoadData:loadData error:error]) {
+            return nil;
         }
-        
-        _networkList = networkList;
     }
     return self;
 }
 
-- (void)fetchAdType:(HZAdType)adType showOptions:(HZShowOptions *)showOptions optionalForcedNetwork:(Class)forcedNetwork {
-    HZParameterAssert(showOptions);
+- (BOOL) refreshWithLoadData:(NSDictionary *)loadData error:(NSError **)error {
+    
+    NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:loadData error:error];
+    if(!networks) {
+        return NO;
+    }
+    
+    self.maxConcurrency = [[HZDictionaryUtils objectForKey:@"max_load" ofClass:[NSNumber class] default:@2 dict:loadData] unsignedIntegerValue];
+        
+    NSMutableArray *const networkList = [NSMutableArray array];
+    
+    for (NSDictionary *network in networks) {
+        NSError *err;
+        HZMediationLoadData *const loadData = [[HZMediationLoadData alloc] initWithDictionary:network error:&err];
+        if (!loadData) {
+            HZELog(@"Error creating HZMediationLoadData: %@",err);
+        } else {
+            [networkList addObject:loadData];
+        }
+    }
+    
+    _networkList = networkList;
+    return YES;
+}
+
+- (void)fetchCreativeType:(HZCreativeType)creativeType fetchOptions:(HZFetchOptions *)fetchOptions optionalForcedNetwork:(Class)forcedNetwork notifyDelegate:(BOOL)notifyDelegate {
+    HZParameterAssert(fetchOptions);
+    const BOOL logFilters = YES;
+    
+    if (logFilters && forcedNetwork) {
+        HZDLog(@"HZMediationLoadManager: only allowing fetch from %@", [forcedNetwork name]);
+    }
     
     NSArray *const networksToConsider = hzFilter(self.networkList, ^BOOL(HZMediationLoadData *datum) {
         return forcedNetwork ? forcedNetwork == datum.adapterClass : YES;
     });
     
+    // filter out the adapters whose SDKs are not integrated
     NSSet *const availableAdapters = [HeyzapMediation availableAdaptersWithHeyzap:YES];
     NSArray *const availableSDKsForFetch = hzFilter(networksToConsider, ^BOOL(HZMediationLoadData *datum) {
-        return [availableAdapters containsObject:datum.adapterClass];
+        if ([availableAdapters containsObject:datum.adapterClass]) {
+            return YES;
+        } else if(logFilters) {
+            HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because SDK is not integrated properly.", [datum.adapterClass name]);
+        }
+        return NO;
     });
     
-    NSArray *const supportsAdType = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
-        return [(HZBaseAdapter *)[datum.adapterClass sharedInstance] supportsAdType:adType];
+    NSArray *const enabledByUser = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
+        if ([self.persistentConfig isNetworkEnabled:[datum.adapterClass name]]) {
+            return YES;
+        } else if(logFilters) {
+            HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because network is disabled by the user.", [datum.adapterClass name]);
+        }
+        return NO;
     });
     
-    NSArray *const hasCredentials = hzFilter(supportsAdType, ^BOOL(HZMediationLoadData *datum) {
-        return [(HZBaseAdapter *)[datum.adapterClass sharedInstance] hasCredentialsForAdType:adType];
+    NSArray *const supportsCreativeType = hzFilter(enabledByUser, ^BOOL(HZMediationLoadData *datum) {
+        if ([(HZBaseAdapter *)[datum.adapterClass sharedAdapter] supportsCreativeType:creativeType]) {
+            return YES;
+        } else if(logFilters) {
+            HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because it does not support creativeType=%@", [datum.adapterClass name], NSStringFromCreativeType(creativeType));
+        }
+        return NO;
     });
     
-    NSArray *const matching = hzFilter(hasCredentials, ^BOOL(HZMediationLoadData *datum) {
-        return hzCreativeTypeSetContainsAdType(datum.creativeTypeSet, adType);
+    NSArray *const hasCredentials = hzFilter(supportsCreativeType, ^BOOL(HZMediationLoadData *datum) {
+        if ([(HZBaseAdapter *)[datum.adapterClass sharedAdapter] hasCredentialsForCreativeType:creativeType]) {
+            return YES;
+        } else if(logFilters) {
+            HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because the adapter does not have credentials for creativeType=%@", [datum.adapterClass name], NSStringFromCreativeType(creativeType));
+        }
+        return NO;
     });
     
+    NSArray *const serverSupportedCreativeType = hzFilter(hasCredentials, ^BOOL(HZMediationLoadData *datum) {
+        if (hzCreativeTypeStringSetContainsCreativeType(datum.creativeTypeSet, creativeType)) {
+            return YES;
+        } else if(logFilters) {
+            HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ (\"%@\") because the server did not specify it to show creativeType=%@", [datum.adapterClass name], [[datum.creativeTypeSet allObjects] componentsJoinedByString:@", "], NSStringFromCreativeType(creativeType));
+        }
+        return NO;
+    });
     
-    // If we're forcing a video only network to show an interstitial for the test activity, we need to notify the delegate for a video network and nto
-    const BOOL isForcedVideoOnlyNetwork = [(HZBaseAdapter *)[forcedNetwork sharedInstance] isVideoOnlyNetwork] && adType == HZAdTypeInterstitial;
+    NSArray *const matching = hzFilter(serverSupportedCreativeType, ^BOOL(HZMediationLoadData *datum) {
+        if ([self.segmentationController allowAdapter:[datum.adapterClass sharedAdapter] toShowAdForCreativeType:creativeType tag:fetchOptions.tag]) {
+            return YES;
+        } else if(logFilters) {
+            HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because segmentation says it won't allow an ad of creativeType=%@ right now for tag=%@.", [datum.adapterClass name], NSStringFromCreativeType(creativeType), fetchOptions.tag);
+        }
+        return NO;
+    });
     
-    [self fetchAdType:adType loadData:matching showOptions:showOptions notifyDelegate:!isForcedVideoOnlyNetwork];
-    
-    // Should just take all STATIC and VIDEO?
-    
-    if (adType == HZAdTypeInterstitial) {
-        NSArray *videoNetworks = hzFilter(availableSDKsForFetch, ^BOOL(HZMediationLoadData *datum) {
-            return hzCreativeTypeSetContainsAdType(datum.creativeTypeSet, HZAdTypeVideo);
-        });
-        [self fetchAdType:HZAdTypeVideo loadData:videoNetworks showOptions:showOptions notifyDelegate:isForcedVideoOnlyNetwork];
-        // Also load video, to allow for blending
-    }
+    HZDLog(@"HZMediationLoadManager: fetching for creativeType=%@ from networks:\n%@", NSStringFromCreativeType(creativeType), matching);
+    [self fetchCreativeType:creativeType loadData:matching fetchOptions:fetchOptions notifyDelegate:notifyDelegate];
 }
 
-// At fetch time, check if we can show interstitial video
-// If yes, include video networks
-// If no, don't include video networks
-//
-
 // For interstitial, this should ensure that a non-rate-limited network is started.
-- (void)fetchAdType:(HZAdType)adType loadData:(NSArray *)loadData showOptions:(HZShowOptions *)showOptions notifyDelegate:(BOOL)notifyDelegate {
+- (void)fetchCreativeType:(HZCreativeType)creativeType loadData:(NSArray *)loadData fetchOptions:(HZFetchOptions *)fetchOptions notifyDelegate:(BOOL)notifyDelegate {
     HZParameterAssert(loadData);
-    HZParameterAssert(showOptions);
-    
+    HZParameterAssert(fetchOptions);
+
     dispatch_async(self.fetchQueue, ^{
-        
         __block BOOL fetchedAd = NO;
         __block BOOL shouldNotifyDelegate = notifyDelegate;
+        __block BOOL hasTriedFetchingHeyzapExchange = NO;
         
         [loadData enumerateObjectsUsingBlock:^(HZMediationLoadData *datum, NSUInteger idx, BOOL *stop) {
+
             // we always want the HeyzapExchange to start & fetch so it's bid can be considered in the waterfall on show later, but others shouldn't start unless necessary
             if(fetchedAd && datum.adapterClass != [HZHeyzapExchangeAdapter class]){
                 return;
+            }
+            
+            if (datum.adapterClass == [HZHeyzapExchangeAdapter class]) {
+                hasTriedFetchingHeyzapExchange = YES;
             }
             
             const BOOL setupSuccessful = [self.delegate setupAdapterNamed:datum.networkName];
@@ -135,29 +177,30 @@ return nil; \
                 
                 __block HZBaseAdapter *adapter;
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    adapter = (HZBaseAdapter *)[datum.adapterClass sharedInstance];
+                    adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
                 });
                 
                 dispatch_sync([self.delegate pausableMainQueue], ^{
-                    [adapter prefetchForType:adType];
+                    [adapter prefetchForCreativeType:creativeType];
                 });
                 
                 NSTimeInterval pollingInterval = [datum.adapterClass isAvailablePollInterval];
-                const BOOL anAdapterHasAnAd = hzWaitUntilInterval(pollingInterval, ^BOOL{
-                    return [self adaptersFromLoadData:loadData uptoIndexHasAd:idx ofType:adType];
+                __block HZBaseAdapter *adapterWithAnAd = nil;
+                hzWaitUntilInterval(pollingInterval, ^BOOL{
+                    adapterWithAnAd = [self adapterFromLoadData:loadData uptoIndexThatHasAd:idx ofCreativeType:creativeType tag:fetchOptions.tag];
+                    return (adapterWithAnAd != nil); // stop waiting if we found an adapter
                 }, datum.timeout);
                 
-                if (anAdapterHasAnAd) {
-                    fetchedAd = YES;
-                    
-                    if(datum.adapterClass == [HZHeyzapExchangeAdapter class]){
-                        // stop iterating once the exchange succeeds
+                if (adapterWithAnAd) {
+                    if (hasTriedFetchingHeyzapExchange){
+                        // stop iterating once the exchange has had a chance to fetch & there is an ad from any network available
                         *stop = YES;
                     }
                     
+                    fetchedAd = YES;
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         if (shouldNotifyDelegate) {
-                            [self.delegate didFetchAdOfType:adType options:showOptions];
+                            [self.delegate didFetchAdOfCreativeType:creativeType withAdapter:adapterWithAnAd options:fetchOptions];
                         }
                     });
                     
@@ -168,22 +211,27 @@ return nil; \
         if (!fetchedAd) {
             dispatch_sync(dispatch_get_main_queue(), ^{
                 if (shouldNotifyDelegate) {
-                    [self.delegate didFailToFetchAdOfType:adType options:showOptions];
+                    [self.delegate didFailToFetchAdOfCreativeType:creativeType options:fetchOptions];
                 }
             });
         }
-        
     });
 }
 
-- (BOOL)adaptersFromLoadData:(NSArray *)loadData uptoIndexHasAd:(NSUInteger)idx ofType:(HZAdType)adType {
+/**
+ *  Returns the first adapter, from index [0,idx] that has an allowed ad fetched of the given type, or nil if none in that range have an ad of the given type.
+ */
+- (HZBaseAdapter *)adapterFromLoadData:(NSArray *)loadData uptoIndexThatHasAd:(NSUInteger)idx ofCreativeType:(HZCreativeType)creativeType tag:(NSString *)tag {
     for (NSUInteger i = 0; i <= idx; i++) {
         HZMediationLoadData *datum = loadData[i];
-        if ([((HZBaseAdapter *)[datum.adapterClass sharedInstance]) hasAdForType:adType]) {
-            return YES;
+        HZBaseAdapter *adapter = ((HZBaseAdapter *)[datum.adapterClass sharedAdapter]);
+        if ([[HeyzapMediation sharedInstance] isNetworkClassInitialized:[adapter class]]
+            && [self.segmentationController adapterHasAllowedAd:adapter forCreativeType:creativeType tag:tag]) {
+            return adapter;
         }
     }
-    return NO;
+    
+    return nil;
 }
 
 // If

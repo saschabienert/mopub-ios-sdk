@@ -77,7 +77,7 @@
         options = [HZShowOptions new];
     }
 
-    [[HeyzapMediation sharedInstance] showAdForAdUnitType:HZAdTypeVideo additionalParams:nil options:options];
+    [[HeyzapMediation sharedInstance] showForAdType:HZAdTypeVideo additionalParams:nil options:options];
 }
 
 + (void) showWithCompletion:(void (^)(BOOL result, NSError *error))completion {
@@ -99,10 +99,29 @@
     [self fetchForTag:nil withCompletion:completion];
 }
 
++ (void) fetchForTags:(NSArray *)tags {
+    [self fetchForTags:tags withCompletion:nil];
+}
+
++ (void) fetchForTags:(NSArray *)tags withCompletion:(void (^)(BOOL, NSError *))completion {
+    for(id tag in tags) {
+        if([tag isKindOfClass:[NSString class]]) {
+            [self fetchForTag:tag withCompletion:completion];
+        } else {
+            HZELog(@"Only NSStrings should be passed via the NSArray accepted by `fetchForTags:` and its variants. You passed a: %@", [tag class]);
+        }
+    }
+}
+
 + (void) fetchForTag:(NSString *)tag withCompletion: (void (^)(BOOL result, NSError *error))completion {
     HZVersionCheck()
 
-    [[HeyzapMediation sharedInstance] fetchForAdType:HZAdTypeVideo additionalParams:nil completion:completion];
+    HZFetchOptions *fetchOptions = [HZFetchOptions new];
+    fetchOptions.requestingAdType = HZAdTypeVideo;
+    fetchOptions.tag = tag;
+    fetchOptions.completion = completion;
+    
+    [[HeyzapMediation sharedInstance] fetchWithOptions:fetchOptions];
 }
 
 #pragma mark - Querying

@@ -43,6 +43,9 @@
 #import "HZDictionaryUtils.h"
 #import "HZDevice.h"
 #import "HZAbstractHeyzapAdapter.h"
+#import "HZMediationPersistentConfig.h"
+#import "HZUtils.h"
+#import "HZTestActivityTableViewCell.h"
 
 @interface HZTestActivityViewController()
 
@@ -101,14 +104,25 @@
     UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(hide)];
     [self.navigationItem setLeftBarButtonItem:button animated:NO];
     
+    UISwitch *allNeworksEnableSwitch = [[UISwitch alloc] init];
+    [allNeworksEnableSwitch addTarget:self action:@selector(allNetworksEnableSwitchToggled:) forControlEvents:UIControlEventValueChanged];
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc]initWithCustomView:allNeworksEnableSwitch]];
+    
     self.navigationController.navigationBar.titleTextAttributes = nil;
     
     self.view.backgroundColor = [UIColor whiteColor];
     
+    // disable segmentation for the test activity
+    [[HeyzapMediation sharedInstance] enableSegmentation:NO];
+    
     [self makeView];
     
     //fetch ad list
-    [self checkNetworkInfo:self.refreshControl];
+    [self checkNetworkInfo:self.refreshControl completion:^(BOOL success){
+        // if more than half the networks are disabled already, default switch to off
+        // else default to on
+        allNeworksEnableSwitch.on = [[[HeyzapMediation sharedInstance].persistentConfig allDisabledNetworks] count] < (self.allNetworks.count/2);
+    }];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -121,6 +135,9 @@
 - (void) hide {
     HZDLog(@"Hiding test activity view controller");
     
+    // re-enable segmentation after the test activity closes
+    [[HeyzapMediation sharedInstance] enableSegmentation:YES];
+    
     [self.rootVC dismissViewControllerAnimated:YES completion:nil];
     [[UIApplication sharedApplication] setStatusBarHidden:self.statusBarHidden];
 }
@@ -132,21 +149,15 @@
 }
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    HZBaseAdapter *network = [self.allNetworks objectAtIndex:indexPath.row];
+    HZBaseAdapter *network = (HZBaseAdapter *)[[self.allNetworks objectAtIndex:indexPath.row] sharedAdapter];
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
-    if(cell == nil){
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"reuseIdentifier"];
+    HZTestActivityTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
+    
+    if (cell == nil){
+        cell = [[HZTestActivityTableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"reuseIdentifier" persistentConfig:[HeyzapMediation sharedInstance].persistentConfig tableViewController:self];
     }
-    cell.textLabel.text = [[network class] humanizedName];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    if ([self.integrationStatuses[indexPath.row] boolValue]) {
-        cell.detailTextLabel.text = @"☑︎";
-        cell.detailTextLabel.textColor = [UIColor greenColor];
-    } else {
-        cell.detailTextLabel.text = @"☒";
-        cell.detailTextLabel.textColor = [UIColor redColor];
-    }
+    
+    [cell configureWithNetwork:network integratedSuccessfully:[self.integrationStatuses[indexPath.row] boolValue]];
     
     return cell;
 }
@@ -161,7 +172,7 @@
         return;
     }
     
-    HZBaseAdapter *network = (HZBaseAdapter *)[networkClass sharedInstance];
+    HZBaseAdapter *network = [networkClass sharedAdapter];
     HZDLog(@"Current network adapter: %@", network);
     
     HZTestActivityNetworkViewController *networkVC = [[HZTestActivityNetworkViewController alloc] initWithNetwork:network
@@ -217,14 +228,18 @@
     [self.refreshControl beginRefreshing];
 }
 
+
 #pragma mark - General utility methods
 
 - (void) checkNetworkInfo:(UIRefreshControl *)refreshControl {
+    [self checkNetworkInfo:refreshControl completion:nil];
+}
+- (void) checkNetworkInfo:(UIRefreshControl *)refreshControl completion:(void (^)(BOOL success))completion {
     
     // check available
     NSMutableSet *availableNetworks = [NSMutableSet set];
     for (HZBaseAdapter *adapter in [HeyzapMediation availableAdaptersWithHeyzap:YES]) {
-        [availableNetworks addObject:[[adapter class] sharedInstance]];
+        [availableNetworks addObject:[[adapter class] sharedAdapter]];
     }
     self.availableNetworks = availableNetworks;
     self.chooseLabel.text = @"Loading...";
@@ -270,7 +285,7 @@
                 available = YES;
             }
             
-            HZBaseAdapter *adapter = (HZBaseAdapter *)[mediatorClass sharedInstance];
+            HZBaseAdapter *adapter = [mediatorClass sharedAdapter];
             
             // check enabled
             if([mediator[@"enabled"] boolValue]){
@@ -308,6 +323,9 @@
         }
         
         [refreshControl endRefreshing];
+        if(completion) {
+            completion(YES);
+        }
         
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         
@@ -322,7 +340,27 @@
          show];
         
         HZDLog(@"Error from /info: %@", error.localizedDescription);
+        if(completion) {
+            completion(NO);
+        }
     }];
+}
+     
+#pragma mark - Network enable/disable
+     
+- (BOOL) showNetworkEnableSwitch {
+    return [[HZDevice currentDevice] isHeyzapTestApp];
+}
+
+- (void)allNetworksEnableSwitchToggled:(UISwitch *)theSwitch {
+    NSSet * allNetworkNames = [[NSSet alloc]initWithArray:hzMap(self.allNetworks, ^NSString *(Class klass){return [[klass sharedAdapter] name];})];
+    if(theSwitch.isOn) {
+        [[HeyzapMediation sharedInstance].persistentConfig removeDisabledNetworks:allNetworkNames];
+    } else {
+        [[HeyzapMediation sharedInstance].persistentConfig addDisabledNetworks:allNetworkNames];
+    }
+    
+    [self.tableView reloadData];
 }
 
 @end

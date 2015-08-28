@@ -14,11 +14,14 @@
 #import "HZMediationLoadManager.h"
 #import "HZMediateRequester.h"
 #import "HZMediationSettings.h"
+#import "HZSegmentationController.h"
+#import "HZFetchOptions.h"
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
 @protocol HZBannerReportingDelegate;
 @class HZBannerAdOptions;
+@class HZMediationPersistentConfig;
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
@@ -26,6 +29,8 @@
 @property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 @property (nonatomic, readonly) NSString *mediationId;
 @property (nonatomic, readonly) HZMediationSettings *settings;
+@property (nonatomic, readonly) HZSegmentationController *segmentationController;
+@property (nonatomic, readonly) HZMediationPersistentConfig *persistentConfig;
 
 + (instancetype)sharedInstance;
 
@@ -36,9 +41,9 @@
 
 #pragma mark - Showing Ads
 
-- (void)fetchForAdType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
+- (void)fetchWithOptions:(HZFetchOptions *)fetchOptions;
 
-- (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options;
+- (void)showForAdType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options;
 
 - (BOOL)isAvailableForAdUnitType:(HZAdType)adType tag:(NSString *)tag;
 
@@ -67,12 +72,11 @@
 - (id)delegateForNetwork:(NSString *)network;
 
 - (BOOL) isNetworkInitialized:(NSString *)network;
+- (BOOL) isNetworkClassInitialized:(Class)networkClass;
 - (BOOL)isAdapterInitialized:(HZBaseAdapter *)adapter;
+
 - (void) setNetworkCallbackBlock: (void (^)(NSString *network, NSString *callback))block;
 - (void) sendNetworkCallback: (NSString *) callback forNetwork: (NSString *) network;
-
-HZAdType hzAdTypeFromString(NSString *adUnit);
-NSString * NSStringFromAdType(HZAdType type);
 
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion;
 
@@ -80,5 +84,10 @@ NSString * NSStringFromAdType(HZAdType type);
 - (void)resumeExpensiveWork;
 
 - (void)showTestActivity;
+
+/**
+ *  Used to disable Segmentation for the mediation test activity
+ */
+- (void)enableSegmentation:(BOOL)enabled;
 
 @end

@@ -22,7 +22,7 @@
 
 @implementation HZHyprmxAdapter
 
-+ (instancetype)sharedInstance {
++ (instancetype)sharedAdapter {
     static HZHyprmxAdapter *proxy;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -75,16 +75,14 @@
     return nil;
 }
 
-- (HZAdType)supportedAdFormats {
-    return HZAdTypeIncentivized;
-}
-
-- (BOOL)isVideoOnlyNetwork {
-    return YES;
+- (HZCreativeType)supportedCreativeTypes {
+    return HZCreativeTypeIncentivized;
 }
 
 static BOOL wasReady = NO;
-- (BOOL)hasAdForType:(HZAdType)type {
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType {
+    if (!([self supportedCreativeTypes] & creativeType)) return NO;
+    
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
         wasReady = isOfferReady;
     }];
@@ -92,7 +90,9 @@ static BOOL wasReady = NO;
     return wasReady;
 }
 
-- (void)prefetchForType:(HZAdType)type {
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
+    if(![self supportsCreativeType:creativeType]) return;
+    
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
     
@@ -101,7 +101,9 @@ static BOOL wasReady = NO;
     });
 }
 
-- (void)showAdForType:(HZAdType)type options:(HZShowOptions *)options {
+- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options{
+    if(![self supportsCreativeType:creativeType]) return;
+    
     HZHyprmxAdapter *bSelf = self;
     
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
@@ -113,7 +115,7 @@ static BOOL wasReady = NO;
             
             [[HZHYPRManager sharedManager] displayOffer:^(BOOL completed, id offer) {
                 wasReady = NO;
-                if (type == HZAdTypeIncentivized) {
+                if (creativeType == HZCreativeTypeIncentivized) {
                     if (completed) {
                         [bSelf.delegate adapterDidCompleteIncentivizedAd: bSelf];
                     } else {
