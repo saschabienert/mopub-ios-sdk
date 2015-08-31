@@ -45,7 +45,7 @@
         appStoreID = [NSNumber numberWithInt:clickURLAppID.intValue];
     }
     
-    if(NSClassFromString(@"SKStoreProductViewController") && appStoreID && useModalAppStore) { // Checks for iOS 6 feature.
+    if(appStoreID && useModalAppStore) {
         if (clickURL) {
             self.clickTrackingWebView = [[UIWebView alloc] init];
             self.clickTrackingWebView.delegate = self;
@@ -114,14 +114,14 @@
         return storeController;
     } else {
         
-        NSError *error;
-        if (useModalAppStore) {
+        NSError *error = nil;
+        if (!appStoreID && useModalAppStore) {
             error = [NSError errorWithDomain:@"heyzap"
-                                                 code:1
-                                             userInfo:@{NSLocalizedDescriptionKey: @"SKStoreProductViewController wasn't available"}];
+                                        code:1
+                                    userInfo:@{NSLocalizedDescriptionKey: @"Can't open app store for blank appStoreID"}];
         }
         
-        completion ? completion(!useModalAppStore, error) : nil;
+        completion ? completion((error == nil), error) : nil;
         [[UIApplication sharedApplication] openURL: clickURL];
         return nil;
     }
