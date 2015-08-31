@@ -44,20 +44,28 @@ describe(@"HZSegmentationSegment", ^{
     HZAuctionType const expectedAuctionType= HZAuctionTypeMonetization;
     HZAuctionType const wrongAuctionType = HZAuctionTypeCrossPromo;
     
-    __block HZImpressionHistory *impressionHistoryMock;
-    
-    beforeAll(^{
-        impressionHistoryMock = [KWMock mockForClass:[HZImpressionHistory class]];
-    });
-    
     beforeEach(^{
         segment = [[HZSegmentationSegment alloc] initWithTimeInterval:SEGMENT_TIME_INTERVAL forTags:nil creativeType:expectedCreativeType auctionType:expectedAuctionType limit:0 adsEnabled:YES name:@"test segment"];
         segment.impressionHistory = [[NSMutableOrderedSet alloc] init];
     });
     
+    it(@"Initializes properly", ^{
+        NSArray *const tags = @[tag, other_tag];
+        NSUInteger limit = 5;
+        NSString *name = @"wow what a name";
+        segment = [[HZSegmentationSegment alloc] initWithTimeInterval:SEGMENT_TIME_INTERVAL forTags:tags creativeType:expectedCreativeType auctionType:expectedAuctionType limit:limit adsEnabled:YES name:name];
+        [[theValue(segment.timeInterval) should] equal:theValue(SEGMENT_TIME_INTERVAL)];
+        [[theValue(segment.creativeType) should] equal:theValue(expectedCreativeType)];
+        [[segment.adTags should] equal:tags];
+        [[theValue(segment.impressionLimit) should] equal:theValue(limit)];
+        [[theValue(segment.auctionType) should] equal:theValue(expectedAuctionType)];
+        [[theValue(segment.adsEnabled) should] equal:theValue(YES)];
+        [[segment.impressionHistory should] beNil];
+    });
+    
     it(@"Loads from the HZImpressionHistory correctly", ^{
-        
         NSArray * array = @[[NSDate date]];
+        HZImpressionHistory *impressionHistoryMock = [KWMock mockForClass:[HZImpressionHistory class]];
         
         [[HZImpressionHistory should] receive:@selector(sharedInstance) andReturn:impressionHistoryMock];
         [[impressionHistoryMock should] receive:@selector(impressionsSince:withCreativeType:tags:auctionType:databaseConnection:mostRecentFirst:) andReturn:[[NSMutableOrderedSet alloc] initWithArray:array] withCount:1 arguments:any(), theValue(expectedCreativeType), any(), theValue(expectedAuctionType), any(), theValue(YES)];
@@ -343,6 +351,22 @@ describe(@"HZSegmentationSegment", ^{
         for(NSDate *d in segment.impressionHistory) {
             [[d should] beBetween:date and:date2];
         }
+    });
+    
+    it(@"Does not add impression to history when disabled or not loaded.", ^{
+        NSDate *const date = [NSDate date];
+        segment.creativeType = allCreativeTypes;
+        
+        segment.adsEnabled = NO;
+        BOOL recorded = [segment recordImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag date:date];
+        [[theValue(recorded) should] equal:theValue(NO)];
+        segment.adsEnabled = YES;
+        segment.impressionHistory = nil;
+        recorded = [segment recordImpressionWithCreativeType:expectedCreativeType auctionType:expectedAuctionType tag:tag date:date];
+        [[theValue(recorded) should] equal:theValue(NO)];
+        
+        [[theValue(segment.impressionHistory.count) should] equal:theValue(0)];
+        [[theValue([segment impressionCount]) should] equal:theValue(0)];
     });
     
     it(@"Does not add impression to history that does not match auctionType, no tag filter or creativeType filter", ^{

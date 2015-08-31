@@ -202,17 +202,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
 + (NSArray *)testActivityAdapters
 {
-    NSSet *filteredAdapters = [[self allAdapterClasses] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^
-        BOOL(Class klass, NSDictionary *bindings) {
-        return klass != [HZCrossPromoAdapter class];
-    }]];
-
-    NSArray *sortedAdapters = [[filteredAdapters allObjects] sortedArrayUsingComparator:^
+    return [[[self allAdapterClasses] allObjects] sortedArrayUsingComparator:^
         NSComparisonResult(Class klass1, Class klass2) {
         return [[[klass1 sharedAdapter] name] compare:[[klass2 sharedAdapter] name]];
     }];
-
-    return sortedAdapters;
 }
 
 + (BOOL)isHeyzapAdapter {

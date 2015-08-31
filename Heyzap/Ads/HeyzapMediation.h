@@ -15,6 +15,7 @@
 #import "HZMediateRequester.h"
 #import "HZMediationSettings.h"
 #import "HZSegmentationController.h"
+#import "HZFetchOptions.h"
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
@@ -40,9 +41,9 @@
 
 #pragma mark - Showing Ads
 
-- (void)fetchForAdType:(HZAdType)adType tag:(NSString *)tag additionalParams:(NSDictionary *)additionalParams completion:(void (^)(BOOL result, NSError *error))completion;
+- (void)fetchWithOptions:(HZFetchOptions *)fetchOptions;
 
-- (void)showAdForAdUnitType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options;
+- (void)showForAdType:(HZAdType)adType additionalParams:(NSDictionary *)additionalParams options:(HZShowOptions *)options;
 
 - (BOOL)isAvailableForAdUnitType:(HZAdType)adType tag:(NSString *)tag;
 

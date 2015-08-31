@@ -28,6 +28,7 @@
 #import "HZHeyzapExchangeAdapter.h"
 #import "TestAppPaymentTransactionObserver.h"
 #import "HeyzapMediation.h"
+#import "SDKTestAppViewControllerAdCallbackDelegate.h"
 
 #define kTagCreativeIDField 4393
 
@@ -38,7 +39,13 @@ typedef enum {
     kAdUnitSegmentBanner,
 } kAdUnitSegment;
 
-@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, HZBannerAdDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+
+
+@property (nonatomic) SDKTestAppViewControllerHZAdsDelegate *interstitialDelegate;
+@property (nonatomic) SDKTestAppViewControllerHZAdsDelegate *videoDelegate;
+@property (nonatomic) SDKTestAppViewControllerHZIncentivizedAdDelegate *incentivizedDelegate;
+@property (nonatomic) SDKTestAppViewControllerHZBannerAdDelegate *bannerDelegate;
 
 @property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl1;
 @property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl2;
@@ -77,6 +84,12 @@ typedef enum {
 
 @end
 
+#define METHOD_NAME NSStringFromSelector(_cmd)
+#define MERGE_TWO_STRINGS(str1, str2) [NSString stringWithFormat:@"%@ %@", str1, str2]
+#define LOG_METHOD_NAME_TO_CONSOLE [self logToConsole:METHOD_NAME]
+#define LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(str) [self logToConsole:MERGE_TWO_STRINGS(METHOD_NAME, str)]
+
+
 @implementation SDKTestAppViewController
 
 - (id) init {
@@ -91,63 +104,8 @@ typedef enum {
     return self;
 }
 
-#define LOG_METHOD_NAME_TO_CONSOLE [self logToConsole:NSStringFromSelector(_cmd)]
-#define LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(str) [self logToConsole:[NSString stringWithFormat:@"%@ %@", NSStringFromSelector(_cmd), str]]
-#pragma mark - Callbacks
 
-- (void)didReceiveAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-    
-    [self changeColorOfShowButton];
-}
-- (void)didShowAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-    
-    [self changeColorOfShowButton];
-}
-- (void)didClickAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-}
-- (void)didHideAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-    [self changeColorOfShowButton];
-}
-- (void)didFailToReceiveAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-}
-
-- (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error {
-    if(self.logCallbacksSwitch.isOn)[self logToConsole:[NSString stringWithFormat:@"%@ tag: %@ error: %@",NSStringFromSelector(_cmd),tag, error]];
-}
-
-- (void)willStartAudio {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-}
-- (void)didFinishAudio {
-    if(self.logCallbacksSwitch.isOn)LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)didCompleteAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-}
-
-- (void) didFailToCompleteAdWithTag:(NSString *)tag {
-    if(self.logCallbacksSwitch.isOn) {
-        LOG_METHOD_NAME_TO_CONSOLE_WITH_STRING(tag);
-    }
-}
+#pragma mark - Notifications
 
 - (void)requestNotification:(NSNotification *)notification{
     if(self.logRequestsSwitch.isOn){
@@ -187,38 +145,6 @@ typedef enum {
     }
 }
 
-- (void) changeColorOfShowButtonAfterSeconds:(NSTimeInterval)seconds {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * seconds), dispatch_get_main_queue(), ^{
-        [self changeColorOfShowButton];
-    });
-}
-
-- (void) changeColorOfShowButton {
-    [self.bannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex != kAdUnitSegmentBanner) forKey:@"hidden"];
-    [self.nonBannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex == kAdUnitSegmentBanner) forKey:@"hidden"];
-    
-    NSString * adTag = [self adTagText];
-    
-    switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
-        case kAdUnitSegmentInterstitial:
-            [self setShowButtonOn:[HZInterstitialAd isAvailableForTag:adTag]];
-            break;
-        case kAdUnitSegmentVideo:
-            [self setShowButtonOn:[HZVideoAd isAvailableForTag:adTag]];
-            break;
-        case kAdUnitSegmentIncentivized:
-            [self setShowButtonOn:[HZIncentivizedAd isAvailableForTag:adTag]];
-            break;
-        default:
-            break;
-    }
-}
-
-- (void)setShowButtonOn:(BOOL)on
-{
-    self.showButton.backgroundColor = (on ? [UIColor greenColor] : [UIColor redColor]);
-}
-
 - (void)responseNotification:(NSNotification *)notification{
     if(self.logResponsesSwitch.isOn){
         NSString * title, * logText;
@@ -250,6 +176,9 @@ typedef enum {
     }
 }
 
+
+#pragma mark - View lifecycle
+
 NSString * const kCreativeIDTextFieldAccessibilityLabel = @"creative ID";
 NSString * const kAdTagTextFieldAccessibilityLabel = @"ad tag";
 NSString * const kShowAdButtonAccessibilityLabel = @"show ad";
@@ -262,17 +191,24 @@ NSString * const kHZAPIClientDidSendRequestNotification = @"HZAPIClientDidSendRe
 NSString * const kHZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccessNotification";
 NSString * const kHZPaymentTransactionErrorNotification = @"HZPaymentTransactionErrorNotification";
 
-#pragma mark - View lifecycle
-
 const CGFloat kLeftMargin = 10;
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [HZInterstitialAd setDelegate:self];
-    [HZVideoAd setDelegate:self];
-    [HZIncentivizedAd setDelegate:self];
+    self.interstitialDelegate = [[SDKTestAppViewControllerHZAdsDelegate alloc] initWthSDKTestAppViewController:self];
+    self.interstitialDelegate.name = @"--HZInterstitialAd--";
+    self.videoDelegate = [[SDKTestAppViewControllerHZAdsDelegate alloc] initWthSDKTestAppViewController:self];
+    self.videoDelegate.name = @"--HZVideoAd--";
+    self.incentivizedDelegate = [[SDKTestAppViewControllerHZIncentivizedAdDelegate alloc] initWthSDKTestAppViewController:self];
+    self.incentivizedDelegate.name = @"--HZIncentivizedAd--";
+    self.bannerDelegate = [[SDKTestAppViewControllerHZBannerAdDelegate alloc] initWthSDKTestAppViewController:self];
+    self.bannerDelegate.name = @"--HZBannerAd--";
+    
+    [HZInterstitialAd setDelegate:self.interstitialDelegate];
+    [HZVideoAd setDelegate:self.videoDelegate];
+    [HZIncentivizedAd setDelegate:self.incentivizedDelegate];
     
     
     [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
@@ -594,6 +530,40 @@ const CGFloat kLeftMargin = 10;
     return YES;
 }
 
+#pragma mark - Button/UI handlers
+
+- (void) changeColorOfShowButtonAfterSeconds:(NSTimeInterval)seconds {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * seconds), dispatch_get_main_queue(), ^{
+        [self changeColorOfShowButton];
+    });
+}
+
+- (void) changeColorOfShowButton {
+    [self.bannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex != kAdUnitSegmentBanner) forKey:@"hidden"];
+    [self.nonBannerControls setValue:@(self.adUnitSegmentedControl.selectedSegmentIndex == kAdUnitSegmentBanner) forKey:@"hidden"];
+    
+    NSString * adTag = [self adTagText];
+    
+    switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
+        case kAdUnitSegmentInterstitial:
+            [self setShowButtonOn:[HZInterstitialAd isAvailableForTag:adTag]];
+            break;
+        case kAdUnitSegmentVideo:
+            [self setShowButtonOn:[HZVideoAd isAvailableForTag:adTag]];
+            break;
+        case kAdUnitSegmentIncentivized:
+            [self setShowButtonOn:[HZIncentivizedAd isAvailableForTag:adTag]];
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)setShowButtonOn:(BOOL)on
+{
+    self.showButton.backgroundColor = (on ? [UIColor greenColor] : [UIColor redColor]);
+}
+
 - (void) toggleDebuggable: (UISwitch *) sender {
     [HeyzapAds setDebug: sender.on];
 }
@@ -613,23 +583,28 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void) fetchAd: (id) sender {
-    NSString *adTag = [self adTagText];
-    if (adTag) {
-        [self logToConsole:[NSString stringWithFormat:@"Fetching for tag: %@", adTag]];
+    NSString *adTagText = [self adTagText];
+    if (adTagText) {
+        [self logToConsole:[NSString stringWithFormat:@"Fetching for tag: %@", adTagText]];
     } else {
         [self logToConsole:@"Fetching for default tag"];
-        adTag = nil;
+        adTagText = nil;
     }
+    
+    void (^completion)(BOOL, NSError *) = ^void (BOOL result, NSError *error){
+        if (!result || error) [self logToConsole:[NSString stringWithFormat:@"Fetch ad failed. Error: %@", error.localizedDescription]];
+    };
+    
     
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
-            [HZInterstitialAd fetchForTag:adTag];
+            [HZInterstitialAd fetchForTag:adTagText withCompletion:completion];
             break;
         case kAdUnitSegmentVideo:
-            [HZVideoAd fetchForTag:adTag];
+            [HZVideoAd fetchForTag:adTagText withCompletion:completion];
             break;
         case kAdUnitSegmentIncentivized:
-            [HZIncentivizedAd fetchForTag:adTag];
+            [HZIncentivizedAd fetchForTag:adTagText withCompletion:completion];
             break;
         default:
             break;
@@ -645,6 +620,7 @@ const CGFloat kLeftMargin = 10;
         [self logToConsole:@"Showing for default tag"];
         adTag = nil;
     }
+    
     
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
@@ -680,7 +656,7 @@ const CGFloat kLeftMargin = 10;
                          position:HZBannerPositionBottom
                           options:opts
      success:^(HZBannerAd *banner) {
-         banner.delegate = self;
+         banner.delegate = self.bannerDelegate;
          self.hideBannerButton.enabled = YES;
          self.wrapper = banner;
      } failure:^(NSError *error) {
@@ -689,6 +665,7 @@ const CGFloat kLeftMargin = 10;
              errorMessage = [errorMessage stringByAppendingFormat:@"; error was: %@",error.localizedDescription];
              [self logToConsole:errorMessage];
          }
+         
          self.showBannerButton.enabled = YES;
      }];
 }
@@ -700,8 +677,6 @@ const CGFloat kLeftMargin = 10;
     self.hideBannerButton.enabled = NO;
     self.showBannerButton.enabled = YES;
 }
-
-#pragma mark - Target-Action
 
 - (void)showNativeAds {
     [HZNativeAdController fetchAds:20 tag:nil completion:^(NSError *error, HZNativeAdCollection *collection) {
@@ -833,6 +808,15 @@ const CGFloat kLeftMargin = 10;
     
 }
 
+- (void)pauseExpensiveWorkSwitchFlipped:(UISwitch *)theSwitch {
+    if (theSwitch.isOn) {
+        [HeyzapAds pauseExpensiveWork];
+    } else {
+        [HeyzapAds resumeExpensiveWork];
+    }
+}
+
+
 #pragma mark - Open
 
 - (void) openLastFetch {
@@ -841,6 +825,9 @@ const CGFloat kLeftMargin = 10;
     }
 }
 
+
+#pragma mark Orientation
+
 - (BOOL)shouldAutorotate {
     return YES;
 }
@@ -848,6 +835,7 @@ const CGFloat kLeftMargin = 10;
 - (NSUInteger)supportedInterfaceOrientations {
     return UIInterfaceOrientationMaskAll;
 }
+
 
 #pragma mark - Console
 
@@ -864,6 +852,15 @@ const CGFloat kLeftMargin = 10;
     }
 }
 
+- (void) logCallback:(NSString *)callbackName {
+    [self logToConsole:callbackName];
+    [self changeColorOfShowButton];
+}
+- (void) logCallback:(NSString *)callbackName withString:(NSString *)string {
+    [self logToConsole:[NSString stringWithFormat:@"%@ %@", callbackName, string]];
+    [self changeColorOfShowButton];
+}
+
 
 #pragma mark - Cleanup
 
@@ -872,40 +869,8 @@ const CGFloat kLeftMargin = 10;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-#undef APPEND_METHOD_NAME_TO_CONSOLE
 
-- (void)bannerDidReceiveAd:(HZBannerAd *)banner {
-    NSLog(@"bannerDidReceiveAd");
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
-    NSLog(@"bannerDidFailtoReceiveAd:%@",error);
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)bannerWasClicked:(HZBannerAd *)banner {
-    NSLog(@"bannerWasClicked");
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)bannerWillPresentModalView:(HZBannerAd *)banner {
-    NSLog(@"bannerWillPresentModalView");
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)bannerDidDismissModalView:(HZBannerAd *)banner {
-    NSLog(@"bannerDidDismissModalView");
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-- (void)bannerWillLeaveApplication:(HZBannerAd *)banner {
-    NSLog(@"bannerWillLeaveApplication");
-    LOG_METHOD_NAME_TO_CONSOLE;
-}
-
-
-#pragma mark - Creative Type support
+#pragma mark - Legacy Creative Type support
 
 - (NSArray *)humanizedCreativeTypes {
     return @[@"None",
@@ -955,14 +920,6 @@ const CGFloat kLeftMargin = 10;
     self.creativeTypeTextField.font = [UIFont italicSystemFontOfSize:18];
     self.creativeTypeTextField.textColor = [UIColor lightGrayColor];
     self.creativeTypeTextField.text = @"Creative type";
-}
-
-- (void)pauseExpensiveWorkSwitchFlipped:(UISwitch *)theSwitch {
-    if (theSwitch.isOn) {
-        [HeyzapAds pauseExpensiveWork];
-    } else {
-        [HeyzapAds resumeExpensiveWork];
-    }
 }
 
 @end

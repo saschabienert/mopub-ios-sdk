@@ -20,6 +20,10 @@ DerivedData
 #CocoaPods
 Pods
 
+# Build Scripts
+Heyzap/Coverage/.build_vars
+*.pyc
+
 # Build Directories
 ads-sdk-build
 sdk-build
