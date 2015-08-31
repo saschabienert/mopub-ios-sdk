@@ -35,7 +35,7 @@ typedef enum {
     VASTFirstQuartile,
     VASTSecondQuartile,
     VASTThirdQuartile,
-    VASTFourtQuartile,
+    VASTFourthQuartile,
 } CurrentVASTQuartile;
 
 @interface HZSKVASTViewController() <HZAdPopupActionDelegate>
@@ -69,9 +69,6 @@ typedef enum {
 @property(nonatomic, strong) HZVASTVideoCache *videoCache;
 @property(nonatomic) BOOL didClick;
 
-- (void) UIApplicationDidBecomeActive: (id) notification;
-- (void) UIApplicationDidEnterBackground: (id) notification;
-
 @end
 
 @implementation HZSKVASTViewController
@@ -99,8 +96,7 @@ typedef enum {
         [self.view addSubview:_activityIndicator];
         
         [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(UIApplicationDidBecomeActive:) name: UIApplicationDidBecomeActiveNotification object: nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(UIApplicationDidEnterBackground:) name: UIApplicationDidEnterBackgroundNotification object: nil];
+        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(UIApplicationWillResignActive:) name: UIApplicationWillResignActiveNotification object: nil];
     }
     return self;
 }
@@ -229,13 +225,6 @@ typedef enum {
     [[UIApplication sharedApplication] setStatusBarHidden:statusBarHiddenOutsideOfVAST withAnimation:UIStatusBarAnimationNone];
 }
 
-#pragma mark - App lifecycle
-
-- (void)applicationDidBecomeActive:(UIApplication *)application
-{
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"applicationDidBecomeActive"];
-    [self handleResumeState];
-}
 
 #pragma mark - UIApplication Notifications
 
@@ -246,12 +235,15 @@ typedef enum {
         self.didClick = NO;
     }
     
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"applicationDidBecomeActive"];
+    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"UIApplicationDidBecomeActive"];
     [self handleResumeState];
 }
 
-- (void) UIApplicationDidEnterBackground: (id) notification {
+- (void) UIApplicationWillResignActive:(id)notification {
+    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"UIApplicationWillResignActive"];
+    [self handlePauseState];
 }
+
 
 #pragma mark - Orientation handling
 
@@ -338,7 +330,7 @@ typedef enum {
         case VASTThirdQuartile:
             if (currentPlayedPercentage>75.0) {
                 [self.eventProcessor trackEvent:VASTEventTrackThirdQuartile];
-                currentQuartile=VASTFourtQuartile;
+                currentQuartile=VASTFourthQuartile;
             }
             break;
         default:
