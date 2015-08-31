@@ -16,7 +16,7 @@
 - (void)didFailToLoadAdOfType:(HZCreativeType)creativeType error:(NSError *)error;
 
 - (void)didClickAd;
-- (void)didDismissAd;
+- (void)didDismissAdOfType:(HZCreativeType)creativeType;
 
 - (void)willPlayAudio;
 - (void)didFinishAudio;
