@@ -11,9 +11,6 @@ PODS:
   - Kiwi (2.4.0)
   - Leadbolt (5.2)
   - Masonry (0.6.2)
-  - OCHamcrest (4.1.1)
-  - OCMockito (1.4.0):
-    - OCHamcrest (~> 4.0)
   - OHHTTPStubs (4.2.0):
     - OHHTTPStubs/Default (= 4.2.0)
   - OHHTTPStubs/Core (4.2.0)
@@ -27,7 +24,6 @@ PODS:
   - OHHTTPStubs/NSURLSession (4.2.0):
     - OHHTTPStubs/Core
   - OHHTTPStubs/OHPathHelpers (4.2.0)
-  - Subliminal (1.1.0)
   - UnityAds (1.4.5)
   - VungleAdvertiserSDK (3.1.2)
 
@@ -42,26 +38,18 @@ DEPENDENCIES:
   - Kiwi
   - Leadbolt
   - Masonry
-  - OCMockito
   - OHHTTPStubs
-  - Subliminal (from `https://github.com/inkling/Subliminal.git`, branch `shared/Xcode6`)
   - UnityAds
   - VungleAdvertiserSDK
 
 EXTERNAL SOURCES:
   Bugsnag:
     :git: https://github.com/bugsnag/bugsnag-cocoa.git
-  Subliminal:
-    :branch: shared/Xcode6
-    :git: https://github.com/inkling/Subliminal.git
 
 CHECKOUT OPTIONS:
   Bugsnag:
     :commit: 10842c8160496dec55cf8c4f4fb9729ac3e3ea97
     :git: https://github.com/bugsnag/bugsnag-cocoa.git
-  Subliminal:
-    :commit: d99fef42529589373adc1948aede98aed0fbe9de
-    :git: https://github.com/inkling/Subliminal.git
 
 SPEC CHECKSUMS:
   AdColony: 389b39a185cf61a18cc7d4e1d910046246508e80
@@ -74,10 +62,7 @@ SPEC CHECKSUMS:
   Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
   Leadbolt: 1e2703134831ec79a27145a80791efba1664ceba
   Masonry: 362e8a1cc0beada4a4c4832d5e863da2a51533be
-  OCHamcrest: 6f03ffa81d12feab872638490a44ab0a6d3aca10
-  OCMockito: 4981140c9a9ec06c31af40f636e3c0f25f27e6b2
   OHHTTPStubs: f639130b83fb5f4f022d38f841141b0a6fa77249
-  Subliminal: ce9b0a4b831f1abd12a6b71599178bd3a3658eb0
   UnityAds: a05bce9ad710707a267d66bb3f651e211f0dd74b
   VungleAdvertiserSDK: 2909d6e65c488799574ba028b84e64a95652127c
 

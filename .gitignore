@@ -16,6 +16,13 @@ DerivedData
 .idea/
 *.hmap
 *.xccheckout
+*.ipa
+*.dSYM.zip
+
+## Other
+*.moved-aside
+*.xcuserstate
+*.xcscmblueprint
 
 #CocoaPods
 Pods
