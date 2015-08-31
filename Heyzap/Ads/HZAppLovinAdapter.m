@@ -248,20 +248,23 @@
     [self.delegate adapterWasClicked:self];
 }
 
-- (void)didDismissAd
+- (void)didDismissAdOfType:(HZCreativeType)creativeType
 {
     [self.delegate adapterDidDismissAd:self];
+    if(creativeType == HZCreativeTypeIncentivized) {
+        [self clearIncentivizedState];
+    } else if (creativeType == HZCreativeTypeStatic) {
+        self.currentInterstitialAd = nil;
+    }
 }
 
 - (void)didCompleteIncentivized
 {
-    [self clearIncentivizedState];
     [self.delegate adapterDidCompleteIncentivizedAd:self];
 }
 
 - (void)didFailToCompleteIncentivized
 {
-    [self clearIncentivizedState];
     [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
 }
 
