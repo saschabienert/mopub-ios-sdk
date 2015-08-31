@@ -1016,13 +1016,10 @@ const NSTimeInterval bannerPollInterval = 1;
             success = NO;
         }
         
-        NSDictionary *credentials = self.starter.networkNameToCredentials[adapterName];
-        
         if ([self.setupMediatorClasses containsObject:adapterClass]) {
             success = YES;
         } else if ([self.erroredMediatiorClasses containsObject:adapterClass]
-                   || ![adapterClass isSDKAvailable]
-                   || !credentials) {
+                   || ![adapterClass isSDKAvailable]) {
             success = NO;
         } else if (forceOnlyHeyzapSDK && ![adapterClass isHeyzapAdapter]) {
             success = NO;
