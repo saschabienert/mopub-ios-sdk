@@ -49,6 +49,9 @@
 
 @implementation HZHeyzapExchangeClient
 
+
+#pragma mark - Fetch
+
 - (void) fetchForCreativeType:(HZCreativeType)creativeType {
     if(self.state == HZHeyzapExchangeClientStateFetching || self.state == HZHeyzapExchangeClientStateReady) {
         return;
@@ -158,6 +161,26 @@
     }
 }
 
+
+#pragma mark - Show
+
+- (void) showWithOptions:(HZShowOptions *)options {
+    //mediationId can change over time, we want to use the current id at the time of showing the ad for later reporting
+    self.mediationId = [[HeyzapMediation sharedInstance] mediationId];
+    self.showOptions = options;
+    
+    if(self.vastAdFetchedAndReady){
+        self.vastVC.rootViewController = options.viewController;
+        [self.vastVC play];
+    }else if(self.mraidInterstitialFetchedAndReady){
+        self.mraidInterstitial.rootViewController = options.viewController;
+        [self.mraidInterstitial show];
+    }
+}
+
+
+#pragma mark - Reporting
+
 - (void) reportImpression {
     [self.apiClient reportImpressionForAd:self.adAuctionId
                           withExtraParams:[self impressionParams]
@@ -197,21 +220,9 @@
                  }];
 }
 
-- (void) showWithOptions:(HZShowOptions *)options {
-    //mediationId can change over time, we want to use the current id at the time of showing the ad for later reporting
-    self.mediationId = [[HeyzapMediation sharedInstance] mediationId];
-    self.showOptions = options;
-    
-    if(self.vastAdFetchedAndReady){
-        self.vastVC.rootViewController = options.viewController;
-        [self.vastVC play];
-    }else if(self.mraidInterstitialFetchedAndReady){
-        self.mraidInterstitial.rootViewController = options.viewController;
-        [self.mraidInterstitial show];
-    }
-}
 
 #pragma mark - HZSKVASTViewControllerDelegate
+
 - (void) vastReady:(HZSKVASTViewController *)vastVC {
     self.vastVC = vastVC;
     self.vastAdFetchedAndReady = YES;
@@ -299,6 +310,7 @@
 }
 - (void)vastTrackingEvent:(NSString *)eventName { }
 
+
 #pragma mark - HZMRAIDInterstitialDelegate
 
 - (void)mraidInterstitialAdReady:(HZMRAIDInterstitial *)mraidInterstitial {
@@ -336,13 +348,17 @@
     [self reportClick];
 }
 
+
 #pragma mark - HZHeyzapExchangeMRAIDServiceHandlerDelegate
+
 - (void) serviceEventProcessed:(NSString *)serviceEvent willLeaveApplication:(BOOL)willLeaveApplication{
     [self.delegate adClickedWithClient:self];
     [self reportClick];
 }
 
+
 #pragma mark - Utilities
+
 - (BOOL) isSupportedFormat {
     return [[HZHeyzapExchangeClient supportedFormats] containsObject:@(self.format)];
 }
