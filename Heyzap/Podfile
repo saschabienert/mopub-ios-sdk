@@ -29,8 +29,3 @@ target :"Ads Tests", :exclusive => true do
    pod 'Kiwi'
    pod 'OHHTTPStubs'
 end
-
-target :'Integration Tests', :exclusive => true do
-  pod 'Subliminal', :git => 'https://github.com/inkling/Subliminal.git', :branch => "shared/Xcode6"
-  pod 'OCMockito'
-end
