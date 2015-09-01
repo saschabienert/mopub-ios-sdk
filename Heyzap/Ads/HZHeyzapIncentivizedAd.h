@@ -13,8 +13,6 @@
 
 @interface HZHeyzapIncentivizedAd : NSObject
 
-+ (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate;
-
 /** Shows an incentivized video ad configured with the given options
  *
  * @param auctionType Heyzap auction type for this show

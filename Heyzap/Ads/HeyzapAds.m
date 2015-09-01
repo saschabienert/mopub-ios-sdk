@@ -150,19 +150,6 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
     [[HZAdsManager sharedManager] setOptions: options];
 }
 
-+ (void) setDelegate: (id<HZAdsDelegate>) delegate {
-    HZVersionCheck()
-
-    [[HZAdsManager sharedManager] setInterstitialDelegate: delegate];
-    [[HZAdsManager sharedManager] setVideoDelegate: delegate];
-}
-
-+ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate {
-    HZVersionCheck()
-
-    [[HZAdsManager sharedManager] setIncentivizedDelegate: delegate];
-}
-
 + (void) setFramework: (NSString *) framework {
     HZVersionCheck()
 

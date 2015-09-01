@@ -23,12 +23,6 @@
 
 #pragma mark - Callbacks
 
-/** Sets the delegate to receive the messages listed in the `HZAdsDelegate` protocol.
- 
- @param delegate The object to receive the callbacks.
- */
-+ (void) setDelegate: (id<HZAdsDelegate>) delegate;
-
 /**
  *  Fetches an interstitial ad for the given tag with an optional completion handler
  *
