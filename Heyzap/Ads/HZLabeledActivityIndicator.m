@@ -1,26 +1,26 @@
 //
-//  HZWebViewActivityIndicator.m
+//  HZLabeledActivityIndicator.m
 //  Heyzap
 //
 //  Created by Karim Piyarali on 6/11/15.
 //  Copyright (c) 2015 Heyzap. All rights reserved.
 //
 
-#import "HZActivityIndicator.h"
-#import "HZActivityIndicatorView.h"
+#import "HZLabeledActivityIndicator.h"
+#import "HZHZActivityIndicatorView.h"
 
-@interface HZActivityIndicator()
+@interface HZLabeledActivityIndicator()
 
 @property (nonatomic) UILabel *labelView;
 @property (nonatomic) UIView *backgroundBox;
 
-- (HZActivityIndicatorView *) createActivityIndicatorView;
+- (HZHZActivityIndicatorView *) createActivityIndicatorView;
 - (UIView *) createBackgroundBox;
 - (UILabel *) createLabelView;
 
 @end
 
-@implementation HZActivityIndicator
+@implementation HZLabeledActivityIndicator
 
 #pragma mark - Constants
 
@@ -74,14 +74,14 @@ UIViewAutoresizing const kHZActivityIndicatorDefaultAutoResizingMask = UIViewAut
 
 #pragma mark - Init Helpers
 
-- (HZActivityIndicatorView *)createActivityIndicatorView {
-    HZActivityIndicatorView *activityIndicatorView = [[HZActivityIndicatorView alloc] initWithFrame:CGRectZero];
+- (HZHZActivityIndicatorView *)createActivityIndicatorView {
+    HZHZActivityIndicatorView *activityIndicatorView = [[HZHZActivityIndicatorView alloc] initWithFrame:CGRectZero];
     
     activityIndicatorView.roundedCoreners = UIRectCornerAllCorners;
     activityIndicatorView.cornerRadii = CGSizeMake(3, 3);
     activityIndicatorView.stepDuration = 0.1;
     activityIndicatorView.color = [UIColor whiteColor];
-    activityIndicatorView.direction = HZActivityIndicatorDirectionClockwise;
+    activityIndicatorView.direction = HZHZActivityIndicatorDirectionClockwise;
     activityIndicatorView.hidesWhenStopped = YES;
     activityIndicatorView.autoresizingMask = kHZActivityIndicatorDefaultAutoResizingMask;
     

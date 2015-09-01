@@ -90,7 +90,7 @@ typedef enum {
         _videoView.actionDelegate = self;
         _videoView.player.shouldAutoplay = NO;
         
-        _activityIndicator = [[HZActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
+        _activityIndicator = [[HZLabeledActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
         _activityIndicator.labelText = @"Please Wait...";
         _activityIndicator.fadeBackground = YES;
         [self.view addSubview:_activityIndicator];

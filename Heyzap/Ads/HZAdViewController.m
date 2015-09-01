@@ -13,13 +13,13 @@
 #import "HZAdsManager.h"
 #import "HZAdsAPIClient.h"
 #import "HZStorePresenter.h"
-#import "HZActivityIndicator.h"
+#import "HZLabeledActivityIndicator.h"
 #import "HZEnums.h"
 
 @interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
 
 @property (nonatomic) UIWebView *clickTrackingWebView;
-@property (nonatomic) HZActivityIndicator *activityIndicator;
+@property (nonatomic) HZLabeledActivityIndicator *activityIndicator;
 
 @property (nonatomic) BOOL statusBarHidden;
 
@@ -32,7 +32,7 @@
     if (self) {
         self.ad = ad;
         
-        _activityIndicator = [[HZActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
+        _activityIndicator = [[HZLabeledActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
         _activityIndicator.labelText = @"Loading App Store";
         _activityIndicator.fadeBackground = YES;
     }

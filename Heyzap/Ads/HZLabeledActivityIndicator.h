@@ -1,5 +1,5 @@
 //
-//  HZWebViewActivityIndicator.h
+//  HZLabeledActivityIndicator.h
 //  Heyzap
 //
 //  Created by Karim Piyarali on 6/11/15.
@@ -7,14 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "HZActivityIndicatorView.h"
+#import "HZHZActivityIndicatorView.h"
 
-@interface HZActivityIndicator : UIView
+@interface HZLabeledActivityIndicator : UIView
 
 @property (nonatomic) BOOL fadeBackground;
 @property (nonatomic) BOOL enableInteraction; // allow users to interact with the background view
 @property (nonatomic) NSString *labelText;
-@property (nonatomic, readonly) HZActivityIndicatorView *activityIndicatorView;
+@property (nonatomic, readonly) HZHZActivityIndicatorView *activityIndicatorView;
 
 - (instancetype) initWithFrame:(CGRect)frame withBackgroundBox:(BOOL)withBackgroundBox;
 
