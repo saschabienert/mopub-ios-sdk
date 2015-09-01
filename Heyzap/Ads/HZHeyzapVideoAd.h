@@ -46,6 +46,4 @@
 # pragma mark - Testing;
 + (void) setCreativeID:(int)creativeID;
 
-+ (void)setDelegate:(id<HZAdsDelegate>)delegate;
-
 @end

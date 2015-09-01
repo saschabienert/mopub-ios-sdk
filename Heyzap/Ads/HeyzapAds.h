@@ -222,13 +222,6 @@ extern NSString * const HZRemoteDataRefreshedNotification;
 @interface HeyzapAds : NSObject
 
 /**
- *  Sets the object to receive HZIncentivizedAdDelegate callbacks
- *
- *  @param delegate An object conforing to the HZIncentivizedAdDelegate protocol
- */
-+ (void) setIncentiveDelegate: (id<HZIncentivizedAdDelegate>) delegate __attribute__((deprecated("Call `HZIncentivizedAd setDelegate:` instead.")));
-
-/**
  *  Sets an object to be forwarded all callbacks sent by the specified network.
  *
  *  @param delegate An object that can respond to the callbacks that the network sends.
