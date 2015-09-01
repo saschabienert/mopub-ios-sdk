@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "HZCreativeType.h"
 
 @interface HZAdModel : NSObject <HZAdInfoProvider>
 
@@ -18,10 +19,13 @@
 
 @property (nonatomic, readonly) NSURL *launchURI;
 @property (nonatomic, readonly) BOOL useModalAppStore;
-@property (nonatomic) NSString *tag;
-@property (nonatomic) NSString *adUnit;
+@property (nonatomic) HZFetchableCreativeType fetchableCreativeType;
 @property (nonatomic, readonly) HZAuctionType auctionType;
 @property (nonatomic, readonly) int requiredAdOrientation;
+
+// Properties set on show.
+@property (nonatomic) HZCreativeType showableCreativeType;
+@property (nonatomic) NSString *tag;
 
 @property (nonatomic) BOOL sentClick;
 @property (nonatomic) BOOL sentImpression;
@@ -31,7 +35,7 @@
 @property (nonatomic, readonly) BOOL enable90DegreeTransform;
 
 #pragma mark - Initializers
-- (instancetype) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;
+- (instancetype) initWithDictionary: (NSDictionary *) dict fetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType;
 
 #pragma mark - Validity
 + (BOOL) isResponseValid:(NSDictionary *)response withError: (NSError **) error;
@@ -49,7 +53,7 @@
 - (Class) controller;
 
 #pragma mark - Factory
-+ (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;
++ (HZAdModel *) modelForResponse: (NSDictionary *) response fetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType;
 
 #pragma mark - Actions
 - (void) doPostFetchActionsWithCompletion: (void (^)(BOOL result))completion;

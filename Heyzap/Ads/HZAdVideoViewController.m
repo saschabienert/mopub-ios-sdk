@@ -96,13 +96,12 @@
 - (void) hide {
     [self.ad onCompleteWithViewDuration: self.videoView.playbackTime andTotalDuration: self.videoView.videoDuration andFinished: self.didFinishVideo];
     
-    if (self.ad.adUnit != nil && [self.ad.adUnit isEqualToString: @"incentivized"]) {
+    if (self.ad.showableCreativeType == HZCreativeTypeIncentivized) {
         if (self.didFinishVideo) {
             [HZAdsManager postNotificationName:kHeyzapDidCompleteIncentivizedAd infoProvider:self.ad];
         } else {
             [HZAdsManager postNotificationName:kHeyzapDidFailToCompleteIncentivizedAd infoProvider:self.ad];
         }
-        
     }
     
     [super hide];

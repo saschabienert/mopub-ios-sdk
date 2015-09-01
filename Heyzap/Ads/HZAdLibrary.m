@@ -41,21 +41,21 @@
 
 #pragma mark - Queueing Behavior
 
-- (HZAdModel *)peekAtAdForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType
+- (HZAdModel *)peekAtAdForFetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType
 {
-    HZAdInfo *key = [[HZAdInfo alloc] initWithAdUnit:adUnit auctionType:auctionType];
+    HZAdInfo *const key = [[HZAdInfo alloc] initWithFetchableCreativeType:fetchableCreativeType auctionType:auctionType];
     HZQueue *queue =  self.adDict[key];
     return [queue peekTail];
 }
 
-- (HZAdModel *) popAdForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
-    HZAdInfo *key = [[HZAdInfo alloc] initWithAdUnit:adUnit auctionType:auctionType];
+- (HZAdModel *) popAdForFetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType {
+    HZAdInfo *const key = [[HZAdInfo alloc] initWithFetchableCreativeType:fetchableCreativeType auctionType:auctionType];
     HZQueue *queue =  self.adDict[key];
     return [queue dequeue];
 }
 
-- (void) pushAd:(HZAdModel *)ad forAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
-    HZAdInfo *key = [[HZAdInfo alloc] initWithAdUnit:adUnit auctionType:auctionType];
+- (void) pushAd:(HZAdModel *)ad forFetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType {
+    HZAdInfo *const key = [[HZAdInfo alloc] initWithFetchableCreativeType:fetchableCreativeType auctionType:auctionType];
     
     HZQueue *const queue = ({
         HZQueue *maybeQueue = self.adDict[key];

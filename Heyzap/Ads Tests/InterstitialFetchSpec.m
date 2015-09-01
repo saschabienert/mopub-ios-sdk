@@ -41,7 +41,7 @@ describe(@"InterstitialFetch", ^{
             if (hziOS8Plus()) {
                 [OHHTTPStubs stubRequestContainingString:@"fetch_ad" withJSON:[TestJSON portraitInterstitialJSON]];
                 
-                HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:@[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"] adUnit:@"interstitial" tag:nil auctionType:HZAuctionTypeMonetization andAdditionalParams:nil];
+                HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithFetchableCreativeType:HZFetchableCreativeTypeStatic tag:nil auctionType:HZAuctionTypeMonetization andAdditionalParams:nil];
                 
                 __block HZAdModel *blockModel;
                 [[HZAdsFetchManager sharedManager] fetch:request withCompletion:^(HZAdModel *model, NSError *error) {
@@ -49,7 +49,6 @@ describe(@"InterstitialFetch", ^{
                 }];
                 [[expectFutureValue(blockModel) hzShouldEventuallyAfterDelay] beNonNil];
             }
-            
         });
     });
 
