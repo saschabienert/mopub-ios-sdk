@@ -67,7 +67,7 @@
 
 - (void)ad:(HZALAd *)ad wasHiddenIn:(UIView *)view
 {
-    [self.delegate didDismissAd];
+    [self.delegate didDismissAdOfType:self.creativeType];
 }
 
 - (void)ad:(HZALAd *)ad wasClickedIn:(UIView *)view
