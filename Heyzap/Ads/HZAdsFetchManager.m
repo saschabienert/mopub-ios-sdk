@@ -37,7 +37,6 @@
         if (aRequest.lastError != nil) {
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", aRequest.lastError]];
-            [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: nil];
             [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
             
             if (completion) {
@@ -65,7 +64,6 @@
     }
     
     if (!validAd) {
-        [[[HZAdsManager sharedManager] delegateForAdUnit:request.adUnit] didFailToReceiveAdWithTag:nil];
         [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
         
         if (completion) {
@@ -112,7 +110,6 @@
             
             [[HZAdLibrary sharedLibrary] pushAd:ad forAdUnit:request.adUnit auctionType:request.auctionType];
             
-            [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didReceiveAdWithTag:nil];
             [HZAdsManager postNotificationName:kHeyzapDidReceiveAdNotification infoProvider:request];
             
             if (completion) {
@@ -120,7 +117,6 @@
             }
             
         } else {
-            [[[HZAdsManager sharedManager] delegateForAdUnit: request.adUnit] didFailToReceiveAdWithTag: nil];
             [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
             
             if (completion) {

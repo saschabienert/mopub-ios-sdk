@@ -98,6 +98,7 @@ NSString *const kHZBannerOrdinalKey = @"banner_ordinal";
  */
 NSString *const kHZOrdinalKey = @"ordinal";
 NSString *const kHZIncentivizedCompleteKey = @"complete";
+NSString *const kHZIncentivizedInfoKey = @"custom_info";
 
 - (void)reportFetchWithSuccessfulAdapter:(HZBaseAdapter *)chosenAdapter
 {
@@ -140,11 +141,13 @@ NSString *const kHZIncentivizedCompleteKey = @"complete";
         params[kHZBannerOrdinalKey] = @(self.bannerImpressionCount);
     }
     
-    [[HZMediationAPIClient sharedClient] POST:@"click" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
-        HZDLog(@"Success reporting click");
-    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        HZDLog(@"Error reporting click = %@",error);
-    }];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        [[HZMediationAPIClient sharedClient] POST:@"click" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
+            HZDLog(@"Success reporting click");
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+            HZDLog(@"Error reporting click = %@",error);
+        }];
+    });
 }
 
 - (void)reportImpressionForAdapter:(HZBaseAdapter *)adapter
@@ -162,18 +165,20 @@ NSString *const kHZIncentivizedCompleteKey = @"complete";
         params[kHZBannerOrdinalKey] = @(self.bannerImpressionCount);
     }
     
-    [[HZMediationAPIClient sharedClient] POST:@"impression" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
-        HZDLog(@"Success reporting impression");
-    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        HZDLog(@"Error reporting impression = %@",error);
-    }];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        [[HZMediationAPIClient sharedClient] POST:@"impression" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
+            HZDLog(@"Success reporting impression");
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+            HZDLog(@"Error reporting impression = %@",error);
+        }];
+    });
     
     if (self.adType == HZAdTypeBanner) {
         self.bannerImpressionCount += 1;
     }
 }
 
-- (void)reportIncentivizedResult:(BOOL)success forAdapter:(HZBaseAdapter *)adapter {
+- (void)reportIncentivizedResult:(BOOL)success forAdapter:(HZBaseAdapter *)adapter incentivizedInfo:(NSString *)incentivizedInfo {
     const NSUInteger ordinal = [self.chosenAdapters indexOfObject:adapter];
     NSMutableDictionary *const params = [self addParametersToDefaults:
                                          @{
@@ -182,14 +187,17 @@ NSString *const kHZIncentivizedCompleteKey = @"complete";
                                            kHZNetworkKey: [adapter name],
                                            kHZOrdinalKey: @(ordinal),
                                            kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                           kHZIncentivizedInfoKey: incentivizedInfo ?: @"",
                                            }].mutableCopy;
     
-    [[HZMediationAPIClient sharedClient] POST:@"complete" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
-        HZDLog(@"Success reporting incentivized complete");
-    } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-        // The server hasn't implemented this endpoint yet, so don't bother logging the error for now.
-//        HZDLog(@"Error reporting incentivized complete = %@",error);
-    }];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        [[HZMediationAPIClient sharedClient] POST:@"complete" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
+            HZDLog(@"Success reporting incentivized complete");
+        } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
+            HZELog(@"Error reporting incentivized complete = %@",error);
+        }];
+    });
 }
 
 NSString * sdkVersionOrDefault(NSString *const version) {

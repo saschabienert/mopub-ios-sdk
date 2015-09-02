@@ -77,14 +77,6 @@
 		5011CE7118DBB4B700604B53 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE7018DBB4B700604B53 /* CoreLocation.framework */; };
 		5011CE8918DBBBF700604B53 /* HZAdMobAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5011CE8718DBBBF700604B53 /* HZAdMobAdapter.h */; };
 		5011CE8A18DBBBF700604B53 /* HZAdMobAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5011CE8818DBBBF700604B53 /* HZAdMobAdapter.m */; };
-		5011CE9718DBF00F00604B53 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4118DB915500604B53 /* AVFoundation.framework */; };
-		5011CE9818DBF01700604B53 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4518DB916B00604B53 /* AudioToolbox.framework */; };
-		5011CE9A18DBF08300604B53 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE6818DBAEDD00604B53 /* Social.framework */; };
-		5011CE9B18DBF08700604B53 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE6118DBAEAE00604B53 /* EventKit.framework */; };
-		5011CE9C18DBF08700604B53 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE6218DBAEAE00604B53 /* EventKitUI.framework */; };
-		5011CE9D18DBF09000604B53 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4718DB917200604B53 /* CoreMedia.framework */; };
-		5011CE9E18DBF09A00604B53 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE7018DBB4B700604B53 /* CoreLocation.framework */; };
-		5011CE9F18DBF0AC00604B53 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE3F18DB914200604B53 /* libz.dylib */; };
 		5019224818EDFA6A002793A3 /* HZMediationEventReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5019224618EDFA6A002793A3 /* HZMediationEventReporter.h */; };
 		5019224918EDFA6A002793A3 /* HZMediationEventReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5019224718EDFA6A002793A3 /* HZMediationEventReporter.m */; };
 		5019224E18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5019224C18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h */; };
@@ -96,9 +88,7 @@
 		5020884019DA2574005C3C1B /* HZNativeAdCollectionSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5020883F19DA2574005C3C1B /* HZNativeAdCollectionSpec.m */; };
 		5020884219DA28DE005C3C1B /* HZNativeAdSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5020884119DA28DE005C3C1B /* HZNativeAdSpec.m */; };
 		5020884619DA2A87005C3C1B /* ValidNativeAd.json in Resources */ = {isa = PBXBuildFile; fileRef = 5020884419DA2A87005C3C1B /* ValidNativeAd.json */; };
-		502BE84F18CD530D00EB6415 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 502BE84E18CD530D00EB6415 /* TestUtilities.m */; };
 		50310F991A2E894F00FDC9BC /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50310F981A2E894F00FDC9BC /* Launch Screen.xib */; };
-		50310F9A1A2E894F00FDC9BC /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50310F981A2E894F00FDC9BC /* Launch Screen.xib */; };
 		50310F9B1A2E894F00FDC9BC /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50310F981A2E894F00FDC9BC /* Launch Screen.xib */; };
 		5045147F18B58C5A00E00E6C /* SDCSegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */; };
 		504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C518B592CE00E00E6C /* ServerSelectionViewController.m */; };
@@ -179,7 +169,6 @@
 		507255A61B31F5A800576059 /* HZMediationLoadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 507255A41B31F5A800576059 /* HZMediationLoadManager.h */; };
 		507255A71B31F5A800576059 /* HZMediationLoadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 507255A51B31F5A800576059 /* HZMediationLoadManager.m */; };
 		50759D261AD3359E00AECC2B /* PersistentTestAppConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AE54441AD333860099358E /* PersistentTestAppConfiguration.m */; };
-		50759D271AD3359E00AECC2B /* PersistentTestAppConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AE54441AD333860099358E /* PersistentTestAppConfiguration.m */; };
 		50759D281AD3359F00AECC2B /* PersistentTestAppConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AE54441AD333860099358E /* PersistentTestAppConfiguration.m */; };
 		5079F3CB1AC4B672008AB46B /* HZNoCaretTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = 5079F3C91AC4B672008AB46B /* HZNoCaretTextField.h */; };
 		5079F3CC1AC4B672008AB46B /* HZNoCaretTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5079F3CA1AC4B672008AB46B /* HZNoCaretTextField.m */; };
@@ -190,20 +179,14 @@
 		507A455119BE4E5100C7AEEA /* HZNativeAdCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A454F19BE4E5100C7AEEA /* HZNativeAdCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		507A455219BE4E5100C7AEEA /* HZNativeAdCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455019BE4E5100C7AEEA /* HZNativeAdCollection.m */; };
 		507A455919BE762900C7AEEA /* NativeAdTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455819BE762900C7AEEA /* NativeAdTableViewController.m */; };
-		507A455A19BE762900C7AEEA /* NativeAdTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455819BE762900C7AEEA /* NativeAdTableViewController.m */; };
 		507A455E19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455D19BE80E100C7AEEA /* NativeTableViewCell.m */; };
-		507A455F19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455D19BE80E100C7AEEA /* NativeTableViewCell.m */; };
 		507A456219BE95B000C7AEEA /* HZStorePresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A456019BE95B000C7AEEA /* HZStorePresenter.h */; };
 		507A456319BE95B000C7AEEA /* HZStorePresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A456119BE95B000C7AEEA /* HZStorePresenter.m */; };
 		507A457019BF91ED00C7AEEA /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */; };
-		507A457119BF91ED00C7AEEA /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */; };
 		507A457419BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
-		507A457519BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
 		509109351B66E5FB004464E7 /* HZMediationStarterSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 509109341B66E5FB004464E7 /* HZMediationStarterSpec.m */; };
 		509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 509B04351A44AA0300EC3ACF /* HZNativeAdImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		509B04381A44AA0300EC3ACF /* HZNativeAdImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B04361A44AA0300EC3ACF /* HZNativeAdImage.m */; };
-		509B5BE418C943B8003A7CB9 /* TestInterstitials.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE318C943B8003A7CB9 /* TestInterstitials.m */; };
-		509B5BE718C94490003A7CB9 /* UIViewController+IntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BE618C94490003A7CB9 /* UIViewController+IntegrationTests.m */; };
 		509B5BE918C968FA003A7CB9 /* portraitInterstitialRequest.json in Resources */ = {isa = PBXBuildFile; fileRef = 509B5BE818C968FA003A7CB9 /* portraitInterstitialRequest.json */; };
 		509B5BEC18C96CE2003A7CB9 /* TestJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BEB18C96CE2003A7CB9 /* TestJSON.m */; };
 		509E8D3519B79F8200ABF2D2 /* HZEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 509E8D3319B79F8200ABF2D2 /* HZEnums.h */; };
@@ -223,30 +206,9 @@
 		50A10DE61AE9BABF00001C4C /* HZMediationRequestSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 50A10DE41AE9BABF00001C4C /* HZMediationRequestSerializer.h */; };
 		50A10DE71AE9BABF00001C4C /* HZMediationRequestSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A10DE51AE9BABF00001C4C /* HZMediationRequestSerializer.m */; };
 		50A10DEB1AE9BF0300001C4C /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A10DEA1AE9BF0300001C4C /* UIImageView+AFNetworking.m */; };
-		50A10DEC1AE9BF0300001C4C /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A10DEA1AE9BF0300001C4C /* UIImageView+AFNetworking.m */; };
 		50A10DED1AE9BF0300001C4C /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A10DEA1AE9BF0300001C4C /* UIImageView+AFNetworking.m */; };
 		50A289DD1AAFBA4A00951E16 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86E439371AAA462500470E62 /* iAd.framework */; };
 		50A36ACC18C93B9C00FA84F0 /* InterstitialSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */; };
-		50A36AD218C9405A00FA84F0 /* DeviceInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514CB18B68EF600E00E6C /* DeviceInfoViewController.m */; };
-		50A36AD418C9405A00FA84F0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B941E71758056B00B8EACE /* main.m */; };
-		50A36AD518C9405A00FA84F0 /* ServerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C518B592CE00E00E6C /* ServerSelectionViewController.m */; };
-		50A36AD618C9405A00FA84F0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B941EB1758056B00B8EACE /* AppDelegate.m */; };
-		50A36AD718C9405A00FA84F0 /* SDCSegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */; };
-		50A36AD818C9405A00FA84F0 /* BaseTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C818B5A59100E00E6C /* BaseTestAppViewController.m */; };
-		50A36AD918C9405A00FA84F0 /* SDKTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 862D5341176D12E900C4221F /* SDKTestAppViewController.m */; };
-		50A36ADB18C9405A00FA84F0 /* libHeyzapAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9432A1758108700B8EACE /* libHeyzapAds.a */; };
-		50A36ADC18C9405A00FA84F0 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501F9D7318989B8A00127E49 /* CoreTelephony.framework */; };
-		50A36ADE18C9405A00FA84F0 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86234AAB185690410071957B /* MediaPlayer.framework */; };
-		50A36ADF18C9405A00FA84F0 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A18C04178B64E600536547 /* MessageUI.framework */; };
-		50A36AE018C9405A00FA84F0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B941DF1758056B00B8EACE /* CoreGraphics.framework */; };
-		50A36AE118C9405A00FA84F0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943BF1758347300B8EACE /* UIKit.framework */; };
-		50A36AE218C9405A00FA84F0 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B7175830A600B8EACE /* AdSupport.framework */; };
-		50A36AE318C9405A00FA84F0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B943B8175830A700B8EACE /* QuartzCore.framework */; };
-		50A36AE418C9405A00FA84F0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9419E1757FD6300B8EACE /* Foundation.framework */; };
-		50A36AE618C9405A00FA84F0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 86B941E41758056B00B8EACE /* InfoPlist.strings */; };
-		50A36AE718C9405A00FA84F0 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941ED1758056B00B8EACE /* Default.png */; };
-		50A36AE818C9405A00FA84F0 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941EF1758056B00B8EACE /* Default@2x.png */; };
-		50A36AE918C9405A00FA84F0 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B941F11758056B00B8EACE /* Default-568h@2x.png */; };
 		50A64F731B3A1D4A0094B702 /* HZMediationAvailabilityChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 50A64F711B3A1D4A0094B702 /* HZMediationAvailabilityChecker.h */; };
 		50A64F741B3A1D4A0094B702 /* HZMediationAvailabilityChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A64F721B3A1D4A0094B702 /* HZMediationAvailabilityChecker.m */; };
 		50AA624518CBF4DC0018A0B6 /* InterstitialFetchSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624418CBF4DC0018A0B6 /* InterstitialFetchSpec.m */; };
@@ -305,7 +267,6 @@
 		50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ECA1C318DB618E006284AB /* HeyzapMediation.h */; };
 		50ECA1C618DB618E006284AB /* HeyzapMediation.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ECA1C418DB618E006284AB /* HeyzapMediation.m */; };
 		50ECA1C818DB6234006284AB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
-		50ECA1C918DB623A006284AB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECA1C718DB6234006284AB /* SystemConfiguration.framework */; };
 		50ECA1CD18DB684D006284AB /* HZChartboostAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ECA1CB18DB684D006284AB /* HZChartboostAdapter.h */; };
 		50ECA1CE18DB684D006284AB /* HZChartboostAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ECA1CC18DB684D006284AB /* HZChartboostAdapter.m */; };
 		50ECA1D218DB7373006284AB /* HZHeyzapAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ECA1D018DB7373006284AB /* HZHeyzapAdapter.h */; };
@@ -350,7 +311,6 @@
 		866E3A111851302C00B6E431 /* HZAdInterstitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 866E3A0F1851302C00B6E431 /* HZAdInterstitialViewController.m */; };
 		866E3A181851329500B6E431 /* HZWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = 866E3A161851329500B6E431 /* HZWebView.h */; };
 		866E3A191851329500B6E431 /* HZWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 866E3A171851329500B6E431 /* HZWebView.m */; };
-		867A6BA01AAFB0B200D63872 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86E439371AAA462500470E62 /* iAd.framework */; };
 		867DABD50F9C498EBEF03E87 /* libPods-Ads Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B1D5F5ECB01E4EDFA33DE9B0 /* libPods-Ads Tests.a */; };
 		8680AC9B193ED2DC0078B5CF /* HZDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 8680AC99193ED2DC0078B5CF /* HZDelegateProxy.h */; };
 		8680AC9C193ED2DC0078B5CF /* HZDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8680AC9A193ED2DC0078B5CF /* HZDelegateProxy.m */; };
@@ -426,7 +386,6 @@
 		8A6417A71B1FB451003E8747 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A6417A61B1FB451003E8747 /* StoreKit.framework */; };
 		8A6417AA1B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6417A91B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m */; };
 		8A6417AC1B1FC2C2003E8747 /* TestAppPaymentTransactionObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6417A91B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m */; };
-		8A6417AD1B1FC2C4003E8747 /* TestAppPaymentTransactionObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6417A91B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m */; };
 		8AA226471B3CCDDE00FA1428 /* HZActivityIndicatorView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AA226451B3CCDDE00FA1428 /* HZActivityIndicatorView.h */; };
 		8AA226481B3CCDDE00FA1428 /* HZActivityIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA226461B3CCDDE00FA1428 /* HZActivityIndicatorView.m */; };
 		8AA2264C1B3CCEEE00FA1428 /* HZWebViewActivityIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AA2264A1B3CCEEE00FA1428 /* HZWebViewActivityIndicator.h */; };
@@ -453,10 +412,8 @@
 		996B33B31B702F3D001D05DE /* HZSegmentationSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B33B21B702F3D001D05DE /* HZSegmentationSegment.h */; };
 		996B33B51B71277F001D05DE /* HZImpressionHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B33B41B71277F001D05DE /* HZImpressionHistory.h */; };
 		996B33B71B71278E001D05DE /* HZImpressionHistory.m in Sources */ = {isa = PBXBuildFile; fileRef = 996B33B61B71278E001D05DE /* HZImpressionHistory.m */; };
-		996D9AA5BB144F82A96FC8B0 /* libPods-Integration Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */; };
 		996E9A611B8FB73C001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 996E9A5F1B8FB737001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m */; };
 		996E9A621B8FB74B001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 996E9A5F1B8FB737001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m */; };
-		996E9A641B8FB75B001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 996E9A5F1B8FB737001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m */; };
 		99752D541B3B860C0075B328 /* HZVASTVideoCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 99752D531B3B860C0075B328 /* HZVASTVideoCache.m */; };
 		99752D561B3B86230075B328 /* HZVASTVideoCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 99752D551B3B86230075B328 /* HZVASTVideoCache.h */; };
 		99752D5D1B3CCEB90075B328 /* HZHeyzapExchangeAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 99752D5C1B3CCEB90075B328 /* HZHeyzapExchangeAdapter.m */; };
@@ -535,13 +492,6 @@
 			remoteInfo = Ads;
 		};
 		505351EB18F76550003C531E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 86B943291758108700B8EACE;
-			remoteInfo = Ads;
-		};
-		50A36AD018C9405A00FA84F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
 			proxyType = 1;
@@ -646,8 +596,6 @@
 		5020884119DA28DE005C3C1B /* HZNativeAdSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdSpec.m; sourceTree = "<group>"; };
 		5020884419DA2A87005C3C1B /* ValidNativeAd.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ValidNativeAd.json; sourceTree = "<group>"; };
 		50269FF219B65D9500CD7C88 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		502BE84D18CD530D00EB6415 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
-		502BE84E18CD530D00EB6415 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
 		50310F981A2E894F00FDC9BC /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		503CD2341901A86D00667C0D /* HZALAdVideoPlaybackDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZALAdVideoPlaybackDelegate.h; sourceTree = "<group>"; };
 		5045147D18B58C5A00E00E6C /* SDCSegmentedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCSegmentedViewController.h; sourceTree = "<group>"; };
@@ -729,9 +677,6 @@
 		509B04361A44AA0300EC3ACF /* HZNativeAdImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdImage.m; sourceTree = "<group>"; };
 		509B04391A44B04300EC3ACF /* HZNativeAdImage_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZNativeAdImage_Private.h; sourceTree = "<group>"; };
 		509B043A1A44B6C700EC3ACF /* HZInitMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZInitMacros.h; sourceTree = "<group>"; };
-		509B5BE318C943B8003A7CB9 /* TestInterstitials.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestInterstitials.m; sourceTree = "<group>"; };
-		509B5BE518C94490003A7CB9 /* UIViewController+IntegrationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+IntegrationTests.h"; sourceTree = "<group>"; };
-		509B5BE618C94490003A7CB9 /* UIViewController+IntegrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+IntegrationTests.m"; sourceTree = "<group>"; };
 		509B5BE818C968FA003A7CB9 /* portraitInterstitialRequest.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = portraitInterstitialRequest.json; sourceTree = "<group>"; };
 		509B5BEA18C96CE2003A7CB9 /* TestJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestJSON.h; sourceTree = "<group>"; };
 		509B5BEB18C96CE2003A7CB9 /* TestJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestJSON.m; sourceTree = "<group>"; };
@@ -754,7 +699,6 @@
 		50A10DE91AE9BF0300001C4C /* UIImageView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+AFNetworking.h"; sourceTree = "<group>"; };
 		50A10DEA1AE9BF0300001C4C /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
 		50A36ACB18C93B9C00FA84F0 /* InterstitialSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialSpec.m; sourceTree = "<group>"; };
-		50A36AED18C9405A00FA84F0 /* Integration Tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Integration Tests.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		50A64F711B3A1D4A0094B702 /* HZMediationAvailabilityChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationAvailabilityChecker.h; sourceTree = "<group>"; };
 		50A64F721B3A1D4A0094B702 /* HZMediationAvailabilityChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationAvailabilityChecker.m; sourceTree = "<group>"; };
 		50AA624418CBF4DC0018A0B6 /* InterstitialFetchSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialFetchSpec.m; sourceTree = "<group>"; };
@@ -1116,33 +1060,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		50A36ADA18C9405A00FA84F0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				867A6BA01AAFB0B200D63872 /* iAd.framework in Frameworks */,
-				5011CE9F18DBF0AC00604B53 /* libz.dylib in Frameworks */,
-				5011CE9E18DBF09A00604B53 /* CoreLocation.framework in Frameworks */,
-				5011CE9D18DBF09000604B53 /* CoreMedia.framework in Frameworks */,
-				5011CE9B18DBF08700604B53 /* EventKit.framework in Frameworks */,
-				5011CE9C18DBF08700604B53 /* EventKitUI.framework in Frameworks */,
-				5011CE9A18DBF08300604B53 /* Social.framework in Frameworks */,
-				5011CE9818DBF01700604B53 /* AudioToolbox.framework in Frameworks */,
-				5011CE9718DBF00F00604B53 /* AVFoundation.framework in Frameworks */,
-				50ECA1C918DB623A006284AB /* SystemConfiguration.framework in Frameworks */,
-				50A36ADB18C9405A00FA84F0 /* libHeyzapAds.a in Frameworks */,
-				50A36ADC18C9405A00FA84F0 /* CoreTelephony.framework in Frameworks */,
-				50A36ADE18C9405A00FA84F0 /* MediaPlayer.framework in Frameworks */,
-				50A36ADF18C9405A00FA84F0 /* MessageUI.framework in Frameworks */,
-				50A36AE018C9405A00FA84F0 /* CoreGraphics.framework in Frameworks */,
-				50A36AE118C9405A00FA84F0 /* UIKit.framework in Frameworks */,
-				50A36AE218C9405A00FA84F0 /* AdSupport.framework in Frameworks */,
-				50A36AE318C9405A00FA84F0 /* QuartzCore.framework in Frameworks */,
-				50A36AE418C9405A00FA84F0 /* Foundation.framework in Frameworks */,
-				996D9AA5BB144F82A96FC8B0 /* libPods-Integration Tests.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		86B941D91758056B00B8EACE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1386,7 +1303,6 @@
 				509109311B66E21F004464E7 /* Mediation */,
 				5053E7F01AEABCA60090889B /* Caching Tests */,
 				50B0AF981AEAB383003B8233 /* Utils Tests */,
-				50A36ACD18C9402200FA84F0 /* Integration Tests */,
 				5020883E19DA255D005C3C1B /* Native Ads */,
 				50AA624618CBF5720018A0B6 /* Categories */,
 				509B5BED18C96CEA003A7CB9 /* Ads JSON */,
@@ -1618,19 +1534,6 @@
 				50A10DEA1AE9BF0300001C4C /* UIImageView+AFNetworking.m */,
 			);
 			name = Networking;
-			sourceTree = "<group>";
-		};
-		50A36ACD18C9402200FA84F0 /* Integration Tests */ = {
-			isa = PBXGroup;
-			children = (
-				509B5BE318C943B8003A7CB9 /* TestInterstitials.m */,
-				509B5BE518C94490003A7CB9 /* UIViewController+IntegrationTests.h */,
-				509B5BE618C94490003A7CB9 /* UIViewController+IntegrationTests.m */,
-				502BE84D18CD530D00EB6415 /* TestUtilities.h */,
-				502BE84E18CD530D00EB6415 /* TestUtilities.m */,
-			);
-			name = "Integration Tests";
-			path = "../Integration Tests";
 			sourceTree = "<group>";
 		};
 		50AA624618CBF5720018A0B6 /* Categories */ = {
@@ -1962,7 +1865,6 @@
 				86B941DC1758056B00B8EACE /* HeyzapSDKTest.app */,
 				86B9432A1758108700B8EACE /* libHeyzapAds.a */,
 				504E9C9218C9322100402BC3 /* Ads Tests.xctest */,
-				50A36AED18C9405A00FA84F0 /* Integration Tests.app */,
 				5053521818F76550003C531E /* MediationTestApp.app */,
 			);
 			name = Products;
@@ -2592,27 +2494,6 @@
 			productReference = 5053521818F76550003C531E /* MediationTestApp.app */;
 			productType = "com.apple.product-type.application";
 		};
-		50A36ACE18C9405A00FA84F0 /* Integration Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 50A36AEA18C9405A00FA84F0 /* Build configuration list for PBXNativeTarget "Integration Tests" */;
-			buildPhases = (
-				B7BA62A16F294B7BBBCC3D3F /* Check Pods Manifest.lock */,
-				50A36AD118C9405A00FA84F0 /* Sources */,
-				50A36ADA18C9405A00FA84F0 /* Frameworks */,
-				50A36AE518C9405A00FA84F0 /* Resources */,
-				A6B341C0C9F8424385290773 /* Copy Pods Resources */,
-				77F1BED1A3C4A4E2C9DD55FB /* Upload Bugsnag dSYM */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				50A36ACF18C9405A00FA84F0 /* PBXTargetDependency */,
-			);
-			name = "Integration Tests";
-			productName = HeyzapSDKTest;
-			productReference = 50A36AED18C9405A00FA84F0 /* Integration Tests.app */;
-			productType = "com.apple.product-type.application";
-		};
 		86B941DB1758056B00B8EACE /* HeyzapSDKTest */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 86B942071758056B00B8EACE /* Build configuration list for PBXNativeTarget "HeyzapSDKTest" */;
@@ -2671,9 +2552,6 @@
 					505351E918F76550003C531E = {
 						DevelopmentTeam = A722HEF3XB;
 					};
-					50A36ACE18C9405A00FA84F0 = {
-						DevelopmentTeam = A722HEF3XB;
-					};
 					86B941DB1758056B00B8EACE = {
 						DevelopmentTeam = A722HEF3XB;
 						SystemCapabilities = {
@@ -2704,7 +2582,6 @@
 				86B943AC1758220700B8EACE /* HeyzapAds */,
 				86B09B98175988850045AA54 /* SDK */,
 				504E9C9118C9322100402BC3 /* Ads Tests */,
-				50A36ACE18C9405A00FA84F0 /* Integration Tests */,
 				505351E918F76550003C531E /* MediationTestApp */,
 				86C4913D1B27E75B00A84B2C /* MRAIDJShex */,
 			);
@@ -2733,19 +2610,6 @@
 				5053521318F76550003C531E /* Default-568h@2x.png in Resources */,
 				50310F9B1A2E894F00FDC9BC /* Launch Screen.xib in Resources */,
 				50B03A381A706C2B0086E444 /* Storyboard.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		50A36AE518C9405A00FA84F0 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				50A36AE618C9405A00FA84F0 /* InfoPlist.strings in Resources */,
-				50A36AE718C9405A00FA84F0 /* Default.png in Resources */,
-				50A36AE818C9405A00FA84F0 /* Default@2x.png in Resources */,
-				50A36AE918C9405A00FA84F0 /* Default-568h@2x.png in Resources */,
-				507A457119BF91ED00C7AEEA /* Storyboard.storyboard in Resources */,
-				50310F9A1A2E894F00FDC9BC /* Launch Screen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2793,21 +2657,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		77F1BED1A3C4A4E2C9DD55FB /* Upload Bugsnag dSYM */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Upload Bugsnag dSYM";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/usr/bin/env ruby";
-			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
 			showEnvVarsInLog = 0;
 		};
 		86B943571758198100B8EACE /* Prepare Framework */ = {
@@ -2895,37 +2744,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-HeyzapSDKTest/Pods-HeyzapSDKTest-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A6B341C0C9F8424385290773 /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Integration Tests/Pods-Integration Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		B1A49526A5AAF300587C1AE9 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		B7BA62A16F294B7BBBCC3D3F /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3061,30 +2880,6 @@
 				505351F218F76550003C531E /* SDCSegmentedViewController.m in Sources */,
 				505351F318F76550003C531E /* BaseTestAppViewController.m in Sources */,
 				505351F418F76550003C531E /* SDKTestAppViewController.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		50A36AD118C9405A00FA84F0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				996E9A641B8FB75B001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m in Sources */,
-				50A36AD218C9405A00FA84F0 /* DeviceInfoViewController.m in Sources */,
-				50A10DEC1AE9BF0300001C4C /* UIImageView+AFNetworking.m in Sources */,
-				50A36AD418C9405A00FA84F0 /* main.m in Sources */,
-				8A6417AD1B1FC2C4003E8747 /* TestAppPaymentTransactionObserver.m in Sources */,
-				509B5BE718C94490003A7CB9 /* UIViewController+IntegrationTests.m in Sources */,
-				507A455A19BE762900C7AEEA /* NativeAdTableViewController.m in Sources */,
-				50A36AD518C9405A00FA84F0 /* ServerSelectionViewController.m in Sources */,
-				502BE84F18CD530D00EB6415 /* TestUtilities.m in Sources */,
-				50A36AD618C9405A00FA84F0 /* AppDelegate.m in Sources */,
-				509B5BE418C943B8003A7CB9 /* TestInterstitials.m in Sources */,
-				50A36AD718C9405A00FA84F0 /* SDCSegmentedViewController.m in Sources */,
-				507A457519BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */,
-				50A36AD818C9405A00FA84F0 /* BaseTestAppViewController.m in Sources */,
-				507A455F19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */,
-				50759D271AD3359E00AECC2B /* PersistentTestAppConfiguration.m in Sources */,
-				50A36AD918C9405A00FA84F0 /* SDKTestAppViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3287,11 +3082,6 @@
 			target = 86B943291758108700B8EACE /* Ads */;
 			targetProxy = 505351EB18F76550003C531E /* PBXContainerItemProxy */;
 		};
-		50A36ACF18C9405A00FA84F0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 86B943291758108700B8EACE /* Ads */;
-			targetProxy = 50A36AD018C9405A00FA84F0 /* PBXContainerItemProxy */;
-		};
 		50BDCFF718B813C100265212 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 86B943291758108700B8EACE /* Ads */;
@@ -3475,60 +3265,6 @@
 				PRODUCT_NAME = MediationTestApp;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				RUN_CLANG_STATIC_ANALYZER = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-		50A36AEB18C9405A00FA84F0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B9241C359E50B2D9005581FE /* Pods-Integration Tests.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
-					"$(PROJECT_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
-				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/HeyzapSDKTest-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				OTHER_LDFLAGS = "$(inherited)";
-				PRODUCT_NAME = "Integration Tests";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";
-				RUN_CLANG_STATIC_ANALYZER = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Debug;
-		};
-		50A36AEC18C9405A00FA84F0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 604FF60355743B39E9AD975E /* Pods-Integration Tests.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
-					"$(PROJECT_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
-				INFOPLIST_FILE = "$(SRCROOT)/HeyzapSDKTest/HeyzapSDKTest-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				OTHER_LDFLAGS = "$(inherited)";
-				PRODUCT_NAME = "Integration Tests";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "65BB83E8-C41C-44AC-A496-91716DB0813D";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -3878,15 +3614,6 @@
 			buildConfigurations = (
 				5053521618F76550003C531E /* Debug */,
 				5053521718F76550003C531E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		50A36AEA18C9405A00FA84F0 /* Build configuration list for PBXNativeTarget "Integration Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				50A36AEB18C9405A00FA84F0 /* Debug */,
-				50A36AEC18C9405A00FA84F0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

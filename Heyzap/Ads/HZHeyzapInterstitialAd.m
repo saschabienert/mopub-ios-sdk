@@ -24,12 +24,6 @@ static NSString *HZInterstitialForcedCreativeType = nil;
 
 @implementation HZHeyzapInterstitialAd
 
-+ (void) setDelegate: (id<HZAdsDelegate>) delegate {
-    if ([HZAdsManager isEnabled]) {
-        [[HZAdsManager sharedManager] setInterstitialDelegate:delegate];
-    }
-}
-
 + (void)showForAuctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options {
     if (![HZAdsManager isEnabled]) {
         return;

@@ -89,7 +89,7 @@
 // State
 @property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
 
-- (void)sendShowFailureMessagesForAdType:(HZAdType)adType options:(HZShowOptions *)options error:(NSError *)underlyingError;
+- (void)sendShowFailureMessagesWithShowOptions:(HZShowOptions *)options error:(NSError *)underlyingError;
 
 @end
 
@@ -368,7 +368,7 @@
     
     NSError *preShowError = [self checkForPreShowError:options.tag adType:adType];
     if (preShowError) {
-        [self sendShowFailureMessagesForAdType:adType options:options error:preShowError];
+        [self sendShowFailureMessagesWithShowOptions:options error:preShowError];
         return;
     }
     
@@ -378,7 +378,7 @@
     NSDictionary *const latestMediateParams = [self.mediateRequester latestMediateParams];
     if (!latestMediate || !latestMediateParams) {
         NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Didn't get the waterfall from Heyzap's servers before a request to show an ad was made."}];
-        [self sendShowFailureMessagesForAdType:adType options:options error:error];
+        [self sendShowFailureMessagesWithShowOptions:options error:error];
         return;
     }
     
@@ -408,7 +408,7 @@
                                                                                        NSLocalizedDescriptionKey: @"Failed to parse /mediate response",
                                                                                        NSUnderlyingErrorKey:eventReporterError,
                                                                                        }];
-        [self sendShowFailureMessagesForAdType:adType options:options error:error];
+        [self sendShowFailureMessagesWithShowOptions:options error:error];
         return;
     }
     
@@ -416,7 +416,7 @@
     if (!chosenAdapterWithScore) {
         NSString *const errorMessage = [NSString stringWithFormat:@"An ad cannot be shown at this time. Either no available networks had an ad or segmentation settings prevented the show. Ad networks we checked: [%@]", [hzMap([plainAdapters array], ^NSString *(HZBaseAdapter *adapter){return [[adapter class] humanizedName];}) componentsJoinedByString:@", "]];
         NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: errorMessage}];
-        [self sendShowFailureMessagesForAdType:adType options:options error:error];
+        [self sendShowFailureMessagesWithShowOptions:options error:error];
         return;
     }
     
@@ -477,7 +477,7 @@
     return nil;
 }
 
-- (void)sendShowFailureMessagesForAdType:(HZAdType)adType options:(HZShowOptions *)options error:(NSError *)underlyingError {
+- (void)sendShowFailureMessagesWithShowOptions:(HZShowOptions *)options error:(NSError *)underlyingError {
     NSError *error;
     
     if ([[underlyingError domain] isEqualToString:kHZMediationDomain]) {
@@ -494,7 +494,7 @@
         options.completion(NO, error);
     }
     
-    [[self delegateForAdType:adType] didFailToShowAdWithTag:options.tag andError:error];
+    [[self delegateForAdType:options.requestingAdType] didFailToShowAdWithTag:options.tag andError:error];
 }
 
 #pragma mark - Querying adapters
@@ -532,7 +532,7 @@
     
     if (currentAd && currentAd.adState == HZAdStateRequestedShow) {
         self.currentShownAd.adState = HZAdStateShown;
-        [[self delegateForAdType:currentAd.eventReporter.adType] didShowAdWithTag:currentAd.tag];
+        [[self delegateForAdType:currentAd.showOptions.requestingAdType] didShowAdWithTag:currentAd.tag];
     } else {
         HZELog(@"The network %@ reported that it showed an ad, but we weren't expecting this.",adapter.name);
     }
@@ -549,7 +549,7 @@
     
     if (self.currentShownAd) {
         [self.currentShownAd.eventReporter reportClickForAdapter:adapter];
-        [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didClickAdWithTag:self.currentShownAd.tag];
+        [[self delegateForAdType:self.currentShownAd.showOptions.requestingAdType] didClickAdWithTag:self.currentShownAd.tag];
     } else {
         HZELog(@"Ad network %@ reported that an ad was clicked, but we weren't expecting this.",adapter.name);
     }
@@ -560,9 +560,9 @@
     [self sendNetworkCallback: HZNetworkCallbackDismiss forNetwork: [adapter name]];
     
     if (self.currentShownAd) {
-        [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didHideAdWithTag:self.currentShownAd.tag];
+        [[self delegateForAdType:self.currentShownAd.showOptions.requestingAdType] didHideAdWithTag:self.currentShownAd.tag];
         
-        const HZAdType previousAdType = self.currentShownAd.eventReporter.adType;
+        const HZAdType previousAdType = self.currentShownAd.showOptions.requestingAdType;
         NSString *const tag = self.currentShownAd.tag;
         self.currentShownAd = nil;
         [self autoFetchAdType:previousAdType tag:tag];
@@ -576,7 +576,7 @@
     [self sendNetworkCallback: HZNetworkCallbackAudioStarting forNetwork: [adapter name]];
     
     if (self.currentShownAd) {
-        [[self delegateForAdType:self.currentShownAd.eventReporter.adType] willStartAudio];
+        [[self delegateForAdType:self.currentShownAd.showOptions.requestingAdType] willStartAudio];
     } else {
         HZELog(@"Ad network %@ reported that an ad played audio, but we weren't expecting this.",adapter.name);
     }
@@ -587,7 +587,7 @@
     [self sendNetworkCallback: HZNetworkCallbackAudioFinished forNetwork: [adapter name]];
     
     if (self.currentShownAd) {
-        [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didFinishAudio];
+        [[self delegateForAdType:self.currentShownAd.showOptions.requestingAdType] didFinishAudio];
     } else {
         HZELog(@"Ad network %@ reported that an ad finished playing audio, but we weren't expecting this.",adapter.name);
     }
@@ -596,9 +596,8 @@
 - (void)adapterDidFailToShowAd:(HZBaseAdapter *)adapter error:(NSError *)underlyingError {
     
     if (self.currentShownAd) {
-        [self sendShowFailureMessagesForAdType:self.currentShownAd.eventReporter.adType
-                                       options:self.currentShownAd.showOptions
-                                         error:underlyingError];
+        [self sendShowFailureMessagesWithShowOptions:self.currentShownAd.showOptions
+                                              error:underlyingError];
         self.currentShownAd = nil;
     } else {
         HZELog(@"Ad network %@ reported that an ad failed to show, but we weren't expecting this.",adapter.name);
@@ -614,8 +613,8 @@
     
     if (self.currentShownAd) {
         [[self settings] incentivizedAdShown];
-        [[self delegateForAdType:self.currentShownAd.eventReporter.adType] didCompleteAdWithTag:self.currentShownAd.tag];
-        [self.currentShownAd.eventReporter reportIncentivizedResult:YES forAdapter:adapter];
+        [[self delegateForAdType:self.currentShownAd.showOptions.requestingAdType] didCompleteAdWithTag:self.currentShownAd.tag];
+        [self.currentShownAd.eventReporter reportIncentivizedResult:YES forAdapter:adapter incentivizedInfo:self.currentShownAd.showOptions.incentivizedInfo];
     } else {
         HZELog(@"Ad network %@ reported that an incentivized ad was completed, but we weren't expecting this.",adapter.name);
     }
@@ -627,7 +626,7 @@
     
     if (self.currentShownAd) {
         [[self delegateForAdType:HZAdTypeIncentivized] didFailToCompleteAdWithTag:self.currentShownAd.tag];
-        [self.currentShownAd.eventReporter reportIncentivizedResult:NO forAdapter:adapter];
+        [self.currentShownAd.eventReporter reportIncentivizedResult:NO forAdapter:adapter incentivizedInfo:self.currentShownAd.showOptions.incentivizedInfo];
     } else {
         HZELog(@"Ad network %@ reported that an incentivized ad wasn't completed, but we weren't expecting this.",adapter.name);
     }
@@ -1016,13 +1015,10 @@ const NSTimeInterval bannerPollInterval = 1;
             success = NO;
         }
         
-        NSDictionary *credentials = self.starter.networkNameToCredentials[adapterName];
-        
         if ([self.setupMediatorClasses containsObject:adapterClass]) {
             success = YES;
         } else if ([self.erroredMediatiorClasses containsObject:adapterClass]
-                   || ![adapterClass isSDKAvailable]
-                   || !credentials) {
+                   || ![adapterClass isSDKAvailable]) {
             success = NO;
         } else if (forceOnlyHeyzapSDK && ![adapterClass isHeyzapAdapter]) {
             success = NO;

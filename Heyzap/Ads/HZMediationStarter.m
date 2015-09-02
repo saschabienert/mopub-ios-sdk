@@ -17,7 +17,6 @@
 
 @property (nonatomic) NSTimeInterval retryStartDelay;
 @property (nonatomic, weak) id<HZMediationStarting> startingDelegate;
-@property (nonatomic) NSDictionary *networkNameToCredentials;
 @property (nonatomic) HZCachingService *cachingService;
 @end
 
@@ -62,7 +61,6 @@ const NSTimeInterval maxStartDelay     = 300;
         
         if (startInfo) {
             dispatch_sync(dispatch_get_main_queue(), ^{
-                [self createNameToCredentialsMapping:startInfo];
                 [self giveStartDictionaryToDelegate:startInfo fromCache:YES];
             });
         }
@@ -85,7 +83,6 @@ const NSTimeInterval maxStartDelay     = 300;
                 HZDLog(@"Wrote start info to disk");
             });
             
-            [self createNameToCredentialsMapping:json];
             [self giveStartDictionaryToDelegate:json fromCache:NO];
             
         } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
@@ -100,26 +97,6 @@ const NSTimeInterval maxStartDelay     = 300;
 
 - (void)giveStartDictionaryToDelegate:(NSDictionary *)dictionary fromCache:(BOOL)fromCache {
     [self.startingDelegate startWithDictionary:dictionary fromCache:fromCache];
-}
-
-- (void)createNameToCredentialsMapping:(NSDictionary *)startResponse {
-    NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:startResponse];
-    if (!networks) {
-        HZELog(@"Invalid /start response; missing 'networks' in JSON");
-        return;
-    }
-    
-    NSMutableDictionary *nameToStartData = [NSMutableDictionary dictionary];
-    for (NSDictionary *startInfo in networks) {
-        NSString *network = [HZDictionaryUtils objectForKey:@"name" ofClass:[NSString class] dict:startInfo];
-        NSString *credentials = [HZDictionaryUtils objectForKey:@"data" ofClass:[NSDictionary class] dict:startInfo];
-        if (network && credentials) {
-            nameToStartData[network] = credentials;
-        } else {
-            HZELog(@"Invalid network in /start response");
-        }
-    }
-    self.networkNameToCredentials = nameToStartData;
 }
 
 @end

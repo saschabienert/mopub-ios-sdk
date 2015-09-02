@@ -34,9 +34,6 @@
 #define AIR_FRAMEWORK @"air"
 
 @interface HZAdsManager()
-@property (nonatomic, strong) HZDelegateProxy *interstitialDelegateProxy;
-@property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
-@property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 @end
 
 @implementation HZAdsManager
@@ -47,9 +44,6 @@ static BOOL hzAdsIsEnabled = NO;
     self = [super init];
     if (self) {
         hzAdsIsEnabled = YES;
-        _interstitialDelegateProxy = [[HZDelegateProxy alloc] init];
-        _incentivizedDelegateProxy = [[HZDelegateProxy alloc] init];
-        _videoDelegateProxy = [[HZDelegateProxy alloc] init];
 
         [[self class] runInitialTasks];
     }
@@ -242,7 +236,6 @@ static BOOL hzAdsIsEnabled = NO;
     
     if (!result || error) {
         // Not using the standard method here.
-        [[[HZAdsManager sharedManager] delegateForAdUnit: adUnit] didFailToShowAdWithTag:options.tag andError: error];
         [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification adUnit:adUnit auctionType:auctionType];
     }
     
@@ -295,31 +288,6 @@ static BOOL hzAdsIsEnabled = NO;
         }
     });
     return sharedManager;
-}
-
-#pragma mark - Delegation
-
-- (void)setInterstitialDelegate:(id<HZAdsDelegate>)delegate
-{
-    self.interstitialDelegateProxy.forwardingTarget = delegate;
-}
-- (void)setIncentivizedDelegate:(id<HZAdsDelegate>)delegate
-{
-    self.incentivizedDelegateProxy.forwardingTarget = delegate;
-}
-- (void)setVideoDelegate:(id<HZAdsDelegate>)delegate
-{
-    self.videoDelegateProxy.forwardingTarget = delegate;
-}
-
-- (id)delegateForAdUnit:(NSString *)adUnit {
-    if ([adUnit isEqualToString:@"incentivized"]) {
-        return self.incentivizedDelegateProxy;
-    } else if ([adUnit isEqualToString:@"video"]) {
-        return self.videoDelegateProxy;
-    } else {
-        return self.interstitialDelegateProxy;
-    }
 }
 
 // Send out NSNotifications so mediation can get more info than delegate callbacks provide (e.g. auctionType, easier access to adUnit).

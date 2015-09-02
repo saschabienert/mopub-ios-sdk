@@ -19,6 +19,7 @@
 
 #import "HZMRAIDJS.h"
 #import "CloseButton.h"
+#import "HZExtendedHitAreaButton.h"
 
 #define kHZCloseEventRegionPadding 10
 
@@ -59,10 +60,10 @@ typedef enum {
     UIWebView *webViewPart2;
     UIWebView *currentWebView;
     
-    UIButton *closeEventRegion;
+    HZExtendedHitAreaButton *closeEventRegion;
     
     UIView *resizeView;
-    UIButton *resizeCloseRegion;
+    HZExtendedHitAreaButton *resizeCloseRegion;
     
     CGSize previousMaxSize;
     CGSize previousScreenSize;
@@ -700,7 +701,9 @@ typedef enum {
 
 - (void)addCloseEventRegion
 {
-    closeEventRegion = [UIButton buttonWithType:UIButtonTypeCustom];
+    closeEventRegion = [HZExtendedHitAreaButton buttonWithType:UIButtonTypeCustom];
+    closeEventRegion.extendedHitAreaMarginX = 25;
+    closeEventRegion.extendedHitAreaMarginY = 25;
     closeEventRegion.backgroundColor = [UIColor clearColor];
     [closeEventRegion addTarget:self action:@selector(close:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -739,7 +742,9 @@ typedef enum {
             buttonSize = 40;
         }
         
-        resizeCloseRegion = [UIButton buttonWithType:UIButtonTypeCustom];
+        resizeCloseRegion = [HZExtendedHitAreaButton buttonWithType:UIButtonTypeCustom];
+        resizeCloseRegion.extendedHitAreaMarginX = 25;
+        resizeCloseRegion.extendedHitAreaMarginY = 25;
         resizeCloseRegion.frame = CGRectMake(0, 0, buttonSize, buttonSize);
         resizeCloseRegion.backgroundColor = [UIColor clearColor];
         [resizeCloseRegion addTarget:self action:@selector(closeFromResize) forControlEvents:UIControlEventTouchUpInside];
