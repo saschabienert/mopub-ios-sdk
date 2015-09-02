@@ -54,6 +54,6 @@
 
 - (void)reportImpressionForAdapter:(HZBaseAdapter *)adapter;
 
-- (void)reportIncentivizedResult:(BOOL)success forAdapter:(HZBaseAdapter *)adapter;
+- (void)reportIncentivizedResult:(BOOL)success forAdapter:(HZBaseAdapter *)adapter incentivizedInfo:(NSString *)incentivizedInfo;
 
 @end
