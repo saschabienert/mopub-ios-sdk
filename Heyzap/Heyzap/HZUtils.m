@@ -271,6 +271,7 @@ NSString *const kNoInternet = @"no_internet";
 // this method may not behave as intended if the input string contains backslashes. ex: it will treat `\r` as one character, not two. you can escape the backslash with another backslash to prevent this.
 + (NSString*) SHA1ForString:(NSString*)string
 {
+    // impl from: http://stackoverflow.com/a/7571583/2544629
     const char *cstr = [string UTF8String];
     uint8_t digest[CC_SHA1_DIGEST_LENGTH];
     CC_SHA1(cstr, (unsigned int)strlen(cstr), digest);
