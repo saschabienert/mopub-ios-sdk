@@ -14,10 +14,6 @@
 #import "HZAdFetchRequest.h"
 #import "HZAdsFetchManager.h"
 
-#define HZInterstitialAdCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
-#define HZInterstitialAdCreativeTypesNoVideo @[@"interstitial", @"full_screen_interstitial"]
-#define HZInterstitialAdUnit @"interstitial"
-
 static int HZInterstitialAdCreativeIDPin = 0;
 static BOOL HZInterstitialForceTestCreative = NO;
 static NSString *HZInterstitialForcedCreativeType = nil;

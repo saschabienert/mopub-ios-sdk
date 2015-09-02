@@ -13,9 +13,6 @@
 #import "HZAdsFetchManager.h"
 #import "HZAdsManager.h"
 
-#define HZIncentivizedAdUnit @"incentivized"
-#define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
-
 static NSString *HZIncentivizedAdUserIdentifier = nil;
 static int HZIncentivizedCreativeIDPin = 0;
 

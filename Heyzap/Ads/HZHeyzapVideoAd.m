@@ -14,9 +14,6 @@
 #import "HZAdFetchRequest.h"
 #import "HZAdsAPIClient.h"
 
-#define HZVideoAdUnit @"video"
-#define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
-
 static int HZVideoAdCreativeIDPin = 0;
 
 @implementation HZHeyzapVideoAd
