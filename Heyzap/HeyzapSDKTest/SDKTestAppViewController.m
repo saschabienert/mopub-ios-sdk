@@ -30,6 +30,8 @@
 #import "HeyzapMediation.h"
 #import "SDKTestAppViewControllerAdCallbackDelegate.h"
 
+#import "HZUtils.h"
+
 #define kTagCreativeIDField 4393
 
 typedef enum {
@@ -621,19 +623,22 @@ const CGFloat kLeftMargin = 10;
         adTag = nil;
     }
     
+    HZShowOptions *opts = [[HZShowOptions alloc] init];
+    opts.tag = adTag;
     
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
             NSLog(@"Showing Interstitial");
-            [HZInterstitialAd showForTag:adTag];
+            [HZInterstitialAd showWithOptions:opts];
             break;
         case kAdUnitSegmentVideo:
             NSLog(@"Showing Video");
-            [HZVideoAd showForTag:adTag];
+            [HZVideoAd showWithOptions:opts];
             break;
         case kAdUnitSegmentIncentivized:
             NSLog(@"Showing Incentivized");
-            [HZIncentivizedAd showForTag:adTag];
+            opts.incentivizedInfo = @"test app incentivized info";
+            [HZIncentivizedAd showWithOptions:opts];
             break;
         default:
             break;

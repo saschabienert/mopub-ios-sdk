@@ -33,6 +33,7 @@ char *HZNewBase64Encode(
 + (NSString *) publisherID;
 + (NSString *) internetStatus;
 + (NSString *) MD5ForString:(NSString*)string;
++ (NSString*) SHA1ForString:(NSString*)string;
 + (BOOL) dateIsToday:(NSDate *)otherDate;
 + (NSDate *) dateWithoutTimeFromDate:(NSDate *)date;
 

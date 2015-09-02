@@ -8,6 +8,8 @@
 
 #import "HZAPIClient.h"
 
+extern NSString * const kHZMediationAPIBaseURLString;
+
 @interface HZMediationAPIClient : HZAPIClient
 
 + (HZMediationAPIClient *)sharedClient;
