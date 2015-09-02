@@ -43,6 +43,11 @@
     return _showableCreativeType;
 }
 
+- (HZAdType)requestingAdType {
+    HZAssert(_requestingAdType != 0, @"Requesting ad type asked for before it's been set.");
+    return _requestingAdType;
+}
+
 + (BOOL) isValidForCreativeType: (NSString *) creativeType {
     return YES;
 }
@@ -214,7 +219,9 @@
     
     NSDictionary *standardParams = @{@"impression_id": self.impressionID,
                                      @"promoted_game_package": self.promotedGamePackage,
-                                     @"tag": [HZAdModel normalizeTag: self.tag]};
+                                     @"tag": [HZAdModel normalizeTag: self.tag],
+                                     @"ad_unit":NSStringFromAdType(self.requestingAdType),
+                                     };
     
     if (self.additionalEventParams != nil) {
         [self.additionalEventParams addEntriesFromDictionary: standardParams];

@@ -24,6 +24,8 @@
 #import "HZNSURLUtils.h"
 #import "HZPaymentTransactionObserver.h"
 #import "HZCreativeType.h"
+#import "HZShowOptions.h"
+#import "HZShowOptions_Private.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
@@ -216,6 +218,7 @@ static BOOL hzAdsIsEnabled = NO;
             // Properties set on show
             ad.showableCreativeType = showableCreativeType;
             ad.tag = options.tag;
+            ad.requestingAdType = options.requestingAdType;
             
             Class controllerClass = [ad controller];
             

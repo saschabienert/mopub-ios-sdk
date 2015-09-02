@@ -71,7 +71,6 @@ const NSTimeInterval maxMediateDelay     = 300;
     // TODO: cleanup the process of getting mediateParams.
     NSMutableDictionary *const mediateParams = [request.createParams mutableCopy];
     [mediateParams removeObjectForKey:@"creative_type"];
-    [mediateParams removeObjectForKey:@"ad_unit"];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[HZMediationAPIClient sharedClient] GET:@"mediate"

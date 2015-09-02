@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "HZCreativeType.h"
+#import "HZAdType.h"
 
 @interface HZAdModel : NSObject <HZAdInfoProvider>
 
@@ -25,6 +26,7 @@
 
 // Properties set on show.
 @property (nonatomic) HZCreativeType showableCreativeType;
+@property (nonatomic) HZAdType requestingAdType;
 @property (nonatomic) NSString *tag;
 
 @property (nonatomic) BOOL sentClick;
