@@ -19,7 +19,6 @@
     if(self) {
         NSDictionary *const finalSettings = ({
             NSMutableDictionary *settings = [defaultsDictionary mutableCopy];
-            NSLog(@"Overriding settings with ad unit dict: %@",adUnitDictionary);
             [settings addEntriesFromDictionary:adUnitDictionary];
             settings;
         });
