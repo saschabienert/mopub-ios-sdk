@@ -234,7 +234,7 @@
         return nil;
     }
     
-    if([skipOffsetRaw containsString:@"%"]) {
+    if ([skipOffsetRaw rangeOfString:@"%"].location != NSNotFound) {
         //process \d{1,3}%
         int percentageInt = [[skipOffsetRaw stringByReplacingOccurrencesOfString:@"%" withString:@""] intValue];
 
