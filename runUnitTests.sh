@@ -11,5 +11,5 @@ else
 	TEST_COMMAND="tee"
 fi
 
-xcodebuild -workspace Heyzap/Heyzap.xcworkspace -scheme Ads -sdk iphonesimulator$OS_VERSION -destination platform='iOS Simulator',OS=$OS_VERSION,name='iPhone Retina (4-inch)' build test | eval $TEST_COMMAND; exit ${PIPESTATUS[0]}
+xcodebuild -workspace Heyzap/Heyzap.xcworkspace -scheme Ads -sdk iphonesimulator -destination platform='iOS Simulator',OS=$OS_VERSION,name='iPhone Retina (4-inch)' build test | eval $TEST_COMMAND; exit ${PIPESTATUS[0]}
 

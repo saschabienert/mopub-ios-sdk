@@ -8,4 +8,7 @@ dependencies:
 
 test:
   override:
+    - xcodebuild -showsdks
+    - xcrun simctl list
     - ./runUnitTests.sh 8.3
+    - ./runUnitTests.sh 7.1
