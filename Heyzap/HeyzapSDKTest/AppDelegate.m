@@ -15,10 +15,6 @@
 #import "HZInterstitialAd.h"
 #import "SDKTestAppViewController.h"
 
-#if INTEGRATION_TESTING
-#import <Subliminal/Subliminal.h>
-#endif
-
 #import "HZDevice.h"
 #import "SDCSegmentedViewController.h"
 #import "ServerSelectionViewController.h"
@@ -45,14 +41,9 @@
     
     SDKTestAppViewController *mainController = [[SDKTestAppViewController alloc] init];
     
-#if INTEGRATION_TESTING
-    // Integration tests don't want autoprefetching interfering with testing callbacks, fetching the wrong ad, etc.
-    [HeyzapAds startWithPublisherID:@"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
-#else
     const HZAdOptions opts = [PersistentTestAppConfiguration sharedConfiguration].autoPrefetch ? HZAdOptionsNone : HZAdOptionsDisableAutoPrefetching;
     [HeyzapAds startWithPublisherID: @"1234" andOptions:opts];
 //    [HeyzapAds pauseExpensiveWork];
-#endif
     
     [HeyzapAds setDelegate:mainController forNetwork:HZNetworkChartboost];
 
@@ -76,11 +67,6 @@
     
     [self.window setRootViewController: self.navController];
     [self.window makeKeyAndVisible];
-    
-#if INTEGRATION_TESTING
-//    [SLTestController sharedTestController].shouldWaitToStartTesting = YES;
-    [[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
-#endif
     
     return YES;
 }

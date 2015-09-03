@@ -21,13 +21,6 @@ static int HZIncentivizedCreativeIDPin = 0;
 
 @implementation HZHeyzapIncentivizedAd
 
-+ (void)setDelegate:(id<HZIncentivizedAdDelegate>)delegate
-{
-    if ([HZAdsManager isEnabled]) {
-        [[HZAdsManager sharedManager] setIncentivizedDelegate:delegate];
-    }
-}
-
 + (void)showForAuctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options
 {
     if (![HZAdsManager isEnabled]) {

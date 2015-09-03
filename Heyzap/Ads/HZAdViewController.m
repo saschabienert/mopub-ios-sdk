@@ -74,8 +74,8 @@
     if (!options.viewController) {
         NSLog(@"Heyzap requires a root view controller to display an ad. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
         
-        NSError *const error = [NSError errorWithDomain:@"Heyzap" code:10 userInfo:@{NSLocalizedFailureReasonErrorKey:@"There was no root view controller to display the ad."}];
-        [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didFailToShowAdWithTag:self.ad.tag andError:error];
+        // TODO: surface this NSError via the NSNotification.
+//        NSError *const error = [NSError errorWithDomain:@"Heyzap" code:10 userInfo:@{NSLocalizedFailureReasonErrorKey:@"There was no root view controller to display the ad."}];
         [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification infoProvider:self.ad];
         return;
     }
@@ -93,7 +93,6 @@
     // Revert back to old status bar state
     [[UIApplication sharedApplication] setStatusBarHidden: self.statusBarHidden];
     
-    [[[HZAdsManager sharedManager] delegateForAdUnit: self.ad.adUnit] didHideAdWithTag: self.ad.tag];
     [HZAdsManager postNotificationName:kHeyzapDidHideAdNotification infoProvider:self.ad];
 }
 
@@ -103,7 +102,6 @@
 
 - (void) didImpression {
     if ([self.ad onImpression]) {
-        [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didShowAdWithTag:self.ad.tag];
         [HZAdsManager postNotificationName:kHeyzapDidShowAdNotitification infoProvider:self.ad];
     }
 }
@@ -111,7 +109,6 @@
 - (void)didClickWithURL:(NSURL *)url {
     
     if ([self.ad onClick]) {
-        [[[HZAdsManager sharedManager] delegateForAdUnit:self.ad.adUnit] didClickAdWithTag:self.ad.tag];
         [HZAdsManager postNotificationName:kHeyzapDidClickAdNotification infoProvider:self.ad];
     }
     
