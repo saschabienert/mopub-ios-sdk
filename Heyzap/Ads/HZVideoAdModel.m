@@ -19,7 +19,9 @@
 @interface HZVideoAdModel()<UIWebViewDelegate>
 @property (nonatomic) BOOL sentComplete;
 @property (nonatomic) HZAFHTTPRequestOperation *downloadOperation;
-@property (nonatomic) NSDictionary *videoDictionary;
+@property (nonatomic) NSDictionary *videoSettingsDictionary;
+@property (nonatomic) HZVideoAdDisplayOptions *displayOptions;
+
 @end
 
 @implementation HZVideoAdModel
@@ -32,11 +34,10 @@
             _HTMLContent = [HZDictionaryUtils objectForKey: @"html_data" ofClass: [NSString class] default: @"" dict: interstitial];
         }
         
-        NSDictionary *video = [HZDictionaryUtils objectForKey: @"video" ofClass: [NSDictionary class] default: @{} dict: dict];
-        _videoDictionary = video;
+        _videoSettingsDictionary = [HZDictionaryUtils objectForKey: @"video" ofClass: [NSDictionary class] default: @{} dict: dict];
         
-        if ([video objectForKey: @"static_url"] != nil) {
-            NSArray *staticURLs = [HZDictionaryUtils objectForKey: @"static_url" ofClass: [NSArray class] default: @[] dict: video];
+        if ([_videoSettingsDictionary objectForKey: @"static_url"] != nil) {
+            NSArray *staticURLs = [HZDictionaryUtils objectForKey: @"static_url" ofClass: [NSArray class] default: @[] dict: _videoSettingsDictionary];
             
             _staticURLs = [[NSMutableArray alloc] init];
             
@@ -47,8 +48,8 @@
             _staticURLs = [[NSMutableArray alloc] initWithCapacity: 0];
         }
         
-        if ([video objectForKey: @"streaming_url"] != nil) {
-            NSArray *streamingURLs = [HZDictionaryUtils objectForKey: @"streaming_url" ofClass: [NSArray class] default: @[] dict: video];
+        if ([_videoSettingsDictionary objectForKey: @"streaming_url"] != nil) {
+            NSArray *streamingURLs = [HZDictionaryUtils objectForKey: @"streaming_url" ofClass: [NSArray class] default: @[] dict: _videoSettingsDictionary];
             
             _streamingURLs = [[NSMutableArray alloc] init];
             
@@ -65,6 +66,7 @@
         
         /* 
          Expected format of video dict (defaults at top level, overrides per ad unit underneath "ad_unit"):
+         See `updateDisplayOptionsWithShowableCreativeType` below for parsing the overrides.
          {
              ...
          
@@ -87,10 +89,8 @@
              }
          }
          */
-        // Should we still do this?
-        [HZVideoAdDisplayOptions setDefaultsWithDict:video];
         
-        NSDictionary *meta = [HZDictionaryUtils objectForKey: @"meta"  ofClass: [NSDictionary class] default: @{} dict: video];
+        NSDictionary *meta = [HZDictionaryUtils objectForKey: @"meta"  ofClass: [NSDictionary class] default: @{} dict: _videoSettingsDictionary];
         
         // Video Meta
         _videoWidth = [HZDictionaryUtils objectForKey: @"width" ofClass: [NSNumber class] default: @0 dict: meta];
@@ -101,7 +101,7 @@
         // Other
         _fileCached = NO;
 
-        _displayOptions = [HZVideoAdDisplayOptions defaults];
+        _displayOptions = [[HZVideoAdDisplayOptions alloc] initWithDefaultsDictionary:_videoSettingsDictionary adUnitDictionary:@{}];
     }
     
     return self;
@@ -123,18 +123,23 @@
 }
 
 - (void)updateDisplayOptionsWithShowableCreativeType {
+    // JSON structure we're parsing:
+    /*
+     "ad_unit" : {
+        "incentivized" : {
+            "allow_hide" : false,
+            "allow_click" : false,
+            ...
+        },
+        "video" : {...},
+     }
+     */
+    NSDictionary *const settingsByAdUnitDict = [HZDictionaryUtils objectForKey: @"ad_unit" ofClass: [NSDictionary class] default:@{} dict:self.videoSettingsDictionary];
+    
     NSString *const adUnitKey = [self adUnitKey];
-    NSDictionary *video = self.videoDictionary[adUnitKey];
+    NSDictionary *const adUnitDict = [HZDictionaryUtils objectForKey:adUnitKey ofClass:[NSDictionary class] default:@{} dict:settingsByAdUnitDict];
     
-    NSDictionary * adUnitVideoOptionsResponse = [HZDictionaryUtils objectForKey: @"ad_unit" ofClass: [NSDictionary class] default: nil dict: video];
-    
-    NSDictionary * optionsForCurrentAdUnit = [HZDictionaryUtils objectForKey:adUnitKey ofClass:[NSDictionary class] default:nil dict:adUnitVideoOptionsResponse];
-    if(!optionsForCurrentAdUnit) {
-        HZDLog(@"HZVideoAdModel did not find video display options for adUnit=\"%@\" in response. Using defaults.", adUnitKey);
-        _displayOptions = [HZVideoAdDisplayOptions defaults];
-    } else {
-        _displayOptions = [[HZVideoAdDisplayOptions alloc] initWithDict:optionsForCurrentAdUnit];
-    }
+    self.displayOptions = [[HZVideoAdDisplayOptions alloc] initWithDefaultsDictionary:self.videoSettingsDictionary adUnitDictionary:adUnitDict];
 }
 
 - (void) dealloc {
