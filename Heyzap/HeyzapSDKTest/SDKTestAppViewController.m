@@ -283,24 +283,22 @@ const CGFloat kLeftMargin = 10;
     [self.hideBannerButton addTarget: self action: @selector(hideBannerButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
     [self.scrollView addSubview: self.hideBannerButton];
     
+    UIButton *availableButton = ({
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        button.frame = CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, 10.0, 110.0, 25.5);
+        button.backgroundColor = [UIColor lightTextColor];
+        button.layer.cornerRadius = 4.0;
+        [button setTitle: @"Available?" forState: UIControlStateNormal];
+        [button addTarget: self action: @selector(checkAvailability) forControlEvents: UIControlEventTouchUpInside];
+        button;
+    });
+    [self.scrollView addSubview:availableButton];
+    
     // Keep references to banner/non-banner controls so we can flip between them when the segmented control changes.
     self.bannerControls = @[self.showBannerButton,self.hideBannerButton];
     self.nonBannerControls = @[self.showButton, fetchButton];
     [self.bannerControls setValue:@YES forKey:@"hidden"];
     
-    self.adsTextField = [[UITextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, 10.0, 110.0, 25.5)];
-    self.adsTextField.delegate = self;
-    self.adsTextField.borderStyle = UITextBorderStyleRoundedRect;
-    self.adsTextField.keyboardType = UIKeyboardTypeNumberPad;
-    self.adsTextField.placeholder = @"Creative ID";
-    self.adsTextField.textAlignment = NSTextAlignmentLeft;
-    self.adsTextField.accessibilityLabel = kCreativeIDTextFieldAccessibilityLabel;
-    self.adsTextField.tag = kTagCreativeIDField;
-    [self.adsTextField addTarget:self
-                          action:@selector(creativeIDEditingChanged:)
-                forControlEvents:UIControlEventEditingChanged];
-    [self.scrollView addSubview:self.adsTextField];
-
     self.creativeTypeTextField = ({
         UITextField *tf = [[UITextField alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.showButton.frame) + 5, 180, 35)];
         tf.delegate = self;
@@ -330,7 +328,7 @@ const CGFloat kLeftMargin = 10;
     [self setCreativeTypeTextFieldToNone];
     [self.scrollView addSubview:self.creativeTypeTextField];
     
-    self.adTagField = [[UITextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, CGRectGetMaxY(self.adsTextField.frame) + 10.0, 110.0, 25.5)];
+    self.adTagField = [[UITextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, CGRectGetMaxY(availableButton.frame) + 10.0, 110.0, 25.5)];
     self.adTagField.delegate = self;
     self.adTagField.borderStyle = UITextBorderStyleRoundedRect;
     self.adTagField.keyboardType = UIKeyboardTypeAlphabet;
@@ -342,6 +340,20 @@ const CGFloat kLeftMargin = 10;
               forControlEvents:UIControlEventEditingChanged];
     
     [self.scrollView addSubview:self.adTagField];
+    
+    self.adsTextField = [[UITextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(self.adTagField.frame) + 10.0, CGRectGetMinY(self.adTagField.frame), 110.0, 25.5)];
+    self.adsTextField.delegate = self;
+    self.adsTextField.borderStyle = UITextBorderStyleRoundedRect;
+    self.adsTextField.keyboardType = UIKeyboardTypeNumberPad;
+    self.adsTextField.placeholder = @"Creative ID";
+    self.adsTextField.textAlignment = NSTextAlignmentLeft;
+    self.adsTextField.accessibilityLabel = kCreativeIDTextFieldAccessibilityLabel;
+    self.adsTextField.tag = kTagCreativeIDField;
+    [self.adsTextField addTarget:self
+                          action:@selector(creativeIDEditingChanged:)
+                forControlEvents:UIControlEventEditingChanged];
+    [self.scrollView addSubview:self.adsTextField];
+
     
     UIButton *nativeAdsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     nativeAdsButton.frame = CGRectMake(10.0, CGRectGetMaxY(self.creativeTypeTextField.frame) + 10, 120.0, 25.0);
@@ -643,6 +655,37 @@ const CGFloat kLeftMargin = 10;
         default:
             break;
     }
+}
+
+- (void)checkAvailability {
+    NSString * adTag = [self adTagText];
+    NSString *adType;
+    BOOL available;
+    
+    switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
+        case kAdUnitSegmentInterstitial:
+            available = [HZInterstitialAd isAvailableForTag:adTag];
+            adType = @"An interstitial";
+            break;
+        case kAdUnitSegmentVideo:
+            available = [HZVideoAd isAvailableForTag:adTag];
+            adType = @"A video";
+            break;
+        case kAdUnitSegmentIncentivized:
+            available = [HZIncentivizedAd isAvailableForTag:adTag];
+            adType = @"An incentivized";
+            break;
+        default:
+            break;
+    }
+    
+    if (adType) {
+        [self setShowButtonOn:available];
+        [self logToConsole:[NSString stringWithFormat:@"%@ ad %@ available.", adType, (available ? @"is" : @"is not")]];
+    } else {
+        [self logToConsole:@"Is Available Error: Unable to determine ad type."];
+    }
+    
 }
 
 - (void)showBannerButtonPressed:(UIControl *)sender {
