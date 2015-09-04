@@ -173,6 +173,13 @@ extern "C" {
     void hz_ads_show_incentivized(const char *tag) {
         [HZIncentivizedAd showForTag: [NSString stringWithUTF8String: tag]];
     }
+
+    void hz_ads_show_incentivized_with_custom_info(const char *tag, const char *customInfo) {
+        HZShowOptions *showOptions = [HZShowOptions new];
+        showOptions.tag = [NSString stringWithUTF8String: tag];
+        showOptions.incentivizedInfo = [NSString stringWithUTF8String: customInfo];
+        [HZIncentivizedAd showWithOptions:showOptions];
+    }
     
     void hz_ads_hide_incentivized() {
         //[HZIncentivizedAd hide];
