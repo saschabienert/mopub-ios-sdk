@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString* const kMRAIDKitVersion;
-extern BOOL SK_ENABLE_JS_LOG;
-extern BOOL SK_SUPPRESS_JS_ALERT;
-extern BOOL SK_SUPPRESS_BANNER_AUTO_REDIRECT;
+extern NSString* const kHZMRAIDKitVersion;
+extern BOOL HZ_SK_ENABLE_JS_LOG;
+extern BOOL HZ_SK_SUPPRESS_JS_ALERT;
+extern BOOL HZ_SK_SUPPRESS_BANNER_AUTO_REDIRECT;
