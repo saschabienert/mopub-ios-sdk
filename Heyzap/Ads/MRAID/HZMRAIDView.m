@@ -438,7 +438,7 @@ typedef enum {
     
     NSString *eventJSON = [params objectForKey: @"eventJSON"];
     
-    if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
+    if(!bonafideTapObserved && HZ_SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZSKLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.createCalendarEvent() when no UI touch event exists."];
         return;  // ignore programmatic touches (taps)
     }
@@ -463,7 +463,7 @@ typedef enum {
         urlString = [params objectForKey: @"url"];
     }
     
-    if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
+    if(!bonafideTapObserved && HZ_SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZSKLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.expand() when no UI touch event exists."];
         return;  // ignore programmatic touches (taps)
     }
@@ -562,7 +562,7 @@ typedef enum {
 - (void)open:(NSDictionary *) params {
     NSString *urlString = [params objectForKey: @"url"];
     
-    if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
+    if(!bonafideTapObserved && HZ_SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZSKLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.open() when no UI touch event exists."];
        return;  // ignore programmatic touches (taps)
     }
@@ -582,7 +582,7 @@ typedef enum {
     
     NSString *urlString = [params objectForKey: @"url"];
     
-    if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
+    if(!bonafideTapObserved && HZ_SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZSKLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.playVideo() when no UI touch event exists."];
         return;  // ignore programmatic touches (taps)
     }
@@ -599,7 +599,7 @@ typedef enum {
 
 - (void)resize: (NSDictionary *) params {
     
-    if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
+    if(!bonafideTapObserved && HZ_SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZSKLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.resize when no UI touch event exists."];
         return;  // ignore programmatic touches (taps)
     }
@@ -669,7 +669,7 @@ typedef enum {
     
     NSString *urlString = [params objectForKey: @"url"];
     
-    if(!bonafideTapObserved && SK_SUPPRESS_BANNER_AUTO_REDIRECT){
+    if(!bonafideTapObserved && HZ_SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         [HZSKLogger info:@"MRAID - View" withMessage:@"Suppressing an attempt to programmatically call mraid.storePicture when no UI touch event exists."];
         return;  // ignore programmatic touches (taps)
     }
@@ -991,11 +991,11 @@ typedef enum {
         // In this case, state should already be MRAIDStateExpanded and should not be changed.
         // if (wv != webViewPart2) {
         
-        if (SK_ENABLE_JS_LOG) {
+        if (HZ_SK_ENABLE_JS_LOG) {
             [wv stringByEvaluatingJavaScriptFromString:@"var enableLog = true"];
         }
         
-        if (SK_SUPPRESS_JS_ALERT) {
+        if (HZ_SK_SUPPRESS_JS_ALERT) {
             [wv stringByEvaluatingJavaScriptFromString:@"function alert(){}; function prompt(){}; function confirm(){}"];
         }
         
@@ -1114,7 +1114,7 @@ typedef enum {
     [wv stringByEvaluatingJavaScriptFromString:js];
     
     // Alert suppression
-    if (SK_SUPPRESS_JS_ALERT)
+    if (HZ_SK_SUPPRESS_JS_ALERT)
         [wv stringByEvaluatingJavaScriptFromString:@"function alert(){}; function prompt(){}; function confirm(){}"];
 }
 
@@ -1122,7 +1122,7 @@ typedef enum {
 
 -(void)setUpTapGestureRecognizer
 {
-    if(!SK_SUPPRESS_BANNER_AUTO_REDIRECT){
+    if(!HZ_SK_SUPPRESS_BANNER_AUTO_REDIRECT){
         return;  // return without adding the GestureRecognizer if the feature is not enabled
     }
     // One finger, one tap

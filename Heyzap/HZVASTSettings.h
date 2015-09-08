@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-extern const NSString* kVASTKitVersion;
-extern const int kMaxRecursiveDepth;
-extern const float kPlayTimeCounterInterval;
-extern const BOOL kValidateWithSchema;
+extern const NSString* kHZVASTKitVersion;
+extern const int kHZMaxRecursiveDepth;
+extern const float kHZPlayTimeCounterInterval;
+extern const BOOL kHZValidateWithSchema;
 
 @interface HZVASTSettings : NSObject
 

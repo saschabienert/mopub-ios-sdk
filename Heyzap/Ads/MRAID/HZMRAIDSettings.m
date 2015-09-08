@@ -8,7 +8,7 @@
 
 #import "HZMRAIDSettings.h"
 
-NSString* const kMRAIDKitVersion    = @"1.0.6";
-BOOL SK_ENABLE_JS_LOG                  = YES;
-BOOL SK_SUPPRESS_JS_ALERT              = YES;
-BOOL SK_SUPPRESS_BANNER_AUTO_REDIRECT  = YES;
+NSString* const kHZMRAIDKitVersion    = @"1.0.6";
+BOOL HZ_SK_ENABLE_JS_LOG                  = YES;
+BOOL HZ_SK_SUPPRESS_JS_ALERT              = YES;
+BOOL HZ_SK_SUPPRESS_BANNER_AUTO_REDIRECT  = YES;

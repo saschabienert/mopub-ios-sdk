@@ -329,6 +329,19 @@ extern CBLocation const CBLocationDefault;
 
 /*!
  @abstract
+ Set a custom mediation library to append to the POST body of every request.
+ example setMediation:@"MoPub" withVersion:@"3.8.0"
+ 
+ @param libraryName The name of the mediation library.
+ @param libraryVersion The version sent as a string.
+ 
+ @discussion This is an internal method used by mediation partners to track their usage.
+ @since 5.5.0
+ */
++ (void)setMediation:(NSString *)libraryName withVersion:(NSString*)libraryVersion;
+
+/*!
+ @abstract
  Decide if Chartboost SDK should show interstitials in the first session.
  
  @param shouldRequest YES if allowed to show interstitials in first session, NO otherwise.

@@ -32,4 +32,8 @@
     return [NSClassFromString([self hzProxiedClassName]) alloc];
 }
 
++ (BOOL)respondsToSelector:(SEL)aSelector {
+    return [super respondsToSelector:aSelector] || [NSClassFromString([self hzProxiedClassName]) respondsToSelector:aSelector];
+}
+
 @end

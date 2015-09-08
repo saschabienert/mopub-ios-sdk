@@ -217,7 +217,7 @@ extern NSString * const HZRemoteDataRefreshedNotification;
 @end
 
 /**
- *  A class with miscellaneous Heyzap Ads methods.
+ *  A class with miscellaneous Heyzap Ads methods. All methods on this class must be called from the main queue.
  */
 @interface HeyzapAds : NSObject
 
