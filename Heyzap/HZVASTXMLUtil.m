@@ -17,7 +17,7 @@
 
 #pragma mark - error/warning callback functions
 
-void documentParserErrorCallback(void *ctx, const char *msg, ...)
+void hzDocumentParserErrorCallback(void *ctx, const char *msg, ...)
 {
     va_list args;
     va_start (args, msg);
@@ -32,7 +32,7 @@ void documentParserErrorCallback(void *ctx, const char *msg, ...)
     va_end(args);
 }
 
-void schemaParserErrorCallback(void *ctx, const char *msg, ...)
+void hzSchemaParserErrorCallback(void *ctx, const char *msg, ...)
 {
     va_list args;
 	va_start (args, msg);
@@ -44,7 +44,7 @@ void schemaParserErrorCallback(void *ctx, const char *msg, ...)
     va_end(args);
 }
 
-void schemaParserWarningCallback(void *ctx, const char *msg, ...)
+void hzSchemaParserWarningCallback(void *ctx, const char *msg, ...)
 {
     va_list args;
 	va_start (args, msg);
@@ -56,7 +56,7 @@ void schemaParserWarningCallback(void *ctx, const char *msg, ...)
     va_end(args);
 }
 
-void schemaValidationErrorCallback(void *ctx, const char *msg, ...)
+void hzSchemaValidationErrorCallback(void *ctx, const char *msg, ...)
 {
     va_list args;
 	va_start (args, msg);
@@ -68,7 +68,7 @@ void schemaValidationErrorCallback(void *ctx, const char *msg, ...)
     va_end(args);
 }
 
-void schemaValidationWarningCallback(void *ctx, const char *msg, ...)
+void hzSchemaValidationWarningCallback(void *ctx, const char *msg, ...)
 {
     va_list args;
 	va_start (args, msg);
@@ -82,7 +82,7 @@ void schemaValidationWarningCallback(void *ctx, const char *msg, ...)
 
 #pragma mark - internal helper functions
 
-NSDictionary *dictionaryForNode(xmlNodePtr currentNode, NSMutableDictionary *parentResult)
+NSDictionary *hzDictionaryForNode(xmlNodePtr currentNode, NSMutableDictionary *parentResult)
 {
 	NSMutableDictionary *resultForNode = [NSMutableDictionary dictionary];
 	
@@ -124,7 +124,7 @@ NSDictionary *dictionaryForNode(xmlNodePtr currentNode, NSMutableDictionary *par
 			}
 			
 			if (attribute->children) {
-				NSDictionary *childDictionary = dictionaryForNode(attribute->children, attributeDictionary);
+				NSDictionary *childDictionary = hzDictionaryForNode(attribute->children, attributeDictionary);
 				if (childDictionary) {
 					attributeDictionary[@"attributeContent"] = childDictionary;
 				}
@@ -145,7 +145,7 @@ NSDictionary *dictionaryForNode(xmlNodePtr currentNode, NSMutableDictionary *par
 	if (childNode) {
 		NSMutableArray *childContentArray = [NSMutableArray array];
 		while (childNode) {
-			NSDictionary *childDictionary = dictionaryForNode(childNode, resultForNode);
+			NSDictionary *childDictionary = hzDictionaryForNode(childNode, resultForNode);
 			if (childDictionary) {
 				[childContentArray addObject:childDictionary];
 			}
@@ -159,7 +159,7 @@ NSDictionary *dictionaryForNode(xmlNodePtr currentNode, NSMutableDictionary *par
 	return resultForNode;
 }
 
-NSArray *performXPathQuery(xmlDocPtr doc, NSString *query)
+NSArray *hzPerformXPathQuery(xmlDocPtr doc, NSString *query)
 {
     xmlXPathContextPtr xpathCtx;
     xmlXPathObjectPtr xpathObj;
@@ -186,7 +186,7 @@ NSArray *performXPathQuery(xmlDocPtr doc, NSString *query)
 	
 	NSMutableArray *resultNodes = [NSMutableArray array];
 	for (NSInteger i = 0; i < nodes->nodeNr; i++) {
-		NSDictionary *nodeDictionary = dictionaryForNode(nodes->nodeTab[i], nil);
+		NSDictionary *nodeDictionary = hzDictionaryForNode(nodes->nodeTab[i], nil);
 		if (nodeDictionary) {
 			[resultNodes addObject:nodeDictionary];
 		}
@@ -201,10 +201,10 @@ NSArray *performXPathQuery(xmlDocPtr doc, NSString *query)
 
 #pragma mark - "public" API
 
-BOOL validateXMLDocSyntax(NSData *document)
+BOOL hzValidateXMLDocSyntax(NSData *document)
 {
     BOOL retval = YES;
-    xmlSetGenericErrorFunc(NULL, (xmlGenericErrorFunc)documentParserErrorCallback);
+    xmlSetGenericErrorFunc(NULL, (xmlGenericErrorFunc)hzDocumentParserErrorCallback);
 	xmlDocPtr doc = xmlReadMemory([document bytes], (int)[document length], "", NULL, 0); // XML_PARSE_RECOVER);
     if (doc == NULL) {
         [HZSKLogger error:@"VAST - XML Util" withMessage:@"Unable to parse."];
@@ -216,9 +216,9 @@ BOOL validateXMLDocSyntax(NSData *document)
     return retval;
 }
 
-BOOL validateXMLDocAgainstSchema(NSData *document, NSData *schemaData)
+BOOL hzValidateXMLDocAgainstSchema(NSData *document, NSData *schemaData)
 {
-    xmlSetGenericErrorFunc(NULL, (xmlGenericErrorFunc)documentParserErrorCallback);
+    xmlSetGenericErrorFunc(NULL, (xmlGenericErrorFunc)hzDocumentParserErrorCallback);
     
     // load XML document
 	xmlDocPtr doc = xmlReadMemory([document bytes], (int)[document length], "", NULL, 0); // XML_PARSE_RECOVER);
@@ -233,8 +233,8 @@ BOOL validateXMLDocAgainstSchema(NSData *document, NSData *schemaData)
     xmlSchemaParserCtxtPtr parserCtxt = xmlSchemaNewMemParserCtxt([schemaData bytes], (int)[schemaData length]);
     
     xmlSchemaSetParserErrors(parserCtxt,
-                             (xmlSchemaValidityErrorFunc)schemaParserErrorCallback,
-                             (xmlSchemaValidityWarningFunc)schemaParserWarningCallback,
+                             (xmlSchemaValidityErrorFunc)hzSchemaParserErrorCallback,
+                             (xmlSchemaValidityWarningFunc)hzSchemaParserWarningCallback,
                              NULL);
     
     xmlSchemaPtr schema = xmlSchemaParse(parserCtxt);
@@ -244,8 +244,8 @@ BOOL validateXMLDocAgainstSchema(NSData *document, NSData *schemaData)
     
     xmlSchemaValidCtxtPtr validCtxt = xmlSchemaNewValidCtxt(schema);
     xmlSchemaSetValidErrors(validCtxt,
-                            (xmlSchemaValidityErrorFunc)schemaValidationErrorCallback,
-                            (xmlSchemaValidityWarningFunc)schemaValidationWarningCallback,
+                            (xmlSchemaValidityErrorFunc)hzSchemaValidationErrorCallback,
+                            (xmlSchemaValidityWarningFunc)hzSchemaValidationWarningCallback,
                             NULL);
     int ret = xmlSchemaValidateDoc(validCtxt, doc);
     if (ret == 0) {
@@ -271,7 +271,7 @@ BOOL validateXMLDocAgainstSchema(NSData *document, NSData *schemaData)
     return (ret == 0);
 }
 
-NSArray *performXMLXPathQuery(NSData *document, NSString *query)
+NSArray *hzPerformXMLXPathQuery(NSData *document, NSString *query)
 {
     xmlDocPtr doc;
 	doc = xmlReadMemory([document bytes], (int)[document length], "", NULL, 0); // XML_PARSE_RECOVER);
@@ -279,7 +279,7 @@ NSArray *performXMLXPathQuery(NSData *document, NSString *query)
         [HZSKLogger error:@"VAST - XML Util" withMessage:@"Unable to parse."];
 		return nil;
     }
-	NSArray *result = performXPathQuery(doc, query);
+	NSArray *result = hzPerformXPathQuery(doc, query);
     xmlFreeDoc(doc);
 	return result;
 }

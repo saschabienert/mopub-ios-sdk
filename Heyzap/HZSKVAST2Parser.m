@@ -60,27 +60,27 @@
 
 - (HZSKVASTError)parseRecursivelyWithData:(NSData *)vastData depth:(int)depth
 {
-    if (depth >= kMaxRecursiveDepth) {
+    if (depth >= kHZMaxRecursiveDepth) {
         vastModel = nil;
         return VASTErrorTooManyWrappers;
     }
 
     // Validate the basic XML syntax of the VAST document.
     BOOL isValid;
-    isValid = validateXMLDocSyntax(vastData);
+    isValid = hzValidateXMLDocSyntax(vastData);
     if (!isValid) {
         vastModel = nil;
         return VASTErrorXMLParse;
     }
 
-    if (kValidateWithSchema) {
+    if (kHZValidateWithSchema) {
         [HZSKLogger debug:@"VAST-Parser" withMessage:@"Validating against schema"];
         
         // Using header data
         NSData *vastSchemaData = [NSData dataWithBytesNoCopy:HZvast_2_0_1_xsd
                                                       length:HZvast_2_0_1_xsd_len
                                                 freeWhenDone:NO];
-        isValid = validateXMLDocAgainstSchema(vastData, vastSchemaData);
+        isValid = hzValidateXMLDocAgainstSchema(vastData, vastSchemaData);
         if (!isValid) {
             vastModel = nil;
             return VASTErrorSchemaValidation;
@@ -94,7 +94,7 @@
     
     // Check to see whether this is a wrapper ad. If so, process it.
     NSString *query = @"//VASTAdTagURI";
-    NSArray *results = performXMLXPathQuery(vastData, query);
+    NSArray *results = hzPerformXMLXPathQuery(vastData, query);
     if ([results count] > 0) {
         NSString *url;
         NSDictionary *node = results[0];
