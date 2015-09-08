@@ -99,7 +99,7 @@ extern void UnitySendMessage(const char *, const char *, const char *);
 
 - (void) sendMessageForKlass: (NSString *) klass withMessage: (NSString *) message andTag: (NSString *) tag {
     NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", message, tag];
-    UnitySendMessage([klass UTF8String], "setDisplayState", [unityMessage UTF8String]);
+    UnitySendMessage([klass UTF8String], "SetCallback", [unityMessage UTF8String]);
 }
 
 @end
@@ -133,7 +133,7 @@ extern "C" {
             [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
                 NSString *unityMessage = [NSString stringWithFormat: @"%@,%@", network, callback];
                 NSString *klassName = @"HeyzapAds";
-                UnitySendMessage([klassName UTF8String], "setNetworkCallbackMessage", [unityMessage UTF8String]);
+                UnitySendMessage([klassName UTF8String], "SetNetworkCallbackMessage", [unityMessage UTF8String]);
             }];
         });
     }
