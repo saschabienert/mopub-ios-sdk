@@ -69,8 +69,6 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     HZDLog(@"Initializing Leadbolt with App API Key: %@",self.appAPIKey);
     [HZAppTracker startSession:self.appAPIKey]; // NB: Leadbolt must be started after registering for NSNotifications per docs.
     
-    [[HeyzapMediation sharedInstance] sendNetworkCallback:HZNetworkCallbackInitialized forNetwork:[self name]];
-    
     return nil;
 }
 
