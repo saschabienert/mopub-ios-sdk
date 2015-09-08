@@ -51,7 +51,7 @@
     
     NSString *version;
     NSString *query = @"/VAST/@version";
-    NSArray *results = performXMLXPathQuery(vastDocumentArray[0], query);
+    NSArray *results = hzPerformXMLXPathQuery(vastDocumentArray[0], query);
     // there should be only a single result
     if ([results count] > 0) {
         NSDictionary *attribute = results[0];
@@ -78,7 +78,7 @@
     NSString *query = @"//Linear//Tracking";
 
     for (NSData *document in vastDocumentArray) {
-        NSArray *results = performXMLXPathQuery(document, query);
+        NSArray *results = hzPerformXMLXPathQuery(document, query);
         for (NSDictionary *result in results) {
             // use lazy initialization
             if (!eventDict) {
@@ -134,7 +134,7 @@
     NSString *query = @"//MediaFile";
     
     for (NSData *document in vastDocumentArray) {
-        NSArray *results = performXMLXPathQuery(document, query);
+        NSArray *results = hzPerformXMLXPathQuery(document, query);
         for (NSDictionary *result in results) {
  
             // use lazy initialization
@@ -209,7 +209,7 @@
     
     NSString *skipOffsetRaw = nil;
     NSString *query = @"//Linear/@skipoffset";
-    NSArray *results = performXMLXPathQuery(vastDocumentArray[0], query);
+    NSArray *results = hzPerformXMLXPathQuery(vastDocumentArray[0], query);
     if ([results count] > 0) {
         NSDictionary *attribute = results[0];
         skipOffsetRaw = attribute[@"nodeContent"];
@@ -250,7 +250,7 @@
 - (NSNumber *) durationInSeconds{
     NSString *duration = nil;
     NSString *query = @"//Creative//Duration";
-    NSArray *results = performXMLXPathQuery(vastDocumentArray[0], query);
+    NSArray *results = hzPerformXMLXPathQuery(vastDocumentArray[0], query);
     
     if ([results count] > 0) {
         NSDictionary *attribute = results[0];
@@ -305,7 +305,7 @@
     NSString *elementName = [query stringByReplacingOccurrencesOfString:@"/" withString:@""];
     
     for (NSData *document in vastDocumentArray) {
-        NSArray *results = performXMLXPathQuery(document, query);
+        NSArray *results = hzPerformXMLXPathQuery(document, query);
         for (NSDictionary *result in results) {
             // use lazy initialization
             if (!array) {

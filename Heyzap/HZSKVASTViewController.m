@@ -250,7 +250,7 @@ typedef enum {
     @synchronized (self) {
         [self stopPlaybackTimer];
         [HZSKLogger debug:@"VAST - View Controller" withMessage:@"start playback timer"];
-        playbackTimer = [NSTimer scheduledTimerWithTimeInterval:kPlayTimeCounterInterval
+        playbackTimer = [NSTimer scheduledTimerWithTimeInterval:kHZPlayTimeCounterInterval
                                                          target:self
                                                        selector:@selector(updatePlayedSeconds)
                                                        userInfo:nil
