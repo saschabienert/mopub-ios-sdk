@@ -40,6 +40,8 @@
     HZShowOptions *options = [[[self class] allocWithZone:zone] init];
     [options setTag:[self tag]];
     [options setViewController:[self viewController]];
+    [options setIncentivizedInfo:[self incentivizedInfo]];
+    [options setCompletion:[self completion]];
     return options;
 }
 
