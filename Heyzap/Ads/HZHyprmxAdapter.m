@@ -51,7 +51,7 @@
 }
 
 + (NSString *)name {
-    return HZNetworkHyperMX;
+    return HZNetworkHyprMX;
 }
 
 + (NSString *) humanizedName {
