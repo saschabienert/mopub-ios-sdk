@@ -81,11 +81,11 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
 
 + (NSString *)name
 {
-    return @"leadbolt";
+    return HZNetworkLeadbolt;
 }
 
 + (NSString *)humanizedName {
-    return @"Leadbolt";
+    return kHZAdapterLeadboltHumanized;
 }
 
 + (NSString *)sdkVersion
