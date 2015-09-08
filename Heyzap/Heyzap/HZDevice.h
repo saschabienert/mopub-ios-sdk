@@ -17,11 +17,8 @@
 -(uint64_t) hzGetFreeDiskspace;
 - (NSDictionary *) HZIdentifierDictionary;
 - (NSString *) HZConnectivityType;
-- (NSString *) HZuniqueGlobalDeviceIdentifier;
 - (NSString *) HZadvertisingIdentifier;
 - (NSString *) HZvendorDeviceIdentity;
-- (NSString *) HZmd5MacAddress;
-- (NSString *) HZmacaddress;
 - (NSString *) HZCarrierName;
 
 - (HZOpenRTBConnectionType) getHZOpenRTBConnectionType;

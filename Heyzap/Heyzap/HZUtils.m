@@ -172,15 +172,6 @@ char *HZNewBase64Encode(
     return data;
 }
 
-+ (NSString *) deviceID {
-    NSString *advertisingIdentifier = [[HZDevice currentDevice] HZadvertisingIdentifier];
-    if ([advertisingIdentifier isEqualToString:@""]) {
-        return [[HZDevice currentDevice] HZuniqueGlobalDeviceIdentifier];
-    } else {
-        return advertisingIdentifier;
-    }
-}
-
 + (void) setPublisherID: (NSString *) publisherID {
     HZUtilsPublisherID = [publisherID copy];
 }
