@@ -89,22 +89,19 @@
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
     if(![self supportsCreativeType:creativeType]) return;
-    
-    // mediation has already called the completion block, so copy the options, excluding the block
-    HZShowOptions *newOptions = [options copy];
 
     const HZAuctionType auctionType = [self auctionType];
     switch (creativeType) {
         case HZCreativeTypeStatic: {
-            [HZHeyzapInterstitialAd showForAuctionType:auctionType options:newOptions];
+            [HZHeyzapInterstitialAd showForAuctionType:auctionType options:options];
             break;
         }
         case HZCreativeTypeIncentivized: {
-            [HZHeyzapIncentivizedAd showForAuctionType:auctionType options:newOptions];
+            [HZHeyzapIncentivizedAd showForAuctionType:auctionType options:options];
             break;
         }
         case HZCreativeTypeVideo: {
-            [HZHeyzapVideoAd showForAuctionType:auctionType options:newOptions];
+            [HZHeyzapVideoAd showForAuctionType:auctionType options:options];
             break;
         }
         default: {
@@ -160,8 +157,10 @@
 }
 
 - (void)didFailToShowAd:(NSNotification *)notification {
-    // This is handled automatically by the HeyzapMediation timeout.
-    // Potentially it's a worthwhile optimization to tell that to HeyzapMediation directly when possible, to avoid the 1.5s timeout.
+    if ([self correctAuctionType:notification]) {
+        NSError *error = (NSError *)[notification userInfo][NSUnderlyingErrorKey];
+        [self.delegate adapterDidFailToShowAd:self error:error];
+    }
 }
 
 - (void)didReceiveAd:(NSNotification *)notification {

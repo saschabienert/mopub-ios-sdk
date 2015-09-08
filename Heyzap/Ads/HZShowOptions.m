@@ -36,13 +36,6 @@
 
 @implementation HZShowOptions
 
-- (HZShowOptions *)copyWithZone:(NSZone *)zone {
-    HZShowOptions *options = [[[self class] allocWithZone:zone] init];
-    [options setTag:[self tag]];
-    [options setViewController:[self viewController]];
-    return options;
-}
-
 @synthesize tag = _tag;
 
 - (NSString *)tag {
