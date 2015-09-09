@@ -10,7 +10,4 @@
 
 @interface HZAdsRequestSerializer : HZAFHTTPRequestSerializer
 
-// Subclasses may override.
-+ (NSMutableDictionary *)defaultParams;
-
 @end

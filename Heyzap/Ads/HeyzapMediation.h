@@ -22,6 +22,7 @@
 @protocol HZBannerReportingDelegate;
 @class HZBannerAdOptions;
 @class HZMediationPersistentConfig;
+@class HZErrorReporter;
 
 extern NSString * const HZMediationDidReceiveAdNotification;
 
@@ -34,6 +35,7 @@ extern NSString * const HZMediationDidReceiveAdNotification;
 @property (nonatomic, readonly) HZMediationSettings *settings;
 @property (nonatomic, readonly) HZSegmentationController *segmentationController;
 @property (nonatomic, readonly) HZMediationPersistentConfig *persistentConfig;
+@property (nonatomic, readonly) HZErrorReporter *errorReporter;
 
 + (instancetype)sharedInstance;
 
