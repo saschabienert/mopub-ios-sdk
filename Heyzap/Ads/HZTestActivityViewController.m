@@ -104,10 +104,12 @@
     UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(hide)];
     [self.navigationItem setLeftBarButtonItem:button animated:NO];
     
-    UISwitch *allNeworksEnableSwitch = [[UISwitch alloc] init];
-    [allNeworksEnableSwitch addTarget:self action:@selector(allNetworksEnableSwitchToggled:) forControlEvents:UIControlEventValueChanged];
-    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc]initWithCustomView:allNeworksEnableSwitch]];
-    
+    UISwitch *allNeworksEnableSwitch;
+    if ([self showNetworkEnableSwitch]) {
+        allNeworksEnableSwitch = [[UISwitch alloc] init];
+        [allNeworksEnableSwitch addTarget:self action:@selector(allNetworksEnableSwitchToggled:) forControlEvents:UIControlEventValueChanged];
+        [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc]initWithCustomView:allNeworksEnableSwitch]];
+    }
     self.navigationController.navigationBar.titleTextAttributes = nil;
     
     self.view.backgroundColor = [UIColor whiteColor];
@@ -121,7 +123,7 @@
     [self checkNetworkInfo:self.refreshControl completion:^(BOOL success){
         // if more than half the networks are disabled already, default switch to off
         // else default to on
-        allNeworksEnableSwitch.on = [[[HeyzapMediation sharedInstance].persistentConfig allDisabledNetworks] count] < (self.allNetworks.count/2);
+        [allNeworksEnableSwitch setOn:[[[HeyzapMediation sharedInstance].persistentConfig allDisabledNetworks] count] < (self.allNetworks.count/2)];
     }];
 }
 
