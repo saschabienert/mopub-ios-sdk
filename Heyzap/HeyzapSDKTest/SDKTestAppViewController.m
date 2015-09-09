@@ -681,11 +681,10 @@ const CGFloat kLeftMargin = 10;
     
     if (adType) {
         [self setShowButtonOn:available];
-        [self logToConsole:[NSString stringWithFormat:@"%@ ad %@ available.", adType, (available ? @"is" : @"is not")]];
+        [self logToConsole:[NSString stringWithFormat:@"%@ ad %@ available for tag: `%@`.", adType, (available ? @"is" : @"is not"), adTag]];
     } else {
         [self logToConsole:@"Is Available Error: Unable to determine ad type."];
     }
-    
 }
 
 - (void)showBannerButtonPressed:(UIControl *)sender {
