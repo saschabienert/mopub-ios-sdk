@@ -18,12 +18,8 @@ char *HZNewBase64Encode(
 
 @interface HZUtils : NSObject
 
-+ (NSString *)urlEncodeString: (NSString *) string usingEncoding:(NSStringEncoding)encoding;
-+ (NSString *)base64EncodedStringFromString: (NSString *) string;
 + (id) objectFromArchivedData: (NSData *) data;
 + (NSData *) dataFromObject: (id<NSCoding>) object;
-+ (NSString *) deviceID;
-+ (NSString *) pathWithFilename: (NSString *) filename;
 + (NSString *) cacheDirectoryPath;
 + (NSString *) cacheDirectoryWithFilename: (NSString *) filename;
 + (void) createCacheDirectory;

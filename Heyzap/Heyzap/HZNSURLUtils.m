@@ -15,8 +15,8 @@
     
     NSMutableString *mutableString = [NSMutableString stringWithString:url];
     
-    hzReplaceSubstringWithString(mutableString, @"{MAC_ADDRESS_MD5}", [[HZDevice currentDevice] HZmd5MacAddress]);
-    hzReplaceSubstringWithString(mutableString, @"{MAC_ADDRESS}", [[HZDevice currentDevice] HZmacaddress]);
+    hzReplaceSubstringWithString(mutableString, @"{MAC_ADDRESS_MD5}", @""); // Deprecated
+    hzReplaceSubstringWithString(mutableString, @"{MAC_ADDRESS}", @""); // Deprecated
     hzReplaceSubstringWithString(mutableString, @"{IDFA}", [[HZDevice currentDevice] HZadvertisingIdentifier]);
     hzReplaceSubstringWithString(mutableString, @"{IMPRESSION_ID}", impressionID);
     hzReplaceSubstringWithString(mutableString, @"{ODIN}", @""); // Deprecated
