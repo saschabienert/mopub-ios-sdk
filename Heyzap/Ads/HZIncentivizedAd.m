@@ -133,12 +133,6 @@
 
 #pragma mark - Heyzap specific
 
-+ (void) setUserIdentifier: (NSString *) userIdentifier {
-    HZVersionCheck()
-
-    [HZHeyzapIncentivizedAd setUserIdentifier:userIdentifier];
-}
-
 + (void) setCreativeID:(int)creativeID {
     HZVersionCheck()
 

@@ -16,7 +16,6 @@
 #define HZIncentivizedAdUnit @"incentivized"
 #define HZIncentivizedAdCreativeTypes @[@"video", @"interstitial_video"]
 
-static NSString *HZIncentivizedAdUserIdentifier = nil;
 static int HZIncentivizedCreativeIDPin = 0;
 
 @implementation HZHeyzapIncentivizedAd
@@ -38,10 +37,6 @@ static int HZIncentivizedCreativeIDPin = 0;
             [params setObject: [NSString stringWithFormat: @"%i", HZIncentivizedCreativeIDPin] forKey: @"creative_id"];
         }
         
-        if (HZIncentivizedAdUserIdentifier != nil) {
-            [params setObject: HZIncentivizedAdUserIdentifier forKey: @"user_identifier"];
-        }
-        
         HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes: HZIncentivizedAdCreativeTypes adUnit: HZIncentivizedAdUnit tag:nil auctionType:auctionType andAdditionalParams: params];
         
         [[HZAdsFetchManager sharedManager] fetch: request withCompletion:^(HZAdModel *ad, NSError *error) {
@@ -60,10 +55,6 @@ static int HZIncentivizedCreativeIDPin = 0;
 + (void)hide
 {
     [[HZAdsManager sharedManager] hideActiveAd];
-}
-
-+ (void) setUserIdentifier: (NSString *) userIdentifier {
-    HZIncentivizedAdUserIdentifier = userIdentifier;
 }
 
 + (void) setCreativeID:(int)creativeID {
