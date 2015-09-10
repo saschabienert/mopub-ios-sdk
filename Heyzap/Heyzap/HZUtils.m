@@ -135,32 +135,6 @@ char *HZNewBase64Encode(
 
 @implementation HZUtils
 
-+ (NSString *)base64EncodedStringFromString: (NSString *) string {
-    
-    NSData *data = [string dataUsingEncoding: NSUTF8StringEncoding];
-    
-	size_t outputLength = 0;
-	char *outputBuffer =
-    HZNewBase64Encode([data bytes], [data length], false, &outputLength);
-	
-    NSString *result = outputLength == 0 ? nil : [[NSString alloc]
-                                                  initWithBytes:outputBuffer
-                                                         length:outputLength
-                                                       encoding:NSASCIIStringEncoding];
-	free(outputBuffer);
-	return result;
-}
-
-+(NSString *)urlEncodeString: (NSString *) string usingEncoding:(NSStringEncoding)encoding {
-    NSString *encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
-                                                               (CFStringRef) string,
-                                                               NULL,
-                                                               (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
-                                                               CFStringConvertNSStringEncodingToEncoding(encoding)));
-    
-    return encodedString;
-}
-
 + (id) objectFromArchivedData: (NSData *) data {
     if (!data) return nil;
     
@@ -172,28 +146,12 @@ char *HZNewBase64Encode(
     return data;
 }
 
-+ (NSString *) deviceID {
-    NSString *advertisingIdentifier = [[HZDevice currentDevice] HZadvertisingIdentifier];
-    if ([advertisingIdentifier isEqualToString:@""]) {
-        return [[HZDevice currentDevice] HZuniqueGlobalDeviceIdentifier];
-    } else {
-        return advertisingIdentifier;
-    }
-}
-
 + (void) setPublisherID: (NSString *) publisherID {
     HZUtilsPublisherID = [publisherID copy];
 }
 
 + (NSString *) publisherID {
     return HZUtilsPublisherID;
-}
-
-+ (NSString *) pathWithFilename: (NSString *) filenameShort {
-    NSArray *folders = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    NSString *filename = [folders count] == 0 ? NSTemporaryDirectory() : [folders objectAtIndex:0];
-    filename = [filename stringByAppendingPathComponent:[NSString stringWithFormat: @"Caches/%@.heyzap", filenameShort]];
-    return filename;
 }
 
 + (NSString *) cacheDirectoryPath {

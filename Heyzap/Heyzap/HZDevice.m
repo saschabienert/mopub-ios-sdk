@@ -41,78 +41,6 @@ NSString * const kHZDeviceNetworkUnknown = @"unknown";
 #pragma mark -
 #pragma mark Private Methods
 
-// http://stackoverflow.com/a/8036320/1176156
-- (NSString *)HZmacaddress
-{
-    static NSString *macAddressString;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        int                 mgmtInfoBase[6];
-        char                *msgBuffer = NULL;
-        size_t              length;
-        unsigned char       macAddress[6];
-        struct if_msghdr    *interfaceMsgStruct;
-        struct sockaddr_dl  *socketStruct;
-        NSString            *errorFlag = NULL;
-        
-        // Setup the management Information Base (mib)
-        mgmtInfoBase[0] = CTL_NET;        // Request network subsystem
-        mgmtInfoBase[1] = AF_ROUTE;       // Routing table info
-        mgmtInfoBase[2] = 0;
-        mgmtInfoBase[3] = AF_LINK;        // Request link layer information
-        mgmtInfoBase[4] = NET_RT_IFLIST;  // Request all configured interfaces
-        
-        // With all configured interfaces requested, get handle index
-        if ((mgmtInfoBase[5] = if_nametoindex("en0")) == 0)
-            errorFlag = @"if_nametoindex failure";
-        else
-        {
-            // Get the size of the data available (store in len)
-            if (sysctl(mgmtInfoBase, 6, NULL, &length, NULL, 0) < 0)
-                errorFlag = @"sysctl mgmtInfoBase failure";
-            else
-            {
-                // Alloc memory based on above call
-                if ((msgBuffer = malloc(length)) == NULL)
-                    errorFlag = @"buffer allocation failure";
-                else
-                {
-                    // Get system information, store in buffer
-                    if (sysctl(mgmtInfoBase, 6, msgBuffer, &length, NULL, 0) < 0)
-                        errorFlag = @"sysctl msgBuffer failure";
-                }
-            }
-        }
-        
-        // Befor going any further...
-        if (errorFlag != NULL)
-        {
-            free(msgBuffer);
-            macAddressString = errorFlag;
-            return;
-        }
-        
-        // Map msgbuffer to interface message structure
-        interfaceMsgStruct = (struct if_msghdr *) msgBuffer;
-        
-        // Map to link-level socket structure
-        socketStruct = (struct sockaddr_dl *) (interfaceMsgStruct + 1);
-        
-        // Copy link layer address data in socket structure to an array
-        memcpy(&macAddress, socketStruct->sdl_data + socketStruct->sdl_nlen, 6);
-        
-        // Read from char array into a string object, into traditional Mac address format
-        macAddressString = [NSString stringWithFormat:@"%02X:%02X:%02X:%02X:%02X:%02X",
-                                      macAddress[0], macAddress[1], macAddress[2],
-                                      macAddress[3], macAddress[4], macAddress[5]];
-        
-        // Release the buffer memory
-        free(msgBuffer);
-    });
-    
-    return macAddressString;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Public Methods
@@ -280,52 +208,6 @@ NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKT
 
 #pragma mark - Device Identifiers
 
-- (NSString *) HZuniqueDeviceIdentifier{
-    static NSString *uniqueIdentifier;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSString *macaddress = [self HZmacaddress];
-        NSString *bundleIdentifier = [[HZDevice currentDevice] bundleIdentifier];
-        
-        NSString *stringToHash = [NSString stringWithFormat:@"%@%@",macaddress,bundleIdentifier];
-        uniqueIdentifier = [HZUtils base64EncodedStringFromString: stringToHash];
-    });
-    
-    return uniqueIdentifier;
-}
-
-- (NSString *) HZuniqueGlobalDeviceIdentifier{
-    
-    static NSString *uniqueIdentifier;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSString *macaddress = [self HZmacaddress];
-        uniqueIdentifier = [HZUtils base64EncodedStringFromString: macaddress];
-    });
-    
-    return uniqueIdentifier;
-}
-
-- (NSString *)HZmd5MacAddress {
-    static NSString *md5MacAddress;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSString *macaddress = [self HZmacaddress];
-        const char *cStr = [macaddress UTF8String];
-        unsigned char digest[CC_MD5_DIGEST_LENGTH];
-        CC_MD5(cStr, (CC_LONG)strlen(cStr), digest); // Casting to silence warning
-        
-        NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH *2];
-        
-        for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
-            [output appendFormat:@"%02x", digest[i]];
-        }
-        md5MacAddress = output;
-    });
-    
-    return md5MacAddress;
-}
-
 // Warning: iOS will fail to give an advertising identifier when running tests from the command line. Stub this method as a workaround.
 - (NSString *)HZadvertisingIdentifier {
     static NSString *uuid;
@@ -357,8 +239,6 @@ NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKT
 
 - (NSDictionary *)HZIdentifierDictionary
 {
-    NSString *uniqueDeviceIdentifier = [self HZuniqueDeviceIdentifier] ?: @"";
-    NSString *uniqueGlobalDeviceIdentifier = [self HZuniqueGlobalDeviceIdentifier] ?: @"";
     NSString *advertisingIdentifier = [self HZadvertisingIdentifier] ?: @"";
     NSString *connectivityType = [self HZConnectivityType] ?:@"";
     NSString *trackingEnabled = [self HZtrackingEnabled];
@@ -366,8 +246,6 @@ NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKT
     
     return @{
              @"vendor_device_id": vendorDeviceID,
-             @"uniqueDeviceIdentifier": uniqueDeviceIdentifier,
-             @"uniqueGlobalDeviceIdentifier":uniqueGlobalDeviceIdentifier,
              @"advertisingIdentifier":advertisingIdentifier,
              @"advertising_id": advertisingIdentifier,
              @"connection_type":connectivityType,

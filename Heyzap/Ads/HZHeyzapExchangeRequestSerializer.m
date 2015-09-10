@@ -69,7 +69,7 @@
                                          @"device_os": @"iOS",
                                          @"device_osv": [HZDevice systemVersion],
                                          @"device_connectiontype": @([[HZDevice currentDevice] getHZOpenRTBConnectionType]),
-                                         @"device_ifa": [HZUtils deviceID],
+                                         @"device_ifa": [[HZDevice currentDevice] HZadvertisingIdentifier],
                                          @"device_devicetype": deviceType,
                                          @"device_dnt": @(![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]), // do not track
                                          @"sdk_version": SDK_VERSION,

@@ -606,9 +606,12 @@ const CGFloat kLeftMargin = 10;
     }
     
     void (^completion)(BOOL, NSError *) = ^void (BOOL result, NSError *error){
-        if (!result || error) [self logToConsole:[NSString stringWithFormat:@"Fetch ad failed. Error: %@", error.localizedDescription]];
+        if (!result || error) {
+            [self logToConsole:[NSString stringWithFormat:@"Fetch ad completion block - failed. Error: %@", error.localizedDescription]];
+        } else {
+            [self logToConsole:@"Fetch ad completion block - success"];
+        }
     };
-    
     
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
@@ -637,6 +640,9 @@ const CGFloat kLeftMargin = 10;
     
     HZShowOptions *opts = [[HZShowOptions alloc] init];
     opts.tag = adTag;
+    opts.completion = ^(BOOL success, NSError *err) {
+        [self logToConsole:[NSString stringWithFormat:@"Show completion block. Success=%x, err=%@", success, err]];
+    };
     
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
@@ -681,11 +687,10 @@ const CGFloat kLeftMargin = 10;
     
     if (adType) {
         [self setShowButtonOn:available];
-        [self logToConsole:[NSString stringWithFormat:@"%@ ad %@ available.", adType, (available ? @"is" : @"is not")]];
+        [self logToConsole:[NSString stringWithFormat:@"%@ ad %@ available for tag: `%@`.", adType, (available ? @"is" : @"is not"), adTag]];
     } else {
         [self logToConsole:@"Is Available Error: Unable to determine ad type."];
     }
-    
 }
 
 - (void)showBannerButtonPressed:(UIControl *)sender {
