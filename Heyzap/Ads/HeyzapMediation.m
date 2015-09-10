@@ -529,6 +529,9 @@
     
     [currentAd.eventReporter reportImpressionForAdapter:adapter];
     [self.segmentationController recordImpressionWithCreativeType:currentAd.eventReporter.creativeType tag:currentAd.tag adapter:adapter];
+    if (currentAd.showOptions.completion) {
+        currentAd.showOptions.completion(YES, nil);
+    }
     
     if (currentAd && currentAd.adState == HZAdStateRequestedShow) {
         self.currentShownAd.adState = HZAdStateShown;
