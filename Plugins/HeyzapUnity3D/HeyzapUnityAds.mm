@@ -193,14 +193,6 @@ extern "C" {
         return [HZIncentivizedAd isAvailableForTag: [NSString stringWithUTF8String: tag]];
     }
     
-    void hz_ads_incentivized_set_user_identifier(const char *identifier) {
-        NSString *userID = [NSString stringWithUTF8String:identifier];
-        if ([userID isEqualToString:@""]) {
-            userID = nil;
-        }
-        return [HZIncentivizedAd setUserIdentifier: userID];
-    }
-    
     void hz_ads_show_banner(const char *position, const char *tag) {
         if (!HZCurrentBannerAd) {
             HZBannerPosition pos = HZBannerPositionBottom;
