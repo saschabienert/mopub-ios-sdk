@@ -39,6 +39,14 @@
  */
 + (BOOL)isAvailableForTag:(NSString *)tag auctionType:(HZAuctionType)auctionType;
 
+/**
+ *  (Optional) As a layer of added security, you can specify an identifier for the user. You can opt to receive a server-to-server callback with the provided userIdentifier.
+ *
+ *  @param userIdentifier Any unique identifier, like a username, email, or ID that your server-side database uses.
+ */
++ (void) setUserIdentifier: (NSString *) userIdentifier;
+
+
 + (void) setCreativeID: (int) creativeID;
 
 @end
