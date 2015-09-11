@@ -13,6 +13,7 @@
 #import "HZDictionaryUtils.h"
 #import "HZLog.h"
 #import "HeyzapMediation.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZChartboostAdapter()
 
@@ -115,10 +116,8 @@ NSString * const kHZCBLocationDefault = @"Default";
     }
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
-    
     switch (creativeType) {
         case HZCreativeTypeStatic:
             [HZChartboost showInterstitial:kHZCBLocationDefault];

@@ -14,6 +14,7 @@
 #import "HZiAdBannerAdapter.h"
 #import "HeyzapMediation.h"
 #import "HZDevice.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZiAdAdapter()<ADInterstitialAdDelegate>
 
@@ -84,9 +85,7 @@
     return [self.interstitialAd isLoaded];
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
-    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
-    
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
     BOOL success = NO;
     
     if ([options.viewController respondsToSelector:@selector(requestInterstitialAdPresentation)]) {

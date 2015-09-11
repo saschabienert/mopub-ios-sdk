@@ -13,10 +13,7 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HeyzapAds.h"
-
-@interface HZAbstractHeyzapAdapter()
-
-@end
+#import "HZBaseAdapter_Internal.h"
 
 @implementation HZAbstractHeyzapAdapter
 
@@ -86,10 +83,8 @@
     }
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
-
     const HZAuctionType auctionType = [self auctionType];
     switch (creativeType) {
         case HZCreativeTypeStatic: {

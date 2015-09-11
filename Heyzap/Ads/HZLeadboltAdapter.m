@@ -11,6 +11,7 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZLeadboltAdapter()
 
@@ -148,10 +149,8 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     }
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
-    
     HZDLog(@"Requesting that Leadbolt show an ad of type: %@",NSStringFromCreativeType(creativeType));
     switch (creativeType) {
         case HZCreativeTypeStatic: {

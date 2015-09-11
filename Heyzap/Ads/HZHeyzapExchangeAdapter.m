@@ -20,6 +20,7 @@
 #import "HZSKVASTViewController.h"
 #import "HZHeyzapExchangeClient.h"
 #import "HZHeyzapExchangeBannerAdapter.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZHeyzapExchangeAdapter()<HZHeyzapExchangeClientDelegate>
 
@@ -115,10 +116,8 @@
     return NO;
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
-    
     HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
     if(!exchangeClient || exchangeClient.state != HZHeyzapExchangeClientStateReady){
         HZELog(@"HeyzapExchangeAdapter: No ad available for creativeType=%@", NSStringFromCreativeType(creativeType));

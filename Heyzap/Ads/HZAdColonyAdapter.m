@@ -12,6 +12,7 @@
 #import "HZDictionaryUtils.h"
 #import "HeyzapAds.h"
 #import "HeyzapMediation.h"
+#import "HZBaseAdapter_Internal.h"
 
 #import <UIKit/UIKit.h>
 
@@ -142,10 +143,8 @@
     // AdColony auto-prefetches
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
-    
     if (creativeType == HZCreativeTypeIncentivized) {
         [self.delegate adapterWillPlayAudio:self];
         [HZAdColony playVideoAdForZone:self.incentivizedZoneID

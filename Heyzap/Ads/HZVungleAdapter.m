@@ -13,6 +13,7 @@
 #import "HZVungleSDK.h"
 #import "HZUtils.h"
 #import "HeyzapMediation.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZVungleAdapter() <HZVungleSDKDelegate>
 
@@ -121,10 +122,8 @@
     self.lastError = nil;
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
-    
     // setup options
     NSMutableDictionary *vungleOptions = [[NSMutableDictionary alloc] init];
     

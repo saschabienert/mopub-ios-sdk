@@ -22,6 +22,7 @@
 
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
+#import "HZBaseAdapter_Internal.h"
 
 /**
  *  AppLovin's SDK is split between using (singletons+class methods) vs instances. Inexplicably, the former group is only available when you store the SDK Key in your info.plist file, so we need to use the instance methods.
@@ -152,10 +153,8 @@
     }
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
-    
     if (creativeType == HZCreativeTypeIncentivized) {
         
         if (self.currentIncentivizedAd && [self.currentIncentivizedAd isReadyForDisplay]) {

@@ -37,40 +37,19 @@
 
 @end
 
-#define SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType) do { \
-    if (![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner) { \
-        [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an unsupported creativeType: %@", [[self class] humanizedName], NSStringFromCreativeType(creativeType)]}]];\
-        return;\
-    }\
-} while(0)
-
-
 /**
  *  The (mostly abstract) superclass for adapters.
  */
 @interface HZBaseAdapter : NSObject
 
-/**
- *  These properties exist for subclasses to use. Other callers must use `lastErrorForAdType:` and `clearErrorForAdType:`.
- */
-@property (nonatomic, strong) NSError *lastStaticError;
-@property (nonatomic, strong) NSError *lastIncentivizedError;
-@property (nonatomic, strong) NSError *lastVideoError;
-
 @property (nonatomic, weak) id<HZMediationAdapterDelegate>delegate;
 
 /**
- *  The credentials should be set on adapters immediately after calling sharedAdapter. Subclasses should ignore attempts to call this method if their credentials have already been set.
+ *  The credentials should be set on adapters immediately after calling sharedAdapter. Subclasses should ignore attempts to call this property's setter method if their credentials have already been set.
  */
 @property (nonatomic, strong) NSDictionary *credentials;
 
-/**
- *  Do not call this method directly. Subclasses should implement this method to read their credentials dictionary (`self.credentials`) into properties. The default implementation of this method does nothing, so can be left unimplemented for networks like iAds that don't have credentials.
- */
-- (void)loadCredentials;
-
 @property (nonatomic, strong) HZAdapterDelegate *forwardingDelegate;
-
 
 
 + (instancetype)sharedAdapter;
@@ -83,7 +62,7 @@
 - (void) setLatestMediationScore:(NSNumber *)score forCreativeType:(HZCreativeType)creativeType;
 
 /**
- *  The adapter should show an ad for the given ad type.
+ *  The adapter should show an ad for the given ad type. Don't call this method unless you've called `hasAdForCreativeType:` and it returned `YES`.
  *
  *  @param creativeType The type of ad (video, incentivized, static) to show
  *  @param options Options to configure showing the ad
@@ -99,7 +78,7 @@
 /**
  *  The version of the SDK, if available.
  *
- *  @return The version string, or `nil` if it wasn't available.
+ *  @return The version string, or `nil` if it isn't available.
  */
 + (NSString *)sdkVersion;
 
@@ -133,7 +112,7 @@
 /**
  *  Its possible this should be handled internally by the adapters, like when they fetch...
  *
- *  @param adType The type of ad to clear the error for.
+ *  @param creativeType The type of ad to clear the error for.
  */
 - (void)clearErrorForCreativeType:(HZCreativeType)creativeType;
 

@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZBaseAdapter.h"
+#import "HZBaseAdapter_Internal.h"
 #import "HZVungleAdapter.h"
 #import "HZChartboostAdapter.h"
 #import "HZMediationConstants.h"
@@ -31,6 +31,13 @@
 @implementation HZBaseAdapter
 
 #define ABSTRACT_METHOD_ERROR() @throw [NSException exceptionWithName:@"AbstractMethodException" reason:@"Subclasses should override this method" userInfo:nil];
+
+#define SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVE_TYPE(creativeType) do { \
+    if (![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner) { \
+        [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an unsupported creativeType: %@", [[self class] humanizedName], NSStringFromCreativeType(creativeType)]}]];\
+        return;\
+    }\
+} while(0)
 
 NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
@@ -61,7 +68,6 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
-
 + (NSString *)humanizedName {
     ABSTRACT_METHOD_ERROR();
 }
@@ -87,6 +93,12 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 }
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+{
+    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVE_TYPE(creativeType);
+    [self internalShowAdForCreativeType:creativeType options:options];
+}
+
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
     ABSTRACT_METHOD_ERROR();
 }

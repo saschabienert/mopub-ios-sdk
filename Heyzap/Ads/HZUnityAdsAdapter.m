@@ -11,6 +11,7 @@
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
 #import "HeyzapMediation.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZUnityAdsAdapter() <HZUnityAdsDelegate>
 
@@ -143,10 +144,8 @@ NSString * const kHZNetworkName = @"mobile";
     // UnityAds auto-prefetches
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
-    
     [[HZUnityAds sharedInstance] setViewController:options.viewController];
     if (creativeType == HZCreativeTypeIncentivized) {
         self.isShowingIncentivized = YES;
