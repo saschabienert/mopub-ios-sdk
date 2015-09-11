@@ -9,7 +9,7 @@
 #import "HZBaseAdapter.h"
 
 /**
- *  Methods that should only be used internally by HZBaseAdapter and it's subclasses are declared here.
+ *  Methods & properties that should only be used internally by HZBaseAdapter and it's subclasses are declared here.
  */
 @interface HZBaseAdapter()
 
