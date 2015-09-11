@@ -285,17 +285,22 @@ static BOOL hzAdsIsEnabled = NO;
 + (void)postNotificationName:(NSString *const)notificationName adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
     [HZAdsManager postNotificationName:notificationName adUnit:adUnit auctionType:auctionType userInfo:nil];
 }
-
 + (void)postNotificationName:(NSString *const)notificationName adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType userInfo:(NSDictionary *)userInfo {
     HZAdInfo *const info = [[HZAdInfo alloc] initWithAdUnit:adUnit auctionType:auctionType];
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName
-                                                        object:info
-                                                      userInfo:userInfo];
+    [HZAdsManager postNotificationName:notificationName adInfo:info userInfo:userInfo];
 }
 
 + (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider {
+    [HZAdsManager postNotificationName:notificationName infoProvider:infoProvider userInfo:nil];
+}
++ (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider userInfo:(NSDictionary *)userInfo {
+    [HZAdsManager postNotificationName:notificationName adInfo:[[HZAdInfo alloc] initWithProvider:infoProvider] userInfo:userInfo];
+}
+
++ (void)postNotificationName:(NSString *const)notificationName adInfo:(HZAdInfo *)adInfo userInfo:(NSDictionary *)userInfo {
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationName
-                                                        object:[[HZAdInfo alloc] initWithProvider:infoProvider]];
+                                                        object:adInfo
+                                                      userInfo:userInfo];
 }
 
 @end

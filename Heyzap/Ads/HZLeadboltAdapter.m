@@ -11,6 +11,7 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZLeadboltAdapter()
 
@@ -148,7 +149,7 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     }
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
     HZDLog(@"Requesting that Leadbolt show an ad of type: %@",NSStringFromCreativeType(creativeType));
     switch (creativeType) {
@@ -164,7 +165,6 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
         }
         default: {
             // Unsupported
-            HZDLog(@"Can't show Leadbolt ad of unsupported type: %@",NSStringFromCreativeType(creativeType));
             break;
         }
     }

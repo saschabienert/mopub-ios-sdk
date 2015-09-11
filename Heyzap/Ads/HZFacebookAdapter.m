@@ -17,6 +17,7 @@
 #import "HZBannerAdOptions_Private.h"
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
@@ -116,12 +117,7 @@
     [self.interstitialAd loadAd];
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
-    if (creativeType != HZCreativeTypeStatic) {
-        //can only show interstitials
-        return;
-    }
-    
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
     [self.interstitialAd showAdFromRootViewController:options.viewController];
 }
 

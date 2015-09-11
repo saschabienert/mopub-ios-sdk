@@ -37,7 +37,7 @@
         if (aRequest.lastError != nil) {
             
             [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", aRequest.lastError]];
-            [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
+            [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request userInfo:@{NSUnderlyingErrorKey: aRequest.lastError}];
             
             if (completion) {
                 completion(nil, aRequest.lastError);
@@ -64,17 +64,18 @@
     }
     
     if (!validAd) {
-        [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
+        NSError *error;
+        if ([request.lastResponse objectForKey: @"impression_id"] != nil) {
+            error =  [NSError errorWithDomain: @"com.heyzap.sdk.ads.fetch" code: 4 userInfo: @{NSLocalizedDescriptionKey: @"Failed to fetch a valid ad."}];
+        } else {
+            error =  [NSError errorWithDomain: @"com.heyzap.sdk.ads.fetch" code: 5 userInfo: @{NSLocalizedDescriptionKey: @"No fill."}];
+        }
+        
+        [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", error]];
+        
+        [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request userInfo:@{NSUnderlyingErrorKey: error}];
         
         if (completion) {
-            NSError *error;
-            if ([request.lastResponse objectForKey: @"impression_id"] != nil) {
-                error =  [NSError errorWithDomain: @"com.heyzap.sdk.ads.fetch" code: 4 userInfo: @{NSLocalizedDescriptionKey: @"Failed to fetch a valid ad."}];
-            } else {
-                error =  [NSError errorWithDomain: @"com.heyzap.sdk.ads.fetch" code: 5 userInfo: @{NSLocalizedDescriptionKey: @"No fill."}];
-            }
-
-            [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", error]];
             completion(nil, error);
         }
         
@@ -94,10 +95,11 @@
         
         return;
     } else if ([ad isInstalled] && !request.shouldIgnoreAlreadyInstalledGame) {
+        NSError *error =  [NSError errorWithDomain: @"com.heyzap.sdk.ads.fetch" code: 5 userInfo: @{NSLocalizedDescriptionKey: @"No fill."}];
+        [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", error]];
         
+        [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request userInfo:@{NSUnderlyingErrorKey: error}];
         if (completion) {
-            NSError *error =  [NSError errorWithDomain: @"com.heyzap.sdk.ads.fetch" code: 5 userInfo: @{NSLocalizedDescriptionKey: @"No fill."}];
-            [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", error]];
             completion(nil, error);
         }
         
@@ -117,11 +119,11 @@
             }
             
         } else {
-            [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request];
+            NSError *error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.fetch" code: 8 userInfo: @{NSLocalizedDescriptionKey: @"Failed to download assets."}];
+            [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", error]];
             
+            [HZAdsManager postNotificationName:kHeyzapDidFailToReceiveAdNotification infoProvider:request userInfo:@{NSUnderlyingErrorKey: error}];
             if (completion) {
-                NSError *error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.fetch" code: 8 userInfo: @{NSLocalizedDescriptionKey: @"Failed to download assets."}];
-                [HZLog debug: [NSString stringWithFormat: @"(FETCH) Error: %@", error]];
                 completion(nil, error);
             }
         }
