@@ -194,18 +194,19 @@
     if ([self correctAuctionType:notification]) {
         HZAdInfo *info = notification.object;
         HZAdType type = hzAdTypeFromString(info.adUnit);
+        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:[notification userInfo]];
         
         switch (type) {
             case HZAdTypeInterstitial: {
-                self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
+                self.lastStaticError = error;
                 break;
             }
             case HZAdTypeIncentivized: {
-                self.lastIncentivizedError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
+                self.lastIncentivizedError = error;
                 break;
             }
             case HZAdTypeVideo: {
-                self.lastVideoError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
+                self.lastVideoError = error;
                 break;
             }
             case HZAdTypeBanner: {
@@ -214,6 +215,7 @@
             }
         }
         
+        HZELog(@"The %@ network failed to fetch an ad. Error: %@", [self name], error);
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
     }
 }
