@@ -117,13 +117,6 @@
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(self.currentlyPlayingClient != nil){
-        HZELog(@"HeyzapExchangeAdapter: Already showing an ad.");
-        
-        [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an ad, but is already showing one.", [[self class] humanizedName]]}]];
-        return;
-    }
-    
     SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
     
     HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
