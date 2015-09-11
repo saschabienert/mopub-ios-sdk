@@ -319,7 +319,7 @@
             }
         };
         
-        [self fetchWithOptions:fetchOptions notifyDelegate:NO];
+        [self fetchWithOptions:fetchOptions notifyDelegate:YES];
     }
 }
 
