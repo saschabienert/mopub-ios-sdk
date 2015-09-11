@@ -117,10 +117,7 @@
 }
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
-    if (creativeType != HZCreativeTypeStatic) {
-        //can only show interstitials
-        return;
-    }
+    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
     
     [self.interstitialAd showAdFromRootViewController:options.viewController];
 }

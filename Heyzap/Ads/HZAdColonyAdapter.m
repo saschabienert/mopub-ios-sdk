@@ -144,7 +144,7 @@
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(![self supportsCreativeType:creativeType]) return;
+    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
     
     if (creativeType == HZCreativeTypeIncentivized) {
         [self.delegate adapterWillPlayAudio:self];

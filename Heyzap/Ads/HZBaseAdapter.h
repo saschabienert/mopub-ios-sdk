@@ -37,6 +37,14 @@
 
 @end
 
+#define SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType) do { \
+    if (![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner) { \
+        [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an unsupported creativeType: %@", [[self class] humanizedName], NSStringFromCreativeType(creativeType)]}]];\
+        return;\
+    }\
+} while(0)
+
+
 /**
  *  The (mostly abstract) superclass for adapters.
  */

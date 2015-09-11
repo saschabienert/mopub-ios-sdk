@@ -150,6 +150,8 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
+    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
+    
     HZDLog(@"Requesting that Leadbolt show an ad of type: %@",NSStringFromCreativeType(creativeType));
     switch (creativeType) {
         case HZCreativeTypeStatic: {
@@ -164,7 +166,6 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
         }
         default: {
             // Unsupported
-            HZDLog(@"Can't show Leadbolt ad of unsupported type: %@",NSStringFromCreativeType(creativeType));
             break;
         }
     }

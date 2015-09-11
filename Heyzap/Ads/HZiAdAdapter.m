@@ -85,9 +85,7 @@
 }
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
-    if (creativeType != HZCreativeTypeStatic) {
-        return;
-    }
+    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
     
     BOOL success = NO;
     

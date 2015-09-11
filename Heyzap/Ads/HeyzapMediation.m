@@ -422,11 +422,6 @@
     
     self.currentShownAd = [[HZMediationCurrentShownAd alloc] initWithEventReporter:eventReporter adapter:[chosenAdapterWithScore adapter] options:options];
     
-    // Notify dependent objects of a show
-    if (adType == HZAdTypeInterstitial && [chosenAdapterWithScore creativeType] == HZCreativeTypeVideo) {
-        [self.availabilityChecker didShowInterstitialVideo];
-    }
-    
     [self.mediateRequester refreshMediate];
     
     // Show ad
@@ -529,6 +524,13 @@
     
     [currentAd.eventReporter reportImpressionForAdapter:adapter];
     [self.segmentationController recordImpressionWithCreativeType:currentAd.eventReporter.creativeType tag:currentAd.tag adapter:adapter];
+    
+    
+    // Notify dependent objects of a show
+    if (currentAd.showOptions.requestingAdType == HZAdTypeInterstitial && currentAd.eventReporter.creativeType == HZCreativeTypeVideo) {
+        [self.availabilityChecker didShowInterstitialVideo];
+    }
+    
     if (currentAd.showOptions.completion) {
         currentAd.showOptions.completion(YES, nil);
     }

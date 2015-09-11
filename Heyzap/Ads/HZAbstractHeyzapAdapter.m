@@ -88,7 +88,7 @@
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(![self supportsCreativeType:creativeType]) return;
+    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
 
     const HZAuctionType auctionType = [self auctionType];
     switch (creativeType) {

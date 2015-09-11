@@ -119,14 +119,17 @@
 {
     if(self.currentlyPlayingClient != nil){
         HZELog(@"HeyzapExchangeAdapter: Already showing an ad.");
+        
+        [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an ad, but is already showing one.", [[self class] humanizedName]]}]];
         return;
     }
     
-    if(![self supportsCreativeType:creativeType]) return;
+    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
     
     HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
     if(!exchangeClient || exchangeClient.state != HZHeyzapExchangeClientStateReady){
         HZELog(@"HeyzapExchangeAdapter: No ad available for creativeType=%@", NSStringFromCreativeType(creativeType));
+        [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an ad of creativeType: %@, but it doesn't have one.", [[self class] humanizedName], NSStringFromCreativeType(creativeType)]}]];
         return;
     }
     

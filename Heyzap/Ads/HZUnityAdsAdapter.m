@@ -145,7 +145,7 @@ NSString * const kHZNetworkName = @"mobile";
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(![self supportsCreativeType:creativeType]) return;
+    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVETYPE(creativeType);
     
     [[HZUnityAds sharedInstance] setViewController:options.viewController];
     if (creativeType == HZCreativeTypeIncentivized) {
