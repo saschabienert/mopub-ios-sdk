@@ -261,13 +261,7 @@
 
 #pragma mark - Fetching
 
-// Default to notifying the delegate
 - (void) fetchWithOptions:(HZFetchOptions *)fetchOptions
-{
-    [self fetchWithOptions:fetchOptions notifyDelegate:YES];
-}
-
-- (void) fetchWithOptions:(HZFetchOptions *)fetchOptions notifyDelegate:(BOOL)notifyDelegate
 {
     HZParameterAssert(fetchOptions);
     HZParameterAssert(fetchOptions.requestingAdType);
@@ -276,7 +270,7 @@
     // This feels pretty hacky..
     if (self.startStatus == HZMediationStartStatusNotStarted) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self fetchWithOptions:fetchOptions notifyDelegate:notifyDelegate];
+            [self fetchWithOptions:fetchOptions];
         });
         return;
     }
@@ -296,7 +290,7 @@
     
     for (NSNumber * creativeTypeToFetch in fetchOptions.creativeTypesToFetch) {
         HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeToFetch);
-        [self.loadManager fetchCreativeType:creativeType fetchOptions:fetchOptions optionalForcedNetwork:optionalForcedNetwork notifyDelegate:notifyDelegate];
+        [self.loadManager fetchCreativeType:creativeType fetchOptions:fetchOptions optionalForcedNetwork:optionalForcedNetwork notifyDelegate:YES];
     }
 }
 
@@ -319,7 +313,7 @@
             }
         };
         
-        [self fetchWithOptions:fetchOptions notifyDelegate:YES];
+        [self fetchWithOptions:fetchOptions];
     }
 }
 
