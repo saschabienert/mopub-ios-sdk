@@ -95,14 +95,8 @@ typedef enum {
         _activityIndicator.fadeBackground = YES;
         [self.view addSubview:_activityIndicator];
         
-        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(UIApplicationDidBecomeActive:) name: UIApplicationDidBecomeActiveNotification object: nil];
-        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(UIApplicationWillResignActive:) name: UIApplicationWillResignActiveNotification object: nil];
     }
     return self;
-}
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 #pragma mark - Load methods
@@ -209,6 +203,10 @@ typedef enum {
     [super viewDidAppear:animated];
     isViewOnScreen=YES;
     self.didClick = NO;
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(UIApplicationDidBecomeActive:) name: UIApplicationDidBecomeActiveNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(UIApplicationWillResignActive:) name: UIApplicationWillResignActiveNotification object: nil];
+
     [self handleResumeState];
 }
 
@@ -221,27 +219,33 @@ typedef enum {
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    isViewOnScreen = NO;
     [super viewWillDisappear:animated];
     [[UIApplication sharedApplication] setStatusBarHidden:statusBarHiddenOutsideOfVAST withAnimation:UIStatusBarAnimationNone];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 
 #pragma mark - UIApplication Notifications
 
 - (void) UIApplicationDidBecomeActive: (id) notification {
-    
-    if (self.didClick) {
-        [self.activityIndicator stopAnimating];
-        self.didClick = NO;
+    if (isViewOnScreen) {
+        if (self.didClick) {
+            [self.activityIndicator stopAnimating];
+            self.didClick = NO;
+        }
+        
+        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"UIApplicationDidBecomeActive"];
+        [self handleResumeState];
     }
-    
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"UIApplicationDidBecomeActive"];
-    [self handleResumeState];
 }
 
 - (void) UIApplicationWillResignActive:(id)notification {
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"UIApplicationWillResignActive"];
-    [self handlePauseState];
+    if (isViewOnScreen) {
+        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"UIApplicationWillResignActive"];
+        [self handlePauseState];
+    }
 }
 
 
