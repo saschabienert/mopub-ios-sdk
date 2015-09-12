@@ -12,7 +12,7 @@
 @interface HZLabeledActivityIndicator : UIView
 
 @property (nonatomic) BOOL fadeBackground;
-@property (nonatomic) BOOL enableInteraction; // allow users to interact with the background view
+@property (nonatomic) BOOL enableInteractionWithSuperview; // whether or not to allow users to interact with the superview while this indicator is showing
 @property (nonatomic) NSString *labelText;
 @property (nonatomic, readonly) HZHZActivityIndicatorView *activityIndicatorView;
 

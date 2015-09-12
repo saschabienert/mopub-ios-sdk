@@ -13,6 +13,7 @@
 
 @property (nonatomic) UILabel *labelView;
 @property (nonatomic) UIView *backgroundBox;
+@property (nonatomic) BOOL superviewInteractionWasEnabled;
 
 - (HZHZActivityIndicatorView *) createActivityIndicatorView;
 - (UIView *) createBackgroundBox;
@@ -67,6 +68,8 @@ UIViewAutoresizing const kHZActivityIndicatorDefaultAutoResizingMask = UIViewAut
         
         _labelView = [self createLabelView];
         [parent addSubview:_labelView];
+        
+        _enableInteractionWithSuperview = NO;
     }
     
     return self;
@@ -172,8 +175,9 @@ UIViewAutoresizing const kHZActivityIndicatorDefaultAutoResizingMask = UIViewAut
 #pragma mark - Animate
 
 - (void)startAnimating {
-    if (!self.enableInteraction) {
+    if (!self.enableInteractionWithSuperview) {
         self.userInteractionEnabled = NO;
+        self.superviewInteractionWasEnabled = self.superview.userInteractionEnabled;
         [self.superview setUserInteractionEnabled:NO];
     }
     
@@ -184,9 +188,9 @@ UIViewAutoresizing const kHZActivityIndicatorDefaultAutoResizingMask = UIViewAut
 - (void)stopAnimating {
     self.hidden = YES;
     [self.activityIndicatorView stopAnimating];
-    if (!self.enableInteraction) {
+    if (!self.enableInteractionWithSuperview) {
         self.userInteractionEnabled = YES;
-        [self.superview setUserInteractionEnabled:YES];
+        [self.superview setUserInteractionEnabled:self.superviewInteractionWasEnabled];
     }
 }
 
