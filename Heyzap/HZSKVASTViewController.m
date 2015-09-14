@@ -35,7 +35,7 @@ typedef enum {
     VASTFirstQuartile,
     VASTSecondQuartile,
     VASTThirdQuartile,
-    VASTFourtQuartile,
+    VASTFourthQuartile,
 } CurrentVASTQuartile;
 
 @interface HZSKVASTViewController() <HZAdPopupActionDelegate>
@@ -67,6 +67,7 @@ typedef enum {
 @property(nonatomic, strong) HZVideoView *videoView;
 @property(nonatomic, strong) HZVASTVideoSettings *videoSettings;
 @property(nonatomic, strong) HZVASTVideoCache *videoCache;
+@property(nonatomic) BOOL didClick;
 
 @end
 
@@ -88,6 +89,12 @@ typedef enum {
         _videoView = [[HZVideoView alloc] initWithFrame:CGRectZero];
         _videoView.actionDelegate = self;
         _videoView.player.shouldAutoplay = NO;
+        
+        _activityIndicator = [[HZLabeledActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
+        _activityIndicator.labelText = @"Please Wait...";
+        _activityIndicator.fadeBackground = YES;
+        [self.view addSubview:_activityIndicator];
+        
     }
     return self;
 }
@@ -195,6 +202,10 @@ typedef enum {
 {
     [super viewDidAppear:animated];
     isViewOnScreen=YES;
+    self.didClick = NO;
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(UIApplicationDidBecomeActive:) name: UIApplicationDidBecomeActiveNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(UIApplicationWillResignActive:) name: UIApplicationWillResignActiveNotification object: nil];
 
     [self handleResumeState];
 }
@@ -208,17 +219,35 @@ typedef enum {
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    isViewOnScreen = NO;
     [super viewWillDisappear:animated];
     [[UIApplication sharedApplication] setStatusBarHidden:statusBarHiddenOutsideOfVAST withAnimation:UIStatusBarAnimationNone];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
-#pragma mark - App lifecycle
 
-- (void)applicationDidBecomeActive:(UIApplication *)application
-{
-    [HZSKLogger debug:@"VAST - View Controller" withMessage:@"applicationDidBecomeActive"];
-    [self handleResumeState];
+#pragma mark - UIApplication Notifications
+
+- (void) UIApplicationDidBecomeActive: (id) notification {
+    if (isViewOnScreen) {
+        if (self.didClick) {
+            [self.activityIndicator stopAnimating];
+            self.didClick = NO;
+        }
+        
+        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"UIApplicationDidBecomeActive"];
+        [self handleResumeState];
+    }
 }
+
+- (void) UIApplicationWillResignActive:(id)notification {
+    if (isViewOnScreen) {
+        [HZSKLogger debug:@"VAST - View Controller" withMessage:@"UIApplicationWillResignActive"];
+        [self handlePauseState];
+    }
+}
+
 
 #pragma mark - Orientation handling
 
@@ -305,7 +334,7 @@ typedef enum {
         case VASTThirdQuartile:
             if (currentPlayedPercentage>75.0) {
                 [self.eventProcessor trackEvent:VASTEventTrackThirdQuartile];
-                currentQuartile=VASTFourtQuartile;
+                currentQuartile=VASTFourthQuartile;
             }
             break;
         default:
@@ -412,6 +441,7 @@ typedef enum {
     [self.videoView play];
     
     hasPlayerStarted=YES;
+    isPlaying = YES;
     
     if (impressions) {
         [HZSKLogger debug:@"VAST - View Controller" withMessage:@"Sending Impressions requests"];
@@ -420,7 +450,6 @@ typedef enum {
     [self.eventProcessor trackEvent:VASTEventTrackStart];
 }
 
-// not used right now, but could be in the future if there's a reason to pause
 - (void)handlePauseState
 {
     @synchronized (self) {
@@ -476,6 +505,11 @@ typedef enum {
             [self.eventProcessor sendVASTUrlsWithId:clickTracking];
         }
         if ([self.delegate respondsToSelector:@selector(vastOpenBrowseWithUrl:)]) {
+            self.didClick = YES;
+            [self handlePauseState];
+            [self.view bringSubviewToFront:self.activityIndicator];
+            [self.activityIndicator startAnimating];
+            
             [self.delegate vastOpenBrowseWithUrl:self.clickThrough];
         }
     }

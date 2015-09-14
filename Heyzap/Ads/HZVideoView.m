@@ -182,7 +182,7 @@
  *  This method is called in order to automatically fade out video controls after a certain time period
  */
 - (void) animationTimerDidFire: (id) sender {
-    // fade out video controls after this timer fires, if they're still showing & we're using the new fading controls
+    // fade out video controls after this timer fires, unless they're no longer showing or we're not using fading controls
     if(!self.showingAllVideoControls || self.videoClickEnabled){
         return;
     }

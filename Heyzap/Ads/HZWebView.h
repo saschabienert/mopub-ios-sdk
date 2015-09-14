@@ -13,7 +13,6 @@
 @interface HZWebView : UIView<UIWebViewDelegate>
 
 @property (nonatomic, weak) id<HZAdPopupActionDelegate> actionDelegate;
-@property (nonatomic) BOOL isLoading;
 
 - (void) setHTML: (NSString *) html;
 
