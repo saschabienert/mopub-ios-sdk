@@ -24,20 +24,13 @@
 #import "HZLeadboltAdapter.h"
 
 @interface HZBaseAdapter()
-//key: HZAdType value: NSNumber *
+//key: HZCreativeType value: NSNumber *
 @property (nonatomic, strong) NSMutableDictionary *latestMediationScores;
 @end
 
 @implementation HZBaseAdapter
 
 #define ABSTRACT_METHOD_ERROR() @throw [NSException exceptionWithName:@"AbstractMethodException" reason:@"Subclasses should override this method" userInfo:nil];
-
-#define SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVE_TYPE(creativeType) do { \
-    if (![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner) { \
-        [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an unsupported creativeType: %@", [[self class] humanizedName], NSStringFromCreativeType(creativeType)]}]];\
-        return;\
-    }\
-} while(0)
 
 NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
@@ -94,7 +87,12 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    SEND_SHOW_ERROR_IF_UNSUPPORTED_CREATIVE_TYPE(creativeType);
+    if (![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner) {
+        NSError *const error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an unsupported creativeType: %@", [[self class] humanizedName], NSStringFromCreativeType(creativeType)]}];
+        [self.delegate adapterDidFailToShowAd:self error:error];
+        return;
+    }
+    
     [self internalShowAdForCreativeType:creativeType options:options];
 }
 
