@@ -297,18 +297,22 @@ extern "C" {
         return [HeyzapAds isNetworkInitialized:HZNetworkChartboost];
     }
     
-    void hz_fetch_chartboost_for_location(const char *location) {
-        NSString *nsLocation = [NSString stringWithUTF8String:location];
-        
+    // Calling hz_fetch_chartboost_for_location recursively won't keep the `const char *` in memory
+    // Since I want to call it recursively, I immediately convert to an `NSString *` in `hz_fetch_chartboost_for_location`
+    void hz_fetch_chartboost_for_location_objc(NSString *location) {
         if (!hz_chartboost_enabled()) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                hz_fetch_chartboost_for_location(location);
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                hz_fetch_chartboost_for_location_objc(location);
             });
             return;
         }
         
-        
-        [HZUnityAdapterChartboostProxy cacheInterstitial:nsLocation];
+        [HZUnityAdapterChartboostProxy cacheInterstitial:location];
+    }
+    
+    void hz_fetch_chartboost_for_location(const char *location) {
+        NSString *nsLocation = [NSString stringWithUTF8String:location];
+        hz_fetch_chartboost_for_location_objc(nsLocation);
     }
     
     bool hz_chartboost_is_available_for_location(const char *location) {
