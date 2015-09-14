@@ -139,7 +139,7 @@
 }
 
 - (BOOL) onClick {
-    if (self.sentClick) return false;
+    if (self.sentClick) return NO;
     
     NSMutableDictionary *params = [self paramsForEventCallback];
     
@@ -156,7 +156,7 @@
 }
 
 - (BOOL) onImpression {
-    if (self.sentImpression) return false;
+    if (self.sentImpression) return NO;
 
     
     NSMutableDictionary *params = [self paramsForEventCallback];
