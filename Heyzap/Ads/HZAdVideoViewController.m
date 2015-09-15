@@ -187,7 +187,12 @@
 
 #pragma mark - Autorotation
 
-- (NSUInteger)supportedInterfaceOrientations {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
+- (NSUInteger)supportedInterfaceOrientations
+#else
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+#endif
+{
     if ([self applicationSupportsLandscape]) {
         return UIInterfaceOrientationMaskLandscape;
     } else {

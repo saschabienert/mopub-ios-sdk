@@ -161,7 +161,11 @@
     return _preferredOrientation;
 }
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
 - (NSUInteger)supportedInterfaceOrientations
+#else
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+#endif
 {
     [HZSKLogger debug:@"MRAID - ModalViewController" withMessage:[NSString stringWithFormat: @"%@ %@", [self.class description], NSStringFromSelector(_cmd)]];
     if (_orientationProperties.forceOrientation == HZMRAIDForceOrientationPortrait) {
