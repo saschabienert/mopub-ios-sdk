@@ -107,6 +107,11 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return [[self class] name];
 }
 
+- (NSString *)humanizedName
+{
+    return [[self class] humanizedName];
+}
+
 - (BOOL)supportsCreativeType:(HZCreativeType)creativeType
 {
     return [self supportedCreativeTypes] & creativeType;
