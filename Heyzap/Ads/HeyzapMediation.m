@@ -366,6 +366,12 @@
         return;
     }
     
+    if (self.currentShownAd.isStale) {
+        const NSTimeInterval timeSinceShown = [[NSDate date] timeIntervalSinceDate:self.currentShownAd.shownDate];
+        HZELog(@"WARNING: It has been %g seconds since Mediation requested an ad be shown from %@, but we've not received an \"ad dismissed\" callback from that network. After %llu seconds we assume an ad is no longer showing for the purposes of allowing a new ad to show, but this means your code will not have received a \"dismiss\" callback. This indicates there is either a bug in mediation, the 3rd party network is not sending callbacks, or your code is interfering with how ads are shown. Please report this issue to support@heyzap.com for investigation.\n\n\n",timeSinceShown, self.currentShownAd.adapter.humanizedName, adStalenessTimeout);
+        self.currentShownAd = nil;
+    }
+    
     // Getting /mediate and sending failure message can be part of the
     // TODO: tell the server if an outdated or cached mediate is being used. Potentially include the outdated time diff.
     NSDictionary *const latestMediate = [self.mediateRequester latestMediate];
@@ -460,7 +466,7 @@
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad when the SDK is paused."}];
     } else if ([[[self settings] disabledTags] containsObject:tag]) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad with a disabled tag"}];
-    } else if (self.currentShownAd) {
+    } else if (self.currentShownAd && !self.currentShownAd.isStale) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"An ad is already shown or attempting to be shown"}];
     } else if ([[self settings] IAPAdsTimeOut] && adType != HZAdTypeIncentivized) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Ads are disabled because of a recent in-app-purchase."}];
@@ -515,6 +521,8 @@
 
 #pragma mark - Adapter Callbacks
 
+const unsigned long long adStalenessTimeout = 15;
+
 - (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
     NSLog(@"HeyzapMediation: ad shown from %@",[adapter name]);
     [self sendNetworkCallback: HZNetworkCallbackShow forNetwork: [adapter name]];
@@ -533,6 +541,14 @@
     } else {
         HZELog(@"The network %@ reported that it showed an ad, but we weren't expecting this.",adapter.name);
     }
+    
+    __weak __typeof(&*currentAd)weakCurrentAd = currentAd;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(adStalenessTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (weakCurrentAd) {
+            HZILog(@"Marking the ad as stale");
+            [weakCurrentAd setStale];
+        }
+    });
 }
 
 /**
