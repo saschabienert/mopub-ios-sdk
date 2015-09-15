@@ -175,7 +175,9 @@
         NSURLRequest* trackingURLrequest = [ NSURLRequest requestWithURL:trackingURL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:1.0];
         NSOperationQueue *senderQueue = [[NSOperationQueue alloc] init];
         [HZSKLogger debug:@"VAST - Event Processor" withMessage:[NSString stringWithFormat:@"Event processor sending request to url: %@", [trackingURL absoluteString]]];
-        [NSURLConnection sendAsynchronousRequest:trackingURLrequest queue:senderQueue completionHandler:nil];  // Send the request only, no response or errors
+        [NSURLConnection sendAsynchronousRequest:trackingURLrequest queue:senderQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError * connectionError) {
+            
+        }];  // Send the request only, no response or errors
     });
 }
 
