@@ -20,7 +20,6 @@
 @property (nonatomic, strong) NSString *incentivizedZoneID;
 @property (nonatomic) BOOL isShowingIncentivized;
 @property (nonatomic) BOOL didCompleteIncentivized;
-@property (nonatomic) BOOL loggingEnabled;
 
 @end
 
@@ -62,15 +61,8 @@
                                                   dict:self.credentials];
 }
 
-
-- (void) enableLogging:(BOOL)enabled {
-    self.loggingEnabled = enabled;
-    if (self.isInitialized) {
-        [self toggleUnityLogging];
-    }
-}
-- (void) toggleUnityLogging {
-    [[HZUnityAds sharedInstance] setDebugMode:self.loggingEnabled];
+- (void) toggleLogging {
+    [[HZUnityAds sharedInstance] setDebugMode:[self isLoggingEnabled]];
 }
 
 #pragma mark - Adapter Protocol
@@ -100,7 +92,7 @@ NSString * const kHZNetworkName = @"mobile";
 - (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appID, @"game_id");
     
-    [self toggleUnityLogging];
+    [self toggleLogging];
     
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     

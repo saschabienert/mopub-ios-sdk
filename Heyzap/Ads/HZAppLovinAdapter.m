@@ -45,8 +45,6 @@
 
 @property (nonatomic, strong) HZALInterstitialAd *currentInterstitialAd;
 
-@property (nonatomic) BOOL loggingEnabled;
-
 @end
 
 @implementation HZAppLovinAdapter
@@ -67,10 +65,6 @@
 
 - (void)loadCredentials {
     self.sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:self.credentials];
-}
-
-- (void) enableLogging:(BOOL)enabled {
-    self.loggingEnabled = enabled;
 }
 
 #pragma mark - Adapter Protocol
@@ -98,12 +92,14 @@
     return [HZALSdk version];
 }
 
+- (void) toggleLogging { HZDLog(@"Logs for %@ can only be enabled/disabled before initialization.", [[self class] humanizedName]); }
+
 - (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.sdkKey, @"sdk_key");
     
     HZDLog(@"Initializing AppLovin with SDK Key: %@",self.sdkKey);
     HZALSdkSettings *settings = [HZALSdkSettings alloc];
-    settings.isVerboseLogging = self.loggingEnabled;
+    settings.isVerboseLogging = [self isLoggingEnabled];
     self.sdk = [HZALSdk sharedWithKey:self.sdkKey settings:settings];
     [self.sdk initializeSdk];
     

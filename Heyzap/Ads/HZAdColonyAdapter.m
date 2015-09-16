@@ -21,7 +21,6 @@
 @property (nonatomic, strong) NSString *appID;
 @property (nonatomic, strong) NSString *interstitialZoneID;
 @property (nonatomic, strong) NSString *incentivizedZoneID;
-@property (nonatomic) BOOL loggingEnabled;
 
 @end
 
@@ -55,10 +54,6 @@
                                                          dict:self.credentials];
 }
 
-- (void) enableLogging:(BOOL)enabled {
-    self.loggingEnabled = enabled;
-}
-
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -81,6 +76,8 @@
 
 }
 
+- (void) toggleLogging { HZDLog(@"Logs for %@ can only be enabled/disabled before initialization.", [[self class] humanizedName]); }
+
 - (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appID, @"app_id");
     
@@ -97,7 +94,7 @@
     [HZAdColony configureWithAppID:self.appID
                            zoneIDs:zoneIDs
                           delegate:self.forwardingDelegate
-                           logging:self.loggingEnabled];
+                           logging:[self isLoggingEnabled]];
     return nil;
 }
 

@@ -125,10 +125,19 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return nil;
 }
 
+#pragma mark - Logging
+
 - (void) loggingChanged:(NSNotification *) notification {
-    [self enableLogging:([HZLog isThirdPartyLoggingEnabled] ? YES : NO)];
+    if (self.isInitialized) {
+        [self toggleLogging];
+    }
 }
-- (void) enableLogging:(BOOL)enabled { }
+
+- (BOOL) isLoggingEnabled {
+    return ([HZLog isThirdPartyLoggingEnabled] ? YES : NO);
+}
+
+- (void) toggleLogging { }
 
 #pragma mark - Inferred methods
 

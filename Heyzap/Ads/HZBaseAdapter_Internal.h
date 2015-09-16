@@ -34,7 +34,8 @@
 - (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options;
 
 /**
- *  Subclasses can implement this method if they can turn logging on in the adapted SDK. Note this method may be called before the SDK is initialized or even before we check if the adapted SDK is available. The default implementation is empty.
+ *  Subclasses can implement this method if they can turn logging on in the adapted SDK. This method will only be called on subclasses if they are already initialized. The method `isLoggingEnabled` can be called in this method to see if logging is on or not. The default implementation is empty.
  */
-- (void) enableLogging:(BOOL)enabled;
+- (void) toggleLogging;
+- (BOOL) isLoggingEnabled;
 @end
