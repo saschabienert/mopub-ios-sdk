@@ -37,6 +37,10 @@ const NSTimeInterval maxStartDelay     = 300;
     return self;
 }
 
+- (instancetype)init NS_UNAVAILABLE {
+    return nil;
+}
+
 - (void)setRetryStartDelay:(NSTimeInterval)retryStartDelay {
     _retryStartDelay = MIN(retryStartDelay, maxStartDelay);
 }

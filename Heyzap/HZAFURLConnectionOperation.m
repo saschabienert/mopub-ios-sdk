@@ -205,6 +205,10 @@ static inline BOOL HZAFStateTransitionIsValid(HZAFOperationState fromState, HZAF
     return self;
 }
 
+- (instancetype)init NS_UNAVAILABLE {
+    return nil;
+}
+
 - (void)dealloc {
     if (_outputStream) {
         [_outputStream close];

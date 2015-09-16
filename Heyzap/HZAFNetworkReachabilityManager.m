@@ -126,6 +126,10 @@ static void HZAFNetworkReachabilityReleaseCallback(const void *info) {
     return _sharedManager;
 }
 
+- (instancetype)init NS_UNAVAILABLE {
+    return nil;
+}
+
 + (instancetype)managerForDomain:(NSString *)domain {
     SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, [domain UTF8String]);
 
