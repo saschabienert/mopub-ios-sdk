@@ -107,9 +107,8 @@
 
 - (void)didClickWithURL:(NSURL *)url {
     
-    if ([self.ad onClick]) {
-        [HZAdsManager postNotificationName:kHeyzapDidClickAdNotification infoProvider:self.ad];
-    }
+    [self.ad onClick];
+    [HZAdsManager postNotificationName:kHeyzapDidClickAdNotification infoProvider:self.ad];
     
     NSDictionary *queryDictionary = [HZUtils hzQueryDictionaryFromURL: url];
     
