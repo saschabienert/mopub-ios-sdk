@@ -98,7 +98,7 @@
     return [HZALSdk version];
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.sdkKey, @"sdk_key");
     
     HZDLog(@"Initializing AppLovin with SDK Key: %@",self.sdkKey);

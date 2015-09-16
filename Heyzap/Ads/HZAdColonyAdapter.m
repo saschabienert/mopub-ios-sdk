@@ -81,7 +81,7 @@
 
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appID, @"app_id");
     
     NSArray *const zoneIDs = ({

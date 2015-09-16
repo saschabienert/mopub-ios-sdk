@@ -59,7 +59,7 @@
 
 #pragma mark - Adapter Protocol
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     return nil;
 }
 

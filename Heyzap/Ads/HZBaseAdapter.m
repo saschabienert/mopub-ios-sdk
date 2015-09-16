@@ -63,6 +63,11 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 }
 
 - (NSError *)initializeSDK {
+    NSError *error = [self internalInitializeSDK];
+    _isInitialized = (error == nil);
+    return error;
+}
+- (NSError *)internalInitializeSDK {
     ABSTRACT_METHOD_ERROR();
 }
 

@@ -23,6 +23,7 @@
 @property (nonatomic) NSString *appID;
 @property (nonatomic, strong) NSError *lastError;
 @property (nonatomic) BOOL isShowingIncentivized;
+@property (nonatomic) BOOL loggingEnabled;
 
 @end
 
@@ -55,13 +56,22 @@
 }
 
 - (void) enableLogging:(BOOL)enabled {
-    [[HZVungleSDK sharedSDK] setLoggingEnabled:enabled];
+    self.loggingEnabled = enabled;
+    if (self.isInitialized) {
+        [self toggleVungleLogging];
+    }
+}
+
+- (void) toggleVungleLogging {
+    [[HZVungleSDK sharedSDK] setLoggingEnabled:self.loggingEnabled];
 }
 
 #pragma mark - Adapter Protocol
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appID, @"app_id");
+    
+    [self toggleVungleLogging];
     
     HZDLog(@"Initializing Vungle with App ID: %@",self.appID);
     [[HZVungleSDK sharedSDK] startWithAppId:self.appID];

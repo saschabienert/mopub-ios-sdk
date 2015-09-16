@@ -24,6 +24,7 @@
 @property (nonatomic, strong) NSString *placementID;
 @property (nonatomic, strong) NSString *bannerPlacementID;
 @property (nonatomic, strong) HZFBInterstitialAd *interstitialAd;
+@property (nonatomic) BOOL loggingEnabled;
 @end
 
 @implementation HZFacebookAdapter
@@ -53,7 +54,14 @@
 }
 
 - (void) enableLogging:(BOOL)enabled {
-    [HZFBAdSettings setLogLevel:(enabled ? HZFBAdLogLevelVerbose : HZFBAdLogLevelError)]; // leave error logs on
+    self.loggingEnabled = enabled;
+    if (self.isInitialized) {
+        [self toggleFBLogging];
+    }
+}
+
+- (void) toggleFBLogging {
+    [HZFBAdSettings setLogLevel:(self.loggingEnabled ? HZFBAdLogLevelVerbose : HZFBAdLogLevelError)]; // leave error logs on
 }
 
 #pragma mark - Adapter Protocol
@@ -75,7 +83,8 @@
     return nil;
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
+    [self toggleFBLogging];
     return nil;
 }
 
