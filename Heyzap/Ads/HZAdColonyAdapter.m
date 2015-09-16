@@ -21,6 +21,7 @@
 @property (nonatomic, strong) NSString *appID;
 @property (nonatomic, strong) NSString *interstitialZoneID;
 @property (nonatomic, strong) NSString *incentivizedZoneID;
+@property (nonatomic) BOOL loggingEnabled;
 
 @end
 
@@ -52,6 +53,10 @@
     self.incentivizedZoneID = [HZDictionaryUtils objectForKey:@"incentivized_zone_id"
                                                       ofClass:[NSString class]
                                                          dict:self.credentials];
+}
+
+- (void) enableLogging:(BOOL)enabled {
+    self.loggingEnabled = enabled;
 }
 
 #pragma mark - Adapter Protocol
@@ -92,7 +97,7 @@
     [HZAdColony configureWithAppID:self.appID
                            zoneIDs:zoneIDs
                           delegate:self.forwardingDelegate
-                           logging:NO];
+                           logging:self.loggingEnabled];
     return nil;
 }
 

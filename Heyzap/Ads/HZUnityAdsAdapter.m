@@ -61,6 +61,10 @@
                                                   dict:self.credentials];
 }
 
+- (void) enableLogging:(BOOL)enabled {
+    [[HZUnityAds sharedInstance] setDebugMode:enabled];
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable

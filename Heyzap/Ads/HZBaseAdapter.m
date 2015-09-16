@@ -22,6 +22,7 @@
 #import "HZHyprmxAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 #import "HZLeadboltAdapter.h"
+#import "HZLog.h"
 
 @interface HZBaseAdapter()
 //key: HZCreativeType value: NSNumber *
@@ -39,6 +40,20 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 + (instancetype)sharedAdapter
 {
     ABSTRACT_METHOD_ERROR();
+}
+
+- (instancetype) init {
+    self = [super init];
+    if (self) {
+        [self loggingChanged:nil]; // initial state setup
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
+    }
+    
+    return self;
+}
+
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - Adapter Protocol
@@ -104,6 +119,11 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return nil;
 }
+
+- (void) loggingChanged:(NSNotification *) notification {
+    [self enableLogging:([HZLog isThirdPartyLoggingEnabled] ? YES : NO)];
+}
+- (void) enableLogging:(BOOL)enabled { }
 
 #pragma mark - Inferred methods
 

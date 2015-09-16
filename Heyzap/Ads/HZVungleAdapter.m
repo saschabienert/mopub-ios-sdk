@@ -54,6 +54,10 @@
     self.appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:self.credentials];
 }
 
+- (void) enableLogging:(BOOL)enabled {
+    [[HZVungleSDK sharedSDK] setLoggingEnabled:enabled];
+}
+
 #pragma mark - Adapter Protocol
 
 - (NSError *)initializeSDK {

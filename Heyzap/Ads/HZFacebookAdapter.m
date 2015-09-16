@@ -18,6 +18,7 @@
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
 #import "HZBaseAdapter_Internal.h"
+#import "HZFBAdSettings.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
@@ -49,6 +50,10 @@
                               objectForKey:@"banner_placement_id"
                               ofClass:[NSString class]
                               dict:self.credentials];
+}
+
+- (void) enableLogging:(BOOL)enabled {
+    [HZFBAdSettings setLogLevel:(enabled ? HZFBAdLogLevelVerbose : HZFBAdLogLevelError)]; // leave error logs on
 }
 
 #pragma mark - Adapter Protocol
