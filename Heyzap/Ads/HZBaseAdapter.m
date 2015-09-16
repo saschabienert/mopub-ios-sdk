@@ -42,16 +42,6 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
-- (instancetype) init {
-    self = [super init];
-    if (self) {
-        [self loggingChanged:nil]; // initial state setup
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
-    }
-    
-    return self;
-}
-
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -64,7 +54,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
 - (NSError *)initializeSDK {
     NSError *error = [self internalInitializeSDK];
-    _isInitialized = (error == nil);
+    if (!error && !self.isInitialized) {
+        _isInitialized = YES;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
+    }
     return error;
 }
 - (NSError *)internalInitializeSDK {
@@ -128,9 +121,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 #pragma mark - Logging
 
 - (void) loggingChanged:(NSNotification *) notification {
-    if (self.isInitialized) {
-        [self toggleLogging];
-    }
+    [self toggleLogging];
 }
 
 - (BOOL) isLoggingEnabled {
