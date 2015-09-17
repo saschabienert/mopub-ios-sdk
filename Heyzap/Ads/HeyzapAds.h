@@ -70,10 +70,20 @@
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
     HZAdOptionsNone = 0 << 0,
+    /**
+     *  Pass this to disable automatic prefetching of ads. Ad prefetching occurs immediately after you initialize the Heyzap SDK and also after ads are dismissed.
+     */
     HZAdOptionsDisableAutoPrefetching = 1 << 0,
-    HZAdOptionsAdvertiserOnly = 1 << 1,
-    HZAdOptionsAmazon = 1 << 2,
+    /**
+     *  Pass this if you are only integrating the Heyzap SDK into your app to track game installs as an advertiser. No ads will be fetched.
+     */
     HZAdOptionsInstallTrackingOnly = 1 << 1,
+    /**
+     *  @deprecated
+     *  Please use HZAdOptionsInstallTrackingOnly instead.
+     */
+    HZAdOptionsAdvertiserOnly DEPRECATED_ATTRIBUTE = HZAdOptionsInstallTrackingOnly,
+    HZAdOptionsAmazon DEPRECATED_ATTRIBUTE = 1 << 2,
     /**
      *  Pass this to disable mediation. This is not required, but is recommended for developers not using mediation. If you're mediating Heyzap through someone (e.g. AdMob), it is *strongly* recommended that you disable Heyzap's mediation to prevent any potential conflicts.
      */
