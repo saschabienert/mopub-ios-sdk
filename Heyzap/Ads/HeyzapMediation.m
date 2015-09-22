@@ -493,6 +493,7 @@
     [[self delegateForAdType:options.requestingAdType] didFailToShowAdWithTag:options.tag andError:error];
 }
 
+
 #pragma mark - Querying adapters
 
 - (BOOL)isAvailableForAdUnitType:(const HZAdType)adType tag:(NSString *)tag {
@@ -610,7 +611,7 @@
     }
 }
 
-#pragma mark - Incentivized Specific
+#pragma mark - Adapter Callbacks (Incentivized)
 
 // Issue: some networks tell you the user completed an incentivized ad only after a network request, potentially after the user has dismissed the ad (I think AppLovin does this).
 - (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter
@@ -638,121 +639,8 @@
     }
 }
 
-#pragma mark - Misc
 
-+ (NSString *)commaSeparatedAdapterList
-{
-    NSMutableArray *adapterNames = [NSMutableArray array];
-    for (Class adapterClass in [HeyzapMediation availableAdapters]) {
-        [adapterNames addObject:[adapterClass name]];
-    }
-    return [adapterNames componentsJoinedByString:@","];
-}
-
-+ (NSSet *) availableAdapters {
-    // Profiling showed this to take > 1 ms; it's doing a decent amount of work checking if all the classes exist.
-    static NSSet *availableAdapters;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        availableAdapters = [[HZBaseAdapter allAdapterClasses] objectsPassingTest: ^BOOL(Class adapter, BOOL *stop){
-            return [adapter isSDKAvailable];
-        }];
-    });
-    return availableAdapters;
-}
-
-static BOOL forceOnlyHeyzapSDK = NO;
-+ (void)forceOnlyHeyzapSDK {
-    forceOnlyHeyzapSDK = YES;
-}
-
-+ (BOOL)isOnlyHeyzapSDK
-{
-    static BOOL isOnlyHeyzap;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        isOnlyHeyzap = [[self availableNonHeyzapAdapters] count] == 0 || forceOnlyHeyzapSDK;
-    });
-    return isOnlyHeyzap;
-}
-
-+ (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap
-{
-    return [[HeyzapMediation availableAdapters] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
-        return (includeHeyzap || ![adapterClass isHeyzapAdapter]);
-    }]];
-}
-
-+ (NSSet *)availableNonHeyzapAdapters
-{
-    return [self availableAdaptersWithHeyzap:NO];
-}
-
-#pragma mark - Setters/Getters for delegates
-
-- (void)setDelegate:(id<HZAdsDelegate>)delegate forAdType:(HZAdType)adType
-{
-    switch (adType) {
-        case HZAdTypeInterstitial: {
-            self.interstitialDelegateProxy.forwardingTarget = delegate;
-            break;
-        }
-        case HZAdTypeIncentivized: {
-            self.incentivizedDelegateProxy.forwardingTarget = delegate;
-            break;
-        }
-        case HZAdTypeVideo: {
-            self.videoDelegateProxy.forwardingTarget = delegate;
-            break;
-        }
-        case HZAdTypeBanner: {
-            // Ignored; banners have a different delegate system.
-        }
-    }
-}
-
-- (id)delegateForAdType:(HZAdType)adType
-{
-    switch (adType) {
-        case HZAdTypeInterstitial: {
-            return self.interstitialDelegateProxy;
-            break;
-        }
-        case HZAdTypeIncentivized: {
-            return self.incentivizedDelegateProxy;
-            break;
-        }
-        case HZAdTypeVideo: {
-            return self.videoDelegateProxy;
-            break;
-        }
-        case HZAdTypeBanner: {
-            // Banners use a different delegate system.
-            return nil;
-        }
-    }
-}
-
-- (id)underlyingDelegateForAdType:(HZAdType)adType {
-    switch (adType) {
-        case HZAdTypeInterstitial: {
-            return self.interstitialDelegateProxy.forwardingTarget;
-            break;
-        }
-        case HZAdTypeIncentivized: {
-            return self.incentivizedDelegateProxy.forwardingTarget;
-            break;
-        }
-        case HZAdTypeVideo: {
-            return self.videoDelegateProxy.forwardingTarget;
-            break;
-        }
-        case HZAdTypeBanner: {
-            // Banners use a different delegate system.
-            return nil;
-        }
-    }
-}
+#pragma mark - Banner Mediation
 
 - (void)requestBannerWithOptions:(HZBannerAdOptions *)options completion:(void (^)(NSError *error, HZBannerAdapter *adapter))completion {
     HZParameterAssert(options);
@@ -915,7 +803,7 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
             
             if ([adaptersStillFetching count]) {
                 // TODO add a metric here
-                HZELog(@"Waited %f seconds, and the following adapter(s) never succeeded or failed to fetch a banner ad: [%@]", bannerTimeout, [hzMap([adaptersStillFetching allObjects], ^NSString *(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {return [[adapterWithScore adapter] name];}) componentsJoinedByString:@", "]);
+                HZELog(@"Waited %i seconds, and the following adapter(s) never succeeded or failed to fetch a banner ad: [%@]", (int)bannerTimeout, [hzMap([adaptersStillFetching allObjects], ^NSString *(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {return [[adapterWithScore adapter] name];}) componentsJoinedByString:@", "]);
             }
             
             if([adaptersWithAvailableAds count] == 0){
@@ -935,7 +823,7 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
             finalAdapter.eventReporter = eventReporter;
             [eventReporter reportFetchWithSuccessfulAdapter:finalAdapter.parentAdapter];
             [self.mediateRequester refreshMediate];
-
+            
             dispatch_sync(dispatch_get_main_queue(), ^{
                 // TODO add a metric for the time/number of retries it took to succeed since the initial request by the dev?
                 completion(nil, finalAdapter);
@@ -971,6 +859,119 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
     [eventReporter reportClickForAdapter:bannerAdapter.parentAdapter];
 }
 
+
+#pragma mark - Misc Utility Methods for Adapter Availability
+
++ (NSString *)commaSeparatedAdapterList
+{
+    NSMutableArray *adapterNames = [NSMutableArray array];
+    for (Class adapterClass in [HeyzapMediation availableAdapters]) {
+        [adapterNames addObject:[adapterClass name]];
+    }
+    return [adapterNames componentsJoinedByString:@","];
+}
+
++ (NSSet *) availableAdapters {
+    // Profiling showed this to take > 1 ms; it's doing a decent amount of work checking if all the classes exist.
+    static NSSet *availableAdapters;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        availableAdapters = [[HZBaseAdapter allAdapterClasses] objectsPassingTest: ^BOOL(Class adapter, BOOL *stop){
+            return [adapter isSDKAvailable];
+        }];
+    });
+    return availableAdapters;
+}
+
+static BOOL forceOnlyHeyzapSDK = NO;
++ (void)forceOnlyHeyzapSDK {
+    forceOnlyHeyzapSDK = YES;
+}
+
++ (BOOL)isOnlyHeyzapSDK
+{
+    static BOOL isOnlyHeyzap;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        isOnlyHeyzap = [[self availableAdaptersWithHeyzap:NO] count] == 0 || forceOnlyHeyzapSDK;
+    });
+    return isOnlyHeyzap;
+}
+
++ (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap
+{
+    return [[HeyzapMediation availableAdapters] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
+        return (includeHeyzap || ![adapterClass isHeyzapAdapter]);
+    }]];
+}
+
+
+#pragma mark - Setters/Getters for delegates
+
+- (void)setDelegate:(id<HZAdsDelegate>)delegate forAdType:(HZAdType)adType
+{
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            self.interstitialDelegateProxy.forwardingTarget = delegate;
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            self.incentivizedDelegateProxy.forwardingTarget = delegate;
+            break;
+        }
+        case HZAdTypeVideo: {
+            self.videoDelegateProxy.forwardingTarget = delegate;
+            break;
+        }
+        case HZAdTypeBanner: {
+            // Ignored; banners have a different delegate system.
+        }
+    }
+}
+
+- (id)delegateForAdType:(HZAdType)adType
+{
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            return self.interstitialDelegateProxy;
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            return self.incentivizedDelegateProxy;
+            break;
+        }
+        case HZAdTypeVideo: {
+            return self.videoDelegateProxy;
+            break;
+        }
+        case HZAdTypeBanner: {
+            // Banners use a different delegate system.
+            return nil;
+        }
+    }
+}
+
+- (id)underlyingDelegateForAdType:(HZAdType)adType {
+    switch (adType) {
+        case HZAdTypeInterstitial: {
+            return self.interstitialDelegateProxy.forwardingTarget;
+            break;
+        }
+        case HZAdTypeIncentivized: {
+            return self.incentivizedDelegateProxy.forwardingTarget;
+            break;
+        }
+        case HZAdTypeVideo: {
+            return self.videoDelegateProxy.forwardingTarget;
+            break;
+        }
+        case HZAdTypeBanner: {
+            // Banners use a different delegate system.
+            return nil;
+        }
+    }
+}
+
 - (void)setDelegate:(id)delegate forNetwork:(NSString *)network {
     if (network == nil) return;
     
@@ -988,6 +989,9 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
     
     return [self.networkListeners objectForKey: [network lowercaseString]];
 }
+
+
+# pragma mark - Checking Adapter Status
 
 - (BOOL) isNetworkInitialized:(NSString *)network {
     if (network == nil) {
@@ -1007,9 +1011,17 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
     return NO;
 }
 
-- (BOOL)isAdapterInitialized:(HZBaseAdapter *)adapter {
+- (BOOL) isAdapterInitialized:(HZBaseAdapter *)adapter {
     return [self.setupMediators containsObject:adapter];
 }
+
+
+- (BOOL)isNetworkEnabledByPersistentConfig:(NSString *)network {
+    return [self.persistentConfig isNetworkEnabled:network];
+}
+
+
+# pragma mark - Network Callback Management
 
 - (void) setNetworkCallbackBlock: (void (^)(NSString *network, NSString *callback))block {
     _networkCallbackBlock = block;
@@ -1020,6 +1032,9 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
         _networkCallbackBlock(network, callback);
     }
 }
+
+
+#pragma mark - Setup Adapters
 
 /**
  *  Setups an adapter
@@ -1071,6 +1086,20 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
     return success;
 }
 
+- (void)setupAllAdapters:(void(^)(void))completion {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        for (Class class in [HZBaseAdapter allAdapterClasses]) {
+            [self setupAdapterNamed:[class name]];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (completion) { completion(); }
+        });
+    });
+}
+
+
+#pragma mark - Handling /mediate
+
 /**
  *  Called when /mediate returns with new data
  */
@@ -1109,6 +1138,8 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
 }
 
 
+#pragma mark - Other
+
 - (void)showTestActivity {
     // People are likely to show the test activity immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
@@ -1130,17 +1161,6 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
     [self.segmentationController setEnabled:enabled];
 }
 
-- (void)setupAllAdapters:(void(^)(void))completion {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        for (Class class in [HZBaseAdapter allAdapterClasses]) {
-            [self setupAdapterNamed:[class name]];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completion) { completion(); }
-        });
-    });
-}
-
 /**
  *  Lookup the forced network (the test activity calls this)
  *
@@ -1153,8 +1173,5 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
     return [HZBaseAdapter adapterClassForName:forcedNetworkName];
 }
 
-- (BOOL)isNetworkEnabledByPersistentConfig:(NSString *)network {
-    return [self.persistentConfig isNetworkEnabled:network];
-}
 
 @end
