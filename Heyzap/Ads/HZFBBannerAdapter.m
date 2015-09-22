@@ -19,6 +19,7 @@
 @property (nonatomic, strong) HZFBAdView *adView;
 @property (nonatomic) BOOL isLoaded;
 @property (nonatomic) BOOL reportedMostRecentImpressionAsFirstImpression;
+@property (nonatomic) BOOL waitingToBeAddedToScreen;
 
 @end
 
@@ -59,6 +60,7 @@
     // if on screen, then register impression
     // else monitor view for superview
     self.isLoaded = YES;
+    self.waitingToBeAddedToScreen = YES;
     [self.bannerInteractionDelegate didReceiveAd];
 }
 - (void)adView:(HZFBAdView *)adView didFailWithError:(NSError *)error {
@@ -87,8 +89,10 @@
 }
 
 - (void) bannerWasAddedToView {
-    self.reportedMostRecentImpressionAsFirstImpression = YES;
-    [self.bannerReportingDelegate bannerAdapter:self hadInitialImpressionWithEventReporter:self.eventReporter];
+    if (self.waitingToBeAddedToScreen) {
+        self.reportedMostRecentImpressionAsFirstImpression = YES;
+        [self.bannerReportingDelegate bannerAdapter:self hadInitialImpressionWithEventReporter:self.eventReporter];
+    }
 }
 
 @end

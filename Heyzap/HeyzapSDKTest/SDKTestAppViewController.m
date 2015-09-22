@@ -77,6 +77,7 @@ typedef enum {
 
 @property (nonatomic) UIButton *showBannerButton;
 @property (nonatomic) UIButton *hideBannerButton;
+@property (nonatomic) UIButton *destroyBannerButton;
 
 @property (nonatomic) NSArray *bannerControls;
 @property (nonatomic) NSArray *nonBannerControls;
@@ -283,9 +284,23 @@ const CGFloat kLeftMargin = 10;
     [self.hideBannerButton addTarget: self action: @selector(hideBannerButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
     [self.scrollView addSubview: self.hideBannerButton];
     
+    self.destroyBannerButton = ({
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        button.frame = CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, 10.0, CGRectGetWidth(self.hideBannerButton.frame), CGRectGetHeight(self.hideBannerButton.frame));
+        button.backgroundColor = [UIColor darkGrayColor];
+        button.layer.cornerRadius = 4.0;
+        [button setTitle: @"Destroy" forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
+        button.enabled = NO;
+        [button addTarget: self action: @selector(destroyBannerButtonPressed) forControlEvents: UIControlEventTouchUpInside];
+        button;
+    });
+    [self.scrollView addSubview:self.destroyBannerButton];
+    
     UIButton *availableButton = ({
         UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        button.frame = CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, 10.0, 110.0, 25.5);
+        button.frame = self.destroyBannerButton.frame;
         button.backgroundColor = [UIColor lightTextColor];
         button.layer.cornerRadius = 4.0;
         [button setTitle: @"Available?" forState: UIControlStateNormal];
@@ -295,8 +310,8 @@ const CGFloat kLeftMargin = 10;
     [self.scrollView addSubview:availableButton];
     
     // Keep references to banner/non-banner controls so we can flip between them when the segmented control changes.
-    self.bannerControls = @[self.showBannerButton,self.hideBannerButton];
-    self.nonBannerControls = @[self.showButton, fetchButton];
+    self.bannerControls = @[self.showBannerButton, self.hideBannerButton, self.destroyBannerButton];
+    self.nonBannerControls = @[self.showButton, fetchButton, availableButton];
     [self.bannerControls setValue:@YES forKey:@"hidden"];
     
     self.creativeTypeTextField = ({
@@ -707,8 +722,8 @@ const CGFloat kLeftMargin = 10;
                           options:opts
      success:^(HZBannerAd *banner) {
          banner.delegate = self.bannerDelegate;
-         self.hideBannerButton.enabled = YES;
          self.wrapper = banner;
+         [self setBannerButtonStates];
      } failure:^(NSError *error) {
          NSString *errorMessage = @"Failed to fetch banner";
          if (error.localizedDescription) {
@@ -716,17 +731,29 @@ const CGFloat kLeftMargin = 10;
              [self logToConsole:errorMessage];
          }
          
-         self.showBannerButton.enabled = YES;
+         [self setBannerButtonStates];
      }];
 }
 
 - (void)hideBannerButtonPressed:(id)sender {
     [self.view endEditing:YES];
+    [self.wrapper setHidden:!self.wrapper.hidden];
+    [self setBannerButtonStates];
+}
+
+- (void)destroyBannerButtonPressed {
+    [self.view endEditing:YES];
     [self.wrapper removeFromSuperview];
     self.wrapper = nil;
     
-    self.hideBannerButton.enabled = NO;
-    self.showBannerButton.enabled = YES;
+    [self setBannerButtonStates];
+}
+
+- (void) setBannerButtonStates {
+    self.hideBannerButton.enabled = (self.wrapper != nil);
+    self.destroyBannerButton.enabled = (self.wrapper != nil);
+    self.showBannerButton.enabled = (self.wrapper == nil);
+    [self.hideBannerButton setTitle:(self.wrapper && self.wrapper.hidden ? @"Unhide" : @"Hide") forState:UIControlStateNormal];
 }
 
 - (void)showNativeAds {

@@ -39,9 +39,9 @@
 @interface HZMediationAdapterWithCreativeTypeScore : NSObject
 @property (nonatomic) HZBaseAdapter *adapter;
 @property (nonatomic) HZCreativeType creativeType;
-@property (nonatomic) NSNumber *score;
+@property (nonatomic, readonly) NSNumber *score;
 
 @property (nonatomic) HZBannerAdapter *bannerAdapter; // used for banners only
 
-- (instancetype) initWithAdapter:(HZBaseAdapter *)adapter creativeType:(HZCreativeType)creativeType score:(NSNumber *)score;
+- (instancetype) initWithAdapter:(HZBaseAdapter *)adapter creativeType:(HZCreativeType)creativeType;
 @end
