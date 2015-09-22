@@ -716,23 +716,24 @@ const CGFloat kLeftMargin = 10;
     if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
         opts.admobBannerSize = HZAdMobBannerSizeFlexibleWidthLandscape;
     }
+    //opts.fetchTimeout = 45;
     
     [HZBannerAd placeBannerInView:self.view
                          position:HZBannerPositionBottom
                           options:opts
-     success:^(HZBannerAd *banner) {
-         banner.delegate = self.bannerDelegate;
-         self.wrapper = banner;
-         [self setBannerButtonStates];
-     } failure:^(NSError *error) {
-         NSString *errorMessage = @"Failed to fetch banner";
-         if (error.localizedDescription) {
-             errorMessage = [errorMessage stringByAppendingFormat:@"; error was: %@",error.localizedDescription];
-             [self logToConsole:errorMessage];
-         }
-         
-         [self setBannerButtonStates];
-     }];
+                          success:^(HZBannerAd *banner) {
+                              banner.delegate = self.bannerDelegate;
+                              self.wrapper = banner;
+                              [self setBannerButtonStates];
+                          } failure:^(NSError *error) {
+                              NSString *errorMessage = @"Failed to fetch banner";
+                              if (error.localizedDescription) {
+                                  errorMessage = [errorMessage stringByAppendingFormat:@"; error was: %@",error.localizedDescription];
+                                  [self logToConsole:errorMessage];
+                              }
+                              
+                              [self setBannerButtonStates];
+                          }];
 }
 
 - (void)hideBannerButtonPressed:(id)sender {

@@ -751,7 +751,7 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
 
 /**
  *  This method will fetch a banner from each adapter in the given ordered set of HZMediationAdapterWithCreativeTypeScore objects, giving them `bannerTimeout` seconds to fetch. It will continue doing this until at least one adapter fetches successfully, at which point the given completion block will be called.
- *  There is no failure case or maximum number of retries at this time.
+ *  The only failure case is when the user-set timeout (options.fetchTimeout) expires.
  *
  *  Requirements: The caller should verify that all of the passed parameters are non-nil & the adapter set is not empty.
  */
@@ -762,9 +762,12 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
     HZParameterAssert(eventReporter);
     
     dispatch_async(self.fetchQueue, ^{
+        NSDate * startDate = [NSDate date];
+        __block BOOL succeeded = NO;
+        
         // below, we'll continue fetching and waiting indefinitely until we succeed.
         // this will allow network requests to fail while the SDKs fetch without making devs call fetch again and again and handle failures
-        while (true) {
+        do {
             NSMutableSet *adaptersWithAvailableAds = [[NSMutableSet alloc] init]; // unordered since they will become available asynchronously. order of adaptersWithScores is maintained & used later.
             
             // Fetch all eligible adapters
@@ -829,7 +832,15 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
                 completion(nil, finalAdapter);
             });
             
+            succeeded = YES;
             break; // exit while loop
+        } while ([[NSDate date] timeIntervalSinceDate:startDate] < options.fetchTimeout);
+        
+        if (!succeeded) {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                NSError *timeoutError = [HeyzapMediation bannerErrorWithDescription:[NSString stringWithFormat:@"No banners were fetched before the retry timeout (%f seconds) was reached.", options.fetchTimeout] underlyingError:nil];
+                completion(timeoutError, nil);
+            });
         }
     });
 }

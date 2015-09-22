@@ -62,6 +62,8 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
         } else {
             _admobBannerSize = HZAdMobBannerSizeFlexibleWidthPortrait;
         }
+        
+        _fetchTimeout = DBL_MAX;
     }
     return self;
 }
@@ -247,12 +249,21 @@ NSString *hzFacebookBannerSizeDescription(HZFacebookBannerSize size) {
     }
 }
 
+- (void) setFetchTimeout:(NSTimeInterval)timeout {
+    if (timeout >= 0) {
+        _fetchTimeout = timeout;
+    } else {
+        HZELog(@"ERROR: Banner ad retry timeout must be >= 0");
+    }
+}
+
 - (id)copyWithZone:(NSZone *)zone {
     HZBannerAdOptions *copy = [[HZBannerAdOptions alloc] init];
     copy.presentingViewController = self.presentingViewController;
     copy.admobBannerSize = self.admobBannerSize;
     copy.facebookBannerSize = self.facebookBannerSize;
     copy.tag = self.tag;
+    copy.fetchTimeout = self.fetchTimeout;
     return copy;
 }
 

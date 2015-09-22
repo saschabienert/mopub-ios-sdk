@@ -89,4 +89,13 @@ typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
  */
 @property (nonatomic, strong) NSString *tag;
 
+/**
+ *  Banner ads have some internal retry logic, to prevent show failures caused by bad network connectivity. Set this time interval to restrict how many seconds Heyzap spends trying to fetch banner ads. This value will only be considered after an initial failure; for instance, a fetchTimeout of 0 will not stop the initial fetch, but it will stop all retries.
+ *
+ *  <b>Default:</b> DBL_MAX (no timeout).
+ *
+ *  <b>Note:</b> Setting this value too low will prevent Heyzap from retrying at all. Give time for slow network requests in this value if you wish to allow Heyzap to retry at least a couple of times before failing (i.e.: at least 60 seconds).
+ */
+@property (nonatomic) NSTimeInterval fetchTimeout;
+
 @end
