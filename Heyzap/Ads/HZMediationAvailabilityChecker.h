@@ -31,7 +31,7 @@
 - (void)updateWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig;
 - (void)didShowInterstitialVideo;
 
-- (NSOrderedSet *)parseMediateIntoAdaptersForShow:(NSDictionary *)mediateDictionary setupAdapterClasses:(NSSet *)setupAdapterClasses adType:(HZAdType)adType;
+- (NSOrderedSet *)parseMediateIntoAdaptersForShow:(NSDictionary *)mediateDictionary validAdapterClasses:(NSSet *)validAdapterClasses adType:(HZAdType)adType;
 
 @end
 

@@ -76,7 +76,7 @@
 
 #pragma mark - Externally Called on Show
 
-- (NSOrderedSet *)parseMediateIntoAdaptersForShow:(NSDictionary *)mediateDictionary setupAdapterClasses:(NSSet *)setupAdapterClasses adType:(HZAdType)adType {
+- (NSOrderedSet *)parseMediateIntoAdaptersForShow:(NSDictionary *)mediateDictionary validAdapterClasses:(NSSet *)validAdapterClasses adType:(HZAdType)adType {
     NSError *error;
     NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:mediateDictionary error:&error];
     
@@ -91,7 +91,7 @@
         Class adapter = [HZBaseAdapter adapterClassForName:networkName];
         HZBaseAdapter *adapterInstance = [adapter sharedAdapter];
         
-        if ([setupAdapterClasses containsObject:adapter]) {
+        if ([validAdapterClasses containsObject:adapter]) {
             // add each network/score/creativeType triplet to the return value for each creativeType in the network's response set that matches a currently-allowed creativeType, if the network is set up & it supports the creativeType
             for (NSNumber * creativeTypeNumber in creativeTypesAllowed) {
                 HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeNumber);
