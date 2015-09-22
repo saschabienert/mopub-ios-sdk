@@ -22,6 +22,7 @@
 #import "HZHyprmxAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 #import "HZLeadboltAdapter.h"
+#import "HZLog.h"
 
 @interface HZBaseAdapter()
 //key: HZCreativeType value: NSNumber *
@@ -41,6 +42,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 #pragma mark - Adapter Protocol
 
 - (void)loadCredentials {
@@ -48,6 +53,14 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 }
 
 - (NSError *)initializeSDK {
+    NSError *error = [self internalInitializeSDK];
+    if (!error && !self.isInitialized) {
+        _isInitialized = YES;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
+    }
+    return error;
+}
+- (NSError *)internalInitializeSDK {
     ABSTRACT_METHOD_ERROR();
 }
 
@@ -104,6 +117,18 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return nil;
 }
+
+#pragma mark - Logging
+
+- (void) loggingChanged:(NSNotification *) notification {
+    [self toggleLogging];
+}
+
+- (BOOL) isLoggingEnabled {
+    return ([HZLog isThirdPartyLoggingEnabled] ? YES : NO);
+}
+
+- (void) toggleLogging { }
 
 #pragma mark - Inferred methods
 

@@ -7,12 +7,14 @@
 //
 
 #import "HZClassProxy.h"
+#import "HZALSdkSettings.h"
 
 @class HZALAdService;
 
 @interface HZALSdk : HZClassProxy
 
 + (HZALSdk *)sharedWithKey:(NSString *)sdkKey;
++ (HZALSdk *)sharedWithKey:(NSString *)sdkKey settings:(HZALSdkSettings *)settings;
 
 - (void)initializeSdk;
 

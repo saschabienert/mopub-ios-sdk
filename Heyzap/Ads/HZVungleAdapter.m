@@ -54,10 +54,16 @@
     self.appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:self.credentials];
 }
 
+- (void) toggleLogging {
+    [[HZVungleSDK sharedSDK] setLoggingEnabled:[self isLoggingEnabled]];
+}
+
 #pragma mark - Adapter Protocol
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appID, @"app_id");
+    
+    [self toggleLogging];
     
     HZDLog(@"Initializing Vungle with App ID: %@",self.appID);
     [[HZVungleSDK sharedSDK] startWithAppId:self.appID];

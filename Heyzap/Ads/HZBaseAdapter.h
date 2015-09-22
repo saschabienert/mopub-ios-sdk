@@ -51,6 +51,8 @@
 
 @property (nonatomic, strong) HZAdapterDelegate *forwardingDelegate;
 
+@property (nonatomic, readonly) BOOL isInitialized;
+
 
 + (instancetype)sharedAdapter;
 

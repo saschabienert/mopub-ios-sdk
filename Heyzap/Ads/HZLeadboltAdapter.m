@@ -53,7 +53,7 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
                                                 dict:self.credentials];
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appAPIKey, @"app_api_key");
     
     // These notifications aren't documented in AppTracker.h; this comes from http://help.leadbolt.com/ios-integration-guide/ and their sample app.

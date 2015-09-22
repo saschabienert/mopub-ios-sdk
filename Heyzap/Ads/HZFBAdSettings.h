@@ -10,6 +10,16 @@
 
 @interface HZFBAdSettings : HZClassProxy
 
-+ (void) addTestDevice:(NSString *)deviceHash;
+typedef NS_ENUM(NSInteger, HZFBAdLogLevel) {
+    HZFBAdLogLevelNone,
+    HZFBAdLogLevelNotification,
+    HZFBAdLogLevelError,
+    HZFBAdLogLevelWarning,
+    HZFBAdLogLevelLog,
+    HZFBAdLogLevelDebug,
+    HZFBAdLogLevelVerbose
+};
 
++ (void) addTestDevice:(NSString *)deviceHash;
++ (void) setLogLevel:(HZFBAdLogLevel)level;
 @end

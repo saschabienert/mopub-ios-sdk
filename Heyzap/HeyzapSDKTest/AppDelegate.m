@@ -38,6 +38,8 @@
     }
     
     [HZLog setDebugLevel: HZDebugLevelVerbose];
+//    [HZLog setThirdPartyLoggingEnabled:YES];
+    
     SDKTestAppViewController *mainController = [[SDKTestAppViewController alloc] init];
     
     const HZAdOptions opts = [PersistentTestAppConfiguration sharedConfiguration].autoPrefetch ? HZAdOptionsNone : HZAdOptionsDisableAutoPrefetching;
