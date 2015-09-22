@@ -74,7 +74,7 @@ static BOOL hzAdsIsEnabled = NO;
                 [[HZAdsAPIClient sharedClient] POST:@"register_new_game_install" parameters:@{} success:^(HZAFHTTPRequestOperation *operation, id JSON) {
                     [[HZUserDefaults sharedDefaults] setObject:@YES forKey:HAS_REPORTED_INSTALL_KEY];
                 } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
-                    HZDLog(@"Error reporting new game install = %@",error);
+                    HZELog(@"Error reporting new game install = %@",error);
                 }];
             }
         });
