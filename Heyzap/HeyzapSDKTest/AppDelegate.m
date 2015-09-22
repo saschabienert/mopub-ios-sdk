@@ -38,7 +38,7 @@
     }
     
     [HZLog setDebugLevel: HZDebugLevelVerbose];
-    [HZLog setThirdPartyLoggingEnabled:YES];
+//    [HZLog setThirdPartyLoggingEnabled:YES];
     
     SDKTestAppViewController *mainController = [[SDKTestAppViewController alloc] init];
     
