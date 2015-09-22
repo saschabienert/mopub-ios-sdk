@@ -423,6 +423,8 @@
 		99752D641B3CD9250075B328 /* HZHeyzapExchangeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99752D631B3CD9240075B328 /* HZHeyzapExchangeClient.h */; };
 		99752D661B3DC2960075B328 /* HZHeyzapExchangeAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 99752D651B3DC2960075B328 /* HZHeyzapExchangeAPIClient.m */; };
 		99752D681B3DC2AB0075B328 /* HZHeyzapExchangeAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99752D671B3DC2AB0075B328 /* HZHeyzapExchangeAPIClient.h */; };
+		9989E49E1BA9DEEA00430B79 /* HZALSdkSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9989E49D1BA9DEEA00430B79 /* HZALSdkSettings.h */; };
+		9989E4A01BA9DF4A00430B79 /* HZALSdkSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9989E49F1BA9DF4A00430B79 /* HZALSdkSettings.m */; };
 		998B1BFE1B714D98003C1437 /* HZDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 998B1BFD1B714D98003C1437 /* HZDatabaseHelper.m */; };
 		998B1C001B714DA6003C1437 /* HZDatabaseHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B1BFF1B714DA6003C1437 /* HZDatabaseHelper.h */; };
 		998B1C061B72BB4C003C1437 /* HZFBAdSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B1C051B72BB4C003C1437 /* HZFBAdSettings.h */; };
@@ -931,6 +933,8 @@
 		99752D631B3CD9240075B328 /* HZHeyzapExchangeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapExchangeClient.h; sourceTree = "<group>"; };
 		99752D651B3DC2960075B328 /* HZHeyzapExchangeAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapExchangeAPIClient.m; sourceTree = "<group>"; };
 		99752D671B3DC2AB0075B328 /* HZHeyzapExchangeAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapExchangeAPIClient.h; sourceTree = "<group>"; };
+		9989E49D1BA9DEEA00430B79 /* HZALSdkSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZALSdkSettings.h; sourceTree = "<group>"; };
+		9989E49F1BA9DF4A00430B79 /* HZALSdkSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZALSdkSettings.m; sourceTree = "<group>"; };
 		998B1BFD1B714D98003C1437 /* HZDatabaseHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZDatabaseHelper.m; sourceTree = "<group>"; };
 		998B1BFF1B714DA6003C1437 /* HZDatabaseHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZDatabaseHelper.h; sourceTree = "<group>"; };
 		998B1C011B718561003C1437 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
@@ -1587,6 +1591,8 @@
 				503CD2351901A87300667C0D /* Protocols */,
 				50B46B0F18F862DA005155B8 /* HZALSdk.h */,
 				50B46B1018F862DA005155B8 /* HZALSdk.m */,
+				9989E49D1BA9DEEA00430B79 /* HZALSdkSettings.h */,
+				9989E49F1BA9DF4A00430B79 /* HZALSdkSettings.m */,
 				50B46B1318F87B2C005155B8 /* HZALInterstitialAd.h */,
 				50B46B1418F87B2C005155B8 /* HZALInterstitialAd.m */,
 				50B46B1718F88C2D005155B8 /* HZALAdService.h */,
@@ -2423,6 +2429,7 @@
 				504D82511AAA64CE004695C8 /* HZFBBannerAdapter.h in Headers */,
 				E626220919E707540094957B /* HZTestActivityViewController.h in Headers */,
 				99D4C4131B38878C004D24DE /* HZSKLogger.h in Headers */,
+				9989E49E1BA9DEEA00430B79 /* HZALSdkSettings.h in Headers */,
 				998B1C001B714DA6003C1437 /* HZDatabaseHelper.h in Headers */,
 				866E3A101851302C00B6E431 /* HZAdInterstitialViewController.h in Headers */,
 				50CAB1A51AE9758500F9642D /* HZAFSecurityPolicy.h in Headers */,
@@ -2935,6 +2942,7 @@
 				50CAB1A21AE9757800F9642D /* HZAFNetworkReachabilityManager.m in Sources */,
 				99AF08571B8E701A00532AB7 /* HZFetchOptions.m in Sources */,
 				E626228619F5BAD40094957B /* HZTestActivityNetworkViewController.m in Sources */,
+				9989E4A01BA9DF4A00430B79 /* HZALSdkSettings.m in Sources */,
 				86B09B8A1759743F0045AA54 /* HZRotatingView.m in Sources */,
 				86C491771B2819C000A84B2C /* HZMRAIDUtil.m in Sources */,
 				5011CE5618DB9B7F00604B53 /* HZAdColonyAdapter.m in Sources */,

@@ -63,7 +63,7 @@
     return [[HZHYPRManager sharedManager] versionString];
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.distributorID, @"distributorID");
     
     NSString *adID = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];

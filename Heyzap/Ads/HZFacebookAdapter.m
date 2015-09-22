@@ -18,6 +18,7 @@
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
 #import "HZBaseAdapter_Internal.h"
+#import "HZFBAdSettings.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
@@ -51,6 +52,10 @@
                               dict:self.credentials];
 }
 
+- (void) toggleLogging {
+    [HZFBAdSettings setLogLevel:([self isLoggingEnabled] ? HZFBAdLogLevelVerbose : HZFBAdLogLevelError)]; // leave error logs on
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable {
@@ -70,7 +75,8 @@
     return nil;
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
+    [self toggleLogging];
     return nil;
 }
 

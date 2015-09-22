@@ -61,6 +61,10 @@
                                                   dict:self.credentials];
 }
 
+- (void) toggleLogging {
+    [[HZUnityAds sharedInstance] setDebugMode:[self isLoggingEnabled]];
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -85,8 +89,10 @@
 
 NSString * const kHZNetworkName = @"mobile";
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appID, @"game_id");
+    
+    [self toggleLogging];
     
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     

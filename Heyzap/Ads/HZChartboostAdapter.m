@@ -52,7 +52,7 @@
     return [HZChartboost hzProxiedClassIsAvailable];
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appID, @"appID");
     RETURN_ERROR_IF_NIL(self.appSignature, @"appSignature");
     

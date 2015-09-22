@@ -13,6 +13,7 @@
 #import "HZAppLovinDelegate.h"
 
 #import "HZALSdk.h"
+#import "HZALSdkSettings.h"
 #import "HZALInterstitialAd.h"
 #import "HZALAdService.h"
 #import "HZALAd.h"
@@ -91,11 +92,15 @@
     return [HZALSdk version];
 }
 
-- (NSError *)initializeSDK {
+- (void) toggleLogging { HZDLog(@"Logs for %@ can only be enabled/disabled before initialization.", [[self class] humanizedName]); }
+
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.sdkKey, @"sdk_key");
     
     HZDLog(@"Initializing AppLovin with SDK Key: %@",self.sdkKey);
-    self.sdk = [HZALSdk sharedWithKey:self.sdkKey];
+    HZALSdkSettings *settings = [HZALSdkSettings alloc];
+    settings.isVerboseLogging = [self isLoggingEnabled];
+    self.sdk = [HZALSdk sharedWithKey:self.sdkKey settings:settings];
     [self.sdk initializeSdk];
     
     return nil;

@@ -26,9 +26,16 @@
  */
 - (void)loadCredentials;
 
+- (NSError *)internalInitializeSDK;
 
 /**
  *  Show an ad. This is called by the base adapter implementation after it verifies that the requested creativeType is supported by the subclass.
  */
 - (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options;
+
+/**
+ *  Subclasses can implement this method if they can turn logging on in the adapted SDK. This method will only be called on subclasses if they are already initialized. The method `isLoggingEnabled` can be called in this method to see if logging is on or not. The default implementation is empty.
+ */
+- (void) toggleLogging;
+- (BOOL) isLoggingEnabled;
 @end

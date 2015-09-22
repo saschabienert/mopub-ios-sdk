@@ -28,7 +28,7 @@
     return YES;
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     return nil;
 }
 
