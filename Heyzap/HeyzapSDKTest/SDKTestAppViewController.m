@@ -723,6 +723,7 @@ const CGFloat kLeftMargin = 10;
 - (void)hideBannerButtonPressed:(id)sender {
     [self.view endEditing:YES];
     [self.wrapper removeFromSuperview];
+    self.wrapper = nil;
     
     self.hideBannerButton.enabled = NO;
     self.showBannerButton.enabled = YES;

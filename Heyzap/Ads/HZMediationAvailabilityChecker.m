@@ -92,7 +92,7 @@
         HZBaseAdapter *adapterInstance = [adapter sharedAdapter];
         
         if ([setupAdapterClasses containsObject:adapter]) {
-            // add each network/score/creativeType triplet to the retrun value for each creativeType in the network's response set that matches a currently-allowed creativeType, if the network is setup & it supports the creativeType
+            // add each network/score/creativeType triplet to the return value for each creativeType in the network's response set that matches a currently-allowed creativeType, if the network is set up & it supports the creativeType
             for (NSNumber * creativeTypeNumber in creativeTypesAllowed) {
                 HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeNumber);
                 

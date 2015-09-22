@@ -11,6 +11,7 @@
 #import "HZCreativeType.h"
 
 @class HZBaseAdapter;
+@class HZBannerAdapter;
 @class HZSegmentationController;
 @class HZInterstitialVideoConfig;
 @class HZMediationAdapterWithCreativeTypeScore;
@@ -39,6 +40,8 @@
 @property (nonatomic) HZBaseAdapter *adapter;
 @property (nonatomic) HZCreativeType creativeType;
 @property (nonatomic) NSNumber *score;
+
+@property (nonatomic) HZBannerAdapter *bannerAdapter; // used for banners only
 
 - (instancetype) initWithAdapter:(HZBaseAdapter *)adapter creativeType:(HZCreativeType)creativeType score:(NSNumber *)score;
 @end
