@@ -765,18 +765,18 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
         NSDate * startDate = [NSDate date];
         __block BOOL succeeded = NO;
         
-        // below, we'll continue fetching and waiting indefinitely until we succeed.
+        // below, we'll continue fetching and waiting indefinitely until we succeed, or hit the timeout.
         // this will allow network requests to fail while the SDKs fetch without making devs call fetch again and again and handle failures
         do {
             NSMutableSet *adaptersWithAvailableAds = [[NSMutableSet alloc] init]; // unordered since they will become available asynchronously. order of adaptersWithScores is maintained & used later.
             
             // Fetch all eligible adapters
-            for (HZMediationAdapterWithCreativeTypeScore *adapterWithScore in adaptersWithScores) {
-                HZDLog(@"Fetching a banner from %@", [[adapterWithScore adapter] name]);
-                dispatch_sync(dispatch_get_main_queue(), ^{
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                for (HZMediationAdapterWithCreativeTypeScore *adapterWithScore in adaptersWithScores) {
+                    HZDLog(@"Fetching a banner from %@", [[adapterWithScore adapter] name]);
                     adapterWithScore.bannerAdapter = [[adapterWithScore adapter] fetchBannerWithOptions:options reportingDelegate:self];
-                });
-            }
+                }
+            });
             
             // Check every so often to see if they all succeeded/failed yet
             __block NSSet *adaptersStillFetching;
@@ -809,7 +809,7 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
                 HZELog(@"Waited %i seconds, and the following adapter(s) never succeeded or failed to fetch a banner ad: [%@]", (int)bannerTimeout, [hzMap([adaptersStillFetching allObjects], ^NSString *(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {return [[adapterWithScore adapter] name];}) componentsJoinedByString:@", "]);
             }
             
-            if([adaptersWithAvailableAds count] == 0){
+            if ([adaptersWithAvailableAds count] == 0) {
                 HZELog(@"None of the available banner adapters were able to fetch an ad [%@]. Retrying...", [hzMap([adaptersWithScores array], ^NSString *(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {return [[adapterWithScore adapter] name];}) componentsJoinedByString:@", "]);
                 continue; // try while loop again
             }
