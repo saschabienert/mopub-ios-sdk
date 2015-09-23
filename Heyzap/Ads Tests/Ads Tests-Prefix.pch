@@ -14,4 +14,15 @@
     #import "HZEnums.h"
     #import "HZNotifications.h"
     #import "HZAdInfo.h"
+
+
+    // Copied from "KiwiConfiguration.h"
+    // This category is solely meant to coax Xcode into exposing the method names below during autocompletion.
+    // There is no implementation and this class definition must come before the macro definitions below.
+    @interface NSObject (KiwiVerifierMacroNames)
+    - (void)hzShouldEventuallyAfterDelay;
+    @end
+    #define hzShouldEventuallyAfterDelay attachToVerifier:KW_ADD_ASYNC_VERIFIER(KWExpectationTypeShould, 5.0, NO)
+
+
 #endif

@@ -47,7 +47,7 @@ describe(@"InterstitialFetch", ^{
                 [[HZAdsFetchManager sharedManager] fetch:request withCompletion:^(HZAdModel *model, NSError *error) {
                     blockModel = model;
                 }];
-                [[expectFutureValue(blockModel) shouldEventually] beNonNil];
+                [[expectFutureValue(blockModel) hzShouldEventuallyAfterDelay] beNonNil];
             }
             
         });
