@@ -13,10 +13,7 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HeyzapAds.h"
-
-@interface HZAbstractHeyzapAdapter()
-
-@end
+#import "HZBaseAdapter_Internal.h"
 
 @implementation HZAbstractHeyzapAdapter
 
@@ -31,7 +28,7 @@
     return YES;
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     return nil;
 }
 
@@ -86,10 +83,8 @@
     }
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(![self supportsCreativeType:creativeType]) return;
-
     const HZAuctionType auctionType = [self auctionType];
     switch (creativeType) {
         case HZCreativeTypeStatic: {
@@ -194,18 +189,19 @@
     if ([self correctAuctionType:notification]) {
         HZAdInfo *info = notification.object;
         HZAdType type = hzAdTypeFromString(info.adUnit);
+        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:[notification userInfo]];
         
         switch (type) {
             case HZAdTypeInterstitial: {
-                self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
+                self.lastStaticError = error;
                 break;
             }
             case HZAdTypeIncentivized: {
-                self.lastIncentivizedError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
+                self.lastIncentivizedError = error;
                 break;
             }
             case HZAdTypeVideo: {
-                self.lastVideoError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
+                self.lastVideoError = error;
                 break;
             }
             case HZAdTypeBanner: {
@@ -214,6 +210,7 @@
             }
         }
         
+        HZELog(@"The %@ network failed to fetch an ad. Error: %@", [self name], error);
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
     }
 }

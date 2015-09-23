@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZBaseAdapter.h"
+#import "HZBaseAdapter_Internal.h"
 #import "HZVungleAdapter.h"
 #import "HZChartboostAdapter.h"
 #import "HZMediationConstants.h"
@@ -22,9 +22,10 @@
 #import "HZHyprmxAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 #import "HZLeadboltAdapter.h"
+#import "HZLog.h"
 
 @interface HZBaseAdapter()
-//key: HZAdType value: NSNumber *
+//key: HZCreativeType value: NSNumber *
 @property (nonatomic, strong) NSMutableDictionary *latestMediationScores;
 @end
 
@@ -41,6 +42,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 #pragma mark - Adapter Protocol
 
 - (void)loadCredentials {
@@ -48,6 +53,14 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 }
 
 - (NSError *)initializeSDK {
+    NSError *error = [self internalInitializeSDK];
+    if (!error && !self.isInitialized) {
+        _isInitialized = YES;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
+    }
+    return error;
+}
+- (NSError *)internalInitializeSDK {
     ABSTRACT_METHOD_ERROR();
 }
 
@@ -60,7 +73,6 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 {
     ABSTRACT_METHOD_ERROR();
 }
-
 
 + (NSString *)humanizedName {
     ABSTRACT_METHOD_ERROR();
@@ -88,12 +100,35 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
+    if (![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner) {
+        NSError *const error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an unsupported creativeType: %@", [[self class] humanizedName], NSStringFromCreativeType(creativeType)]}];
+        [self.delegate adapterDidFailToShowAd:self error:error];
+        return;
+    }
+    
+    [self internalShowAdForCreativeType:creativeType options:options];
+}
+
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+{
     ABSTRACT_METHOD_ERROR();
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return nil;
 }
+
+#pragma mark - Logging
+
+- (void) loggingChanged:(NSNotification *) notification {
+    [self toggleLogging];
+}
+
+- (BOOL) isLoggingEnabled {
+    return ([HZLog isThirdPartyLoggingEnabled] ? YES : NO);
+}
+
+- (void) toggleLogging { }
 
 #pragma mark - Inferred methods
 

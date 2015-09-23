@@ -20,6 +20,7 @@
 #import "HZSKVASTViewController.h"
 #import "HZHeyzapExchangeClient.h"
 #import "HZHeyzapExchangeBannerAdapter.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZHeyzapExchangeAdapter()<HZHeyzapExchangeClientDelegate>
 
@@ -58,7 +59,7 @@
     return YES;
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     return nil;
 }
 
@@ -115,18 +116,12 @@
     return NO;
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(self.currentlyPlayingClient != nil){
-        HZELog(@"HeyzapExchangeAdapter: Already showing an ad.");
-        return;
-    }
-    
-    if(![self supportsCreativeType:creativeType]) return;
-    
     HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
     if(!exchangeClient || exchangeClient.state != HZHeyzapExchangeClientStateReady){
         HZELog(@"HeyzapExchangeAdapter: No ad available for creativeType=%@", NSStringFromCreativeType(creativeType));
+        [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an ad of creativeType: %@, but it doesn't have one.", [[self class] humanizedName], NSStringFromCreativeType(creativeType)]}]];
         return;
     }
     

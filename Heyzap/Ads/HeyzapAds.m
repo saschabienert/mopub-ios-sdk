@@ -111,16 +111,22 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
 
 + (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options andFramework:(NSString *)framework {
     HZVersionCheck()
-
-    if (options & HZAdOptionsDisableMedation) {
-        [HeyzapMediation forceOnlyHeyzapSDK];
-    }
     
     [[HZAdsManager sharedManager] setPublisherID: publisherID];
     [[HZAdsManager sharedManager] setOptions: options];
     [[HZAdsManager sharedManager] setIsDebuggable: NO];
     if (framework && ![framework isEqualToString:@""]) {
         [[HZAdsManager sharedManager] setFramework:framework];
+    }
+    
+    if (options & HZAdOptionsInstallTrackingOnly) {
+        // install tracking is done in the HZAdsManager, once the singleton `sharedManager` is created. (the line below is included just in case the code above moves later)
+        [HZAdsManager sharedManager];
+        return;
+    }
+
+    if (options & HZAdOptionsDisableMedation) {
+        [HeyzapMediation forceOnlyHeyzapSDK];
     }
     
     [[HZAdsManager sharedManager] onStart];

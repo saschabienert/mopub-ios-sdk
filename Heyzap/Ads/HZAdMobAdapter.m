@@ -15,6 +15,7 @@
 #import "HZAdMobBannerAdapter.h"
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
@@ -58,7 +59,7 @@
 
 #pragma mark - Adapter Protocol
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     return nil;
 }
 
@@ -169,10 +170,8 @@
     [newAd loadRequest:request];
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(![self supportsCreativeType:creativeType]) return;
-
     HZGADInterstitial *ad = self.adDictionary[@(creativeType)];
     [ad presentFromRootViewController:options.viewController];
 }

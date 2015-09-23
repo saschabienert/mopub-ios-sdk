@@ -484,9 +484,6 @@ const CGFloat kLeftMargin = 10;
     makeIAPButton.frame = CGRectMake(kLeftMargin, CGRectGetMaxY(openLastFetchButton.frame), 200.0, 50.0);
     [self.scrollView addSubview: makeIAPButton];
     
-    // Add to payment queue
-    [[SKPaymentQueue defaultQueue] addTransactionObserver:[TestAppPaymentTransactionObserver sharedInstance]];
-    
     // Spoof IAP
     UIButton *spoofIAPButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
     [spoofIAPButton setTitle: @"Spoof IAP" forState: UIControlStateNormal];

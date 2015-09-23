@@ -12,6 +12,7 @@
 #import "HZDictionaryUtils.h"
 #import "HeyzapAds.h"
 #import "HeyzapMediation.h"
+#import "HZBaseAdapter_Internal.h"
 
 #import <UIKit/UIKit.h>
 
@@ -75,7 +76,9 @@
 
 }
 
-- (NSError *)initializeSDK {
+- (void) toggleLogging { HZDLog(@"Logs for %@ can only be enabled/disabled before initialization.", [[self class] humanizedName]); }
+
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appID, @"app_id");
     
     NSArray *const zoneIDs = ({
@@ -91,7 +94,7 @@
     [HZAdColony configureWithAppID:self.appID
                            zoneIDs:zoneIDs
                           delegate:self.forwardingDelegate
-                           logging:NO];
+                           logging:[self isLoggingEnabled]];
     return nil;
 }
 
@@ -142,10 +145,8 @@
     // AdColony auto-prefetches
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(![self supportsCreativeType:creativeType]) return;
-    
     if (creativeType == HZCreativeTypeIncentivized) {
         [self.delegate adapterWillPlayAudio:self];
         [HZAdColony playVideoAdForZone:self.incentivizedZoneID

@@ -253,19 +253,12 @@
 
 - (void) onActionClick: (UIView *) sender withURL: (NSURL *) url {
     if ([sender tag] == kHZVideoViewTag) {
-        if ([self.ad.displayOptions allowInstallButton]) {
-            [self.videoView pause];
-            [self didClickWithURL: url];
-        }
+        [self.videoView pause];
+        [self didClickWithURL:url];
     }
     
     if ([sender tag] == kHZWebViewTag) {
-        self.webView.isLoading = YES;
-        __weak HZAdVideoViewController *weakSelf = self;
-        
-        [self didClickWithURL:url completion:^(BOOL result, NSError *error) {
-            [[weakSelf webView] setIsLoading:NO];
-        }];
+        [self didClickWithURL:url];
     }
 }
 

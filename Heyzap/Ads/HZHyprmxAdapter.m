@@ -14,6 +14,7 @@
 #import "HZDevice.h"
 #import "HZAdsManager.h"
 #import "HZInitMacros.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZHyprmxAdapter()
 @property (nonatomic, strong) NSString *distributorID;
@@ -62,7 +63,7 @@
     return [[HZHYPRManager sharedManager] versionString];
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.distributorID, @"distributorID");
     
     NSString *adID = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
@@ -101,9 +102,7 @@ static BOOL wasReady = NO;
     });
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options{
-    if(![self supportsCreativeType:creativeType]) return;
-    
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options{
     HZHyprmxAdapter *bSelf = self;
     
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {

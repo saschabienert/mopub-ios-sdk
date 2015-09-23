@@ -31,6 +31,7 @@
 #import "HZIncentivizedAd.h"
 #import "HZBannerAd.h"
 #import "HZUnityAdapterChartboostProxy.h"
+#import "HZLog.h"
 
 extern void UnitySendMessage(const char *, const char *, const char *);
 
@@ -286,11 +287,19 @@ extern "C" {
     }
     
     void hz_ads_show_debug_logs(void) {
-        [HeyzapAds setDebugLevel:HZDebugLevelVerbose];
+        [HZLog setDebugLevel:HZDebugLevelVerbose];
     }
     
     void hz_ads_hide_debug_logs(void) {
-        [HeyzapAds setDebugLevel:HZDebugLevelSilent];
+        [HZLog setDebugLevel:HZDebugLevelSilent];
+    }
+    
+    void hz_ads_show_third_party_debug_logs(void) {
+        [HZLog setThirdPartyLoggingEnabled:YES];
+    }
+    
+    void hz_ads_hide_third_party_debug_logs(void) {
+        [HZLog setThirdPartyLoggingEnabled:NO];
     }
     
     BOOL hz_chartboost_enabled(void) {

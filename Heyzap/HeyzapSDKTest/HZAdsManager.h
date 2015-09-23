@@ -48,6 +48,7 @@
 - (void) hideActiveAd;
 
 + (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider;
++ (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider userInfo:(NSDictionary *)userInfo;
 
 #define HZVersionCheck()     if(![HZAdsManager isVersionSupported]){                \
                                HZELog(@"Heyzap only supports iOS 6.0 and above"); \
