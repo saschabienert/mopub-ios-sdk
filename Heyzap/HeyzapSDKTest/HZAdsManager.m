@@ -18,14 +18,14 @@
 #import "HZAdVideoViewController.h"
 #import "HZAdInterstitialViewController.h"
 #import "HeyzapAds.h"
-#import "HZDelegateProxy.h"
 #import "HZEnums.h"
-
-#import "HZDelegateProxy.h"
 #import "HZWebViewPool.h"
 #import "HZDownloadHelper.h"
 #import "HZNSURLUtils.h"
 #import "HZPaymentTransactionObserver.h"
+#import "HZCreativeType.h"
+#import "HZShowOptions.h"
+#import "HZShowOptions_Private.h"
 
 #define HAS_REPORTED_INSTALL_KEY @"hz_install_reported"
 #define DEFAULT_RETRIES 3
@@ -172,54 +172,75 @@ static BOOL hzAdsIsEnabled = NO;
 
 #pragma mark - Is Available
 
-- (BOOL)isAvailableForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType
+- (BOOL)isAvailableForFetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType
 {
-    return [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:adUnit auctionType:auctionType] != nil;
+    return [[HZAdLibrary sharedLibrary] peekAtAdForFetchableCreativeType:fetchableCreativeType auctionType:auctionType] != nil;
 }
 
 #pragma mark - Show
-- (void) showForAdUnit: (NSString *) adUnit auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options  {
+
+- (HZFetchableCreativeType)fetchableFromShowable:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeStatic: {
+            return HZFetchableCreativeTypeStatic;
+        }
+        case HZCreativeTypeIncentivized:
+        case HZCreativeTypeVideo: {
+            return HZFetchableCreativeTypeVideo;
+        }
+        case HZCreativeTypeBanner:
+        case HZCreativeTypeNative:
+        case HZCreativeTypeUnknown: {
+            HZFail(@"Invalid creative type to try to convert into a fetchable creative type. Creative type was %@",NSStringFromCreativeType(creativeType));
+        }
+    }
+}
+
+- (void)showForCreativeType:(HZCreativeType)showableCreativeType auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options {
+    
+    const HZFetchableCreativeType fetchable = [self fetchableFromShowable:showableCreativeType];
+    
     BOOL success = NO;
     NSError *error;
     
     if (self.activeController) {
         error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 7 userInfo: @{NSLocalizedDescriptionKey: @"Another ad is currently displaying."}];
+    } else if (![[HZDevice currentDevice] HZConnectivityType]) {
+        error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 1 userInfo: @{NSLocalizedDescriptionKey: @"No internet connection."}];
     } else {
-        if (![[HZDevice currentDevice] HZConnectivityType]) {
-            error = [NSError errorWithDomain: @"com.heyzap.sdk.ads.error.display" code: 1 userInfo: @{NSLocalizedDescriptionKey: @"No internet connection."}];
-        } else {
-            HZAdModel *ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit auctionType:auctionType];
-            while (ad != nil && [ad isExpired]) {
-                ad = [[HZAdLibrary sharedLibrary] popAdForAdUnit:adUnit auctionType:auctionType];
-            }
+        HZAdModel *ad = [[HZAdLibrary sharedLibrary] popAdForFetchableCreativeType:fetchable auctionType:auctionType];
+        while (ad != nil && [ad isExpired]) {
+            ad = [[HZAdLibrary sharedLibrary] popAdForFetchableCreativeType:fetchable auctionType:auctionType];
+        }
+        
+        if (ad != nil) {
             
-            if (ad != nil) {
+            // Properties set on show
+            ad.showableCreativeType = showableCreativeType;
+            ad.tag = options.tag;
+            ad.requestingAdType = options.requestingAdType;
+            
+            Class controllerClass = [ad controller];
+            
+            if (controllerClass == [HZAdVideoViewController class]) {
                 
-                // Tags are now set on show. TODO: This may need to find a better home?
-                ad.tag = options.tag;
+                HZAdVideoViewController *controller = [[HZAdVideoViewController alloc] initWithAd: (HZVideoAdModel *) ad];
+                if (!controller) {
+                    success = NO;
+                } else {
+                    [controller showWithOptions:options];
+                    self.activeController = controller;
+                    success = YES;
+                }
                 
-                Class controllerClass = [ad controller];
-                
-                if (controllerClass == [HZAdVideoViewController class]) {
-                    
-                    HZAdVideoViewController *controller = [[HZAdVideoViewController alloc] initWithAd: (HZVideoAdModel *) ad];
-                    if (!controller) {
-                        success = NO;
-                    } else {
-                        [controller showWithOptions:options];
-                        self.activeController = controller;
-                        success = YES;
-                    }
-                    
-                } else if (controllerClass == [HZAdInterstitialViewController class]) {
-                    HZAdInterstitialViewController *controller = [[HZAdInterstitialViewController alloc] initWithAd: (HZInterstitialAdModel *) ad];
-                    if (!controller) {
-                        success = NO;
-                    } else {
-                        [controller showWithOptions:options];
-                        self.activeController = controller;
-                        success = YES;
-                    }
+            } else if (controllerClass == [HZAdInterstitialViewController class]) {
+                HZAdInterstitialViewController *controller = [[HZAdInterstitialViewController alloc] initWithAd: (HZInterstitialAdModel *) ad];
+                if (!controller) {
+                    success = NO;
+                } else {
+                    [controller showWithOptions:options];
+                    self.activeController = controller;
+                    success = YES;
                 }
             }
             
@@ -230,7 +251,7 @@ static BOOL hzAdsIsEnabled = NO;
     }
     
     if (!success || error) {
-        [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification adUnit:adUnit auctionType:auctionType userInfo: (error ? @{NSUnderlyingErrorKey: error} : nil)];
+        [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification fetchableCreativeType:fetchable auctionType:auctionType userInfo: (error ? @{NSUnderlyingErrorKey: error} : nil)];
     }
 }
 
@@ -282,11 +303,11 @@ static BOOL hzAdsIsEnabled = NO;
 
 // Send out NSNotifications so mediation can get more info than delegate callbacks provide (e.g. auctionType, easier access to adUnit).
 // See HZNotification for details.
-+ (void)postNotificationName:(NSString *const)notificationName adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
-    [HZAdsManager postNotificationName:notificationName adUnit:adUnit auctionType:auctionType userInfo:nil];
++ (void)postNotificationName:(NSString *const)notificationName fetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType {
+    [HZAdsManager postNotificationName:notificationName fetchableCreativeType:fetchableCreativeType auctionType:auctionType userInfo:nil];
 }
-+ (void)postNotificationName:(NSString *const)notificationName adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType userInfo:(NSDictionary *)userInfo {
-    HZAdInfo *const info = [[HZAdInfo alloc] initWithAdUnit:adUnit auctionType:auctionType];
++ (void)postNotificationName:(NSString *const)notificationName fetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType userInfo:(NSDictionary *)userInfo {
+    HZAdInfo *const info = [[HZAdInfo alloc] initWithFetchableCreativeType:fetchableCreativeType auctionType:auctionType];
     [HZAdsManager postNotificationName:notificationName adInfo:info userInfo:userInfo];
 }
 

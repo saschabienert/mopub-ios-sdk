@@ -23,17 +23,14 @@
 
 @implementation HZAdFetchRequest
 
-- (id) initWithCreativeTypes:(NSArray *)creativeTypes
-                      adUnit:(NSString *)adUnit
-                         tag:(NSString *)tag
-                 auctionType:(HZAuctionType)auctionType
-         andAdditionalParams:(NSDictionary *)additionalParams {
+- (id) initWithFetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType
+                                 tag:(NSString *)tag
+                         auctionType:(HZAuctionType)auctionType
+                 andAdditionalParams:(NSDictionary *)additionalParams {
     
     self = [super init];
     if (self) {
-        _requestID = [NSUUID UUID];
-        _creativeTypes = creativeTypes;
-        _adUnit = adUnit;
+        _fetchableCreativeType = fetchableCreativeType;
         _auctionType = auctionType;
         _tag = [HZAdModel normalizeTag:tag];
         _retriesRemaining = kHZAdRetries;
@@ -46,7 +43,7 @@
         NSString *orientation = UIInterfaceOrientationIsLandscape(deviceOrientation) ? @"landscape" : @"portrait";
         
         // override
-        if ([adUnit isEqualToString: @"video"] || [adUnit isEqualToString: @"incentivized"]) {
+        if (fetchableCreativeType == HZFetchableCreativeTypeVideo) {
             orientation = @"landscape";
         }
         
@@ -59,7 +56,7 @@
         NSString *deviceDPI = [NSString stringWithFormat: @"%f", [UIScreen mainScreen].scale];
         
         NSString *supportedFeatures = @"actions_from_webview,js_visibility_callback,chromeless";
-        NSString *creativeTypesString = [_creativeTypes componentsJoinedByString:@","];
+        NSString *creativeTypesString = [[self class] creativeTypeStringForFetchableType:fetchableCreativeType];
         
         _generatedParams = [NSMutableDictionary dictionaryWithDictionary:@{@"orientation": orientation,
                                                                            @"device_width": @(screenSize.width),
@@ -70,7 +67,6 @@
                                                                            @"device_free_bytes": diskSpaceInBytes,
                                                                            @"device_dpi": deviceDPI,
                                                                            @"creative_type": creativeTypesString,
-                                                                           @"ad_unit": _adUnit,
                                                                            @"tag": _tag,
                                                                            @"auction_type": NSStringFromHZAuctionType(auctionType),
                                                                            }];
@@ -130,6 +126,20 @@
 
 - (BOOL) canRetry {
     return _retriesRemaining > 0;
+}
+
++ (NSString *)creativeTypeStringForFetchableType:(HZFetchableCreativeType)fetchableCreativeType {
+    switch (fetchableCreativeType) {
+        case HZFetchableCreativeTypeStatic: {
+            return @"full_screen_interstitial,interstitial";
+        }
+        case HZFetchableCreativeTypeVideo: {
+            return @"interstitial_video,video";
+        }
+        case HZFetchableCreativeTypeNative: {
+            return @"native";
+        }
+    }
 }
 
 @end

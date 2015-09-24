@@ -38,6 +38,16 @@
 
 #pragma mark - Validity
 
+- (HZCreativeType)showableCreativeType {
+    HZAssert(_showableCreativeType != HZCreativeTypeUnknown, @"[Heyzap internal ad network] The showableCreativeType has not been set");
+    return _showableCreativeType;
+}
+
+- (HZAdType)requestingAdType {
+    HZAssert(_requestingAdType != 0, @"Requesting ad type asked for before it's been set.");
+    return _requestingAdType;
+}
+
 + (BOOL) isValidForCreativeType: (NSString *) creativeType {
     return YES;
 }
@@ -72,10 +82,10 @@
 
 #pragma mark - Initializers
 
-- (instancetype) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
+- (instancetype) initWithDictionary: (NSDictionary *) dict fetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType {
     self = [super init];
     if (self) {
-        _adUnit = adUnit;
+        _fetchableCreativeType = fetchableCreativeType;
         _auctionType = auctionType;
         
         _impressionID = [HZDictionaryUtils objectForKey: @"impression_id" ofClass: [NSString class] default: @"" dict: dict];
@@ -120,7 +130,7 @@
 
 
 - (NSString *) description {
-    return [NSString stringWithFormat: @"<%@ I:%@ A:%@ T:%@ PKG: %@>", [self class], _impressionID, _adUnit, _tag, _promotedGamePackage];
+    return [NSString stringWithFormat: @"<%@ I:%@ creativeType:%@ T:%@ PKG: %@>", [self class], _impressionID, NSStringFromHZFetchableCreativeType(self.fetchableCreativeType), _tag, _promotedGamePackage];
 }
 
 #pragma mark - Expiry
@@ -178,16 +188,20 @@
 }
 
 #pragma mark - Factory
-+ (HZAdModel *) modelForResponse: (NSDictionary *) response adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
-    NSString *creativeType = [HZDictionaryUtils objectForKey: @"creative_type" ofClass: [NSString class] default: @"interstitial" dict: response];
++ (HZAdModel *) modelForResponse: (NSDictionary *) response fetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType {
     
-    if ([HZVideoAdModel isValidForCreativeType: creativeType]) {
-        return [[HZVideoAdModel alloc] initWithDictionary: response adUnit:adUnit auctionType:auctionType];
-    } else {
-        return [[HZInterstitialAdModel alloc] initWithDictionary: response adUnit:adUnit auctionType:auctionType];
+    switch (fetchableCreativeType) {
+        case HZFetchableCreativeTypeStatic: {
+            return [[HZInterstitialAdModel alloc] initWithDictionary:response fetchableCreativeType:fetchableCreativeType auctionType:auctionType];
+        }
+        case HZFetchableCreativeTypeVideo: {
+            return [[HZVideoAdModel alloc] initWithDictionary:response fetchableCreativeType:fetchableCreativeType auctionType:auctionType];
+        }
+        case HZFetchableCreativeTypeNative: {
+            HZELog(@"Native is not a valid creative for HZAdModel");
+            return nil;
+        }
     }
-    
-    return nil;
 }
 
 - (void) cleanup {
@@ -205,7 +219,9 @@
     
     NSDictionary *standardParams = @{@"impression_id": self.impressionID,
                                      @"promoted_game_package": self.promotedGamePackage,
-                                     @"tag": [HZAdModel normalizeTag: self.tag]};
+                                     @"tag": [HZAdModel normalizeTag: self.tag],
+                                     @"ad_unit":NSStringFromAdType(self.requestingAdType),
+                                     };
     
     if (self.additionalEventParams != nil) {
         [self.additionalEventParams addEntriesFromDictionary: standardParams];

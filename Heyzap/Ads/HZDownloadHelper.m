@@ -16,7 +16,7 @@ NSString * const HZDownloadHelperSuccessNotification = @"HZDownloadHelperSuccess
 
 @implementation HZDownloadHelper
 
-+ (HZAFHTTPRequestOperation *) downloadURL: (NSURL *) url toFilePath: (NSString *) filePath forTag:(NSString *)tag adUnit:(NSString *)type andAuctionType:(HZAuctionType)auctionType withCompletion:(void (^)(BOOL result))completion {
++ (HZAFHTTPRequestOperation *) downloadURL: (NSURL *) url toFilePath: (NSString *) filePath withCompletion:(void (^)(BOOL result))completion {
 
     __block NSDate *startDownload = [NSDate date];
     

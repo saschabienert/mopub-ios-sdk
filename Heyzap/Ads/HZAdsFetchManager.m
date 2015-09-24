@@ -23,7 +23,7 @@
 
 - (void) fetch: (HZAdFetchRequest *) request withCompletion:(void (^)(HZAdModel *, NSError *))completion {
     // Already have the ad, let's bail out.
-    HZAdModel *ad = [[HZAdLibrary sharedLibrary] peekAtAdForAdUnit:request.adUnit auctionType:request.auctionType];
+    HZAdModel *ad = [[HZAdLibrary sharedLibrary] peekAtAdForFetchableCreativeType:request.fetchableCreativeType auctionType:request.auctionType];
     if (ad != nil && !request.shouldSkipCache) {
         // ad is available. no need to fetch another.
         if (![ad isExpired]) return;
@@ -57,7 +57,7 @@
     if (![HZAdModel isResponseValid: request.lastResponse withError: &error]) {
         validAd = NO;
     } else {
-        ad = [HZAdModel modelForResponse: request.lastResponse adUnit:request.adUnit auctionType:request.auctionType];
+        ad = [HZAdModel modelForResponse:request.lastResponse fetchableCreativeType:request.fetchableCreativeType auctionType:request.auctionType];
         if (ad == nil) {
             validAd = NO;
         }
@@ -82,8 +82,6 @@
         return;
     }
     
-    ad.adUnit = request.adUnit;
-    
     if ([ad isInstalled] && [request canRetry]) {
         
         [HZLog debug: [NSString stringWithFormat: @"%@ already installed. Trying again.", ad]];
@@ -105,12 +103,12 @@
         
         return;
     }
-    
+
     // Set session specific data
     [ad doPostFetchActionsWithCompletion:^(BOOL result) {
         if (result) {
             
-            [[HZAdLibrary sharedLibrary] pushAd:ad forAdUnit:request.adUnit auctionType:request.auctionType];
+            [[HZAdLibrary sharedLibrary] pushAd:ad forFetchableCreativeType:request.fetchableCreativeType auctionType:request.auctionType];
             
             [HZAdsManager postNotificationName:kHeyzapDidReceiveAdNotification infoProvider:request];
             

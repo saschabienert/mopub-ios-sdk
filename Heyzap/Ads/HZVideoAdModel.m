@@ -19,22 +19,25 @@
 @interface HZVideoAdModel()<UIWebViewDelegate>
 @property (nonatomic) BOOL sentComplete;
 @property (nonatomic) HZAFHTTPRequestOperation *downloadOperation;
+@property (nonatomic) NSDictionary *videoSettingsDictionary;
+@property (nonatomic) HZVideoAdDisplayOptions *displayOptions;
+
 @end
 
 @implementation HZVideoAdModel
 
-- (instancetype) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
-    self = [super initWithDictionary: dict adUnit:adUnit auctionType:auctionType];
+- (instancetype) initWithDictionary: (NSDictionary *) dict fetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType {
+    self = [super initWithDictionary: dict fetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:auctionType];
     if (self) {
         NSDictionary *interstitial = [HZDictionaryUtils objectForKey: @"interstitial" ofClass: [NSDictionary class] default: @{} dict: dict];
         if ([interstitial objectForKey: @"html_data"] != nil) {
             _HTMLContent = [HZDictionaryUtils objectForKey: @"html_data" ofClass: [NSString class] default: @"" dict: interstitial];
         }
         
-        NSDictionary *video = [HZDictionaryUtils objectForKey: @"video" ofClass: [NSDictionary class] default: @{} dict: dict];
+        _videoSettingsDictionary = [HZDictionaryUtils objectForKey: @"video" ofClass: [NSDictionary class] default: @{} dict: dict];
         
-        if ([video objectForKey: @"static_url"] != nil) {
-            NSArray *staticURLs = [HZDictionaryUtils objectForKey: @"static_url" ofClass: [NSArray class] default: @[] dict: video];
+        if ([_videoSettingsDictionary objectForKey: @"static_url"] != nil) {
+            NSArray *staticURLs = [HZDictionaryUtils objectForKey: @"static_url" ofClass: [NSArray class] default: @[] dict: _videoSettingsDictionary];
             
             _staticURLs = [[NSMutableArray alloc] init];
             
@@ -45,8 +48,8 @@
             _staticURLs = [[NSMutableArray alloc] initWithCapacity: 0];
         }
         
-        if ([video objectForKey: @"streaming_url"] != nil) {
-            NSArray *streamingURLs = [HZDictionaryUtils objectForKey: @"streaming_url" ofClass: [NSArray class] default: @[] dict: video];
+        if ([_videoSettingsDictionary objectForKey: @"streaming_url"] != nil) {
+            NSArray *streamingURLs = [HZDictionaryUtils objectForKey: @"streaming_url" ofClass: [NSArray class] default: @[] dict: _videoSettingsDictionary];
             
             _streamingURLs = [[NSMutableArray alloc] init];
             
@@ -63,6 +66,7 @@
         
         /* 
          Expected format of video dict (defaults at top level, overrides per ad unit underneath "ad_unit"):
+         See `updateDisplayOptionsWithShowableCreativeType` below for parsing the overrides.
          {
              ...
          
@@ -85,18 +89,8 @@
              }
          }
          */
-        [HZVideoAdDisplayOptions setDefaultsWithDict:video];
-        NSDictionary * adUnitVideoOptionsResponse = [HZDictionaryUtils objectForKey: @"ad_unit" ofClass: [NSDictionary class] default: nil dict: video];
-        // only save current ad unit display options, discard the others
-        NSDictionary * optionsForCurrentAdUnit = [HZDictionaryUtils objectForKey:adUnit ofClass:[NSDictionary class] default:nil dict:adUnitVideoOptionsResponse];
-        if(!optionsForCurrentAdUnit) {
-            HZDLog(@"HZVideoAdModel did not find video display options for adUnit=\"%@\" in response. Using defaults.", adUnit);
-            _displayOptions = [HZVideoAdDisplayOptions defaults];
-        } else {
-            _displayOptions = [[HZVideoAdDisplayOptions alloc] initWithDict:optionsForCurrentAdUnit];
-        }
         
-        NSDictionary *meta = [HZDictionaryUtils objectForKey: @"meta"  ofClass: [NSDictionary class] default: @{} dict: video];
+        NSDictionary *meta = [HZDictionaryUtils objectForKey: @"meta"  ofClass: [NSDictionary class] default: @{} dict: _videoSettingsDictionary];
         
         // Video Meta
         _videoWidth = [HZDictionaryUtils objectForKey: @"width" ofClass: [NSNumber class] default: @0 dict: meta];
@@ -107,9 +101,45 @@
         // Other
         _fileCached = NO;
 
+        _displayOptions = [[HZVideoAdDisplayOptions alloc] initWithDefaultsDictionary:_videoSettingsDictionary adUnitDictionary:@{}];
     }
     
     return self;
+}
+
+- (NSString *)adUnitKey {
+    if (self.showableCreativeType == HZCreativeTypeIncentivized) {
+        return @"incentivized";
+    } else if (self.showableCreativeType == HZCreativeTypeVideo) {
+        return @"video";
+    } else {
+        HZFail(@"Invalid creative type for showing videos: %%@",NSStringFromCreativeType(self.showableCreativeType));
+    }
+}
+
+- (void)setShowableCreativeType:(HZCreativeType)showableCreativeType {
+    [super setShowableCreativeType:showableCreativeType];
+    [self updateDisplayOptionsWithShowableCreativeType];
+}
+
+- (void)updateDisplayOptionsWithShowableCreativeType {
+    // JSON structure we're parsing:
+    /*
+     "ad_unit" : {
+        "incentivized" : {
+            "allow_hide" : false,
+            "allow_click" : false,
+            ...
+        },
+        "video" : {...},
+     }
+     */
+    NSDictionary *const settingsByAdUnitDict = [HZDictionaryUtils objectForKey: @"ad_unit" ofClass: [NSDictionary class] default:@{} dict:self.videoSettingsDictionary];
+    
+    NSString *const adUnitKey = [self adUnitKey];
+    NSDictionary *const adUnitDict = [HZDictionaryUtils objectForKey:adUnitKey ofClass:[NSDictionary class] default:@{} dict:settingsByAdUnitDict];
+    
+    self.displayOptions = [[HZVideoAdDisplayOptions alloc] initWithDefaultsDictionary:self.videoSettingsDictionary adUnitDictionary:adUnitDict];
 }
 
 - (void) dealloc {
@@ -134,7 +164,6 @@
 }
 
 - (void) doPostFetchActionsWithCompletion:(void (^)(BOOL))completion {
-    
     NSString *path = [[NSBundle mainBundle] bundlePath];
     NSURL *baseURL = [NSURL fileURLWithPath:path];
     
@@ -154,17 +183,14 @@
             } else if ([self.streamingURLs count] > 0) {
                 URLToDownload = [self.streamingURLs firstObject];
             }
-            
+
             self.downloadOperation = [HZDownloadHelper downloadURL: URLToDownload
                                                         toFilePath: [self filePathForCachedVideo]
-                                                            forTag:self.tag
-                                                            adUnit:self.adUnit
-                                                    andAuctionType:self.auctionType
                                                     withCompletion:^(BOOL result) {
                                                         dispatch_async(dispatch_get_main_queue(), ^{
                                                              __strong __typeof(&*weakSelf)strongSelf = weakSelf;
                                                             strongSelf.fileCached = result;
-                                                            if (![strongSelf.adUnit isEqualToString: @"interstitial"] && completion != nil) {
+                                                            if (completion != nil) {
                                                                 if (strongSelf.displayOptions.allowFallbacktoStreaming) {
                                                                     completion(YES);
                                                                 } else {
@@ -177,7 +203,7 @@
         
     }
     
-    if (self.displayOptions.forceStreaming || [self.adUnit isEqualToString: @"interstitial"]) {
+    if (self.displayOptions.forceStreaming) {
         if (completion != nil) {
             completion(YES);
         }
@@ -205,7 +231,7 @@
         
         [params setObject: [NSString stringWithFormat: @"%f", lockoutTimeSeconds] forKey: @"lockout_time_seconds"];
         
-        if ([self.adUnit isEqualToString: @"incentivized"]) {
+        if (self.showableCreativeType == HZCreativeTypeIncentivized) {
             [params setObject: @"true" forKey: @"incentivized"];
         }
         

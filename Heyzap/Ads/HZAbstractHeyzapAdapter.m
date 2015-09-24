@@ -161,24 +161,18 @@
 - (void)didReceiveAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         HZAdInfo *info = notification.object;
-        HZAdType type = hzAdTypeFromString(info.adUnit);
+        HZFetchableCreativeType fetchableCreativeType = info.fetchableCreativeType;
         
-        switch (type) {
-            case HZAdTypeInterstitial: {
+        switch (fetchableCreativeType) {
+            case HZFetchableCreativeTypeStatic: {
                 self.lastStaticError = nil;
-                break;
             }
-            case HZAdTypeIncentivized: {
+            case HZFetchableCreativeTypeVideo: {
                 self.lastIncentivizedError = nil;
-                break;
-            }
-            case HZAdTypeVideo: {
                 self.lastVideoError = nil;
-                break;
             }
-            case HZAdTypeBanner: {
-                // Ignored
-                break;
+            case HZFetchableCreativeTypeNative: {
+                // ignored
             }
         }
         
@@ -188,25 +182,20 @@
 - (void)didFailToReceiveAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         HZAdInfo *info = notification.object;
-        HZAdType type = hzAdTypeFromString(info.adUnit);
+        HZFetchableCreativeType fetchableCreativeType = info.fetchableCreativeType;
+        
         NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:[notification userInfo]];
         
-        switch (type) {
-            case HZAdTypeInterstitial: {
+        switch (fetchableCreativeType) {
+            case HZFetchableCreativeTypeStatic: {
                 self.lastStaticError = error;
-                break;
             }
-            case HZAdTypeIncentivized: {
+            case HZFetchableCreativeTypeVideo: {
                 self.lastIncentivizedError = error;
-                break;
-            }
-            case HZAdTypeVideo: {
                 self.lastVideoError = error;
-                break;
             }
-            case HZAdTypeBanner: {
-                // Ignored
-                break;
+            case HZFetchableCreativeTypeNative: {
+                // ignored
             }
         }
         

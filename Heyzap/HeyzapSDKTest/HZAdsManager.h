@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "HeyzapAds.h"
 #import "HZShowOptions.h"
+#import "HZCreativeType.h"
 
 @class HZAdModel;
 @class HZAdViewController;
@@ -43,8 +44,8 @@
 - (BOOL) isUnity3D;
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
 
-- (BOOL)isAvailableForAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;
-- (void) showForAdUnit: (NSString *) adUnit auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options;
+- (BOOL)isAvailableForFetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType;
+- (void)showForCreativeType:(HZCreativeType)showableCreativeType auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options;
 - (void) hideActiveAd;
 
 + (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider;
