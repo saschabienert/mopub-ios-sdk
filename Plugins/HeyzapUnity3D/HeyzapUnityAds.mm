@@ -310,12 +310,13 @@ extern "C" {
     // Since I want to call it recursively, I immediately convert to an `NSString *` in `hz_fetch_chartboost_for_location`
     void hz_fetch_chartboost_for_location_objc(NSString *location) {
         if (!hz_chartboost_enabled()) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            HZDLog(@"Chartboost not enabled; retrying in 0.25 seconds");
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 hz_fetch_chartboost_for_location_objc(location);
             });
             return;
         }
-        
+        HZDLog(@"Caching Chartboost interstitial for location: %@",location);
         [HZUnityAdapterChartboostProxy cacheInterstitial:location];
     }
     
@@ -327,19 +328,22 @@ extern "C" {
     bool hz_chartboost_is_available_for_location(const char *location) {
         NSString *nsLocation = [NSString stringWithUTF8String:location];
         if (!hz_chartboost_enabled()) {
+            HZDLog(@"Chartboost ad is not available because it is not enabled");
             return NO;
         }
-        return [HZUnityAdapterChartboostProxy hasInterstitial:nsLocation];
+        const BOOL hasAd = [HZUnityAdapterChartboostProxy hasInterstitial:nsLocation];
+        HZDLog(@"Chartboost says it has an ad = %i",hasAd);
+        return hasAd;
     }
     
     void hz_show_chartboost_for_location(const char *location) {
         NSString *nsLocation = [NSString stringWithUTF8String:location];
         
         if (!hz_chartboost_enabled()) {
-            NSLog(@"Chartboost not enabled yet; not able to show ad.");
+            HZDLog(@"Chartboost not enabled yet; not able to show ad.");
             return;
         }
-        
+        HZDLog(@"Requesting Chartboost show interstitial for location: %@",nsLocation);
         [HZUnityAdapterChartboostProxy showInterstitial:nsLocation];
     }
 }
