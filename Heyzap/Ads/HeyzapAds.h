@@ -69,29 +69,30 @@
 #endif
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
-    HZAdOptionsNone = 0 << 0,
+    HZAdOptionsNone = 0 << 0, // 0
     /**
      *  Pass this to disable automatic prefetching of ads. Ad prefetching occurs immediately after you initialize the Heyzap SDK and also after ads are dismissed.
      */
-    HZAdOptionsDisableAutoPrefetching = 1 << 0,
+    HZAdOptionsDisableAutoPrefetching = 1 << 0, // 1
     /**
      *  Pass this if you are only integrating the Heyzap SDK into your app to track game installs as an advertiser. No ads will be fetched.
      */
-    HZAdOptionsInstallTrackingOnly = 1 << 1,
+    HZAdOptionsInstallTrackingOnly = 1 << 1, // 2
     /**
      *  @deprecated
      *  Please use HZAdOptionsInstallTrackingOnly instead.
      */
     HZAdOptionsAdvertiserOnly DEPRECATED_ATTRIBUTE = HZAdOptionsInstallTrackingOnly,
-    HZAdOptionsAmazon DEPRECATED_ATTRIBUTE = 1 << 2,
+    // This doesn't do anything for iOS, but is here to keep parity with the Android SDK's flag values for the sake of Unity, AIR, etc.
+    HZAdOptionsAmazon DEPRECATED_ATTRIBUTE = 1 << 2, // 4
     /**
-     *  Pass this to disable mediation. This is not required, but is recommended for developers not using mediation. If you're mediating Heyzap through someone (e.g. AdMob), it is *strongly* recommended that you disable Heyzap's mediation to prevent any potential conflicts.
+     *  Pass this to disable mediation. This is not required, but is recommended for developers not using mediation (i.e: not integrating any 3rd-pary network SDKs). If you're mediating Heyzap through someone (e.g. AdMob), it is *strongly* recommended that you disable Heyzap's mediation to prevent any potential conflicts.
      */
-    HZAdOptionsDisableMedation = 1 << 3,
+    HZAdOptionsDisableMedation = 1 << 3, // 8
     /**
      * Pass this to disable recording of In-App Purchase data
      */
-    HZAdOptionsDisableAutomaticIAPRecording = 1 << 4,
+    HZAdOptionsDisableAutomaticIAPRecording = 1 << 4, // 16
 };
 
 
