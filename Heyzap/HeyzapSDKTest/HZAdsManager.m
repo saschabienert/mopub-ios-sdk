@@ -322,10 +322,5 @@ static BOOL hzAdsIsEnabled = NO;
                                                         object:adInfo
                                                       userInfo:userInfo];
 }
-    
-    
-    
-    
-
 
 @end
