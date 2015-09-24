@@ -301,6 +301,7 @@ static BOOL hzAdsIsEnabled = NO;
     return sharedManager;
 }
 
+// Send out NSNotifications so mediation can get more info than delegate callbacks provide (e.g. auctionType, easier access to adUnit).
 // See HZNotification for details.
 + (void)postNotificationName:(NSString *const)notificationName fetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType {
     [HZAdsManager postNotificationName:notificationName fetchableCreativeType:fetchableCreativeType auctionType:auctionType userInfo:nil];
