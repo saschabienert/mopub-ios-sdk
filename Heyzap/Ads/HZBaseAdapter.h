@@ -100,6 +100,7 @@
 - (NSString *)sdkVersion;
 
 - (NSString *)name;
+- (NSString *)humanizedName;
 
 - (BOOL)supportsCreativeType:(HZCreativeType)creativeType;
 

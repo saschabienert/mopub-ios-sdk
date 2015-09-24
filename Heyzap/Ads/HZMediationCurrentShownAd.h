@@ -24,7 +24,12 @@ typedef NS_ENUM(NSUInteger, HZAdState) {
 @property (nonatomic, readonly) HZBaseAdapter *adapter;
 @property (nonatomic) HZAdState adState; // Mutable
 @property (nonatomic, readonly) HZShowOptions *showOptions;
+@property (nonatomic, readonly, getter=isStale) BOOL stale;
+
+@property (nonatomic, readonly) NSDate *shownDate;
 
 - (instancetype)initWithEventReporter:(HZMediationEventReporter *)eventReporter adapter:(HZBaseAdapter *)adapter options:(HZShowOptions *)options;
+
+- (void)setStale;
 
 @end
