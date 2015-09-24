@@ -76,7 +76,7 @@
 
 #pragma mark - Externally Called on Show
 
-- (NSOrderedSet *)parseMediateIntoAdaptersForShow:(NSDictionary *)mediateDictionary setupAdapterClasses:(NSSet *)setupAdapterClasses adType:(HZAdType)adType {
+- (NSOrderedSet *)parseMediateIntoAdaptersForShow:(NSDictionary *)mediateDictionary validAdapterClasses:(NSSet *)validAdapterClasses adType:(HZAdType)adType {
     NSError *error;
     NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:mediateDictionary error:&error];
     
@@ -91,8 +91,8 @@
         Class adapter = [HZBaseAdapter adapterClassForName:networkName];
         HZBaseAdapter *adapterInstance = [adapter sharedAdapter];
         
-        if ([setupAdapterClasses containsObject:adapter]) {
-            // add each network/score/creativeType triplet to the retrun value for each creativeType in the network's response set that matches a currently-allowed creativeType, if the network is setup & it supports the creativeType
+        if ([validAdapterClasses containsObject:adapter]) {
+            // add each network/creativeType tuple to the return value for each creativeType in the network's response set that matches a currently-allowed creativeType, if the network is set up & it supports the creativeType
             for (NSNumber * creativeTypeNumber in creativeTypesAllowed) {
                 HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeNumber);
                 
@@ -101,7 +101,7 @@
                     && [adapterInstance hasCredentialsForCreativeType:creativeType]
                     && [self.persistentConfig isNetworkEnabled:[adapterInstance name]]) {
                     
-                    [chosenNetworks addObject:[[HZMediationAdapterWithCreativeTypeScore alloc] initWithAdapter:adapterInstance creativeType:creativeType score:[adapterInstance latestMediationScoreForCreativeType:creativeType]]];
+                    [chosenNetworks addObject:[[HZMediationAdapterWithCreativeTypeScore alloc] initWithAdapter:adapterInstance creativeType:creativeType]];
                 }
             }
         }
@@ -171,15 +171,18 @@
 
 @implementation HZMediationAdapterWithCreativeTypeScore
 
-- (instancetype) initWithAdapter:(HZBaseAdapter *)adapter creativeType:(HZCreativeType)creativeType score:(NSNumber *)score {
+- (instancetype) initWithAdapter:(HZBaseAdapter *)adapter creativeType:(HZCreativeType)creativeType {
     self = [super init];
     if (self) {
         _adapter = adapter;
         _creativeType = creativeType;
-        _score = score;
     }
     
     return self;
+}
+
+- (NSNumber *) score {
+    return [self.adapter latestMediationScoreForCreativeType:self.creativeType];
 }
 
 - (NSString *) description {

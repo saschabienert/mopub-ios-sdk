@@ -11,6 +11,7 @@
 #import "HZCreativeType.h"
 
 @class HZBaseAdapter;
+@class HZBannerAdapter;
 @class HZSegmentationController;
 @class HZInterstitialVideoConfig;
 @class HZMediationAdapterWithCreativeTypeScore;
@@ -30,7 +31,7 @@
 - (void)updateWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig;
 - (void)didShowInterstitialVideo;
 
-- (NSOrderedSet *)parseMediateIntoAdaptersForShow:(NSDictionary *)mediateDictionary setupAdapterClasses:(NSSet *)setupAdapterClasses adType:(HZAdType)adType;
+- (NSOrderedSet *)parseMediateIntoAdaptersForShow:(NSDictionary *)mediateDictionary validAdapterClasses:(NSSet *)validAdapterClasses adType:(HZAdType)adType;
 
 @end
 
@@ -38,7 +39,9 @@
 @interface HZMediationAdapterWithCreativeTypeScore : NSObject
 @property (nonatomic) HZBaseAdapter *adapter;
 @property (nonatomic) HZCreativeType creativeType;
-@property (nonatomic) NSNumber *score;
+@property (nonatomic, readonly) NSNumber *score;
 
-- (instancetype) initWithAdapter:(HZBaseAdapter *)adapter creativeType:(HZCreativeType)creativeType score:(NSNumber *)score;
+@property (nonatomic) HZBannerAdapter *bannerAdapter; // used for banners only
+
+- (instancetype) initWithAdapter:(HZBaseAdapter *)adapter creativeType:(HZCreativeType)creativeType;
 @end

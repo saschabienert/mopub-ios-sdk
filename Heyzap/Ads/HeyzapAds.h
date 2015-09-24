@@ -289,7 +289,7 @@ extern NSString * const HZRemoteDataRefreshedNotification;
 /**
  * Returns a dictionary of developer-settable data or an empty dictionary if no data is available.
  
- * Note: This data is cached, so it will usually be available at app launch. It is updated via a network call that is made when `[HeyzapAds startWithPublisherId:]` (or one of its related methods) is called. If you want to guarantee that the data has been refreshed, only use it after receiving an NSNotification with name=`HZRemoteDataRefreshedNotification`. The userInfo passed with the notification will be the same NSDictionary you can receive with this method call.
+ * @note This data is cached, so it will usually be available at app launch. It is updated via a network call that is made when `[HeyzapAds startWithPublisherId:]` (or one of its related methods) is called. If you want to guarantee that the data has been refreshed, only use it after receiving an NSNotification with name=`HZRemoteDataRefreshedNotification`. The userInfo passed with the notification will be the same NSDictionary you can receive with this method call.
  */
 + (NSDictionary *) remoteData;
 
@@ -309,7 +309,8 @@ extern NSString * const HZRemoteDataRefreshedNotification;
  *
  *  If you are experiencing frame drops after adding mediation, you can use this method to prevent Heyzap from starting these expensive operations. Note that this could cause the time to finish a fetch take significantly longer. If you use this method, please take every opportunity to call `resumeExpensiveWork`; even spending a tenth of a second on a post-level screen is ample time for the most expensive operations to complete.
  *
- *  @warning Using this method is likely to extend the amount of time until you receive an ad from Heyzap Mediation. Please only use this method if you are experiencing performance issues and after reading this documentation. Note: you *must* call `resumeExpensiveWork` to show ads.
+ *  @warning Using this method is likely to extend the amount of time until you receive an ad from Heyzap Mediation. Please only use this method if you are experiencing performance issues and after reading this documentation. 
+ *  @note You *must* call `resumeExpensiveWork` to show ads after calling this.
  */
 + (void)pauseExpensiveWork;
 
