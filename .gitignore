@@ -18,6 +18,8 @@ DerivedData
 *.xccheckout
 *.ipa
 *.dSYM.zip
+*.gcda
+*.gcno
 
 ## Other
 *.moved-aside
