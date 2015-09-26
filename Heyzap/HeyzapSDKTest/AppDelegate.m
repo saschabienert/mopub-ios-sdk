@@ -12,6 +12,8 @@
 #import "HeyzapAds.h"
 #import "HZLog.h"
 
+#import "HZUINavigationController.h"
+
 #import "HZInterstitialAd.h"
 #import "SDKTestAppViewController.h"
 
@@ -61,7 +63,7 @@
     }
     
     
-    self.navController = [[UINavigationController alloc] initWithRootViewController: segmentedController];
+    self.navController = [[HZUINavigationController alloc] initWithRootViewController: segmentedController orientations:UIInterfaceOrientationMaskAll];
     
     segmentedController.position = SDCSegmentedViewControllerControlPositionNavigationBar;
     segmentedController.segmentedControl.tintColor = [UIColor whiteColor];
@@ -71,6 +73,5 @@
     
     return YES;
 }
-
 
 @end

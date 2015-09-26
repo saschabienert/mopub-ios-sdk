@@ -127,6 +127,15 @@ NSInteger const DefaultSegmentIndex = 0;
 	[self stopObservingViewController:self.viewControllers[self.currentSelectedIndex]];
 }
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
+- (NSUInteger)supportedInterfaceOrientations
+#else
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+#endif
+{
+    return UIInterfaceOrientationMaskAll;
+}
+
 #pragma mark - Content Management
 
 - (void)addStoryboardSegments:(NSArray *)segments {
