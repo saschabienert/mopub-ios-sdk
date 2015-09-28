@@ -235,5 +235,11 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
     [[HZPaymentTransactionObserver sharedInstance] onIAPPurchaseComplete:productId productName:productName price:price];
 }
 
++ (void)startChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature {
+    HZVersionCheck();
+
+    [[HeyzapMediation sharedInstance] startChartboostWithAppID:appID appSignature:appSignature];
+}
+
 @end
 

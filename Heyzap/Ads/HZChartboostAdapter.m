@@ -14,6 +14,9 @@
 #import "HZLog.h"
 #import "HeyzapMediation.h"
 
+NSString * const kHZChartboostAppIDKey = @"app_id";
+NSString * const kHZChartboostAppSignatureKey = @"app_signature";
+
 @interface HZChartboostAdapter()
 
 @property (nonatomic) NSString *appID;
@@ -40,8 +43,8 @@
 }
 
 - (void)loadCredentials {
-    self.appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:self.credentials];
-    self.appSignature = [HZDictionaryUtils objectForKey:@"app_signature" ofClass:[NSString class] dict:self.credentials];
+    self.appID = [HZDictionaryUtils objectForKey:kHZChartboostAppIDKey ofClass:[NSString class] dict:self.credentials];
+    self.appSignature = [HZDictionaryUtils objectForKey:kHZChartboostAppSignatureKey ofClass:[NSString class] dict:self.credentials];
 }
 
 #pragma mark - Adapter Protocol

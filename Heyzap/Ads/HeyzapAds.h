@@ -326,4 +326,6 @@ extern NSString * const HZRemoteDataRefreshedNotification;
  */
 + (void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price;
 
++ (void)startChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature;
+
 @end

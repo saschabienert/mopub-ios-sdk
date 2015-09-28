@@ -52,6 +52,7 @@
 
 // Segmentation
 #import "HZImpressionHistory.h"
+#import "HZChartboostAdapter.h"
 
 @interface HeyzapMediation()
 
@@ -1020,24 +1021,29 @@ const NSTimeInterval bannerPollInterval = 1;
         } else if (forceOnlyHeyzapSDK && ![adapterClass isHeyzapAdapter]) {
             success = NO;
         } else {
-            NSError *credentialError = [[adapterClass sharedAdapter] initializeSDK];
-            if (credentialError){
-                HZELog(@"Failed to initialize network %@, had error: %@",[adapterClass humanizedName], credentialError);
-                self.erroredMediatiorClasses = [self.erroredMediatiorClasses setByAddingObject:adapterClass];
-            } else {
-                HZILog(@"Setup adapter: %@",[adapterClass humanizedName]);
-                HZBaseAdapter *adapter = [adapterClass sharedAdapter];
-                adapter.delegate = self;
-                self.setupMediators = [self.setupMediators setByAddingObject:adapter];
-                self.setupMediatorClasses = [self.setupMediatorClasses setByAddingObject:adapterClass];
-                
-                [self sendNetworkCallback:HZNetworkCallbackInitialized forNetwork:adapterName];
-            }
+            NSError *credentialError = [self setupAdapter:[adapterClass sharedAdapter]];
             success = credentialError == nil;
         }
     });
     
     return success;
+}
+
+- (NSError *)setupAdapter:(HZBaseAdapter *)adapter {
+    Class adapterClass = [adapter class];
+    NSError *const credentialError = [adapter initializeSDK];
+    if (credentialError){
+        HZELog(@"Failed to initialize network %@, had error: %@",[adapterClass humanizedName], credentialError);
+        self.erroredMediatiorClasses = [self.erroredMediatiorClasses setByAddingObject:[adapter class]];
+    } else {
+        HZILog(@"Setup adapter: %@",[adapterClass humanizedName]);
+        adapter.delegate = self;
+        self.setupMediators = [self.setupMediators setByAddingObject:adapter];
+        self.setupMediatorClasses = [self.setupMediatorClasses setByAddingObject:[adapter class]];
+
+        [self sendNetworkCallback:HZNetworkCallbackInitialized forNetwork:[adapter name]];
+    }
+    return credentialError;
 }
 
 - (NSOrderedSet *)getBannerClasses:(NSDictionary *)json tag:(NSString *)tag error:(NSError **)error {
@@ -1155,8 +1161,19 @@ const NSTimeInterval bannerPollInterval = 1;
     return [HZBaseAdapter adapterClassForName:forcedNetworkName];
 }
 
+
 - (BOOL)isNetworkEnabledByPersistentConfig:(NSString *)network {
     return [self.persistentConfig isNetworkEnabled:network];
+}
+
+- (void)startChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature {
+    HZParameterAssert(appID);
+    HZParameterAssert(appSignature);
+
+    HZBaseAdapter *const chartboost = [HZChartboostAdapter sharedAdapter];
+    chartboost.credentials = @{kHZChartboostAppIDKey: appID, appSignature : appSignature};
+    NSLog(@"Starting Chartboost");
+    [self setupAdapter:chartboost];
 }
 
 @end

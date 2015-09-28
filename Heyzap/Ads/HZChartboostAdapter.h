@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
 
+extern NSString * const kHZChartboostAppIDKey;
+extern NSString * const kHZChartboostAppSignatureKey;
+
 @interface HZChartboostAdapter : HZBaseAdapter
 
 @end

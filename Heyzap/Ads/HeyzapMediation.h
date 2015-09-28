@@ -90,4 +90,6 @@
  */
 - (void)enableSegmentation:(BOOL)enabled;
 
+- (void)startChartboostWithAppID:(NSString *)appID appSignature:(NSString *)appSignature;
+
 @end

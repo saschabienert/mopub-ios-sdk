@@ -293,6 +293,10 @@ extern "C" {
         [HeyzapAds setDebugLevel:HZDebugLevelSilent];
     }
     
+    void hz_start_chartboost(const char *appID, const char *appSignature) {
+        [HeyzapAds startChartboostWithAppID:[NSString stringWithUTF8String:appID] appSignature:[NSString stringWithUTF8String:appSignature]];
+    }
+    
     BOOL hz_chartboost_enabled(void) {
         return [HeyzapAds isNetworkInitialized:HZNetworkChartboost];
     }
