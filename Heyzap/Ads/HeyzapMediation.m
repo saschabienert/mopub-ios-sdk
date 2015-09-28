@@ -1171,7 +1171,7 @@ const NSTimeInterval bannerPollInterval = 1;
     HZParameterAssert(appSignature);
 
     HZBaseAdapter *const chartboost = [HZChartboostAdapter sharedAdapter];
-    chartboost.credentials = @{kHZChartboostAppIDKey: appID, appSignature : appSignature};
+    chartboost.credentials = @{kHZChartboostAppIDKey: appID, kHZChartboostAppSignatureKey : appSignature};
     NSLog(@"Starting Chartboost");
     [self setupAdapter:chartboost];
 }
