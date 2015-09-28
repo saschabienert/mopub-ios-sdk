@@ -50,10 +50,6 @@ typedef enum {
 @property (nonatomic) SDKTestAppViewControllerHZIncentivizedAdDelegate *incentivizedDelegate;
 @property (nonatomic) SDKTestAppViewControllerHZBannerAdDelegate *bannerDelegate;
 
-@property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl1;
-@property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl2;
-@property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl3;
-
 @property (nonatomic, strong) UISegmentedControl *adUnitSegmentedControl;
 
 @property (nonatomic, strong) NSString * forcedCreativeType;
@@ -793,33 +789,6 @@ const CGFloat kLeftMargin = 10;
     }
     
     return text;
-}
-
-// @[@"Rand", @"PSS",@"SS",@"FI",@"PFI"]
-// @[@"I", @"B",@"GOTD", @"SF", @"PSF"]
-
-- (void) setForcedCreativeType:(NSString *)forcedCreativeType{
-    _forcedCreativeType = [self.forcedCreativeDict objectForKey:forcedCreativeType];
-    [self logToConsole:[NSString stringWithFormat:@"Creative Type: %@", forcedCreativeType]];
-}
-
-- (void)creativeControlValueChanged:(UISegmentedControl *)sender
-{
-    if(sender == self.creativeSegmentedControl1){
-        [self.creativeSegmentedControl2 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-        [self.creativeSegmentedControl3 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-    }else if(sender == self.creativeSegmentedControl2){
-        [self.creativeSegmentedControl1 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-        [self.creativeSegmentedControl3 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-    }else if(sender == self.creativeSegmentedControl3){
-        [self.creativeSegmentedControl1 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-        [self.creativeSegmentedControl2 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-    }
-    
-    NSLog(@"Sender selected index: %ld, title: %@", (long)[sender selectedSegmentIndex], [sender titleForSegmentAtIndex:[sender selectedSegmentIndex]]);
-    [self setForcedCreativeType:[sender titleForSegmentAtIndex:[sender selectedSegmentIndex]]];
-    
-//    [self adsButton:nil];
 }
 
 - (void) clearButton{
