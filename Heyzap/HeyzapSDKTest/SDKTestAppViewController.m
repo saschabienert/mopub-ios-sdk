@@ -29,6 +29,7 @@
 #import "TestAppPaymentTransactionObserver.h"
 #import "HeyzapMediation.h"
 #import "SDKTestAppViewControllerAdCallbackDelegate.h"
+#import "HZUINavigationController.h"
 
 #import "HZUtils.h"
 
@@ -763,7 +764,9 @@ const CGFloat kLeftMargin = 10;
             NSLog(@"error = %@",error);
         } else {
             
-            UINavigationController *navController = [[UIStoryboard storyboardWithName:@"Storyboard" bundle:[NSBundle mainBundle]] instantiateInitialViewController];
+            HZUINavigationController *navController = [[UIStoryboard storyboardWithName:@"Storyboard" bundle:[NSBundle mainBundle]] instantiateInitialViewController];
+            navController.orientationMask = UIInterfaceOrientationMaskAll;
+            
             NativeAdTableViewController *vc = (id)navController.topViewController;
             vc.adCollection = collection;
             [self presentViewController:navController animated:YES completion:nil];

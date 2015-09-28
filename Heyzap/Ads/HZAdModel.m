@@ -107,7 +107,7 @@
         
         NSString *requiredOrientation = [HZDictionaryUtils objectForKey: @"required_orientation" ofClass: [NSString class] default: @"portrait" dict: dict];
         if ([requiredOrientation isEqualToString: @"portrait"]) {
-            _requiredAdOrientation = UIInterfaceOrientationMaskPortrait;
+            _requiredAdOrientation = UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
         } else {
             _requiredAdOrientation = UIInterfaceOrientationMaskLandscape;
         }
