@@ -385,17 +385,23 @@
     // update Heyzap Exchange's scores with latest fetched ad scores (ads have their own scores in the exchange, the score currently on the adapter is the per network score all networks have)
     [[HZHeyzapExchangeAdapter sharedAdapter] setAllMediationScoresForReadyAds];
     
+    // filter for the forced network, if applicable
+    NSSet *adapterClassesToConsider = self.setupMediatorClasses;
+    Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
+    if (optionalForcedNetwork) {
+        adapterClassesToConsider = [adapterClassesToConsider objectsPassingTest:^BOOL(Class klass, BOOL *stop) {
+            return klass == optionalForcedNetwork;
+        }];
+    }
+    
     // this returns a set of HZMediationAdapterWithCreativeTypeScore
-    NSMutableOrderedSet *adaptersWithScores = [[self.availabilityChecker parseMediateIntoAdaptersForShow:latestMediate validAdapterClasses:self.setupMediatorClasses adType:adType] mutableCopy];
+    NSMutableOrderedSet *adaptersWithScores = [[self.availabilityChecker parseMediateIntoAdaptersForShow:latestMediate validAdapterClasses:adapterClassesToConsider adType:adType] mutableCopy];
     
     // Sort the adapters, largest score first. The objects in the set obtained above contain their creative type and score.
     [self sortAdaptersByScore:adaptersWithScores ifLatestMediateRequires:latestMediate];
-    
-    Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
-    
+
     HZMediationAdapterWithCreativeTypeScore *chosenAdapterWithScore = [self.availabilityChecker firstAdapterWithAdForTag:options.tag
                                                                                                       adaptersWithScores:adaptersWithScores
-                                                                                                   optionalForcedNetwork:optionalForcedNetwork
                                                                                                   segmentationController:self.segmentationController];
     
     // Start event reporting
