@@ -82,7 +82,6 @@ static BOOL hzAdsIsEnabled = NO;
     
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        [HZNSURLUtils substituteGetParams:@"" impressionID:@""];
         [[HZDevice currentDevice] hzGetFreeDiskspace];
     });
     
