@@ -42,11 +42,9 @@
 }
 - (void)willStartAudio {
     [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME)];
-    [self.vc otherAudioIsPlaying:YES];
 }
 - (void)didFinishAudio {
     [self.vc logCallback:MERGE_TWO_STRINGS(self.name, METHOD_NAME)];
-    [self.vc otherAudioIsPlaying:NO];
 }
 @end
 

@@ -96,6 +96,21 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
 
 // NSNotifications
 NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNotification";
+NSString * const HZMediationDidShowAdNotification = @"HZMediationDidShowAdNotification";
+NSString * const HZMediationDidFailToShowAdNotification = @"HZMediationDidFailToShowAdNotification";
+NSString * const HZMediationDidReceiveAdNotification = @"HZMediationDidReceiveAdNotification";
+NSString * const HZMediationDidFailToReceiveAdNotification = @"HZMediationDidFailToReceiveAdNotification";
+NSString * const HZMediationDidClickAdNotification = @"HZMediationDidClickAdNotification";
+NSString * const HZMediationDidHideAdNotification = @"HZMediationDidHideAdNotification";
+NSString * const HZMediationWillStartAdAudioNotification = @"HZMediationWillStartAdAudioNotification";
+NSString * const HZMediationDidFinishAdAudioNotification = @"HZMediationDidFinishAdAudioNotification";
+// Incentivized specific NSNotifications
+NSString * const HZMediationDidCompleteIncentivizedAdNotification = @"HZMediationDidCompleteIncentivizedAdNotification";
+NSString * const HZMediationDidFailToCompleteIncentivizedAdNotification = @"HZMediationDidFailToCompleteIncentivizedAdNotification";
+
+// User Info Keys for NSNotifications
+NSString * const HZAdTagUserInfoKey = @"HZAdTagUserInfoKey";
+NSString * const HZNetworkNameUserInfoKey = @"HZNetworkNameUserInfoKey";
 
 @implementation HeyzapAds
 

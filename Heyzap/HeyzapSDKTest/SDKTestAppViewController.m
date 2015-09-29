@@ -232,10 +232,13 @@ const CGFloat kLeftMargin = 10;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(responseNotification:) name:kHZAPIClientDidReceiveResponseNotification object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(downloadNotification:) name: kHZDownloadHelperSuccessNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadNotification:) name:kHZDownloadHelperSuccessNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(remoteDataRefreshed:) name:HZRemoteDataRefreshedNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(paymentTransactionErrorNotification:) name: kHZPaymentTransactionErrorNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(paymentTransactionErrorNotification:) name:kHZPaymentTransactionErrorNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(adAudioStarted) name:HZMediationWillStartAdAudioNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(adAudioEnded) name:HZMediationDidFinishAdAudioNotification object:nil];
 
     
     self.showButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
@@ -1056,7 +1059,12 @@ const CGFloat kLeftMargin = 10;
     }
 }
 
-// Heyzap audio callbacks from ads will call this from SDKTestAppViewControllerAdCallbackDelegate
+- (void) adAudioStarted {
+    [self otherAudioIsPlaying:YES];
+}
+- (void) adAudioEnded {
+    [self otherAudioIsPlaying:NO];
+}
 - (void) otherAudioIsPlaying:(BOOL)isPlaying {
     if (self.backgroundMusicShouldPlay) {
         if (isPlaying) {
