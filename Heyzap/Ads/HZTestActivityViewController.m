@@ -351,7 +351,7 @@
 #pragma mark - Network enable/disable
      
 - (BOOL) showNetworkEnableSwitch {
-    return [[HZDevice currentDevice] isHeyzapTestApp];
+    return [HZDevice isHeyzapTestApp];
 }
 
 - (void)allNetworksEnableSwitchToggled:(UISwitch *)theSwitch {

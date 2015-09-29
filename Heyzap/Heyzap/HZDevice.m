@@ -148,7 +148,7 @@ NSString * const kHZDeviceNetworkUnknown = @"unknown";
     return radio;
 }
 
-- (NSString *) HZCarrierName{
++ (NSString *) HZCarrierName{
     CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
     CTCarrier *carrier = [netinfo subscriberCellularProvider];
     return [carrier carrierName] ?: kHZDeviceNetworkUnknown;
@@ -190,7 +190,7 @@ static NSString *overriddenBundleIdentifier;
     overriddenBundleIdentifier = bundleIdentifier;
 }
 
-- (NSString *)bundleIdentifier {
++ (NSString *)bundleIdentifier {
     static NSString *bundleIdentifier;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -202,14 +202,14 @@ static NSString *overriddenBundleIdentifier;
 
 NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKTest";
 
-- (BOOL)isHeyzapTestApp {
++ (BOOL)isHeyzapTestApp {
     return [[self bundleIdentifier] isEqualToString:kZHMediationTestAppBundleID];
 }
 
 #pragma mark - Device Identifiers
 
 // Warning: iOS will fail to give an advertising identifier when running tests from the command line. Stub this method as a workaround.
-- (NSString *)HZadvertisingIdentifier {
++ (NSString *)HZadvertisingIdentifier {
     static NSString *uuid;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -218,7 +218,7 @@ NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKT
     return uuid;
 }
 
-- (NSString *)HZtrackingEnabled {
++ (NSString *)HZtrackingEnabled {
     static NSString *trackingEnabled;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -227,7 +227,7 @@ NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKT
     return trackingEnabled;
 }
 
-- (NSString *) HZvendorDeviceIdentity {
++ (NSString *) HZvendorDeviceIdentity {
     static NSString *identifier;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -237,10 +237,10 @@ NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKT
     return identifier;
 }
 
-- (NSDictionary *)HZIdentifierDictionary
++ (NSDictionary *)HZIdentifierDictionary
 {
     NSString *advertisingIdentifier = [self HZadvertisingIdentifier] ?: @"";
-    NSString *connectivityType = [self HZConnectivityType] ?:@"";
+    NSString *connectivityType = [[self currentDevice] HZConnectivityType] ?:@"";
     NSString *trackingEnabled = [self HZtrackingEnabled];
     NSString *vendorDeviceID = [self HZvendorDeviceIdentity];
     
@@ -253,7 +253,7 @@ NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKT
              };
 }
 
--(uint64_t)hzGetFreeDiskspace {
++ (uint64_t)hzGetFreeDiskspace {
     static uint64_t totalFreeSpace = 0;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

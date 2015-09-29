@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseTestAppViewController.h"
-#import "Chartboost.h"
+#import <Chartboost/Chartboost.h>
 
 @interface DeviceInfoViewController : BaseTestAppViewController
 

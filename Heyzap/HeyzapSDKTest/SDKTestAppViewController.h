@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BaseTestAppViewController.h"
 #import "HeyzapAds.h"
-#import "Chartboost.h"
+#import <Chartboost/Chartboost.h>
 
 @interface SDKTestAppViewController : BaseTestAppViewController <UITextFieldDelegate>
 

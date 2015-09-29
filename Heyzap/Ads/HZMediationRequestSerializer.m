@@ -44,7 +44,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         mediationDefaults = @{
-                              @"external_package":[[HZDevice currentDevice] bundleIdentifier],
+                              @"external_package":[HZDevice bundleIdentifier],
                               @"networks":[HeyzapMediation commaSeparatedAdapterList],
                               };
     });
