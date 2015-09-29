@@ -38,3 +38,17 @@ HZAdType hzAdTypeFromString(NSString *adUnit) {
         return HZAdTypeInterstitial;
     }
 }
+
+// This will be true for native ads as well, when those are added.
+BOOL hzCanShowConcurrentlyWithOtherAds(const HZAdType adType) {
+    switch (adType) {
+        case HZAdTypeBanner: {
+            return YES;
+        }
+        case HZAdTypeInterstitial:
+        case HZAdTypeVideo:
+        case HZAdTypeIncentivized: {
+            return NO;
+        }
+    }
+}

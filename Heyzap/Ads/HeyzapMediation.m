@@ -460,7 +460,7 @@
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad when the SDK is paused."}];
     } else if ([[[self settings] disabledTags] containsObject:tag]) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad with a disabled tag"}];
-    } else if (self.currentShownAd) {
+    } else if (self.currentShownAd && !hzCanShowConcurrentlyWithOtherAds(adType)) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"An ad is already shown or attempting to be shown"}];
     } else if ([[self settings] IAPAdsTimeOut] && adType != HZAdTypeIncentivized) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Ads are disabled because of a recent in-app-purchase."}];
