@@ -340,9 +340,10 @@ NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKT
             self.latestRadioAccessTechnology = telephonyInfo.currentRadioAccessTechnology;
             self.notificationObserver = [NSNotificationCenter.defaultCenter addObserverForName:CTRadioAccessTechnologyDidChangeNotification
                                                             object:nil
-                                                             queue:nil
+                                                             queue:[NSOperationQueue mainQueue]
                                                         usingBlock:^(NSNotification *notif)
              {
+                 // TODO: Check if calling this on the main queue is expensive.
                  self.latestRadioAccessTechnology = telephonyInfo.currentRadioAccessTechnology;
              }];
         }else{
