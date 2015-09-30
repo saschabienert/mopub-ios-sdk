@@ -14,12 +14,12 @@
 + (HZDevice *) currentDevice;
 
 // This method executes once and returns the same value going forward (so as not to constantly be going to disk).
--(uint64_t) hzGetFreeDiskspace;
-- (NSDictionary *) HZIdentifierDictionary;
++ (uint64_t) hzGetFreeDiskspace;
++ (NSDictionary *) HZIdentifierDictionary;
 - (NSString *) HZConnectivityType;
-- (NSString *) HZadvertisingIdentifier;
-- (NSString *) HZvendorDeviceIdentity;
-- (NSString *) HZCarrierName;
++ (NSString *) HZadvertisingIdentifier;
++ (NSString *) HZvendorDeviceIdentity;
++ (NSString *) HZCarrierName;
 
 - (HZOpenRTBConnectionType) getHZOpenRTBConnectionType;
 
@@ -29,13 +29,13 @@
 + (BOOL)isIpad;
 + (BOOL)isPhone;
 
-- (BOOL)isHeyzapTestApp;
++ (BOOL)isHeyzapTestApp;
 
 + (BOOL)canCheckURLSchemes;
 
 #pragma mark - Overriding the bundle ID
 
 + (void)setBundleIdentifier:(NSString *)bundleIdentifier;
-- (NSString *)bundleIdentifier;
++ (NSString *)bundleIdentifier;
 
 @end

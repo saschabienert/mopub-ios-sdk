@@ -57,19 +57,19 @@
         NSString *publisherID = [HZUtils publisherID] ?: @"";
         
         NSMutableDictionary *params = [@{@"app_platform": @1,//iOS=1 (enum: ANDROID(0), IOS(1), AMAZON(2) )
-                                         @"app_bundle": [[HZDevice currentDevice] bundleIdentifier],
+                                         @"app_bundle": [HZDevice bundleIdentifier],
                                          @"app_version": versionString,
                                          @"app_sdk_key": publisherID,
                                          @"device_scale": @(screenScale),
                                          @"device_ua": userAgent,
-                                         @"device_carrier": [[HZDevice currentDevice] HZCarrierName],
+                                         @"device_carrier": [HZDevice HZCarrierName],
                                          @"device_make": @"Apple",
                                          @"device_model": [HZAvailability platform],
                                          @"device_language": [[NSLocale preferredLanguages] objectAtIndex:0],
                                          @"device_os": @"iOS",
                                          @"device_osv": [HZDevice systemVersion],
                                          @"device_connectiontype": @([[HZDevice currentDevice] getHZOpenRTBConnectionType]),
-                                         @"device_ifa": [[HZDevice currentDevice] HZadvertisingIdentifier],
+                                         @"device_ifa": [HZDevice HZadvertisingIdentifier],
                                          @"device_devicetype": deviceType,
                                          @"device_dnt": @(![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]), // do not track
                                          @"sdk_version": SDK_VERSION,

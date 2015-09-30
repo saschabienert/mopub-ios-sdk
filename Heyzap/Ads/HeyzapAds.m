@@ -111,6 +111,9 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
 
 + (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options andFramework:(NSString *)framework {
     HZVersionCheck()
+    
+    // Hack to start `HZDevice` on the main queue. This works around an issue where it deadlocked for Jon Grall when creating the `CTTelephonyNetworkInfo` object on a background queue.
+    [HZDevice currentDevice];
 
     if (options & HZAdOptionsDisableMedation) {
         [HeyzapMediation forceOnlyHeyzapSDK];
@@ -122,7 +125,7 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
     if (framework && ![framework isEqualToString:@""]) {
         [[HZAdsManager sharedManager] setFramework:framework];
     }
-    
+
     [[HZAdsManager sharedManager] onStart];
     
     [[HeyzapMediation sharedInstance] start];
