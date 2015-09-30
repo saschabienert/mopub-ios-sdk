@@ -140,7 +140,7 @@
     }
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     // AdColony auto-prefetches
 }
@@ -159,7 +159,7 @@
     }
 }
 
-- (NSError *)lastErrorForCreativeType:(HZCreativeType)creativeType
+- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeVideo: {

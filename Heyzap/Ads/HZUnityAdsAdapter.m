@@ -145,7 +145,7 @@ NSString * const kHZNetworkName = @"mobile";
     }
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     // UnityAds auto-prefetches
 }

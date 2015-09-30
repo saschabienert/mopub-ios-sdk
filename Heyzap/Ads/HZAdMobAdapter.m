@@ -116,7 +116,7 @@
     }
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeStatic: {
@@ -133,10 +133,8 @@
     }
     
     HZGADInterstitial *currentAd = self.adDictionary[@(creativeType)];
-    NSError *currentError = [self lastErrorForCreativeType:creativeType];
     if (currentAd
-        && !currentAd.hasBeenUsed
-        && !currentError) {
+        && !currentAd.hasBeenUsed) {
         // If we have an ad already out fetching, don't start up a re-fetch.
         return;
     }
@@ -197,9 +195,9 @@
                                             userInfo:@{kHZMediatorNameKey: @"AdMob",
                                                        NSUnderlyingErrorKey: error}];
     if (creativeType == HZCreativeTypeStatic) {
-        self.lastStaticError = wrappedError;
+        [self setLastFetchError:wrappedError forCreativeType:HZCreativeTypeStatic];
     } else if (creativeType == HZCreativeTypeVideo) {
-        self.lastVideoError = wrappedError;
+        [self setLastFetchError:wrappedError forCreativeType:HZCreativeTypeVideo];
     }
     
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
@@ -226,7 +224,7 @@
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
-    [self clearErrorForCreativeType:[self creativeTypeForAd:ad]];
+    [self clearLastFetchErrorForCreativeType:[self creativeTypeForAd:ad]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 

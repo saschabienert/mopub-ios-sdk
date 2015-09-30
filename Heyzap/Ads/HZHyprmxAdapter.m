@@ -91,9 +91,7 @@ static BOOL wasReady = NO;
     return wasReady;
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
-    if(![self supportsCreativeType:creativeType]) return;
-    
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
     

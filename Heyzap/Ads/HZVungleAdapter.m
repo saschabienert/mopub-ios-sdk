@@ -96,7 +96,7 @@
     return HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
@@ -118,14 +118,13 @@
     return [self supportedCreativeTypes] & creativeType && adPlayable;
 }
 
-- (NSError *)lastErrorForCreativeType:(HZCreativeType)creativeType
+- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
 {
     return self.lastError;
 }
 
-- (void)clearErrorForCreativeType:(HZCreativeType)creativeType
-{
-    self.lastError = nil;
+- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
+    self.lastError = error;
 }
 
 - (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options

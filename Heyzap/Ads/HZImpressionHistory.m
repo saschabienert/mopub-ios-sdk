@@ -95,7 +95,7 @@
         if (failed) {
             HZELog(@"HZImpressionHistory: FAILED impression insert query took %f seconds after a %f second threading delay. Query: %@;", [methodEnd timeIntervalSinceDate:methodStart], [methodStart timeIntervalSinceDate:methodStartPreQueue], query);
         } else {
-            HZDLog(@"HZImpressionHistory: impression insert query took %f seconds after a %f second threading delay. Query: %@;", [methodEnd timeIntervalSinceDate:methodStart], [methodStart timeIntervalSinceDate:methodStartPreQueue], query);
+            //HZDLog(@"HZImpressionHistory: impression insert query took %f seconds after a %f second threading delay. Query: %@;", [methodEnd timeIntervalSinceDate:methodStart], [methodStart timeIntervalSinceDate:methodStartPreQueue], query);
         }
         
     });
@@ -114,7 +114,7 @@
         return [[NSMutableOrderedSet alloc] init];
     }
     
-    NSDate *methodStart = [NSDate date];
+    //NSDate *methodStart = [NSDate date];
     
     NSString *creativeTypeWhereClause = @"";
     if (creativeType != HZCreativeTypeUnknown) {
@@ -154,8 +154,8 @@
     
     sqlite3_finalize(statement);
     
-    NSDate *methodEnd = [NSDate date];
-    HZDLog(@"HZImpressionHistory: impression list query (result size=%lu) took %f seconds. Query: %@;", (unsigned long)[impressions count], [methodEnd timeIntervalSinceDate:methodStart], query);
+    //NSDate *methodEnd = [NSDate date];
+    //HZDLog(@"HZImpressionHistory: impression list query (result size=%lu) took %f seconds. Query: %@;", (unsigned long)[impressions count], [methodEnd timeIntervalSinceDate:methodStart], query);
     
     return impressions;
 }

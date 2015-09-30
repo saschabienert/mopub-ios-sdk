@@ -931,6 +931,9 @@ static BOOL forceOnlyHeyzapSDK = NO;
         return (includeHeyzap || ![adapterClass isHeyzapAdapter]);
     }]];
 }
+-  (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap {
+    return [[self class] availableAdaptersWithHeyzap:includeHeyzap];
+}
 
 
 #pragma mark - Setters/Getters for delegates

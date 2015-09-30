@@ -88,7 +88,15 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
+    if(![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner) return;
+    if ([self hasAdForCreativeType:creativeType]) return;
+    
+    [self clearLastFetchErrorForCreativeType:creativeType];
+    [self internalPrefetchForCreativeType:creativeType];
+}
+
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     ABSTRACT_METHOD_ERROR();
 }
@@ -156,19 +164,19 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return YES;
 }
 
-- (NSError *)lastErrorForCreativeType:(HZCreativeType)creativeType
+- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeStatic: {
-            return self.lastStaticError;
+            return self.lastStaticFetchError;
             break;
         }
         case HZCreativeTypeIncentivized: {
-            return self.lastIncentivizedError;
+            return self.lastIncentivizedFetchError;
             break;
         }
         case HZCreativeTypeVideo: {
-            return self.lastVideoError;
+            return self.lastVideoFetchError;
             break;
         }
         case HZCreativeTypeBanner:
@@ -180,27 +188,24 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     }
 }
 
-- (void)clearErrorForCreativeType:(HZCreativeType)creativeType
+- (void)clearLastFetchErrorForCreativeType:(HZCreativeType)creativeType
 {
-    switch (creativeType) {
-        case HZCreativeTypeStatic: {
-            self.lastStaticError = nil;
+    [self setLastFetchError:nil forCreativeType:creativeType];
+}
+
+- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
+    switch(creativeType) {
+        case HZCreativeTypeStatic:
+            self.lastStaticFetchError = error;
             break;
-        }
-        case HZCreativeTypeIncentivized: {
-            self.lastIncentivizedError = nil;
+        case HZCreativeTypeIncentivized:
+            self.lastIncentivizedFetchError = error;
             break;
-        }
-        case HZCreativeTypeVideo: {
-            self.lastVideoError = nil;
+        case HZCreativeTypeVideo:
+            self.lastVideoFetchError = error;
             break;
-        }
-        case HZCreativeTypeBanner:
-        case HZCreativeTypeNative:
-        case HZCreativeTypeUnknown: {
-            // ignored for now
+        default://ignore banners, native, etc. here
             break;
-        }
     }
 }
 
