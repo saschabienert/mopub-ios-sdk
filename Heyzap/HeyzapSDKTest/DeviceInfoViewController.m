@@ -40,7 +40,7 @@
 {
     UILabel *idfaLabel = [self deviceInformationLabelWithFrameY:initialY
                                                         keyText:@"IDFA"
-                                                      valueText:[[HZDevice currentDevice] HZadvertisingIdentifier]];
+                                                      valueText:[HZDevice HZadvertisingIdentifier]];
     [self.scrollView addSubview:idfaLabel];
     
     UIButton *emailButton = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -53,7 +53,7 @@
     
     UILabel *appBundleID = [self deviceInformationLabelWithFrameY: CGRectGetMaxY(emailButton.frame)+5
                                                           keyText: @"Bundle ID"
-                                                        valueText: [[HZDevice currentDevice] bundleIdentifier]];
+                                                        valueText: [HZDevice bundleIdentifier]];
     [self.scrollView addSubview: appBundleID];
     
     
@@ -146,7 +146,7 @@
         mail.mailComposeDelegate = self;
         [mail setSubject:@"IDFA"];
         
-        [mail setMessageBody:[NSString stringWithFormat:@"Your IDFA is %@",[[HZDevice currentDevice] HZadvertisingIdentifier]]
+        [mail setMessageBody:[NSString stringWithFormat:@"Your IDFA is %@",[HZDevice HZadvertisingIdentifier]]
                       isHTML:NO];
         
         [self presentViewController:mail animated:YES completion:nil];

@@ -17,7 +17,7 @@ describe(@"HZInterstitialAdModel", ^{
     
     beforeAll(^{
         // Workaround a bug where, when running tests from the command line, iOS doesn't find the advertising identifier.
-        [[HZDevice currentDevice] stub:@selector(HZadvertisingIdentifier) andReturn:@"1234-5432-5653-4543"];
+        [HZDevice stub:@selector(HZadvertisingIdentifier) andReturn:@"1234-5432-5653-4543"];
     });
     
     context(@"Initialization", ^{

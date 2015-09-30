@@ -131,7 +131,7 @@
         _cachingService = [[HZCachingService alloc] init];
         _starter = [[HZMediationStarter alloc] initWithStartingDelegate:self cachingService:_cachingService];
         _mediateRequester = [[HZMediateRequester alloc] initWithDelegate:self cachingService:_cachingService];
-        _persistentConfig = [[HZMediationPersistentConfig alloc] initWithCachingService:_cachingService isTestApp:[[HZDevice currentDevice] isHeyzapTestApp]];
+        _persistentConfig = [[HZMediationPersistentConfig alloc] initWithCachingService:_cachingService isTestApp:[HZDevice isHeyzapTestApp]];
     }
     return self;
 }
@@ -468,7 +468,7 @@
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad when the SDK is paused."}];
     } else if ([[[self settings] disabledTags] containsObject:tag]) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Attempted to show an ad with a disabled tag"}];
-    } else if (self.currentShownAd && !self.currentShownAd.isStale) {
+    } else if (self.currentShownAd && !self.currentShownAd.isStale && !hzCanShowConcurrentlyWithOtherAds(adType)) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"An ad is already shown or attempting to be shown"}];
     } else if ([[self settings] IAPAdsTimeOut] && adType != HZAdTypeIncentivized) {
         return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Ads are disabled because of a recent in-app-purchase."}];

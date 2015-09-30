@@ -36,7 +36,7 @@
         _retriesRemaining = kHZAdRetries;
         
         NSString *internetStatus = [HZUtils internetStatus];
-        NSNumber *diskSpaceInBytes = [NSNumber numberWithUnsignedLongLong:[[HZDevice currentDevice] hzGetFreeDiskspace]];
+        NSNumber *diskSpaceInBytes = [NSNumber numberWithUnsignedLongLong:[HZDevice hzGetFreeDiskspace]];
         
         UIInterfaceOrientation deviceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
         

@@ -51,8 +51,8 @@
         
         NSMutableDictionary *params = [@{@"publisher_id": publisherID,
                                          @"publisher_sdk_key": publisherID,
-                                         @"device_id": [[HZDevice currentDevice] HZadvertisingIdentifier],
-                                         @"app_bundle_id": [[HZDevice currentDevice] bundleIdentifier],
+                                         @"device_id": [HZDevice HZadvertisingIdentifier],
+                                         @"app_bundle_id": [HZDevice bundleIdentifier],
                                          @"app_version": versionString,
                                          @"device_form_factor": deviceFormFactor,
                                          @"platform": @"iphone",
@@ -61,10 +61,10 @@
                                          @"ios_version": [UIDevice currentDevice].systemVersion,
                                          @"os_version": [UIDevice currentDevice].systemVersion,
                                          @"device_type": [HZAvailability platform],
-                                         @"advertising_id" : [[HZDevice currentDevice] HZadvertisingIdentifier],
+                                         @"advertising_id" : [HZDevice HZadvertisingIdentifier],
                                          } mutableCopy];
         
-        [params addEntriesFromDictionary:[[HZDevice currentDevice] HZIdentifierDictionary]];
+        [params addEntriesFromDictionary:[HZDevice HZIdentifierDictionary]];
         defaultParams = params;
     });
     

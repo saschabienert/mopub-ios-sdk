@@ -17,3 +17,5 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
 
 NSString * NSStringFromAdType(HZAdType type);
 HZAdType hzAdTypeFromString(NSString *adUnit);
+
+BOOL hzCanShowConcurrentlyWithOtherAds(const HZAdType adType);

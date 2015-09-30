@@ -112,6 +112,9 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
 + (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options andFramework:(NSString *)framework {
     HZVersionCheck()
     
+    // Hack to start `HZDevice` on the main queue. This works around an issue where it deadlocked for Jon Grall when creating the `CTTelephonyNetworkInfo` object on a background queue.
+    [HZDevice currentDevice];
+    
     [[HZAdsManager sharedManager] setPublisherID: publisherID];
     [[HZAdsManager sharedManager] setOptions: options];
     [[HZAdsManager sharedManager] setIsDebuggable: NO];
