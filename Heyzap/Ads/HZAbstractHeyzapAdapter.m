@@ -13,10 +13,7 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HeyzapAds.h"
-
-@interface HZAbstractHeyzapAdapter()
-
-@end
+#import "HZBaseAdapter_Internal.h"
 
 @implementation HZAbstractHeyzapAdapter
 
@@ -31,7 +28,7 @@
     return YES;
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     return nil;
 }
 
@@ -86,10 +83,8 @@
     }
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(![self supportsCreativeType:creativeType]) return;
-
     const HZAuctionType auctionType = [self auctionType];
     switch (creativeType) {
         case HZCreativeTypeStatic: {
@@ -166,24 +161,18 @@
 - (void)didReceiveAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         HZAdInfo *info = notification.object;
-        HZAdType type = hzAdTypeFromString(info.adUnit);
+        HZFetchableCreativeType fetchableCreativeType = info.fetchableCreativeType;
         
-        switch (type) {
-            case HZAdTypeInterstitial: {
+        switch (fetchableCreativeType) {
+            case HZFetchableCreativeTypeStatic: {
                 self.lastStaticError = nil;
-                break;
             }
-            case HZAdTypeIncentivized: {
+            case HZFetchableCreativeTypeVideo: {
                 self.lastIncentivizedError = nil;
-                break;
-            }
-            case HZAdTypeVideo: {
                 self.lastVideoError = nil;
-                break;
             }
-            case HZAdTypeBanner: {
-                // Ignored
-                break;
+            case HZFetchableCreativeTypeNative: {
+                // ignored
             }
         }
         
@@ -193,27 +182,24 @@
 - (void)didFailToReceiveAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         HZAdInfo *info = notification.object;
-        HZAdType type = hzAdTypeFromString(info.adUnit);
+        HZFetchableCreativeType fetchableCreativeType = info.fetchableCreativeType;
         
-        switch (type) {
-            case HZAdTypeInterstitial: {
-                self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
-                break;
+        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:[notification userInfo]];
+        
+        switch (fetchableCreativeType) {
+            case HZFetchableCreativeTypeStatic: {
+                self.lastStaticError = error;
             }
-            case HZAdTypeIncentivized: {
-                self.lastIncentivizedError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
-                break;
+            case HZFetchableCreativeTypeVideo: {
+                self.lastIncentivizedError = error;
+                self.lastVideoError = error;
             }
-            case HZAdTypeVideo: {
-                self.lastVideoError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
-                break;
-            }
-            case HZAdTypeBanner: {
-                // Ignored
-                break;
+            case HZFetchableCreativeTypeNative: {
+                // ignored
             }
         }
         
+        HZELog(@"The %@ network failed to fetch an ad. Error: %@", [self name], error);
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
     }
 }

@@ -29,6 +29,7 @@
 #import "TestAppPaymentTransactionObserver.h"
 #import "HeyzapMediation.h"
 #import "SDKTestAppViewControllerAdCallbackDelegate.h"
+#import "HZUINavigationController.h"
 
 #import "HZUtils.h"
 
@@ -48,10 +49,6 @@ typedef enum {
 @property (nonatomic) SDKTestAppViewControllerHZAdsDelegate *videoDelegate;
 @property (nonatomic) SDKTestAppViewControllerHZIncentivizedAdDelegate *incentivizedDelegate;
 @property (nonatomic) SDKTestAppViewControllerHZBannerAdDelegate *bannerDelegate;
-
-@property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl1;
-@property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl2;
-@property (nonatomic, strong) UISegmentedControl *creativeSegmentedControl3;
 
 @property (nonatomic, strong) UISegmentedControl *adUnitSegmentedControl;
 
@@ -77,6 +74,7 @@ typedef enum {
 
 @property (nonatomic) UIButton *showBannerButton;
 @property (nonatomic) UIButton *hideBannerButton;
+@property (nonatomic) UIButton *destroyBannerButton;
 
 @property (nonatomic) NSArray *bannerControls;
 @property (nonatomic) NSArray *nonBannerControls;
@@ -283,9 +281,23 @@ const CGFloat kLeftMargin = 10;
     [self.hideBannerButton addTarget: self action: @selector(hideBannerButtonPressed:) forControlEvents: UIControlEventTouchUpInside];
     [self.scrollView addSubview: self.hideBannerButton];
     
+    self.destroyBannerButton = ({
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        button.frame = CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, 10.0, CGRectGetWidth(self.hideBannerButton.frame), CGRectGetHeight(self.hideBannerButton.frame));
+        button.backgroundColor = [UIColor darkGrayColor];
+        button.layer.cornerRadius = 4.0;
+        [button setTitle: @"Destroy" forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
+        [button setTitleColor: [UIColor lightGrayColor] forState: UIControlStateDisabled];
+        button.enabled = NO;
+        [button addTarget: self action: @selector(destroyBannerButtonPressed) forControlEvents: UIControlEventTouchUpInside];
+        button;
+    });
+    [self.scrollView addSubview:self.destroyBannerButton];
+    
     UIButton *availableButton = ({
         UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        button.frame = CGRectMake(CGRectGetMaxX(fetchButton.frame) + 10.0, 10.0, 110.0, 25.5);
+        button.frame = self.destroyBannerButton.frame;
         button.backgroundColor = [UIColor lightTextColor];
         button.layer.cornerRadius = 4.0;
         [button setTitle: @"Available?" forState: UIControlStateNormal];
@@ -295,8 +307,8 @@ const CGFloat kLeftMargin = 10;
     [self.scrollView addSubview:availableButton];
     
     // Keep references to banner/non-banner controls so we can flip between them when the segmented control changes.
-    self.bannerControls = @[self.showBannerButton,self.hideBannerButton];
-    self.nonBannerControls = @[self.showButton, fetchButton];
+    self.bannerControls = @[self.showBannerButton, self.hideBannerButton, self.destroyBannerButton];
+    self.nonBannerControls = @[self.showButton, fetchButton, availableButton];
     [self.bannerControls setValue:@YES forKey:@"hidden"];
     
     self.creativeTypeTextField = ({
@@ -483,9 +495,6 @@ const CGFloat kLeftMargin = 10;
     [makeIAPButton addTarget: self action: @selector(makeIAP) forControlEvents: UIControlEventTouchUpInside];
     makeIAPButton.frame = CGRectMake(kLeftMargin, CGRectGetMaxY(openLastFetchButton.frame), 200.0, 50.0);
     [self.scrollView addSubview: makeIAPButton];
-    
-    // Add to payment queue
-    [[SKPaymentQueue defaultQueue] addTransactionObserver:[TestAppPaymentTransactionObserver sharedInstance]];
     
     // Spoof IAP
     UIButton *spoofIAPButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
@@ -704,31 +713,45 @@ const CGFloat kLeftMargin = 10;
     if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
         opts.admobBannerSize = HZAdMobBannerSizeFlexibleWidthLandscape;
     }
+    //opts.fetchTimeout = 45;
     
     [HZBannerAd placeBannerInView:self.view
                          position:HZBannerPositionBottom
                           options:opts
-     success:^(HZBannerAd *banner) {
-         banner.delegate = self.bannerDelegate;
-         self.hideBannerButton.enabled = YES;
-         self.wrapper = banner;
-     } failure:^(NSError *error) {
-         NSString *errorMessage = @"Failed to fetch banner";
-         if (error.localizedDescription) {
-             errorMessage = [errorMessage stringByAppendingFormat:@"; error was: %@",error.localizedDescription];
-             [self logToConsole:errorMessage];
-         }
-         
-         self.showBannerButton.enabled = YES;
-     }];
+                          success:^(HZBannerAd *banner) {
+                              banner.delegate = self.bannerDelegate;
+                              self.wrapper = banner;
+                              [self setBannerButtonStates];
+                          } failure:^(NSError *error) {
+                              NSString *errorMessage = @"Failed to fetch banner";
+                              if (error.localizedDescription) {
+                                  errorMessage = [errorMessage stringByAppendingFormat:@"; error was: %@",error.localizedDescription];
+                                  [self logToConsole:errorMessage];
+                              }
+                              
+                              [self setBannerButtonStates];
+                          }];
 }
 
 - (void)hideBannerButtonPressed:(id)sender {
     [self.view endEditing:YES];
+    [self.wrapper setHidden:!self.wrapper.hidden];
+    [self setBannerButtonStates];
+}
+
+- (void)destroyBannerButtonPressed {
+    [self.view endEditing:YES];
     [self.wrapper removeFromSuperview];
+    self.wrapper = nil;
     
-    self.hideBannerButton.enabled = NO;
-    self.showBannerButton.enabled = YES;
+    [self setBannerButtonStates];
+}
+
+- (void) setBannerButtonStates {
+    self.hideBannerButton.enabled = (self.wrapper != nil);
+    self.destroyBannerButton.enabled = (self.wrapper != nil);
+    self.showBannerButton.enabled = (self.wrapper == nil);
+    [self.hideBannerButton setTitle:(self.wrapper && self.wrapper.hidden ? @"Unhide" : @"Hide") forState:UIControlStateNormal];
 }
 
 - (void)showNativeAds {
@@ -737,7 +760,9 @@ const CGFloat kLeftMargin = 10;
             NSLog(@"error = %@",error);
         } else {
             
-            UINavigationController *navController = [[UIStoryboard storyboardWithName:@"Storyboard" bundle:[NSBundle mainBundle]] instantiateInitialViewController];
+            HZUINavigationController *navController = [[UIStoryboard storyboardWithName:@"Storyboard" bundle:[NSBundle mainBundle]] instantiateInitialViewController];
+            navController.orientationMask = UIInterfaceOrientationMaskAll;
+            
             NativeAdTableViewController *vc = (id)navController.topViewController;
             vc.adCollection = collection;
             [self presentViewController:navController animated:YES completion:nil];
@@ -764,33 +789,6 @@ const CGFloat kLeftMargin = 10;
     }
     
     return text;
-}
-
-// @[@"Rand", @"PSS",@"SS",@"FI",@"PFI"]
-// @[@"I", @"B",@"GOTD", @"SF", @"PSF"]
-
-- (void) setForcedCreativeType:(NSString *)forcedCreativeType{
-    _forcedCreativeType = [self.forcedCreativeDict objectForKey:forcedCreativeType];
-    [self logToConsole:[NSString stringWithFormat:@"Creative Type: %@", forcedCreativeType]];
-}
-
-- (void)creativeControlValueChanged:(UISegmentedControl *)sender
-{
-    if(sender == self.creativeSegmentedControl1){
-        [self.creativeSegmentedControl2 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-        [self.creativeSegmentedControl3 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-    }else if(sender == self.creativeSegmentedControl2){
-        [self.creativeSegmentedControl1 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-        [self.creativeSegmentedControl3 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-    }else if(sender == self.creativeSegmentedControl3){
-        [self.creativeSegmentedControl1 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-        [self.creativeSegmentedControl2 setSelectedSegmentIndex:UISegmentedControlNoSegment];
-    }
-    
-    NSLog(@"Sender selected index: %ld, title: %@", (long)[sender selectedSegmentIndex], [sender titleForSegmentAtIndex:[sender selectedSegmentIndex]]);
-    [self setForcedCreativeType:[sender titleForSegmentAtIndex:[sender selectedSegmentIndex]]];
-    
-//    [self adsButton:nil];
 }
 
 - (void) clearButton{

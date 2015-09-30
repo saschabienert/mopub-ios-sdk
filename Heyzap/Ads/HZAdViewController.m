@@ -13,11 +13,13 @@
 #import "HZAdsManager.h"
 #import "HZAdsAPIClient.h"
 #import "HZStorePresenter.h"
+#import "HZLabeledActivityIndicator.h"
 #import "HZEnums.h"
 
 @interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
 
 @property (nonatomic) UIWebView *clickTrackingWebView;
+@property (nonatomic) HZLabeledActivityIndicator *activityIndicator;
 
 @property (nonatomic) BOOL statusBarHidden;
 
@@ -29,6 +31,10 @@
     self = [super init];
     if (self) {
         self.ad = ad;
+        
+        _activityIndicator = [[HZLabeledActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
+        _activityIndicator.labelText = @"Loading App Store";
+        _activityIndicator.fadeBackground = YES;
     }
     
     return self;
@@ -68,9 +74,8 @@
     if (!options.viewController) {
         NSLog(@"Heyzap requires a root view controller to display an ad. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
         
-        // TODO: surface this NSError via the NSNotification.
-//        NSError *const error = [NSError errorWithDomain:@"Heyzap" code:10 userInfo:@{NSLocalizedFailureReasonErrorKey:@"There was no root view controller to display the ad."}];
-        [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification infoProvider:self.ad];
+        NSError *const error = [NSError errorWithDomain:@"Heyzap" code:10 userInfo:@{NSLocalizedFailureReasonErrorKey:@"There was no root view controller to display the ad."}];
+        [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification infoProvider:self.ad userInfo:@{NSUnderlyingErrorKey: error}];
         return;
     }
 
@@ -100,17 +105,10 @@
     }
 }
 
-- (void) didClickWithURL: (NSURL *) url {
-    [self didClickWithURL:url
-               completion:^(BOOL result, NSError *error) {
-               }];
-}
-
-- (void)didClickWithURL:(NSURL *)url completion:(void (^)(BOOL, NSError *))completion {
+- (void)didClickWithURL:(NSURL *)url {
     
-    if ([self.ad onClick]) {
-        [HZAdsManager postNotificationName:kHeyzapDidClickAdNotification infoProvider:self.ad];
-    }
+    [self.ad onClick];
+    [HZAdsManager postNotificationName:kHeyzapDidClickAdNotification infoProvider:self.ad];
     
     NSDictionary *queryDictionary = [HZUtils hzQueryDictionaryFromURL: url];
     
@@ -122,14 +120,26 @@
         clickURL = self.ad.clickURL;
     }
     
+    // start activity indicator
+    if (self.ad.useModalAppStore) {
+        [self.view addSubview:_activityIndicator];
+        [self.view bringSubviewToFront:self.activityIndicator];
+        [self.activityIndicator startAnimating];
+    }
+    
+    __weak HZAdViewController *weakSelf = self;
+    
     [[HZStorePresenter sharedInstance] presentAppStoreForID:self.ad.promotedGamePackage
                                    presentingViewController:self
                                                    delegate:self
                                            useModalAppStore:self.ad.useModalAppStore
                                                    clickURL:clickURL
                                                impressionID:self.ad.impressionID
-                                                 completion: ^(BOOL result, NSError *error) {
-                                                     completion(result, error);
+                                                 completion:^(BOOL result, NSError *error) {
+                                                     if ([[weakSelf ad] useModalAppStore]) {
+                                                         [[weakSelf activityIndicator] stopAnimating];
+                                                         [[weakSelf activityIndicator] removeFromSuperview];
+                                                     }
                                                  }];
 }
 

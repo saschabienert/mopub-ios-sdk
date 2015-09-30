@@ -11,12 +11,19 @@
 #import <UIKit/UIKit.h>
 
 static HZDebugLevel kHZGlobalDebugLevel = HZDebugLevelError;
+static BOOL kHZIsThirdPartyLoggingEnabled = NO;
+
+NSString *const kHZLogThirdPartyLoggingEnabledChangedNotification = @"kHZLogThirdPartyLoggingEnabledChangedNotification";
 
 @interface HZLog()
 + (void) log: (NSString *) message atDebugLevel: (HZDebugLevel) debugLevel;
 @end
 
 @implementation HZLog
+
++ (void) initialize {
+    [self setThirdPartyLoggingEnabled:NO];
+}
 
 + (void) setDebugLevel:(HZDebugLevel)debugLevel {
     kHZGlobalDebugLevel = debugLevel;
@@ -44,6 +51,14 @@ static HZDebugLevel kHZGlobalDebugLevel = HZDebugLevelError;
     if (debugLevel <= kHZGlobalDebugLevel) {
         NSLog(@"[ Heyzap ] %@", message);
     }
+}
+
++ (BOOL) isThirdPartyLoggingEnabled {
+    return kHZIsThirdPartyLoggingEnabled;
+}
++ (void) setThirdPartyLoggingEnabled:(BOOL)enabled {
+    kHZIsThirdPartyLoggingEnabled = enabled;
+    [[NSNotificationCenter defaultCenter] postNotificationName:kHZLogThirdPartyLoggingEnabledChangedNotification object:self];
 }
 
 @end

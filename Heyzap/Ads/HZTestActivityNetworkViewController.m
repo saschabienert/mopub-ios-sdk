@@ -81,6 +81,8 @@
 
 @property (nonatomic) HZBannerAd *bannerWrapper;
 
+@property (nonatomic, strong) UIScrollView *scrollView;
+
 NSValue *hzBannerPositionValue(HZBannerPosition position);
 HZBannerPosition hzBannerPositionFromNSValue(NSValue *value);
 NSString *hzBannerPositionName(HZBannerPosition position);
@@ -88,7 +90,6 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 @property (nonatomic, weak) id<HZAdsDelegate> previousInterstitialDelegate;
 @property (nonatomic, weak) id<HZAdsDelegate> previousVideoDelegate;
 @property (nonatomic, weak) id<HZAdsDelegate> previousIncentivizedDelegate;
-
 
 @end
 
@@ -98,28 +99,29 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (instancetype) initWithNetwork:(HZBaseAdapter *)network rootVC:(UIViewController *)rootVC available:(BOOL)available initialized:(BOOL)initialized enabled:(BOOL)enabled {
     self = [super init];
-
-    self.network = network;
-    self.rootVC = rootVC;
-    self.available = available;
-    self.initialized = initialized;
-    self.enabled = enabled;
     
-    // set this adapter's delegate to us so we can get callbacks
-    
-    _previousInterstitialDelegate = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeInterstitial];
-    _previousVideoDelegate        = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeVideo];
-    _previousIncentivizedDelegate = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeIncentivized];
-    
-    [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeInterstitial];
-    [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeVideo];
-    [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeIncentivized];
-    
-    // UnityAds starts with a view controller that is not us, need to set it since AppLovin apparently jacks it
-    if ([[network name] isEqualToString:@"unityads"]) {
-        [[HZUnityAds sharedInstance] setViewController:self];
+    if (self) {
+        self.network = network;
+        self.rootVC = rootVC;
+        self.available = available;
+        self.initialized = initialized;
+        self.enabled = enabled;
+        
+        // set this adapter's delegate to us so we can get callbacks
+        
+        _previousInterstitialDelegate = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeInterstitial];
+        _previousVideoDelegate        = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeVideo];
+        _previousIncentivizedDelegate = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeIncentivized];
+        
+        [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeInterstitial];
+        [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeVideo];
+        [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeIncentivized];
+        
+        // UnityAds starts with a view controller that is not us, need to set it since AppLovin apparently jacks it
+        if ([[network name] isEqualToString:@"unityads"]) {
+            [[HZUnityAds sharedInstance] setViewController:self];
+        }
     }
-    
     return self;
 }
 
@@ -138,7 +140,13 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     UIBarButtonItem *refresh = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh)];
     [self.navigationItem setRightBarButtonItem:refresh];
     
-    [self.view addSubview:[self makeView]];
+    self.scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds]; // Set contentSize later dynamically
+    self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    
+    [self makeView];
+    [self updateScrollViewContentSize];
+    [self.view addSubview:self.scrollView];
+    
     [self showOrHideBannerControls];
 }
 
@@ -161,6 +169,19 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 - (void)setChosenBannerSize:(NSValue *)chosenBannerSize {
     _chosenBannerSize = chosenBannerSize;
     self.bannerSizeTextField.text = [@"Size: " stringByAppendingString:[self bannerSizeDescription:chosenBannerSize]];
+}
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
+- (NSUInteger)supportedInterfaceOrientations
+#else
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+#endif
+{
+    return UIInterfaceOrientationMaskAll;
+}
+
+- (BOOL)shouldAutorotate {
+    return YES;
 }
 
 #pragma mark - UI action methods
@@ -191,7 +212,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             }
 
             // if credentials have changed, pop an alert
-            if (![self.network.credentials isEqualToDictionary:network[@"data"]]) {
+            if (![self.network.credentials isEqualToDictionary:network[@"data"]] && self.enabled) {
                 [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@ credentials have changed", [[self.network class] humanizedName]]
                                             message:@"Restart the app to verify SDK initialization" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
             }
@@ -219,6 +240,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
                 [self.adControls removeFromSuperview];
             }
             [self showOrHideBannerControls];
+            [self updateScrollViewContentSize];
         }
     } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
         HZDLog(@"Error from /info: %@", error.localizedDescription);
@@ -363,36 +385,31 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 #pragma mark - View creation utility methods
 
-- (UIView *) makeView {
-    // top level view
-    UIView *currentNetworkView = ({
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0,30,
-                                                                CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds))];
-        view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        view;
-    });
-    
+- (void) makeView {
     // sdk available label
-    UIView *availableView = [self makeStatusLabel:@"available" withStatus:self.available text:@"SDK Available" y:95];
-    [currentNetworkView addSubview:availableView];
+    UIView *availableView = [self makeStatusLabel:@"available" withStatus:self.available text:@"SDK Available" y:30];
+    [self.scrollView addSubview:availableView];
     
     // sdk initialization succeeded label
-    UIView *initializationView = [self makeStatusLabel:@"initialization" withStatus:self.initialized text:@"SDK initialized with credentials" y:availableView.frame.origin.y + 15];
-    [currentNetworkView addSubview:initializationView];
+    UIView *initializationView = [self makeStatusLabel:@"initialization" withStatus:self.initialized text:@"SDK initialized with credentials" y:(CGRectGetMaxY(availableView.frame) + 5)];
+    [self.scrollView addSubview:initializationView];
 
     // network is enabled label
-    UIView *enabledView = [self makeStatusLabel:@"enabled" withStatus:self.enabled text:@"Network enabled on dashboard" y:initializationView.frame.origin.y + 15];
-    [currentNetworkView addSubview:enabledView];
+    UIView *enabledView = [self makeStatusLabel:@"enabled" withStatus:self.enabled text:@"Network enabled on dashboard" y:(CGRectGetMaxY(initializationView.frame) + 5)];
+    [self.scrollView addSubview:enabledView];
     
     // only show ad fetching/showing controls and debug log if the network was initialized correctly
     if(self.available && self.initialized){
         self.adControls = [self makeAdControls];
-        [currentNetworkView addSubview:self.adControls];
+        [self.scrollView addSubview:self.adControls];
 
         // debug log
         self.debugLog = ({
-            UITextView *text = [[UITextView alloc] initWithFrame:CGRectMake(self.adControls.frame.origin.x, self.adControls.frame.origin.y + self.adControls.frame.size.height,
-                                                                            self.adControls.frame.size.width, 210)];
+            UITextView *text = [[UITextView alloc] initWithFrame:CGRectMake(self.adControls.frame.origin.x,
+                                                                            CGRectGetMaxY(self.adControls.frame),
+                                                                            CGRectGetWidth(self.adControls.frame),
+                                                                            MAX(CGRectGetHeight(self.view.frame) - CGRectGetMaxY(self.adControls.frame) - 60, 200/*min height*/))];
+            text.autoresizingMask = UIViewAutoresizingFlexibleWidth;
             text.editable = false;
             text.font = [UIFont fontWithName: @"Courier" size: 12.0];
             text.text = @"Debug log:";
@@ -402,25 +419,24 @@ NSString *hzBannerPositionName(HZBannerPosition position);
         UIView *debugLogShadow = ({
             UIView *view = [[UIView alloc] initWithFrame:self.debugLog.frame];
             view.layer.shadowColor = [UIColor grayColor].CGColor;
-            view.layer.shadowOffset = CGSizeMake(0, 1);
+            view.layer.shadowOffset = CGSizeMake(0, 3);
             view.layer.shadowOpacity = 1;
-            view.layer.shadowRadius = 1;
+            view.layer.shadowRadius = 2;
             view.layer.masksToBounds = NO;
+            view.autoresizingMask = self.debugLog.autoresizingMask;
             view.backgroundColor = [UIColor whiteColor];
             view;
         });
         
-        [currentNetworkView addSubview:debugLogShadow];
-        [currentNetworkView addSubview:self.debugLog];
+        [self.scrollView addSubview:debugLogShadow];
+        [self.scrollView addSubview:self.debugLog];
     }
-    
-    return currentNetworkView;
 }
 
 - (UIView *) makeAdControls {
     UIView *adControls = ({
-        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 160, self.view.frame.size.width - 20, 190)];
-        controls.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 140, self.view.frame.size.width - 20, 160)];
+        controls.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         controls;
     });
     
@@ -447,6 +463,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     UISegmentedControl *adFormatControl = ({
         UISegmentedControl *control = [[UISegmentedControl alloc] initWithItems:formats];
         control.frame = CGRectMake(0, 0, adControls.frame.size.width, 40);
+        control.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         control.selectedSegmentIndex = 0;
         control;
     });
@@ -461,6 +478,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     UIButton *fetchButton = ({
         UIButton *button = [[self class] buttonWithBackgroundColor:[UIColor darkGrayColor]];
         button.frame = leftButtonFrame;
+        button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleRightMargin;
         [button setTitle:@"Fetch" forState:UIControlStateNormal];
         [button addTarget:self action:@selector(fetchAd) forControlEvents:UIControlEventTouchUpInside];
         button;
@@ -470,6 +488,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     self.showButton = ({
         UIButton *button = [[self class] buttonWithBackgroundColor:[UIColor redColor]];
         button.frame = rightButtonFrame;
+        button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin;
         [button setTitle:@"Show" forState:UIControlStateNormal];
         [button addTarget:self action:@selector(showAd) forControlEvents:UIControlEventTouchUpInside];
         button;
@@ -484,6 +503,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             UIButton *button = [[self class] buttonWithBackgroundColor:[UIColor darkGrayColor]];
             button.enabled = NO;
             button.frame = leftButtonFrame;
+            button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleRightMargin;
             [button setTitle:@"Hide" forState:UIControlStateNormal];
             [button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
             [button addTarget:self action:@selector(hideBanner:) forControlEvents:UIControlEventTouchUpInside];
@@ -494,6 +514,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
         self.showBannerButton = ({
             UIButton *button = [[self class] buttonWithBackgroundColor:[UIColor darkGrayColor]];
             button.frame = rightButtonFrame;
+            button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin;
             [button setTitle:@"Show" forState:UIControlStateNormal];
             [button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
             [button addTarget:self action:@selector(showBanner:) forControlEvents:UIControlEventTouchUpInside];
@@ -505,9 +526,10 @@ NSString *hzBannerPositionName(HZBannerPosition position);
         const CGFloat positionY = CGRectGetMaxY(fetchButton.frame) + 10;
         
         self.bannerPositionTextField = ({
-            HZNoCaretTextField *textField = [[HZNoCaretTextField alloc] initWithFrame:CGRectMake(adFormatControl.frame.origin.x, positionY, buttonWidth, 40)];
+            HZNoCaretTextField *textField = [[HZNoCaretTextField alloc] initWithFrame:CGRectMake(CGRectGetMinX(self.hideBannerButton.frame), positionY, buttonWidth, 40)];
             textField.delegate = self;
             textField.borderStyle = UITextBorderStyleRoundedRect;
+            textField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleRightMargin;
             textField.textAlignment = NSTextAlignmentCenter;
             
             textField.inputAccessoryView = ({
@@ -537,6 +559,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             textField.delegate = self;
             textField.borderStyle = UITextBorderStyleRoundedRect;
             textField.textAlignment = NSTextAlignmentCenter;
+            textField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin;
             
             textField.inputAccessoryView = ({
                 UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
@@ -586,35 +609,36 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (UIView *) makeStatusLabel:(NSString *)type withStatus:(BOOL)status text:(NSString *)text y:(CGFloat)y {
     UIView *wrapperView = ({
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x + 10, y, self.view.frame.size.width - 20, 30)];
-        view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(10, y, 300, 20)];
         view.backgroundColor = [UIColor clearColor];
         view;
     });
     
-    UILabel *textLabel = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(wrapperView.frame.origin.x + 10, wrapperView.frame.origin.y - 125,
-                                                                   wrapperView.frame.size.width - 20, wrapperView.frame.size.height)];
-        label.text = text;
-        label.textAlignment = NSTextAlignmentLeft;
-        label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont systemFontOfSize:16];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        label;
-    });
-    [wrapperView addSubview:textLabel];
-    
     UILabel *statusLabel = ({
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(wrapperView.frame.origin.x - 10, textLabel.frame.origin.y,
-                                                                   20, textLabel.frame.size.height)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,
+                                                                   0,
+                                                                   20,
+                                                                   CGRectGetHeight(wrapperView.frame))];
         label.textAlignment = NSTextAlignmentLeft;
         label.backgroundColor = [UIColor clearColor];
         label.font = [UIFont systemFontOfSize:16];
-        label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         label;
     });
     [self setStatusForLabel:statusLabel withBool:status];
     [wrapperView addSubview:statusLabel];
+    
+    UILabel *textLabel = ({
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetWidth(statusLabel.frame),
+                                                                   0,
+                                                                   CGRectGetWidth(wrapperView.frame) - CGRectGetWidth(statusLabel.frame),
+                                                                   CGRectGetHeight(wrapperView.frame))];
+        label.text = text;
+        label.textAlignment = NSTextAlignmentLeft;
+        label.backgroundColor = [UIColor clearColor];
+        label.font = [UIFont systemFontOfSize:16];
+        label;
+    });
+    [wrapperView addSubview:textLabel];
 
     if ([type isEqualToString:@"available"]) {
         self.availableStatus = statusLabel;
@@ -863,4 +887,18 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     [self appendStringToDebugLog:[NSString stringWithFormat:@"Banner Callback: %@",NSStringFromSelector(selector)]];
 }
 
+- (void)updateScrollViewContentSize
+{
+    // This approach avoids constant manual adjustment
+    CGRect subviewContainingRect = CGRectZero;
+    for (UIView *view in self.scrollView.subviews) {
+        subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
+    }
+    self.scrollView.contentSize = (CGSize) { CGRectGetWidth(self.view.frame), subviewContainingRect.size.height };
+}
+
+
+- (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    [self updateScrollViewContentSize];
+}
 @end

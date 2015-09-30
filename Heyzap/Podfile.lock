@@ -1,38 +1,38 @@
 PODS:
-  - AdColony (2.5.3)
-  - AppLovin (3.1.2)
-  - Bugsnag (4.0.7):
-    - Bugsnag/no-arc (= 4.0.7)
-  - Bugsnag/no-arc (4.0.7)
+  - AdColony (2.6.0)
+  - AppLovin (3.1.3)
+  - Bugsnag (4.0.8):
+    - Bugsnag/no-arc (= 4.0.8)
+  - Bugsnag/no-arc (4.0.8)
   - ChartboostSDK (5.5.3)
-  - FacebookAudienceNetwork (4.5.1)
-  - Google-Mobile-Ads-SDK (7.4.1)
+  - FBAudienceNetwork (4.6.0)
+  - Google-Mobile-Ads-SDK (7.5.0)
   - HyprMX (36)
   - Kiwi (2.4.0)
   - Leadbolt (5.2)
-  - Masonry (0.6.2)
-  - OHHTTPStubs (4.2.0):
-    - OHHTTPStubs/Default (= 4.2.0)
-  - OHHTTPStubs/Core (4.2.0)
-  - OHHTTPStubs/Default (4.2.0):
+  - Masonry (0.6.3)
+  - OHHTTPStubs (4.3.0):
+    - OHHTTPStubs/Default (= 4.3.0)
+  - OHHTTPStubs/Core (4.3.0)
+  - OHHTTPStubs/Default (4.3.0):
     - OHHTTPStubs/Core
     - OHHTTPStubs/JSON
     - OHHTTPStubs/NSURLSession
     - OHHTTPStubs/OHPathHelpers
-  - OHHTTPStubs/JSON (4.2.0):
+  - OHHTTPStubs/JSON (4.3.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/NSURLSession (4.2.0):
+  - OHHTTPStubs/NSURLSession (4.3.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/OHPathHelpers (4.2.0)
-  - UnityAds (1.4.5)
-  - VungleAdvertiserSDK (3.1.2)
+  - OHHTTPStubs/OHPathHelpers (4.3.0)
+  - UnityAds (1.5.2)
+  - VungleAdvertiserSDK (3.2.0)
 
 DEPENDENCIES:
   - AdColony
   - AppLovin
   - Bugsnag (from `https://github.com/bugsnag/bugsnag-cocoa.git`)
   - ChartboostSDK
-  - FacebookAudienceNetwork
+  - FBAudienceNetwork (= 4.6.0)
   - Google-Mobile-Ads-SDK
   - HyprMX
   - Kiwi
@@ -48,22 +48,22 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Bugsnag:
-    :commit: 10842c8160496dec55cf8c4f4fb9729ac3e3ea97
+    :commit: e23cbd91a648a241cae5c2e014554a43bade835c
     :git: https://github.com/bugsnag/bugsnag-cocoa.git
 
 SPEC CHECKSUMS:
-  AdColony: 389b39a185cf61a18cc7d4e1d910046246508e80
-  AppLovin: 491ab14cf8c11b3ac5c5fececaee1463b3cb8b15
-  Bugsnag: 5861d8519d30063abe7b3fcdcf4114a6dddab27a
+  AdColony: ab47c3e22be7843e08f90989381a222884be4a62
+  AppLovin: 1e2653a8af2f19d1649e542d4ea257902bdec129
+  Bugsnag: bd1dcec5a7dbc34364ee097f1be6a8c93ae4a83f
   ChartboostSDK: 9bf9427b4c306773ea9f7d8cf974b4a3a0f1e61e
-  FacebookAudienceNetwork: 5e931961bef5030fd56b24a46af151b7c7ffd8ce
-  Google-Mobile-Ads-SDK: dce4c2728daa0bcbd88b6e3dc111b718a07b1eb6
+  FBAudienceNetwork: a1bcfb9eb2fecfc5c2caa6e5cfd3331aa5ddda08
+  Google-Mobile-Ads-SDK: 24879c6e4d1c2f9767e68bb9e65640a06c711143
   HyprMX: 91b4ac0c0aad04fe04a4f320106d75af625becee
   Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
   Leadbolt: 1e2703134831ec79a27145a80791efba1664ceba
-  Masonry: 362e8a1cc0beada4a4c4832d5e863da2a51533be
-  OHHTTPStubs: f639130b83fb5f4f022d38f841141b0a6fa77249
-  UnityAds: a05bce9ad710707a267d66bb3f651e211f0dd74b
-  VungleAdvertiserSDK: 2909d6e65c488799574ba028b84e64a95652127c
+  Masonry: ff105a956abcd19a618b2028b121cb638d7a8e2f
+  OHHTTPStubs: 0aec5755528693a165bd616cb79f69387de306a8
+  UnityAds: 76f1a98bf40597f1c0aab01f65c700b7734dcbd9
+  VungleAdvertiserSDK: c3ece1bf66a7f34688cfed832e2b12e321bbed03
 
 COCOAPODS: 0.38.2

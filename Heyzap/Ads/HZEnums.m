@@ -47,4 +47,18 @@ NSString * HeyzapAdapterFromHZAuctionType(HZAuctionType auctionType) {
     }
 }
 
+NSString * NSStringFromHZFetchableCreativeType(HZFetchableCreativeType fetchableCreativeType) {
+    switch (fetchableCreativeType) {
+        case HZFetchableCreativeTypeStatic: {
+            return @"HZFetchableCreativeTypeStatic";
+        }
+        case HZFetchableCreativeTypeVideo: {
+            return @"HZFetchableCreativeTypeVideo";
+        }
+        case HZFetchableCreativeTypeNative: {
+            return @"HZFetchableCreativeTypeNative";
+        }
+    }
+}
+
 @end

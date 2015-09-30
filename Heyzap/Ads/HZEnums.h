@@ -47,4 +47,13 @@ NSString * NSStringFromHZAuctionType(HZAuctionType auctionType);
  */
 NSString * HeyzapAdapterFromHZAuctionType(HZAuctionType auctionType);
 
+
+typedef NS_ENUM(NSUInteger, HZFetchableCreativeType) {
+    HZFetchableCreativeTypeStatic,
+    HZFetchableCreativeTypeVideo,
+    HZFetchableCreativeTypeNative,
+};
+
+NSString * NSStringFromHZFetchableCreativeType(HZFetchableCreativeType fetchableCreativeType);
+
 @end

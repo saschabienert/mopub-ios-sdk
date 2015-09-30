@@ -34,9 +34,9 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#import "HZActivityIndicatorView.h"
+#import "HZHZActivityIndicatorView.h"
 
-@interface HZActivityIndicatorView ()
+@interface HZHZActivityIndicatorView ()
 {
     NSTimer     *_timer;
     CGFloat     _anglePerStep;
@@ -49,7 +49,7 @@
 
 @end
 
-@implementation HZActivityIndicatorView
+@implementation HZHZActivityIndicatorView
 @synthesize steps = _steps;
 @synthesize indicatorRadius = _indicatorRadius;
 @synthesize finSize = _finSize;
@@ -95,7 +95,7 @@
 - (void)_setPropertiesForStyle:(UIActivityIndicatorViewStyle)style
 {
     self.backgroundColor = [UIColor clearColor];
-    self.direction = HZActivityIndicatorDirectionClockwise;
+    self.direction = HZHZActivityIndicatorDirectionClockwise;
     self.roundedCoreners = UIRectCornerAllCorners;
     self.cornerRadii = CGSizeMake(1, 1);
     self.stepDuration = 0.1;
@@ -148,7 +148,7 @@
     return;
   
     // maa bugfix: this was 0 in the original code.  this means clockwise rotation starts more slowly than it should.
-    _currStep = self.direction == HZActivityIndicatorDirectionClockwise ? self.steps - 1 : 0;
+    _currStep = self.direction == HZHZActivityIndicatorDirectionClockwise ? self.steps - 1 : 0;
     _timer = [NSTimer scheduledTimerWithTimeInterval:_stepDuration target:self selector:@selector(_repeatAnimation:) userInfo:nil repeats:YES];
     _isAnimating = YES;
     

@@ -38,7 +38,7 @@ describe(@"HZMediationPersistentConfig", ^{
             [cachingService stub:@selector(rootObjectWithFilename:) andReturn:[NSSet set]];
             
             HZMediationPersistentConfig *config = [[HZMediationPersistentConfig alloc] initWithCachingService:cachingService isTestApp:YES];
-            [[expectFutureValue(cachingService) shouldEventually] receive:@selector(cacheRootObject:filename:) withCountAtLeast:1];
+            [[expectFutureValue(cachingService) hzShouldEventuallyAfterDelay] receive:@selector(cacheRootObject:filename:) withCountAtLeast:1];
             
             [config addDisabledNetwork:kNetworkName];
             

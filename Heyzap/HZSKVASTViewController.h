@@ -27,6 +27,7 @@
 #import "HZSKVASTError.h"
 #import "HZCreativeType.h"
 #import "HZSKVASTModel.h"
+#import "HZLabeledActivityIndicator.h"
 
 @class HZSKVASTViewController;
 
@@ -51,6 +52,8 @@
 
 @property(nonatomic) UIViewController *rootViewController;
 
+@property (nonatomic) HZLabeledActivityIndicator *activityIndicator;
+
 - (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forCreativeType:(HZCreativeType)creativeType; // designated initializer for VASTViewController
 
 - (void)loadVideoWithURL:(NSURL *)url;            // load and prepare to play a VAST video from a URL
@@ -58,6 +61,9 @@
 
 - (void)play;// command to play the video, this is only valid after receiving the vastReady: callback (which will be called after a loadVideo...: call)
 - (BOOL)vastVideoCached; // returns whether or not the video (sent to one of the loadVideoWith...: methods) has been cached yet
+
+- (void)handlePauseState;
+- (void)handleResumeState;
 
 @end
 

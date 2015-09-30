@@ -28,8 +28,11 @@
 @property (nonatomic, strong) NSDictionary *mediateParams;
 @property (nonatomic, strong) NSString *impressionID;
 @property (nonatomic, strong) NSOrderedSet *chosenAdapters;
-@property (nonatomic) double interstitialVideoIntervalMillis;
-@property (nonatomic) BOOL interstitialVideoEnabled;
+
+// State tracking
+@property (atomic) BOOL hasReportedClick;
+
+
 
 #pragma mark - Stateful properties
 
@@ -129,6 +132,10 @@ NSString *const kHZIncentivizedInfoKey = @"custom_info";
 
 - (void)reportClickForAdapter:(HZBaseAdapter *)adapter
 {
+    if (self.hasReportedClick) {
+        return;
+    }
+    
     const NSUInteger ordinal = [self.chosenAdapters indexOfObject:adapter];
     NSMutableDictionary *const params = [self addParametersToDefaults:
                                   @{kHZImpressionIDKey: self.impressionID,
@@ -143,6 +150,7 @@ NSString *const kHZIncentivizedInfoKey = @"custom_info";
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         [[HZMediationAPIClient sharedClient] POST:@"click" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
+            self.hasReportedClick = YES;
             HZDLog(@"Success reporting click");
         } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
             HZDLog(@"Error reporting click = %@",error);

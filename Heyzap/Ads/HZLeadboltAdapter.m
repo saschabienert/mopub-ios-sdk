@@ -11,6 +11,7 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZLeadboltAdapter()
 
@@ -52,7 +53,7 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
                                                 dict:self.credentials];
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appAPIKey, @"app_api_key");
     
     // These notifications aren't documented in AppTracker.h; this comes from http://help.leadbolt.com/ios-integration-guide/ and their sample app.
@@ -148,7 +149,7 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     }
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
     HZDLog(@"Requesting that Leadbolt show an ad of type: %@",NSStringFromCreativeType(creativeType));
     switch (creativeType) {
@@ -164,7 +165,6 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
         }
         default: {
             // Unsupported
-            HZDLog(@"Can't show Leadbolt ad of unsupported type: %@",NSStringFromCreativeType(creativeType));
             break;
         }
     }

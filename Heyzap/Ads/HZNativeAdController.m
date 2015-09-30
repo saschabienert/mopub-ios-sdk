@@ -33,11 +33,10 @@
     }
     
     
-    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:@[@"native"]
-                                                                         adUnit:@"native"
-                                                                            tag:tag
-                                                                    auctionType:HZAuctionTypeMixed
-                                                            andAdditionalParams:@{@"max_count": @(numberOfAds)}];
+    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithFetchableCreativeType:HZFetchableCreativeTypeNative
+                                                                                    tag:tag
+                                                                            auctionType:HZAuctionTypeMixed
+                                                                    andAdditionalParams:@{@"max_count": @(numberOfAds)}];
     
     
     [[HZAdsAPIClient sharedClient] loadRequest:request withCompletion:^(HZAdFetchRequest *request) {

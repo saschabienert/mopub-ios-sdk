@@ -46,6 +46,7 @@
 #import "HZMediationPersistentConfig.h"
 #import "HZUtils.h"
 #import "HZTestActivityTableViewCell.h"
+#import "HZUINavigationController.h"
 
 @interface HZTestActivityViewController()
 
@@ -83,7 +84,7 @@
     
     // take over the screen
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    HZUINavigationController *nav = [[HZUINavigationController alloc] initWithRootViewController:vc orientations:UIInterfaceOrientationMaskAll];
     [vc.rootVC presentViewController:nav animated:YES completion:nil];
 }
 
@@ -129,6 +130,15 @@
 
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+}
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
+- (NSUInteger)supportedInterfaceOrientations
+#else
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+#endif
+{
+    return UIInterfaceOrientationMaskAll;
 }
 
 

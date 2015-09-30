@@ -14,6 +14,7 @@
 #import "HZiAdBannerAdapter.h"
 #import "HeyzapMediation.h"
 #import "HZDevice.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZiAdAdapter()<ADInterstitialAdDelegate>
 
@@ -46,7 +47,7 @@
     return YES;
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     return nil;
 }
 
@@ -84,11 +85,7 @@
     return [self.interstitialAd isLoaded];
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
-    if (creativeType != HZCreativeTypeStatic) {
-        return;
-    }
-    
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
     BOOL success = NO;
     
     if ([options.viewController respondsToSelector:@selector(requestInterstitialAdPresentation)]) {
