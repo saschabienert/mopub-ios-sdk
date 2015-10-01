@@ -713,7 +713,7 @@ const CGFloat kLeftMargin = 10;
     if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
         opts.admobBannerSize = HZAdMobBannerSizeFlexibleWidthLandscape;
     }
-    //opts.fetchTimeout = 45;
+    opts.fetchTimeout = 45;
     
     [HZBannerAd placeBannerInView:self.view
                          position:HZBannerPositionBottom

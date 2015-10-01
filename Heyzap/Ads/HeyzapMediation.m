@@ -781,6 +781,9 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
         NSDate * startDate = [NSDate date];
         __block BOOL succeeded = NO;
         
+        __block NSTimeInterval retryInterval = 1;
+        NSTimeInterval const maxRetryInterval = 180; // 3 minutes
+        
         // below, we'll continue fetching and waiting indefinitely until we succeed, or hit the timeout.
         // this will allow network requests to fail while the SDKs fetch without making devs call fetch again and again and handle failures
         do {
@@ -826,8 +829,14 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
             }
             
             if ([adaptersWithAvailableAds count] == 0) {
-                HZELog(@"None of the available banner adapters were able to fetch an ad [%@]. Retrying...", [hzMap([adaptersWithScores array], ^NSString *(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {return [[adapterWithScore adapter] name];}) componentsJoinedByString:@", "]);
-                continue; // try while loop again
+                retryInterval = MIN((options.fetchTimeout - [[NSDate date] timeIntervalSinceDate:startDate]), retryInterval); // don't wait longer than the user-set timeout would allow
+                HZELog(@"None of the available banner adapters were able to fetch an ad [%@]. Retrying in %i seconds...", [hzMap([adaptersWithScores array], ^NSString *(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {return [[adapterWithScore adapter] name];}) componentsJoinedByString:@", "], (int)retryInterval);
+                
+                
+                [NSThread sleepForTimeInterval:retryInterval];
+                retryInterval = MIN(retryInterval * 2, maxRetryInterval);
+                
+                continue; // try while loop again after sleeping
             }
             
             // adaptersWithScores is in the /mediate order we want to keep. Only leave the HZMediationAdapterWithCreativeTypeScore instances in adaptersWithScores that have available ads
@@ -855,6 +864,7 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
         if (!succeeded) {
             dispatch_sync(dispatch_get_main_queue(), ^{
                 NSError *timeoutError = [HeyzapMediation bannerErrorWithDescription:[NSString stringWithFormat:@"No banners were fetched before the retry timeout (%f seconds) was reached.", options.fetchTimeout] underlyingError:nil];
+                [eventReporter reportFetchWithSuccessfulAdapter:nil];
                 completion(timeoutError, nil);
             });
         }
