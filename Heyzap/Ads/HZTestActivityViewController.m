@@ -250,7 +250,7 @@
     
     // check available
     NSMutableSet *availableNetworks = [NSMutableSet set];
-    for (HZBaseAdapter *adapter in [HeyzapMediation availableAdaptersWithHeyzap:YES]) {
+    for (HZBaseAdapter *adapter in [[HeyzapMediation sharedInstance] availableAdaptersWithHeyzap:YES]) {
         [availableNetworks addObject:[[adapter class] sharedAdapter]];
     }
     self.availableNetworks = availableNetworks;

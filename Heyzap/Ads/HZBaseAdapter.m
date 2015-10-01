@@ -28,6 +28,7 @@
 @interface HZBaseAdapter()
 //key: HZCreativeType value: NSNumber *
 @property (nonatomic, strong) NSMutableDictionary *latestMediationScores;
+@property (nonatomic) BOOL isInitialized;
 @end
 
 @implementation HZBaseAdapter
@@ -55,10 +56,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
 - (NSError *)initializeSDK {
     __block NSError *error;
-    ensureMainQueue(^{
+    hzEnsureMainQueue(^{
         error = [self internalInitializeSDK];
         if (!error && !self.isInitialized) {
-            self->_isInitialized = YES;
+            self.isInitialized = YES;
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
         }
     });
@@ -98,7 +99,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
         return;
     }
     
-    ensureMainQueue(^{
+    hzEnsureMainQueue(^{
         if ([self hasAdForCreativeType:creativeType]) return;
         
         [self clearLastFetchErrorForCreativeType:creativeType];
@@ -121,7 +122,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     if (![self supportsCreativeType:creativeType]) return NO;
     
     __block BOOL hasAd;
-    ensureMainQueue(^{
+    hzEnsureMainQueue(^{
         hasAd = [self internalHasAdForCreativeType:creativeType];
     });
     return hasAd;
@@ -139,7 +140,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
         return;
     }
     
-    ensureMainQueue(^{
+    hzEnsureMainQueue(^{
         [self internalShowAdForCreativeType:creativeType options:options];
     });
 }
@@ -151,7 +152,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     __block HZBannerAdapter *bannerAdapter;
-    ensureMainQueue(^{
+    hzEnsureMainQueue(^{
         bannerAdapter = [self internalFetchBannerWithOptions:options reportingDelegate:reportingDelegate];
     });
     return bannerAdapter;

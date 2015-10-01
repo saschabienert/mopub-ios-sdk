@@ -277,7 +277,16 @@ NSArray *hzFilter(NSArray *array, BOOL(^block)(id object)) {
     }];
     return [array objectsAtIndexes:idxSet];
 }
-
+id hzFirstObjectPassingTest(NSArray *array, BOOL(^test)(id object, NSUInteger index)) {
+    __block id passingObj = nil;
+    [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if (test(obj, idx)) {
+            *stop = YES;
+            passingObj = obj;
+        }
+    }];
+    return passingObj;
+}
 
 NSOrderedSet *hzMapOrderedSet(NSOrderedSet *set, id (^block)(id object)) {
     NSMutableOrderedSet *newSet = [[NSMutableOrderedSet alloc] initWithCapacity:set.count];
@@ -292,6 +301,16 @@ NSOrderedSet *hzFilterOrderedSet(NSOrderedSet *set, BOOL(^block)(id object)) {
     }];
     
     return [NSOrderedSet orderedSetWithArray:[set objectsAtIndexes:idxSet]];
+}
+id hzFirstObjectPassingTestOrderedSet(NSOrderedSet *set, BOOL(^test)(id object, NSUInteger index)) {
+    __block id passingObj = nil;
+    [set enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if (test(obj, idx)) {
+            *stop = YES;
+            passingObj = obj;
+        }
+    }];
+    return passingObj;
 }
 
 BOOL hziOS8Plus(void) {

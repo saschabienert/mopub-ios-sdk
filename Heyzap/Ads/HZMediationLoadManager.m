@@ -164,14 +164,10 @@
         NSSet * const networksToAlwaysFetch = [NSSet setWithArray:@[[HZHeyzapExchangeAdapter class], [HZCrossPromoAdapter class]]];
         [networksToAlwaysFetch enumerateObjectsUsingBlock:^(Class adapterClass, BOOL *stop) {
             
-            __block HZMediationLoadData *alwaysFetchDatum = nil;
-            [loadData enumerateObjectsUsingBlock:^(HZMediationLoadData *datum, NSUInteger idx, BOOL *stop) {
-                 // don't fetch this networkToAlwaysFetch unless it's in the load data also
-                if (datum.adapterClass == adapterClass) {
-                    *stop = YES;
-                    alwaysFetchDatum = datum;
-                }
-            }];
+            // don't fetch this networkToAlwaysFetch unless it's in the load data also
+            HZMediationLoadData *alwaysFetchDatum = hzFirstObjectPassingTest(loadData, ^BOOL(HZMediationLoadData *datum, NSUInteger idx){
+                return datum.adapterClass == adapterClass;
+            });
             if (!alwaysFetchDatum) {
                 return;
             }
@@ -181,11 +177,7 @@
                 return;
             }
             
-            __block HZBaseAdapter *adapter;
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                adapter = (HZBaseAdapter *)[alwaysFetchDatum.adapterClass sharedAdapter];
-            });
-            
+            HZBaseAdapter *adapter = (HZBaseAdapter *)[alwaysFetchDatum.adapterClass sharedAdapter];
             dispatch_sync([self.delegate pausableMainQueue], ^{
                 [adapter prefetchForCreativeType:creativeType];
             });
@@ -194,15 +186,12 @@
         // We want to guarantee (whenever possible) that there is an ad at the end of this call to fetch that is not from one of the following classes.
         NSSet * const networksToExcludeInHasAdChecks = [NSSet setWithArray:@[[HZCrossPromoAdapter class]]];
         
-        [loadData enumerateObjectsUsingBlock:^(HZMediationLoadData *datum, NSUInteger idx, BOOL *stop) {
+        hzFirstObjectPassingTest(loadData, ^BOOL(HZMediationLoadData *datum, NSUInteger idx) {
          
             const BOOL setupSuccessful = [self.delegate setupAdapterNamed:datum.networkName];
             if (setupSuccessful) {
-                __block HZBaseAdapter *adapter;
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
-                });
                 
+                HZBaseAdapter *adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
                 dispatch_sync([self.delegate pausableMainQueue], ^{
                     [adapter prefetchForCreativeType:creativeType];
                 });
@@ -237,17 +226,18 @@
                 }, datum.timeout);
                 
                 if (adapterWithAnAd) {
-                    *stop = YES;
+                    return YES;
                 }
             }
-        }];
+            return NO;
+        });
         
         // report success with the first adapter in the loadData with an ad w/ no network exclusions, or failure if none have an ad
         //  - the search is re-done here instead of using the adapter retrieved where `*stop = YES` is set above so that the adapter
         //    that we report success with can be one of the networksToExcludeInHasAdChecks - this will report the one highest in the load order
         if (notifyDelegate) {
-            HZBaseAdapter *finalAdapter = [self firstAdapterThatHasAdFromLoadData:loadData inRange:(NSMakeRange(0, [loadData count])) ofCreativeType:creativeType tag:fetchOptions.tag excludingClasses:nil];
             dispatch_sync(dispatch_get_main_queue(), ^{
+                HZBaseAdapter *finalAdapter = [self firstAdapterThatHasAdFromLoadData:loadData inRange:(NSMakeRange(0, [loadData count])) ofCreativeType:creativeType tag:fetchOptions.tag excludingClasses:[NSSet set]];
                 if (finalAdapter) {
                     [self.delegate didFetchAdOfCreativeType:creativeType withAdapter:finalAdapter options:fetchOptions];
                 } else {
