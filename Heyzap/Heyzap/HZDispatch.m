@@ -38,7 +38,7 @@ BOOL hzWaitUntilInterval(const NSTimeInterval interval, BOOL (^waitBlock)(void),
     }
 }
 
-void ensureMainQueue(void (^block)(void))
+void hzEnsureMainQueue(void (^block)(void))
 {
     NSCParameterAssert(block);
     if ([NSThread isMainThread]) {

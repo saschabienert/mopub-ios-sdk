@@ -17,6 +17,8 @@
 @protocol HZMediationLoadManagerDelegate <NSObject>
 
 - (BOOL)setupAdapterNamed:(NSString *)adapterName;
+- (BOOL)isNetworkClassInitialized:(Class)networkClass;
+- (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap;
 - (void)didFetchAdOfCreativeType:(HZCreativeType)creativeType withAdapter:(HZBaseAdapter *)adapter options:(HZFetchOptions *)fetchOptions;
 - (void)didFailToFetchAdOfCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)fetchOptions;
 - (dispatch_queue_t)pausableMainQueue;

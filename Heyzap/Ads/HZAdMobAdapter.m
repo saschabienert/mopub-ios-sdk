@@ -82,7 +82,7 @@
     return [HZGADRequest sdkVersion];
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeStatic:
@@ -116,7 +116,7 @@
     }
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeStatic: {
@@ -133,10 +133,8 @@
     }
     
     HZGADInterstitial *currentAd = self.adDictionary[@(creativeType)];
-    NSError *currentError = [self lastErrorForCreativeType:creativeType];
     if (currentAd
-        && !currentAd.hasBeenUsed
-        && !currentError) {
+        && !currentAd.hasBeenUsed) {
         // If we have an ad already out fetching, don't start up a re-fetch.
         return;
     }
@@ -196,11 +194,8 @@
                                                 code:1
                                             userInfo:@{kHZMediatorNameKey: @"AdMob",
                                                        NSUnderlyingErrorKey: error}];
-    if (creativeType == HZCreativeTypeStatic) {
-        self.lastStaticError = wrappedError;
-    } else if (creativeType == HZCreativeTypeVideo) {
-        self.lastVideoError = wrappedError;
-    }
+    
+    [self setLastFetchError:wrappedError forCreativeType:creativeType];
     
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
@@ -226,11 +221,11 @@
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
-    [self clearErrorForCreativeType:[self creativeTypeForAd:ad]];
+    [self clearLastFetchErrorForCreativeType:[self creativeTypeForAd:ad]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:self.bannerAdUnitID options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 

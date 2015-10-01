@@ -81,9 +81,7 @@
 }
 
 static BOOL wasReady = NO;
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType {
-    if (!([self supportedCreativeTypes] & creativeType)) return NO;
-    
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType {
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
         wasReady = isOfferReady;
     }];
@@ -91,9 +89,7 @@ static BOOL wasReady = NO;
     return wasReady;
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
-    if(![self supportsCreativeType:creativeType]) return;
-    
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
     

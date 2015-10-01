@@ -36,7 +36,7 @@ BOOL hzWaitUntilInterval(NSTimeInterval interval, BOOL (^waitBlock)(void), const
  *
  *  @param block The block to execute. Must not be NULL.
  */
-void ensureMainQueue(void (^block)(void));
+void hzEnsureMainQueue(void (^block)(void));
 
 dispatch_source_t hzCreateDispatchTimer(double interval, dispatch_queue_t queue, dispatch_block_t block);
 

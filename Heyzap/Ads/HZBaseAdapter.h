@@ -105,7 +105,7 @@
 - (BOOL)supportsCreativeType:(HZCreativeType)creativeType;
 
 
-- (NSError *)lastErrorForCreativeType:(HZCreativeType)creativeType;
+- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType;
 
 - (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType; // For networks that have multiple, optional credentials. This must be called after the network has been initialized.
 // Maybe pass credentials immediately on creating the instance, and store them there?
@@ -117,7 +117,7 @@
  *
  *  @param creativeType The type of ad to clear the error for.
  */
-- (void)clearErrorForCreativeType:(HZCreativeType)creativeType;
+- (void)clearLastFetchErrorForCreativeType:(HZCreativeType)creativeType;
 
 #pragma mark - Implemented methods
 

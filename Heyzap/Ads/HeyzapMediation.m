@@ -915,7 +915,7 @@ static BOOL forceOnlyHeyzapSDK = NO;
     forceOnlyHeyzapSDK = YES;
 }
 
-+ (BOOL)isOnlyHeyzapSDK
+- (BOOL)isOnlyHeyzapSDK
 {
     static BOOL isOnlyHeyzap;
     static dispatch_once_t onceToken;
@@ -925,13 +925,12 @@ static BOOL forceOnlyHeyzapSDK = NO;
     return isOnlyHeyzap;
 }
 
-+ (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap
+- (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap
 {
     return [[HeyzapMediation availableAdapters] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(Class adapterClass, NSDictionary *bindings) {
         return (includeHeyzap || ![adapterClass isHeyzapAdapter]);
     }]];
 }
-
 
 #pragma mark - Setters/Getters for delegates
 

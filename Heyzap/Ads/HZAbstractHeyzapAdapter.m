@@ -41,14 +41,11 @@
     return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeIncentivized;
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
-{
-    if(![self supportsCreativeType:creativeType]) return;
-    
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+{    
     const HZAuctionType auctionType = [self auctionType];
     switch (creativeType) {
         case HZCreativeTypeStatic: {
-            // TODO: refactor heyzap network to respect creativeTypes. right now the below call will show videos and statics.
             [HZHeyzapInterstitialAd fetchForAuctionType:auctionType withCompletion:nil];
             break;
         }
@@ -67,10 +64,8 @@
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if(![self supportsCreativeType:creativeType]) return NO;
-    
     const HZAuctionType auctionType = [self auctionType];
     if (creativeType & HZCreativeTypeVideo) {
         return [HZHeyzapVideoAd isAvailableForTag:nil auctionType:auctionType];
@@ -103,6 +98,31 @@
             // Ignored; Heyzap doesn't support banners, etc.
             break;
         }
+    }
+}
+
+- (NSError *) lastFetchErrorForCreativeType:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeStatic:
+            return self.lastStaticFetchError;
+            break;
+        case HZCreativeTypeVideo:
+        case HZCreativeTypeIncentivized:
+            return self.lastVideoFetchError;
+        default:
+            return nil;
+    }
+}
+- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeStatic:
+            self.lastStaticFetchError = error;
+            break;
+        case HZCreativeTypeVideo:
+        case HZCreativeTypeIncentivized:
+            self.lastVideoFetchError = error;
+        default:
+            break;
     }
 }
 
@@ -165,11 +185,10 @@
         
         switch (fetchableCreativeType) {
             case HZFetchableCreativeTypeStatic: {
-                self.lastStaticError = nil;
+                [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
             }
             case HZFetchableCreativeTypeVideo: {
-                self.lastIncentivizedError = nil;
-                self.lastVideoError = nil;
+                [self clearLastFetchErrorForCreativeType:HZCreativeTypeVideo];
             }
             case HZFetchableCreativeTypeNative: {
                 // ignored
@@ -188,18 +207,17 @@
         
         switch (fetchableCreativeType) {
             case HZFetchableCreativeTypeStatic: {
-                self.lastStaticError = error;
+                [self setLastFetchError:error forCreativeType:HZCreativeTypeStatic];
             }
             case HZFetchableCreativeTypeVideo: {
-                self.lastIncentivizedError = error;
-                self.lastVideoError = error;
+                [self setLastFetchError:error forCreativeType:HZCreativeTypeVideo];
             }
             case HZFetchableCreativeTypeNative: {
                 // ignored
             }
         }
         
-        HZELog(@"The %@ network failed to fetch an ad. Error: %@", [self name], error);
+        HZELog(@"The %@ network failed to fetch an ad. Error: %@", [self humanizedName], error);
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
     }
 }

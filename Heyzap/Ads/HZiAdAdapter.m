@@ -65,23 +65,15 @@
     return [NSString stringWithFormat: @"%@", [UIDevice currentDevice].systemVersion];
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
-    if (creativeType != HZCreativeTypeStatic) {
-        return;
-    }
-    
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
     if (self.interstitialAd == nil) {
         self.interstitialAd = [[ADInterstitialAd alloc] init];
         self.interstitialAd.delegate = self.forwardingDelegate;
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if (creativeType != HZCreativeTypeStatic) {
-        return NO;
-    }
-    
     return [self.interstitialAd isLoaded];
 }
 
@@ -142,7 +134,7 @@
 }
 
 - (void)interstitialAdDidLoad:(ADInterstitialAd *)interstitialAd {
-    self.lastStaticError = nil;
+    [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
@@ -179,17 +171,17 @@
 - (void)interstitialAd:(ADInterstitialAd *)interstitialAd
       didFailWithError:(NSError *)error {
     
-    self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain
-                                                     code:1
-                                                 userInfo:@{kHZMediatorNameKey: @"iAd",
-                                                            NSUnderlyingErrorKey: error}];
+    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain
+                                                code:1
+                                            userInfo:@{kHZMediatorNameKey: @"iAd", NSUnderlyingErrorKey: error}]
+            forCreativeType:HZCreativeTypeStatic];
     self.interstitialAd = nil;
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 # pragma mark - Banners
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZiAdBannerAdapter alloc] initWithReportingDelegate:reportingDelegate parentAdapter:self options:options];
 }
 

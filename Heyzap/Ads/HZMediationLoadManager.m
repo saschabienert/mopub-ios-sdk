@@ -15,9 +15,10 @@
 #import "HZUtils.h"
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
-#import "HZHeyzapExchangeAdapter.h"
 #import "HZMediationPersistentConfig.h"
 
+#import "HZHeyzapExchangeAdapter.h"
+#import "HZCrossPromoAdapter.h"
 
 @interface HZMediationLoadManager()
 
@@ -91,7 +92,7 @@
     });
     
     // filter out the adapters whose SDKs are not integrated
-    NSSet *const availableAdapters = [HeyzapMediation availableAdaptersWithHeyzap:YES];
+    NSSet *const availableAdapters = [self.delegate availableAdaptersWithHeyzap:YES];
     NSArray *const availableSDKsForFetch = hzFilter(networksToConsider, ^BOOL(HZMediationLoadData *datum) {
         if ([availableAdapters containsObject:datum.adapterClass]) {
             return YES;
@@ -156,61 +157,90 @@
     HZParameterAssert(fetchOptions);
 
     dispatch_async(self.fetchQueue, ^{
-        __block BOOL fetchedAd = NO;
-        __block BOOL shouldNotifyDelegate = notifyDelegate;
-        __block BOOL hasTriedFetchingHeyzapExchange = NO;
         
-        [loadData enumerateObjectsUsingBlock:^(HZMediationLoadData *datum, NSUInteger idx, BOOL *stop) {
-
-            // we always want the HeyzapExchange to start & fetch so it's bid can be considered in the waterfall on show later, but others shouldn't start unless necessary
-            if(fetchedAd && datum.adapterClass != [HZHeyzapExchangeAdapter class]){
+        // these networks should always be fetched:
+        // - Exchange should be fetched so it's real-time bid score can be considered in the show waterfall later.
+        // - CrossPromo should be fetched since /mediate might put it at the top of the waterfall if their xpromo settings deem a xpromo ad necessary at show time
+        NSSet * const networksToAlwaysFetch = [NSSet setWithArray:@[[HZHeyzapExchangeAdapter class], [HZCrossPromoAdapter class]]];
+        [networksToAlwaysFetch enumerateObjectsUsingBlock:^(Class adapterClass, BOOL *stop) {
+            
+            // don't fetch this networkToAlwaysFetch unless it's in the load data also
+            HZMediationLoadData *alwaysFetchDatum = hzFirstObjectPassingTest(loadData, ^BOOL(HZMediationLoadData *datum, NSUInteger idx){
+                return datum.adapterClass == adapterClass;
+            });
+            if (!alwaysFetchDatum) {
                 return;
             }
             
-            if (datum.adapterClass == [HZHeyzapExchangeAdapter class]) {
-                hasTriedFetchingHeyzapExchange = YES;
+            // don't fetch if setting up adapter fails
+            if (![self.delegate setupAdapterNamed:alwaysFetchDatum.networkName]) {
+                return;
             }
             
+            HZBaseAdapter *adapter = (HZBaseAdapter *)[alwaysFetchDatum.adapterClass sharedAdapter];
+            dispatch_sync([self.delegate pausableMainQueue], ^{
+                [adapter prefetchForCreativeType:creativeType];
+            });
+        }];
+        
+        // We want to guarantee (whenever possible) that there is an ad at the end of this call to fetch that is not from one of the following classes.
+        NSSet * const networksToExcludeInHasAdChecks = [NSSet setWithArray:@[[HZCrossPromoAdapter class]]];
+        
+        hzFirstObjectPassingTest(loadData, ^BOOL(HZMediationLoadData *datum, NSUInteger idx) {
+         
             const BOOL setupSuccessful = [self.delegate setupAdapterNamed:datum.networkName];
-
             if (setupSuccessful) {
                 
-                __block HZBaseAdapter *adapter;
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
-                });
-                
+                HZBaseAdapter *adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
                 dispatch_sync([self.delegate pausableMainQueue], ^{
                     [adapter prefetchForCreativeType:creativeType];
                 });
                 
+                HZDLog(@"Attempting to fetch from %@ for creativeType: %@", [datum.adapterClass humanizedName], NSStringFromCreativeType(creativeType));
+                
                 NSTimeInterval pollingInterval = [datum.adapterClass isAvailablePollInterval];
                 __block HZBaseAdapter *adapterWithAnAd = nil;
                 hzWaitUntilInterval(pollingInterval, ^BOOL{
-                    adapterWithAnAd = [self adapterFromLoadData:loadData uptoIndexThatHasAd:idx ofCreativeType:creativeType tag:fetchOptions.tag];
+                    
+                    // skip wait time if:
+                    //  - the current adapter is one we're going to ignore, and the current (to-be-ignored) adapter already has an ad
+                    //      - the requirement that it already has an ad is here so that the ignored network has nonzero time to fetch
+                    //        if it's high in the load order (example: the ignored network is the only one in the loadData)
+                    //  -- OR --
+                    //  - the current adapter has an error for the creativeType
+                    BOOL skipWaitTimeForExcludedNetwork = ([networksToExcludeInHasAdChecks containsObject:datum.adapterClass]
+                                                           && [[datum.adapterClass sharedAdapter] hasAdForCreativeType:creativeType]);
+                    if (skipWaitTimeForExcludedNetwork) {
+                        return true; // stop waiting
+                    }
+                    
+                    NSError * adapterError = [[datum.adapterClass sharedAdapter] lastFetchErrorForCreativeType:creativeType];
+                    if (adapterError){
+                        HZELog(@"Not waiting for %@ to fetch because it errored during a fetch for creativeType:%@. Error: %@", [datum.adapterClass humanizedName], NSStringFromCreativeType(creativeType), adapterError);
+                        return true; // stop waiting
+                    }
+                    
+                    adapterWithAnAd = [self firstAdapterThatHasAdFromLoadData:loadData inRange:(NSMakeRange(0, idx+1)) ofCreativeType:creativeType tag:fetchOptions.tag excludingClasses:networksToExcludeInHasAdChecks];
+                    
                     return (adapterWithAnAd != nil); // stop waiting if we found an adapter
                 }, datum.timeout);
                 
                 if (adapterWithAnAd) {
-                    if (hasTriedFetchingHeyzapExchange){
-                        // stop iterating once the exchange has had a chance to fetch & there is an ad from any network available
-                        *stop = YES;
-                    }
-                    
-                    fetchedAd = YES;
-                    dispatch_sync(dispatch_get_main_queue(), ^{
-                        if (shouldNotifyDelegate) {
-                            [self.delegate didFetchAdOfCreativeType:creativeType withAdapter:adapterWithAnAd options:fetchOptions];
-                        }
-                    });
-                    
-                    shouldNotifyDelegate = NO; // no longer notify after first notification
+                    return YES;
                 }
             }
-        }];
-        if (!fetchedAd) {
+            return NO;
+        });
+        
+        // report success with the first adapter in the loadData with an ad w/ no network exclusions, or failure if none have an ad
+        //  - the search is re-done here instead of using the adapter retrieved where `*stop = YES` is set above so that the adapter
+        //    that we report success with can be one of the networksToExcludeInHasAdChecks - this will report the one highest in the load order
+        if (notifyDelegate) {
             dispatch_sync(dispatch_get_main_queue(), ^{
-                if (shouldNotifyDelegate) {
+                HZBaseAdapter *finalAdapter = [self firstAdapterThatHasAdFromLoadData:loadData inRange:(NSMakeRange(0, [loadData count])) ofCreativeType:creativeType tag:fetchOptions.tag excludingClasses:[NSSet set]];
+                if (finalAdapter) {
+                    [self.delegate didFetchAdOfCreativeType:creativeType withAdapter:finalAdapter options:fetchOptions];
+                } else {
                     [self.delegate didFailToFetchAdOfCreativeType:creativeType options:fetchOptions];
                 }
             });
@@ -219,28 +249,22 @@
 }
 
 /**
- *  Returns the first adapter, from index [0,idx] that has an allowed ad fetched of the given type, or nil if none in that range have an ad of the given type.
+ *  Returns the first adapter that has an allowed ad fetched of the given type, or nil if none in the given range of indices within the passed loadData array have an ad of the given type.
  */
-- (HZBaseAdapter *)adapterFromLoadData:(NSArray *)loadData uptoIndexThatHasAd:(NSUInteger)idx ofCreativeType:(HZCreativeType)creativeType tag:(NSString *)tag {
-    for (NSUInteger i = 0; i <= idx; i++) {
+- (HZBaseAdapter *) firstAdapterThatHasAdFromLoadData:(NSArray *)loadData inRange:(NSRange)range ofCreativeType:(HZCreativeType)creativeType tag:(NSString *)tag excludingClasses:(NSSet *)excludedClasses {
+    for (NSUInteger i = range.location; i < NSMaxRange(range); i++) {
         HZMediationLoadData *datum = loadData[i];
-        HZBaseAdapter *adapter = ((HZBaseAdapter *)[datum.adapterClass sharedAdapter]);
-        if ([[HeyzapMediation sharedInstance] isNetworkClassInitialized:[adapter class]]
+        HZBaseAdapter *adapter = [datum.adapterClass sharedAdapter];
+        BOOL excludeThisAdapter = (excludedClasses != nil && [excludedClasses containsObject:datum.adapterClass]);
+        
+        if (!excludeThisAdapter
+            && [self.delegate isNetworkClassInitialized:[adapter class]]
             && [self.segmentationController adapterHasAllowedAd:adapter forCreativeType:creativeType tag:tag]) {
             return adapter;
         }
     }
-    
     return nil;
 }
-
-// If
-// Need one queue polling network
-// Have a timer polling networks, and just have a list of networks to poll?
-// How to handle timeouts? Could just do performSelector after delay / dispatch_after
-
-// How to
-
 
 
 @end

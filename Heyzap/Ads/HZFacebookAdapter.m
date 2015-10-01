@@ -99,21 +99,15 @@
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType {
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType {
     return creativeType == HZCreativeTypeStatic && self.interstitialAd && self.interstitialAd.isAdValid;
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
     HZAssert(self.placementID, @"Need a Placement ID by this point");
     
-    if (creativeType != HZCreativeTypeStatic) {
-        // only prefetch if they want an interstitial
-        return;
-    }
-    
-    if (self.interstitialAd
-        && !self.lastStaticError) {
-        // If we have an interstitial already out fetching, don't start up a re-fetch.
+    if (self.interstitialAd) {
+        // If we have an interstitial already out fetching, don't start up a re-fetch. This differs from the `hasAdForCreativeType:` check because we don't check `isAdValid`.
         return;
     }
     
@@ -151,15 +145,15 @@
 }
 
 - (void)interstitialAdDidLoad:(HZFBInterstitialAd *)interstitialAd {
-    self.lastStaticError = nil;
+    [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (void)interstitialAd:(HZFBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
-    self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain
-                                                     code:1
-                                                 userInfo:@{kHZMediatorNameKey: @"Facebook",
-                                                            NSUnderlyingErrorKey: error}];
+    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain
+                                                code:1
+                                            userInfo:@{kHZMediatorNameKey: @"Facebook", NSUnderlyingErrorKey: error}]
+            forCreativeType:HZCreativeTypeStatic];
     self.interstitialAd = nil;
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
@@ -169,7 +163,7 @@
     [self.delegate adapterDidShowAd:self];
 }
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZFBBannerAdapter alloc] initWithAdUnitId:self.bannerPlacementID options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 

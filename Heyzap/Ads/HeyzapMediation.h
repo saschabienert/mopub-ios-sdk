@@ -53,14 +53,14 @@
 // Need Delegate API for getting the current view controller.
 // We can handle the common scenarios by recursively finding the right view controller.
 
-+ (BOOL)isOnlyHeyzapSDK;
+- (BOOL)isOnlyHeyzapSDK;
 
 /**
  *  Call this method to force `isOnlyHeyzapSDK` to always return `YES`.
  */
 + (void)forceOnlyHeyzapSDK;
 
-+ (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap;
+- (NSSet *)availableAdaptersWithHeyzap:(BOOL)includeHeyzap;
 
 + (NSString *)commaSeparatedAdapterList;
 

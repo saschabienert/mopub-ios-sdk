@@ -67,7 +67,7 @@
     self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
     _creativeType = creativeType;
     
-    HZAFHTTPRequestOperation *request = [self.apiClient fetchAdWithExtraParams:[self apiRequestParams]
+    [self.apiClient fetchAdWithExtraParams:[self apiRequestParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
                 {
                     NSData * data = (NSData *)responseObject;
@@ -146,19 +146,20 @@
                 }
                 failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
                 {
-                    HZELog(@"Fetch failed. Error: %@", error);
-                    [self handleFetchFailure:@"request failed / no fill"];
+                    if ([operation.response statusCode] == 404){
+                        HZDLog(@"Exchange fetch failed - no fill.");
+                        [self handleFetchFailure:@"request failed with code: 404 (no fill)"];
+                    } else {
+                        HZELog(@"Exchange fetch failed. Error: %@", error);
+                        [self handleFetchFailure:[NSString stringWithFormat:@"request failed with code: %li", (long)operation.response.statusCode]];
+                    }
                 }
      ];
-    
-    HZDLog(@"Exchange fetch request URL: %@", request.request.URL);
 }
 
 - (void) handleFetchFailure:(NSString *)failureReason {
     self.state = HZHeyzapExchangeClientStateFailure;
-    if(failureReason) {
-        [self.delegate client:self didFailToFetchAdWithCreativeType:self.creativeType error:failureReason];
-    }
+    [self.delegate client:self didFailToFetchAdWithCreativeType:self.creativeType error:failureReason];
 }
 
 

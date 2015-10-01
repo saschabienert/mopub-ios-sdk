@@ -99,7 +99,7 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     return HZCreativeTypeStatic | HZCreativeTypeIncentivized;
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeStatic: {
@@ -120,7 +120,7 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeStatic: {
@@ -182,25 +182,32 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
 - (void)onModuleFailed:(NSNotification *)notification {
     [[HeyzapMediation sharedInstance] sendNetworkCallback:HZNetworkCallbackFetchFailed forNetwork:[self name]];
     const BOOL wasFailureToCache = [notification.userInfo[@"cached"] isEqualToString:@"yes"];
+    
     if (wasFailureToCache) {
         HZELog(@"Mediation: Leadbolt ad failed to cache; notification = %@", notification);
+        [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Leadbolt ad failed to cache."}] forCreativeType:[self creativeTypeFromNSNotification:notification]];
     } else { // Otherwise, it failed to show
         HZELog(@"Mediation: Leadbolt ad failed to display; notification = %@", notification);
-        [self.delegate adapterDidFailToShowAd:self error:nil];
+        [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Leadbolt ad failed to display."}]];
     }
 }
 
 - (void)onModuleCached:(NSNotification *)notification {
     [[HeyzapMediation sharedInstance] sendNetworkCallback:HZNetworkCallbackAvailable forNetwork:[self name]];
     HZDLog(@"Leadbolt ad cached; notification = %@",notification);
-    NSString *const placement = notification.userInfo[@"placement"];
+    HZCreativeType creativeType = [self creativeTypeFromNSNotification:notification];
     
-    if ([placement isEqualToString:kHZLeadboltInterstitialModule]) {
+    if (creativeType == HZCreativeTypeStatic) {
+        [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
         self.staticCached = YES;
-    } else if ([placement isEqualToString:kHZLeadboltIncentivizedModule]) {
+    } else if (creativeType == HZCreativeTypeIncentivized) {
+        [self clearLastFetchErrorForCreativeType:HZCreativeTypeIncentivized];
         self.incentivizedCached = YES;
     } else {
-        HZELog(@"Unknown module cached by Leadbolt. This shouldn't break anything, but it's unexpected. notification = %@",notification);
+        HZELog(@"Unknown module type cached by Leadbolt. This shouldn't break anything, but it's unexpected. notification = %@",notification);
+        // clear all the errors to be safe in this case.
+        [self clearLastFetchErrorForCreativeType:HZCreativeTypeIncentivized];
+        [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
     }
 }
 
@@ -227,6 +234,22 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
         [self.delegate adapterDidCompleteIncentivizedAd:self];
     } else {
         [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+    }
+}
+
+
+#pragma mark - Utilities
+
+- (HZCreativeType) creativeTypeFromNSNotification:(NSNotification *)notification {
+    NSString *const placement = notification.userInfo[@"placement"];
+    
+    if ([placement isEqualToString:kHZLeadboltInterstitialModule]) {
+        return HZCreativeTypeStatic;
+    } else if ([placement isEqualToString:kHZLeadboltIncentivizedModule]) {
+        return HZCreativeTypeIncentivized;
+    } else {
+        HZELog(@"Unknown module placement by Leadbolt. This shouldn't break anything, but it's unexpected. notification = %@",notification);
+        return HZCreativeTypeUnknown;
     }
 }
 
