@@ -40,6 +40,10 @@
  */
 - (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType;
 
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate;
+
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType;
+
 /**
  *  Subclasses can implement this method if they can turn logging on in the adapted SDK. This method will only be called on subclasses if they are already initialized. The method `isLoggingEnabled` can be called in this method to see if logging is on or not. The default implementation is empty.
  */

@@ -64,10 +64,8 @@
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if(![self supportsCreativeType:creativeType]) return NO;
-    
     const HZAuctionType auctionType = [self auctionType];
     if (creativeType & HZCreativeTypeVideo) {
         return [HZHeyzapVideoAd isAvailableForTag:nil auctionType:auctionType];
@@ -219,7 +217,7 @@
             }
         }
         
-        HZELog(@"The %@ network failed to fetch an ad. Error: %@", [self name], error);
+        HZELog(@"The %@ network failed to fetch an ad. Error: %@", [self humanizedName], error);
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
     }
 }

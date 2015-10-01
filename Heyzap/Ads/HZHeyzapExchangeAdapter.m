@@ -97,10 +97,8 @@
     [self.exchangeClientsPerCreativeType setObject:newClient forKey:[self creativeTypeAsDictKey:creativeType]];
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if(![self supportsCreativeType:creativeType]) return NO;
-    
     HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
     if(client && client.state == HZHeyzapExchangeClientStateReady){
         return YES;

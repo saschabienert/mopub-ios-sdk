@@ -140,7 +140,7 @@
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeStatic: {

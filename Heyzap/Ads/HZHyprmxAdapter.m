@@ -81,9 +81,7 @@
 }
 
 static BOOL wasReady = NO;
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType {
-    if (!([self supportedCreativeTypes] & creativeType)) return NO;
-    
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType {
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
         wasReady = isOfferReady;
     }];

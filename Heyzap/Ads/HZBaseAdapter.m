@@ -23,6 +23,7 @@
 #import "HZHeyzapExchangeAdapter.h"
 #import "HZLeadboltAdapter.h"
 #import "HZLog.h"
+#import "HZDispatch.h"
 
 @interface HZBaseAdapter()
 //key: HZCreativeType value: NSNumber *
@@ -53,11 +54,14 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 }
 
 - (NSError *)initializeSDK {
-    NSError *error = [self internalInitializeSDK];
-    if (!error && !self.isInitialized) {
-        _isInitialized = YES;
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
-    }
+    __block NSError *error;
+    ensureMainQueue(^{
+        error = [self internalInitializeSDK];
+        if (!error && !self.isInitialized) {
+            self->_isInitialized = YES;
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
+        }
+    });
     return error;
 }
 - (NSError *)internalInitializeSDK {
@@ -89,11 +93,17 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 }
 
 - (void)prefetchForCreativeType:(HZCreativeType)creativeType {
-    if(![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner) return;
-    if ([self hasAdForCreativeType:creativeType]) return;
+    if(![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner){
+        HZELog(@"HZBaseAdapter: prefetchForCreativeType:%@ called for %@ adapter (%@)", NSStringFromCreativeType(creativeType), [self name], creativeType == HZCreativeTypeBanner ? @"banners can't be fetched via the normal adapter": @"unsupported creativeType");
+        return;
+    }
     
-    [self clearLastFetchErrorForCreativeType:creativeType];
-    [self internalPrefetchForCreativeType:creativeType];
+    ensureMainQueue(^{
+        if ([self hasAdForCreativeType:creativeType]) return;
+        
+        [self clearLastFetchErrorForCreativeType:creativeType];
+        [self internalPrefetchForCreativeType:creativeType];
+    });
 }
 
 - (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
@@ -102,6 +112,21 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 }
 
 - (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+{
+    if (creativeType == HZCreativeTypeBanner) {
+        HZELog(@"hasAdForCreativeType should not be sent to adapters asking about banner ads.");
+        return NO;
+    }
+    
+    if (![self supportsCreativeType:creativeType]) return NO;
+    
+    __block BOOL hasAd;
+    ensureMainQueue(^{
+        hasAd = [self internalHasAdForCreativeType:creativeType];
+    });
+    return hasAd;
+}
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
     ABSTRACT_METHOD_ERROR();
 }
@@ -114,7 +139,9 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
         return;
     }
     
-    [self internalShowAdForCreativeType:creativeType options:options];
+    ensureMainQueue(^{
+        [self internalShowAdForCreativeType:creativeType options:options];
+    });
 }
 
 - (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
@@ -123,6 +150,14 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    __block HZBannerAdapter *bannerAdapter;
+    ensureMainQueue(^{
+        bannerAdapter = [self internalFetchBannerWithOptions:options reportingDelegate:reportingDelegate];
+    });
+    return bannerAdapter;
+}
+
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return nil;
 }
 

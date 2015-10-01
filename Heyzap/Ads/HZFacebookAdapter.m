@@ -99,7 +99,7 @@
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType {
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType {
     return creativeType == HZCreativeTypeStatic && self.interstitialAd && self.interstitialAd.isAdValid;
 }
 
@@ -107,7 +107,7 @@
     HZAssert(self.placementID, @"Need a Placement ID by this point");
     
     if (self.interstitialAd) {
-        // If we have an interstitial already out fetching, don't start up a re-fetch.
+        // If we have an interstitial already out fetching, don't start up a re-fetch. This differs from the `hasAdForCreativeType:` check because we don't check `isAdValid`.
         return;
     }
     
@@ -163,7 +163,7 @@
     [self.delegate adapterDidShowAd:self];
 }
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZFBBannerAdapter alloc] initWithAdUnitId:self.bannerPlacementID options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 

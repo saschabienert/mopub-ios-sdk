@@ -82,7 +82,7 @@
     return [HZGADRequest sdkVersion];
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeStatic:
@@ -194,11 +194,8 @@
                                                 code:1
                                             userInfo:@{kHZMediatorNameKey: @"AdMob",
                                                        NSUnderlyingErrorKey: error}];
-    if (creativeType == HZCreativeTypeStatic) {
-        [self setLastFetchError:wrappedError forCreativeType:HZCreativeTypeStatic];
-    } else if (creativeType == HZCreativeTypeVideo) {
-        [self setLastFetchError:wrappedError forCreativeType:HZCreativeTypeVideo];
-    }
+    
+    [self setLastFetchError:wrappedError forCreativeType:creativeType];
     
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
@@ -228,7 +225,7 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:self.bannerAdUnitID options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 

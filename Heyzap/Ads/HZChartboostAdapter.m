@@ -100,10 +100,8 @@ NSString * const kHZCBLocationDefault = @"Default";
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if(![self supportsCreativeType:creativeType]) return NO;
-    
     switch (creativeType) {
         case HZCreativeTypeIncentivized:
             return [HZChartboost hasRewardedVideo:kHZCBLocationDefault];

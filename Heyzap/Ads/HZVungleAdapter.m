@@ -101,10 +101,8 @@
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if(![self supportsCreativeType:creativeType]) return NO;
-    
     BOOL adPlayable = NO;
     
     // in v.3.1.0 `isAdPlayable` is added, `isCachedAdAvailable` is deprecated
@@ -115,7 +113,7 @@
         adPlayable = [[HZVungleSDK sharedSDK] isCachedAdAvailable];
     }
     
-    return [self supportedCreativeTypes] & creativeType && adPlayable;
+    return adPlayable;
 }
 
 - (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
