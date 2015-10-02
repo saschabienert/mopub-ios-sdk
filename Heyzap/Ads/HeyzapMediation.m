@@ -321,7 +321,7 @@
 #pragma mark - Fetch (LoadManager) callbacks
 
 - (void)didFetchAdOfCreativeType:(HZCreativeType)creativeType withAdapter:(HZBaseAdapter *)adapter options:(HZFetchOptions *)fetchOptions {
-    if ([self.settings tagIsEnabled:fetchOptions.tag]) {
+    if ([[self settings] tagIsEnabled:fetchOptions.tag]) {
         @synchronized(fetchOptions) {
             fetchOptions.creativeTypesFetchesFinished = [fetchOptions.creativeTypesFetchesFinished setByAddingObject:@(creativeType)];
             if (!fetchOptions.alreadyNotifiedDelegateOfSuccess){
