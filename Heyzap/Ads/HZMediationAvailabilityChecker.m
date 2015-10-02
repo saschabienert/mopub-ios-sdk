@@ -109,12 +109,7 @@
     return chosenNetworks;
 }
 
-- (HZMediationAdapterWithCreativeTypeScore *)firstAdapterWithAdForTag:(NSString *)tag adaptersWithScores:(NSOrderedSet *)adaptersWithScores optionalForcedNetwork:(Class)forcedNetwork segmentationController:(HZSegmentationController *)segmentationController {
-    if (forcedNetwork) {
-        adaptersWithScores = hzFilterOrderedSet(adaptersWithScores, ^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {
-            return [[adapterWithScore adapter] isKindOfClass:forcedNetwork];
-        });
-    }
+- (HZMediationAdapterWithCreativeTypeScore *)firstAdapterWithAdForTag:(NSString *)tag adaptersWithScores:(NSOrderedSet *)adaptersWithScores segmentationController:(HZSegmentationController *)segmentationController {
     
     const NSUInteger idx = [adaptersWithScores indexOfObjectPassingTest:^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore, NSUInteger idx, BOOL *stop) {
         if([segmentationController adapterHasAllowedAd:[adapterWithScore adapter] forCreativeType:[adapterWithScore creativeType] tag:tag]) {
