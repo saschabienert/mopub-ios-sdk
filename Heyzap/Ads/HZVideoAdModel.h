@@ -24,8 +24,8 @@
 @property (nonatomic, readonly) NSNumber *videoSizeBytes;
 
 // Video Sources
-@property (nonatomic, readonly) NSMutableArray *staticURLs;
-@property (nonatomic, readonly) NSMutableArray *streamingURLs;
+@property (nonatomic, readonly) NSMutableArray<NSURL *> *staticURLs;
+@property (nonatomic, readonly) NSMutableArray<NSURL *> *streamingURLs;
 
 // On-screen Video Behaviors
 @property (nonatomic, readonly) HZVideoAdDisplayOptions *displayOptions;

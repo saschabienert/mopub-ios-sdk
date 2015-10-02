@@ -12,7 +12,7 @@
 #import "HZAdInfo.h"
 
 @interface HZAdLibrary()
-@property (nonatomic, strong) NSMutableDictionary *adDict;
+@property (nonatomic, strong) NSMutableDictionary<HZAdInfo *, HZQueue *> *adDict;
 @end
 
 @implementation HZAdLibrary

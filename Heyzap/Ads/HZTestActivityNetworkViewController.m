@@ -76,8 +76,8 @@
 @property (nonatomic) HZBannerPosition chosenBannerPosition;
 @property (nonatomic) NSValue *chosenBannerSize;
 
-@property (nonatomic) NSArray *nonBannerControls;
-@property (nonatomic) NSArray *bannerControls;
+@property (nonatomic) NSArray<UIControl *> *nonBannerControls;
+@property (nonatomic) NSArray<UIControl *> *bannerControls;
 
 @property (nonatomic) HZBannerAd *bannerWrapper;
 

@@ -25,7 +25,7 @@
 @interface HZHeyzapExchangeAdapter()<HZHeyzapExchangeClientDelegate>
 
 /* Maps creativeType to a client for that type.*/
-@property (nonatomic) NSMutableDictionary *exchangeClientsPerCreativeType;
+@property (nonatomic) NSMutableDictionary<NSNumber *, HZHeyzapExchangeClient *> *exchangeClientsPerCreativeType;
 
 @property (nonatomic) HZHeyzapExchangeClient *currentlyPlayingClient;
 @end

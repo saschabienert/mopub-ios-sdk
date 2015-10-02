@@ -25,12 +25,12 @@
 @property (nonatomic) id<HZMediationPersistentConfigReadonly> persistentConfig;
 @property (nonatomic) HZSegmentationController *segmentationController;
 @property (nonatomic) NSUInteger maxConcurrency;
-@property (nonatomic) NSArray *networkList;
+@property (nonatomic) NSArray<HZBaseAdapter *> *networkList;
 
 @property (nonatomic, weak) id<HZMediationLoadManagerDelegate> delegate;
 
-@property (nonatomic) NSSet *networksToAlwaysFetch;
-@property (nonatomic) NSSet *networksToKeepLoadingPast;
+@property (nonatomic) NSSet<Class> *networksToAlwaysFetch;
+@property (nonatomic) NSSet<Class> *networksToKeepLoadingPast;
 
 // GCD
 @property (nonatomic) dispatch_queue_t fetchQueue;

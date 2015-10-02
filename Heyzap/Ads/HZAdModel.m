@@ -22,7 +22,7 @@
 #import "HZNSURLUtils.h"
 
 @interface HZAdModel()
-@property (nonatomic) NSMutableDictionary *additionalEventParams;
+@property (nonatomic) NSMutableDictionary<NSString *, id> *additionalEventParams;
 @property (nonatomic) NSNumber *refreshTime;
 @property (nonatomic) NSString *adStrategy;
 @property (nonatomic) NSNumber *creativeID;

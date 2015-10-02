@@ -76,8 +76,8 @@ typedef enum {
 @property (nonatomic) UIButton *hideBannerButton;
 @property (nonatomic) UIButton *destroyBannerButton;
 
-@property (nonatomic) NSArray *bannerControls;
-@property (nonatomic) NSArray *nonBannerControls;
+@property (nonatomic) NSArray<UIControl *> *bannerControls;
+@property (nonatomic) NSArray<UIControl *> *nonBannerControls;
 
 @property (nonatomic) UITextField *creativeTypeTextField;
 @property (nonatomic) UITextField *adTagField;

@@ -12,7 +12,7 @@
 
 @interface HZSegmentationController (Testing)
 
-@property (nonnull, nonatomic) NSSet *segments;
+@property (nonnull, nonatomic) NSSet<HZSegmentationSegment *> *segments;
 
 - (NSUInteger) impressionCount;
 

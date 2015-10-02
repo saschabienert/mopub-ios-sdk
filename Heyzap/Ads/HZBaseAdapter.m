@@ -27,7 +27,7 @@
 
 @interface HZBaseAdapter()
 //key: HZCreativeType value: NSNumber *
-@property (nonatomic, strong) NSMutableDictionary *latestMediationScores;
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSNumber *> *latestMediationScores;
 @property (nonatomic) BOOL isInitialized;
 @end
 

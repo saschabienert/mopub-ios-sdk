@@ -55,9 +55,9 @@
 
 @interface HeyzapMediation()
 
-@property (nonatomic, strong) NSSet *setupMediators;
-@property (nonatomic, strong) NSSet *setupMediatorClasses;
-@property (nonatomic, strong) NSSet *erroredMediatiorClasses;
+@property (nonatomic, strong) NSSet<HZBaseAdapter *> *setupMediators;
+@property (nonatomic, strong) NSSet<Class> *setupMediatorClasses;
+@property (nonatomic, strong) NSSet<Class> *erroredMediatiorClasses;
 
 @property (nonatomic, strong) NSDate *lastInterstitialVideoShownDate;
 
@@ -66,7 +66,7 @@
 @property (nonatomic, strong) HZDelegateProxy *videoDelegateProxy;
 
 @property (nonatomic, strong) void (^networkCallbackBlock)(NSString *network, NSString *callback);
-@property (nonatomic, strong) NSMutableDictionary *networkListeners;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, id> *networkListeners;
 @property (nonatomic) dispatch_queue_t fetchQueue;
 @property (nonatomic) dispatch_queue_t sdkStartQueue;
 @property (nonatomic) dispatch_queue_t pausableMainQueue;

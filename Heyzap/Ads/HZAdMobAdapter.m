@@ -19,7 +19,7 @@
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
-@property (nonatomic, strong) NSMutableDictionary *adDictionary;
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, HZGADInterstitial *> *adDictionary;
 
 @property (nonatomic, strong) NSString *interstitialAdUnitID;
 @property (nonatomic, strong) NSString *videoAdUnitID;
