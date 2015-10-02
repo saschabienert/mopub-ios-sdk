@@ -28,7 +28,9 @@
 @property (nonatomic) NSArray *networkList;
 
 @property (nonatomic, weak) id<HZMediationLoadManagerDelegate> delegate;
-@property (nonatomic) BOOL autoFetchEnabled;
+
+@property (nonatomic) NSSet *networksToAlwaysFetch;
+@property (nonatomic) NSSet *networksToKeepLoadingPast;
 
 // GCD
 @property (nonatomic) dispatch_queue_t fetchQueue;
@@ -47,6 +49,7 @@
         _persistentConfig = persistentConfig;
         _segmentationController = segmentationController;
         _fetchQueue = dispatch_queue_create("com.heyzap.sdk.mediation", DISPATCH_QUEUE_CONCURRENT);
+        
         if (![self refreshWithLoadData:loadData error:error]) {
             return nil;
         }
@@ -55,14 +58,28 @@
 }
 
 - (BOOL) refreshWithLoadData:(NSDictionary *)loadData error:(NSError **)error {
-    
     NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:loadData error:error];
     if(!networks) {
         return NO;
     }
     
+    // currently unused
     self.maxConcurrency = [[HZDictionaryUtils objectForKey:@"max_load" ofClass:[NSNumber class] default:@2 dict:loadData] unsignedIntegerValue];
-        
+    
+    // these networks should always be fetched:
+    // - Exchange should be fetched so it's real-time bid score can be considered in the show waterfall later.
+    // - CrossPromo should be fetched since /mediate might put it at the top of the waterfall if their xpromo settings deem a xpromo ad necessary at show time
+    NSArray *alwaysFetch = [HZDictionaryUtils objectForKey:@"always_fetch_networks" ofClass:[NSArray class] default:@[[HZCrossPromoAdapter name], [HZHeyzapExchangeAdapter name]] dict:loadData];
+    self.networksToAlwaysFetch = [NSSet setWithArray:hzMap(alwaysFetch, ^Class(NSString *networkName) {
+        return [HZBaseAdapter adapterClassForName:networkName];
+    })];
+    
+    // We want to guarantee (whenever possible) that there is an ad at the end of a call to fetch that is not from one of the following classes, regardless of any lazy loading going on.
+    NSArray *excludeInChecks = [HZDictionaryUtils objectForKey:@"keep_loading_past_networks" ofClass:[NSArray class] default:@[[HZCrossPromoAdapter name]] dict:loadData];
+    self.networksToKeepLoadingPast = [NSSet setWithArray:hzMap(excludeInChecks, ^Class(NSString *networkName) {
+        return [HZBaseAdapter adapterClassForName:networkName];
+    })];
+    
     NSMutableArray *const networkList = [NSMutableArray array];
     
     for (NSDictionary *network in networks) {
@@ -75,7 +92,7 @@
         }
     }
     
-    _networkList = networkList;
+    self.networkList = networkList;
     return YES;
 }
 
@@ -156,12 +173,11 @@
     HZParameterAssert(loadData);
     HZParameterAssert(fetchOptions);
 
+    // since these properties could update during the fetch process (which is backgrounded), store what the properties are now (on the main thread) and use these const sets instead below
+    const NSSet *networksToAlwaysFetch = self.networksToAlwaysFetch;
+    const NSSet *networksToKeepLoadingPast = self.networksToKeepLoadingPast;
+    
     dispatch_async(self.fetchQueue, ^{
-        
-        // these networks should always be fetched:
-        // - Exchange should be fetched so it's real-time bid score can be considered in the show waterfall later.
-        // - CrossPromo should be fetched since /mediate might put it at the top of the waterfall if their xpromo settings deem a xpromo ad necessary at show time
-        NSSet * const networksToAlwaysFetch = [NSSet setWithArray:@[[HZHeyzapExchangeAdapter class], [HZCrossPromoAdapter class]]];
         [networksToAlwaysFetch enumerateObjectsUsingBlock:^(Class adapterClass, BOOL *stop) {
             
             // don't fetch this networkToAlwaysFetch unless it's in the load data also
@@ -183,22 +199,20 @@
             });
         }];
         
-        // We want to guarantee (whenever possible) that there is an ad at the end of this call to fetch that is not from one of the following classes.
-        NSSet * const networksToExcludeInHasAdChecks = [NSSet setWithArray:@[[HZCrossPromoAdapter class]]];
         
         hzFirstObjectPassingTest(loadData, ^BOOL(HZMediationLoadData *datum, NSUInteger idx) {
          
             const BOOL setupSuccessful = [self.delegate setupAdapterNamed:datum.networkName];
             if (setupSuccessful) {
                 
-                HZBaseAdapter *adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
+                const HZBaseAdapter *adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
                 dispatch_sync([self.delegate pausableMainQueue], ^{
                     [adapter prefetchForCreativeType:creativeType];
                 });
                 
                 HZDLog(@"Attempting to fetch from %@ for creativeType: %@", [datum.adapterClass humanizedName], NSStringFromCreativeType(creativeType));
                 
-                NSTimeInterval pollingInterval = [datum.adapterClass isAvailablePollInterval];
+                const NSTimeInterval pollingInterval = [datum.adapterClass isAvailablePollInterval];
                 __block HZBaseAdapter *adapterWithAnAd = nil;
                 hzWaitUntilInterval(pollingInterval, ^BOOL{
                     
@@ -208,19 +222,19 @@
                     //        if it's high in the load order (example: the ignored network is the only one in the loadData)
                     //  -- OR --
                     //  - the current adapter has an error for the creativeType
-                    BOOL skipWaitTimeForExcludedNetwork = ([networksToExcludeInHasAdChecks containsObject:datum.adapterClass]
-                                                           && [[datum.adapterClass sharedAdapter] hasAdForCreativeType:creativeType]);
-                    if (skipWaitTimeForExcludedNetwork) {
+                    const BOOL skipWaitTime = ([networksToKeepLoadingPast containsObject:datum.adapterClass]
+                                               && [[datum.adapterClass sharedAdapter] hasAdForCreativeType:creativeType]);
+                    if (skipWaitTime) {
                         return true; // stop waiting
                     }
                     
-                    NSError * adapterError = [[datum.adapterClass sharedAdapter] lastFetchErrorForCreativeType:creativeType];
+                    const NSError *adapterError = [[datum.adapterClass sharedAdapter] lastFetchErrorForCreativeType:creativeType];
                     if (adapterError){
                         HZELog(@"Not waiting for %@ to fetch because it errored during a fetch for creativeType:%@. Error: %@", [datum.adapterClass humanizedName], NSStringFromCreativeType(creativeType), adapterError);
                         return true; // stop waiting
                     }
                     
-                    adapterWithAnAd = [self firstAdapterThatHasAdFromLoadData:loadData inRange:(NSMakeRange(0, idx+1)) ofCreativeType:creativeType tag:fetchOptions.tag excludingClasses:networksToExcludeInHasAdChecks];
+                    adapterWithAnAd = [self firstAdapterThatHasAdFromLoadData:loadData inRange:(NSMakeRange(0, idx+1)) ofCreativeType:creativeType tag:fetchOptions.tag excludingClasses:networksToKeepLoadingPast];
                     
                     return (adapterWithAnAd != nil); // stop waiting if we found an adapter
                 }, datum.timeout);
@@ -251,7 +265,7 @@
 /**
  *  Returns the first adapter that has an allowed ad fetched of the given type, or nil if none in the given range of indices within the passed loadData array have an ad of the given type.
  */
-- (HZBaseAdapter *) firstAdapterThatHasAdFromLoadData:(NSArray *)loadData inRange:(NSRange)range ofCreativeType:(HZCreativeType)creativeType tag:(NSString *)tag excludingClasses:(NSSet *)excludedClasses {
+- (HZBaseAdapter *) firstAdapterThatHasAdFromLoadData:(NSArray *)loadData inRange:(NSRange)range ofCreativeType:(HZCreativeType)creativeType tag:(NSString *)tag excludingClasses:(const NSSet *)excludedClasses {
     for (NSUInteger i = range.location; i < NSMaxRange(range); i++) {
         HZMediationLoadData *datum = loadData[i];
         HZBaseAdapter *adapter = [datum.adapterClass sharedAdapter];

@@ -267,7 +267,8 @@ NSString *const kNoInternet = @"no_internet";
 NSArray *hzMap(NSArray *array, id (^block)(id object)) {
     NSMutableArray *newArray = [[NSMutableArray alloc] initWithCapacity:array.count];
     for (id obj in array) {
-        [newArray addObject:block(obj)];
+        id retVal = block(obj);
+        if (retVal) [newArray addObject:retVal];
     }
     return newArray;
 }
@@ -291,7 +292,8 @@ id hzFirstObjectPassingTest(NSArray *array, BOOL(^test)(id object, NSUInteger in
 NSOrderedSet *hzMapOrderedSet(NSOrderedSet *set, id (^block)(id object)) {
     NSMutableOrderedSet *newSet = [[NSMutableOrderedSet alloc] initWithCapacity:set.count];
     for (id obj in set) {
-        [newSet addObject:block(obj)];
+        id retVal = block(obj);
+        if (retVal) [newSet addObject:retVal];
     }
     return newSet;
 }
