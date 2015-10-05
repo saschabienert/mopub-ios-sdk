@@ -14,7 +14,7 @@
 @property (nonatomic, readonly) NSTimeInterval timeout;
 @property (nonatomic, readonly) Class adapterClass;
 @property (nonatomic, readonly) NSString *networkName;
-@property (nonatomic, readonly) NSSet *creativeTypeSet;
+@property (nonatomic, readonly) NSSet<NSString *> *creativeTypeSet;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary error:(NSError **)error;
 

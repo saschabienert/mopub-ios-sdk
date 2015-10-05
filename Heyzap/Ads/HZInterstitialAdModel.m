@@ -17,8 +17,8 @@
 
 @implementation HZInterstitialAdModel
 
-- (instancetype) initWithDictionary: (NSDictionary *) dict adUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType {
-    self = [super initWithDictionary: dict adUnit:adUnit auctionType:auctionType];
+- (instancetype) initWithDictionary: (NSDictionary *) dict fetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType {
+    self = [super initWithDictionary: dict fetchableCreativeType:fetchableCreativeType auctionType:auctionType];
     if (self) {
         _HTMLContent = [HZDictionaryUtils objectForKey: @"ad_html" ofClass: [NSString class] default: @"<html></html>" dict: dict];
         

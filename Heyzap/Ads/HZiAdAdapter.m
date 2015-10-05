@@ -13,6 +13,7 @@
 #import "HZiAdBannerAdapter.h"
 #import "HeyzapMediation.h"
 #import "HZDevice.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZiAdAdapter()<ADInterstitialAdDelegate>
 
@@ -45,7 +46,7 @@
     return YES;
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     return nil;
 }
 
@@ -63,31 +64,19 @@
     return [NSString stringWithFormat: @"%@", [UIDevice currentDevice].systemVersion];
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
-    if (creativeType != HZCreativeTypeStatic) {
-        return;
-    }
-    
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
     if (self.interstitialAd == nil) {
         self.interstitialAd = [[ADInterstitialAd alloc] init];
         self.interstitialAd.delegate = self.forwardingDelegate;
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if (creativeType != HZCreativeTypeStatic) {
-        return NO;
-    }
-    
     return [self.interstitialAd isLoaded];
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
-    if (creativeType != HZCreativeTypeStatic) {
-        return;
-    }
-    
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
     BOOL success = NO;
     
     if ([options.viewController respondsToSelector:@selector(requestInterstitialAdPresentation)]) {
@@ -144,7 +133,7 @@
 }
 
 - (void)interstitialAdDidLoad:(ADInterstitialAd *)interstitialAd {
-    self.lastStaticError = nil;
+    [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
@@ -181,17 +170,17 @@
 - (void)interstitialAd:(ADInterstitialAd *)interstitialAd
       didFailWithError:(NSError *)error {
     
-    self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain
-                                                     code:1
-                                                 userInfo:@{kHZMediatorNameKey: @"iAd",
-                                                            NSUnderlyingErrorKey: error}];
+    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain
+                                                code:1
+                                            userInfo:@{kHZMediatorNameKey: @"iAd", NSUnderlyingErrorKey: error}]
+            forCreativeType:HZCreativeTypeStatic];
     self.interstitialAd = nil;
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 # pragma mark - Banners
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZiAdBannerAdapter alloc] initWithReportingDelegate:reportingDelegate parentAdapter:self options:options];
 }
 

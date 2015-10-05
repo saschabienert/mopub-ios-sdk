@@ -14,13 +14,13 @@
 
 @property (nonatomic) NSTimeInterval timeInterval; // number of seconds back the segment should look for impressions that fit the  parameters defined below
 @property (nonatomic) HZCreativeType creativeType;
-@property (nonatomic, nullable) NSArray * adTags; // nil == applies to any tag
+@property (nonatomic, nullable) NSArray<NSString *> *adTags; // nil == applies to any tag
 @property (nonatomic) NSUInteger impressionLimit;
 @property (nonatomic) HZAuctionType auctionType;
 @property (nonatomic) BOOL adsEnabled; // ignore the limit & interval - on/off switch for ads with the specified type/tag/auctionType
 
 @property (nonatomic) BOOL isLoaded; // whether or not the segment has loaded it's history from HZImpressionHistory yet
-@property (nonatomic, nullable) NSMutableOrderedSet *impressionHistory; // ordered set of timestamps at which impressions fitting this segment's search criteria occured, most
+@property (nonatomic, nullable) NSMutableOrderedSet<NSDate *> *impressionHistory; // ordered set of timestamps at which impressions fitting this segment's search criteria occured, most
 
 - (NSUInteger) impressionCount;
 

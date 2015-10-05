@@ -20,8 +20,13 @@
         _adapter = adapter;
         _adState = HZAdStateRequestedShow;
         _showOptions = options;
+        _shownDate = [NSDate date];
     }
     return self;
+}
+
+- (void)setStale {
+    _stale = YES;
 }
 
 @end

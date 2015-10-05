@@ -12,40 +12,33 @@
 
 @implementation HZVideoAdDisplayOptions
 
-static NSDictionary *defaults;
 
-+ (void) setDefaultsWithDict:(NSDictionary *)dict {
-    
-    defaults = dict;
-}
-
-- (instancetype) initWithDict:(NSDictionary *)dict {
+- (instancetype)initWithDefaultsDictionary:(NSDictionary *const)defaultsDictionary adUnitDictionary:(NSDictionary *const)adUnitDictionary {
     self = [super init];
     
     if(self) {
-        NSMutableDictionary *overriddenDefaults = [defaults mutableCopy];
-        [overriddenDefaults addEntriesFromDictionary:dict];
+        NSDictionary *const finalSettings = ({
+            NSMutableDictionary *settings = [defaultsDictionary mutableCopy];
+            [settings addEntriesFromDictionary:adUnitDictionary];
+            settings;
+        });
         
-        _allowHide = [[HZDictionaryUtils objectForKey: @"allow_hide" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults] boolValue];
-        _allowSkip = [[HZDictionaryUtils objectForKey: @"allow_skip" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults] boolValue];
-        _allowInstallButton = [[HZDictionaryUtils objectForKey: @"allow_install_button" ofClass: [NSNumber class] default: @1 dict: overriddenDefaults] boolValue];
-        _allowAdTimer = [[HZDictionaryUtils objectForKey: @"allow_ad_timer" ofClass: [NSNumber class] default: @1 dict: overriddenDefaults] boolValue];
-        _lockoutTime = [HZDictionaryUtils objectForKey: @"lockout_time" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults];
-        _postRollInterstitial = [[HZDictionaryUtils objectForKey: @"post_roll_interstitial" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults] boolValue];
+        _allowHide = [[HZDictionaryUtils objectForKey: @"allow_hide" ofClass: [NSNumber class] default: @0 dict: finalSettings] boolValue];
+        _allowSkip = [[HZDictionaryUtils objectForKey: @"allow_skip" ofClass: [NSNumber class] default: @0 dict: finalSettings] boolValue];
+        _allowInstallButton = [[HZDictionaryUtils objectForKey: @"allow_install_button" ofClass: [NSNumber class] default: @1 dict: finalSettings] boolValue];
+        _allowAdTimer = [[HZDictionaryUtils objectForKey: @"allow_ad_timer" ofClass: [NSNumber class] default: @1 dict: finalSettings] boolValue];
+        _lockoutTime = [HZDictionaryUtils objectForKey: @"lockout_time" ofClass: [NSNumber class] default: @0 dict: finalSettings];
+        _postRollInterstitial = [[HZDictionaryUtils objectForKey: @"post_roll_interstitial" ofClass: [NSNumber class] default: @0 dict: finalSettings] boolValue];
         
-        _installButtonText = [HZDictionaryUtils objectForKey:@"install_button_text" ofClass:[NSString class] default:@"Install Now" dict:overriddenDefaults];
-        _skipNowText = [HZDictionaryUtils objectForKey:@"skip_now_text" ofClass:[NSString class] default:@"Skip" dict:overriddenDefaults];
-        _skipLaterFormattedText = [HZDictionaryUtils objectForKey:@"skip_later_formatted_text" ofClass:[NSString class] default:@"Skip in %is" dict:overriddenDefaults];
+        _installButtonText = [HZDictionaryUtils objectForKey:@"install_button_text" ofClass:[NSString class] default:@"Install Now" dict:finalSettings];
+        _skipNowText = [HZDictionaryUtils objectForKey:@"skip_now_text" ofClass:[NSString class] default:@"Skip" dict:finalSettings];
+        _skipLaterFormattedText = [HZDictionaryUtils objectForKey:@"skip_later_formatted_text" ofClass:[NSString class] default:@"Skip in %is" dict:finalSettings];
         
-        _allowFallbacktoStreaming = [[HZDictionaryUtils objectForKey: @"allow_streaming_fallback" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults] boolValue];
-        _forceStreaming = [[HZDictionaryUtils objectForKey: @"force_streaming" ofClass: [NSNumber class] default: @0 dict: overriddenDefaults] boolValue];
+        _allowFallbacktoStreaming = [[HZDictionaryUtils objectForKey: @"allow_streaming_fallback" ofClass: [NSNumber class] default: @0 dict: finalSettings] boolValue];
+        _forceStreaming = [[HZDictionaryUtils objectForKey: @"force_streaming" ofClass: [NSNumber class] default: @0 dict: finalSettings] boolValue];
     }
     
     return self;
-}
-
-+ (HZVideoAdDisplayOptions *) defaults {
-    return [[HZVideoAdDisplayOptions alloc] initWithDict:nil];
 }
 
 @end

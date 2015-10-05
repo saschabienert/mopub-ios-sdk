@@ -12,7 +12,7 @@
 
 @property (nonatomic, readonly) NSNumber *incentivizedDailyLimit;
 @property (nonatomic, readonly) NSDictionary *remoteDataDictionary;
-@property (nonatomic, readonly) NSSet *disabledTags;
+@property (nonatomic, readonly) NSSet<NSString *> *disabledTags;
 @property (nonatomic, readonly) NSTimeInterval IAPAdsTimeOut;
 @property (nonatomic, readonly) NSString *remoteDataJsonString;
 

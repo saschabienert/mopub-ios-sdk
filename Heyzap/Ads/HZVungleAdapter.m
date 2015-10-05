@@ -13,6 +13,7 @@
 #import "HZVungleSDK.h"
 #import "HZUtils.h"
 #import "HeyzapMediation.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZVungleAdapter() <HZVungleSDKDelegate>
 
@@ -53,10 +54,16 @@
     self.appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:self.credentials];
 }
 
+- (void) toggleLogging {
+    [[HZVungleSDK sharedSDK] setLoggingEnabled:[self isLoggingEnabled]];
+}
+
 #pragma mark - Adapter Protocol
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appID, @"app_id");
+    
+    [self toggleLogging];
     
     HZDLog(@"Initializing Vungle with App ID: %@",self.appID);
     [[HZVungleSDK sharedSDK] startWithAppId:self.appID];
@@ -89,15 +96,13 @@
     return HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if(![self supportsCreativeType:creativeType]) return NO;
-    
     BOOL adPlayable = NO;
     
     // in v.3.1.0 `isAdPlayable` is added, `isCachedAdAvailable` is deprecated
@@ -108,23 +113,20 @@
         adPlayable = [[HZVungleSDK sharedSDK] isCachedAdAvailable];
     }
     
-    return [self supportedCreativeTypes] & creativeType && adPlayable;
+    return adPlayable;
 }
 
-- (NSError *)lastErrorForCreativeType:(HZCreativeType)creativeType
+- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
 {
     return self.lastError;
 }
 
-- (void)clearErrorForCreativeType:(HZCreativeType)creativeType
-{
-    self.lastError = nil;
+- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
+    self.lastError = error;
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(![self supportsCreativeType:creativeType]) return;
-    
     // setup options
     NSMutableDictionary *vungleOptions = [[NSMutableDictionary alloc] init];
     

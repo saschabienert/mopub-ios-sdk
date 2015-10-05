@@ -13,7 +13,7 @@
 @interface HZMediationPersistentConfig()
 
 @property (nonatomic, readonly) HZCachingService *cachingService;
-@property (nonatomic) NSMutableSet *disabledNetworks;
+@property (nonatomic) NSMutableSet<NSString *> *disabledNetworks;
 @property (nonatomic, readonly) BOOL isTestApp;
 @property (atomic) NSUInteger writeVersion;
 @end

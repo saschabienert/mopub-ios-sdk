@@ -11,6 +11,7 @@
 #import "HZMediationConstants.h"
 #import "HZDictionaryUtils.h"
 #import "HeyzapMediation.h"
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZUnityAdsAdapter() <HZUnityAdsDelegate>
 
@@ -60,6 +61,10 @@
                                                   dict:self.credentials];
 }
 
+- (void) toggleLogging {
+    [[HZUnityAds sharedInstance] setDebugMode:[self isLoggingEnabled]];
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -84,8 +89,10 @@
 
 NSString * const kHZNetworkName = @"mobile";
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.appID, @"game_id");
+    
+    [self toggleLogging];
     
     UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
     
@@ -104,10 +111,8 @@ NSString * const kHZNetworkName = @"mobile";
     return HZCreativeTypeVideo | HZCreativeTypeIncentivized;
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if(![self supportsCreativeType:creativeType]) return NO;
-    
     if (![[[UIApplication sharedApplication] keyWindow] rootViewController]) {
         // This is important so we should always NSLog this.
         NSLog(@"UnityAds reqires a root view controller on the keyWindow to show ads. Make sure [[[UIApplication sharedApplication] keyWindow] rootViewController] does not return `nil`.");
@@ -138,15 +143,13 @@ NSString * const kHZNetworkName = @"mobile";
     }
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     // UnityAds auto-prefetches
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(![self supportsCreativeType:creativeType]) return;
-    
     [[HZUnityAds sharedInstance] setViewController:options.viewController];
     if (creativeType == HZCreativeTypeIncentivized) {
         self.isShowingIncentivized = YES;

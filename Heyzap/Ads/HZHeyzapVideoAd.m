@@ -14,9 +14,6 @@
 #import "HZAdFetchRequest.h"
 #import "HZAdsAPIClient.h"
 
-#define HZVideoAdUnit @"video"
-#define HZVideoAdCreativeTypes @[@"video", @"interstitial_video"]
-
 static int HZVideoAdCreativeIDPin = 0;
 
 @implementation HZHeyzapVideoAd
@@ -27,7 +24,7 @@ static int HZVideoAdCreativeIDPin = 0;
         return;
     }
 
-    [[HZAdsManager sharedManager] showForAdUnit:HZVideoAdUnit auctionType:auctionType options:options];
+    [[HZAdsManager sharedManager] showForCreativeType:HZCreativeTypeVideo auctionType:auctionType options:options];
 }
 
 + (void) hide {
@@ -41,11 +38,10 @@ static int HZVideoAdCreativeIDPin = 0;
         
         NSDictionary *params = (HZVideoAdCreativeIDPin > 0) ? @{@"creative_id": [NSString stringWithFormat: @"%i", HZVideoAdCreativeIDPin]} : nil;
         
-        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:HZVideoAdCreativeTypes
-                                                                             adUnit:HZVideoAdUnit
-                                                                                tag:nil
-                                                                        auctionType:auctionType
-                                                                andAdditionalParams:params];
+        HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithFetchableCreativeType:HZFetchableCreativeTypeVideo
+                                                                                        tag:nil
+                                                                                auctionType:auctionType
+                                                                        andAdditionalParams:params];
         
         [[HZAdsFetchManager sharedManager] fetch: request
                                   withCompletion:^(HZAdModel *ad, NSError *error) {
@@ -63,7 +59,7 @@ static int HZVideoAdCreativeIDPin = 0;
 
 + (BOOL) isAvailableForTag: (NSString *) tag auctionType:(HZAuctionType)auctionType {
     if (![HZAdsManager isEnabled]) return NO;
-    return [[HZAdsManager sharedManager] isAvailableForAdUnit:HZVideoAdUnit auctionType:auctionType];
+    return [[HZAdsManager sharedManager] isAvailableForFetchableCreativeType:HZFetchableCreativeTypeVideo auctionType:auctionType];
 }
 
 + (void) setCreativeID:(int)creativeID {

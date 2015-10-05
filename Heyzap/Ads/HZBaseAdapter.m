@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
-#import "HZBaseAdapter.h"
+#import "HZBaseAdapter_Internal.h"
 #import "HZVungleAdapter.h"
 #import "HZChartboostAdapter.h"
 #import "HZMediationConstants.h"
@@ -22,10 +22,13 @@
 #import "HZHyprmxAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 #import "HZLeadboltAdapter.h"
+#import "HZLog.h"
+#import "HZDispatch.h"
 
 @interface HZBaseAdapter()
-//key: HZAdType value: NSNumber *
-@property (nonatomic, strong) NSMutableDictionary *latestMediationScores;
+//key: HZCreativeType value: NSNumber *
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSNumber *> *latestMediationScores;
+@property (nonatomic) BOOL isInitialized;
 @end
 
 @implementation HZBaseAdapter
@@ -41,6 +44,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 #pragma mark - Adapter Protocol
 
 - (void)loadCredentials {
@@ -48,6 +55,17 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 }
 
 - (NSError *)initializeSDK {
+    __block NSError *error;
+    hzEnsureMainQueue(^{
+        error = [self internalInitializeSDK];
+        if (!error && !self.isInitialized) {
+            self.isInitialized = YES;
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
+        }
+    });
+    return error;
+}
+- (NSError *)internalInitializeSDK {
     ABSTRACT_METHOD_ERROR();
 }
 
@@ -60,7 +78,6 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 {
     ABSTRACT_METHOD_ERROR();
 }
-
 
 + (NSString *)humanizedName {
     ABSTRACT_METHOD_ERROR();
@@ -76,24 +93,86 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
+    if(![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner){
+        HZELog(@"HZBaseAdapter: prefetchForCreativeType:%@ called for %@ adapter (%@)", NSStringFromCreativeType(creativeType), [self name], creativeType == HZCreativeTypeBanner ? @"banners can't be fetched via the normal adapter": @"unsupported creativeType");
+        return;
+    }
+    
+    hzEnsureMainQueue(^{
+        if ([self hasAdForCreativeType:creativeType]) return;
+        
+        [self clearLastFetchErrorForCreativeType:creativeType];
+        [self internalPrefetchForCreativeType:creativeType];
+    });
+}
+
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     ABSTRACT_METHOD_ERROR();
 }
 
 - (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
 {
+    if (creativeType == HZCreativeTypeBanner) {
+        HZELog(@"hasAdForCreativeType should not be sent to adapters asking about banner ads.");
+        return NO;
+    }
+    
+    if (![self supportsCreativeType:creativeType]) return NO;
+    
+    __block BOOL hasAd;
+    hzEnsureMainQueue(^{
+        hasAd = [self internalHasAdForCreativeType:creativeType];
+    });
+    return hasAd;
+}
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+{
     ABSTRACT_METHOD_ERROR();
 }
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
+    if (![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner) {
+        NSError *const error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an unsupported creativeType: %@", [[self class] humanizedName], NSStringFromCreativeType(creativeType)]}];
+        [self.delegate adapterDidFailToShowAd:self error:error];
+        return;
+    }
+    
+    hzEnsureMainQueue(^{
+        [self internalShowAdForCreativeType:creativeType options:options];
+    });
+}
+
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+{
     ABSTRACT_METHOD_ERROR();
 }
 
 - (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    __block HZBannerAdapter *bannerAdapter;
+    hzEnsureMainQueue(^{
+        bannerAdapter = [self internalFetchBannerWithOptions:options reportingDelegate:reportingDelegate];
+    });
+    return bannerAdapter;
+}
+
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return nil;
 }
+
+#pragma mark - Logging
+
+- (void) loggingChanged:(NSNotification *) notification {
+    [self toggleLogging];
+}
+
+- (BOOL) isLoggingEnabled {
+    return ([HZLog isThirdPartyLoggingEnabled] ? YES : NO);
+}
+
+- (void) toggleLogging { }
 
 #pragma mark - Inferred methods
 
@@ -107,6 +186,11 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return [[self class] name];
 }
 
+- (NSString *)humanizedName
+{
+    return [[self class] humanizedName];
+}
+
 - (BOOL)supportsCreativeType:(HZCreativeType)creativeType
 {
     return [self supportedCreativeTypes] & creativeType;
@@ -116,19 +200,19 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return YES;
 }
 
-- (NSError *)lastErrorForCreativeType:(HZCreativeType)creativeType
+- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeStatic: {
-            return self.lastStaticError;
+            return self.lastStaticFetchError;
             break;
         }
         case HZCreativeTypeIncentivized: {
-            return self.lastIncentivizedError;
+            return self.lastIncentivizedFetchError;
             break;
         }
         case HZCreativeTypeVideo: {
-            return self.lastVideoError;
+            return self.lastVideoFetchError;
             break;
         }
         case HZCreativeTypeBanner:
@@ -140,27 +224,24 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     }
 }
 
-- (void)clearErrorForCreativeType:(HZCreativeType)creativeType
+- (void)clearLastFetchErrorForCreativeType:(HZCreativeType)creativeType
 {
-    switch (creativeType) {
-        case HZCreativeTypeStatic: {
-            self.lastStaticError = nil;
+    [self setLastFetchError:nil forCreativeType:creativeType];
+}
+
+- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
+    switch(creativeType) {
+        case HZCreativeTypeStatic:
+            self.lastStaticFetchError = error;
             break;
-        }
-        case HZCreativeTypeIncentivized: {
-            self.lastIncentivizedError = nil;
+        case HZCreativeTypeIncentivized:
+            self.lastIncentivizedFetchError = error;
             break;
-        }
-        case HZCreativeTypeVideo: {
-            self.lastVideoError = nil;
+        case HZCreativeTypeVideo:
+            self.lastVideoFetchError = error;
             break;
-        }
-        case HZCreativeTypeBanner:
-        case HZCreativeTypeNative:
-        case HZCreativeTypeUnknown: {
-            // ignored for now
+        default://ignore banners, native, etc. here
             break;
-        }
     }
 }
 

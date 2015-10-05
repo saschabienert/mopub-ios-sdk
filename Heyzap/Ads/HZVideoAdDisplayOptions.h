@@ -8,20 +8,7 @@
 
 @interface HZVideoAdDisplayOptions : NSObject
 
-/**
- *  Call this method to set up the defaults used for all future instantiations of this class using initWithDict:.
- */
-+ (void) setDefaultsWithDict:(NSDictionary *)dict;
-
-/**
- *  This method will use the defaults set by a prior call to setDefaultsWithDict:, overriding them with any settings passed in the dictionary, to create a HZVideoAdDisplayOptions object.
- */
-- (instancetype) initWithDict:(NSDictionary *)dict;
-
-/**
- *  Returns an instance of HZVideoAdDisplayOptions created solely with the defaults previously set with a call to setDefaultsWithDict:.
- */
-+ (HZVideoAdDisplayOptions *) defaults;
+- (instancetype)initWithDefaultsDictionary:(NSDictionary *)defaultsDictionary adUnitDictionary:(NSDictionary *)adUnitsDictionary;
 
 // On-screen Video Behaviors
 @property (nonatomic, readonly) NSNumber *lockoutTime;

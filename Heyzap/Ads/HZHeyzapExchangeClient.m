@@ -49,6 +49,9 @@
 
 @implementation HZHeyzapExchangeClient
 
+
+#pragma mark - Fetch
+
 - (void) fetchForCreativeType:(HZCreativeType)creativeType {
     if(self.state == HZHeyzapExchangeClientStateFetching || self.state == HZHeyzapExchangeClientStateReady) {
         return;
@@ -64,7 +67,7 @@
     self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
     _creativeType = creativeType;
     
-    HZAFHTTPRequestOperation *request = [self.apiClient fetchAdWithExtraParams:[self apiRequestParams]
+    [self.apiClient fetchAdWithExtraParams:[self apiRequestParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
                 {
                     NSData * data = (NSData *)responseObject;
@@ -143,20 +146,41 @@
                 }
                 failure:^(HZAFHTTPRequestOperation *operation, NSError *error)
                 {
-                    HZELog(@"Fetch failed. Error: %@", error);
-                    [self handleFetchFailure:@"request failed / no fill"];
+                    if ([operation.response statusCode] == 404){
+                        HZDLog(@"Exchange fetch failed - no fill.");
+                        [self handleFetchFailure:@"request failed with code: 404 (no fill)"];
+                    } else {
+                        HZELog(@"Exchange fetch failed. Error: %@", error);
+                        [self handleFetchFailure:[NSString stringWithFormat:@"request failed with code: %li", (long)operation.response.statusCode]];
+                    }
                 }
      ];
-    
-    HZDLog(@"Exchange fetch request URL: %@", request.request.URL);
 }
 
 - (void) handleFetchFailure:(NSString *)failureReason {
     self.state = HZHeyzapExchangeClientStateFailure;
-    if(failureReason) {
-        [self.delegate client:self didFailToFetchAdWithCreativeType:self.creativeType error:failureReason];
+    [self.delegate client:self didFailToFetchAdWithCreativeType:self.creativeType error:failureReason];
+}
+
+
+#pragma mark - Show
+
+- (void) showWithOptions:(HZShowOptions *)options {
+    //mediationId can change over time, we want to use the current id at the time of showing the ad for later reporting
+    self.mediationId = [[HeyzapMediation sharedInstance] mediationId];
+    self.showOptions = options;
+    
+    if(self.vastAdFetchedAndReady){
+        self.vastVC.rootViewController = options.viewController;
+        [self.vastVC play];
+    }else if(self.mraidInterstitialFetchedAndReady){
+        self.mraidInterstitial.rootViewController = options.viewController;
+        [self.mraidInterstitial show];
     }
 }
+
+
+#pragma mark - Reporting
 
 - (void) reportImpression {
     [self.apiClient reportImpressionForAd:self.adAuctionId
@@ -197,21 +221,9 @@
                  }];
 }
 
-- (void) showWithOptions:(HZShowOptions *)options {
-    //mediationId can change over time, we want to use the current id at the time of showing the ad for later reporting
-    self.mediationId = [[HeyzapMediation sharedInstance] mediationId];
-    self.showOptions = options;
-    
-    if(self.vastAdFetchedAndReady){
-        self.vastVC.rootViewController = options.viewController;
-        [self.vastVC play];
-    }else if(self.mraidInterstitialFetchedAndReady){
-        self.mraidInterstitial.rootViewController = options.viewController;
-        [self.mraidInterstitial show];
-    }
-}
 
 #pragma mark - HZSKVASTViewControllerDelegate
+
 - (void) vastReady:(HZSKVASTViewController *)vastVC {
     self.vastVC = vastVC;
     self.vastAdFetchedAndReady = YES;
@@ -290,6 +302,7 @@
 }
 - (void)vastOpenBrowseWithUrl:(NSURL *)url {
     HZDLog(@"HZHeyzapExchangeClient VAST click url: '%@'", [url absoluteString]);
+    
     self.clickTrackingWebView = [[UIWebView alloc] init];
     [self.clickTrackingWebView loadRequest:[NSURLRequest requestWithURL:url]];
     
@@ -336,13 +349,17 @@
     [self reportClick];
 }
 
+
 #pragma mark - HZHeyzapExchangeMRAIDServiceHandlerDelegate
+
 - (void) serviceEventProcessed:(NSString *)serviceEvent willLeaveApplication:(BOOL)willLeaveApplication{
     [self.delegate adClickedWithClient:self];
     [self reportClick];
 }
 
+
 #pragma mark - Utilities
+
 - (BOOL) isSupportedFormat {
     return [[HZHeyzapExchangeClient supportedFormats] containsObject:@(self.format)];
 }

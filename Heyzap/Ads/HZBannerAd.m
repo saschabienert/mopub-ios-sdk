@@ -188,20 +188,23 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
 #pragma mark - UIView methods
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
-    [self.adapter bannerWasAddedToView];
-    
     [super willMoveToSuperview:newSuperview];
-    if ([self isFlexibleWidth]) {
-        CGRect frame = self.frame;
-        frame.size.width = newSuperview.bounds.size.width;
-        self.frame = frame;
+    
+    if (newSuperview) {
+        [self.adapter bannerWasAddedToView];
         
-        // AdMob will not automatically adjust to the new size (FB will)
-        if ([self.mediatedNetwork isEqualToString: [HZAdMobAdapter name]]) {
-            UIView *underlyingBanner = self.adapter.mediatedBanner;
-            CGRect underlyingFrame = underlyingBanner.frame;
-            underlyingFrame.size.width = self.frame.size.width;
-            underlyingBanner.frame = underlyingFrame;
+        if ([self isFlexibleWidth]) {
+            CGRect frame = self.frame;
+            frame.size.width = newSuperview.bounds.size.width;
+            self.frame = frame;
+            
+            // AdMob will not automatically adjust to the new size (FB will)
+            if ([self.mediatedNetwork isEqualToString: [HZAdMobAdapter name]]) {
+                UIView *underlyingBanner = self.adapter.mediatedBanner;
+                CGRect underlyingFrame = underlyingBanner.frame;
+                underlyingFrame.size.width = self.frame.size.width;
+                underlyingBanner.frame = underlyingFrame;
+            }
         }
     }
 }
