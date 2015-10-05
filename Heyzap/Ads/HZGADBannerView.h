@@ -7,7 +7,7 @@
 //
 
 #import "HZClassProxy.h"
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 
 @class HZGADBannerView;

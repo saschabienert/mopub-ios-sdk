@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@import StoreKit;
+#import <StoreKit/StoreKit.h>
 
 @interface HZStorePresenter : NSObject
 

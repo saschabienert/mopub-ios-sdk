@@ -13,7 +13,7 @@
 #import "HZCreativeType.h"
 #import "HZAdType.h"
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 @class HZBaseAdapter;
 @class HZBannerAdapter;
