@@ -96,6 +96,8 @@ NSString *const kHZImpressionIDKey = @"mediation_id";
 NSString *const kHZNetworkKey = @"network";
 NSString *const kHZNetworkVersionKey = @"network_version";
 NSString *const kHZBannerOrdinalKey = @"banner_ordinal";
+NSString *const kHZCreativeTypeKey = @"creative_type";
+
 /**
  *  The dictionary key for the position of a network within the list received from the server; for the list [chartboost, applovin], chartboost is 0.
  */
@@ -120,6 +122,7 @@ NSString *const kHZIncentivizedInfoKey = @"custom_info";
                                                                          kHZOrdinalKey : @(idx),
                                                                          kHZNetworkKey : [adapter name],
                                                                          kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                                                         kHZCreativeTypeKey: NSStringFromCreativeType(self.creativeType),
                                                                          }];
             [[HZMediationAPIClient sharedClient] POST:@"fetch" parameters:params success:^(HZAFHTTPRequestOperation *operation, id responseObject) {
                 HZDLog(@"Success reporting fetch");
@@ -142,6 +145,7 @@ NSString *const kHZIncentivizedInfoKey = @"custom_info";
                                     kHZNetworkKey: [adapter name],
                                     kHZOrdinalKey : @(ordinal),
                                     kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                    kHZCreativeTypeKey: NSStringFromCreativeType(self.creativeType),
                                     }].mutableCopy;
     
     if (self.adType == HZAdTypeBanner) {
@@ -167,6 +171,7 @@ NSString *const kHZIncentivizedInfoKey = @"custom_info";
                                     kHZNetworkKey: [adapter name],
                                     kHZOrdinalKey: @(ordinal),
                                     kHZNetworkVersionKey: sdkVersionOrDefault(adapter.sdkVersion),
+                                    kHZCreativeTypeKey: NSStringFromCreativeType(self.creativeType),
                                     }].mutableCopy;
     
     if (self.adType == HZAdTypeBanner) {
