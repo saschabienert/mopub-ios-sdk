@@ -18,7 +18,7 @@
 #import "HZInitMacros.h"
 #import "HZAdsManager.h"
 
-@import StoreKit;
+#import <StoreKit/StoreKit.h>
 
 NSString *const kHZNativeAdCategoryKey = @"category";
 NSString *const kHZNativeAdDescriptionKey = @"description";

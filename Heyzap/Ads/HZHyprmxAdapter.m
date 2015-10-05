@@ -14,6 +14,7 @@
 #import "HZDevice.h"
 #import "HZAdsManager.h"
 #import "HZInitMacros.h"
+#import <AdSupport/AdSupport.h>
 
 @interface HZHyprmxAdapter()
 @property (nonatomic, strong) NSString *distributorID;

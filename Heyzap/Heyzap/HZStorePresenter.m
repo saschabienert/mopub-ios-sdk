@@ -10,7 +10,7 @@
 #import "HZDevice.h"
 #import "HZAdsAPIClient.h"
 #import "HZUtils.h"
-@import StoreKit;
+#import <StoreKit/StoreKit.h>
 
 @interface HZStorePresenter() <UIWebViewDelegate>
 

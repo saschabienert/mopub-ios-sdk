@@ -13,6 +13,7 @@
 #import "HZVungleSDK.h"
 #import "HZAdColony.h"
 #import "HZGADInterstitial.h"
+#import <iAd/iAd.h>
 
 @class HZBaseAdapter;
 
