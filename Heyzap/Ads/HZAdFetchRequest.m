@@ -18,7 +18,7 @@
 
 @interface HZAdFetchRequest()
 @property (nonatomic, readonly) NSString *tag;
-@property (nonatomic) NSMutableDictionary *generatedParams;
+@property (nonatomic) NSMutableDictionary<NSString *, id> *generatedParams;
 @end
 
 @implementation HZAdFetchRequest

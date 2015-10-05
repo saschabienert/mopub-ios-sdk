@@ -52,11 +52,11 @@
 
 @property (nonatomic) BOOL statusBarHidden;
 @property (nonatomic) UIViewController *rootVC;
-@property (nonatomic) NSArray *allNetworks;
-@property (nonatomic) NSSet *availableNetworks;
-@property (nonatomic) NSSet *initializedNetworks;
-@property (nonatomic) NSSet *enabledNetworks;
-@property (nonatomic) NSMutableArray *integrationStatuses;
+@property (nonatomic) NSArray<Class> *allNetworks;
+@property (nonatomic) NSSet<HZBaseAdapter *> *availableNetworks;
+@property (nonatomic) NSSet<HZBaseAdapter *> *initializedNetworks;
+@property (nonatomic) NSSet<HZBaseAdapter *> *enabledNetworks;
+@property (nonatomic) NSMutableArray<NSNumber *> *integrationStatuses;
 @property (nonatomic) UILabel *chooseLabel;
 
 @end

@@ -12,8 +12,8 @@ NSInteger const DefaultSegmentIndex = 0;
 
 @interface SDCSegmentedViewController ()
 
-@property (nonatomic, strong) NSMutableArray *viewControllers;
-@property (nonatomic, strong) NSMutableArray *titles;
+@property (nonatomic, strong) NSMutableArray<UIViewController *> *viewControllers;
+@property (nonatomic, strong) NSMutableArray<NSString *> *titles;
 @property (nonatomic, strong) UISegmentedControl *segmentedControl;
 
 @property (nonatomic) NSInteger currentSelectedIndex;

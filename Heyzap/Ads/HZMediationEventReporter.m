@@ -27,7 +27,7 @@
  */
 @property (nonatomic, strong) NSDictionary *mediateParams;
 @property (nonatomic, strong) NSString *impressionID;
-@property (nonatomic, strong) NSOrderedSet *chosenAdapters;
+@property (nonatomic, strong) NSOrderedSet<HZBaseAdapter *> *chosenAdapters;
 
 // State tracking
 @property (atomic) BOOL hasReportedClick;

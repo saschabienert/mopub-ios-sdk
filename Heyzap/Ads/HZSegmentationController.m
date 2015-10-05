@@ -14,7 +14,7 @@
 #import "HZDictionaryUtils.h"
 
 @interface HZSegmentationController()
-@property (nonnull, nonatomic) NSSet *segments;
+@property (nonnull, nonatomic) NSSet<HZSegmentationSegment *> *segments;
 @property (nonatomic) dispatch_queue_t impressionDbReadQueue;
 @end
 

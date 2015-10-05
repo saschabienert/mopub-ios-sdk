@@ -11,7 +11,7 @@
 
 @interface HZWebViewPool()
 
-@property (nonatomic) NSMutableArray *pool;
+@property (nonatomic) NSMutableArray<UIWebView *> *pool;
 
 @end
 
