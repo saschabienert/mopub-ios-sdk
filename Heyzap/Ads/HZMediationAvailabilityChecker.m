@@ -12,13 +12,12 @@
 #import "HZMediationConstants.h"
 #import "HZUtils.h"
 #import "HZSegmentationController.h"
-#import "HZInterstitialVideoConfig.h"
+#import "HZMediationInterstitialVideoManager.h"
 #import "HZMediationPersistentConfig.h"
 
 @interface HZMediationAvailabilityChecker()
 
-@property (nonatomic, strong) NSDate *lastInterstitialVideoShownDate;
-@property (nonatomic) HZInterstitialVideoConfig *config;
+@property (nonatomic) HZMediationInterstitialVideoManager *interstitialVideoManager;
 @property (nonatomic) id<HZMediationPersistentConfigReadonly> persistentConfig;
 
 @end
@@ -29,31 +28,20 @@
 
 #pragma mark - Init
 
-- (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig {
+- (instancetype)initWithInterstitialVideoManager:(HZMediationInterstitialVideoManager *)interstitialVideoManager persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig {
     self = [super init];
     if (self) {
-        _config = interstitialVideoConfig;
+        _interstitialVideoManager = interstitialVideoManager;
         _persistentConfig = persistentConfig;
     }
     return self;
 }
 
 
-#pragma mark - External Setup / Updates
-
-- (void)updateWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig {
-    self.config = interstitialVideoConfig;
-}
-
-- (void)didShowInterstitialVideo {
-    self.lastInterstitialVideoShownDate = [NSDate date];
-}
-
-
 #pragma mark - External Availability Checks 
 
 - (NSOrderedSet *)availableAndAllowedAdaptersForAdType:(HZAdType)adType tag:(NSString *)tag adapters:(NSOrderedSet *)adapters segmentationController:(HZSegmentationController *)segmentationController {
-    NSSet *allowedCreativeTypes = [self creativeTypesAllowedForAdType:adType];
+    NSSet *allowedCreativeTypes = [self.interstitialVideoManager creativeTypesAllowedToShowForAdType:adType];
     
     NSIndexSet *indexes = [adapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         for(NSNumber *allowedCreativeTypeNumber in allowedCreativeTypes) {
@@ -83,7 +71,7 @@
     NSMutableOrderedSet *chosenNetworks = [NSMutableOrderedSet orderedSet];
     
     // check what creative types the requested ad type can show right now
-    NSSet *creativeTypesAllowed = [self creativeTypesAllowedForAdType:adType];
+    NSSet *creativeTypesAllowed = [self.interstitialVideoManager creativeTypesAllowedToShowForAdType:adType];
     
     for (NSDictionary *network in networks) {
         NSString *networkName = network[@"network"];
@@ -125,39 +113,6 @@
     }
 }
 
-
-#pragma mark - Utilities
-
-- (BOOL) hasEnoughTimePassedSinceLastInterstitialVideo {
-    if (!self.lastInterstitialVideoShownDate) {
-        return YES;
-    }
-    const NSTimeInterval secondsSinceLastInterstitial = [[NSDate date] timeIntervalSinceDate:self.lastInterstitialVideoShownDate];
-    return (secondsSinceLastInterstitial * 1000) > self.config.interstitialVideoIntervalMillis;
-}
-
-- (BOOL) shouldAllowInterstitialVideo {
-    return self.config.interstitialVideoEnabled && [self hasEnoughTimePassedSinceLastInterstitialVideo];
-}
-
-/**
- *  Returns the creativeTypes that should be allowed for the given adType right now, taking into consideration the limits on interstitial video blending that may be in effect right now.
- */
-- (NSSet *) creativeTypesAllowedForAdType:(HZAdType)adType {
-    switch(adType){
-        case HZAdTypeInterstitial:
-            if([self shouldAllowInterstitialVideo])
-                return [NSSet setWithArray:@[@(HZCreativeTypeVideo), @(HZCreativeTypeStatic)]];
-            else
-                return [NSSet setWithArray:@[@(HZCreativeTypeStatic)]];
-        case HZAdTypeIncentivized:
-            return [NSSet setWithArray:@[@(HZCreativeTypeIncentivized)]];
-        case HZAdTypeBanner:
-            return [NSSet setWithArray:@[@(HZCreativeTypeBanner)]];
-        case HZAdTypeVideo:
-            return [NSSet setWithArray:@[@(HZCreativeTypeVideo)]];
-    }
-}
 
 @end
 
