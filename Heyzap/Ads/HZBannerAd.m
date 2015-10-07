@@ -15,7 +15,7 @@
 
 #import "HZAdMobAdapter.h"
 
-@import iAd;
+#import <iAd/iAd.h>
 
 @interface HZBannerAd()
 

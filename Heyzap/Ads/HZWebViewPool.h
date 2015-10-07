@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Heyzap. All rights reserved.
 //
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 // This Web view pool serves two purposes:
 // First, initializing the first webview takes 31–42 ms; it takes something like 11ms for subsequent initializations. By initializing the pool when the SDK is started (before gameplay happens), we avoid taking a 40ms hit when we can't afford it (during 60 FPS gameplay).

@@ -12,6 +12,7 @@
 #import "HeyzapAds.h"
 #import "HZAvailability.h"
 #import "HZHeyzapExchangeClient.h"
+#import <AdSupport/AdSupport.h>
 
 @implementation HZHeyzapExchangeRequestSerializer
 

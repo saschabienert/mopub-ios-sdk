@@ -14,6 +14,7 @@
 #import "HZDevice.h"
 #import "HZAdsManager.h"
 #import "HZInitMacros.h"
+#import <AdSupport/AdSupport.h>
 #import "HZBaseAdapter_Internal.h"
 
 @interface HZHyprmxAdapter()

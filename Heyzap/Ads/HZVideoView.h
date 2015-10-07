@@ -9,6 +9,7 @@
 #import "HZRotatingView.h"
 #import "HZAdViewController.h"
 #import "HZVideoControlView.h"
+#import <MediaPlayer/MediaPlayer.h>
 
 @interface HZVideoView : UIView<UIGestureRecognizerDelegate>
 

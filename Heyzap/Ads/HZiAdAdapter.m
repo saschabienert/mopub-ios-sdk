@@ -7,8 +7,7 @@
 //
 
 #import "HZiAdAdapter.h"
-
-@import iAd;
+#import <iAd/iAd.h>
 
 #import "HZMediationConstants.h"
 #import "HZiAdBannerAdapter.h"

@@ -10,7 +10,7 @@
 #import "HZMediationConstants.h"
 #import "HeyzapMediation.h"
 
-@import iAd;
+#import <iAd/iAd.h>
 
 @interface HZiAdBannerAdapter() <ADBannerViewDelegate>
 
