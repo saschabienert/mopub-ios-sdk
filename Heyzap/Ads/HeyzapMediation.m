@@ -41,9 +41,8 @@
 #import "HZMediationAvailabilityChecker.h"
 #import "HZMediationSettings.h"
 #import "HZCachingService.h"
-#import "HZInterstitialVideoConfig.h"
+#import "HZMediationInterstitialVideoManager.h"
 #import "HZCachingService.h"
-#import "HZInterstitialVideoConfig.h"
 #import "HZMediationPersistentConfig.h"
 
 // Exchange
@@ -58,8 +57,6 @@
 @property (nonatomic, strong) NSSet<HZBaseAdapter *> *setupMediators;
 @property (nonatomic, strong) NSSet<Class> *setupMediatorClasses;
 @property (nonatomic, strong) NSSet<Class> *erroredMediatiorClasses;
-
-@property (nonatomic, strong) NSDate *lastInterstitialVideoShownDate;
 
 @property (nonatomic, strong) HZDelegateProxy *interstitialDelegateProxy;
 @property (nonatomic, strong) HZDelegateProxy *incentivizedDelegateProxy;
@@ -80,6 +77,7 @@
 @property (nonatomic, strong) HZMediationAvailabilityChecker *availabilityChecker;
 @property (nonatomic, strong) HZMediationSettings *settings;
 @property (nonatomic, strong) HZSegmentationController *segmentationController;
+@property (nonatomic, strong) HZMediationInterstitialVideoManager *interstitialVideoManager;
 
 @property (nonatomic) HZMediationStartStatus startStatus;
 
@@ -286,7 +284,19 @@
     }
     
     Class optionalForcedNetwork = [[self class] optionalForcedNetwork:fetchOptions.additionalParameters];
-    fetchOptions.creativeTypesToFetch = hzCreativeTypesPossibleForAdType(fetchOptions.requestingAdType);
+    
+    // fetch all creativeTypes that can be shown via the requesting adType.
+    // interstitial video handling:
+    //  - don't fetch interstitial video if it's completely disabled
+    //  - fetch interstitial video even if it's currently under a timeout, so it's available later should the timeout expire
+    //      - (the delegate callbacks / completion blocks (didReceiveAdWithTag: / didFailToReceiveAdWithTag:) won't be called
+    //        for interstitial video if the timeout is still in effect when the fetch finishes)
+    NSMutableSet *creativeTypesToFetch = hzCreativeTypesPossibleForAdType(fetchOptions.requestingAdType);
+    if (fetchOptions.requestingAdType == HZAdTypeInterstitial && ![self.interstitialVideoManager interstitialVideoEnabled]){
+        HZILog(@"Interstitial video is disabled, so this fetch will not fetch a video ad.");
+        [creativeTypesToFetch removeObject:@(HZCreativeTypeVideo)];
+    }
+    fetchOptions.creativeTypesToFetch = creativeTypesToFetch;
     
     for (NSNumber * creativeTypeToFetch in fetchOptions.creativeTypesToFetch) {
         HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeToFetch);
@@ -321,7 +331,17 @@
 #pragma mark - Fetch (LoadManager) callbacks
 
 - (void)didFetchAdOfCreativeType:(HZCreativeType)creativeType withAdapter:(HZBaseAdapter *)adapter options:(HZFetchOptions *)fetchOptions {
-    if ([[self settings] tagIsEnabled:fetchOptions.tag]) {
+    
+    if (![[self settings] tagIsEnabled:fetchOptions.tag]) {
+        HZILog(@"Tag '%@' is disabled, so an otherwise successful fetch from %@ is not reporting as a success.", fetchOptions.tag, [adapter humanizedName]);
+        [self didFailToFetchAdOfCreativeType:creativeType options:fetchOptions];
+    } else if (fetchOptions.requestingAdType == HZAdTypeInterstitial
+               && creativeType == HZCreativeTypeVideo
+               && ![self.interstitialVideoManager shouldAllowInterstitialVideo]) {
+        // we fetched an interstitial video but it can't show at this time. don't report fetch success in this case.
+        HZILog(@"Interstitial video settings are blocking an otherwise successful fetch from %@ from reporting as a success.", [adapter humanizedName]);
+        [self didFailToFetchAdOfCreativeType:creativeType options:fetchOptions];
+    } else {
         @synchronized(fetchOptions) {
             fetchOptions.creativeTypesFetchesFinished = [fetchOptions.creativeTypesFetchesFinished setByAddingObject:@(creativeType)];
             if (!fetchOptions.alreadyNotifiedDelegateOfSuccess){
@@ -330,8 +350,6 @@
                 if (fetchOptions.completion) { fetchOptions.completion(YES, nil); }
             }
         }
-    } else {
-        [self didFailToFetchAdOfCreativeType:creativeType options:fetchOptions];
     }
 }
 
@@ -544,7 +562,7 @@ const unsigned long long adStalenessTimeout = 15;
     
     // Notify dependent objects of a show
     if (currentAd.showOptions.requestingAdType == HZAdTypeInterstitial && currentAd.eventReporter.creativeType == HZCreativeTypeVideo) {
-        [self.availabilityChecker didShowInterstitialVideo];
+        [self.interstitialVideoManager didShowInterstitialVideo];
     }
     
     if (currentAd.showOptions.completion) {
@@ -1149,12 +1167,14 @@ static BOOL forceOnlyHeyzapSDK = NO;
     NSDictionary *json = self.mediateRequester.latestMediate;
     _mediationId = [HZDictionaryUtils objectForKey:@"id" ofClass:[NSString class] default:@"" dict:json];
     
-    HZInterstitialVideoConfig *const interstitialVideoConfig = [[HZInterstitialVideoConfig alloc] initWithDictionary:json];
+    if (!self.interstitialVideoManager) {
+        self.interstitialVideoManager = [[HZMediationInterstitialVideoManager alloc] initWithDictionary:json];
+    } else {
+        [self.interstitialVideoManager updateWithDictionary:json];
+    }
     
     if (!self.availabilityChecker) {
-        self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithInterstitialVideoConfig:interstitialVideoConfig persistentConfig:self.persistentConfig];
-    } else {
-        [self.availabilityChecker updateWithInterstitialVideoConfig:interstitialVideoConfig];
+        self.availabilityChecker = [[HZMediationAvailabilityChecker alloc] initWithInterstitialVideoManager:self.interstitialVideoManager persistentConfig:self.persistentConfig];
     }
     
     [self updateMediationScoresWithDict:json];

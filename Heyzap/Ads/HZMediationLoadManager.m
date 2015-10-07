@@ -24,6 +24,7 @@
 
 @property (nonatomic) id<HZMediationPersistentConfigReadonly> persistentConfig;
 @property (nonatomic) HZSegmentationController *segmentationController;
+
 @property (nonatomic) NSUInteger maxConcurrency;
 @property (nonatomic) NSArray<HZBaseAdapter *> *networkList;
 

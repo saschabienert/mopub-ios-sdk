@@ -55,5 +55,5 @@ return [NSError errorWithDomain:kHZMediationDomain code:3 userInfo:@{NSLocalized
 + (NSArray *)legacyCreativeTypesForAdType:(HZAdType)type;
 
 BOOL hzCreativeTypeStringSetContainsAdType(NSSet *const creativeTypes, const HZAdType adType);
-NSSet * hzCreativeTypesPossibleForAdType(HZAdType adType);
+NSMutableSet * hzCreativeTypesPossibleForAdType(HZAdType adType);
 @end

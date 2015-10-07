@@ -4,7 +4,7 @@ PODS:
   - Bugsnag (4.0.9):
     - Bugsnag/no-arc (= 4.0.9)
   - Bugsnag/no-arc (4.0.9)
-  - FacebookAudienceNetwork (4.6.0)
+  - FBAudienceNetwork (4.6.0)
   - Google-Mobile-Ads-SDK (7.5.1)
   - HyprMX (36)
   - HZChartboost (6.0.0)
@@ -31,7 +31,7 @@ DEPENDENCIES:
   - AdColony
   - AppLovin
   - Bugsnag (from `https://github.com/bugsnag/bugsnag-cocoa.git`)
-  - FacebookAudienceNetwork
+  - FBAudienceNetwork (= 4.6.0)
   - Google-Mobile-Ads-SDK
   - HyprMX
   - HZChartboost
@@ -55,7 +55,7 @@ SPEC CHECKSUMS:
   AdColony: ab47c3e22be7843e08f90989381a222884be4a62
   AppLovin: 29282a5295c39d54787732502c9e3ff60381af54
   Bugsnag: a4bdbf356f318cef00d12eb1601f16d8d0c71ba4
-  FacebookAudienceNetwork: 3e60c72ad733b1939b1b29ef10824ee229ff5175
+  FBAudienceNetwork: a1bcfb9eb2fecfc5c2caa6e5cfd3331aa5ddda08
   Google-Mobile-Ads-SDK: 37315a38a1c6ed738da43a938afb2425099e6759
   HyprMX: 91b4ac0c0aad04fe04a4f320106d75af625becee
   HZChartboost: 8fee4c0112755f1a2a77e8f428c73c3f534011c0
@@ -66,4 +66,4 @@ SPEC CHECKSUMS:
   UnityAds: 76f1a98bf40597f1c0aab01f65c700b7734dcbd9
   VungleAdvertiserSDK: c3ece1bf66a7f34688cfed832e2b12e321bbed03
 
-COCOAPODS: 0.39.0.beta.4
+COCOAPODS: 0.38.2

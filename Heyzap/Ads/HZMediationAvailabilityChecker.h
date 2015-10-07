@@ -13,7 +13,7 @@
 @class HZBaseAdapter;
 @class HZBannerAdapter;
 @class HZSegmentationController;
-@class HZInterstitialVideoConfig;
+@class HZMediationInterstitialVideoManager;
 @class HZMediationAdapterWithCreativeTypeScore;
 @protocol HZMediationPersistentConfigReadonly;
 
@@ -22,15 +22,11 @@
  */
 @interface HZMediationAvailabilityChecker : NSObject
 
-- (instancetype)initWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig;
+- (instancetype)initWithInterstitialVideoManager:(HZMediationInterstitialVideoManager *)interstitialVideoManager persistentConfig:(id<HZMediationPersistentConfigReadonly>)persistentConfig;
 
 - (NSOrderedSet *)availableAndAllowedAdaptersForAdType:(HZAdType)adType tag:(NSString *)tag adapters:(NSOrderedSet *)adapters segmentationController:(HZSegmentationController *)segmentationController;
 
 - (HZMediationAdapterWithCreativeTypeScore *)firstAdapterWithAdForTag:(NSString *)tag adaptersWithScores:(NSOrderedSet *)adaptersWithScores segmentationController:(HZSegmentationController *)segmentationController;
-
-
-- (void)updateWithInterstitialVideoConfig:(HZInterstitialVideoConfig *)interstitialVideoConfig;
-- (void)didShowInterstitialVideo;
 
 - (NSOrderedSet *)parseMediateIntoAdaptersForShow:(NSDictionary *)mediateDictionary validAdapterClasses:(NSSet *)validAdapterClasses adType:(HZAdType)adType;
 
