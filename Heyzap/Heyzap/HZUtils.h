@@ -38,8 +38,6 @@ NSArray *hzFilter(NSArray *array, BOOL(^block)(id object));
 NSOrderedSet *hzMapOrderedSet(NSOrderedSet *set, id (^block)(id object));
 NSOrderedSet *hzFilterOrderedSet(NSOrderedSet *set, BOOL(^block)(id object));
 
-BOOL hziOS8Plus(void);
-
 /**
  *  Looks up a string constant (e.g. `extern NSString *const kFoo;`) at runtime. This is useful for loading constant values for 3rd party SDKs that we don't have at compile time.
  *

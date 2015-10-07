@@ -294,16 +294,6 @@ NSOrderedSet *hzFilterOrderedSet(NSOrderedSet *set, BOOL(^block)(id object)) {
     return [NSOrderedSet orderedSetWithArray:[set objectsAtIndexes:idxSet]];
 }
 
-BOOL hziOS8Plus(void) {
-    static BOOL eightPlus;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        // (All UIDevice access seems to take 1ms)
-        eightPlus = [[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0;
-    });
-    return eightPlus;
-}
-
 NSString *hzLookupStringConstant(NSString *constantName) {
     void ** dataPtr = CFBundleGetDataPointerForName(CFBundleGetMainBundle(), (__bridge CFStringRef)constantName);
     return (__bridge NSString *)(dataPtr ? *dataPtr : nil);

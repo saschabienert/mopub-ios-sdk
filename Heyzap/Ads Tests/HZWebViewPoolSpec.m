@@ -8,7 +8,7 @@
 
 #import <Kiwi/Kiwi.h>
 #import "HZWebViewPool.h"
-#import "HZUtils.h"
+#import "HZDevice.h"
 
 
 SPEC_BEGIN(HZWebViewPoolSpec)
