@@ -287,6 +287,14 @@ NSString * const kZHMediationTestAppBundleID = @"com.EnterpriseHeyzap.HeyzapSDKT
     return version;
 }
 
+BOOL hziOS7Plus(void) {
+    return [[HZDevice systemVersion] floatValue] >= 7.0;
+}
+
+BOOL hziOS8Plus(void) {
+    return [[HZDevice systemVersion] floatValue] >= 8.0;
+}
+
 + (HZDevice *)currentDevice {
     static HZDevice *currentDevice;
     static dispatch_once_t onceToken;

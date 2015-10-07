@@ -14,6 +14,7 @@
 #import "HZUtils.h"
 #import "HeyzapMediation.h"
 #import "HZBaseAdapter_Internal.h"
+#import "HZDevice.h"
 
 @interface HZVungleAdapter() <HZVungleSDKDelegate>
 
@@ -74,7 +75,7 @@
 
 + (BOOL)isSDKAvailable
 {
-    return [HZVungleSDK hzProxiedClassIsAvailable];
+    return hziOS7Plus() && [HZVungleSDK hzProxiedClassIsAvailable];
 }
 
 + (NSString *)name

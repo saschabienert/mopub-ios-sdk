@@ -29,6 +29,10 @@
 + (BOOL)isIpad;
 + (BOOL)isPhone;
 
+
+BOOL hziOS7Plus(void);
+BOOL hziOS8Plus(void);
+
 + (BOOL)isHeyzapTestApp;
 
 + (BOOL)canCheckURLSchemes;

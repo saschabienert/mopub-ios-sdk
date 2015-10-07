@@ -57,7 +57,20 @@
     RETURN_ERROR_IF_NIL(self.appSignature, @"appSignature");
     
     if ([HZChartboost respondsToSelector:@selector(setMediation:withVersion:)]) {
-        [HZChartboost setMediation:@"HeyZap" withVersion:SDK_VERSION];
+        NSMethodSignature *signature = [HZChartboost methodSignatureForSelector:@selector(setMediation:withVersion:)];
+        if (signature) {
+            NSString *const type = [NSString stringWithUTF8String:[signature getArgumentTypeAtIndex:2]]; // See docs: "The hidden arguments self (of type id) and _cmd (of type SEL) are at indices 0 and 1; method-specific arguments begin at index 2."
+            if ([type isEqualToString:@"@"]) { // @ for objects
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconversion"
+                [HZChartboost setMediation:@"HeyZap" withVersion:SDK_VERSION]; // Chartboost < 6
+#pragma clang diagnostic pop
+            } else {
+                [HZChartboost setMediation:CBMediationHeyZap withVersion:SDK_VERSION]; // Chartboost >= 6
+            }
+        } else {
+            HZELog(@"Couldn't create the method signature for setMediation:withVersion: for Chartboost. This means we can't tell Chartboost that we're mediating them, which they use for analytics/diagnostic purposes. Please report this to support@heyzap.com.");
+        }
     }
     
     [HZChartboost startWithAppId:self.appID appSignature:self.appSignature delegate:self.forwardingDelegate];
