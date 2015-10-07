@@ -27,6 +27,10 @@
     return NSClassFromString([self hzProxiedClassName]);
 }
 
++ (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
+    return [NSClassFromString([self hzProxiedClassName]) methodSignatureForSelector:aSelector];
+}
+
 + (id)alloc
 {
     return [NSClassFromString([self hzProxiedClassName]) alloc];
