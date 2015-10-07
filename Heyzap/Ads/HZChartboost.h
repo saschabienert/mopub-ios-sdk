@@ -22,6 +22,30 @@ typedef NS_ENUM(NSUInteger, CBFramework) {
 };
 
 /*!
+ @typedef NS_ENUM (NSUInteger, CBMediation)
+ 
+ @abstract
+ Used with setMediation:(CBMediation)library calls to set mediation library name
+ partners. If you don't see your library here, contact support.
+ */
+typedef NS_ENUM(NSUInteger, CBMediation) {
+    /*! Unknown. Other */
+    CBMediationOther,
+    /*! AdMarvel */
+    CBMediationAdMarvel,
+    /*! Fuse */
+    CBMediationFuse,
+    /*! Fyber */
+    CBMediationFyber,
+    /*! HeyZap */
+    CBMediationHeyZap,
+    /*! MoPub */
+    CBMediationMoPub,
+    /*! Supersonic */
+    CBMediationSupersonic,
+};
+
+/*!
  @typedef NS_ENUM (NSUInteger, CBLoadError)
  
  @abstract
@@ -338,7 +362,7 @@ extern CBLocation const CBLocationDefault;
  @discussion This is an internal method used by mediation partners to track their usage.
  @since 5.5.0
  */
-+ (void)setMediation:(NSString *)libraryName withVersion:(NSString*)libraryVersion;
++ (void)setMediation:(CBMediation)library withVersion:(NSString*)libraryVersion;
 
 /*!
  @abstract
