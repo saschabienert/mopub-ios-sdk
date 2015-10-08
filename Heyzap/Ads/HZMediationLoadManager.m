@@ -177,8 +177,10 @@
     HZParameterAssert(fetchOptions);
 
     // since these properties could update during the fetch process (which is backgrounded), store what the properties are now (on the main thread) and use these const sets instead below
-    const NSSet *networksToAlwaysFetch = self.networksToAlwaysFetch;
-    const NSSet *networksToKeepLoadingPast = self.networksToKeepLoadingPast;
+    NSSet *const networksToAlwaysFetch = self.networksToAlwaysFetch;
+    NSSet *const networksToKeepLoadingPast = self.networksToKeepLoadingPast;
+    
+    NSMutableSet * networksAlreadyFetched = [NSMutableSet set];
     
     dispatch_async(self.fetchQueue, ^{
         [networksToAlwaysFetch enumerateObjectsUsingBlock:^(Class adapterClass, BOOL *stop) {
@@ -196,10 +198,13 @@
                 return;
             }
             
-            HZBaseAdapter *adapter = (HZBaseAdapter *)[alwaysFetchDatum.adapterClass sharedAdapter];
-            dispatch_sync([self.delegate pausableMainQueue], ^{
-                [adapter prefetchForCreativeType:creativeType];
-            });
+            if (![networksAlreadyFetched containsObject:alwaysFetchDatum.adapterClass]) {
+                [networksAlreadyFetched addObject:alwaysFetchDatum.adapterClass];
+                HZBaseAdapter *adapter = (HZBaseAdapter *)[alwaysFetchDatum.adapterClass sharedAdapter];
+                dispatch_sync([self.delegate pausableMainQueue], ^{
+                    [adapter prefetchForCreativeType:creativeType];
+                });
+            }
         }];
         
         
@@ -209,9 +214,13 @@
             if (setupSuccessful) {
                 
                 const HZBaseAdapter *adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
-                dispatch_sync([self.delegate pausableMainQueue], ^{
-                    [adapter prefetchForCreativeType:creativeType];
-                });
+                
+                if (![networksAlreadyFetched containsObject:datum.adapterClass]) {
+                    [networksAlreadyFetched addObject:datum.adapterClass];
+                    dispatch_sync([self.delegate pausableMainQueue], ^{
+                        [adapter prefetchForCreativeType:creativeType];
+                    });
+                }
                 
                 HZDLog(@"Attempting to fetch from %@ for creativeType: %@", [datum.adapterClass humanizedName], NSStringFromCreativeType(creativeType));
                 
