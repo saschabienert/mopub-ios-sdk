@@ -901,7 +901,7 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
             [eventReporter reportFetchWithSuccessfulAdapter:finalAdapter.parentAdapter];
             [self.mediateRequester refreshMediate];
             
-            HZILog(@"Mediation successfully fetched a banner from %@ for tag: %@ after %f seconds", [[finalAdapter class] humanizedName], options.tag, [[NSDate date] timeIntervalSinceDate:startDate]);
+            HZILog(@"Mediation successfully fetched a banner from %@ for tag: %@ after %f seconds", [[[finalAdapter parentAdapter] class] humanizedName], options.tag, [[NSDate date] timeIntervalSinceDate:startDate]);
             dispatch_sync(dispatch_get_main_queue(), ^{
                 // TODO add a metric for the time/number of retries it took to succeed since the initial request by the dev?
                 completion(nil, finalAdapter);
