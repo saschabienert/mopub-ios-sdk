@@ -101,6 +101,8 @@
     HZParameterAssert(fetchOptions);
     const BOOL logFilters = YES;
     
+    HZILog(@"LoadManager fetching creativeType: %@ tag: %@ requesting adType: %@ forcedNetwork: %@", NSStringFromCreativeType(creativeType), fetchOptions.tag, NSStringFromAdType(fetchOptions.requestingAdType), forcedNetwork ?: @"(none)");
+    
     if (logFilters && forcedNetwork) {
         HZDLog(@"HZMediationLoadManager: only allowing fetch from %@", [forcedNetwork name]);
     }
@@ -165,7 +167,7 @@
         return NO;
     });
     
-    HZDLog(@"HZMediationLoadManager: fetching for creativeType=%@ from networks:\n%@", NSStringFromCreativeType(creativeType), matching);
+    HZDLog(@"HZMediationLoadManager: fetching for creativeType=%@ and tag=%@ from networks:\n%@", NSStringFromCreativeType(creativeType), fetchOptions.tag, matching);
     [self fetchCreativeType:creativeType loadData:matching fetchOptions:fetchOptions notifyDelegate:notifyDelegate];
 }
 
