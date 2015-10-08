@@ -80,6 +80,10 @@
     return nil;
 }
 
+- (NSString *)testActivityInstructions {
+    return @"Facebook Audience Network will only show ads if you have Facebook installed and are logged in, or are using a simulator. You can use [FBAdSettings addTestDevice:<device hash>] to work around this. FAN will print your device hash to the Xcode console.";
+}
+
 - (HZCreativeType) supportedCreativeTypes {
     return HZCreativeTypeStatic | HZCreativeTypeBanner;
 }

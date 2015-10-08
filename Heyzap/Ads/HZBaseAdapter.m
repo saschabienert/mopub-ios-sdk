@@ -342,4 +342,8 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return returnVal;
 }
 
+- (NSString *)testActivityInstructions {
+    return nil;
+}
+
 @end
