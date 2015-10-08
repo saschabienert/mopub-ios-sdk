@@ -114,7 +114,6 @@
                     }
                     
                     self.adMarkup = adDict[@"markup"];
-                    HZDLog(@"Ad markup received: %@", self.adMarkup);
                     NSDictionary *adAuctionDict = self.responseDict[@"auction"];
                     self.adAuctionId = adAuctionDict[@"id"];
                     self.adScore = adAuctionDict[@"score"];

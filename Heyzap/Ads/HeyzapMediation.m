@@ -198,9 +198,11 @@
 }
 
 - (void)startWithDictionary:(NSDictionary *const __nonnull)dictionary fromCache:(const BOOL)fromCache {
+    HZILog(@"Mediation starting from %@", fromCache ? @"cache" : @"network");
     [[self settings] setupWithDict:dictionary fromCache:fromCache];
     [self addCredentialsToAdapters:dictionary];
     [self.segmentationController setupFromMediationStart:dictionary completion:^void(BOOL successful){
+        HZILog(@"Segmentation started from %@ %@successfully", fromCache ? @"cache" : @"network", successful ? @"" : @"un");
         self.hasSegmentationSetupFinished = YES;
     }];
     
@@ -210,6 +212,7 @@
         if (error || !self.loadManager) {
             HZELog(@"Error initializing network preloader. Mediation won't be possible. %@",error);
         } else {
+            HZILog(@"Load manager setup from %@", fromCache ? @"cache" : @"network");
             self.hasLoadManagerSetupSucceeded = YES;
         }
     } else {
@@ -251,6 +254,7 @@
     @synchronized(self) {
         if (self.hasLoadManagerSetupSucceeded && self.hasSegmentationSetupFinished && self.startStatus != HZMediationStartStatusSuccess) {
             self.startStatus = HZMediationStartStatusSuccess;
+            HZILog(@"Mediation started successfully.");
             [self autoFetchAdType:HZAdTypeInterstitial tag:nil];
         }
     }
@@ -267,6 +271,7 @@
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
     if (self.startStatus == HZMediationStartStatusNotStarted) {
+        HZILog(@"Mediation not started yet when a fetch was called. Will retry.");
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self fetchWithOptions:fetchOptions];
         });
@@ -275,7 +280,10 @@
     
     HZParameterAssert(self.loadManager);
     
+    HZILog(@"Mediation: fetchWithOptions called. adType: %@ tag: %@", NSStringFromAdType(fetchOptions.requestingAdType), fetchOptions.tag);
+    
     if(fetchOptions.requestingAdType == HZAdTypeIncentivized && ![[self settings] shouldAllowIncentivizedAd]) {
+        HZILog(@"Fetch failing because this user has reached their daily limit for incentivized views.");
         [[self delegateForAdType:fetchOptions.requestingAdType] didFailToReceiveAdWithTag:fetchOptions.tag];
         if(fetchOptions.completion) {
             fetchOptions.completion(NO, [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"This user has reached their daily limit for incentivized ad views."}]);
@@ -313,16 +321,19 @@
         fetchOptions.completion = ^void (BOOL result, NSError *error){
             if(adType == HZAdTypeIncentivized && ![[self settings] shouldAllowIncentivizedAd]) {
                 // don't keep autofetching if it'll keep failing because of the daily limit
+                HZILog(@"Autofetch failing out because it's trying to fetch an incentivized ad when the daily limit has been reached.");
                 return;
             }
             
             if (error) {
+                HZELog(@"Autofetch had an error, trying again in 10 seconds. Error: %@", error);
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     [self autoFetchAdType:adType tag:tag];
                 });
             }
         };
         
+        HZILog(@"Autofetching for adType: %@, tag: '%@'", NSStringFromAdType(adType), tag);
         [self fetchWithOptions:fetchOptions];
     }
 }
@@ -345,9 +356,12 @@
         @synchronized(fetchOptions) {
             fetchOptions.creativeTypesFetchesFinished = [fetchOptions.creativeTypesFetchesFinished setByAddingObject:@(creativeType)];
             if (!fetchOptions.alreadyNotifiedDelegateOfSuccess){
+                HZILog(@"Fetch succeeded. Notifying delegate. creativeType: %@, adapter: %@, tag: %@ requesting adType: %@", NSStringFromCreativeType(creativeType), [adapter humanizedName], fetchOptions.tag, NSStringFromAdType(fetchOptions.requestingAdType));
                 fetchOptions.alreadyNotifiedDelegateOfSuccess = YES;
                 [[self delegateForAdType:fetchOptions.requestingAdType] didReceiveAdWithTag:fetchOptions.tag];
                 if (fetchOptions.completion) { fetchOptions.completion(YES, nil); }
+            } else {
+                HZILog(@"Fetch succeeded, already notified delegate. creativeType: %@, adapter: %@, tag: %@ requesting adType: %@", NSStringFromCreativeType(creativeType), [adapter humanizedName], fetchOptions.tag, NSStringFromAdType(fetchOptions.requestingAdType));
             }
         }
     }
@@ -355,10 +369,12 @@
 
 - (void)didFailToFetchAdOfCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)fetchOptions {
     @synchronized(fetchOptions) {
+        HZILog(@"Fetch failed for creativeType: %@ tag: %@ requesting adType: %@", NSStringFromCreativeType(creativeType), fetchOptions.tag, NSStringFromAdType(fetchOptions.requestingAdType));
         fetchOptions.creativeTypesFetchesFinished = [fetchOptions.creativeTypesFetchesFinished setByAddingObject:@(creativeType)];
         NSMutableSet *creativeTypesLeftToFetch = [fetchOptions.creativeTypesToFetch mutableCopy];
         [creativeTypesLeftToFetch minusSet:fetchOptions.creativeTypesFetchesFinished];
         if ([creativeTypesLeftToFetch count] == 0) {
+            HZILog(@"Fetch failed for all creativeTypes. Notifying delegate. tag: %@ requesting adType: %@", fetchOptions.tag, NSStringFromAdType(fetchOptions.requestingAdType));
             NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Heyzap was unable to fetch an ad from any of the available networks for creative types: [%@] and tag: [%@] via ad type: %@.", [ hzMap([fetchOptions.creativeTypesToFetch allObjects], ^NSString *(NSNumber * number){return NSStringFromCreativeType(hzCreativeTypeFromNSNumber(number));}) componentsJoinedByString:@", "], fetchOptions.tag, NSStringFromAdType(fetchOptions.requestingAdType)]}];
             
             [[self delegateForAdType:fetchOptions.requestingAdType] didFailToReceiveAdWithTag:fetchOptions.tag];
@@ -377,6 +393,8 @@
     }
     
     options.requestingAdType = adType;
+    
+    HZILog(@"Mediation: showForAdType: %@ tag: %@", NSStringFromAdType(adType), options.tag);
     
     NSError *preShowError = [self checkForPreShowError:options.tag adType:adType];
     if (preShowError) {
@@ -407,6 +425,7 @@
     NSSet *adapterClassesToConsider = self.setupMediatorClasses;
     Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
     if (optionalForcedNetwork) {
+        HZILog(@"Mediation only showing for one adapter: %@", [optionalForcedNetwork humanizedName]);
         adapterClassesToConsider = [adapterClassesToConsider objectsPassingTest:^BOOL(Class klass, BOOL *stop) {
             return klass == optionalForcedNetwork;
         }];
@@ -456,7 +475,7 @@
     [self.mediateRequester refreshMediate];
     
     // Show ad
-    HZDLog(@"HeyzapMediation: %@ adapter will now show an ad of creativeType: %@. Requested adType: %@", [[chosenAdapterWithScore adapter] name], NSStringFromCreativeType([chosenAdapterWithScore creativeType]), NSStringFromAdType(adType));
+    HZDLog(@"HeyzapMediation: %@ adapter will now show an ad of creativeType: %@. Requested adType: %@ tag: %@", [[chosenAdapterWithScore adapter] name], NSStringFromCreativeType([chosenAdapterWithScore creativeType]), NSStringFromAdType(adType), options.tag);
     [[chosenAdapterWithScore adapter] showAdForCreativeType:[chosenAdapterWithScore creativeType] options:options];
 }
 
@@ -689,6 +708,7 @@ const unsigned long long adStalenessTimeout = 15;
     // People are likely to call fetch immediately after calling start, so just re-enqueue their calls.
     // This feels pretty hacky..
     if (self.startStatus == HZMediationStartStatusNotStarted) {
+        HZILog(@"Mediation requestBanner called before mediation started. Will retry.");
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self requestBannerWithOptions:options completion:completion];
         });
@@ -701,6 +721,8 @@ const unsigned long long adStalenessTimeout = 15;
         completion(preShowError, nil);
         return;
     }
+    
+    HZILog(@"Mediation requesting banner for tag: %@ timeout: %f", options.tag, options.fetchTimeout)
     
     dispatch_async(self.fetchQueue, ^{ // necessary for the hzWaitUntilInterval below
         
@@ -716,6 +738,7 @@ const unsigned long long adStalenessTimeout = 15;
         if (!withinTimeout) {
             // TODO add metric here
             NSError *timeoutError = [[self class] bannerErrorWithDescription:@"Couldn't get /mediate waterfall from Heyzap in time to show a banner ad." underlyingError:nil];
+            HZELog(@"Banner fetch error: %@", timeoutError);
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completion(timeoutError, nil);
             });
@@ -801,6 +824,8 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
     HZParameterAssert(completion);
     HZParameterAssert(eventReporter);
     
+    HZILog(@"Mediation attempting to fetch and show a banner with adapters: [%@], tag: %@, timeout: %f", hzMapOrderedSet(adaptersWithScores, ^NSString *(HZMediationAdapterWithCreativeTypeScore *adapterWithScore){ return [[adapterWithScore adapter] name]; }), options.tag, options.fetchTimeout);
+    
     dispatch_async(self.fetchQueue, ^{
         NSDate * startDate = [NSDate date];
         __block BOOL succeeded = NO;
@@ -876,6 +901,7 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
             [eventReporter reportFetchWithSuccessfulAdapter:finalAdapter.parentAdapter];
             [self.mediateRequester refreshMediate];
             
+            HZILog(@"Mediation successfully fetched a banner from %@ for tag: %@ after %f seconds", [[finalAdapter class] humanizedName], options.tag, [[NSDate date] timeIntervalSinceDate:startDate]);
             dispatch_sync(dispatch_get_main_queue(), ^{
                 // TODO add a metric for the time/number of retries it took to succeed since the initial request by the dev?
                 completion(nil, finalAdapter);
