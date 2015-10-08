@@ -56,6 +56,8 @@
 
 + (instancetype)sharedAdapter;
 
+- (NSString *)testActivityInstructions;
+
 - (void)prefetchForCreativeType:(HZCreativeType)creativeType;
 
 - (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType;

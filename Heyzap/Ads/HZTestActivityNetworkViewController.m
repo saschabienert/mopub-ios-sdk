@@ -148,6 +148,10 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     [self.view addSubview:self.scrollView];
     
     [self showOrHideBannerControls];
+    
+    if ([self.network testActivityInstructions]) {
+        [self appendStringToDebugLog:[self.network testActivityInstructions]];
+    }
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
