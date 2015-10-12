@@ -13,7 +13,7 @@
 #import "HZMediationConstants.h"
 #import "HZAdFetchRequest.h"
 #import "HeyzapAds.h"
-#import "HZTestActivityViewController.h"
+#import "HZMediationTestSuite.h"
 #import "HZShowOptions_Private.h"
 #import "HZFetchOptions_HeyzapMediationPrivate.h"
 
@@ -86,12 +86,15 @@
 
 // State
 @property (nonatomic) HZMediationCurrentShownAd *currentShownAd;
+@property (nonatomic) HZMediationTestSuite *currentTestSuite;
 
 - (void)sendShowFailureMessagesWithShowOptions:(HZShowOptions *)options error:(NSError *)underlyingError;
 
 @end
 
 @implementation HeyzapMediation
+
+@synthesize networkCallbackBlock = _networkCallbackBlock;
 
 #pragma mark - Initialization
 
@@ -129,7 +132,7 @@
         _cachingService = [[HZCachingService alloc] init];
         _starter = [[HZMediationStarter alloc] initWithStartingDelegate:self cachingService:_cachingService];
         _mediateRequester = [[HZMediateRequester alloc] initWithDelegate:self cachingService:_cachingService];
-        _persistentConfig = [[HZMediationPersistentConfig alloc] initWithCachingService:_cachingService isTestApp:[HZDevice isHeyzapTestApp]];
+        _persistentConfig = [[HZMediationPersistentConfig alloc] initWithCachingService:_cachingService];
     }
     return self;
 }
@@ -1114,6 +1117,10 @@ static BOOL forceOnlyHeyzapSDK = NO;
     _networkCallbackBlock = block;
 }
 
+- (void (^)(NSString *network, NSString *callback))networkCallbackBlock {
+    return _networkCallbackBlock;
+}
+
 - (void) sendNetworkCallback: (NSString *) callback forNetwork: (NSString *) network {
     if (_networkCallbackBlock != nil) {
         _networkCallbackBlock(network, callback);
@@ -1236,20 +1243,28 @@ static BOOL forceOnlyHeyzapSDK = NO;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self showTestActivity];
         });
-    } else {
-        [self setupAllAdapters:^{
-            [HZTestActivityViewController show];
+    } else if (self.currentTestSuite == nil){
+        HZDLog(@"Showing Mediation Test Suite.");
+        self.currentTestSuite = [[HZMediationTestSuite alloc] init];
+        [self.currentTestSuite showWithCompletion:^{
+            HZDLog(@"Closing Mediation Test Suite.");
+            self.currentTestSuite = nil;
         }];
+    } else {
+        HZELog(@"Error: Already showing Mediation Test Suite.");
     }
 }
 
 /**
  *  Used to disable Segmentation for the mediation test activity
  */
-- (void)enableSegmentation:(BOOL)enabled {
+- (void) enableSegmentation:(BOOL)enabled {
     [self.segmentationController setEnabled:enabled];
 }
 
+- (BOOL) isSegmentationEnabled {
+    return [self.segmentationController enabled];
+}
 /**
  *  Lookup the forced network (the test activity calls this)
  *

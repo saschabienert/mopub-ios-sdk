@@ -46,9 +46,9 @@ extern NSString * const kHZAdapterLeadboltHumanized;
                        domain:(NSString *)domain
                      userInfo:(NSDictionary *)userInfo;
 
-#define RETURN_ERROR_IF_NIL(value,name) do { \
-if (value == nil) { \
-return [NSError errorWithDomain:kHZMediationDomain code:3 userInfo:@{NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat: @"Missing value: %@",name]}]; \
+#define RETURN_ERROR_UNLESS(value,error_msg) do { \
+if (value == NO) { \
+return [NSError errorWithDomain:kHZMediationDomain code:3 userInfo:@{NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat: @"%@",error_msg]}]; \
 } \
 } while (0)
 

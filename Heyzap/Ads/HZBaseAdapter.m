@@ -200,6 +200,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return YES;
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return YES;
+}
+
 - (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {

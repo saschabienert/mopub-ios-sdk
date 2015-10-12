@@ -54,6 +54,10 @@
                                                          dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.appID != nil;
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -79,7 +83,7 @@
 - (void) toggleLogging { HZDLog(@"Logs for %@ can only be enabled/disabled before initialization.", [[self class] humanizedName]); }
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.appID, @"app_id");
+    RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs an App ID set up on your dashboard.", [self humanizedName]]));
     
     NSArray *const zoneIDs = ({
         NSMutableArray *ids = [NSMutableArray array];

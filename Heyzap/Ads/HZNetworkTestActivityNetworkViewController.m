@@ -30,7 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "HZTestActivityNetworkViewController.h"
+#import "HZNetworkTestActivityNetworkViewController.h"
 #import "HeyzapAds.h"
 #import "HeyzapMediation.h"
 #import "HZMediationAPIClient.h"
@@ -48,21 +48,23 @@
 #import "HZAdMobAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 
-@interface HZTestActivityNetworkViewController() <UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, HZBannerAdDelegate, HZIncentivizedAdDelegate>
+@interface HZNetworkTestActivityNetworkViewController() <UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, HZBannerAdDelegate, HZIncentivizedAdDelegate>
 
 @property (nonatomic) HZBaseAdapter *network;
 @property (nonatomic) UIViewController *rootVC;
 @property (nonatomic) BOOL available;
-@property (nonatomic) BOOL initialized;
+@property (nonatomic) BOOL hasCredentials;
 @property (nonatomic) BOOL enabled;
 @property (nonatomic) UIView *adControls;
 @property (nonatomic) NSString *currentAdFormat;
 @property (nonatomic) HZAdType currentAdType;
 @property (nonatomic) UIButton *showButton;
 @property (nonatomic) UILabel *availableStatus;
-@property (nonatomic) UILabel *initializationStatus;
+@property (nonatomic) UILabel *hasCredentialsStatus;
 @property (nonatomic) UILabel *enabledStatus;
 @property (nonatomic) UITextView *debugLog;
+
+@property (nonatomic) UITextField *adTagField;
 
 @property (nonatomic) UIButton *showBannerButton;
 @property (nonatomic) UIButton *hideBannerButton;
@@ -93,18 +95,18 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 @end
 
-@implementation HZTestActivityNetworkViewController
+@implementation HZNetworkTestActivityNetworkViewController
 
 #pragma mark - Initialization
 
-- (instancetype) initWithNetwork:(HZBaseAdapter *)network rootVC:(UIViewController *)rootVC available:(BOOL)available initialized:(BOOL)initialized enabled:(BOOL)enabled {
+- (instancetype) initWithNetwork:(HZBaseAdapter *)network rootVC:(UIViewController *)rootVC available:(BOOL)available hasCredentials:(BOOL)hasCredentials enabled:(BOOL)enabled {
     self = [super init];
     
     if (self) {
         self.network = network;
         self.rootVC = rootVC;
         self.available = available;
-        self.initialized = initialized;
+        self.hasCredentials = hasCredentials;
         self.enabled = enabled;
         
         // set this adapter's delegate to us so we can get callbacks
@@ -152,6 +154,13 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     if ([self.network testActivityInstructions]) {
         [self appendStringToDebugLog:[self.network testActivityInstructions]];
     }
+    
+    // Dismisses first responder (keyboard)
+    [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)]];
+}
+
+- (void)viewTapped:(UITapGestureRecognizer *)sender{
+    [sender.view endEditing:YES];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -209,11 +218,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             self.enabled = [network[@"enabled"] boolValue];
 
             // check original initialization succeeded
-            if ([[HeyzapMediation sharedInstance] isAdapterInitialized:self.network]) {
-                self.initialized = YES;
-            } else {
-                self.initialized = NO;
-            }
+            self.hasCredentials = [self.network hasNecessaryCredentials];
 
             // if credentials have changed, pop an alert
             if (![self.network.credentials isEqualToDictionary:network[@"data"]] && self.enabled) {
@@ -222,16 +227,16 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             }
 
             HZDLog(@"Available: %d", self.available);
-            HZDLog(@"Initialized: %d", self.initialized);
+            HZDLog(@"Has credentials: %d", self.hasCredentials);
             HZDLog(@"Enabled: %d", self.enabled);
             
             // update the checks and crosses
             [self setStatusForLabel:self.availableStatus withBool:self.available];
-            [self setStatusForLabel:self.initializationStatus withBool:self.initialized];
+            [self setStatusForLabel:self.hasCredentialsStatus withBool:self.hasCredentials];
             [self setStatusForLabel:self.enabledStatus withBool:self.enabled];
             
             // display or remove the ad controls
-            if (self.available && self.initialized) {
+            if (self.available && self.hasCredentials) {
                 
                 [self hideBanner];
                 
@@ -259,7 +264,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     [self showOrHideBannerControls];
     
     if (self.currentAdType != HZAdTypeBanner) {
-        [self changeShowButtonColor];
+        [self checkAvailabilityAndChangeColorOfShowButton];
         [self hideBanner];
     }
 }
@@ -271,13 +276,22 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     if ([[self bannerSizes] count] == 0) {
         self.bannerSizeTextField.hidden = YES;
     }
+
+    [self.view endEditing:YES]; // Dismisses picker views and keyboard
+}
+
+- (void) isAvailableButtonPressed {
+    [self.view endEditing:YES];// Dismisses picker views and keyboard
     
-    if (self.currentAdType != HZAdTypeBanner) {
-        [self.view endEditing:YES]; // Dismisses picker views when you change to a non-banner format.
-    }
+    // use HZShowOptions to format the tag for the log output
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = [self.adTagField text];
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"%@ ad %@ available for tag '%@'.", self.currentAdFormat,([self checkAvailabilityAndChangeColorOfShowButton] ? @"is" : @"is not"), options.tag]];
 }
 
 - (void) fetchAd {
+    [self.view endEditing:YES];// Dismisses picker views and keyboard
+    
     // check if at least one of the supported creativeTypes for this adType has credentials, warn if not
     NSSet *creativeTypesToCheck = hzCreativeTypesPossibleForAdType(self.currentAdType);
     BOOL foundCredentials = NO;
@@ -292,11 +306,9 @@ NSString *hzBannerPositionName(HZBannerPosition position);
         return;
     }
     
-    [self appendStringToDebugLog:@"Fetching ad (may take up to 10 seconds)"];
-    
     HZFetchOptions *fetchOptions = [HZFetchOptions new];
     fetchOptions.requestingAdType = self.currentAdType;
-    fetchOptions.tag = nil;
+    fetchOptions.tag = [self.adTagField text];
     fetchOptions.additionalParameters = @{ @"network": [[self.network class] name] };
     fetchOptions.completion = ^(BOOL result, NSError *error) {
         if (error) {
@@ -305,17 +317,20 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             [self appendStringToDebugLog:@"Fetch succeeded"];
         }
         
-        [self changeShowButtonColor];
+        [self checkAvailabilityAndChangeColorOfShowButton];
     };
     
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Fetching ad with tag: '%@' (may take up to 10 seconds)", fetchOptions.tag]];
     [[HeyzapMediation sharedInstance] fetchWithOptions:fetchOptions];
 }
 
 - (void) showAd {
-    [self appendStringToDebugLog:@"Showing ad"];
+    [self.view endEditing:YES];// Dismisses picker views and keyboard
+    
     NSDictionary *additionalParams = @{ @"network": [[self.network class] name] };
 
     HZShowOptions *options = [HZShowOptions new];
+    options.tag = [self.adTagField text];
     options.viewController = self;
     options.completion = ^(BOOL result, NSError *error) {
         if (error) {
@@ -332,9 +347,10 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             [self appendStringToDebugLog:@"Show succeeded"];
         }
 
-        [self changeShowButtonColor];
+        [self checkAvailabilityAndChangeColorOfShowButton];
     };
-
+    
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Showing ad with tag: '%@'", options.tag]];
     [[HeyzapMediation sharedInstance] showForAdType:self.currentAdType additionalParams:additionalParams options:options];
 }
 
@@ -345,7 +361,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 }
 
 - (void)didFailToShowAdWithTag: (NSString *) tag andError: (NSError *)error {
-    [self changeShowButtonColor];
+    [self checkAvailabilityAndChangeColorOfShowButton];
     [self logCallback:_cmd];
 }
 
@@ -362,7 +378,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 }
 
 - (void)didHideAdWithTag: (NSString *) tag {
-    [self changeShowButtonColor];
+    [self checkAvailabilityAndChangeColorOfShowButton];
     [self logCallback:_cmd];
 }
 
@@ -391,19 +407,19 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void) makeView {
     // sdk available label
-    UIView *availableView = [self makeStatusLabel:@"available" withStatus:self.available text:@"SDK Available" y:30];
+    UIView *availableView = [self makeStatusLabel:@"available" withStatus:self.available text:@"SDK Available" y:15];
     [self.scrollView addSubview:availableView];
     
     // sdk initialization succeeded label
-    UIView *initializationView = [self makeStatusLabel:@"initialization" withStatus:self.initialized text:@"SDK initialized with credentials" y:(CGRectGetMaxY(availableView.frame) + 5)];
-    [self.scrollView addSubview:initializationView];
+    UIView *hasCredentialsView = [self makeStatusLabel:@"credentials" withStatus:self.hasCredentials text:@"SDK has necessary credentials" y:(CGRectGetMaxY(availableView.frame) + 5)];
+    [self.scrollView addSubview:hasCredentialsView];
 
     // network is enabled label
-    UIView *enabledView = [self makeStatusLabel:@"enabled" withStatus:self.enabled text:@"Network enabled on dashboard" y:(CGRectGetMaxY(initializationView.frame) + 5)];
+    UIView *enabledView = [self makeStatusLabel:@"enabled" withStatus:self.enabled text:@"Network enabled on dashboard" y:(CGRectGetMaxY(hasCredentialsView.frame) + 5)];
     [self.scrollView addSubview:enabledView];
     
     // only show ad fetching/showing controls and debug log if the network was initialized correctly
-    if(self.available && self.initialized){
+    if(self.available && self.hasCredentials){
         self.adControls = [self makeAdControls];
         [self.scrollView addSubview:self.adControls];
 
@@ -439,7 +455,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (UIView *) makeAdControls {
     UIView *adControls = ({
-        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 140, self.view.frame.size.width - 20, 160)];
+        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 100, self.view.frame.size.width - 20, 200)];
         controls.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         controls;
     });
@@ -474,8 +490,33 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     [adFormatControl addTarget:self action:@selector(switchAdFormat:) forControlEvents:UIControlEventValueChanged];
     [adControls addSubview:adFormatControl];
     
+    
     const CGFloat buttonWidth = adFormatControl.frame.size.width / 2.0 - 5;
-    const CGRect leftButtonFrame = CGRectMake(adFormatControl.frame.origin.x, adFormatControl.frame.origin.y + adFormatControl.frame.size.height + 10, buttonWidth, 40);
+    self.adTagField = [[UITextField alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(adFormatControl.frame) + 10, buttonWidth, 40)];
+    self.adTagField.delegate = self;
+    self.adTagField.borderStyle = UITextBorderStyleRoundedRect;
+    self.adTagField.keyboardType = UIKeyboardTypeDefault;
+    self.adTagField.placeholder = @"Ad Tag";
+    self.adTagField.textAlignment = NSTextAlignmentLeft;
+    self.adTagField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleRightMargin;
+    self.adTagField.accessibilityLabel = @"ad tag";
+    [self.adTagField addTarget:self
+                        action:@selector(adTagEditingChanged:)
+              forControlEvents:UIControlEventEditingChanged];
+    [adControls addSubview:self.adTagField];
+    
+    UIButton *availableButton = ({
+        UIButton *button = [[self class] buttonWithBackgroundColor:[UIColor darkGrayColor]];
+        button.frame = CGRectMake(CGRectGetMaxX(self.adTagField.frame) + 10, CGRectGetMinY(self.adTagField.frame), CGRectGetWidth(self.adTagField.frame), CGRectGetHeight(self.adTagField.frame));
+        button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin;
+        [button setTitle:@"Ad Available?" forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(isAvailableButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        button;
+    });
+    [adControls addSubview:availableButton];
+    
+    
+    const CGRect leftButtonFrame = CGRectMake(self.adTagField.frame.origin.x, self.adTagField.frame.origin.y + self.adTagField.frame.size.height + 10, buttonWidth, 40);
     const CGRect rightButtonFrame = CGRectMake(CGRectGetMaxX(leftButtonFrame) + 10, leftButtonFrame.origin.y, buttonWidth, 40);
     
     // buttons for fetch and show
@@ -499,7 +540,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     });
     [adControls addSubview:self.showButton];
     
-    self.nonBannerControls = @[fetchButton, self.showButton];
+    self.nonBannerControls = @[fetchButton, self.showButton, availableButton];
     
     if ([self showBanners]) {
         
@@ -646,8 +687,8 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
     if ([type isEqualToString:@"available"]) {
         self.availableStatus = statusLabel;
-    } else if ([type isEqualToString:@"initialization"]) {
-        self.initializationStatus = statusLabel;
+    } else if ([type isEqualToString:@"credentials"]) {
+        self.hasCredentialsStatus = statusLabel;
     } else if ([type isEqualToString:@"enabled"]) {
         self.enabledStatus = statusLabel;
     }
@@ -683,13 +724,15 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     return adType;
 }
 
-- (void) changeShowButtonColor {
-    const BOOL available = [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:self.currentAdType tag:[HeyzapAds defaultTagName] network:self.network];
+- (BOOL) checkAvailabilityAndChangeColorOfShowButton {
+    const BOOL available = [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:self.currentAdType tag:[self.adTagField text] network:self.network];
     if (available) {
         self.showButton.backgroundColor = [UIColor greenColor];
     } else {
         self.showButton.backgroundColor = [UIColor redColor];
     }
+    
+    return available;
 }
 
 - (void) appendStringToDebugLog:(NSString *)string {
@@ -889,6 +932,18 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 
 - (void)logBannerCallback:(SEL)selector {
     [self appendStringToDebugLog:[NSString stringWithFormat:@"Banner Callback: %@",NSStringFromSelector(selector)]];
+}
+
+#pragma mark - UITextField delegate
+
+- (BOOL) textFieldShouldReturn:(UITextField *)textField{
+    [textField resignFirstResponder];
+    
+    return YES;
+}
+
+- (void)adTagEditingChanged:(UITextField *)sender {
+    [self checkAvailabilityAndChangeColorOfShowButton];
 }
 
 - (void)updateScrollViewContentSize

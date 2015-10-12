@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HZMediationPersistentConfig : NSObject <HZMediationPersistentConfigReadonly>
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithCachingService:(HZCachingService *)cachingService isTestApp:(BOOL)isTestApp NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithCachingService:(HZCachingService *)cachingService NS_DESIGNATED_INITIALIZER;
 
 #pragma mark - Support for disabling networks from the client
 

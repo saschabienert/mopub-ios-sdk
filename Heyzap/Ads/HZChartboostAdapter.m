@@ -45,6 +45,10 @@
     self.appSignature = [HZDictionaryUtils objectForKey:@"app_signature" ofClass:[NSString class] dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.appID != nil && self.appSignature != nil;
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -53,8 +57,7 @@
 }
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.appID, @"appID");
-    RETURN_ERROR_IF_NIL(self.appSignature, @"appSignature");
+    RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs an App ID and an App Signature set up on your dashboard.", [self humanizedName]]));
     
     if ([HZChartboost respondsToSelector:@selector(setMediation:withVersion:)]) {
         NSMethodSignature *signature = [HZChartboost methodSignatureForSelector:@selector(setMediation:withVersion:)];

@@ -22,39 +22,26 @@ describe(@"HZMediationPersistentConfig", ^{
         cachingService = [KWMock nullMockForClass:[HZCachingService class]];
     });
     
-    
-    context(@"When it's not the test app", ^{
-        it(@"Networks should always be enabled", ^{
-            HZMediationPersistentConfig *config = [[HZMediationPersistentConfig alloc] initWithCachingService:cachingService isTestApp:NO];
-            [config addDisabledNetwork:kNetworkName];
-            
-            [[theValue([config isNetworkEnabled:kNetworkName]) should] beTrue];
-        });
+    it(@"Should allow disabling networks", ^{
+        [cachingService stub:@selector(rootObjectWithFilename:) andReturn:[NSSet set]];
+        
+        HZMediationPersistentConfig *config = [[HZMediationPersistentConfig alloc] initWithCachingService:cachingService];
+        [[expectFutureValue(cachingService) hzShouldEventuallyAfterDelay] receive:@selector(cacheRootObject:filename:) withCountAtLeast:1];
+        
+        [config addDisabledNetwork:kNetworkName];
+        
+        [[theValue([config isNetworkEnabled:kNetworkName]) should] beFalse];
+        
+        [config removeDisabledNetwork:kNetworkName];
+        
+        [[theValue([config isNetworkEnabled:kNetworkName]) should] beTrue];
+        
     });
     
-    context(@"When it is the test app", ^{
-        
-        it(@"Should allow disabling networks", ^{
-            [cachingService stub:@selector(rootObjectWithFilename:) andReturn:[NSSet set]];
-            
-            HZMediationPersistentConfig *config = [[HZMediationPersistentConfig alloc] initWithCachingService:cachingService isTestApp:YES];
-            [[expectFutureValue(cachingService) hzShouldEventuallyAfterDelay] receive:@selector(cacheRootObject:filename:) withCountAtLeast:1];
-            
-            [config addDisabledNetwork:kNetworkName];
-            
-            [[theValue([config isNetworkEnabled:kNetworkName]) should] beFalse];
-            
-            [config removeDisabledNetwork:kNetworkName];
-            
-            [[theValue([config isNetworkEnabled:kNetworkName]) should] beTrue];
-            
-        });
-        
-        it(@"Should load disabled networks from disk", ^{
-            [cachingService stub:@selector(rootObjectWithFilename:) andReturn:[NSSet setWithObject:kNetworkName]];
-            HZMediationPersistentConfig *config = [[HZMediationPersistentConfig alloc] initWithCachingService:cachingService isTestApp:YES];
-            [[theValue([config isNetworkEnabled:kNetworkName]) should] beFalse];
-        });
+    it(@"Should load disabled networks from disk", ^{
+        [cachingService stub:@selector(rootObjectWithFilename:) andReturn:[NSSet setWithObject:kNetworkName]];
+        HZMediationPersistentConfig *config = [[HZMediationPersistentConfig alloc] initWithCachingService:cachingService];
+        [[theValue([config isNetworkEnabled:kNetworkName]) should] beFalse];
     });
     
 });

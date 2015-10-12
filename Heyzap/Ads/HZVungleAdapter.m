@@ -55,6 +55,10 @@
     self.appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.appID != nil;
+}
+
 - (void) toggleLogging {
     [[HZVungleSDK sharedSDK] setLoggingEnabled:[self isLoggingEnabled]];
 }
@@ -62,7 +66,7 @@
 #pragma mark - Adapter Protocol
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.appID, @"app_id");
+    RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs an App ID set up on your dashboard.", [self humanizedName]]));
     
     [self toggleLogging];
     

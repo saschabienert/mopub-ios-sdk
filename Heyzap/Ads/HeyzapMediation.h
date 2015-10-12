@@ -25,6 +25,7 @@
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
+@property (nonatomic, readonly) void (^networkCallbackBlock)(NSString *network, NSString *callback);
 
 @property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 @property (nonatomic, readonly) NSString *mediationId;
@@ -87,6 +88,7 @@
 /**
  *  Used to disable Segmentation for the mediation test activity
  */
-- (void)enableSegmentation:(BOOL)enabled;
+- (void) enableSegmentation:(BOOL)enabled;
+- (BOOL) isSegmentationEnabled;
 
 @end

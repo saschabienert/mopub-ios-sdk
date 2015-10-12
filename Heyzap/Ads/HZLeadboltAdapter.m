@@ -53,8 +53,12 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
                                                 dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.appAPIKey != nil;
+}
+
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.appAPIKey, @"app_api_key");
+    RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs an App API Key set up on your dashboard.", [self humanizedName]]));
     
     // These notifications aren't documented in AppTracker.h; this comes from http://help.leadbolt.com/ios-integration-guide/ and their sample app.
     
