@@ -53,6 +53,8 @@
 // Segmentation
 #import "HZImpressionHistory.h"
 
+NSString * const HZMediationDidReceiveAdNotification = @"HZMediationDidReceiveAdNotification";
+
 @interface HeyzapMediation()
 
 @property (nonatomic, strong) NSSet *setupMediators;
@@ -328,6 +330,7 @@
                 fetchOptions.alreadyNotifiedDelegateOfSuccess = YES;
                 [[self delegateForAdType:fetchOptions.requestingAdType] didReceiveAdWithTag:fetchOptions.tag];
                 if (fetchOptions.completion) { fetchOptions.completion(YES, nil); }
+                [[NSNotificationCenter defaultCenter] postNotificationName:HZMediationDidReceiveAdNotification object:nil];
             }
         }
     } else {

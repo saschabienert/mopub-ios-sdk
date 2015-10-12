@@ -184,6 +184,17 @@
 		507A456319BE95B000C7AEEA /* HZStorePresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A456119BE95B000C7AEEA /* HZStorePresenter.m */; };
 		507A457019BF91ED00C7AEEA /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */; };
 		507A457419BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
+		508277941BC8925000B4340B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 508277931BC8925000B4340B /* main.m */; };
+		508277971BC8925000B4340B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 508277961BC8925000B4340B /* AppDelegate.m */; };
+		5082779A1BC8925000B4340B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 508277991BC8925000B4340B /* ViewController.m */; };
+		5082779D1BC8925000B4340B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5082779B1BC8925000B4340B /* Main.storyboard */; };
+		5082779F1BC8925000B4340B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5082779E1BC8925000B4340B /* Assets.xcassets */; };
+		508277A21BC8925000B4340B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 508277A01BC8925000B4340B /* LaunchScreen.storyboard */; };
+		508277A71BC892EC00B4340B /* libHeyzapAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B9432A1758108700B8EACE /* libHeyzapAds.a */; };
+		508277AA1BC892FE00B4340B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ABB1891BC87E8A0096882B /* libsqlite3.tbd */; };
+		508277AB1BC8930200B4340B /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ABB1A11BC8816C0096882B /* libxml2.tbd */; };
+		508277BD1BCC07A000B4340B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ABB1891BC87E8A0096882B /* libsqlite3.tbd */; };
+		508277C01BCC07EA00B4340B /* TestHeyzapInterstitial.m in Sources */ = {isa = PBXBuildFile; fileRef = 508277BF1BCC07EA00B4340B /* TestHeyzapInterstitial.m */; settings = {ASSET_TAGS = (); }; };
 		509109351B66E5FB004464E7 /* HZMediationStarterSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 509109341B66E5FB004464E7 /* HZMediationStarterSpec.m */; };
 		509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 509B04351A44AA0300EC3ACF /* HZNativeAdImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		509B04381A44AA0300EC3ACF /* HZNativeAdImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B04361A44AA0300EC3ACF /* HZNativeAdImage.m */; };
@@ -261,7 +272,6 @@
 		50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */; };
 		50D1599418F35CC600734ABB /* HZHeyzapInterstitialAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1599218F35CC600734ABB /* HZHeyzapInterstitialAd.m */; };
 		50DB6F0219EDF6B40074B3E4 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5011CE4118DB915500604B53 /* AVFoundation.framework */; };
-		50DB884D1AB0C0D9003C5758 /* HZBannerAdOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 50DB884B1AB0C0D9003C5758 /* HZBannerAdOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50DB884E1AB0C0D9003C5758 /* HZBannerAdOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 50DB884C1AB0C0D9003C5758 /* HZBannerAdOptions.m */; };
 		50EB889A1A0AFBF20077A4D3 /* HZNSURLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 50EB88981A0AF2030077A4D3 /* HZNSURLUtils.m */; };
 		50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ECA1C318DB618E006284AB /* HeyzapMediation.h */; };
@@ -281,6 +291,7 @@
 		50ED564B1AC0BC910016F9FE /* HZiAdBannerAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ED56491AC0BC910016F9FE /* HZiAdBannerAdapter.h */; };
 		50ED564C1AC0BC910016F9FE /* HZiAdBannerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ED564A1AC0BC910016F9FE /* HZiAdBannerAdapter.m */; };
 		72A18C05178B64E600536547 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A18C04178B64E600536547 /* MessageUI.framework */; };
+		810A8325BAC3078F15E074E5 /* libPods-IntegrationTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE8C3BDC0C3A72F0F2BA561B /* libPods-IntegrationTests.a */; };
 		860FD47A187BB144008A35FD /* HZAdsFetchManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 860FD478187BB144008A35FD /* HZAdsFetchManager.h */; };
 		860FD47B187BB144008A35FD /* HZAdsFetchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 860FD479187BB144008A35FD /* HZAdsFetchManager.m */; };
 		860FD47E187CC056008A35FD /* HZAdFetchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 860FD47C187CC056008A35FD /* HZAdFetchRequest.h */; };
@@ -498,6 +509,27 @@
 			remoteGlobalIDString = 86B943291758108700B8EACE;
 			remoteInfo = Ads;
 		};
+		508277A81BC892F000B4340B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 86B943291758108700B8EACE;
+			remoteInfo = Ads;
+		};
+		508277B51BC8938200B4340B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5082778F1BC8925000B4340B;
+			remoteInfo = IntegrationTestHost;
+		};
+		508277BB1BCC078600B4340B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 86B943291758108700B8EACE;
+			remoteInfo = Ads;
+		};
 		50BDCFF618B813C100265212 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 86B941931757FD6300B8EACE /* Project object */;
@@ -672,6 +704,20 @@
 		507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		507A457219BF943700C7AEEA /* NativeAdDetailsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeAdDetailsTableViewController.h; sourceTree = "<group>"; };
 		507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NativeAdDetailsTableViewController.m; sourceTree = "<group>"; };
+		508277901BC8925000B4340B /* IntegrationTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IntegrationTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		508277931BC8925000B4340B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		508277951BC8925000B4340B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		508277961BC8925000B4340B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		508277981BC8925000B4340B /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		508277991BC8925000B4340B /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		5082779C1BC8925000B4340B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5082779E1BC8925000B4340B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		508277A11BC8925000B4340B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		508277A31BC8925000B4340B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		508277B01BC8938200B4340B /* IntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		508277B41BC8938200B4340B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		508277BE1BCC07EA00B4340B /* TestHeyzapInterstitial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestHeyzapInterstitial.h; sourceTree = "<group>"; };
+		508277BF1BCC07EA00B4340B /* TestHeyzapInterstitial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestHeyzapInterstitial.m; sourceTree = "<group>"; };
 		509109341B66E5FB004464E7 /* HZMediationStarterSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationStarterSpec.m; sourceTree = "<group>"; };
 		509B04351A44AA0300EC3ACF /* HZNativeAdImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAdImage.h; sourceTree = "<group>"; };
 		509B04361A44AA0300EC3ACF /* HZNativeAdImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdImage.m; sourceTree = "<group>"; };
@@ -706,6 +752,9 @@
 		50AA624818CBF58A0018A0B6 /* NSString+Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Tests.m"; sourceTree = "<group>"; };
 		50AA624A18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OHHTTPStubs+Heyzap.h"; sourceTree = "<group>"; };
 		50AA624B18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OHHTTPStubs+Heyzap.m"; sourceTree = "<group>"; };
+		50ABB1891BC87E8A0096882B /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		50ABB19F1BC881600096882B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		50ABB1A11BC8816C0096882B /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		50ABD5A81B2A2D65007A2801 /* HZMediationCurrentShownAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationCurrentShownAd.h; sourceTree = "<group>"; };
 		50ABD5A91B2A2D65007A2801 /* HZMediationCurrentShownAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationCurrentShownAd.m; sourceTree = "<group>"; };
 		50AC60AF18FC79E80046EBC6 /* HZALAdRewardDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZALAdRewardDelegate.h; sourceTree = "<group>"; };
@@ -897,6 +946,7 @@
 		8AA2264B1B3CCEEE00FA1428 /* HZWebViewActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZWebViewActivityIndicator.m; sourceTree = "<group>"; };
 		8AA693131B1D13290074366D /* HZPaymentTransactionObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZPaymentTransactionObserver.h; sourceTree = "<group>"; };
 		8AA693141B1D13290074366D /* HZPaymentTransactionObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZPaymentTransactionObserver.m; sourceTree = "<group>"; };
+		8D0FD61BAFAF524DC96E7456 /* Pods-IntegrationTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IntegrationTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IntegrationTests/Pods-IntegrationTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Integration Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9930D71F1B30F614003C3F3C /* HZVideoAdDisplayOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVideoAdDisplayOptions.m; sourceTree = "<group>"; };
 		9930D7211B30F626003C3F3C /* HZVideoAdDisplayOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVideoAdDisplayOptions.h; sourceTree = "<group>"; };
@@ -974,8 +1024,13 @@
 		99DC6D331B879AA600BF7756 /* HZCreativeType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZCreativeType.m; sourceTree = "<group>"; };
 		99DC6D351B87A1C600BF7756 /* HZAdType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdType.m; sourceTree = "<group>"; };
 		99FA59601B851B200076C088 /* HZShowOptions_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZShowOptions_Private.h; sourceTree = "<group>"; };
+		9B82D2D21C5FC1E270D1DEA8 /* libPods-MediationTestAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MediationTestAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3AD7896F22242FBFCBC9DC2 /* Pods-MediationTestAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediationTestAppTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MediationTestAppTests/Pods-MediationTestAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		B1D5F5ECB01E4EDFA33DE9B0 /* libPods-Ads Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ads Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9241C359E50B2D9005581FE /* Pods-Integration Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integration Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Integration Tests/Pods-Integration Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		BE8C3BDC0C3A72F0F2BA561B /* libPods-IntegrationTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IntegrationTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C87E43F3D43BB6B0824C5628 /* Pods-IntegrationTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IntegrationTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-IntegrationTests/Pods-IntegrationTests.release.xcconfig"; sourceTree = "<group>"; };
+		D9B9D2A734CF1D0B1F3096FD /* Pods-MediationTestAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediationTestAppTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MediationTestAppTests/Pods-MediationTestAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E600E20C1ACB5715006CE286 /* HZAdapterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdapterDelegate.h; sourceTree = "<group>"; };
 		E600E20E1ACB5764006CE286 /* HZAdapterDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdapterDelegate.m; sourceTree = "<group>"; };
 		E600E2111ACB7659006CE286 /* HZAppLovinDelegateReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZAppLovinDelegateReceiver.h; sourceTree = "<group>"; };
@@ -1060,6 +1115,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5082778D1BC8925000B4340B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				508277AB1BC8930200B4340B /* libxml2.tbd in Frameworks */,
+				508277AA1BC892FE00B4340B /* libsqlite3.tbd in Frameworks */,
+				508277A71BC892EC00B4340B /* libHeyzapAds.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		508277AD1BC8938200B4340B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				508277BD1BCC07A000B4340B /* libsqlite3.tbd in Frameworks */,
+				810A8325BAC3078F15E074E5 /* libPods-IntegrationTests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		86B941D91758056B00B8EACE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1117,6 +1191,10 @@
 				4AC97BB61691E598ABE47CC3 /* Pods-MediationTestApp.release.xcconfig */,
 				465A0B5D52E509FBADC510AD /* Pods-HeyzapSDKTest.debug.xcconfig */,
 				58C6B54C3EE10808E4BA228E /* Pods-HeyzapSDKTest.release.xcconfig */,
+				D9B9D2A734CF1D0B1F3096FD /* Pods-MediationTestAppTests.debug.xcconfig */,
+				A3AD7896F22242FBFCBC9DC2 /* Pods-MediationTestAppTests.release.xcconfig */,
+				8D0FD61BAFAF524DC96E7456 /* Pods-IntegrationTests.debug.xcconfig */,
+				C87E43F3D43BB6B0824C5628 /* Pods-IntegrationTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1459,6 +1537,40 @@
 				50310F981A2E894F00FDC9BC /* Launch Screen.xib */,
 			);
 			name = UI;
+			sourceTree = "<group>";
+		};
+		508277911BC8925000B4340B /* IntegrationTestHost */ = {
+			isa = PBXGroup;
+			children = (
+				508277951BC8925000B4340B /* AppDelegate.h */,
+				508277961BC8925000B4340B /* AppDelegate.m */,
+				508277981BC8925000B4340B /* ViewController.h */,
+				508277991BC8925000B4340B /* ViewController.m */,
+				5082779B1BC8925000B4340B /* Main.storyboard */,
+				5082779E1BC8925000B4340B /* Assets.xcassets */,
+				508277A01BC8925000B4340B /* LaunchScreen.storyboard */,
+				508277A31BC8925000B4340B /* Info.plist */,
+				508277921BC8925000B4340B /* Supporting Files */,
+			);
+			path = IntegrationTestHost;
+			sourceTree = "<group>";
+		};
+		508277921BC8925000B4340B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				508277931BC8925000B4340B /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		508277B11BC8938200B4340B /* IntegrationTests */ = {
+			isa = PBXGroup;
+			children = (
+				508277B41BC8938200B4340B /* Info.plist */,
+				508277BE1BCC07EA00B4340B /* TestHeyzapInterstitial.h */,
+				508277BF1BCC07EA00B4340B /* TestHeyzapInterstitial.m */,
+			);
+			path = IntegrationTests;
 			sourceTree = "<group>";
 		};
 		509109311B66E21F004464E7 /* Mediation */ = {
@@ -1853,6 +1965,8 @@
 				86B941E11758056B00B8EACE /* SDK Test App */,
 				86B9432C1758108700B8EACE /* Ads */,
 				504E9C9618C9322100402BC3 /* Ads Tests */,
+				508277911BC8925000B4340B /* IntegrationTestHost */,
+				508277B11BC8938200B4340B /* IntegrationTests */,
 				86B9419D1757FD6300B8EACE /* Frameworks */,
 				86B9419C1757FD6300B8EACE /* Products */,
 				0A84FE9B0634B91D44D83A4A /* Pods */,
@@ -1866,6 +1980,8 @@
 				86B9432A1758108700B8EACE /* libHeyzapAds.a */,
 				504E9C9218C9322100402BC3 /* Ads Tests.xctest */,
 				5053521818F76550003C531E /* MediationTestApp.app */,
+				508277901BC8925000B4340B /* IntegrationTestHost.app */,
+				508277B01BC8938200B4340B /* IntegrationTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1873,6 +1989,9 @@
 		86B9419D1757FD6300B8EACE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				50ABB1A11BC8816C0096882B /* libxml2.tbd */,
+				50ABB19F1BC881600096882B /* libz.tbd */,
+				50ABB1891BC87E8A0096882B /* libsqlite3.tbd */,
 				998B1C0B1B83A364003C1437 /* libxml2.dylib */,
 				998B1C031B718A02003C1437 /* libdyld.dylib */,
 				998B1C011B718561003C1437 /* libsqlite3.0.dylib */,
@@ -1906,6 +2025,8 @@
 				9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */,
 				3A4D105EBBFD2834D2AD2D00 /* libPods-MediationTestApp.a */,
 				107574B6049A6F4A219A0B18 /* libPods-HeyzapSDKTest.a */,
+				9B82D2D21C5FC1E270D1DEA8 /* libPods-MediationTestAppTests.a */,
+				BE8C3BDC0C3A72F0F2BA561B /* libPods-IntegrationTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2318,10 +2439,8 @@
 				E67D8F211ABA3C14000B191C /* HZShowOptions.h in Headers */,
 				50AC611E18FDD3E70046EBC6 /* HZALAdSize.h in Headers */,
 				50B46B1D18F88C6B005155B8 /* HZALAd.h in Headers */,
-				50DB884D1AB0C0D9003C5758 /* HZBannerAdOptions.h in Headers */,
 				995DF5701B44AA00000935BB /* HZOpenRTBConnectionType.h in Headers */,
 				5011CE5518DB9B7F00604B53 /* HZAdColonyAdapter.h in Headers */,
-				50DB884D1AB0C0D9003C5758 /* HZBannerAdOptions.h in Headers */,
 				50608AD01AF9650D00CFB9F6 /* HZMediationStarter.h in Headers */,
 				504D82441AAA26B3004695C8 /* HZBannerAd.h in Headers */,
 				86C4916F1B2819C000A84B2C /* HZMRAIDOrientationProperties.h in Headers */,
@@ -2461,6 +2580,7 @@
 				504E9C9018C9322100402BC3 /* Resources */,
 				772E3B0BDD914296B2558664 /* Copy Pods Resources */,
 				DF1A72313AC449E0DE4816BD /* Upload Bugsnag dSYM */,
+				776090AF4DF274FF82DC9AC1 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2483,6 +2603,7 @@
 				FB0DEFC40D7D92B6FBBD1334 /* Copy Pods Resources */,
 				5035598C1ABB893D0029EBAB /* Embed Frameworks */,
 				D545AFB6BA6704775073AD3F /* Upload Bugsnag dSYM */,
+				21040C03EA3DDC5BFC0658A9 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2494,6 +2615,46 @@
 			productReference = 5053521818F76550003C531E /* MediationTestApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		5082778F1BC8925000B4340B /* IntegrationTestHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 508277A41BC8925000B4340B /* Build configuration list for PBXNativeTarget "IntegrationTestHost" */;
+			buildPhases = (
+				5082778C1BC8925000B4340B /* Sources */,
+				5082778D1BC8925000B4340B /* Frameworks */,
+				5082778E1BC8925000B4340B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				508277A91BC892F000B4340B /* PBXTargetDependency */,
+			);
+			name = IntegrationTestHost;
+			productName = IntegrationTestHost;
+			productReference = 508277901BC8925000B4340B /* IntegrationTestHost.app */;
+			productType = "com.apple.product-type.application";
+		};
+		508277AF1BC8938200B4340B /* IntegrationTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 508277B71BC8938200B4340B /* Build configuration list for PBXNativeTarget "IntegrationTests" */;
+			buildPhases = (
+				CEBE06E3F21E7349D60B0BC6 /* Check Pods Manifest.lock */,
+				508277AC1BC8938200B4340B /* Sources */,
+				508277AD1BC8938200B4340B /* Frameworks */,
+				508277AE1BC8938200B4340B /* Resources */,
+				792FA0C38DB7FA6435D2135F /* Embed Pods Frameworks */,
+				9EA50CD28078EE67EE51E1BF /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				508277BC1BCC078600B4340B /* PBXTargetDependency */,
+				508277B61BC8938200B4340B /* PBXTargetDependency */,
+			);
+			name = IntegrationTests;
+			productName = IntegrationTests;
+			productReference = 508277B01BC8938200B4340B /* IntegrationTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		86B941DB1758056B00B8EACE /* HeyzapSDKTest */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 86B942071758056B00B8EACE /* Build configuration list for PBXNativeTarget "HeyzapSDKTest" */;
@@ -2504,6 +2665,7 @@
 				86B941DA1758056B00B8EACE /* Resources */,
 				A262E87A27F17E956AE6A7D3 /* Copy Pods Resources */,
 				0E022981DBF1316122DDCF78 /* Upload Bugsnag dSYM */,
+				C8852F2FDBC4C4D128818350 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2551,6 +2713,13 @@
 					505351E918F76550003C531E = {
 						DevelopmentTeam = A722HEF3XB;
 					};
+					5082778F1BC8925000B4340B = {
+						CreatedOnToolsVersion = 7.0.1;
+					};
+					508277AF1BC8938200B4340B = {
+						CreatedOnToolsVersion = 7.0.1;
+						TestTargetID = 5082778F1BC8925000B4340B;
+					};
 					86B941DB1758056B00B8EACE = {
 						DevelopmentTeam = A722HEF3XB;
 						SystemCapabilities = {
@@ -2570,6 +2739,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 86B941921757FD6300B8EACE;
 			productRefGroup = 86B9419C1757FD6300B8EACE /* Products */;
@@ -2583,6 +2753,8 @@
 				504E9C9118C9322100402BC3 /* Ads Tests */,
 				505351E918F76550003C531E /* MediationTestApp */,
 				86C4913D1B27E75B00A84B2C /* MRAIDJShex */,
+				5082778F1BC8925000B4340B /* IntegrationTestHost */,
+				508277AF1BC8938200B4340B /* IntegrationTests */,
 			);
 		};
 /* End PBXProject section */
@@ -2609,6 +2781,23 @@
 				5053521318F76550003C531E /* Default-568h@2x.png in Resources */,
 				50310F9B1A2E894F00FDC9BC /* Launch Screen.xib in Resources */,
 				50B03A381A706C2B0086E444 /* Storyboard.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5082778E1BC8925000B4340B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				508277A21BC8925000B4340B /* LaunchScreen.storyboard in Resources */,
+				5082779F1BC8925000B4340B /* Assets.xcassets in Resources */,
+				5082779D1BC8925000B4340B /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		508277AE1BC8938200B4340B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2643,6 +2832,21 @@
 			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
 			showEnvVarsInLog = 0;
 		};
+		21040C03EA3DDC5BFC0658A9 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MediationTestApp/Pods-MediationTestApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		772E3B0BDD914296B2558664 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2656,6 +2860,36 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		776090AF4DF274FF82DC9AC1 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		792FA0C38DB7FA6435D2135F /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-IntegrationTests/Pods-IntegrationTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		86B943571758198100B8EACE /* Prepare Framework */ = {
@@ -2715,6 +2949,21 @@
 			shellPath = /bin/sh;
 			shellScript = "echo \"VAST: Building HZVASTSchema.h from HZvast_2.0.1.xsd (see Ads Build Phases settings)\"\nxxd -i HZvast_2.0.1.xsd > HZVASTSchema.h; echo $'//\\n//  HZVASTSchema.h\\n//  VAST\\n//\\n//  Autogenerated by xxd command - see build phases settings of Ads target.\\n//\\n//  HZVASTSchema.h contains the HZvast_2.0.1.xsd schema as a hex dump, used in HZVAST2Parser for validation.\\n' | cat - HZVASTSchema.h > out.h; mv out.h HZVASTSchema.h";
 		};
+		9EA50CD28078EE67EE51E1BF /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-IntegrationTests/Pods-IntegrationTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		A262E87A27F17E956AE6A7D3 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2746,6 +2995,36 @@
 			showEnvVarsInLog = 0;
 		};
 		BBA031DEA78CD8C4810D81F8 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		C8852F2FDBC4C4D128818350 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-HeyzapSDKTest/Pods-HeyzapSDKTest-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CEBE06E3F21E7349D60B0BC6 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2866,6 +3145,24 @@
 				505351F218F76550003C531E /* SDCSegmentedViewController.m in Sources */,
 				505351F318F76550003C531E /* BaseTestAppViewController.m in Sources */,
 				505351F418F76550003C531E /* SDKTestAppViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5082778C1BC8925000B4340B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5082779A1BC8925000B4340B /* ViewController.m in Sources */,
+				508277971BC8925000B4340B /* AppDelegate.m in Sources */,
+				508277941BC8925000B4340B /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		508277AC1BC8938200B4340B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				508277C01BCC07EA00B4340B /* TestHeyzapInterstitial.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3068,6 +3365,21 @@
 			target = 86B943291758108700B8EACE /* Ads */;
 			targetProxy = 505351EB18F76550003C531E /* PBXContainerItemProxy */;
 		};
+		508277A91BC892F000B4340B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 86B943291758108700B8EACE /* Ads */;
+			targetProxy = 508277A81BC892F000B4340B /* PBXContainerItemProxy */;
+		};
+		508277B61BC8938200B4340B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5082778F1BC8925000B4340B /* IntegrationTestHost */;
+			targetProxy = 508277B51BC8938200B4340B /* PBXContainerItemProxy */;
+		};
+		508277BC1BCC078600B4340B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 86B943291758108700B8EACE /* Ads */;
+			targetProxy = 508277BB1BCC078600B4340B /* PBXContainerItemProxy */;
+		};
 		50BDCFF718B813C100265212 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 86B943291758108700B8EACE /* Ads */;
@@ -3099,6 +3411,22 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
+		5082779B1BC8925000B4340B /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5082779C1BC8925000B4340B /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		508277A01BC8925000B4340B /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				508277A11BC8925000B4340B /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
 		86B941E41758056B00B8EACE /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -3119,7 +3447,6 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(PROJECT_DIR)",
@@ -3152,7 +3479,6 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(PROJECT_DIR)",
@@ -3185,8 +3511,6 @@
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
 					"$(PROJECT_DIR)",
 				);
-				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3206,12 +3530,12 @@
 					"$(inherited)",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.EnterpriseHeyzap.HeyzapSDKTest;
 				PRODUCT_NAME = MediationTestApp;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
@@ -3229,8 +3553,6 @@
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
 					"$(PROJECT_DIR)",
 				);
-				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HeyzapSDKTest/HeyzapSDKTest-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3250,12 +3572,151 @@
 					"$(inherited)",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.EnterpriseHeyzap.HeyzapSDKTest;
 				PRODUCT_NAME = MediationTestApp;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		508277A51BC8925000B4340B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = IntegrationTestHost/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(SDKROOT)/usr/lib/system",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"-lxml2",
+					"-ObjC",
+					"-all_load",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.EnterpriseHeyzap.HeyzapSDKTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		508277A61BC8925000B4340B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = IntegrationTestHost/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(SDKROOT)/usr/lib/system",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"-lxml2",
+					"-ObjC",
+					"-all_load",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.EnterpriseHeyzap.HeyzapSDKTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		508277B81BC8938200B4340B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8D0FD61BAFAF524DC96E7456 /* Pods-IntegrationTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = IntegrationTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = Heyzap.IntegrationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IntegrationTestHost.app/IntegrationTestHost";
+			};
+			name = Debug;
+		};
+		508277B91BC8938200B4340B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C87E43F3D43BB6B0824C5628 /* Pods-IntegrationTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = IntegrationTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = Heyzap.IntegrationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IntegrationTestHost.app/IntegrationTestHost";
 			};
 			name = Release;
 		};
@@ -3306,6 +3767,7 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -3375,6 +3837,7 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -3603,6 +4066,24 @@
 			buildConfigurations = (
 				5053521618F76550003C531E /* Debug */,
 				5053521718F76550003C531E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		508277A41BC8925000B4340B /* Build configuration list for PBXNativeTarget "IntegrationTestHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				508277A51BC8925000B4340B /* Debug */,
+				508277A61BC8925000B4340B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		508277B71BC8938200B4340B /* Build configuration list for PBXNativeTarget "IntegrationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				508277B81BC8938200B4340B /* Debug */,
+				508277B91BC8938200B4340B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
