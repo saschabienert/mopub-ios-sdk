@@ -1,6 +1,6 @@
 machine:
   xcode:
-    version: "6.3.1" # We should try to use the latest Xcode available
+    version: "7.0" # We should try to use the latest Xcode available
 
 dependencies:
   override:
@@ -10,5 +10,5 @@ test:
   override:
     - xcodebuild -showsdks
     - xcrun simctl list
-    - ./runUnitTests.sh 8.3
-    - ./runUnitTests.sh 7.1
+    - ./runUnitTests.sh 9.0
+    - ./runUnitTests.sh 8.4
