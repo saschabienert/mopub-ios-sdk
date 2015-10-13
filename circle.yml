@@ -4,11 +4,14 @@ machine:
 
 dependencies:
   override:
-    - "cd Heyzap && pod install"
+    - bundle install
+    - "cd Heyzap && bundle exec pod install"
 
 test:
   override:
     - xcodebuild -showsdks
     - xcrun simctl list
-    - ./runUnitTests.sh 9.0
-    - ./runUnitTests.sh 8.4
+    - ./runTests.sh 9.0 Ads
+    - ./runTests.sh 8.4 Ads
+    - ./runTests.sh 9.0 IntegrationTestHost
+    - ./runTests.sh 8.4 IntegrationTestHost
