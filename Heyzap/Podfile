@@ -27,7 +27,12 @@ target :MediationTestApp, :exclusive => true do
   pod 'Leadbolt' # Vendored by Heyzap
 end
 
-target :"Ads Tests", :exclusive => true do
+target :"Ads Tests", :exclusive => true do # Unit Tests
    pod 'Kiwi'
    pod 'OHHTTPStubs'
+end
+
+target 'IntegrationTests', :exclusive => true do
+  pod 'KIF', :configurations => ['Debug']
+  pod 'OCMockito'
 end
