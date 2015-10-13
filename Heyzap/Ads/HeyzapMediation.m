@@ -373,7 +373,8 @@
         fetchOptions.creativeTypesFetchesFinished = [fetchOptions.creativeTypesFetchesFinished setByAddingObject:@(creativeType)];
         NSMutableSet *creativeTypesLeftToFetch = [fetchOptions.creativeTypesToFetch mutableCopy];
         [creativeTypesLeftToFetch minusSet:fetchOptions.creativeTypesFetchesFinished];
-        if ([creativeTypesLeftToFetch count] == 0) {
+        
+        if ([creativeTypesLeftToFetch count] == 0 && !fetchOptions.alreadyNotifiedDelegateOfSuccess) {
             HZILog(@"Fetch failed for all creativeTypes. Notifying delegate. tag: %@ requesting adType: %@", fetchOptions.tag, NSStringFromAdType(fetchOptions.requestingAdType));
             NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Heyzap was unable to fetch an ad from any of the available networks for creative types: [%@] and tag: [%@] via ad type: %@.", [ hzMap([fetchOptions.creativeTypesToFetch allObjects], ^NSString *(NSNumber * number){return NSStringFromCreativeType(hzCreativeTypeFromNSNumber(number));}) componentsJoinedByString:@", "], fetchOptions.tag, NSStringFromAdType(fetchOptions.requestingAdType)]}];
             
