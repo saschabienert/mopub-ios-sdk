@@ -61,6 +61,10 @@
                                                   dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.appID != nil;
+}
+
 - (void) toggleLogging {
     [[HZUnityAds sharedInstance] setDebugMode:[self isLoggingEnabled]];
 }
@@ -90,7 +94,7 @@
 NSString * const kHZNetworkName = @"mobile";
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.appID, @"game_id");
+    RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs a Game ID set up on your dashboard.", [self humanizedName]]));
     
     [self toggleLogging];
     

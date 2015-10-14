@@ -109,6 +109,8 @@
 
 - (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType;
 
+- (BOOL) hasNecessaryCredentials;
+
 - (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType; // For networks that have multiple, optional credentials. This must be called after the network has been initialized.
 // Maybe pass credentials immediately on creating the instance, and store them there?
 // I really dislike how it's no longer possible to statically tell whether a network has been initialized or not.

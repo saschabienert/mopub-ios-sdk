@@ -20,12 +20,11 @@
 
 @implementation HZMediationPersistentConfig
 
-- (instancetype)initWithCachingService:(HZCachingService *)cachingService isTestApp:(BOOL)isTestApp {
+- (instancetype)initWithCachingService:(HZCachingService *)cachingService {
     HZParameterAssert(cachingService);
     self = [super init];
     if (self) {
         _cachingService = cachingService;
-        _isTestApp = isTestApp;
         _writeVersion = 0;
     }
     return self;
@@ -44,47 +43,27 @@
 }
 
 - (void)addDisabledNetwork:(NSString *)disabledNetwork {
-    if (!self.isTestApp) {
-        return;
-    }
-    
     [self.disabledNetworks addObject:disabledNetwork];
     [self storeNetworksToDisk];
 }
 
 - (void)addDisabledNetworks:(NSSet *)disabledNetworks {
-    if (!self.isTestApp) {
-        return;
-    }
-    
     [self.disabledNetworks unionSet:disabledNetworks];
     [self storeNetworksToDisk];
 }
 
 - (void)removeDisabledNetwork:(NSString *)networkName {
-    if (!self.isTestApp) {
-        return;
-    }
-    
     [self.disabledNetworks removeObject:networkName];
     [self storeNetworksToDisk];
 }
 
 - (void)removeDisabledNetworks:(NSSet *)networks {
-    if (!self.isTestApp) {
-        return;
-    }
-    
     [self.disabledNetworks minusSet:networks];
     [self storeNetworksToDisk];
 }
 
 - (BOOL)isNetworkDisabled:(NSString *)networkName {
-    if (self.isTestApp) {
-        return [self.disabledNetworks containsObject:networkName];
-    } else {
-        return NO;
-    }
+    return [self.disabledNetworks containsObject:networkName];
 }
 
 - (BOOL)isNetworkEnabled:(NSString *)networkName {

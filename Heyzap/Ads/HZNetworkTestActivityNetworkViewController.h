@@ -32,9 +32,10 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "HZBaseAdapter.h"
 
-@interface HZTestActivityViewController : UITableViewController
+@interface HZNetworkTestActivityNetworkViewController : UIViewController
 
-+ (void) show;
-- (BOOL) showNetworkEnableSwitch;
+- (instancetype) initWithNetwork:(HZBaseAdapter *)network rootVC:(UIViewController *)rootVC available:(BOOL)available hasCredentials:(BOOL)hasCredentials enabled:(BOOL)enabled;
+
 @end

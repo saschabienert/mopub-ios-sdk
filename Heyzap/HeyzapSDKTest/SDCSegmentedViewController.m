@@ -231,6 +231,9 @@ NSInteger const DefaultSegmentIndex = 0;
             [self.segmentedControl setTitle:viewController.title forSegmentAtIndex:index];
         }
     }
+    
+    self.navigationItem.rightBarButtonItems = viewController.navigationItem.rightBarButtonItems;
+    self.navigationItem.leftBarButtonItems = viewController.navigationItem.leftBarButtonItems;
 }
 
 #pragma mark - KVO

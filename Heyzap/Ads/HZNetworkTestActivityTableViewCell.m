@@ -6,22 +6,22 @@
 //  Copyright (c) 2015 Heyzap. All rights reserved.
 //
 
-#import "HZTestActivityTableViewCell.h"
+#import "HZNetworkTestActivityTableViewCell.h"
 #import "HZBaseAdapter.h"
 #import "HZMediationPersistentConfig.h"
 #import "HZDevice.h"
 
-@interface HZTestActivityTableViewCell()
+@interface HZNetworkTestActivityTableViewCell()
 
 @property (nonatomic, strong) HZMediationPersistentConfig *config;
 @property (nonatomic, strong) UISwitch *networkOnSwitch;
 @property (nonatomic, weak) HZBaseAdapter *adapter;
-@property (nonatomic, weak) HZTestActivityViewController *tableViewController;
+@property (nonatomic, weak) HZNetworkTestActivityViewController *tableViewController;
 @end
 
-@implementation HZTestActivityTableViewCell
+@implementation HZNetworkTestActivityTableViewCell
 
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier persistentConfig:(HZMediationPersistentConfig *)config tableViewController:(HZTestActivityViewController *)tableViewController{
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier persistentConfig:(HZMediationPersistentConfig *)config tableViewController:(HZNetworkTestActivityViewController *)tableViewController{
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     HZParameterAssert(config);
     if (self) {

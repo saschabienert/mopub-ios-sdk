@@ -36,8 +36,8 @@
 #import "HZAdFetchRequest.h"
 #import "HZMediationConstants.h"
 #import "HZMediationAPIClient.h"
-#import "HZTestActivityViewController.h"
-#import "HZTestActivityNetworkViewController.h"
+#import "HZNetworkTestActivityViewController.h"
+#import "HZNetworkTestActivityNetworkViewController.h"
 #import "HZDispatch.h"
 #import "HZUnityAds.h"
 #import "HZDictionaryUtils.h"
@@ -45,48 +45,22 @@
 #import "HZAbstractHeyzapAdapter.h"
 #import "HZMediationPersistentConfig.h"
 #import "HZUtils.h"
-#import "HZTestActivityTableViewCell.h"
+#import "HZNetworkTestActivityTableViewCell.h"
 #import "HZUINavigationController.h"
 
-@interface HZTestActivityViewController()
+@interface HZNetworkTestActivityViewController() <HZMediationTestSuitePage>
 
-@property (nonatomic) BOOL statusBarHidden;
 @property (nonatomic) UIViewController *rootVC;
 @property (nonatomic) NSArray<Class> *allNetworks;
 @property (nonatomic) NSSet<HZBaseAdapter *> *availableNetworks;
-@property (nonatomic) NSSet<HZBaseAdapter *> *initializedNetworks;
+@property (nonatomic) NSSet<HZBaseAdapter *> *networksWithCredentials;
 @property (nonatomic) NSSet<HZBaseAdapter *> *enabledNetworks;
 @property (nonatomic) NSMutableArray<NSNumber *> *integrationStatuses;
 @property (nonatomic) UILabel *chooseLabel;
-
 @end
 
-@implementation HZTestActivityViewController
+@implementation HZNetworkTestActivityViewController
 
-#pragma mark - Test activity entry point
-
-+ (void) show {
-    HZDLog(@"Showing test activity view controller");
-    
-    [[HeyzapMediation sharedInstance] start];
-    
-    HZTestActivityViewController *vc = [[self alloc] init];
-    
-    // save whether the status bar is hidden
-    vc.statusBarHidden = [UIApplication sharedApplication].statusBarHidden;
-    
-    // check for a root view controller
-    vc.rootVC = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-    if (!vc.rootVC) {
-        HZDLog(@"Heyzap requires a root view controller to display the test activity. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
-        return;
-    }
-    
-    // take over the screen
-    [[UIApplication sharedApplication] setStatusBarHidden: YES];
-    HZUINavigationController *nav = [[HZUINavigationController alloc] initWithRootViewController:vc orientations:UIInterfaceOrientationMaskAll];
-    [vc.rootVC presentViewController:nav animated:YES completion:nil];
-}
 
 #pragma mark - View lifecycle methods
 
@@ -97,35 +71,14 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     }
     
-    if([self.navigationController.navigationBar respondsToSelector:@selector(barTintColor)]){
-        self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.0/255.0 alpha:1.0];
-    }
-    
-    self.title = @"Heyzap Mediation Test";
-    UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(hide)];
-    [self.navigationItem setLeftBarButtonItem:button animated:NO];
-    
-    UISwitch *allNeworksEnableSwitch;
-    if ([self showNetworkEnableSwitch]) {
-        allNeworksEnableSwitch = [[UISwitch alloc] init];
-        [allNeworksEnableSwitch addTarget:self action:@selector(allNetworksEnableSwitchToggled:) forControlEvents:UIControlEventValueChanged];
-        [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc]initWithCustomView:allNeworksEnableSwitch]];
-    }
-    self.navigationController.navigationBar.titleTextAttributes = nil;
+    [self.delegate didLoad:self];
     
     self.view.backgroundColor = [UIColor whiteColor];
-    
-    // disable segmentation for the test activity
-    [[HeyzapMediation sharedInstance] enableSegmentation:NO];
     
     [self makeView];
     
     //fetch ad list
-    [self checkNetworkInfo:self.refreshControl completion:^(BOOL success){
-        // if more than half the networks are disabled already, default switch to off
-        // else default to on
-        [allNeworksEnableSwitch setOn:[[[HeyzapMediation sharedInstance].persistentConfig allDisabledNetworks] count] < (self.allNetworks.count/2)];
-    }];
+    [self checkNetworkInfo:self.refreshControl completion:nil];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -142,18 +95,6 @@
 }
 
 
-#pragma mark - UI action methods
-
-- (void) hide {
-    HZDLog(@"Hiding test activity view controller");
-    
-    // re-enable segmentation after the test activity closes
-    [[HeyzapMediation sharedInstance] enableSegmentation:YES];
-    
-    [self.rootVC dismissViewControllerAnimated:YES completion:nil];
-    [[UIApplication sharedApplication] setStatusBarHidden:self.statusBarHidden];
-}
-
 #pragma mark - UITableViewDelegate and UITableViewDataSource methods
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -163,10 +104,10 @@
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     HZBaseAdapter *network = (HZBaseAdapter *)[[self.allNetworks objectAtIndex:indexPath.row] sharedAdapter];
     
-    HZTestActivityTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
+    HZNetworkTestActivityTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentifier"];
     
     if (cell == nil){
-        cell = [[HZTestActivityTableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"reuseIdentifier" persistentConfig:[HeyzapMediation sharedInstance].persistentConfig tableViewController:self];
+        cell = [[HZNetworkTestActivityTableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"reuseIdentifier" persistentConfig:[HeyzapMediation sharedInstance].persistentConfig tableViewController:self];
     }
     
     [cell configureWithNetwork:network integratedSuccessfully:[self.integrationStatuses[indexPath.row] boolValue]];
@@ -187,10 +128,10 @@
     HZBaseAdapter *network = [networkClass sharedAdapter];
     HZDLog(@"Current network adapter: %@", network);
     
-    HZTestActivityNetworkViewController *networkVC = [[HZTestActivityNetworkViewController alloc] initWithNetwork:network
+    HZNetworkTestActivityNetworkViewController *networkVC = [[HZNetworkTestActivityNetworkViewController alloc] initWithNetwork:network
                                                                                                            rootVC:self.rootVC
                                                                                                         available:[self.availableNetworks containsObject:network]
-                                                                                                      initialized:[self.initializedNetworks containsObject:network]
+                                                                                                   hasCredentials:[self.networksWithCredentials containsObject:network]
                                                                                                           enabled:[self.enabledNetworks containsObject:network]];
     
     [self.navigationController pushViewController:networkVC animated:YES];
@@ -215,15 +156,31 @@
     self.tableView.dataSource = self;
     self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(self.tableView.frame.origin.x + 10,
                                                                               self.tableView.frame.origin.y,
-                                                                              self.tableView.frame.size.width - 10, 32)];
+                                                                              self.tableView.frame.size.width - 20, 60)];
     
     // choose network label
-    self.chooseLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.tableView.frame.origin.x + 10,
-                                                                 self.tableView.frame.origin.y,
-                                                                 self.tableView.frame.size.width - 10, 32)];
+    self.chooseLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.tableView.tableHeaderView.frame.origin.x + 10,
+                                                                 self.tableView.tableHeaderView.frame.size.height - 32,
+                                                                 140, 32)];
     self.chooseLabel.backgroundColor = [UIColor clearColor];
-    self.chooseLabel.font = [UIFont systemFontOfSize:12];
+    self.chooseLabel.font = [UIFont systemFontOfSize:14];
     self.chooseLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    
+    CGFloat buttonWidth = 50;
+    
+    UIButton *allOnButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    allOnButton.frame = CGRectMake(CGRectGetWidth(self.tableView.tableHeaderView.frame) - buttonWidth - 10, CGRectGetMidY(self.tableView.tableHeaderView.frame) - 20, buttonWidth, 40);
+    [allOnButton addTarget:self action:@selector(allOnButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    allOnButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+    [allOnButton setTitle:@"All On" forState:UIControlStateNormal];
+    [self.tableView.tableHeaderView addSubview:allOnButton];
+    
+    UIButton *allOffButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    allOffButton.frame = CGRectMake(CGRectGetMinX(allOnButton.frame) - buttonWidth - 10, CGRectGetMidY(self.tableView.tableHeaderView.frame) - 20, buttonWidth, 40);
+    [allOffButton addTarget:self action:@selector(allOffButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    allOffButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+    [allOffButton setTitle:@"All Off" forState:UIControlStateNormal];
+    [self.tableView.tableHeaderView addSubview:allOffButton];
     
     if (self.availableNetworks.count == 0) {
         self.chooseLabel.text = @"No SDKs are available";
@@ -238,6 +195,12 @@
     self.refreshControl = [[UIRefreshControl alloc] init];
     [self.refreshControl addTarget:self action:@selector(checkNetworkInfo:) forControlEvents:UIControlEventValueChanged];
     [self.refreshControl beginRefreshing];
+}
+
+- (void) infoButtonPressed {
+    NSString *msg = @"You can test individual network integrations from this screen. The switches on the right allow you to disable individual networks on this device for testing purposes. Turning a network off here will also turn it off in your app until you turn it back on (this setting persists across app loads).";
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Testing Individual Networks" message:msg delegate:NULL cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
 }
 
 
@@ -276,12 +239,12 @@
         }
         
         NSMutableSet *enabledNetworks = [NSMutableSet set];
-        NSMutableSet *initializedNetworks = [NSMutableSet set];
+        NSMutableSet *networksWithCredentials = [NSMutableSet set];
         NSArray *networks = [HZDictionaryUtils objectForKey:@"networks" ofClass:[NSArray class] dict:json];
         for (NSDictionary *mediator in networks) {
             BOOL available = NO;
             BOOL enabled = NO;
-            BOOL initialized = NO;
+            BOOL hasCredentials = NO;
             NSString *mediatorName = mediator[@"name"];
             
             Class mediatorClass = [HZBaseAdapter adapterClassForName:mediatorName];
@@ -307,21 +270,20 @@
             
             // check original initialization succeeded
             
-            if ([[HeyzapMediation sharedInstance] isAdapterInitialized:adapter]
-                || [adapter isKindOfClass:[HZAbstractHeyzapAdapter class]]) {
-                initialized = YES;
-                [initializedNetworks addObject:adapter];
+            if ([adapter hasNecessaryCredentials]) {
+                hasCredentials = YES;
+                [networksWithCredentials addObject:adapter];
             }
             
             // update this network's integration status
             NSUInteger index = [self.allNetworks indexOfObject:mediatorClass];
-            self.integrationStatuses[index] = @(available && enabled && initialized);
+            self.integrationStatuses[index] = @(available && enabled && hasCredentials);
         }
         
         self.enabledNetworks = enabledNetworks;
-        self.initializedNetworks = initializedNetworks;
+        self.networksWithCredentials = networksWithCredentials;
         HZDLog(@"Networks available: %@", self.availableNetworks);
-        HZDLog(@"Networks initialized: %@", self.initializedNetworks);
+        HZDLog(@"Networks with credentials: %@", self.networksWithCredentials);
         HZDLog(@"Networks enabled: %@", self.enabledNetworks);
         
         // update the table view, so that the checkboxes can change if necessary
@@ -361,18 +323,27 @@
 #pragma mark - Network enable/disable
      
 - (BOOL) showNetworkEnableSwitch {
-    return [HZDevice isHeyzapTestApp];
+    return YES;
 }
 
-- (void)allNetworksEnableSwitchToggled:(UISwitch *)theSwitch {
+- (void) setAllNetworksEnabled:(BOOL)enabled {
     NSSet * allNetworkNames = [[NSSet alloc]initWithArray:hzMap(self.allNetworks, ^NSString *(Class klass){return [[klass sharedAdapter] name];})];
-    if(theSwitch.isOn) {
+    if(enabled) {
         [[HeyzapMediation sharedInstance].persistentConfig removeDisabledNetworks:allNetworkNames];
     } else {
         [[HeyzapMediation sharedInstance].persistentConfig addDisabledNetworks:allNetworkNames];
     }
     
     [self.tableView reloadData];
+}
+
+
+- (void) allOffButtonPressed {
+    [self setAllNetworksEnabled:NO];
+}
+
+- (void) allOnButtonPressed {
+    [self setAllNetworksEnabled:YES];
 }
 
 @end

@@ -39,7 +39,7 @@
 #import "HZMediationSettings.h"
 #import "HZPaymentTransactionObserver.h"
 
-#import "HZTestActivityViewController.h"
+#import "HZNetworkTestActivityViewController.h"
 #import "HZDevice.h"
 #import "NSDictionary+HZDummyCategory.h"
 

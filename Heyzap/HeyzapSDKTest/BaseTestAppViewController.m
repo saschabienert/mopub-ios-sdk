@@ -31,6 +31,10 @@
     [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)]];
 }
 
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+}
+
 - (void)viewTapped:(UITapGestureRecognizer *)sender{
     [sender.view endEditing:YES];
 }

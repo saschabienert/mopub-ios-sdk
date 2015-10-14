@@ -67,6 +67,10 @@
     self.sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.sdkKey != nil;
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -95,7 +99,7 @@
 - (void) toggleLogging { HZDLog(@"Logs for %@ can only be enabled/disabled before initialization.", [[self class] humanizedName]); }
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.sdkKey, @"sdk_key");
+    RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs an SDK Key set up on your dashboard.", [self humanizedName]]));
     
     HZDLog(@"Initializing AppLovin with SDK Key: %@",self.sdkKey);
     HZALSdkSettings *settings = [HZALSdkSettings alloc];

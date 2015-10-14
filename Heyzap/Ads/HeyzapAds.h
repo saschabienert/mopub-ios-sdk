@@ -66,6 +66,7 @@
 @import SystemConfiguration;
 @import EventKit;
 @import EventKitUI;
+@import MessageUI;
 #endif
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {

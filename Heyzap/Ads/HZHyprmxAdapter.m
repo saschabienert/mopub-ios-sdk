@@ -46,6 +46,10 @@
                                                  dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.distributorID != nil;
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable {
@@ -65,7 +69,7 @@
 }
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.distributorID, @"distributorID");
+    RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs a Distributor ID set up on your dashboard.", [self humanizedName]]));
     
     NSString *adID = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
     
