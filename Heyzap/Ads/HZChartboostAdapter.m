@@ -57,7 +57,18 @@
 }
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs an App ID and an App Signature set up on your dashboard.", [self humanizedName]]));
+    if (![self hasNecessaryCredentials]) {
+        NSMutableArray *erroredCredentials = [NSMutableArray array];
+        if (!self.appID){
+            [erroredCredentials addObject:@"App ID"];
+        }
+        
+        if (!self.appSignature) {
+            [erroredCredentials addObject:@"App Signature"];
+        }
+        
+        RETURN_ERROR_UNLESS(NO, ([NSString stringWithFormat:@"%@ needs an App ID and an App Signature set up on your dashboard, you're missing these: [%@]", [self humanizedName], [erroredCredentials componentsJoinedByString:@", "]]));
+    }
     
     if ([HZChartboost respondsToSelector:@selector(setMediation:withVersion:)]) {
         NSMethodSignature *signature = [HZChartboost methodSignatureForSelector:@selector(setMediation:withVersion:)];

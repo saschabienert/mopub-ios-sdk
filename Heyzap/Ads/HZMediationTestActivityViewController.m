@@ -221,6 +221,10 @@ typedef enum {
     self.viewJustLoaded = YES;
 }
 
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+}
+
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
     
@@ -279,10 +283,19 @@ typedef enum {
     [sender.view endEditing:YES];
 }
 
++(NSDateFormatter *)sharedDateFormatter {
+    static NSDateFormatter *sharedDateFormatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedDateFormatter = [[NSDateFormatter alloc]init];
+        [sharedDateFormatter setDateFormat:@"[h:mm:ss a]"];
+    });
+    
+    return sharedDateFormatter;
+}
+
 - (void)logToConsole:(NSString *)consoleString {
-    NSDateFormatter * format = [[NSDateFormatter alloc]init];
-    [format setDateFormat:@"[h:mm:ss a]"];
-    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[format stringFromDate:[NSDate date]],consoleString];
+    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[[[self class] sharedDateFormatter] stringFromDate:[NSDate date]],consoleString];
     [self bottomButton];
 }
 

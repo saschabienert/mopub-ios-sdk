@@ -895,14 +895,23 @@ const CGFloat kLeftMargin = 10;
 
 #pragma mark - Console
 
++(NSDateFormatter *)sharedDateFormatter {
+    static NSDateFormatter *sharedDateFormatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedDateFormatter = [[NSDateFormatter alloc]init];
+        [sharedDateFormatter setDateFormat:@"[h:mm:ss a]"];
+    });
+    
+    return sharedDateFormatter;
+}
+
 - (void)logToConsole:(NSString *)consoleString {
     if (!self.logCallbacksSwitch.isOn) {
         return;
     }
     
-    NSDateFormatter * format = [[NSDateFormatter alloc]init];
-    [format setDateFormat:@"[h:mm:ss a]"];
-    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[format stringFromDate:[NSDate date]],consoleString];
+    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[[[self class] sharedDateFormatter] stringFromDate:[NSDate date]],consoleString];
     if (self.scrollSwitch.isOn) {
         [self.consoleTextView scrollRangeToVisible:NSMakeRange(self.consoleTextView.text.length, 0)];
     }

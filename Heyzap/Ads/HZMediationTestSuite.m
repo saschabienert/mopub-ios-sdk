@@ -41,7 +41,6 @@
         segmentedController.edgesForExtendedLayout = UIRectEdgeNone;
     }
     segmentedController.position = SDCSegmentedViewControllerControlPositionNavigationBar;
-    //segmentedController.segmentedControl.tintColor = [UIColor whiteColor];
     
     self.navController = [[HZUINavigationController alloc] initWithRootViewController: segmentedController orientations:UIInterfaceOrientationMaskAll];
     
