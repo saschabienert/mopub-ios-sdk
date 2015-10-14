@@ -23,6 +23,8 @@
 @class HZBannerAdOptions;
 @class HZMediationPersistentConfig;
 
+extern NSString * const HZMediationDidReceiveAdNotification;
+
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
 @property (nonatomic, readonly) void (^networkCallbackBlock)(NSString *network, NSString *callback);

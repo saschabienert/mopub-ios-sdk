@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0610"
+   LastUpgradeVersion = "0700"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,46 +14,60 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-               BuildableName = "Integration Tests.app"
-               BlueprintName = "Integration Tests"
+               BlueprintIdentifier = "5082778F1BC8925000B4340B"
+               BuildableName = "IntegrationTestHost.app"
+               BlueprintName = "IntegrationTestHost"
                ReferencedContainer = "container:Heyzap.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      buildConfiguration = "Debug">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "508277AF1BC8938200B4340B"
+               BuildableName = "IntegrationTests.xctest"
+               BlueprintName = "IntegrationTests"
+               ReferencedContainer = "container:Heyzap.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Integration Tests.app"
-            BlueprintName = "Integration Tests"
+            BlueprintIdentifier = "5082778F1BC8925000B4340B"
+            BuildableName = "IntegrationTestHost.app"
+            BlueprintName = "IntegrationTestHost"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <AdditionalOptions>
+      </AdditionalOptions>
    </TestAction>
    <LaunchAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Integration Tests.app"
-            BlueprintName = "Integration Tests"
+            BlueprintIdentifier = "5082778F1BC8925000B4340B"
+            BuildableName = "IntegrationTestHost.app"
+            BlueprintName = "IntegrationTestHost"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -61,17 +75,18 @@
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
+      buildConfiguration = "Release"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "50A36ACE18C9405A00FA84F0"
-            BuildableName = "Integration Tests.app"
-            BlueprintName = "Integration Tests"
+            BlueprintIdentifier = "5082778F1BC8925000B4340B"
+            BuildableName = "IntegrationTestHost.app"
+            BlueprintName = "IntegrationTestHost"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
