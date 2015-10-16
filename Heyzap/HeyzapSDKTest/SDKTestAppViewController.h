@@ -23,4 +23,6 @@ extern NSString * const kViewAccessibilityLabel;
 - (void) logCallback:(NSString *)callbackName;
 - (void) logCallback:(NSString *)callbackName withString:(NSString *)string;
 
+- (void) otherAudioIsPlaying:(BOOL)isPlaying;
+
 @end
