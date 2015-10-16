@@ -7,6 +7,8 @@
 //  Copyright 2011 Heyzap. All rights reserved.
 //
 
+@import AVFoundation;
+
 #import "SDKTestAppViewController.h"
 
 #import <AdSupport/ASIdentifierManager.h>
@@ -65,6 +67,7 @@ typedef enum {
 @property (nonatomic, strong) UISwitch * logCallbacksSwitch;
 @property (nonatomic, strong) UISwitch * pauseExpensiveWorkSwitch;
 @property (nonatomic, strong) UISwitch * scrollSwitch;
+@property (nonatomic, strong) UISwitch * musicSwitch;
 
 @property (nonatomic, strong) UIButton *showButton;
 
@@ -81,6 +84,11 @@ typedef enum {
 
 @property (nonatomic) UITextField *creativeTypeTextField;
 @property (nonatomic) UITextField *adTagField;
+
+@property (strong, nonatomic) AVAudioSession *audioSession;
+@property (strong, nonatomic) AVAudioPlayer *backgroundMusicPlayer;
+@property (nonatomic) BOOL backgroundMusicPlaying;
+@property (nonatomic) BOOL backgroundMusicShouldPlay;
 
 @end
 
@@ -483,10 +491,20 @@ const CGFloat kLeftMargin = 10;
     self.logCallbacksSwitch.on = self.scrollSwitch.on = YES;
     self.pauseExpensiveWorkSwitch.on = NO;
     
+    UILabel *musicLabel = [self switchLabelWithFrameX:CGRectGetMinX(self.pauseExpensiveWorkSwitch.frame) + 5 Y:CGRectGetMaxY(self.pauseExpensiveWorkSwitch.frame) + 5 text:@"BG Music"];
+    pauseExpensiveWork.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
+    [self.scrollView addSubview: musicLabel];
+    
+    self.musicSwitch = [[UISwitch alloc] init];
+    self.musicSwitch.frame = CGRectMake(CGRectGetMinX(self.pauseExpensiveWorkSwitch.frame), CGRectGetMaxY(musicLabel.frame), 40.0, 40.0);
+    self.musicSwitch.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
+    [self.musicSwitch addTarget:self action:@selector(musicSwitchFlipped:) forControlEvents:UIControlEventValueChanged];
+    [self.scrollView addSubview: self.musicSwitch];
+    
     UIButton *openLastFetchButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
     [openLastFetchButton setTitle: @"Open Last Fetch in Safari" forState: UIControlStateNormal];
     [openLastFetchButton addTarget: self action: @selector(openLastFetch) forControlEvents: UIControlEventTouchUpInside];
-    openLastFetchButton.frame =  CGRectMake(kLeftMargin, CGRectGetMaxY(debugSwitch.frame) + 5.0, 200.0, 50.0);
+    openLastFetchButton.frame =  CGRectMake(kLeftMargin, CGRectGetMaxY(self.musicSwitch.frame) + 5.0, 200.0, 50.0);
     [self.scrollView addSubview: openLastFetchButton];
     
     // IAP
@@ -527,6 +545,11 @@ const CGFloat kLeftMargin = 10;
         subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
     }
     self.scrollView.contentSize = (CGSize) { subviewContainingRect.size.width, subviewContainingRect.size.height + 80 };
+    
+    
+    // Audio
+    [self configureAudioSession];
+    [self configureAudioPlayer];
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{
@@ -985,6 +1008,63 @@ const CGFloat kLeftMargin = 10;
     self.creativeTypeTextField.font = [UIFont italicSystemFontOfSize:18];
     self.creativeTypeTextField.textColor = [UIColor lightGrayColor];
     self.creativeTypeTextField.text = @"Creative type";
+}
+
+
+#pragma mark - Audio
+
+- (void) configureAudioSession {
+    self.audioSession = [AVAudioSession sharedInstance];
+    
+    NSError *setCategoryError = nil;
+    [self.audioSession setCategory:AVAudioSessionCategoryAmbient error:&setCategoryError];
+    if (setCategoryError) {
+        NSLog(@"Error setting audio session category! code:%ld error: %@", (long)[setCategoryError code], setCategoryError);
+    }
+}
+
+- (void)configureAudioPlayer {
+    NSString *backgroundMusicPath = [[NSBundle mainBundle] pathForResource:@"elevator_music" ofType:@"mp3"];
+    NSURL *backgroundMusicURL = [NSURL fileURLWithPath:backgroundMusicPath];
+    self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backgroundMusicURL error:nil];
+    self.backgroundMusicPlayer.numberOfLoops = -1;	// loop forever
+    [self.backgroundMusicPlayer prepareToPlay];
+}
+
+- (void)tryPlayMusic {
+    if (self.backgroundMusicPlaying) {
+        return;
+    }
+    [self.backgroundMusicPlayer prepareToPlay];
+    [self.backgroundMusicPlayer play];
+    self.backgroundMusicPlaying = YES;
+}
+
+- (void) tryPauseMusic {
+    if (self.backgroundMusicPlaying) {
+        [self.backgroundMusicPlayer pause];
+        self.backgroundMusicPlaying = NO;
+    }
+}
+
+- (void) musicSwitchFlipped:(UISwitch *)sender {
+    self.backgroundMusicShouldPlay = sender.isOn;
+    if (sender.isOn) {
+        [self tryPlayMusic];
+    } else {
+        [self tryPauseMusic];
+    }
+}
+
+// Heyzap audio callbacks from ads will call this from SDKTestAppViewControllerAdCallbackDelegate
+- (void) otherAudioIsPlaying:(BOOL)isPlaying {
+    if (self.backgroundMusicShouldPlay) {
+        if (isPlaying) {
+            [self tryPauseMusic];
+        } else {
+            [self tryPlayMusic];
+        }
+    }
 }
 
 @end

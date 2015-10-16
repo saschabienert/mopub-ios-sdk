@@ -404,6 +404,7 @@
 		8AA693151B1D13290074366D /* HZPaymentTransactionObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AA693131B1D13290074366D /* HZPaymentTransactionObserver.h */; };
 		8AA693161B1D13290074366D /* HZPaymentTransactionObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA693141B1D13290074366D /* HZPaymentTransactionObserver.m */; };
 		990300B41BA3939B008D9AEF /* HZBaseAdapter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 990300B31BA39399008D9AEF /* HZBaseAdapter_Internal.h */; };
+		990392011BD18C2A0034CCF8 /* elevator_music.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 990392001BD18C2A0034CCF8 /* elevator_music.mp3 */; settings = {ASSET_TAGS = (); }; };
 		9930D7201B30F614003C3F3C /* HZVideoAdDisplayOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9930D71F1B30F614003C3F3C /* HZVideoAdDisplayOptions.m */; };
 		9930D7221B30F626003C3F3C /* HZVideoAdDisplayOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9930D7211B30F626003C3F3C /* HZVideoAdDisplayOptions.h */; };
 		9934559C1BC83F760089C55C /* HZMediationTestActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9934559A1BC83F760089C55C /* HZMediationTestActivityViewController.h */; settings = {ASSET_TAGS = (); }; };
@@ -961,6 +962,7 @@
 		8D0FD61BAFAF524DC96E7456 /* Pods-IntegrationTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IntegrationTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IntegrationTests/Pods-IntegrationTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9071AF29AC084D728A8E2FAA /* libPods-Integration Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Integration Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		990300B31BA39399008D9AEF /* HZBaseAdapter_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZBaseAdapter_Internal.h; sourceTree = "<group>"; };
+		990392001BD18C2A0034CCF8 /* elevator_music.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = elevator_music.mp3; sourceTree = "<group>"; };
 		9930D71F1B30F614003C3F3C /* HZVideoAdDisplayOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZVideoAdDisplayOptions.m; sourceTree = "<group>"; };
 		9930D7211B30F626003C3F3C /* HZVideoAdDisplayOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZVideoAdDisplayOptions.h; sourceTree = "<group>"; };
 		9934559A1BC83F760089C55C /* HZMediationTestActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationTestActivityViewController.h; sourceTree = "<group>"; };
@@ -2062,6 +2064,7 @@
 		86B941E11758056B00B8EACE /* SDK Test App */ = {
 			isa = PBXGroup;
 			children = (
+				99A05B121BD1685400069175 /* Resources */,
 				50A10DE81AE9BEF000001C4C /* Networking */,
 				507A456E19BF91DF00C7AEEA /* UI */,
 				504514C718B5A59100E00E6C /* BaseTestAppViewController.h */,
@@ -2367,6 +2370,14 @@
 				99B320651B87D1CF002632BF /* HZSegmentationControllerSpec.m */,
 			);
 			name = Segmentation;
+			sourceTree = "<group>";
+		};
+		99A05B121BD1685400069175 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				990392001BD18C2A0034CCF8 /* elevator_music.mp3 */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		99B3206A1B87D686002632BF /* Segmentation JSON */ = {
@@ -2832,6 +2843,7 @@
 				5053520F18F76550003C531E /* InfoPlist.strings in Resources */,
 				5053521018F76550003C531E /* Default.png in Resources */,
 				5053521118F76550003C531E /* Default@2x.png in Resources */,
+				990392011BD18C2A0034CCF8 /* elevator_music.mp3 in Resources */,
 				5053521318F76550003C531E /* Default-568h@2x.png in Resources */,
 				50310F9B1A2E894F00FDC9BC /* Launch Screen.xib in Resources */,
 				50B03A381A706C2B0086E444 /* Storyboard.storyboard in Resources */,
