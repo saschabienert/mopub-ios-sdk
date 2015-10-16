@@ -8,13 +8,14 @@
 
 #import "OHHTTPStubs+Heyzap.h"
 #import "OHHTTPStubsResponse+JSON.h"
+#import "NSString+Tests.h"
 
 @implementation OHHTTPStubs (Heyzap)
 
 + (id<OHHTTPStubsDescriptor>)stubRequestContainingString:(NSString *)string withJSON:(id)JSON
 {
     return [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return [request.URL.absoluteString containsString:@"fetch_ad"];
+        return [request.URL.absoluteString hzContainsString:string];
     } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
         return [OHHTTPStubsResponse responseWithJSONObject:JSON
                                                 statusCode:200
