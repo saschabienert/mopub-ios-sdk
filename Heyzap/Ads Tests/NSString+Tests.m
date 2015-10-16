@@ -10,10 +10,10 @@
 
 @implementation NSString (Tests)
 
-- (BOOL)containsString:(NSString *)string
+- (BOOL)hzContainsString:(NSString *)string
 {
     NSParameterAssert(string);
-    return [string rangeOfString:string].location != NSNotFound;
+    return [self rangeOfString:string].location != NSNotFound;
 }
 
 @end
