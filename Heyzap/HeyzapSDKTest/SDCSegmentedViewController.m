@@ -214,7 +214,7 @@ NSInteger const DefaultSegmentIndex = 0;
 
 									self.currentSelectedIndex = segmentedControl.selectedSegmentIndex;
 								} else {
-                                    NSLog(@"Not finished!");
+                                    //NSLog(@"Not finished!");
                                 }
                                 
 							}];

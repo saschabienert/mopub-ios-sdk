@@ -130,7 +130,7 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
         view = [[[[UIApplication sharedApplication] keyWindow] rootViewController] view];
         if (!view) {
             NSString *const errorMessage = [NSString stringWithFormat:@"No view provided to %@, and couldn't find a rootViewController. Please specify the view to place the banner in.",NSStringFromSelector(_cmd)];
-            NSLog(@"%@",errorMessage);
+            HZAlwaysLog(@"%@",errorMessage);
             @throw [NSException exceptionWithName:@"NoViewForBanner" reason:errorMessage userInfo:nil];
         }
     }
@@ -158,7 +158,7 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
                 const CGFloat bannerHeight = wrapper.frame.size.height;
                 
                 if (viewHeight < bannerHeight) {
-                    NSLog(@"WARNING: %@ is placing a banner in a view whose height (%f) is less than that of the banner (%f). Is your view configured correctly?",NSStringFromSelector(_cmd), viewHeight, bannerHeight);
+                    HZAlwaysLog(@"WARNING: %@ is placing a banner in a view whose height (%f) is less than that of the banner (%f). Is your view configured correctly?",NSStringFromSelector(_cmd), viewHeight, bannerHeight);
                 }
                 
                 CGRect tmpFrame = wrapper.frame;

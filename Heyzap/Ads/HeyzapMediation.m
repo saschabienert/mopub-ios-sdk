@@ -166,6 +166,9 @@ NSString * const HZMediationDidReceiveAdNotification = @"HZMediationDidReceiveAd
         HZILog(@"The following SDKs have been detected = %@",[[self class] commaSeparatedAdapterList]);
         [self.starter start];
         [self.mediateRequester start];
+        if ([[self.persistentConfig allDisabledNetworks] count] > 0) {
+            HZAlwaysLog(@"Heyzap Mediation starting with disabled networks. These networks have been disabled in the Mediation Debug Suite and will not fetch or show ads on this device until re-enabled: [%@]",[[[self.persistentConfig allDisabledNetworks] allObjects] componentsJoinedByString:@", "]);
+        }
     });
 }
 
@@ -241,7 +244,7 @@ NSString * const HZMediationDidReceiveAdNotification = @"HZMediationDidReceiveAd
 
 - (void)receivedStartHeaders:(NSDictionary *)headers {
     if (headers[@"heyzapLogging"]) {
-        NSLog(@"heyzapLogging header present; enabling verbose logging");
+        HZAlwaysLog(@"heyzapLogging header present; enabling verbose logging");
         [HZLog setDebugLevel:HZDebugLevelVerbose];
     }
     
@@ -250,8 +253,7 @@ NSString * const HZMediationDidReceiveAdNotification = @"HZMediationDidReceiveAd
         NSString *delayString = headers[@"showMediationDebugSuiteDelay"];
         NSInteger delayTime = delayString ? [delayString integerValue] : 7;
         
-        NSLog(@"showMediationDebugSuite header present; showing mediation debug suite after a delay");
-        NSLog(@"showMediationDebugSuiteDelay = %li",(long)delayTime);
+        HZAlwaysLog(@"showMediationDebugSuite header present; showing mediation debug suite after a delay of %li seconds",(long)delayTime);
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self showTestActivity];
@@ -589,7 +591,7 @@ NSString * const HZMediationDidReceiveAdNotification = @"HZMediationDidReceiveAd
 const unsigned long long adStalenessTimeout = 15;
 
 - (void)adapterDidShowAd:(HZBaseAdapter *)adapter {
-    NSLog(@"HeyzapMediation: ad shown from %@",[adapter name]);
+    HZAlwaysLog(@"Mediation: ad shown from %@",[adapter name]);
     [self sendNetworkCallback: HZNetworkCallbackShow forNetwork: [adapter name]];
     
     HZMediationCurrentShownAd *currentAd = self.currentShownAd;
@@ -974,7 +976,7 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
     for (Class adapterClass in [HeyzapMediation availableAdapters]) {
         [adapterNames addObject:[adapterClass name]];
     }
-    return [adapterNames componentsJoinedByString:@","];
+    return [adapterNames componentsJoinedByString:@", "];
 }
 
 + (NSSet *) availableAdapters {
