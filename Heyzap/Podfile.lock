@@ -14,22 +14,22 @@ PODS:
   - Kiwi (2.4.0)
   - Leadbolt (6.0)
   - Masonry (0.6.3)
-  - OCHamcrest (4.2.0)
-  - OCMockito (1.4.0):
+  - OCHamcrest (4.3.0)
+  - OCMockito (2.0.1):
     - OCHamcrest (~> 4.0)
-  - OHHTTPStubs (4.3.0):
-    - OHHTTPStubs/Default (= 4.3.0)
-  - OHHTTPStubs/Core (4.3.0)
-  - OHHTTPStubs/Default (4.3.0):
+  - OHHTTPStubs (HEAD based on 4.3.0):
+    - OHHTTPStubs/Default (= HEAD based on 4.3.0)
+  - OHHTTPStubs/Core (HEAD based on 4.3.0)
+  - OHHTTPStubs/Default (HEAD based on 4.3.0):
     - OHHTTPStubs/Core
     - OHHTTPStubs/JSON
     - OHHTTPStubs/NSURLSession
     - OHHTTPStubs/OHPathHelpers
-  - OHHTTPStubs/JSON (4.3.0):
+  - OHHTTPStubs/JSON (HEAD based on 4.3.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/NSURLSession (4.3.0):
+  - OHHTTPStubs/NSURLSession (HEAD based on 4.3.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/OHPathHelpers (4.3.0)
+  - OHHTTPStubs/OHPathHelpers (HEAD based on 4.3.0)
   - UnityAds (1.5.2)
   - VungleAdvertiserSDK (3.2.0)
 
@@ -46,7 +46,7 @@ DEPENDENCIES:
   - Leadbolt
   - Masonry
   - OCMockito
-  - OHHTTPStubs
+  - OHHTTPStubs (HEAD)
   - UnityAds
   - VungleAdvertiserSDK
 
@@ -71,8 +71,8 @@ SPEC CHECKSUMS:
   Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
   Leadbolt: 2599cdd53890689158e94bd93268ae118b43ed1e
   Masonry: ff105a956abcd19a618b2028b121cb638d7a8e2f
-  OCHamcrest: c14c0b3f4c4e99363e5b87d97bae38c4438b6d5d
-  OCMockito: 4981140c9a9ec06c31af40f636e3c0f25f27e6b2
+  OCHamcrest: cd63d27f48a266d4412c0b295b01b8f0940efa81
+  OCMockito: f92ad4c6fac2841a88558879cfe517c40aebf91e
   OHHTTPStubs: 0aec5755528693a165bd616cb79f69387de306a8
   UnityAds: 76f1a98bf40597f1c0aab01f65c700b7734dcbd9
   VungleAdvertiserSDK: c3ece1bf66a7f34688cfed832e2b12e321bbed03
