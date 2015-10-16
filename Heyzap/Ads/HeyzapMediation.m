@@ -9,6 +9,7 @@
 #import "HeyzapMediation.h"
 #import "HZBaseAdapter.h"
 #import "HZMediationAPIClient.h"
+#import "HZMediationJSONAPIClient.h"
 #import "HZDictionaryUtils.h"
 #import "HZMediationConstants.h"
 #import "HZAdFetchRequest.h"
@@ -51,6 +52,10 @@
 
 // Segmentation
 #import "HZImpressionHistory.h"
+
+// Errors
+#import "HZErrorReportingConfig.h"
+#import "HZErrorReporter.h"
 
 NSString * const HZMediationDidReceiveAdNotification = @"HZMediationDidReceiveAdNotification";
 
@@ -115,6 +120,9 @@ NSString * const HZMediationDidReceiveAdNotification = @"HZMediationDidReceiveAd
 {
     self = [super init];
     if (self) {
+        // Initialize the errorReporter first so we can report errors as soon as possible.
+        _errorReporter = [[HZErrorReporter alloc] initWithAPIClient:[HZMediationJSONAPIClient sharedClient] config:[[HZErrorReportingConfig alloc] initWithDictionary:@{}]];
+        
         _setupMediators = [NSSet set];
         _setupMediatorClasses = [NSSet set];
         _erroredMediatiorClasses = [NSSet set];
@@ -204,6 +212,10 @@ NSString * const HZMediationDidReceiveAdNotification = @"HZMediationDidReceiveAd
 
 - (void)startWithDictionary:(NSDictionary *const __nonnull)dictionary fromCache:(const BOOL)fromCache {
     HZILog(@"Mediation starting from %@", fromCache ? @"cache" : @"network");
+    NSDictionary *const errorReportingParams = [HZDictionaryUtils objectForKey:@"error_reporting" ofClass:[NSDictionary class] default:@{} dict:dictionary];
+    HZErrorReportingConfig *errorReporterConfig = [[HZErrorReportingConfig alloc] initWithDictionary:errorReportingParams];
+    [self.errorReporter updateConfig:errorReporterConfig];
+    
     [[self settings] setupWithDict:dictionary fromCache:fromCache];
     [self addCredentialsToAdapters:dictionary];
     [self.segmentationController setupFromMediationStart:dictionary completion:^void(BOOL successful){

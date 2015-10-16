@@ -1,19 +1,16 @@
 //
-//  HZAdsRequestSerializer.m
+//  HZMediationJSONRequestSerializer.m
 //  Heyzap
 //
-//  Created by Maximilian Tagher on 4/23/15.
+//  Created by Maximilian Tagher on 9/11/15.
 //  Copyright (c) 2015 Heyzap. All rights reserved.
 //
 
-#import "HZAdsRequestSerializer.h"
-#import "HZDevice.h"
-#import "HZUtils.h"
-#import "HeyzapAds.h"
-#import "HZAvailability.h"
+#import "HZMediationJSONRequestSerializer.h"
+#import "HZMediationRequestSerializer.h"
 #import "HZDefaultParameters.h"
 
-@implementation HZAdsRequestSerializer
+@implementation HZMediationJSONRequestSerializer
 
 - (instancetype)init {
     self = [super init];
@@ -30,13 +27,9 @@
     return [super requestWithMethod:method URLString:URLString parameters:parameters error:error];
 }
 
-#pragma mark - Default Parameters
-
 + (NSMutableDictionary *) defaultParamsWithDictionary: (NSDictionary *) dictionary {
-    NSMutableDictionary *params = [HZDefaultParameters baseDefaultParams];
-    if (dictionary) {
-        [params addEntriesFromDictionary: dictionary];
-    }
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:dictionary];
+    params[kHZEnvironmentParamsKey] = [HZDefaultParameters mediationDefaultParams];
     return params;
 }
 
