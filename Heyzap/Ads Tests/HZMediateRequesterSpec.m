@@ -66,7 +66,7 @@ describe(@"HZMediateRequester", ^{
         
         // Initially make the request fail.
         [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-            return [request.URL.absoluteString containsString:@"med.heyzap.com/mediate"];
+            return [request.URL.absoluteString hzContainsString:@"med.heyzap.com/mediate"];
         } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
             return [OHHTTPStubsResponse responseWithJSONObject:@{}
                                                     statusCode:500
@@ -97,7 +97,7 @@ describe(@"HZMediateRequester", ^{
         
         // Initially make the request fail.
         [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-            return [request.URL.absoluteString containsString:@"med.heyzap.com/mediate"];
+            return [request.URL.absoluteString hzContainsString:@"med.heyzap.com/mediate"];
         } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
             return [OHHTTPStubsResponse responseWithJSONObject:@{}
                                                     statusCode:500

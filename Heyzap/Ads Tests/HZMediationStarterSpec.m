@@ -72,7 +72,7 @@ describe(@"HZMediationStarter", ^{
         
         // Initially make the request fail.
         [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-            return [request.URL.absoluteString containsString:@"med.heyzap.com/start"];
+            return [request.URL.absoluteString hzContainsString:@"med.heyzap.com/start"];
         } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
             return [OHHTTPStubsResponse responseWithJSONObject:@{}
                                                     statusCode:500

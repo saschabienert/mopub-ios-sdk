@@ -10,6 +10,6 @@
 
 @interface NSString (Tests)
 
-- (BOOL)containsString:(NSString *)string;
+- (BOOL)hzContainsString:(NSString *)string;
 
 @end
