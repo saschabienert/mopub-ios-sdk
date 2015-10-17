@@ -976,7 +976,7 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
     for (Class adapterClass in [HeyzapMediation availableAdapters]) {
         [adapterNames addObject:[adapterClass name]];
     }
-    return [adapterNames componentsJoinedByString:@", "];
+    return [adapterNames componentsJoinedByString:@","];
 }
 
 + (NSSet *) availableAdapters {
