@@ -192,6 +192,10 @@
 		507A456319BE95B000C7AEEA /* HZStorePresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A456119BE95B000C7AEEA /* HZStorePresenter.m */; };
 		507A457019BF91ED00C7AEEA /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */; };
 		507A457419BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
+		5080E7041B9FAABF0065E685 /* HZErrorReportingConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5080E7021B9FAABF0065E685 /* HZErrorReportingConfig.h */; };
+		5080E7051B9FAABF0065E685 /* HZErrorReportingConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5080E7031B9FAABF0065E685 /* HZErrorReportingConfig.m */; };
+		5080E7081B9FB6990065E685 /* HZErrorReporterSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5080E7071B9FB6990065E685 /* HZErrorReporterSpec.m */; };
+		5080E70A1BA0A8310065E685 /* HZErrorReportingConfigSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5080E7091BA0A8310065E685 /* HZErrorReportingConfigSpec.m */; };
 		508277941BC8925000B4340B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 508277931BC8925000B4340B /* main.m */; };
 		508277971BC8925000B4340B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 508277961BC8925000B4340B /* AppDelegate.m */; };
 		5082779A1BC8925000B4340B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 508277991BC8925000B4340B /* ViewController.m */; };
@@ -203,10 +207,6 @@
 		508277AB1BC8930200B4340B /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ABB1A11BC8816C0096882B /* libxml2.tbd */; };
 		508277BD1BCC07A000B4340B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ABB1891BC87E8A0096882B /* libsqlite3.tbd */; };
 		508277C01BCC07EA00B4340B /* TestHeyzapInterstitial.m in Sources */ = {isa = PBXBuildFile; fileRef = 508277BF1BCC07EA00B4340B /* TestHeyzapInterstitial.m */; settings = {ASSET_TAGS = (); }; };
-		5080E7041B9FAABF0065E685 /* HZErrorReportingConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5080E7021B9FAABF0065E685 /* HZErrorReportingConfig.h */; };
-		5080E7051B9FAABF0065E685 /* HZErrorReportingConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5080E7031B9FAABF0065E685 /* HZErrorReportingConfig.m */; };
-		5080E7081B9FB6990065E685 /* HZErrorReporterSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5080E7071B9FB6990065E685 /* HZErrorReporterSpec.m */; };
-		5080E70A1BA0A8310065E685 /* HZErrorReportingConfigSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5080E7091BA0A8310065E685 /* HZErrorReportingConfigSpec.m */; };
 		509109351B66E5FB004464E7 /* HZMediationStarterSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 509109341B66E5FB004464E7 /* HZMediationStarterSpec.m */; };
 		509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 509B04351A44AA0300EC3ACF /* HZNativeAdImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		509B04381A44AA0300EC3ACF /* HZNativeAdImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B04361A44AA0300EC3ACF /* HZNativeAdImage.m */; };
@@ -459,9 +459,9 @@
 		998B1C0E1B83A398003C1437 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E62181B219AFB3CC0099BE8C /* libsqlite3.dylib */; };
 		998B1C111B83A50B003C1437 /* HZSegmentationSegmentSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 998B1C101B83A50B003C1437 /* HZSegmentationSegmentSpec.m */; };
 		998B1C191B84F9AD003C1437 /* HZCreativeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B1C181B84F9AD003C1437 /* HZCreativeType.h */; };
+		99A05AF41BCC7B2E00069175 /* HZBannerAdOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 50DB884B1AB0C0D9003C5758 /* HZBannerAdOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99A05AFB1BCEC31600069175 /* SDCSegmentedViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5045147D18B58C5A00E00E6C /* SDCSegmentedViewController.h */; settings = {ASSET_TAGS = (); }; };
 		99A05AFC1BCEC31C00069175 /* SDCSegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */; settings = {ASSET_TAGS = (); }; };
-		99A05AF41BCC7B2E00069175 /* HZBannerAdOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 50DB884B1AB0C0D9003C5758 /* HZBannerAdOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99AF08571B8E701A00532AB7 /* HZFetchOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 99AF08561B8E701A00532AB7 /* HZFetchOptions.m */; };
 		99B320661B87D1CF002632BF /* HZSegmentationControllerSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 99B320651B87D1CF002632BF /* HZSegmentationControllerSpec.m */; };
 		99B3206C1B87D6C9002632BF /* mediationStartResponseThatShouldProduceFourSegments.json in Resources */ = {isa = PBXBuildFile; fileRef = 99B3206B1B87D6C9002632BF /* mediationStartResponseThatShouldProduceFourSegments.json */; };
@@ -738,6 +738,10 @@
 		507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		507A457219BF943700C7AEEA /* NativeAdDetailsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeAdDetailsTableViewController.h; sourceTree = "<group>"; };
 		507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NativeAdDetailsTableViewController.m; sourceTree = "<group>"; };
+		5080E7021B9FAABF0065E685 /* HZErrorReportingConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZErrorReportingConfig.h; sourceTree = "<group>"; };
+		5080E7031B9FAABF0065E685 /* HZErrorReportingConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZErrorReportingConfig.m; sourceTree = "<group>"; };
+		5080E7071B9FB6990065E685 /* HZErrorReporterSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZErrorReporterSpec.m; sourceTree = "<group>"; };
+		5080E7091BA0A8310065E685 /* HZErrorReportingConfigSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZErrorReportingConfigSpec.m; sourceTree = "<group>"; };
 		508277901BC8925000B4340B /* IntegrationTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IntegrationTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		508277931BC8925000B4340B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		508277951BC8925000B4340B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -752,10 +756,6 @@
 		508277B41BC8938200B4340B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		508277BE1BCC07EA00B4340B /* TestHeyzapInterstitial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestHeyzapInterstitial.h; sourceTree = "<group>"; };
 		508277BF1BCC07EA00B4340B /* TestHeyzapInterstitial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestHeyzapInterstitial.m; sourceTree = "<group>"; };
-		5080E7021B9FAABF0065E685 /* HZErrorReportingConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZErrorReportingConfig.h; sourceTree = "<group>"; };
-		5080E7031B9FAABF0065E685 /* HZErrorReportingConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZErrorReportingConfig.m; sourceTree = "<group>"; };
-		5080E7071B9FB6990065E685 /* HZErrorReporterSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZErrorReporterSpec.m; sourceTree = "<group>"; };
-		5080E7091BA0A8310065E685 /* HZErrorReportingConfigSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZErrorReportingConfigSpec.m; sourceTree = "<group>"; };
 		509109341B66E5FB004464E7 /* HZMediationStarterSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationStarterSpec.m; sourceTree = "<group>"; };
 		509B04351A44AA0300EC3ACF /* HZNativeAdImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZNativeAdImage.h; sourceTree = "<group>"; };
 		509B04361A44AA0300EC3ACF /* HZNativeAdImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdImage.m; sourceTree = "<group>"; };
@@ -930,8 +930,8 @@
 		86B94296175808F800B8EACE /* HZAvailability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAvailability.m; sourceTree = "<group>"; };
 		86B9432A1758108700B8EACE /* libHeyzapAds.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHeyzapAds.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		86B9432E1758108700B8EACE /* Ads-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ads-Prefix.pch"; sourceTree = "<group>"; };
-		86B9434E1758181100B8EACE /* HeyzapAds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeyzapAds.h; sourceTree = "<group>"; };
-		86B9434F1758181100B8EACE /* HeyzapAds.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeyzapAds.m; sourceTree = "<group>"; };
+		86B9434E1758181100B8EACE /* HeyzapAds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = HeyzapAds.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		86B9434F1758181100B8EACE /* HeyzapAds.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HeyzapAds.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		86B943B7175830A600B8EACE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		86B943B8175830A700B8EACE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		86B943BF1758347300B8EACE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -1609,6 +1609,15 @@
 			name = UI;
 			sourceTree = "<group>";
 		};
+		5080E7061B9FB6880065E685 /* Error Reporting */ = {
+			isa = PBXGroup;
+			children = (
+				5080E7071B9FB6990065E685 /* HZErrorReporterSpec.m */,
+				5080E7091BA0A8310065E685 /* HZErrorReportingConfigSpec.m */,
+			);
+			name = "Error Reporting";
+			sourceTree = "<group>";
+		};
 		508277911BC8925000B4340B /* IntegrationTestHost */ = {
 			isa = PBXGroup;
 			children = (
@@ -1641,15 +1650,6 @@
 				508277BF1BCC07EA00B4340B /* TestHeyzapInterstitial.m */,
 			);
 			path = IntegrationTests;
-			sourceTree = "<group>";
-		};
-		5080E7061B9FB6880065E685 /* Error Reporting */ = {
-			isa = PBXGroup;
-			children = (
-				5080E7071B9FB6990065E685 /* HZErrorReporterSpec.m */,
-				5080E7091BA0A8310065E685 /* HZErrorReportingConfigSpec.m */,
-			);
-			name = "Error Reporting";
 			sourceTree = "<group>";
 		};
 		509109311B66E21F004464E7 /* Mediation */ = {
@@ -2647,7 +2647,7 @@
 				50ED56431AC0942D0016F9FE /* HZHZAdMobBannerSupport.h in Headers */,
 				501C70671B87A0DE006E2440 /* HZNetworkTestActivityTableViewCell.h in Headers */,
 				5064819C1BA382EE008AF9B0 /* HZMediationJSONRequestSerializer.h in Headers */,
-				501C70671B87A0DE006E2440 /* HZTestActivityTableViewCell.h in Headers */,
+				501C70671B87A0DE006E2440 /* HZNetworkTestActivityTableViewCell.h in Headers */,
 				5011CE8918DBBBF700604B53 /* HZAdMobAdapter.h in Headers */,
 				99CEBDC31BB5BF0900193293 /* HZUINavigationController.h in Headers */,
 				500F88F218E215D000E5D6F8 /* HZGADInterstitial.h in Headers */,
