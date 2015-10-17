@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface HZErrorReporter : NSObject
 
+extern NSString * const kHZMetricGroupExchange;
+
 - (void)updateConfig:(HZErrorReportingConfig *)config;
 
 #pragma mark - Initialization

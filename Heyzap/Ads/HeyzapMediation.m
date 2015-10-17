@@ -228,6 +228,7 @@
     if (!self.loadManager) {
         self.loadManager = [[HZMediationLoadManager alloc] initWithLoadData:dictionary[@"loader"] delegate:self persistentConfig:self.persistentConfig segmentationController:self.segmentationController error:&error];
         if (error || !self.loadManager) {
+            HZTrackError(error);
             HZELog(@"Error initializing network preloader. Mediation won't be possible. %@",error);
         } else {
             HZILog(@"Load manager setup from %@", fromCache ? @"cache" : @"network");
@@ -443,6 +444,7 @@
     NSDictionary *const latestMediateParams = [self.mediateRequester latestMediateParams];
     if (!latestMediate || !latestMediateParams) {
         NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Didn't get the waterfall from Heyzap's servers before a request to show an ad was made."}];
+        [self trackMissingMediateForAdType:adType];
         [self sendShowFailureMessagesWithShowOptions:options error:error adapter:nil];
         return;
     }
@@ -487,7 +489,12 @@
                                                                                        NSLocalizedDescriptionKey: @"Failed to parse /mediate response",
                                                                                        NSUnderlyingErrorKey:eventReporterError,
                                                                                        }];
+<<<<<<< HEAD
         [self sendShowFailureMessagesWithShowOptions:options error:error adapter:nil];
+=======
+        HZTrackError(eventReporterError);
+        [self sendShowFailureMessagesWithShowOptions:options error:error];
+>>>>>>> Do an initial sweep of error tracking
         return;
     }
     
@@ -738,6 +745,10 @@ const unsigned long long adStalenessTimeout = 15;
     }
 }
 
+- (void)trackMissingMediateForAdType:(HZAdType)adType {
+    [self.errorReporter trackMetric:@[@"mediate",@"missing_for_ad_type",NSStringFromAdType(adType)]];
+}
+
 
 #pragma mark - Banner Mediation
 
@@ -778,6 +789,7 @@ const unsigned long long adStalenessTimeout = 15;
         if (!withinTimeout) {
             // TODO add metric here
             NSError *timeoutError = [[self class] bannerErrorWithDescription:@"Couldn't get /mediate waterfall from Heyzap in time to show a banner ad." underlyingError:nil];
+            [self trackMissingMediateForAdType:HZAdTypeBanner];
             HZELog(@"Banner fetch error: %@", timeoutError);
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completion(timeoutError, nil);
@@ -837,6 +849,7 @@ const unsigned long long adStalenessTimeout = 15;
         
         if (eventReporterError || !eventReporter) {
             NSError *mediationError = [[self class] bannerErrorWithDescription:@"Couldn't create HZMediationEventReporter" underlyingError:eventReporterError];
+            HZTrackError(eventReporterError);
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completion(mediationError, nil);
             });

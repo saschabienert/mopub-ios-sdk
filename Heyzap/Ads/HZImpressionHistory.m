@@ -166,6 +166,7 @@
     NSError *error;
     sqlite3 *database = [HZDatabaseHelper openDatabaseWithName:@"HZImpressionHistory" error:&error];
     if(error) {
+        HZTrackError(error);
         HZELog(@"HZImpressionHistory: Error opening impression history. Segmentation settings may fail. Error: %@", error);
         return NULL;
     }
