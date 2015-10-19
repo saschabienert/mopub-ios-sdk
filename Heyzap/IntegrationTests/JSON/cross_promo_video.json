@@ -1,0 +1,63 @@
+{
+    "interstitial" : {
+        "meta" : {
+            "width" : "fill_parent",
+            "height" : "fill_parent"
+        },
+        "html_data" : "<!DOCTYPE html>\n<!-- iphone -->\n<html>\n<head>\n  <meta charset=\"utf-8\"> <!-- Required for localization -->\n  <meta name=\"viewport\" content=\"width=device-width\">\n  <script src=\"https:\/\/img-cloudflare.haizap.com\/assets\/ads\/fastclick-62c1d38f8e964c75f8de61457fd6dd2d.js\"><\/script>\n      <link href=\"https:\/\/img-cloudflare.haizap.com\/assets\/ads\/flat_ios-e54b2fe012a7581343586c20d28138b9.css\" media=\"screen\" rel=\"stylesheet\" \/>\n<\/head>\n\n<body\n  class=\"\n     animation\n     rating\n    \n  \"\n  onclick=\"JS(event, 'Heyzap.clickAd')\"\n><div class=\"ratio-holder\">\n\n  <img src=\"https:\/\/img-cloudflare.haizap.com\/imgcache\/img:df0c421f7aaadb8c0689d02c05aaac41-type:standard\" class=\"image-landscape\" \/>\n  <img src=\"https:\/\/img-cloudflare.haizap.com\/imgcache\/img:df0c421f7aaadb8c0689d02c05aaac41-type:standard\" class=\"image-portrait\" \/>\n\n  <div class=\"place-holder\"><\/div>\n\n  <div class=\"content\">\n\n    <div id=\"timer-container\" class=\"close-button-size\"><canvas id=\"timer\"><\/canvas><\/div>\n\n    <a href=\"#\" id=\"close-button\" class=\"close close-button-size \" onclick=\"JS(event, 'Heyzap.close')\">&#x0058<span class=\"close-icon\"><\/span><\/a>\n\n    <div class=\"stripe\">\n\n        <div class=\"info-box\" id=\"rating\">\n          <div class=\"info-box-inner\">\n            <div class=\"app-icon\">\n              <img alt=\"Img:f2b46f8b65d549218cc09d1ce5203c11 type:eighty eighty\" src=\"https:\/\/img-cloudflare.haizap.com\/imgcache\/img:f2b46f8b65d549218cc09d1ce5203c11-type:eighty_eighty\" \/>\n            <\/div>\n            <div class=\"app-desc\">\n              <span class=\"app-name\">Star Trooper<\/span>\n              <span class=\"app-rating \"><span class=\"star\"><\/span><span class=\"star\"><\/span><span class=\"star\"><\/span><span class=\"star\"><\/span><span class=\"star\"><\/span><\/span>\n            <\/div>\n          <\/div>\n        <\/div>\n      \n      \n      <div class=\"button-box\">\n        <a href=\"#\" class=\"button-a\">\n          <div class=\"button-b\">\n            <div class=\"button-c\">\n              <div class=\"button-d\">\n                <span class=\"button-inner\" style=\"font-size: 1em;\">\n                  <span class=\"button-image\"><\/span>\n                  <span>Install for <strong>Free<\/strong><\/span>\n                <\/span>\n              <\/div>\n            <\/div>\n          <\/div>\n        <\/a>\n      <\/div>\n    <\/div>\n\n  <\/div>\n\n<\/div><script>\n  window.onload = function() {\n    \/\/ when connection is slow the icons don't expand the parent element, this forced re-render fixes it\n    document.getElementsByTagName('body')[0].className+=' rerender';\n  };\n\n    \/\/ requestAnimationFrame polyfill for old browsers support\n    if (!Date.now)\n      Date.now = function() { return new Date().getTime(); };\n    (function() {\n      'use strict';\n\n      var vendors = ['webkit', 'moz'];\n      for (var i = 0; i < vendors.length && !window.requestAnimationFrame; ++i) {\n        var vp = vendors[i];\n        window.requestAnimationFrame = window[vp+'RequestAnimationFrame'];\n        window.cancelAnimationFrame = (window[vp+'CancelAnimationFrame']\n            || window[vp+'CancelRequestAnimationFrame']);\n      }\n      if (\/iP(ad|hone|od).*OS 6\/.test(window.navigator.userAgent) \/\/ iOS6 is buggy\n          || !window.requestAnimationFrame || !window.cancelAnimationFrame) {\n        var lastTime = 0;\n        window.requestAnimationFrame = function(callback) {\n          var now = Date.now();\n          var nextTime = Math.max(lastTime + 16, now);\n          return setTimeout(function() { callback(lastTime = nextTime); },\n                  nextTime - now);\n        };\n        window.cancelAnimationFrame = clearTimeout;\n      }\n\n    }());\n\n    \/\/ timer circle for close button\n    (function() {\n      var timerContainer = document.getElementById('timer-container');\n      var timer = document.getElementById('timer');\n      var closeButton = document.getElementById('close-button');\n      closeButton.style.display = 'none';\n      var time_0 = null;\n      var duration = 2; \/\/ seconds\n      var a = timerContainer.offsetWidth;\n      timer.width = a;\n      timer.height = a;\n      var ctx = timer.getContext('2d');\n\n      \/\/ timer style\n      var grad = ctx.createLinearGradient(0, 0, 0, a);\n      grad.addColorStop(0, \"#848C97\");\n      grad.addColorStop(1, \"#565F6C\");\n      var grad2 = ctx.createLinearGradient(0, 0, 0, a);\n      grad2.addColorStop(0, \"#B0B4BD\");\n      grad2.addColorStop(1, \"#9297A0\");\n      \/*ctx.fillStyle = '#38404A';\n      ctx.font = '.6em Helvetica';*\/\n      ctx.shadowColor = \"#333\";\n      \/\/ctx.shadowOffsetY = 10;\n\n      \/\/ renderer\n      function render(progress) {\n        \/*var timeNumber = null;\n        var step = 1\/duration;\n        for (var i = 1; i <= duration; i++) {\n          if (progress < i*step) {\n            timeNumber = (duration - i + 1).toString();\n            break\n          }\n        }*\/\n\n        ctx.shadowBlur = 3;\n        ctx.shadowOffsetY = a\/20;\n        ctx.lineWidth = a\/8;\n        ctx.strokeStyle = grad2;\n        ctx.beginPath();\n        ctx.arc(a\/2, a\/2, (a - 2*ctx.lineWidth)\/2, - Math.PI\/2, 2*Math.PI * progress - Math.PI\/2);\n        ctx.stroke();\n\n        ctx.shadowBlur = 0;\n        ctx.shadowOffsetY = 0;\n        ctx.lineWidth = a\/8;\n        ctx.strokeStyle = grad;\n        ctx.beginPath();\n        ctx.arc(a\/2, a\/2, (a - 2*ctx.lineWidth - 2)\/2, - Math.PI\/2, 2*Math.PI * progress - Math.PI\/2);\n        ctx.stroke();\n        \/\/ctx.fillText(timeNumber, (a - ctx.measureText(timeNumber).width)\/2, (a + a*.3)\/2);\n      }\n\n      \/\/ animation cycle\n      function animate(timestamp) {\n        \/\/ make animation dependent on time\n        if (!time_0) time_0 = timestamp;\n        var timeProgress = timestamp - time_0;\n\n        \/\/ clear the canvas\n        ctx.clearRect(0, 0, a, a);\n\n        \/\/ redraw circle with current progress\n        render(timeProgress\/(duration * 1000));\n\n        if (timeProgress < (duration * 1000)) {\n          window.requestAnimationFrame(animate);\n        } else {\n          timerContainer.style.display = 'none';\n          closeButton.style.display = 'block';\n        }\n\n      }\n\n      \/\/ start the show\n      window.requestAnimationFrame(animate);\n\n    }());\n\n<\/script><\/body>\n"
+    },
+    "impression_id" : "1444950899-15fc5a4b399dbca6606a",
+    "ad_strategy" : "LogisticHugeRegularizedOverriddenStrategy",
+    "creative_id" : 6486599,
+    "display_ttl" : 5000,
+    "ad_tag" : null,
+    "use_modal_app_store" : true,
+    "click_url" : "https:\/\/itunes.apple.com\/us\/app\/g\/id330054115?mt=8&uo=4&at=10l74x",
+    "promoted_game_package" : 330054115,
+    "creative_type" : "video",
+    "should_refetch_if_not_ready" : true,
+    "show_only_after_content_loaded" : true,
+    "status" : 200,
+    "video" : {
+        "post_roll_interstitial" : true,
+        "streaming_url" : [
+                           "https:\/\/img-cloudflare-2.haizap.com\/930153bd01e935dd75a7f803f7b33f33-h264_android_ld"
+                           ],
+        "auto_start" : true,
+        "static_url" : [
+                        "https:\/\/img-cloudflare-2.haizap.com\/930153bd01e935dd75a7f803f7b33f33-h264_android_ld"
+                        ],
+        "lockout_time" : 0,
+        "meta" : {
+            "bytes" : 634937,
+            "length" : 10000,
+            "width" : 360,
+            "height" : 270
+        },
+        "allow_skip" : false,
+        "allow_click" : false,
+        "required_download_percent" : 100,
+        "ad_unit" : {
+            "incentivized" : {
+                "allow_hide" : true,
+                "allow_skip" : false,
+                "required_download_percent" : 100,
+                "allow_install_button" : false,
+                "allow_click" : false
+            },
+            "video" : {
+                "allow_hide" : false,
+                "allow_skip" : true,
+                "required_download_percent" : 100,
+                "allow_click" : false
+            },
+            "interstitial" : {
+                "allow_hide" : false,
+                "allow_skip" : false,
+                "required_download_percent" : 20,
+                "allow_click" : true
+            }
+        },
+        "allow_hide" : true
+    }
+}

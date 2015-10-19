@@ -18,6 +18,8 @@
 #define kHZVideoControlViewInstallWidthPadding 30.0
 #define kHZVideoControlViewInstallHeightPadding 0.0
 
+NSString *const kHZSkipAccessibilityLabel = @"skip";
+
 @interface HZVideoControlView()
 
 @end
@@ -50,7 +52,7 @@
         
         _skipButton = [UIButton buttonWithType: UIButtonTypeCustom];
         _skipButton.frame = CGRectMake(0.0, 0.0, 80.0, 40.0);
-        _skipButton.accessibilityLabel = @"skip";
+        _skipButton.accessibilityLabel = kHZSkipAccessibilityLabel;
         [_skipButton setTitle: @"" forState: UIControlStateNormal];
         [_skipButton.titleLabel setFont: [UIFont boldSystemFontOfSize: 17.0]];
         _skipButton.titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -63,6 +65,7 @@
         [self addSubview: _skipButton];
         
         _hideButton = [UIButton buttonWithType: UIButtonTypeCustom];
+        _hideButton.accessibilityLabel = kHZSkipAccessibilityLabel;
         _hideButton.frame = CGRectMake(0.0, 0.0, 40.0, 40.0);
         [_hideButton setTitle: @"✕" forState: UIControlStateNormal];
         [_hideButton setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
