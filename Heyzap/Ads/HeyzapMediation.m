@@ -489,12 +489,8 @@
                                                                                        NSLocalizedDescriptionKey: @"Failed to parse /mediate response",
                                                                                        NSUnderlyingErrorKey:eventReporterError,
                                                                                        }];
-<<<<<<< HEAD
-        [self sendShowFailureMessagesWithShowOptions:options error:error adapter:nil];
-=======
         HZTrackError(eventReporterError);
-        [self sendShowFailureMessagesWithShowOptions:options error:error];
->>>>>>> Do an initial sweep of error tracking
+        [self sendShowFailureMessagesWithShowOptions:options error:error adapter:nil];
         return;
     }
     
@@ -778,7 +774,6 @@ const unsigned long long adStalenessTimeout = 15;
     dispatch_async(self.fetchQueue, ^{ // necessary for the hzWaitUntilInterval below
         
         // This waits for /mediate to prevent a banner failure because of a slow network req.
-        // TODO add metric here
         __block NSDictionary *latestMediate;
         __block NSDictionary *latestMediateParams;
         const BOOL withinTimeout = hzWaitUntilInterval(0.5, ^BOOL{
@@ -787,7 +782,6 @@ const unsigned long long adStalenessTimeout = 15;
             return latestMediate && latestMediateParams;
         }, 4);
         if (!withinTimeout) {
-            // TODO add metric here
             NSError *timeoutError = [[self class] bannerErrorWithDescription:@"Couldn't get /mediate waterfall from Heyzap in time to show a banner ad." underlyingError:nil];
             [self trackMissingMediateForAdType:HZAdTypeBanner];
             HZELog(@"Banner fetch error: %@", timeoutError);
