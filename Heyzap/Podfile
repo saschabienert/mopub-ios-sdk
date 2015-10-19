@@ -7,7 +7,6 @@ inhibit_all_warnings!
 platform :ios, '6.0'
 
 target :MediationTestApp, :exclusive => true do
-  pod 'Bugsnag', :git => "https://github.com/bugsnag/bugsnag-cocoa.git"
   # Chartboost has an official "ChartboostSDK" podspec, but it's often out of date.
   # HZChartboost is vendored by Heyzap.
   pod 'HZChartboost'

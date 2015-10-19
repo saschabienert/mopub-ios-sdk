@@ -2598,7 +2598,6 @@
 				504E9C8F18C9322100402BC3 /* Frameworks */,
 				504E9C9018C9322100402BC3 /* Resources */,
 				772E3B0BDD914296B2558664 /* Copy Pods Resources */,
-				DF1A72313AC449E0DE4816BD /* Upload Bugsnag dSYM */,
 				776090AF4DF274FF82DC9AC1 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
@@ -2621,7 +2620,6 @@
 				5053520D18F76550003C531E /* Resources */,
 				FB0DEFC40D7D92B6FBBD1334 /* Copy Pods Resources */,
 				5035598C1ABB893D0029EBAB /* Embed Frameworks */,
-				D545AFB6BA6704775073AD3F /* Upload Bugsnag dSYM */,
 				21040C03EA3DDC5BFC0658A9 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
@@ -2662,7 +2660,6 @@
 				508277AE1BC8938200B4340B /* Resources */,
 				792FA0C38DB7FA6435D2135F /* Embed Pods Frameworks */,
 				9EA50CD28078EE67EE51E1BF /* Copy Pods Resources */,
-				4AEFED41080976A7FCA7A004 /* Upload Bugsnag dSYM */,
 			);
 			buildRules = (
 			);
@@ -2813,21 +2810,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MediationTestApp/Pods-MediationTestApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4AEFED41080976A7FCA7A004 /* Upload Bugsnag dSYM */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Upload Bugsnag dSYM";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/usr/bin/env ruby";
-			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
-			showEnvVarsInLog = 0;
-		};
 		772E3B0BDD914296B2558664 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2973,36 +2955,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		D545AFB6BA6704775073AD3F /* Upload Bugsnag dSYM */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Upload Bugsnag dSYM";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/usr/bin/env ruby";
-			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
-			showEnvVarsInLog = 0;
-		};
-		DF1A72313AC449E0DE4816BD /* Upload Bugsnag dSYM */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Upload Bugsnag dSYM";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/usr/bin/env ruby";
-			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
 			showEnvVarsInLog = 0;
 		};
 		FB0DEFC40D7D92B6FBBD1334 /* Copy Pods Resources */ = {
