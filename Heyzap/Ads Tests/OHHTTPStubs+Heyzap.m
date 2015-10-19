@@ -23,4 +23,17 @@
     }];
 }
 
++ (id<OHHTTPStubsDescriptor>)stubRequestContainingString:(NSString *)string withVideoFile:(NSString *)videoFileName {
+    NSParameterAssert(string);
+    NSParameterAssert(videoFileName);
+    NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:videoFileName withExtension:@"mp4"];
+    NSParameterAssert(url);
+    
+    return [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        return [request.URL.absoluteString hzContainsString:string];
+    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+        return [[OHHTTPStubsResponse alloc] initWithFileURL:url statusCode:200 headers:@{@"content-type":@"video/mp4"}];
+    }];
+}
+
 @end

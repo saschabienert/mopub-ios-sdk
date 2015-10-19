@@ -30,4 +30,6 @@
  *  @return The dictionary, guaranteed to not be nil.
  */
 + (NSMutableDictionary *)mediationStartJSONThatShouldProduceFourSegments;
+
++ (NSMutableDictionary *)jsonForResource:(NSString *)resource;
 @end

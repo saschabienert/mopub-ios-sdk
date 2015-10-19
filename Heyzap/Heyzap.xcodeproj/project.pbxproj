@@ -90,6 +90,17 @@
 		5020884619DA2A87005C3C1B /* ValidNativeAd.json in Resources */ = {isa = PBXBuildFile; fileRef = 5020884419DA2A87005C3C1B /* ValidNativeAd.json */; };
 		50286DA81B9925D20005C44F /* HZErrorReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50286DA61B9925D20005C44F /* HZErrorReporter.h */; };
 		50286DA91B9925D20005C44F /* HZErrorReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50286DA71B9925D20005C44F /* HZErrorReporter.m */; };
+		502244AD1BCF2E1300279639 /* start.json in Resources */ = {isa = PBXBuildFile; fileRef = 502244AC1BCF2E1300279639 /* start.json */; settings = {ASSET_TAGS = (); }; };
+		502244B01BCF2E2300279639 /* mediate.json in Resources */ = {isa = PBXBuildFile; fileRef = 502244AF1BCF2E2300279639 /* mediate.json */; settings = {ASSET_TAGS = (); }; };
+		502244B41BCF315200279639 /* IntegrationTestConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 502244B31BCF315200279639 /* IntegrationTestConfig.m */; settings = {ASSET_TAGS = (); }; };
+		502244B51BCF327C00279639 /* TestJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BEB18C96CE2003A7CB9 /* TestJSON.m */; settings = {ASSET_TAGS = (); }; };
+		502244BB1BD0351D00279639 /* HZKIFTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 502244BA1BD0351D00279639 /* HZKIFTestCase.m */; settings = {ASSET_TAGS = (); }; };
+		502E03791BD0391C00872BA2 /* NSString+Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624818CBF58A0018A0B6 /* NSString+Tests.m */; settings = {ASSET_TAGS = (); }; };
+		502E037A1BD0392000872BA2 /* OHHTTPStubs+Heyzap.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624B18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m */; settings = {ASSET_TAGS = (); }; };
+		502E03821BD05EFE00872BA2 /* cross_promo_static.json in Resources */ = {isa = PBXBuildFile; fileRef = 502E03811BD05EFE00872BA2 /* cross_promo_static.json */; settings = {ASSET_TAGS = (); }; };
+		502E03851BD064BB00872BA2 /* TestHeyzapVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 502E03841BD064BB00872BA2 /* TestHeyzapVideo.m */; settings = {ASSET_TAGS = (); }; };
+		502E03871BD06B4A00872BA2 /* cross_promo_video.json in Resources */ = {isa = PBXBuildFile; fileRef = 502E03861BD06B4A00872BA2 /* cross_promo_video.json */; settings = {ASSET_TAGS = (); }; };
+		502E038C1BD0980700872BA2 /* three_second_cross_promo_video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 502E038B1BD0980700872BA2 /* three_second_cross_promo_video.mp4 */; settings = {ASSET_TAGS = (); }; };
 		50310F991A2E894F00FDC9BC /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50310F981A2E894F00FDC9BC /* Launch Screen.xib */; };
 		50310F9B1A2E894F00FDC9BC /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50310F981A2E894F00FDC9BC /* Launch Screen.xib */; };
 		50382E331BC5A45E00C9218D /* NSDictionary+HZDummyCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 50382E311BC5A45E00C9218D /* NSDictionary+HZDummyCategory.h */; settings = {ASSET_TAGS = (); }; };
@@ -651,9 +662,20 @@
 		5020883F19DA2574005C3C1B /* HZNativeAdCollectionSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdCollectionSpec.m; sourceTree = "<group>"; };
 		5020884119DA28DE005C3C1B /* HZNativeAdSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZNativeAdSpec.m; sourceTree = "<group>"; };
 		5020884419DA2A87005C3C1B /* ValidNativeAd.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ValidNativeAd.json; sourceTree = "<group>"; };
+		502244AC1BCF2E1300279639 /* start.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = start.json; sourceTree = "<group>"; };
+		502244AF1BCF2E2300279639 /* mediate.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mediate.json; sourceTree = "<group>"; };
+		502244B21BCF315200279639 /* IntegrationTestConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegrationTestConfig.h; sourceTree = "<group>"; };
+		502244B31BCF315200279639 /* IntegrationTestConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntegrationTestConfig.m; sourceTree = "<group>"; };
+		502244B91BD0351D00279639 /* HZKIFTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZKIFTestCase.h; sourceTree = "<group>"; };
+		502244BA1BD0351D00279639 /* HZKIFTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZKIFTestCase.m; sourceTree = "<group>"; };
 		50269FF219B65D9500CD7C88 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		50286DA61B9925D20005C44F /* HZErrorReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZErrorReporter.h; sourceTree = "<group>"; };
 		50286DA71B9925D20005C44F /* HZErrorReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZErrorReporter.m; sourceTree = "<group>"; };
+		502E03811BD05EFE00872BA2 /* cross_promo_static.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cross_promo_static.json; sourceTree = "<group>"; };
+		502E03831BD064BB00872BA2 /* TestHeyzapVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestHeyzapVideo.h; sourceTree = "<group>"; };
+		502E03841BD064BB00872BA2 /* TestHeyzapVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestHeyzapVideo.m; sourceTree = "<group>"; };
+		502E03861BD06B4A00872BA2 /* cross_promo_video.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cross_promo_video.json; sourceTree = "<group>"; };
+		502E038B1BD0980700872BA2 /* three_second_cross_promo_video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = three_second_cross_promo_video.mp4; sourceTree = "<group>"; };
 		50310F981A2E894F00FDC9BC /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		50382E311BC5A45E00C9218D /* NSDictionary+HZDummyCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+HZDummyCategory.h"; sourceTree = "<group>"; };
 		50382E321BC5A45E00C9218D /* NSDictionary+HZDummyCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+HZDummyCategory.m"; sourceTree = "<group>"; };
@@ -1404,6 +1426,77 @@
 			name = "Error Tracking";
 			sourceTree = "<group>";
 		};
+		502244AA1BCF2DCF00279639 /* JSON responses */ = {
+			isa = PBXGroup;
+			children = (
+				502E037D1BD05E9B00872BA2 /* ads.heyzap.com */,
+				502E037C1BD05E9200872BA2 /* med.heyzap.com */,
+			);
+			name = "JSON responses";
+			path = JSON;
+			sourceTree = "<group>";
+		};
+		502244B11BCF314300279639 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				502244B21BCF315200279639 /* IntegrationTestConfig.h */,
+				502244B31BCF315200279639 /* IntegrationTestConfig.m */,
+				502244B91BD0351D00279639 /* HZKIFTestCase.h */,
+				502244BA1BD0351D00279639 /* HZKIFTestCase.m */,
+			);
+			name = Common;
+			sourceTree = "<group>";
+		};
+		502E037C1BD05E9200872BA2 /* med.heyzap.com */ = {
+			isa = PBXGroup;
+			children = (
+				502E03801BD05EC100872BA2 /* /start */,
+				502E037F1BD05EBC00872BA2 /* /mediate */,
+			);
+			name = med.heyzap.com;
+			sourceTree = "<group>";
+		};
+		502E037D1BD05E9B00872BA2 /* ads.heyzap.com */ = {
+			isa = PBXGroup;
+			children = (
+				502E037E1BD05EA500872BA2 /* in_game_api/ads/fetch_ad */,
+			);
+			name = ads.heyzap.com;
+			sourceTree = "<group>";
+		};
+		502E037E1BD05EA500872BA2 /* in_game_api/ads/fetch_ad */ = {
+			isa = PBXGroup;
+			children = (
+				502E03811BD05EFE00872BA2 /* cross_promo_static.json */,
+				502E03861BD06B4A00872BA2 /* cross_promo_video.json */,
+			);
+			name = in_game_api/ads/fetch_ad;
+			sourceTree = "<group>";
+		};
+		502E037F1BD05EBC00872BA2 /* /mediate */ = {
+			isa = PBXGroup;
+			children = (
+				502244AF1BCF2E2300279639 /* mediate.json */,
+			);
+			name = /mediate;
+			sourceTree = "<group>";
+		};
+		502E03801BD05EC100872BA2 /* /start */ = {
+			isa = PBXGroup;
+			children = (
+				502244AC1BCF2E1300279639 /* start.json */,
+			);
+			name = /start;
+			sourceTree = "<group>";
+		};
+		502E03881BD06BBE00872BA2 /* Videos */ = {
+			isa = PBXGroup;
+			children = (
+				502E038B1BD0980700872BA2 /* three_second_cross_promo_video.mp4 */,
+			);
+			path = Videos;
+			sourceTree = "<group>";
+		};
 		503CD2351901A87300667C0D /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
@@ -1645,9 +1738,14 @@
 		508277B11BC8938200B4340B /* IntegrationTests */ = {
 			isa = PBXGroup;
 			children = (
+				502E03881BD06BBE00872BA2 /* Videos */,
+				502244B11BCF314300279639 /* Common */,
+				502244AA1BCF2DCF00279639 /* JSON responses */,
 				508277B41BC8938200B4340B /* Info.plist */,
 				508277BE1BCC07EA00B4340B /* TestHeyzapInterstitial.h */,
 				508277BF1BCC07EA00B4340B /* TestHeyzapInterstitial.m */,
+				502E03831BD064BB00872BA2 /* TestHeyzapVideo.h */,
+				502E03841BD064BB00872BA2 /* TestHeyzapVideo.m */,
 			);
 			path = IntegrationTests;
 			sourceTree = "<group>";
@@ -2776,6 +2874,7 @@
 				508277AE1BC8938200B4340B /* Resources */,
 				792FA0C38DB7FA6435D2135F /* Embed Pods Frameworks */,
 				9EA50CD28078EE67EE51E1BF /* Copy Pods Resources */,
+				4AEFED41080976A7FCA7A004 /* Upload Bugsnag dSYM */,
 			);
 			buildRules = (
 			);
@@ -2932,6 +3031,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				502244AD1BCF2E1300279639 /* start.json in Resources */,
+				502E03821BD05EFE00872BA2 /* cross_promo_static.json in Resources */,
+				502E03871BD06B4A00872BA2 /* cross_promo_video.json in Resources */,
+				502244B01BCF2E2300279639 /* mediate.json in Resources */,
+				502E038C1BD0980700872BA2 /* three_second_cross_promo_video.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2979,6 +3083,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MediationTestApp/Pods-MediationTestApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4AEFED41080976A7FCA7A004 /* Upload Bugsnag dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Bugsnag dSYM";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env ruby";
+			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
 			showEnvVarsInLog = 0;
 		};
 		772E3B0BDD914296B2558664 /* Copy Pods Resources */ = {
@@ -3297,7 +3416,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				502E03791BD0391C00872BA2 /* NSString+Tests.m in Sources */,
+				502244B51BCF327C00279639 /* TestJSON.m in Sources */,
+				502244B41BCF315200279639 /* IntegrationTestConfig.m in Sources */,
+				502E03851BD064BB00872BA2 /* TestHeyzapVideo.m in Sources */,
+				502244BB1BD0351D00279639 /* HZKIFTestCase.m in Sources */,
 				508277C01BCC07EA00B4340B /* TestHeyzapInterstitial.m in Sources */,
+				502E037A1BD0392000872BA2 /* OHHTTPStubs+Heyzap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3738,6 +3863,7 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -3825,6 +3951,7 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
@@ -3833,7 +3960,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = IntegrationTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = Heyzap.IntegrationTests;
@@ -3851,6 +3978,7 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -3860,7 +3988,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = IntegrationTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = Heyzap.IntegrationTests;
