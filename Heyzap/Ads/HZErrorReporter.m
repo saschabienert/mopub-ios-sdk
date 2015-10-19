@@ -28,6 +28,8 @@
 
 @implementation HZErrorReporter
 
+NSString * const kHZMetricGroupExchange = @"exchange";
+
 // nil arguments should never be passed to this class, but we don't want to crash just to report errors.
 #define ERROR_REPORTER_CHECK_NOT_NIL(value) do { \
 if (value == nil) { \
