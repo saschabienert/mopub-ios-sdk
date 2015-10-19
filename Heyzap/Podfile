@@ -29,10 +29,11 @@ end
 
 target :"Ads Tests", :exclusive => true do # Unit Tests
    pod 'Kiwi'
-   pod 'OHHTTPStubs'
+   pod 'OHHTTPStubs', :head # We need this PR: https://github.com/AliSoftware/OHHTTPStubs/pull/129; we can adopt 4.4.0 when it's released.
 end
 
 target 'IntegrationTests', :exclusive => true do
   pod 'KIF', :configurations => ['Debug']
   pod 'OCMockito'
+  pod 'OHHTTPStubs', :head # See comment above
 end

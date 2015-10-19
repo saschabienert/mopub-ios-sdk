@@ -6,8 +6,8 @@
 //  Copyright © 2015 Heyzap. All rights reserved.
 //
 
-#import <KIF/KIF.h>
+#import "HZKIFTestCase.h"
 
-@interface TestHeyzapInterstitial : KIFTestCase
+@interface TestHeyzapInterstitial : HZKIFTestCase
 
 @end

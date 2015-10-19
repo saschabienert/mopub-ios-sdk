@@ -12,6 +12,8 @@
 
 @interface HZVideoControlView : UIView
 
+extern NSString *const kHZSkipAccessibilityLabel;
+
 @property (nonatomic) HZKAProgressLabel *circularProgressTimerLabel;
 /**
  *  This button is tappable while the skip countdown is happening; this allows the skip button to intercept clicks.

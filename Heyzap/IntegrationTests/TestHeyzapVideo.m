@@ -1,33 +1,29 @@
 //
-//  TestAppTest.m
+//  TestHeyzapVideo.m
 //  Heyzap
 //
-//  Created by Maximilian Tagher on 10/9/15.
+//  Created by Maximilian Tagher on 10/15/15.
 //  Copyright © 2015 Heyzap. All rights reserved.
 //
 
-#import "TestHeyzapInterstitial.h"
-#import <KIF/KIF.h>
-#import "SDKTestAppViewController.h"
-#import "HeyzapAds.h"
-
-#import "HeyzapMediation.h"
+#import "TestHeyzapVideo.h"
 #import "HZFetchOptions.h"
-#import "HZInterstitialAd.h"
-#import "IntegrationTestConfig.h"
-#import "TestJSON.h"
-#import "OHHTTPStubs+Heyzap.h"
-#import "HZUtils.h"
+#import "HeyzapMediation.h"
+#import "HZVideoControlView.h"
 
-#define MOCKITO_SHORTHAND
-#import <OCMockito/OCMockito.h>
+@implementation TestHeyzapVideo
 
-@implementation TestHeyzapInterstitial
+- (void)testCompletingIncentivizedVideo {
+    [self runIncentivizedAndSkip:NO];
+}
 
-const int kCrossPromoPortraitFullscreenCreativeID = 6136623;
+- (void)testSkippingIncentivizedVideo {
+    [self runIncentivizedAndSkip:YES];
+}
 
+const int kCrossPromoVideoCreativeID = 6109031;
 
-- (void)testShowingAndClosingHeyzapInterstitial
+- (void)runIncentivizedAndSkip:(BOOL)shouldSkip
 {
     [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:[TestJSON jsonForResource:@"start"]];
     [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:[TestJSON jsonForResource:@"mediate"]];
@@ -37,7 +33,7 @@ const int kCrossPromoPortraitFullscreenCreativeID = 6136623;
     } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
         NSDictionary *queryDictionary = [HZUtils hzQueryDictionaryFromURL: request.URL];
         if ([queryDictionary[@"auction_type"] isEqualToString:@"cross_promo"]) {
-            return [OHHTTPStubsResponse responseWithJSONObject:[TestJSON jsonForResource:@"cross_promo_static"]
+            return [OHHTTPStubsResponse responseWithJSONObject:[TestJSON jsonForResource:@"cross_promo_video"]
                                                     statusCode:200
                                                        headers:nil];
         } else {
@@ -47,15 +43,19 @@ const int kCrossPromoPortraitFullscreenCreativeID = 6136623;
         }
     }];
     
+    [OHHTTPStubs stubRequestContainingString:@"930153bd01e935dd75a7f803f7b33f33-h264_android_ld"
+                               withVideoFile:@"three_second_cross_promo_video"];
+    
     // Mocking
-    id<HZAdsDelegate> mockDelegate = mockProtocol(@protocol(HZAdsDelegate));
-    [HZInterstitialAd setDelegate:mockDelegate];
+    id<HZIncentivizedAdDelegate> mockDelegate = mockProtocol(@protocol(HZIncentivizedAdDelegate));
+    [HZIncentivizedAd setDelegate:mockDelegate];
     
     // Fetch
     NSString *const tag = [NSStringFromSelector(_cmd) lowercaseString];
-    [HZInterstitialAd setCreativeID:kCrossPromoPortraitFullscreenCreativeID];
-    HZFetchOptions *fetchOptions = [HZFetchOptions new];
-    fetchOptions.requestingAdType = HZAdTypeInterstitial;
+    [HZIncentivizedAd setCreativeID:6109031];
+    
+    HZFetchOptions *const fetchOptions = [HZFetchOptions new];
+    fetchOptions.requestingAdType = HZAdTypeIncentivized;
     fetchOptions.tag = tag;
     fetchOptions.additionalParameters = @{ @"network": @"heyzap_cross_promo" };
     
@@ -66,15 +66,26 @@ const int kCrossPromoPortraitFullscreenCreativeID = 6136623;
     [MKTVerify(mockDelegate) didReceiveAdWithTag:tag];
     
     // Show
-    [HZInterstitialAd showForTag:tag];
-    [tester waitForViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
+    [HZIncentivizedAd showForTag:tag];
+    [tester waitForViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
     [MKTVerify(mockDelegate) didShowAdWithTag:tag];
     
-    // Hide
+    // Skip
+    if (shouldSkip) {
+        [tester tapViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
+    }
+    
+    // Close
+    [tester waitForViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
     [tester tapViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
     [tester waitForAbsenceOfViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
-    [MKTVerify(mockDelegate) didHideAdWithTag:tag];
     
+    [MKTVerify(mockDelegate) didHideAdWithTag:tag];
+    if (shouldSkip) {
+        [MKTVerify(mockDelegate) didFailToCompleteAdWithTag:tag];
+    } else {
+        [MKTVerify(mockDelegate) didCompleteAdWithTag:tag];
+    }
 }
 
 @end

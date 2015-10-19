@@ -20,4 +20,6 @@
  */
 + (id<OHHTTPStubsDescriptor>)stubRequestContainingString:(NSString *)string withJSON:(id)JSON;
 
++ (id<OHHTTPStubsDescriptor>)stubRequestContainingString:(NSString *)string withVideoFile:(NSString *)videoFileName;
+
 @end

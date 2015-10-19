@@ -1,0 +1,441 @@
+{
+    "networks": [{
+                 "name": "admob",
+                 "enabled": true,
+                 "data": {
+                 "ad_unit_id": "ca-app-pub-7761436490624316/1565326181",
+                 "video_ad_unit_id": "ca-app-pub-7761436490624316/4518792588",
+                 "native_ad_unit_id": "foobar",
+                 "banner_ad_unit_id": "ca-app-pub-7761436490624316/3042059385"
+                 }
+                 }, {
+                 "name": "chartboost",
+                 "enabled": true,
+                 "data": {
+                 "app_signature": "d2a575bbe9a3359b6ab2d5b807c878b7bfd38668",
+                 "app_id": "532b36fd2d42da26bbd4cfed"
+                 }
+                 }, {
+                 "name": "vungle",
+                 "enabled": true,
+                 "data": {
+                 "app_id": "54251a19bd1cf1fb5d00000b"
+                 }
+                 }, {
+                 "name": "unityads",
+                 "enabled": true,
+                 "data": {
+                 "video_placement_id": "defaultVideoAndPictureZone",
+                 "incentivized_placement_id": "incentivisedVideoZone",
+                 "game_id": "16620"
+                 }
+                 }, {
+                 "name": "leadbolt",
+                 "enabled": true,
+                 "data": {
+                 "app_api_key": "oB1LWfZS0vl64cfL6g9gPTOH8qaWnM3J"
+                 }
+                 }, {
+                 "name": "applovin",
+                 "enabled": true,
+                 "data": {
+                 "sdk_key": "TvPRfJ0dxmTLiGoZQi9o3_5zG0d0FVQoOqD38Eh4-9QhQCFrvPdyOkwfkXfz24mRuzU1CB5BLVtmh7aaXDXwxS"
+                 }
+                 }, {
+                 "name": "iad",
+                 "enabled": true,
+                 "data": {}
+                 }, {
+                 "name": "facebook",
+                 "enabled": true,
+                 "data": {
+                 "banner_placement_id": "500413400097719_538033529669039",
+                 "native_placement_id": "",
+                 "placement_id": "500413400097719_500415960097463"
+                 }
+                 }, {
+                 "name": "heyzap_exchange",
+                 "enabled": true,
+                 "data": {}
+                 }, {
+                 "name": "hyprmx",
+                 "enabled": true,
+                 "data": {
+                 "distributor_id": "-1011000",
+                 "property_id": "HeyzapTestiOS"
+                 }
+                 }, {
+                 "name": "heyzap",
+                 "enabled": true,
+                 "data": {}
+                 }, {
+                 "name": "adcolony",
+                 "enabled": true,
+                 "data": {
+                 "incentivized_zone_id": "vz24872bf08971411983",
+                 "interstitial_zone_id": "vz1bd37638a8ee4cfb8a",
+                 "app_id": "app6ae48650ef6a4585bd"
+                 }
+                 }, {
+                 "name": "heyzap_cross_promo",
+                 "enabled": true,
+                 "data": {}
+                 }],
+    "disabled_tags": ["off"],
+    "iap_ad_disable_time": 0,
+    "custom_publisher_data": "{\"reward\":{\"name\":\"testapp_currency\",\"amount\":375}}",
+    "loader": {
+        "max_load": 2.0,
+        "networks": [{
+                     "network": "heyzap_cross_promo",
+                     "load": 0.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["incentivized"],
+                     "creative_types": ["INCENTIVIZED"]
+                     }, {
+                     "network": "heyzap_cross_promo",
+                     "load": 0.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial", "video"],
+                     "creative_types": ["VIDEO"]
+                     }, {
+                     "network": "heyzap_cross_promo",
+                     "load": 0.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial"],
+                     "creative_types": ["STATIC"]
+                     }, {
+                     "network": "admob",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["banner"],
+                     "creative_types": ["BANNER"]
+                     }, {
+                     "network": "heyzap",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial"],
+                     "creative_types": ["STATIC"]
+                     }, {
+                     "network": "applovin",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial"],
+                     "creative_types": ["STATIC"]
+                     }, {
+                     "network": "vungle",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial", "video"],
+                     "creative_types": ["VIDEO"]
+                     }, {
+                     "network": "vungle",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["incentivized"],
+                     "creative_types": ["INCENTIVIZED"]
+                     }, {
+                     "network": "chartboost",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["incentivized"],
+                     "creative_types": ["INCENTIVIZED"]
+                     }, {
+                     "network": "leadbolt",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial"],
+                     "creative_types": ["STATIC"]
+                     }, {
+                     "network": "adcolony",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial", "video"],
+                     "creative_types": ["VIDEO"]
+                     }, {
+                     "network": "adcolony",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["incentivized"],
+                     "creative_types": ["INCENTIVIZED"]
+                     }, {
+                     "network": "unityads",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial", "video"],
+                     "creative_types": ["VIDEO"]
+                     }, {
+                     "network": "applovin",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["incentivized"],
+                     "creative_types": ["INCENTIVIZED"]
+                     }, {
+                     "network": "leadbolt",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["incentivized"],
+                     "creative_types": ["INCENTIVIZED"]
+                     }, {
+                     "network": "iad",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial"],
+                     "creative_types": ["STATIC"]
+                     }, {
+                     "network": "heyzap",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["incentivized"],
+                     "creative_types": ["INCENTIVIZED"]
+                     }, {
+                     "network": "heyzap",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial", "video"],
+                     "creative_types": ["VIDEO"]
+                     }, {
+                     "network": "facebook",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["banner"],
+                     "creative_types": ["BANNER"]
+                     }, {
+                     "network": "iad",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["banner"],
+                     "creative_types": ["BANNER"]
+                     }, {
+                     "network": "unityads",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["incentivized"],
+                     "creative_types": ["INCENTIVIZED"]
+                     }, {
+                     "network": "admob",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial", "video"],
+                     "creative_types": ["VIDEO"]
+                     }, {
+                     "network": "hyprmx",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["incentivized"],
+                     "creative_types": ["INCENTIVIZED"]
+                     }, {
+                     "network": "heyzap_exchange",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial", "video"],
+                     "creative_types": ["VIDEO"]
+                     }, {
+                     "network": "heyzap_exchange",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["incentivized"],
+                     "creative_types": ["INCENTIVIZED"]
+                     }, {
+                     "network": "heyzap_exchange",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial"],
+                     "creative_types": ["STATIC"]
+                     }, {
+                     "network": "heyzap_exchange",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["banner"],
+                     "creative_types": ["BANNER"]
+                     }, {
+                     "network": "facebook",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial"],
+                     "creative_types": ["STATIC"]
+                     }, {
+                     "network": "admob",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial"],
+                     "creative_types": ["STATIC"]
+                     }, {
+                     "network": "chartboost",
+                     "load": 1.0,
+                     "ttl": 10000.0,
+                     "score": 0.0,
+                     "ad_units": ["interstitial"],
+                     "creative_types": ["STATIC"]
+                     }]
+    },
+    "segments": [{
+                 "name": "Only static interstitials for \"static\" tag",
+                 "rules": [{
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["static"]
+                           }
+                           }, {
+                           "type": "Frequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 2,
+                                                "seconds": 86400
+                                                }, {
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 4,
+                                                "seconds": 86400
+                                                }, {
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 8,
+                                                "seconds": 86400
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }, {
+                           "type": "CrossPromoFrequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 2,
+                                                "seconds": 86400
+                                                }, {
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 4,
+                                                "seconds": 86400
+                                                }, {
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 8,
+                                                "seconds": 86400
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }]
+                 }, {
+                 "name": "all banners off for \"banner\" tag",
+                 "rules": [{
+                           "type": "Frequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "minute",
+                                                "ad_format": 8,
+                                                "seconds": 60
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }, {
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["banner"]
+                           }
+                           }]
+                 }, {
+                 "name": "1 ad per minute for \"on\" tag",
+                 "rules": [{
+                           "type": "Frequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 1,
+                                                "time_quantity": 1,
+                                                "time_unit": "minute",
+                                                "ad_format": 0,
+                                                "seconds": 60
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }, {
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["on"]
+                           }
+                           }, {
+                           "type": "CrossPromoFrequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 1,
+                                                "time_quantity": 1,
+                                                "time_unit": "minute",
+                                                "ad_format": 0,
+                                                "seconds": 60
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }]
+                 }, {
+                 "name": "no ads for \"offtag\" tag",
+                 "rules": [{
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["offtag"]
+                           }
+                           }, {
+                           "type": "Frequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 1,
+                                                "time_quantity": 1,
+                                                "time_unit": "minute",
+                                                "ad_format": 1,
+                                                "seconds": 60
+                                                }],
+                           "ads_enabled": false
+                           }
+                           }, {
+                           "type": "CrossPromoFrequency",
+                           "options": {
+                           "ads_enabled": false
+                           }
+                           }]
+                 }],
+    "error_reporting": {
+        "report_errors": true,
+        "report_metrics": true,
+        "seconds_between_error_reports": 600,
+        "seconds_to_report_after_first_error": 30
+    }
+}
