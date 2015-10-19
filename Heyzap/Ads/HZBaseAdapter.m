@@ -37,15 +37,12 @@
 
 NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
-#pragma mark - Initialization
+// When making a new subclass, copy methods in this section into the subclass and implement them, if necessary.
+#pragma mark - BEGIN METHODS TO PASTE INTO NEW SUBCLASS
 
 + (instancetype)sharedAdapter
 {
     ABSTRACT_METHOD_ERROR();
-}
-
-- (void) dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - Adapter Protocol
@@ -54,17 +51,6 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     
 }
 
-- (NSError *)initializeSDK {
-    __block NSError *error;
-    hzEnsureMainQueue(^{
-        error = [self internalInitializeSDK];
-        if (!error && !self.isInitialized) {
-            self.isInitialized = YES;
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
-        }
-    });
-    return error;
-}
 - (NSError *)internalInitializeSDK {
     ABSTRACT_METHOD_ERROR();
 }
@@ -88,28 +74,82 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
+- (NSString *)testActivityInstructions {
+    return nil;
+}
+
 - (HZCreativeType)supportedCreativeTypes
 {
     ABSTRACT_METHOD_ERROR();
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
-    if(![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner){
-        HZELog(@"HZBaseAdapter: prefetchForCreativeType:%@ called for %@ adapter (%@)", NSStringFromCreativeType(creativeType), [self name], creativeType == HZCreativeTypeBanner ? @"banners can't be fetched via the normal adapter": @"unsupported creativeType");
-        return;
-    }
-    
-    hzEnsureMainQueue(^{
-        if ([self hasAdForCreativeType:creativeType]) return;
-        
-        [self clearLastFetchErrorForCreativeType:creativeType];
-        [self internalPrefetchForCreativeType:creativeType];
-    });
+- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
+    return YES;
+}
+
+- (BOOL) hasNecessaryCredentials {
+    return YES;
 }
 
 - (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     ABSTRACT_METHOD_ERROR();
+}
+
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+{
+    ABSTRACT_METHOD_ERROR();
+}
+
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+{
+    ABSTRACT_METHOD_ERROR();
+}
+
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return nil;
+}
+
+#pragma mark - Logging
+
+- (void) loggingChanged:(NSNotification *) notification {
+    [self toggleLogging];
+}
+
+- (void) toggleLogging { }
+
+
+#pragma mark - END METHODS TO PASTE INTO NEW SUBCLASS
+
+#pragma mark - Instance methods that call class methods
+
+- (NSString *)sdkVersion
+{
+    return [[self class] sdkVersion];
+}
+
+- (NSString *)name
+{
+    return [[self class] name];
+}
+
+- (NSString *)humanizedName
+{
+    return [[self class] humanizedName];
+}
+
+#pragma mark - Public methods that call internal methods
+
+- (NSError *)initializeSDK {
+    __block NSError *error;
+    hzEnsureMainQueue(^{
+        error = [self internalInitializeSDK];
+        if (!error && !self.isInitialized) {
+            self.isInitialized = YES;
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
+        }
+    });
+    return error;
 }
 
 - (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
@@ -127,9 +167,27 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     });
     return hasAd;
 }
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
-{
-    ABSTRACT_METHOD_ERROR();
+
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
+    if(![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner){
+        HZELog(@"HZBaseAdapter: prefetchForCreativeType:%@ called for %@ adapter (%@)", NSStringFromCreativeType(creativeType), [self name], creativeType == HZCreativeTypeBanner ? @"banners can't be fetched via the normal adapter": @"unsupported creativeType");
+        return;
+    }
+    
+    hzEnsureMainQueue(^{
+        if ([self hasAdForCreativeType:creativeType]) return;
+        
+        [self clearLastFetchErrorForCreativeType:creativeType];
+        [self internalPrefetchForCreativeType:creativeType];
+    });
+}
+
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    __block HZBannerAdapter *bannerAdapter;
+    hzEnsureMainQueue(^{
+        bannerAdapter = [self internalFetchBannerWithOptions:options reportingDelegate:reportingDelegate];
+    });
+    return bannerAdapter;
 }
 
 - (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
@@ -145,63 +203,56 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     });
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
-{
-    ABSTRACT_METHOD_ERROR();
-}
-
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    __block HZBannerAdapter *bannerAdapter;
-    hzEnsureMainQueue(^{
-        bannerAdapter = [self internalFetchBannerWithOptions:options reportingDelegate:reportingDelegate];
-    });
-    return bannerAdapter;
-}
-
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    return nil;
-}
-
-#pragma mark - Logging
-
-- (void) loggingChanged:(NSNotification *) notification {
-    [self toggleLogging];
-}
-
-- (BOOL) isLoggingEnabled {
-    return ([HZLog isThirdPartyLoggingEnabled] ? YES : NO);
-}
-
-- (void) toggleLogging { }
-
-#pragma mark - Inferred methods
-
-- (NSString *)sdkVersion
-{
-    return [[self class] sdkVersion];
-}
-
-- (NSString *)name
-{
-    return [[self class] name];
-}
-
-- (NSString *)humanizedName
-{
-    return [[self class] humanizedName];
-}
+#pragma mark - Common, shared logic
 
 - (BOOL)supportsCreativeType:(HZCreativeType)creativeType
 {
     return [self supportedCreativeTypes] & creativeType;
 }
 
-- (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
-    return YES;
+- (NSNumber *) latestMediationScoreForCreativeType:(HZCreativeType)creativeType {
+    if(!self.latestMediationScores){
+        self.latestMediationScores = [[NSMutableDictionary alloc] init];
+    }
+    
+    return self.latestMediationScores[@(creativeType)] ?: @0;
 }
 
-- (BOOL) hasNecessaryCredentials {
-    return YES;
+- (void) setLatestMediationScore:(NSNumber *)score forCreativeType:(HZCreativeType)creativeType {
+    if(!self.latestMediationScores){
+        self.latestMediationScores = [[NSMutableDictionary alloc]init];
+    }
+    
+    self.latestMediationScores[@(creativeType)] = (score ?: @0);
+}
+
+- (void)setCredentials:(NSDictionary *const)credentials {
+    if (!_credentials) {
+        _credentials = credentials;
+        [self loadCredentials];
+    }
+}
+
+- (HZAdType) possibleSupportedAdTypes {
+    HZAdType returnVal = 0;
+    HZCreativeType supportedCreativeTypes = [self supportedCreativeTypes];
+    if (supportedCreativeTypes & HZCreativeTypeStatic) {
+        returnVal |= HZAdTypeInterstitial;
+    }
+    
+    if (supportedCreativeTypes & HZCreativeTypeVideo) {
+        returnVal |= (HZAdTypeInterstitial | HZAdTypeVideo); // blended interstitials
+    }
+    
+    if(supportedCreativeTypes & HZCreativeTypeIncentivized) {
+        returnVal |= HZAdTypeIncentivized;
+    }
+    
+    if(supportedCreativeTypes & HZCreativeTypeBanner) {
+        returnVal |= HZAdTypeBanner;
+    }
+    
+    return returnVal;
 }
 
 - (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
@@ -249,7 +300,19 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     }
 }
 
-#pragma mark - Implemented Methods
+- (BOOL) isLoggingEnabled {
+    return ([HZLog isThirdPartyLoggingEnabled] ? YES : NO);
+}
+
++ (NSTimeInterval)isAvailablePollInterval {
+    return kHZIsAvailablePollIntervalSecondsDefault;
+}
+
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+#pragma mark - Adapter management
 
 + (Class)adapterClassForName:(NSString *)adapterName
 {
@@ -297,57 +360,6 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return NO;
 }
 
-- (NSNumber *) latestMediationScoreForCreativeType:(HZCreativeType)creativeType {
-    if(!self.latestMediationScores){
-        self.latestMediationScores = [[NSMutableDictionary alloc] init];
-    }
-    
-    return self.latestMediationScores[@(creativeType)] ?: @0;
-}
 
-- (void) setLatestMediationScore:(NSNumber *)score forCreativeType:(HZCreativeType)creativeType {
-    if(!self.latestMediationScores){
-        self.latestMediationScores = [[NSMutableDictionary alloc]init];
-    }
-    
-    self.latestMediationScores[@(creativeType)] = (score ?: @0);
-}
-
-- (void)setCredentials:(NSDictionary *const)credentials {
-    if (!_credentials) {
-        _credentials = credentials;
-        [self loadCredentials];
-    }
-}
-
-+ (NSTimeInterval)isAvailablePollInterval {
-    return kHZIsAvailablePollIntervalSecondsDefault;
-}
-
-- (HZAdType) possibleSupportedAdTypes {
-    HZAdType returnVal = 0;
-    HZCreativeType supportedCreativeTypes = [self supportedCreativeTypes];
-    if (supportedCreativeTypes & HZCreativeTypeStatic) {
-        returnVal |= HZAdTypeInterstitial;
-    }
-    
-    if (supportedCreativeTypes & HZCreativeTypeVideo) {
-        returnVal |= (HZAdTypeInterstitial | HZAdTypeVideo); // blended interstitials
-    }
-    
-    if(supportedCreativeTypes & HZCreativeTypeIncentivized) {
-        returnVal |= HZAdTypeIncentivized;
-    }
-    
-    if(supportedCreativeTypes & HZCreativeTypeBanner) {
-        returnVal |= HZAdTypeBanner;
-    }
-    
-    return returnVal;
-}
-
-- (NSString *)testActivityInstructions {
-    return nil;
-}
 
 @end
