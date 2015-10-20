@@ -43,5 +43,9 @@
     return HZAuctionTypeCrossPromo;
 }
 
+- (NSString *)testActivityInstructions {
+    return @"When you launch an app using the Heyzap SDK, we register that you've installed that game, and won't show you ads for it. This often causes developers to not receive cross promo ads.\n\nTo work around this, reset your Advertising Identifier from Settings > Privacy > Advertising > Reset Advertising Identfier...";
+}
+
 
 @end
