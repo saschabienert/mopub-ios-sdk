@@ -160,28 +160,60 @@
     }
 }
 
+#pragma mark - Errors
+
+- (NSString *)errorDescriptionForZoneStatus:(HZ_ADCOLONY_ZONE_STATUS)zoneStatus {
+    switch (zoneStatus) {
+        case HZ_ADCOLONY_ZONE_STATUS_OFF: {
+            return @"The zone is turned off on the AdColony dashboard.";
+        }
+        case HZ_ADCOLONY_ZONE_STATUS_NO_ZONE: {
+            return @"AdColony has not been configured with the zone.";
+        }
+        case HZ_ADCOLONY_ZONE_STATUS_UNKNOWN: {
+            return @"AdColony has not yet received the zone's configuration from the server.";
+        }
+        case HZ_ADCOLONY_ZONE_STATUS_LOADING:
+        case HZ_ADCOLONY_ZONE_STATUS_ACTIVE: {
+            return nil;
+        }
+    }
+}
+
 - (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
 {
+    NSString *const zone = [self zoneIDForCreativeType:creativeType];
+    if (zone) {
+        const HZ_ADCOLONY_ZONE_STATUS status = [HZAdColony zoneStatusForZone:zone];
+        NSString *const errorDescription = [self errorDescriptionForZoneStatus:status];
+        if (errorDescription) {
+            return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:
+                        @{kHZMediatorNameKey: [self humanizedName],
+                          @"AdColonyZoneID":zone,
+                          NSLocalizedDescriptionKey:errorDescription,
+                          }];
+        } else {
+            return nil;
+        }
+    } else {
+        return nil;
+    }
+}
+
+#pragma mark - Util
+
+- (NSString *)zoneIDForCreativeType:(HZCreativeType)creativeType {
     switch (creativeType) {
         case HZCreativeTypeVideo: {
-            if ([HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_OFF
-                || [HZAdColony zoneStatusForZone:self.interstitialZoneID] == HZ_ADCOLONY_ZONE_STATUS_NO_ZONE) {
-                return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"AdColony"}];
-            } else {
-                return nil;
-            }
-            break;
+            return self.interstitialZoneID;
         }
         case HZCreativeTypeIncentivized: {
-            if ([HZAdColony zoneStatusForZone:self.incentivizedZoneID] == HZ_ADCOLONY_ZONE_STATUS_OFF
-                || [HZAdColony zoneStatusForZone:self.incentivizedZoneID] == HZ_ADCOLONY_ZONE_STATUS_NO_ZONE) {
-                return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"AdColony"}];
-            } else {
-                return nil;
-            }
-            break;
+            return self.incentivizedZoneID;
         }
-        default: {
+        case HZCreativeTypeNative:
+        case HZCreativeTypeBanner:
+        case HZCreativeTypeStatic:
+        case HZCreativeTypeUnknown: {
             return nil;
         }
     }
