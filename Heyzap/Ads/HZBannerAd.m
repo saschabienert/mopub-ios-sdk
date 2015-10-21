@@ -150,6 +150,13 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
                 }
                 
                 wrapper.frame = tmpFrame;
+                
+                if (![wrapper isFlexibleWidth]) {
+                    CGPoint center = wrapper.center;
+                    center.x = CGRectGetMidX(view.bounds);
+                    wrapper.center = center;
+                }
+                
                 [view addSubview:wrapper];
                 break;
             }
@@ -169,6 +176,13 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
                 }
                 
                 wrapper.frame = tmpFrame;
+                
+                if (![wrapper isFlexibleWidth]) {
+                    CGPoint center = wrapper.center;
+                    center.x = CGRectGetMidX(view.bounds);
+                    wrapper.center = center;
+                }
+                
                 [view addSubview:wrapper];
                 break;
             }
