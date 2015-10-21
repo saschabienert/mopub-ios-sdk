@@ -16,6 +16,10 @@ BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout) {
 }
 
 BOOL hzWaitUntilInterval(const NSTimeInterval interval, BOOL (^waitBlock)(void), const NSTimeInterval timeout) {
+    return hzWaitUntilIntervalOnQueue(interval, dispatch_get_main_queue(), waitBlock, timeout);
+}
+
+BOOL hzWaitUntilIntervalOnQueue(const NSTimeInterval interval, dispatch_queue_t queue, BOOL (^waitBlock)(void), const NSTimeInterval timeout) {
     NSCParameterAssert(waitBlock);
     NSCParameterAssert(timeout > 0);
     
@@ -23,7 +27,7 @@ BOOL hzWaitUntilInterval(const NSTimeInterval interval, BOOL (^waitBlock)(void),
     while (true) {
         
         __block BOOL waitCondition = NO;
-        dispatch_sync(dispatch_get_main_queue(), ^{
+        dispatch_sync(queue, ^{
             waitCondition = waitBlock();
         });
         

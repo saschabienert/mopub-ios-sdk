@@ -24,12 +24,24 @@ BOOL hzWaitUntil(BOOL (^waitBlock)(void), const NSTimeInterval timeout);
  *  Waits until the return value from waitBlock is true, or it times out.
  *
  *  @param interval       The time to wait between calls to `waitBlock`.
- *  @param waitBlock      The block to run repeatedly until it returns YES.
+ *  @param waitBlock      The block to run repeatedly until it returns YES - this is run on the main queue.
  *  @param timeout        The time to wait before returning NO.
  *
  *  @return YES if successful, NO if not in the timeout.
  */
 BOOL hzWaitUntilInterval(NSTimeInterval interval, BOOL (^waitBlock)(void), const NSTimeInterval timeout);
+
+/**
+ *  Waits until the return value from waitBlock is true, or it times out.
+ *
+ *  @param interval       The time to wait between calls to `waitBlock`.
+ *  @param waitBlock      The block to run repeatedly until it returns YES - this is run on `queue`.
+ *  @param queue          The dispatch queue to run `waitBlock` on.
+ *  @param timeout        The time to wait before returning NO.
+ *
+ *  @return YES if successful, NO if not in the timeout.
+ */
+BOOL hzWaitUntilIntervalOnQueue(const NSTimeInterval interval, dispatch_queue_t queue, BOOL (^waitBlock)(void), const NSTimeInterval timeout);
 
 /**
  *  If not on the main queue, executes the block synchronously on the main queue and waits for it to finish. If on the main queue, just executes the block.
