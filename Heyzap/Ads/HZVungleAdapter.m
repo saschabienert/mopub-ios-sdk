@@ -16,6 +16,9 @@
 #import "HZBaseAdapter_Internal.h"
 #import "HZDevice.h"
 
+NSString * const HZFallbackVunglePlayAdOptionKeyIncentivized = @"incentivized";
+NSString * const HZFallbackVunglePlayAdOptionKeyPlacement = @"placement";
+
 @interface HZVungleAdapter() <HZVungleSDKDelegate>
 
 /**
@@ -133,7 +136,11 @@
 - (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
     // setup options
-    NSMutableDictionary *vungleOptions = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *vungleOptions = [NSMutableDictionary dictionary];
+    
+    NSString *const sanitizedPlacement = [[self class] sanitizeAdTagForVunglePlacement:options.tag];
+    vungleOptions[[[self class] vunglePlayAdOptionKeyPlacement]] = sanitizedPlacement;
+    
     
     if (creativeType == HZCreativeTypeIncentivized) {
         self.isShowingIncentivized = YES;
@@ -149,6 +156,28 @@
         [self.delegate adapterDidFailToShowAd:self error:error];
     }
 }
+
++ (NSString *)vungleValidPlacementCharacters {
+    return @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+}
+
++ (NSCharacterSet *)vunglePlacementDisallowedCharacterSet {
+    static NSCharacterSet *disallowedCharacterSet = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        disallowedCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:[self vungleValidPlacementCharacters]] invertedSet];
+    });
+    return disallowedCharacterSet;
+}
+
++ (NSString *)sanitizeAdTagForVunglePlacement:(NSString *)tag {
+    return [[tag componentsSeparatedByCharactersInSet:[self vunglePlacementDisallowedCharacterSet]] componentsJoinedByString:@""];
+}
+
+
+
+
+
 
 #pragma mark - Vungle Delegate
 
@@ -197,7 +226,11 @@
 }
 
 + (NSString *)vunglePlayAdOptionKeyIncentivized {
-    return @"incentivized";
+    return hzLookupStringConstant(@"VunglePlayAdOptionKeyIncentivized") ?: HZFallbackVunglePlayAdOptionKeyIncentivized;
+}
+
++ (NSString *)vunglePlayAdOptionKeyPlacement {
+    return hzLookupStringConstant(@"VunglePlayAdOptionKeyPlacement") ?: HZFallbackVunglePlayAdOptionKeyPlacement;
 }
 
 @end
