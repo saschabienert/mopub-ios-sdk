@@ -627,7 +627,7 @@ const unsigned long long adStalenessTimeout = 15;
             currentAd.showOptions.completion(YES, nil);
         }
     } else {
-        HZELog(@"The network %@ reported that it showed an ad, but we weren't expecting this.",adapter.name);
+        HZELog(@"The network %@ reported that it showed an ad, but we weren't expecting this. This can happen if you're calling 3rd party networks directly, in which case this is harmless.",adapter.name);
     }
     
     __weak __typeof(&*currentAd)weakCurrentAd = currentAd;
@@ -653,7 +653,7 @@ const unsigned long long adStalenessTimeout = 15;
         [[self delegateForAdType:self.currentShownAd.showOptions.requestingAdType] didClickAdWithTag:self.currentShownAd.tag];
         [[NSNotificationCenter defaultCenter] postNotificationName:HZMediationDidClickAdNotification object:[self classForAdType:self.currentShownAd.showOptions.requestingAdType] userInfo:@{HZAdTagUserInfoKey: self.currentShownAd.tag, HZNetworkNameUserInfoKey: adapter.name}];
     } else {
-        HZELog(@"Ad network %@ reported that an ad was clicked, but we weren't expecting this.",adapter.name);
+        HZELog(@"Ad network %@ reported that an ad was clicked, but we weren't expecting this. This can happen if you're calling 3rd party networks directly, in which case this is harmless.",adapter.name);
     }
 }
 
@@ -671,7 +671,7 @@ const unsigned long long adStalenessTimeout = 15;
         
         [self autoFetchAdType:previousAdType tag:tag];
     } else {
-        HZELog(@"Ad network %@ reported that an ad was closed, but we weren't expecting this.",adapter.name);
+        HZELog(@"Ad network %@ reported that an ad was closed, but we weren't expecting this. This can happen if you're calling 3rd party networks directly, in which case this is harmless.",adapter.name);
     }
 }
 
@@ -683,7 +683,7 @@ const unsigned long long adStalenessTimeout = 15;
         [[self delegateForAdType:self.currentShownAd.showOptions.requestingAdType] willStartAudio];
         [[NSNotificationCenter defaultCenter] postNotificationName:HZMediationWillStartAdAudioNotification object:[self classForAdType:self.currentShownAd.showOptions.requestingAdType] userInfo:@{HZAdTagUserInfoKey: self.currentShownAd.tag, HZNetworkNameUserInfoKey: adapter.name}];
     } else {
-        HZELog(@"Ad network %@ reported that an ad played audio, but we weren't expecting this.",adapter.name);
+        HZELog(@"Ad network %@ reported that an ad played audio, but we weren't expecting this. This can happen if you're calling 3rd party networks directly, in which case this is harmless.",adapter.name);
     }
 }
 
@@ -695,7 +695,7 @@ const unsigned long long adStalenessTimeout = 15;
         [[self delegateForAdType:self.currentShownAd.showOptions.requestingAdType] didFinishAudio];
         [[NSNotificationCenter defaultCenter] postNotificationName:HZMediationDidFinishAdAudioNotification object:[self classForAdType:self.currentShownAd.showOptions.requestingAdType] userInfo:@{HZAdTagUserInfoKey: self.currentShownAd.tag, HZNetworkNameUserInfoKey: adapter.name}];
     } else {
-        HZELog(@"Ad network %@ reported that an ad finished playing audio, but we weren't expecting this.",adapter.name);
+        HZELog(@"Ad network %@ reported that an ad finished playing audio, but we weren't expecting this. This can happen if you're calling 3rd party networks directly, in which case this is harmless.",adapter.name);
     }
 }
 
@@ -707,7 +707,7 @@ const unsigned long long adStalenessTimeout = 15;
                                              adapter:adapter];
         self.currentShownAd = nil;
     } else {
-        HZELog(@"Ad network %@ reported that an ad failed to show, but we weren't expecting this.",adapter.name);
+        HZELog(@"Ad network %@ reported that an ad failed to show, but we weren't expecting this. This can happen if you're calling 3rd party networks directly, in which case this is harmless.",adapter.name);
     }
 }
 
@@ -724,7 +724,7 @@ const unsigned long long adStalenessTimeout = 15;
         [[NSNotificationCenter defaultCenter] postNotificationName:HZMediationDidCompleteIncentivizedAdNotification object:[self classForAdType:self.currentShownAd.showOptions.requestingAdType] userInfo:@{HZAdTagUserInfoKey: self.currentShownAd.tag, HZNetworkNameUserInfoKey: adapter.name}];
         [self.currentShownAd.eventReporter reportIncentivizedResult:YES forAdapter:adapter incentivizedInfo:self.currentShownAd.showOptions.incentivizedInfo];
     } else {
-        HZELog(@"Ad network %@ reported that an incentivized ad was completed, but we weren't expecting this.",adapter.name);
+        HZELog(@"Ad network %@ reported that an incentivized ad was completed, but we weren't expecting this. This can happen if you're calling 3rd party networks directly, in which case this is harmless.",adapter.name);
     }
 }
 
@@ -737,7 +737,7 @@ const unsigned long long adStalenessTimeout = 15;
         [[NSNotificationCenter defaultCenter] postNotificationName:HZMediationDidFailToCompleteIncentivizedAdNotification object:[self classForAdType:self.currentShownAd.showOptions.requestingAdType] userInfo:@{HZAdTagUserInfoKey: self.currentShownAd.tag, HZNetworkNameUserInfoKey: adapter.name}];
         [self.currentShownAd.eventReporter reportIncentivizedResult:NO forAdapter:adapter incentivizedInfo:self.currentShownAd.showOptions.incentivizedInfo];
     } else {
-        HZELog(@"Ad network %@ reported that an incentivized ad wasn't completed, but we weren't expecting this.",adapter.name);
+        HZELog(@"Ad network %@ reported that an incentivized ad wasn't completed, but we weren't expecting this. This can happen if you're calling 3rd party networks directly, in which case this is harmless.",adapter.name);
     }
 }
 
