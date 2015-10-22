@@ -154,6 +154,21 @@ NSString * const kHZDeviceNetworkUnknown = @"unknown";
     return [carrier carrierName] ?: kHZDeviceNetworkUnknown;
 }
 
+// Based on https://developer.apple.com/library/mac/qa/qa1544/_index.html
++ (NSString *)appName {
+    static NSString *appName = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // CFBundleDisplayName and CFBundleDisplayName can apparently be `nil` according to the Apple docs
+        // I'm pretty sure that's for Mac apps though—the app store requires giving your app a name.
+        appName = [[NSBundle mainBundle] localizedInfoDictionary][@"CFBundleDisplayName"]
+            ?: [[NSBundle mainBundle] localizedInfoDictionary][(NSString *)kCFBundleNameKey]
+            ?: [[NSProcessInfo processInfo] processName];
+    });
+    
+    return appName;
+}
+
 // see http://stackoverflow.com/questions/25405566/mapping-ios-7-constants-to-2g-3g-4g-lte-etc
 - (HZOpenRTBConnectionType) getHZOpenRTBConnectionType {
     NSString *str = self.latestRadioAccessTechnology;
