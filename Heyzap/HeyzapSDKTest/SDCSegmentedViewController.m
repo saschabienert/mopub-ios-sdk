@@ -136,6 +136,10 @@ NSInteger const DefaultSegmentIndex = 0;
     return UIInterfaceOrientationMaskAll;
 }
 
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
 #pragma mark - Content Management
 
 - (void)addStoryboardSegments:(NSArray *)segments {
