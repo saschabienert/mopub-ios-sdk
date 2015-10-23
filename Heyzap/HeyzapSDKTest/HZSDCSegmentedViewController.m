@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Scotty Doesn't Code. All rights reserved.
 //
 
-#import "SDCSegmentedViewController.h"
+#import "HZSDCSegmentedViewController.h"
 
 NSInteger const DefaultSegmentIndex = 0;
 
-@interface SDCSegmentedViewController ()
+@interface HZSDCSegmentedViewController ()
 
 @property (nonatomic, strong) NSMutableArray<UIViewController *> *viewControllers;
 @property (nonatomic, strong) NSMutableArray<NSString *> *titles;
@@ -22,7 +22,7 @@ NSInteger const DefaultSegmentIndex = 0;
 
 @end
 
-@implementation SDCSegmentedViewController
+@implementation HZSDCSegmentedViewController
 
 #pragma mark - Custom Getters
 
@@ -56,7 +56,7 @@ NSInteger const DefaultSegmentIndex = 0;
 
 #pragma mark - Custom Setter
 
-- (void)setPosition:(SDCSegmentedViewControllerControlPosition)position {
+- (void)setPosition:(HZSDCSegmentedViewControllerControlPosition)position {
 	_position = position;
 	[self moveControlToPosition:position];
 }
@@ -100,7 +100,7 @@ NSInteger const DefaultSegmentIndex = 0;
 	[super viewWillAppear:animated];
     
 	if ([self.viewControllers count] == 0)
-		[NSException raise:@"SDCSegmentedViewControllerException" format:@"SDCSegmentedViewController has no view controllers that it can display."];
+		[NSException raise:@"HZSDCSegmentedViewControllerException" format:@"HZSDCSegmentedViewController has no view controllers that it can display."];
 	
 	if (self.segmentedControl.selectedSegmentIndex == UISegmentedControlNoSegment) {
 		self.segmentedControl.selectedSegmentIndex = DefaultSegmentIndex;
@@ -169,13 +169,13 @@ NSInteger const DefaultSegmentIndex = 0;
 
 #pragma mark - View Controller Containment
 
-- (void)moveControlToPosition:(SDCSegmentedViewControllerControlPosition)newPosition {
+- (void)moveControlToPosition:(HZSDCSegmentedViewControllerControlPosition)newPosition {
 
 	switch (newPosition) {
-		case SDCSegmentedViewControllerControlPositionNavigationBar:
+		case HZSDCSegmentedViewControllerControlPositionNavigationBar:
 			self.navigationItem.titleView = self.segmentedControl;
 			break;
-		case SDCSegmentedViewControllerControlPositionToolbar: {
+		case HZSDCSegmentedViewControllerControlPositionToolbar: {
 			UIBarButtonItem *flexible = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
 																					  target:nil
 																					  action:nil];
@@ -225,9 +225,9 @@ NSInteger const DefaultSegmentIndex = 0;
 }
 
 - (void)updateBarsForViewController:(UIViewController *)viewController {
-	if (self.position == SDCSegmentedViewControllerControlPositionToolbar)
+	if (self.position == HZSDCSegmentedViewControllerControlPositionToolbar)
 		self.title = viewController.title;
-	else if (self.position == SDCSegmentedViewControllerControlPositionNavigationBar) {
+	else if (self.position == HZSDCSegmentedViewControllerControlPositionNavigationBar) {
         self.toolbarItems = viewController.toolbarItems;
         const NSUInteger index = [self.viewControllers indexOfObject:viewController];
         if (viewController.title) {

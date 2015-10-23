@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SDCSegmentedViewController.h"
+#import "HZSDCSegmentedViewController.h"
 
 @protocol HZMediationTestSuiteManager;
 @protocol HZMediationTestSuitePage <NSObject>

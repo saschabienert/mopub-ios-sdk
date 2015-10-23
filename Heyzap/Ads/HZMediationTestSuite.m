@@ -35,12 +35,12 @@
         [page setDelegate:self];
     }
     
-    SDCSegmentedViewController *segmentedController = [[SDCSegmentedViewController alloc] initWithViewControllers:@[networkTestController, mediationTestController] titles:@[ @"Individual Networks", @"Mediation"]];
+    HZSDCSegmentedViewController *segmentedController = [[HZSDCSegmentedViewController alloc] initWithViewControllers:@[networkTestController, mediationTestController] titles:@[ @"Individual Networks", @"Mediation"]];
     
     if ([segmentedController respondsToSelector:@selector(edgesForExtendedLayout)]) {
         segmentedController.edgesForExtendedLayout = UIRectEdgeNone;
     }
-    segmentedController.position = SDCSegmentedViewControllerControlPositionNavigationBar;
+    segmentedController.position = HZSDCSegmentedViewControllerControlPositionNavigationBar;
     
     self.navController = [[HZUINavigationController alloc] initWithRootViewController: segmentedController orientations:UIInterfaceOrientationMaskAll];
     
