@@ -769,7 +769,7 @@ const unsigned long long adStalenessTimeout = 15;
         return;
     }
     
-    HZILog(@"Mediation requesting banner for tag: %@ timeout: %f", options.tag, options.fetchTimeout)
+    HZILog(@"Mediation requesting banner for tag: %@ timeout: %@", options.tag, ((options.fetchTimeout == DBL_MAX) ? @"(none)" : [NSString stringWithFormat:@"%f", options.fetchTimeout]));
     
     dispatch_async(self.fetchQueue, ^{ // necessary for the hzWaitUntilInterval below
         
@@ -871,7 +871,7 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
     HZParameterAssert(completion);
     HZParameterAssert(eventReporter);
     
-    HZILog(@"Mediation attempting to fetch and show a banner with adapters: [%@], tag: %@, timeout: %f", hzMapOrderedSet(adaptersWithScores, ^NSString *(HZMediationAdapterWithCreativeTypeScore *adapterWithScore){ return [[adapterWithScore adapter] name]; }), options.tag, options.fetchTimeout);
+    HZILog(@"Mediation attempting to fetch and show a banner with adapters: [%@], tag: %@, timeout: %@", hzMapOrderedSet(adaptersWithScores, ^NSString *(HZMediationAdapterWithCreativeTypeScore *adapterWithScore){ return [[adapterWithScore adapter] name]; }), options.tag, ((options.fetchTimeout == DBL_MAX) ? @"(none)" : [NSString stringWithFormat:@"%f", options.fetchTimeout]));
     
     dispatch_async(self.fetchQueue, ^{
         NSDate * startDate = [NSDate date];
