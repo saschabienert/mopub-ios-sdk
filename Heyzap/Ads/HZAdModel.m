@@ -244,7 +244,7 @@
         tag = [[HeyzapAds defaultTagName] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
     }
     
-    return [tag lowercaseString];
+    return tag;
 }
 
 @end
