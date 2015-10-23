@@ -77,6 +77,7 @@
                                          @"video_delivery": @"2",//comma separated list of delivery methods STREAMING(1),PROGRESSIVE(2)
                                          @"video_playbackmethod": @"1",//comma separated list of playback methods: AUTO_PLAY_SOUND_ON_VALUE(1), AUTO_PLAY_SOUND_OFF_VALUE(2), CLICK_TO_PLAY_VALUE(3), MOUSE_OVER_VALUE(4)
                                          @"video_mime": @"video/mp4, video/quicktime", // supported video MIME types for iOS
+                                         @"app_name": [HZDevice appName],
                                          } mutableCopy];
         
         defaultParams = params;

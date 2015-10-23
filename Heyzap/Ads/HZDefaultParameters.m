@@ -47,6 +47,7 @@ NSString * const kHZEnvironmentParamsKey = @"environment_params";
                                          @"os_version": [HZDevice systemVersion],
                                          @"device_type": [HZAvailability platform],
                                          @"advertising_id" : [HZDevice HZadvertisingIdentifier],
+                                         @"app_name": [HZDevice appName],
                                          } mutableCopy];
         
         [params addEntriesFromDictionary:[HZDevice HZIdentifierDictionary]];
