@@ -18,7 +18,7 @@
 #import "SDKTestAppViewController.h"
 
 #import "HZDevice.h"
-#import "SDCSegmentedViewController.h"
+#import "HZSDCSegmentedViewController.h"
 #import "ServerSelectionViewController.h"
 #import "DeviceInfoViewController.h"
 #import "DemandTestViewController.h"
@@ -56,7 +56,7 @@
     DeviceInfoViewController *deviceController = [[DeviceInfoViewController alloc] init];
     DemandTestViewController *mraidController = [[DemandTestViewController alloc] init];
     
-    SDCSegmentedViewController *segmentedController = [[SDCSegmentedViewController alloc] initWithViewControllers:@[mainController, serverController, mraidController, deviceController]];
+    HZSDCSegmentedViewController *segmentedController = [[HZSDCSegmentedViewController alloc] initWithViewControllers:@[mainController, serverController, mraidController, deviceController]];
 
     if ([segmentedController respondsToSelector:@selector(edgesForExtendedLayout)]) {
         segmentedController.edgesForExtendedLayout = UIRectEdgeNone;
@@ -65,7 +65,7 @@
     
     self.navController = [[HZUINavigationController alloc] initWithRootViewController: segmentedController orientations:UIInterfaceOrientationMaskAll];
     
-    segmentedController.position = SDCSegmentedViewControllerControlPositionNavigationBar;
+    segmentedController.position = HZSDCSegmentedViewControllerControlPositionNavigationBar;
     segmentedController.segmentedControl.tintColor = [UIColor whiteColor];
     
     [self.window setRootViewController: self.navController];

@@ -78,13 +78,13 @@
 		5020884019DA2574005C3C1B /* HZNativeAdCollectionSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5020883F19DA2574005C3C1B /* HZNativeAdCollectionSpec.m */; };
 		5020884219DA28DE005C3C1B /* HZNativeAdSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5020884119DA28DE005C3C1B /* HZNativeAdSpec.m */; };
 		5020884619DA2A87005C3C1B /* ValidNativeAd.json in Resources */ = {isa = PBXBuildFile; fileRef = 5020884419DA2A87005C3C1B /* ValidNativeAd.json */; };
-		50286DA81B9925D20005C44F /* HZErrorReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50286DA61B9925D20005C44F /* HZErrorReporter.h */; };
-		50286DA91B9925D20005C44F /* HZErrorReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50286DA71B9925D20005C44F /* HZErrorReporter.m */; };
 		502244AD1BCF2E1300279639 /* start.json in Resources */ = {isa = PBXBuildFile; fileRef = 502244AC1BCF2E1300279639 /* start.json */; settings = {ASSET_TAGS = (); }; };
 		502244B01BCF2E2300279639 /* mediate.json in Resources */ = {isa = PBXBuildFile; fileRef = 502244AF1BCF2E2300279639 /* mediate.json */; settings = {ASSET_TAGS = (); }; };
 		502244B41BCF315200279639 /* IntegrationTestConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 502244B31BCF315200279639 /* IntegrationTestConfig.m */; settings = {ASSET_TAGS = (); }; };
 		502244B51BCF327C00279639 /* TestJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BEB18C96CE2003A7CB9 /* TestJSON.m */; settings = {ASSET_TAGS = (); }; };
 		502244BB1BD0351D00279639 /* HZKIFTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 502244BA1BD0351D00279639 /* HZKIFTestCase.m */; settings = {ASSET_TAGS = (); }; };
+		50286DA81B9925D20005C44F /* HZErrorReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50286DA61B9925D20005C44F /* HZErrorReporter.h */; };
+		50286DA91B9925D20005C44F /* HZErrorReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50286DA71B9925D20005C44F /* HZErrorReporter.m */; };
 		502E03791BD0391C00872BA2 /* NSString+Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624818CBF58A0018A0B6 /* NSString+Tests.m */; settings = {ASSET_TAGS = (); }; };
 		502E037A1BD0392000872BA2 /* OHHTTPStubs+Heyzap.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624B18CBF7080018A0B6 /* OHHTTPStubs+Heyzap.m */; settings = {ASSET_TAGS = (); }; };
 		502E03821BD05EFE00872BA2 /* cross_promo_static.json in Resources */ = {isa = PBXBuildFile; fileRef = 502E03811BD05EFE00872BA2 /* cross_promo_static.json */; settings = {ASSET_TAGS = (); }; };
@@ -94,9 +94,6 @@
 		50310F9B1A2E894F00FDC9BC /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50310F981A2E894F00FDC9BC /* Launch Screen.xib */; };
 		50382E331BC5A45E00C9218D /* NSDictionary+HZDummyCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 50382E311BC5A45E00C9218D /* NSDictionary+HZDummyCategory.h */; settings = {ASSET_TAGS = (); }; };
 		50382E341BC5A45E00C9218D /* NSDictionary+HZDummyCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 50382E321BC5A45E00C9218D /* NSDictionary+HZDummyCategory.m */; settings = {ASSET_TAGS = (); }; };
-		504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C518B592CE00E00E6C /* ServerSelectionViewController.m */; };
-		504514C918B5A59100E00E6C /* BaseTestAppViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514C818B5A59100E00E6C /* BaseTestAppViewController.m */; };
-		504514CC18B68EF600E00E6C /* DeviceInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 504514CB18B68EF600E00E6C /* DeviceInfoViewController.m */; };
 		5046CE8618E3545E000395AA /* HZMediationConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 5046CE8418E3545E000395AA /* HZMediationConstants.h */; };
 		5046CE8718E3545E000395AA /* HZMediationConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5046CE8518E3545E000395AA /* HZMediationConstants.m */; };
 		5046CE8A18E3B0C3000395AA /* HZDispatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5046CE8818E3B0C3000395AA /* HZDispatch.h */; };
@@ -187,8 +184,6 @@
 		507A455219BE4E5100C7AEEA /* HZNativeAdCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A455019BE4E5100C7AEEA /* HZNativeAdCollection.m */; };
 		507A456219BE95B000C7AEEA /* HZStorePresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 507A456019BE95B000C7AEEA /* HZStorePresenter.h */; };
 		507A456319BE95B000C7AEEA /* HZStorePresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A456119BE95B000C7AEEA /* HZStorePresenter.m */; };
-		507A457019BF91ED00C7AEEA /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 507A456F19BF91ED00C7AEEA /* Storyboard.storyboard */; };
-		507A457419BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 507A457319BF943700C7AEEA /* NativeAdDetailsTableViewController.m */; };
 		5080E7041B9FAABF0065E685 /* HZErrorReportingConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5080E7021B9FAABF0065E685 /* HZErrorReportingConfig.h */; };
 		5080E7051B9FAABF0065E685 /* HZErrorReportingConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5080E7031B9FAABF0065E685 /* HZErrorReportingConfig.m */; };
 		5080E7081B9FB6990065E685 /* HZErrorReporterSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5080E7071B9FB6990065E685 /* HZErrorReporterSpec.m */; };
@@ -435,8 +430,8 @@
 		998B1C111B83A50B003C1437 /* HZSegmentationSegmentSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 998B1C101B83A50B003C1437 /* HZSegmentationSegmentSpec.m */; };
 		998B1C191B84F9AD003C1437 /* HZCreativeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 998B1C181B84F9AD003C1437 /* HZCreativeType.h */; };
 		99A05AF41BCC7B2E00069175 /* HZBannerAdOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 50DB884B1AB0C0D9003C5758 /* HZBannerAdOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		99A05AFB1BCEC31600069175 /* SDCSegmentedViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5045147D18B58C5A00E00E6C /* SDCSegmentedViewController.h */; settings = {ASSET_TAGS = (); }; };
-		99A05AFC1BCEC31C00069175 /* SDCSegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */; settings = {ASSET_TAGS = (); }; };
+		99A05AFB1BCEC31600069175 /* HZSDCSegmentedViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5045147D18B58C5A00E00E6C /* HZSDCSegmentedViewController.h */; settings = {ASSET_TAGS = (); }; };
+		99A05AFC1BCEC31C00069175 /* HZSDCSegmentedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5045147E18B58C5A00E00E6C /* HZSDCSegmentedViewController.m */; settings = {ASSET_TAGS = (); }; };
 		99AF08571B8E701A00532AB7 /* HZFetchOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 99AF08561B8E701A00532AB7 /* HZFetchOptions.m */; };
 		99B320661B87D1CF002632BF /* HZSegmentationControllerSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 99B320651B87D1CF002632BF /* HZSegmentationControllerSpec.m */; };
 		99B3206C1B87D6C9002632BF /* mediationStartResponseThatShouldProduceFourSegments.json in Resources */ = {isa = PBXBuildFile; fileRef = 99B3206B1B87D6C9002632BF /* mediationStartResponseThatShouldProduceFourSegments.json */; };
@@ -636,8 +631,8 @@
 		50382E311BC5A45E00C9218D /* NSDictionary+HZDummyCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+HZDummyCategory.h"; sourceTree = "<group>"; };
 		50382E321BC5A45E00C9218D /* NSDictionary+HZDummyCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+HZDummyCategory.m"; sourceTree = "<group>"; };
 		503CD2341901A86D00667C0D /* HZALAdVideoPlaybackDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZALAdVideoPlaybackDelegate.h; sourceTree = "<group>"; };
-		5045147D18B58C5A00E00E6C /* SDCSegmentedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCSegmentedViewController.h; sourceTree = "<group>"; };
-		5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCSegmentedViewController.m; sourceTree = "<group>"; };
+		5045147D18B58C5A00E00E6C /* HZSDCSegmentedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZSDCSegmentedViewController.h; path = HeyzapSDKTest/HZSDCSegmentedViewController.h; sourceTree = "<group>"; };
+		5045147E18B58C5A00E00E6C /* HZSDCSegmentedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HZSDCSegmentedViewController.m; path = HeyzapSDKTest/HZSDCSegmentedViewController.m; sourceTree = "<group>"; };
 		504514C418B592CE00E00E6C /* ServerSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerSelectionViewController.h; sourceTree = "<group>"; };
 		504514C518B592CE00E00E6C /* ServerSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerSelectionViewController.m; sourceTree = "<group>"; };
 		504514C718B5A59100E00E6C /* BaseTestAppViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTestAppViewController.h; sourceTree = "<group>"; };
@@ -1341,17 +1336,6 @@
 			name = "Native Ad JSON";
 			sourceTree = "<group>";
 		};
-		50286DA51B9925C30005C44F /* Error Tracking */ = {
-			isa = PBXGroup;
-			children = (
-				50286DA61B9925D20005C44F /* HZErrorReporter.h */,
-				50286DA71B9925D20005C44F /* HZErrorReporter.m */,
-				5080E7021B9FAABF0065E685 /* HZErrorReportingConfig.h */,
-				5080E7031B9FAABF0065E685 /* HZErrorReportingConfig.m */,
-			);
-			name = "Error Tracking";
-			sourceTree = "<group>";
-		};
 		502244AA1BCF2DCF00279639 /* JSON responses */ = {
 			isa = PBXGroup;
 			children = (
@@ -1371,6 +1355,17 @@
 				502244BA1BD0351D00279639 /* HZKIFTestCase.m */,
 			);
 			name = Common;
+			sourceTree = "<group>";
+		};
+		50286DA51B9925C30005C44F /* Error Tracking */ = {
+			isa = PBXGroup;
+			children = (
+				50286DA61B9925D20005C44F /* HZErrorReporter.h */,
+				50286DA71B9925D20005C44F /* HZErrorReporter.m */,
+				5080E7021B9FAABF0065E685 /* HZErrorReportingConfig.h */,
+				5080E7031B9FAABF0065E685 /* HZErrorReportingConfig.m */,
+			);
+			name = "Error Tracking";
 			sourceTree = "<group>";
 		};
 		502E037C1BD05E9200872BA2 /* med.heyzap.com */ = {
@@ -2152,8 +2147,6 @@
 				507A456E19BF91DF00C7AEEA /* UI */,
 				504514C718B5A59100E00E6C /* BaseTestAppViewController.h */,
 				504514C818B5A59100E00E6C /* BaseTestAppViewController.m */,
-				5045147D18B58C5A00E00E6C /* SDCSegmentedViewController.h */,
-				5045147E18B58C5A00E00E6C /* SDCSegmentedViewController.m */,
 				862D5340176D12E900C4221F /* SDKTestAppViewController.h */,
 				862D5341176D12E900C4221F /* SDKTestAppViewController.m */,
 				507A455B19BE80AA00C7AEEA /* Native Ad Testing */,
@@ -2195,6 +2188,7 @@
 		86B942891758087E00B8EACE /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				992D19641BDAF2400085E8B2 /* SDCSegmentedViewController */,
 				99D4C3F21B3885F4004D24DE /* SKVAST */,
 				8AA226491B3CCDE300FA1428 /* HZActivityIndicator */,
 				50CAB18B1AE9750000F9642D /* AFNetworking2 */,
@@ -2375,6 +2369,15 @@
 				8AA693141B1D13290074366D /* HZPaymentTransactionObserver.m */,
 			);
 			name = Metrics;
+			sourceTree = "<group>";
+		};
+		992D19641BDAF2400085E8B2 /* SDCSegmentedViewController */ = {
+			isa = PBXGroup;
+			children = (
+				5045147D18B58C5A00E00E6C /* HZSDCSegmentedViewController.h */,
+				5045147E18B58C5A00E00E6C /* HZSDCSegmentedViewController.m */,
+			);
+			name = SDCSegmentedViewController;
 			sourceTree = "<group>";
 		};
 		993455981BC83F0F0089C55C /* Mediation Test */ = {
@@ -2595,7 +2598,7 @@
 				860FD47A187BB144008A35FD /* HZAdsFetchManager.h in Headers */,
 				995DF5601B448CDE000935BB /* HZHeyzapExchangeConstants.h in Headers */,
 				99D4C43B1B38908C004D24DE /* HZSKVASTMediaFile.h in Headers */,
-				99A05AFB1BCEC31600069175 /* SDCSegmentedViewController.h in Headers */,
+				99A05AFB1BCEC31600069175 /* HZSDCSegmentedViewController.h in Headers */,
 				86E3186E1B291C2800F2A314 /* HZMRAIDBridge.h in Headers */,
 				995DF5551B4217F8000935BB /* HZHeyzapExchangeBannerAdapter.h in Headers */,
 				996B33B31B702F3D001D05DE /* HZSegmentationSegment.h in Headers */,
@@ -3199,27 +3202,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		86B941D81758056B00B8EACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				996E9A621B8FB74B001BCFDF /* SDKTestAppViewControllerAdCallbackDelegate.m in Sources */,
-				504514CC18B68EF600E00E6C /* DeviceInfoViewController.m in Sources */,
-				50A10DEB1AE9BF0300001C4C /* UIImageView+AFNetworking.m in Sources */,
-				507A455E19BE80E100C7AEEA /* NativeTableViewCell.m in Sources */,
-				86B941E81758056B00B8EACE /* main.m in Sources */,
-				8A6417AA1B1FBC86003E8747 /* TestAppPaymentTransactionObserver.m in Sources */,
-				504514C618B592CE00E00E6C /* ServerSelectionViewController.m in Sources */,
-				507A455919BE762900C7AEEA /* NativeAdTableViewController.m in Sources */,
-				50759D281AD3359F00AECC2B /* PersistentTestAppConfiguration.m in Sources */,
-				86B941EC1758056B00B8EACE /* AppDelegate.m in Sources */,
-				507A457419BF943700C7AEEA /* NativeAdDetailsTableViewController.m in Sources */,
-				86C491371B279DCB00A84B2C /* DemandTestViewController.m in Sources */,
-				504514C918B5A59100E00E6C /* BaseTestAppViewController.m in Sources */,
-				862D5342176D12E900C4221F /* SDKTestAppViewController.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		86B943261758108700B8EACE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3283,7 +3265,7 @@
 				504D824A1AAA48CB004695C8 /* HZFBAdView.m in Sources */,
 				50AC60B318FC7C140046EBC6 /* HZIncentivizedAppLovinDelegate.m in Sources */,
 				500F88F718E215DD00E5D6F8 /* HZGADRequest.m in Sources */,
-				99A05AFC1BCEC31C00069175 /* SDCSegmentedViewController.m in Sources */,
+				99A05AFC1BCEC31C00069175 /* HZSDCSegmentedViewController.m in Sources */,
 				E626220B19E7076A0094957B /* HZNetworkTestActivityViewController.m in Sources */,
 				86234AB118581B800071957B /* HZVideoControlView.m in Sources */,
 				5019224918EDFA6A002793A3 /* HZMediationEventReporter.m in Sources */,

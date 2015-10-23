@@ -12,15 +12,15 @@
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif
 
-typedef NS_ENUM(NSInteger, SDCSegmentedViewControllerControlPosition) {
-	SDCSegmentedViewControllerControlPositionNavigationBar,
-	SDCSegmentedViewControllerControlPositionToolbar
+typedef NS_ENUM(NSInteger, HZSDCSegmentedViewControllerControlPosition) {
+	HZSDCSegmentedViewControllerControlPositionNavigationBar,
+	HZSDCSegmentedViewControllerControlPositionToolbar
 };
 
-@interface SDCSegmentedViewController : UIViewController
+@interface HZSDCSegmentedViewController : UIViewController
 
 @property (nonatomic, readonly, strong) UISegmentedControl *segmentedControl;
-@property (nonatomic) SDCSegmentedViewControllerControlPosition position;
+@property (nonatomic) HZSDCSegmentedViewControllerControlPosition position;
 
 // NSArray of UIViewController subclasses
 - (instancetype)initWithViewControllers:(NSArray *)viewControllers;
