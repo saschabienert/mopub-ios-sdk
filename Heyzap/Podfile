@@ -12,9 +12,9 @@ target :MediationTestApp, :exclusive => true do
   pod 'HZChartboost'
   pod 'AdColony' # Maintained by AdColony
   pod 'Google-Mobile-Ads-SDK' # Maintained by Google
-  pod 'FBAudienceNetwork', '4.6.0' # Maintained by Facebook
+  pod 'FBAudienceNetwork' # Maintained by Facebook
+  pod 'VungleSDK-iOS' # Maintained by Vungle
 
-  pod 'VungleAdvertiserSDK' # In Cocoapods, but outdated. Vendored by Heyzap
   pod 'AppLovin' # Vendored by Heyzap
   pod 'UnityAds' # Vendored by Heyzap
   pod 'HyprMX' #Vendored by Heyzap
