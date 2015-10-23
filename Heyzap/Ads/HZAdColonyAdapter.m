@@ -165,7 +165,7 @@
 - (NSString *)errorDescriptionForZoneStatus:(HZ_ADCOLONY_ZONE_STATUS)zoneStatus {
     switch (zoneStatus) {
         case HZ_ADCOLONY_ZONE_STATUS_OFF: {
-            return @"The zone is turned off on the AdColony dashboard.";
+            return @"The zone ID is invalid or turned off on the AdColony dashboard.";
         }
         case HZ_ADCOLONY_ZONE_STATUS_NO_ZONE: {
             return @"AdColony has not been configured with the zone.";
