@@ -165,13 +165,13 @@
 - (NSString *)errorDescriptionForZoneStatus:(HZ_ADCOLONY_ZONE_STATUS)zoneStatus {
     switch (zoneStatus) {
         case HZ_ADCOLONY_ZONE_STATUS_OFF: {
-            return @"The zone ID is invalid or turned off on the AdColony dashboard.";
+            return @"This zone ID is invalid or turned off on the AdColony dashboard.";
         }
         case HZ_ADCOLONY_ZONE_STATUS_NO_ZONE: {
-            return @"AdColony has not been configured with the zone.";
+            return @"AdColony has not been configured with this zone ID.";
         }
         case HZ_ADCOLONY_ZONE_STATUS_UNKNOWN: {
-            return @"AdColony has not yet received the zone's configuration from the server. This can occur before an ad has finished loading, or if there is no fill available. If you enable third party logging ([HZLog setThirdPartyLoggingEnabled:YES];) AdColony will log that \"There is currently no fill for zone <zoneID>\". Try setting \"Show test ads only\" to \"Yes\" for this zone on the AdColony dashboard.";
+            return @"AdColony has not yet received this zone's configuration from the server. This can occur before an ad has finished loading, or if there is no fill available. If you enable third party logging ([HZLog setThirdPartyLoggingEnabled:YES];) AdColony will log that \"There is currently no fill for zone <zoneID>\". Try setting \"Show test ads only\" to \"Yes\" for this zone on the AdColony dashboard.";
         }
         case HZ_ADCOLONY_ZONE_STATUS_LOADING:
         case HZ_ADCOLONY_ZONE_STATUS_ACTIVE: {
