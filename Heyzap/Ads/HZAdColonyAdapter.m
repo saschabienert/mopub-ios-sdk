@@ -171,7 +171,7 @@
             return @"AdColony has not been configured with the zone.";
         }
         case HZ_ADCOLONY_ZONE_STATUS_UNKNOWN: {
-            return @"AdColony has not yet received the zone's configuration from the server.";
+            return @"AdColony has not yet received the zone's configuration from the server. This can occur before an ad has finished loading, or if there is no fill available. If you enable third party logging ([HZLog setThirdPartyLoggingEnabled:YES];) AdColony will log that \"There is currently no fill for zone <zoneID>\". Try setting \"Show test ads only\" to \"Yes\" for this zone on the AdColony dashboard.";
         }
         case HZ_ADCOLONY_ZONE_STATUS_LOADING:
         case HZ_ADCOLONY_ZONE_STATUS_ACTIVE: {
