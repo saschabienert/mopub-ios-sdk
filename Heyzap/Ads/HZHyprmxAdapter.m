@@ -112,7 +112,7 @@
     return self.isAdReady;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options {
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
 

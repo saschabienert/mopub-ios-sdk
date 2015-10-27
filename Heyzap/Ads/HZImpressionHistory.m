@@ -114,11 +114,16 @@
         return [[NSMutableOrderedSet alloc] init];
     }
     
-    //NSDate *methodStart = [NSDate date];
+    NSDate *methodStart = [NSDate date];
     
     NSString *creativeTypeWhereClause = @"";
     if (creativeType != HZCreativeTypeUnknown) {
-        creativeTypeWhereClause = [NSString stringWithFormat:@"AND " COLUMN_CREATIVETYPE " = %lu", (unsigned long)creativeType];
+        creativeTypeWhereClause = [NSString stringWithFormat:@"" COLUMN_CREATIVETYPE " = %lu", (unsigned long)creativeType];
+    }
+    
+    NSString *auctionTypeWhereClause = @"";
+    if (auctionType != HZAuctionTypeMixed) {
+        auctionTypeWhereClause = [NSString stringWithFormat:@"" COLUMN_AUCTIONTYPE " = %lu", (unsigned long)auctionType];
     }
     
     NSString *tagWhereClause = @"";
@@ -129,10 +134,16 @@
             return @"?";
         });
         
-        tagWhereClause = [NSString stringWithFormat:@"AND " COLUMN_ADTAG " IN (%@)", [questionMarks componentsJoinedByString:@","]];
+        tagWhereClause = [NSString stringWithFormat:@"" COLUMN_ADTAG " IN (%@)", [questionMarks componentsJoinedByString:@","]];
     }
     
-    NSString *query = [NSString stringWithFormat:@"SELECT " COLUMN_TIMESTAMP " FROM " TABLE_NAME " WHERE " COLUMN_AUCTIONTYPE " = %lu %@ %@ AND " COLUMN_TIMESTAMP " BETWEEN %f AND %f ORDER BY " COLUMN_TIMESTAMP " %@", (unsigned long)auctionType, creativeTypeWhereClause, tagWhereClause, [self databaseEntryForDate:timestamp], [self databaseEntryForDate:nil], (mostRecentFirst ? @"DESC" : @"ASC")];
+    NSArray *whereClauses = hzFilter(@[creativeTypeWhereClause, auctionTypeWhereClause, tagWhereClause], ^BOOL(NSString *clause) {
+        return [clause length] > 0;
+    });
+    NSString *whereClausesString = [whereClauses componentsJoinedByString:@" AND "];
+    NSString *endingAndAfterWhereClausesIfNecessary = ([whereClauses count] > 0 ? @" AND " : @"");
+    
+    NSString *query = [NSString stringWithFormat:@"SELECT " COLUMN_TIMESTAMP " FROM " TABLE_NAME " WHERE %@ %@ " COLUMN_TIMESTAMP " BETWEEN %f AND %f ORDER BY " COLUMN_TIMESTAMP " %@", whereClausesString, endingAndAfterWhereClausesIfNecessary, [self databaseEntryForDate:timestamp], [self databaseEntryForDate:nil], (mostRecentFirst ? @"DESC" : @"ASC")];
     sqlite3_stmt *statement = NULL;
     int returnCode = 0;
     
@@ -154,8 +165,8 @@
     
     sqlite3_finalize(statement);
     
-    //NSDate *methodEnd = [NSDate date];
-    //HZDLog(@"HZImpressionHistory: impression list query (result size=%lu) took %f seconds. Query: %@;", (unsigned long)[impressions count], [methodEnd timeIntervalSinceDate:methodStart], query);
+    NSDate *methodEnd = [NSDate date];
+    HZDLog(@"HZImpressionHistory: impression list query (result size=%lu) took %f seconds. Query: %@;", (unsigned long)[impressions count], [methodEnd timeIntervalSinceDate:methodStart], (tags && tags.count > 0 ? [query stringByReplacingOccurrencesOfString:@"(\\?(,\\?)*)" withString:[tags componentsJoinedByString:@", "] options:NSRegularExpressionSearch range:NSMakeRange(0, query.length)] : query));
     
     return impressions;
 }

@@ -19,8 +19,8 @@
     return [self jsonForResource:@"ValidNativeAd"];
 }
 
-+ (NSMutableDictionary *)mediationStartJSONThatShouldProduceFourSegments {
-    return [self jsonForResource:@"mediationStartResponseThatShouldProduceFourSegments"];
++ (NSMutableDictionary *)mediationStartJSONThatShouldProduceFiveSegments {
+    return [self jsonForResource:@"mediationStartResponseThatShouldProduceFiveSegments"];
 }
 
 + (NSMutableDictionary *)jsonForResource:(NSString *)resource

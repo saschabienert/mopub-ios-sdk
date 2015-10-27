@@ -38,7 +38,7 @@
 /**
  *  Fetch an ad. This is called by the base adapter implementation after it verifies that the requested creativeType is supported by the subclass & that the subclass does not already have an ad for the given creativeType.
  */
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType;
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)fetchOptions;
 
 - (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate;
 

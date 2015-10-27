@@ -91,7 +91,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return YES;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)fetchOptions
 {
     ABSTRACT_METHOD_ERROR();
 }
@@ -168,7 +168,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return hasAd;
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
+- (void)prefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)fetchOptions {
     if(![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner){
         HZELog(@"HZBaseAdapter: prefetchForCreativeType:%@ called for %@ adapter (%@)", NSStringFromCreativeType(creativeType), [self name], creativeType == HZCreativeTypeBanner ? @"banners can't be fetched via the normal adapter": @"unsupported creativeType");
         return;
@@ -178,7 +178,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
         if ([self hasAdForCreativeType:creativeType]) return;
         
         [self clearLastFetchErrorForCreativeType:creativeType];
-        [self internalPrefetchForCreativeType:creativeType];
+        [self internalPrefetchForCreativeType:creativeType options:fetchOptions];
     });
 }
 

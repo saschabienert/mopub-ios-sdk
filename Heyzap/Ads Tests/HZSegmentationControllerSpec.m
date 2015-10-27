@@ -33,8 +33,8 @@ describe(@"HZSegmentationSegment", ^{
     });
     
     beforeAll(^{
-        startDictionary = [TestJSON mediationStartJSONThatShouldProduceFourSegments];
-        numberOfSegmentsInStartDictionary = 4;
+        startDictionary = [TestJSON mediationStartJSONThatShouldProduceFiveSegments];
+        numberOfSegmentsInStartDictionary = 5;
     });
     
     it(@"Should start enabled", ^{
@@ -130,6 +130,87 @@ describe(@"HZSegmentationSegment", ^{
         [[segmentMock2 should] receive:@selector(limitsImpressionWithCreativeType:auctionType:tag:) andReturn:theValue(NO) withCount:1 arguments:theValue(expectedCreativeType), any(), tag];
         BOOL allowed = [segmentationController allowAdapter:adapterMock toShowAdForCreativeType:expectedCreativeType tag:tag];
         [[theValue(allowed) should] equal:theValue(YES)];
+    });
+    
+    it(@"Should return a matching placement ID override when at least one segment has one with a matching network name", ^{
+        HZSegmentationSegment *segmentMock = [KWMock mockForClass:[HZSegmentationSegment class]];
+        HZSegmentationSegment *segmentMock2 = [KWMock mockForClass:[HZSegmentationSegment class]];
+        HZBaseAdapter *adapterMock = [KWMock mockForClass:[HZBaseAdapter class]];
+        
+        NSString *networkString = @"network";
+        NSString *overrideString = @"override";
+        NSDictionary *overrideDict = @{networkString:overrideString};
+        
+        segmentationController.segments = [NSSet setWithArray:@[segmentMock, segmentMock2]];
+        
+        [[segmentMock should] receive:@selector(appliesToRequestWithAuctionType:tag:) andReturn:theValue(NO) withCount:1 arguments:any(), tag];
+        [[segmentMock2 should] receive:@selector(appliesToRequestWithAuctionType:tag:) andReturn:theValue(YES) withCount:1 arguments: any(), tag];
+        
+        [[segmentMock2 should] receive:@selector(placementIDOverrides) andReturn:overrideDict];
+        [[adapterMock should] receive:@selector(name) andReturn:networkString];
+        
+        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag];
+        [[returnedOverride should] equal:overrideString];
+    });
+    
+    it(@"Should return a nil placement ID override when at least one segment has an override, but with no matching network name", ^{
+        HZSegmentationSegment *segmentMock = [KWMock mockForClass:[HZSegmentationSegment class]];
+        HZSegmentationSegment *segmentMock2 = [KWMock mockForClass:[HZSegmentationSegment class]];
+        HZBaseAdapter *adapterMock = [KWMock mockForClass:[HZBaseAdapter class]];
+        
+        NSString *networkString = @"network";
+        NSString *wrongNetworkString = @"other_network";
+        NSString *overrideString = @"override";
+        NSDictionary *overrideDict = @{networkString:overrideString};
+        
+        segmentationController.segments = [NSSet setWithArray:@[segmentMock, segmentMock2]];
+        
+        [[segmentMock should] receive:@selector(appliesToRequestWithAuctionType:tag:) andReturn:theValue(NO) withCount:1 arguments:any(), tag];
+        [[segmentMock2 should] receive:@selector(appliesToRequestWithAuctionType:tag:) andReturn:theValue(YES) withCount:1 arguments: any(), tag];
+        
+        [[segmentMock2 should] receive:@selector(placementIDOverrides) andReturn:overrideDict];
+        [[adapterMock should] receive:@selector(name) andReturn:wrongNetworkString];
+        
+        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag];
+        [[returnedOverride should] beNil];
+    });
+    
+    it(@"Should return one of the placement ID overrides when more than one segment has an override with a matching network name", ^{
+        HZSegmentationSegment *segmentMock = [KWMock mockForClass:[HZSegmentationSegment class]];
+        HZSegmentationSegment *segmentMock2 = [KWMock mockForClass:[HZSegmentationSegment class]];
+        HZBaseAdapter *adapterMock = [KWMock mockForClass:[HZBaseAdapter class]];
+        
+        NSString *networkString = @"network";
+        NSString *overrideString = @"override1";
+        NSString *overrideString2 = @"override2";
+        NSDictionary *overrideDict = @{networkString:overrideString};
+        NSDictionary *overrideDict2 = @{networkString:overrideString2};
+        
+        segmentationController.segments = [NSSet setWithArray:@[segmentMock, segmentMock2]];
+        
+        [[segmentMock should] receive:@selector(appliesToRequestWithAuctionType:tag:) andReturn:theValue(YES) withCount:1 arguments:any(), tag];
+        [[segmentMock2 should] receive:@selector(appliesToRequestWithAuctionType:tag:) andReturn:theValue(YES) withCount:1 arguments: any(), tag];
+        
+        [[segmentMock should] receive:@selector(placementIDOverrides) andReturn:overrideDict];
+        [[segmentMock2 should] receive:@selector(placementIDOverrides) andReturn:overrideDict2];
+        [[adapterMock should] receive:@selector(name) andReturn:networkString withCountAtLeast:1];
+        
+        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag];
+        [[returnedOverride should] matchPattern:@"override[12]"];
+    });
+    
+    it(@"Should return a nil placement ID override when no segments have an override", ^{
+        HZSegmentationSegment *segmentMock = [KWMock mockForClass:[HZSegmentationSegment class]];
+        HZSegmentationSegment *segmentMock2 = [KWMock mockForClass:[HZSegmentationSegment class]];
+        HZBaseAdapter *adapterMock = [KWMock mockForClass:[HZBaseAdapter class]];
+        
+        segmentationController.segments = [NSSet setWithArray:@[segmentMock, segmentMock2]];
+        
+        [[segmentMock should] receive:@selector(appliesToRequestWithAuctionType:tag:) andReturn:theValue(NO) withCount:1 arguments:any(), tag];
+        [[segmentMock2 should] receive:@selector(appliesToRequestWithAuctionType:tag:) andReturn:theValue(NO) withCount:1 arguments: any(), tag];
+        
+        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag];
+        [[returnedOverride should] beNil];
     });
 });
 

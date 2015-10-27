@@ -9,6 +9,7 @@
 #import <Kiwi/Kiwi.h>
 #import "HZMediateRequester.h"
 #import "OHHTTPStubs+Heyzap.h"
+#import "OHHTTPStubsResponse+JSON.h"
 #import "HZCachingService.h"
 #import "HZAdsManager.h"
 

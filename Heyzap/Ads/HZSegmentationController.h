@@ -33,19 +33,15 @@
 - (BOOL) allowAdapter:(nonnull HZBaseAdapter *)adapter toShowAdForCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag;
 
 /**
- *  Returns YES if the given banner adapter both has an ad and is allowed to show one based on the current segmentation rules, NO otherwise.
- */
-- (BOOL) bannerAdapterHasAllowedAd:(nonnull HZBannerAdapter *)adapter tag:(nonnull NSString *)adTag;
-
-/**
- *  Returns YES if the given banner adapter is allowed to show an ad based on the current segmentation rules, NO otherwise. This method does NOT check if the banner adapter has an ad.
- */
-- (BOOL) allowBannerAdapter:(nonnull HZBannerAdapter *)bannerAdapter toShowAdForTag:(nonnull NSString *)adTag;
-
-/**
  *  Call this method with every impression. It will update HZImpressionHistory and all of the currently loaded segments.
  */
 - (void) recordImpressionWithCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)tag adapter:(nonnull HZBaseAdapter *)adapter;
+
+/**
+ *  Returns a placement ID to use instead of whatever is currently being used for the given adapter and tag, or `nil` if there is no override for the given set of inputs.
+ */
+- (nullable NSString *) placementIDOverrideForAdapter:(nonnull HZBaseAdapter *)adapter tag:(nonnull NSString *)tag;
+
 
 /**
  *  Deletes the HZImpressionHistory and reloads all segments from the newly-cleared history. Returns YES to the completion block if the delete worked, NO otherwise.

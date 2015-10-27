@@ -107,16 +107,18 @@
     return creativeType == HZCreativeTypeStatic && self.interstitialAd && self.interstitialAd.isAdValid;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
-    HZAssert(self.placementID, @"Need a Placement ID by this point");
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options {
+    NSString *const placement = (options.placementIDOverride ?: self.placementID);
+    HZAssert(placement, @"Need a Placement ID by this point");
     
     if (self.interstitialAd) {
         // If we have an interstitial already out fetching, don't start up a re-fetch. This differs from the `hasAdForCreativeType:` check because we don't check `isAdValid`.
         return;
     }
     
-    HZDLog(@"Initializing Facebook Audience Network interstitial ad with placement ID: %@",self.placementID);
-    self.interstitialAd = [[HZFBInterstitialAd alloc] initWithPlacementID:self.placementID];
+    
+    HZDLog(@"Initializing Facebook Audience Network interstitial ad with placement ID: %@", placement);
+    self.interstitialAd = [[HZFBInterstitialAd alloc] initWithPlacementID: placement];
     self.interstitialAd.delegate = self.forwardingDelegate;
     [self.interstitialAd loadAd];
 }

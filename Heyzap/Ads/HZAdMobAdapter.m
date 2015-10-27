@@ -116,15 +116,15 @@
     }
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
 {
     switch (creativeType) {
         case HZCreativeTypeStatic: {
-            HZAssert(self.interstitialAdUnitID, @"Need an interstitial ad unit ID by this point");
+            HZAssert(self.interstitialAdUnitID || options.placementIDOverride, @"Need an interstitial ad unit ID by this point");
             break;
         }
         case HZCreativeTypeVideo: {
-            HZAssert(self.videoAdUnitID, @"Need a video ad unit ID by this point");
+            HZAssert(self.videoAdUnitID || options.placementIDOverride, @"Need a video ad unit ID by this point");
             break;
         }
         default: {
@@ -142,15 +142,15 @@
     NSString *adUnitID;
     
     if (creativeType == HZCreativeTypeStatic) {
-        adUnitID = self.interstitialAdUnitID;
+        adUnitID = options.placementIDOverride ?: self.interstitialAdUnitID;
         HZDLog(@"Initializing AdMob Ad with interstitialAdUnitID: %@", adUnitID);
         
     } else {
-        adUnitID = self.videoAdUnitID;
+        adUnitID = options.placementIDOverride ?: self.videoAdUnitID;
         HZDLog(@"Initializing AdMob Ad with videoAdUnitID: %@", adUnitID);
     }
     
-    HZGADInterstitial *newAd;
+    __block HZGADInterstitial *newAd;
     
     if ([HZGADInterstitial respondsToSelector:@selector(initWithAdUnitID:)]) {
         newAd = [[HZGADInterstitial alloc] initWithAdUnitID:adUnitID];

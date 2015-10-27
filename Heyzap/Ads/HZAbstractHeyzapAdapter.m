@@ -41,7 +41,7 @@
     return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeIncentivized;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
 {    
     const HZAuctionType auctionType = [self auctionType];
     switch (creativeType) {

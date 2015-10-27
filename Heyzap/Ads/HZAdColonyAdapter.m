@@ -141,7 +141,7 @@
     }
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
 {
     // AdColony auto-prefetches
 }

@@ -25,11 +25,11 @@
 + (NSMutableDictionary *)nativeAdJSON;
 
 /**
- *  JSON for a valid call to /start for Mediation that should produce 4 segments on the client.
+ *  JSON for a valid call to /start for Mediation that should produce 5 segments on the client.
  *
  *  @return The dictionary, guaranteed to not be nil.
  */
-+ (NSMutableDictionary *)mediationStartJSONThatShouldProduceFourSegments;
++ (NSMutableDictionary *)mediationStartJSONThatShouldProduceFiveSegments;
 
 + (NSMutableDictionary *)jsonForResource:(NSString *)resource;
 @end

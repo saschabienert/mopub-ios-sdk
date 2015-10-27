@@ -101,7 +101,7 @@
     return HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }

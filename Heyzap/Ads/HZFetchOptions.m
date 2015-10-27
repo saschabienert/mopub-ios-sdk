@@ -39,4 +39,17 @@
     _tag = [HZAdModel normalizeTag:tag];
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    HZFetchOptions *copy = [[HZFetchOptions alloc] init];
+    copy.tag = self.tag;
+    copy.requestingAdType = self.requestingAdType;
+    copy.additionalParameters = [[NSDictionary alloc] initWithDictionary:self.additionalParameters copyItems:NO];
+    copy.completion = self.completion;
+    copy.placementIDOverride = self.placementIDOverride;
+    copy.alreadyNotifiedDelegateOfSuccess = self.alreadyNotifiedDelegateOfSuccess;
+    copy.creativeTypesToFetch = [NSSet setWithSet:self.creativeTypesToFetch];
+    copy.creativeTypesFetchesFinished = [NSSet setWithSet:self.creativeTypesFetchesFinished];
+    return copy;
+}
+
 @end

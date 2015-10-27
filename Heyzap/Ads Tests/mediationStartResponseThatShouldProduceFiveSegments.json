@@ -1,5 +1,19 @@
 {
-        "segments": [{
+    "segments": [{
+                 "name": "admob placement id for tag \u0027admob\u0027",
+                 "rules": [{
+                           "type": "PlacementId",
+                           "options": {
+                           "admob": "new_placement_id"
+                           }
+                           }, {
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["admob"]
+                           }
+                           }]
+                 },
+                 {
                  "name": "off tag",
                  "rules": [{
                            "type": "Tag",

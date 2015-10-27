@@ -82,7 +82,7 @@
     return HZCreativeTypeStatic | HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
 {
     HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
     if(client && client.state == HZHeyzapExchangeClientStateFetching){

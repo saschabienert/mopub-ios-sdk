@@ -109,7 +109,7 @@
 
 NSString * const kHZCBLocationDefault = @"Default";
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
 {
     switch (creativeType) {
         case HZCreativeTypeStatic:

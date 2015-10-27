@@ -18,7 +18,9 @@
 @property (nonatomic, nullable) NSArray<NSString *> *adTags; // nil == applies to any tag
 @property (nonatomic) NSUInteger impressionLimit;
 @property (nonatomic) HZAuctionType auctionType;
-@property (nonatomic) BOOL adsEnabled; // will ignore the limit & interval if this is YES - it's an on/off switch for ads with the specified type/tag/auctionType
+@property (nonatomic) BOOL adsEnabled; // will ignore the limit & interval if this is NO - it's an on/off switch for ads with the specified type/tag/auctionType
+
+@property (nonatomic) NSDictionary <NSString *, NSString *>* placementIDOverrides;
 
 @property (atomic, nullable) NSMutableOrderedSet<NSDate *> *impressionHistory; // ordered set of timestamps at which impressions fitting this segment's search criteria occured, most recent first. atomic since `loadWithDb:` can be called on any thread, as can the methods that access this property
 
@@ -29,7 +31,7 @@
 
 #pragma mark - Init
 
-- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval forTags:(nullable NSArray *)tags creativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit adsEnabled:(BOOL)adsEnabled name:(nullable NSString *)name {
+- (nullable instancetype) initWithTimeInterval:(NSTimeInterval)interval tags:(nullable NSArray *)tags creativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType limit:(NSUInteger)limit adsEnabled:(BOOL)adsEnabled placementIDOverrides:(nonnull NSDictionary <NSString *, NSString *>*)placementIDOverrides name:(nullable NSString *)name {
     self = [super init];
     if (self) {
         _timeInterval = interval;
@@ -38,6 +40,7 @@
         _impressionLimit = limit;
         _adsEnabled = adsEnabled;
         _creativeType = creativeType;
+        _placementIDOverrides = placementIDOverrides;
         _name = name;
     }
     
@@ -61,13 +64,13 @@
         return NO;
     }
     
-    if(![self appliesToCreativeType:creativeType] || auctionType != self.auctionType) {
-        // creativeType or auctionType mismatch
+    if (![self appliesToRequestWithAuctionType:auctionType tag:tag]) {
+        // auctionType or tag mismatch
         return NO;
     }
     
-    if([self isFilteringForTags] && ![self.adTags containsObject:tag]) {
-        // we are filtering by tags but the tag isn't present in our filter
+    if(![self appliesToCreativeType:creativeType]) {
+        // creativeType mismatch
         return NO;
     }
     
@@ -77,13 +80,7 @@
 }
 
 - (BOOL) limitsImpressionWithCreativeType:(HZCreativeType)creativeType auctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag {
-    if(auctionType != self.auctionType) {
-        // auctionType mismatch
-        return NO;
-    }
-    
-    if([self isFilteringForTags] && ![self.adTags containsObject:tag]) {
-        // we are filtering by tags but the tag isn't present in our filter
+    if (![self appliesToRequestWithAuctionType:auctionType tag:tag]) {
         return NO;
     }
     
@@ -100,6 +97,20 @@
     
     // this segment definitely applies to the pending impression. check the counter over the time interval.
     return self.impressionCount >= self.impressionLimit;
+}
+
+- (BOOL) appliesToRequestWithAuctionType:(HZAuctionType)auctionType tag:(nonnull NSString *)tag {
+    if(self.auctionType != HZAuctionTypeMixed && auctionType != self.auctionType) {
+        // auctionType mismatch
+        return NO;
+    }
+    
+    if([self isFilteringForTags] && ![self.adTags containsObject:tag]) {
+        // we are filtering by tags but the tag isn't present in our filter
+        return NO;
+    }
+    
+    return YES;
 }
 
 #pragma mark - Utilities

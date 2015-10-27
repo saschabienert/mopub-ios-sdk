@@ -118,7 +118,7 @@
 }
 
 // To support incentivized, I will need to have separate objects for the incentivized/interstial delegates because they received the same selectors
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
 {
     switch (creativeType) {
         case HZCreativeTypeStatic: {
