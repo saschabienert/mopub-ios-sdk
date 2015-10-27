@@ -14,21 +14,21 @@ PODS:
   - OCHamcrest (4.3.0)
   - OCMockito (2.0.1):
     - OCHamcrest (~> 4.0)
-  - OHHTTPStubs (HEAD based on 4.3.0):
-    - OHHTTPStubs/Default (= HEAD based on 4.3.0)
-  - OHHTTPStubs/Core (HEAD based on 4.3.0)
-  - OHHTTPStubs/Default (HEAD based on 4.3.0):
+  - OHHTTPStubs (4.4.0):
+    - OHHTTPStubs/Default (= 4.4.0)
+  - OHHTTPStubs/Core (4.4.0)
+  - OHHTTPStubs/Default (4.4.0):
     - OHHTTPStubs/Core
     - OHHTTPStubs/JSON
     - OHHTTPStubs/NSURLSession
     - OHHTTPStubs/OHPathHelpers
-  - OHHTTPStubs/JSON (HEAD based on 4.3.0):
+  - OHHTTPStubs/JSON (4.4.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/NSURLSession (HEAD based on 4.3.0):
+  - OHHTTPStubs/NSURLSession (4.4.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/OHPathHelpers (HEAD based on 4.3.0)
+  - OHHTTPStubs/OHPathHelpers (4.4.0)
   - UnityAds (1.5.3)
-  - VungleSDK-iOS (3.2.0.0)
+  - VungleAdvertiserSDK (3.2.0)
 
 DEPENDENCIES:
   - AdColony
@@ -42,9 +42,9 @@ DEPENDENCIES:
   - Leadbolt
   - Masonry
   - OCMockito
-  - OHHTTPStubs (HEAD)
+  - OHHTTPStubs
   - UnityAds
-  - VungleSDK-iOS
+  - VungleAdvertiserSDK
 
 SPEC CHECKSUMS:
   AdColony: ab47c3e22be7843e08f90989381a222884be4a62
@@ -59,8 +59,8 @@ SPEC CHECKSUMS:
   Masonry: ff105a956abcd19a618b2028b121cb638d7a8e2f
   OCHamcrest: cd63d27f48a266d4412c0b295b01b8f0940efa81
   OCMockito: f92ad4c6fac2841a88558879cfe517c40aebf91e
-  OHHTTPStubs: 0aec5755528693a165bd616cb79f69387de306a8
+  OHHTTPStubs: 1a95a653b78287a1fdb44eb38364b43257ac3550
   UnityAds: 21da73c678c2db60f9495b28bdfd24fca78703d6
-  VungleSDK-iOS: cc8b6200efbc310a1cfde290490138478683729c
+  VungleAdvertiserSDK: c3ece1bf66a7f34688cfed832e2b12e321bbed03
 
 COCOAPODS: 0.39.0

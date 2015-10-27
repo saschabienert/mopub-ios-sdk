@@ -13,7 +13,7 @@ target :MediationTestApp, :exclusive => true do
   pod 'AdColony' # Maintained by AdColony
   pod 'Google-Mobile-Ads-SDK' # Maintained by Google
   pod 'FBAudienceNetwork' # Maintained by Facebook
-  pod 'VungleSDK-iOS' # Maintained by Vungle
+  pod 'VungleAdvertiserSDK' # Maintained by Heyzap; Vungle has one ('VungleSDK-iOS') but the 3.2.0.0 version has a bug
 
   pod 'AppLovin' # Vendored by Heyzap
   pod 'UnityAds' # Vendored by Heyzap
@@ -24,11 +24,11 @@ end
 
 target :"Ads Tests", :exclusive => true do # Unit Tests
    pod 'Kiwi'
-   pod 'OHHTTPStubs', :head # We need this PR: https://github.com/AliSoftware/OHHTTPStubs/pull/129; we can adopt 4.4.0 when it's released.
+   pod 'OHHTTPStubs'
 end
 
 target 'IntegrationTests', :exclusive => true do
   pod 'KIF', :configurations => ['Debug']
   pod 'OCMockito'
-  pod 'OHHTTPStubs', :head # See comment above
+  pod 'OHHTTPStubs'
 end
