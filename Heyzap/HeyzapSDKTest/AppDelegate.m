@@ -25,12 +25,14 @@
 
 #import "HZInterstitialAd.h"
 #import "PersistentTestAppConfiguration.h"
+#import "HZHardcodedConstantChecker.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-
+    [HZHardcodedConstantChecker checkConstants];
+    
     if (![HZDevice hzSystemVersionIsLessThan: @"7.0"]) {
         [[UINavigationBar appearance] setBarTintColor: [UIColor colorWithRed: 39/255.0 green: 115/255.0 blue: 179/255.0 alpha: 0.5]];
         [[UINavigationBar appearance] setTitleTextAttributes: @{
