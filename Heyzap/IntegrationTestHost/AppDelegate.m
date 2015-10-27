@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import "HeyzapAds.h"
 #import "HZInterstitialAd.h"
+#import "HeyzapMediation.h"
+#import "HZMediationPersistentConfig.h"
 
 @interface AppDelegate ()
 
@@ -20,6 +22,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     [HeyzapAds startWithPublisherID:@"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
+    
+    // TODO: Use a separate bundle ID for the IntegrationTestHost so that files on disk aren't shared between the test app and the integration tests.
+    // We'll probably want this to be a separate app on third party networks' dashboards, anyway, so that we can enable test mode for those apps.
+    [[HeyzapMediation sharedInstance].persistentConfig removeDisabledNetworks:[HeyzapMediation sharedInstance].persistentConfig.allDisabledNetworks];
     return YES;
 }
 
