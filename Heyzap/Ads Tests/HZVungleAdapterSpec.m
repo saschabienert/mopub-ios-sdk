@@ -27,13 +27,13 @@ describe(@"HZVungleAdapterSpec", ^{
         });
         
         it(@"Valid characters are left unchanged 2", ^{
-            NSString *const valid = @"fooBarBaz12";
+            NSString *const valid = @"fooBarBaz12-_";
             [[[HZVungleAdapter sanitizeAdTagForVunglePlacement:valid] should] equal:valid];
         });
         
         it(@"Invalid characters should be removed", ^{
             NSString *const string = @"foo!@#$%^&*()-_=+台北àãāBAR123";
-            [[[HZVungleAdapter sanitizeAdTagForVunglePlacement:string] should] equal:@"fooBAR123"];
+            [[[HZVungleAdapter sanitizeAdTagForVunglePlacement:string] should] equal:@"foo-_BAR123"];
         });
     });
 });

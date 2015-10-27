@@ -158,7 +158,7 @@ NSString * const HZFallbackVunglePlayAdOptionKeyPlacement = @"placement";
 }
 
 + (NSString *)vungleValidPlacementCharacters {
-    return @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    return @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
 }
 
 + (NSCharacterSet *)vunglePlacementDisallowedCharacterSet {
