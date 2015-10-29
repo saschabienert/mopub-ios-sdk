@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "HZCreativeType.h"
 #import "HZBaseAdapter.h"
+#import "HZEnums.h"
+
 
 @interface HZSegmentationController : NSObject
 
@@ -40,12 +42,18 @@
 /**
  *  Returns a placement ID to use instead of whatever is currently being used for the given adapter and tag, or `nil` if there is no override for the given set of inputs.
  */
-- (nullable NSString *) placementIDOverrideForAdapter:(nonnull HZBaseAdapter *)adapter tag:(nonnull NSString *)tag;
+- (nullable NSString *) placementIDOverrideForAdapter:(nonnull HZBaseAdapter *)adapter tag:(nonnull NSString *)tag creativeType:(HZCreativeType)creativeType;
 
 
 /**
  *  Deletes the HZImpressionHistory and reloads all segments from the newly-cleared history. Returns YES to the completion block if the delete worked, NO otherwise.
  */
 - (void) clearImpressionHistoryWithCompletion:(nullable void (^)(BOOL successful))completion;
+
+
+/**
+ *  Returns the auction type for the given adapter (Crosspromo for Heyzap Cross Promo, Monetization for all others)
+ */
++ (HZAuctionType) auctionTypeForAdapter:(nonnull HZBaseAdapter *)adapter;
 
 @end

@@ -203,7 +203,7 @@
                 HZBaseAdapter *adapter = (HZBaseAdapter *)[alwaysFetchDatum.adapterClass sharedAdapter];
                 dispatch_sync([self.delegate pausableMainQueue], ^{
                     HZFetchOptions *newFetchOptions = [fetchOptions copy];
-                    newFetchOptions.placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:adapter tag:newFetchOptions.tag];
+                    newFetchOptions.placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:adapter tag:newFetchOptions.tag creativeType:creativeType];
                     [adapter prefetchForCreativeType:creativeType options:newFetchOptions];
                 });
             }
@@ -221,7 +221,7 @@
                     [networksAlreadyFetched addObject:datum.adapterClass];
                     dispatch_sync([self.delegate pausableMainQueue], ^{
                         HZFetchOptions *newFetchOptions = [fetchOptions copy];
-                        newFetchOptions.placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:adapter tag:newFetchOptions.tag];
+                        newFetchOptions.placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:adapter tag:newFetchOptions.tag creativeType:creativeType];
                         [adapter prefetchForCreativeType:creativeType options:newFetchOptions];
                     });
                 }

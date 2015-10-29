@@ -128,8 +128,8 @@
     
     NSString *tagWhereClause = @"";
     if (tags && [tags count] > 0) {
-        // for instance, insert `?, ?, ?` into the WHERE clause if there are 3 tags
-        // the sqlite3_bind_text statement later will replace these with the tags (takes care of escaping for us)
+        // for instance, insert `?,?,?` into the WHERE clause if there are 3 tags
+        // the sqlite3_bind_text statement later will replace these `?`s with the tags (takes care of escaping for us)
         NSArray *questionMarks = hzMap(tags, ^NSString *(NSString *tag){
             return @"?";
         });

@@ -12,15 +12,27 @@
 #import "HZMediationConstants.h"
 #import "HZImpressionHistory.h"
 #import "HZDictionaryUtils.h"
+#import "HZSegmentationFrequencyLimitRule.h"
 
 @interface HZSegmentationController()
 @property (nonnull, nonatomic) NSSet<HZSegmentationSegment *> *segments;
 @property (nonatomic) dispatch_queue_t impressionDbReadQueue;
 @end
 
-#define AUCTIONTYPE_STRING_FREQUENCY @"Frequency"
-#define AUCTIONTYPE_STRING_CROSSPROMOFREQUENCY @"CrossPromoFrequency"
-#define AUCTIONTYPE_STRINGS @[AUCTIONTYPE_STRING_FREQUENCY, AUCTIONTYPE_STRING_CROSSPROMOFREQUENCY]
+#define RULETYPE_MONETIZING_ADS_FREQUENCY @"Frequency"
+#define RULETYPE_CROSSPROMO_ADS_FREQUENCY @"CrossPromoFrequency"
+#define RULETYPE_TAG_FILTER @"Tag"
+#define RULETYPE_PLACEMENT_ID_OVERRIDES @"PlacementId"
+#define RULETYPE_NETWORK_DISABLES @"Network"
+
+#define RULEKEY_TYPE @"type"
+#define RULEKEY_OPTIONS @"options"
+
+#define OPTIONKEY_TAGS @"tags"
+#define OPTIONKEY_NETWORKS @"networks"
+
+#define SEGMENTKEY_NAME @"name"
+#define SEGMENTKEY_RULES @"rules"
 
 @implementation HZSegmentationController
 
@@ -47,64 +59,71 @@
     
     NSArray * segmentsResponse = [HZDictionaryUtils objectForKey:@"segments" ofClass:[NSArray class] default:@[] dict:startDictionary];
     for (NSDictionary *segmentDict in segmentsResponse) {
-        NSArray *tags = nil;
+        NSArray *tags = @[];
         NSDictionary <NSString *, NSString *>* placementIDOverrides = @{};
-        NSString *name = [HZDictionaryUtils objectForKey:@"name" ofClass:[NSString class] default:nil dict:segmentDict];
+        NSArray *disabledNetworks = @[];
+        NSString *name = [HZDictionaryUtils objectForKey:SEGMENTKEY_NAME ofClass:[NSString class] default:nil dict:segmentDict];
         
-        NSMutableArray *rules = [HZDictionaryUtils objectForKey:@"rules" ofClass:[NSArray class] default:@[] dict:segmentDict];
+        NSMutableArray *rules = [HZDictionaryUtils objectForKey:SEGMENTKEY_RULES ofClass:[NSArray class] default:@[] dict:segmentDict];
         rules = [rules mutableCopy];
         
-        // backend has crosspromo/monetization as two rules under the same segment, with the timeInterval, limit, type, enabled, and quantity under those divisions. we treat these as separate segments in the sdk
-        // pull the auctiontype rules out, process the others (tags, placementIds, networks), and combine these with each per-auctiontype ruleset (time, limit, quantity, type, enabled) to create segments
-        NSIndexSet *auctionTypeRuleIndexes = [rules indexesOfObjectsPassingTest:^BOOL(NSDictionary * rule, NSUInteger idx, BOOL *stop) {
-            NSString *ruleType = [HZDictionaryUtils objectForKey:@"type" ofClass:[NSString class] default:@"" dict:rule];
-            if ([AUCTIONTYPE_STRINGS containsObject:ruleType]) {
-                return YES;
-            }
-            return NO;
-        }];
+        NSMutableArray<HZSegmentationFrequencyLimitRule *> *frequencyRules = [NSMutableArray array];
         
-        NSArray *auctionTypeRules = [rules objectsAtIndexes:auctionTypeRuleIndexes];
-        [rules removeObjectsAtIndexes:auctionTypeRuleIndexes];
         
         for (NSDictionary * rule in rules) {
-            // current non-auctiontype based rules: tag filters, placement ID overrides. coming soon: network filters
-            NSString *ruleType = [HZDictionaryUtils objectForKey:@"type" ofClass:[NSString class] default:@"" dict:rule];
-            if ([ruleType isEqualToString:@"Tag"]) {
-                NSDictionary *options = [HZDictionaryUtils objectForKey:@"options" ofClass:[NSDictionary class] default:@{} dict:rule];
-                tags = [HZDictionaryUtils objectForKey:@"tags" ofClass:[NSArray class] default:nil dict:options];
-            } else if ([ruleType isEqualToString:@"PlacementId"]) {
-                // options dict ~= {"network" => "new_placement_id"}
-                placementIDOverrides = [HZDictionaryUtils objectForKey:@"options" ofClass:[NSDictionary class] default:@{} dict:rule];
-            }
-        }
-        
-        if ([auctionTypeRules count] > 0) {
-            // now that the non-auctiontype rules are pulled out, process each auctiontype rule and create segments with them
-            for (NSDictionary *auctionTypeRule in auctionTypeRules) {
-                HZAuctionType auctionType = [HZSegmentationController auctionTypeFromAuctionTypeString:[HZDictionaryUtils objectForKey:@"type" ofClass:[NSString class] default:@"" dict:auctionTypeRule]];
-                NSDictionary *options = [HZDictionaryUtils objectForKey:@"options" ofClass:[NSDictionary class] default:@{} dict:auctionTypeRule];
+            NSString *ruleType = [HZDictionaryUtils objectForKey:RULEKEY_TYPE ofClass:[NSString class] default:@"" dict:rule];
+
+            if ([ruleType isEqualToString:RULETYPE_TAG_FILTER]) {
+                NSDictionary *options = [HZDictionaryUtils objectForKey:RULEKEY_OPTIONS ofClass:[NSDictionary class] default:@{} dict:rule];
+                tags = [HZDictionaryUtils objectForKey:OPTIONKEY_TAGS ofClass:[NSArray class] default:nil dict:options];
                 
-                BOOL adsEnabled = [[HZDictionaryUtils objectForKey:@"ads_enabled" ofClass:[NSNumber class] default:@0 dict:options] boolValue];
+            } else if ([ruleType isEqualToString:RULETYPE_PLACEMENT_ID_OVERRIDES]) {
+                // options dict ~= {"network" => {"creativeType" => "new_placement_id"}}
+                placementIDOverrides = [HZDictionaryUtils objectForKey:RULEKEY_OPTIONS ofClass:[NSDictionary class] default:@{} dict:rule];
+                
+            } else if ([ruleType isEqualToString:RULETYPE_NETWORK_DISABLES]) {
+                NSDictionary *options = [HZDictionaryUtils objectForKey:RULEKEY_OPTIONS ofClass:[NSDictionary class] default:@{} dict:rule];
+                disabledNetworks = [HZDictionaryUtils objectForKey:OPTIONKEY_NETWORKS ofClass:[NSArray class] default:nil dict:options];
+                
+            } else if ([ruleType isEqualToString:RULETYPE_MONETIZING_ADS_FREQUENCY]
+                       || [ruleType isEqualToString:RULETYPE_CROSSPROMO_ADS_FREQUENCY]) {
+                
+                HZAuctionType auctionType = [HZSegmentationController auctionTypeFromAuctionTypeString:[HZDictionaryUtils objectForKey:RULEKEY_TYPE ofClass:[NSString class] default:@"" dict:rule]];
+                
+                NSDictionary *options = [HZDictionaryUtils objectForKey:RULEKEY_OPTIONS ofClass:[NSDictionary class] default:@{} dict:rule];
+                BOOL adsEnabled = [[HZDictionaryUtils objectForKey:@"ads_enabled" ofClass:[NSNumber class] default:@1 dict:options] boolValue];
+                
                 if (adsEnabled) {
                     NSArray *frequencyLimits = [HZDictionaryUtils objectForKey:@"frequency_limits" ofClass:[NSArray class] default:@[] dict:options];
+                    
                     for (NSDictionary *frequencyLimitOptions in frequencyLimits) {
                         NSTimeInterval timeInterval = [[HZDictionaryUtils objectForKey:@"seconds" ofClass:[NSNumber class] default:@0 dict:frequencyLimitOptions] doubleValue];
                         NSUInteger impressionLimit = [[HZDictionaryUtils objectForKey:@"ads_quantity" ofClass:[NSNumber class] default:@0 dict:frequencyLimitOptions] unsignedIntegerValue];
                         
                         HZCreativeType creativeType = hzCreativeTypeFromNSNumber([HZDictionaryUtils objectForKey:@"ad_format" ofClass:[NSNumber class] default:@(HZCreativeTypeUnknown) dict:frequencyLimitOptions]);
                         
-                        [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:timeInterval tags:tags creativeType:creativeType auctionType:auctionType limit:impressionLimit adsEnabled:adsEnabled placementIDOverrides:placementIDOverrides name:name]];
+                        HZSegmentationFrequencyLimitRule *freqRule = [[HZSegmentationFrequencyLimitRule alloc] init];
+                        freqRule.auctionType = auctionType;
+                        freqRule.timeInterval = timeInterval;
+                        freqRule.impressionLimit = impressionLimit;
+                        freqRule.adsEnabled = YES;
+                        freqRule.creativeType = creativeType;
+                        [frequencyRules addObject:freqRule];
                     }
                 } else {
-                    // ads disabled - the frequency limits don't matter / might not even exist. The only settings we care about for this segment are the auctionType & the tags to apply them to. We use a limit of 0 since ads are disabled. (It should apply to all creativeTypes over any time period)
-                    [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:0 tags:tags creativeType:HZCreativeTypeUnknown auctionType:auctionType limit:0 adsEnabled:NO placementIDOverrides:placementIDOverrides name:name]];
+                    // ads disabled for this auctionType & all creativeTypes - the frequency limits don't matter / might not even exist.
+                    HZSegmentationFrequencyLimitRule *freqRule = [[HZSegmentationFrequencyLimitRule alloc] init];
+                    freqRule.auctionType = auctionType;
+                    freqRule.timeInterval = 0;
+                    freqRule.impressionLimit = 0;
+                    freqRule.adsEnabled = NO;
+                    freqRule.creativeType = HZCreativeTypeUnknown;
+                    [frequencyRules addObject:freqRule];
                 }
             }
-        } else {
-            // no auction-type rules. segment is composed of other things besides frequency limits.
-            [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTimeInterval:0 tags:tags creativeType:HZCreativeTypeUnknown auctionType:HZAuctionTypeMixed limit:NSUIntegerMax adsEnabled:YES placementIDOverrides:placementIDOverrides name:name]];
         }
+        
+        [loadedSegments addObject:[[HZSegmentationSegment alloc] initWithTags:tags disabledNetworks:disabledNetworks placementIDOverrides:placementIDOverrides frequencyLimitRules:frequencyRules name:name]];
     }
     
     self.segments = [NSSet setWithArray:loadedSegments];
@@ -131,7 +150,7 @@
         }
         
         sqlite3_close(db);
-        HZDLog(@"HZSegmentationController: Active segments for this user: %@", self.segments);
+        HZDLog(@"HZSegmentationController: Active segments for this user: \n========================================\n\n%@\n========================================\n", [[self.segments allObjects] componentsJoinedByString:@"\n----------------------------------------\n\n"]);
         if (completion) {
             dispatch_async(dispatch_get_main_queue() , ^{
                 completion(YES);
@@ -152,12 +171,10 @@
         return YES;
     }
     
-    HZAuctionType auctionType = [HZSegmentationController auctionTypeForAdapter:adapter];
-    
     __block BOOL didGetLimited = NO;
     [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
-        if([segment limitsImpressionWithCreativeType:creativeType auctionType:auctionType tag:adTag]) {
-            //HZDLog(@"HZSegmentation: ad not allowed for type: %@, auctionType: %@, tag: %@. First segment limiting impression: %@", NSStringFromCreativeType(creativeType), NSStringFromHZAuctionType(auctionType), adTag, segment);
+        if([segment limitsImpressionWithCreativeType:creativeType adapter:adapter tag:adTag]) {
+            //HZDLog(@"HZSegmentation: ad not allowed for type: %@, adapter: %@, tag: %@. First segment limiting impression: %@", NSStringFromCreativeType(creativeType), adapter, adTag, segment);
             didGetLimited = YES;
             *stop = YES;
         }
@@ -166,14 +183,12 @@
     return !didGetLimited;
 }
 
-- (nullable NSString *) placementIDOverrideForAdapter:(nonnull HZBaseAdapter *)adapter tag:(nonnull NSString *)tag {
-    HZAuctionType auctionType = [HZSegmentationController auctionTypeForAdapter:adapter];
-    
+- (nullable NSString *) placementIDOverrideForAdapter:(nonnull HZBaseAdapter *)adapter tag:(nonnull NSString *)tag creativeType:(HZCreativeType)creativeType {
     __block NSString *retVal = nil;
     [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
-        if ([segment appliesToRequestWithAuctionType:auctionType tag:tag]) {
+        if ([segment appliesToRequestWithTag:tag]) {
             
-            NSString * placementID = [HZDictionaryUtils objectForKey:[adapter name] ofClass:[NSString class] default:nil dict:segment.placementIDOverrides];
+            NSString * placementID = [HZDictionaryUtils objectForKey:NSStringFromCreativeType(creativeType) ofClass:[NSString class] default:nil dict:[HZDictionaryUtils objectForKey:[adapter name] ofClass:[NSDictionary class] default:@{} dict:segment.placementIDOverrides]];
             if (retVal) {
                 HZELog(@"Mutliple segments applying placement ID overrides to this request with '%@' adapter for tag '%@'. Overwriting already-parsed placement ID override '%@' with new one: '%@'.", [adapter name], tag, retVal, placementID);
             }
@@ -194,7 +209,7 @@
     
     NSDate *date = [NSDate date];
     for(HZSegmentationSegment *segment in self.segments) {
-        [segment recordImpressionWithCreativeType:creativeType auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] tag:tag date:date];
+        [segment recordImpressionWithCreativeType:creativeType adapter:adapter tag:tag date:date];
     }
     
     [[HZImpressionHistory sharedInstance] recordImpressionWithCreativeType:creativeType tag:tag auctionType:[HZSegmentationController auctionTypeForAdapter:adapter] date:date];
@@ -217,9 +232,9 @@
 }
 
 + (HZAuctionType) auctionTypeFromAuctionTypeString:(NSString *)auctionTypeString {
-    if ([auctionTypeString isEqualToString:AUCTIONTYPE_STRING_CROSSPROMOFREQUENCY]) {
+    if ([auctionTypeString isEqualToString:RULETYPE_CROSSPROMO_ADS_FREQUENCY]) {
         return HZAuctionTypeCrossPromo;
-    } else if([auctionTypeString isEqualToString:AUCTIONTYPE_STRING_FREQUENCY]) {
+    } else if([auctionTypeString isEqualToString:RULETYPE_MONETIZING_ADS_FREQUENCY]) {
         return HZAuctionTypeMonetization;
     }
     

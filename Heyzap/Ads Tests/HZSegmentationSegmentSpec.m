@@ -19,7 +19,7 @@
 @property (nonatomic) HZAuctionType auctionType;
 @property (nonatomic) BOOL adsEnabled; // ignore the limit & interval if this is NO - on/off switch for ads with the specified type/tag/auctionType
 
-@property (nonatomic) BOOL isLoaded; // whether or not the segment has loaded it's history from HZImpressionHistory yet
+@property (nonatomic) BOOL isLoaded; // whether or not the segment's frequency limits have loaded it's history from HZImpressionHistory yet
 @property (nonatomic, nullable) NSMutableOrderedSet<NSDate *> *impressionHistory; // ordered set of timestamps at which impressions fitting this segment's search criteria occured, most
 
 @property (nonatomic, nonnull) NSDictionary <NSString *, NSString *>* placementIDOverrides; // {"network_name":"placement_id_override"}

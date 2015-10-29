@@ -139,7 +139,8 @@ describe(@"HZSegmentationSegment", ^{
         
         NSString *networkString = @"network";
         NSString *overrideString = @"override";
-        NSDictionary *overrideDict = @{networkString:overrideString};
+        HZCreativeType creativeType = HZCreativeTypeVideo;
+        NSDictionary *overrideDict = @{networkString:@{NSStringFromCreativeType(creativeType): overrideString}};
         
         segmentationController.segments = [NSSet setWithArray:@[segmentMock, segmentMock2]];
         
@@ -149,7 +150,7 @@ describe(@"HZSegmentationSegment", ^{
         [[segmentMock2 should] receive:@selector(placementIDOverrides) andReturn:overrideDict];
         [[adapterMock should] receive:@selector(name) andReturn:networkString];
         
-        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag];
+        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag creativeType:creativeType];
         [[returnedOverride should] equal:overrideString];
     });
     
@@ -161,7 +162,8 @@ describe(@"HZSegmentationSegment", ^{
         NSString *networkString = @"network";
         NSString *wrongNetworkString = @"other_network";
         NSString *overrideString = @"override";
-        NSDictionary *overrideDict = @{networkString:overrideString};
+        HZCreativeType creativeType = HZCreativeTypeVideo;
+        NSDictionary *overrideDict = @{networkString:@{NSStringFromCreativeType(creativeType): overrideString}};
         
         segmentationController.segments = [NSSet setWithArray:@[segmentMock, segmentMock2]];
         
@@ -171,7 +173,7 @@ describe(@"HZSegmentationSegment", ^{
         [[segmentMock2 should] receive:@selector(placementIDOverrides) andReturn:overrideDict];
         [[adapterMock should] receive:@selector(name) andReturn:wrongNetworkString];
         
-        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag];
+        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag creativeType:creativeType];
         [[returnedOverride should] beNil];
     });
     
@@ -183,8 +185,9 @@ describe(@"HZSegmentationSegment", ^{
         NSString *networkString = @"network";
         NSString *overrideString = @"override1";
         NSString *overrideString2 = @"override2";
-        NSDictionary *overrideDict = @{networkString:overrideString};
-        NSDictionary *overrideDict2 = @{networkString:overrideString2};
+        HZCreativeType creativeType = HZCreativeTypeVideo;
+        NSDictionary *overrideDict = @{networkString:@{NSStringFromCreativeType(creativeType): overrideString}};
+        NSDictionary *overrideDict2 = @{networkString:@{NSStringFromCreativeType(creativeType): overrideString2}};
         
         segmentationController.segments = [NSSet setWithArray:@[segmentMock, segmentMock2]];
         
@@ -195,7 +198,7 @@ describe(@"HZSegmentationSegment", ^{
         [[segmentMock2 should] receive:@selector(placementIDOverrides) andReturn:overrideDict2];
         [[adapterMock should] receive:@selector(name) andReturn:networkString withCountAtLeast:1];
         
-        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag];
+        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag creativeType:creativeType];
         [[returnedOverride should] matchPattern:@"override[12]"];
     });
     
@@ -209,7 +212,7 @@ describe(@"HZSegmentationSegment", ^{
         [[segmentMock should] receive:@selector(appliesToRequestWithAuctionType:tag:) andReturn:theValue(NO) withCount:1 arguments:any(), tag];
         [[segmentMock2 should] receive:@selector(appliesToRequestWithAuctionType:tag:) andReturn:theValue(NO) withCount:1 arguments: any(), tag];
         
-        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag];
+        NSString *returnedOverride = [segmentationController placementIDOverrideForAdapter:adapterMock tag:tag creativeType:HZCreativeTypeVideo];
         [[returnedOverride should] beNil];
     });
 });
