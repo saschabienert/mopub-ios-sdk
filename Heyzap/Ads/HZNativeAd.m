@@ -74,6 +74,11 @@ NSString *const kHZNativeAdRatingKey = @"rating";
         _iconURL = [NSURL URLWithString:[HZDictionaryUtils objectForKey:kHZNativeAdIconURLKey ofClass:[NSString class] dict:publicDictionary]];
         CHECK_NOT_NIL(_iconURL, @"icon URL");
         
+        NSError *iconError;
+        NSDictionary *iconImageDict = [HZDictionaryUtils objectForKey:@"icon_image" ofClass:[NSDictionary class] dict:publicDictionary];
+        _iconImage = [[HZNativeAdImage alloc] initWithDictionary:iconImageDict error:&iconError];
+        CHECK_NOT_NIL_UNDERLYING(_iconImage, @"Icon Image",iconError);
+        
         /// Nullable properties
         
         // Large creatives
@@ -145,7 +150,7 @@ NSString *const kHZNativeAdRatingKey = @"rating";
 - (NSString *)description {
     NSMutableString *const desc = [[NSMutableString alloc] initWithString:[super description]];
     [desc appendFormat:@" `appName` = %@",self.appName];
-    [desc appendFormat:@" `iconURL` = %@",self.iconURL];
+    [desc appendFormat:@" `iconImage` = %@",self.iconImage];
     [desc appendFormat:@" `rating` = %@",self.rating];
     [desc appendFormat:@" `category` = %@",self.category];
     [desc appendFormat:@" `description` = %@",self.appDescription];

@@ -13,4 +13,11 @@ return nil; \
 } \
 } while (0)
 
+#define CHECK_NOT_NIL_UNDERLYING(value,name, _underlyingError) do { \
+if (value == nil) { \
+*error = [NSError errorWithDomain:@"heyzap" code:3 userInfo:@{NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat: @"Missing value: %@",name], NSUnderlyingErrorKey: _underlyingError}]; \
+return nil; \
+} \
+} while (0)
+
 
