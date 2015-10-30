@@ -39,7 +39,7 @@
         _frequencyLimitRules = frequencyLimitRules;
         
         for(HZSegmentationFrequencyLimitRule *rule in _frequencyLimitRules) {
-            rule.parentSegment = self;
+            rule.parentSegment = self; // frequency rules need a weak reference back to us so they can get the tags we apply to
         }
     }
     
@@ -62,7 +62,7 @@
         return NO;
     }
     
-    // tell freq limits, return YES if one of them do (ret val necessary?)
+    // tell freq limits to try and record impression in their histories, return YES if one of them do
     BOOL didRecordOnALimit = NO;
     for (HZSegmentationFrequencyLimitRule *rule in self.frequencyLimitRules) {
         BOOL didRecord = [rule recordImpressionWithCreativeType:creativeType adapter:adapter date:date];

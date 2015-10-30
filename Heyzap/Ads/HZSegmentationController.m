@@ -88,7 +88,7 @@
             } else if ([ruleType isEqualToString:RULETYPE_MONETIZING_ADS_FREQUENCY]
                        || [ruleType isEqualToString:RULETYPE_CROSSPROMO_ADS_FREQUENCY]) {
                 
-                HZAuctionType auctionType = [HZSegmentationController auctionTypeFromAuctionTypeString:[HZDictionaryUtils objectForKey:RULEKEY_TYPE ofClass:[NSString class] default:@"" dict:rule]];
+                HZAuctionType auctionType = [HZSegmentationController auctionTypeFromAuctionTypeString:ruleType];
                 
                 NSDictionary *options = [HZDictionaryUtils objectForKey:RULEKEY_OPTIONS ofClass:[NSDictionary class] default:@{} dict:rule];
                 BOOL adsEnabled = [[HZDictionaryUtils objectForKey:@"ads_enabled" ofClass:[NSNumber class] default:@1 dict:options] boolValue];
@@ -111,15 +111,17 @@
                         [frequencyRules addObject:freqRule];
                     }
                 } else {
-                    // ads disabled for this auctionType & all creativeTypes - the frequency limits don't matter / might not even exist.
+                    // ads disabled for this auctionType & all creativeTypes - the frequency limits don't matter / might not even be provided by the server.
                     HZSegmentationFrequencyLimitRule *freqRule = [[HZSegmentationFrequencyLimitRule alloc] init];
                     freqRule.auctionType = auctionType;
                     freqRule.timeInterval = 0;
                     freqRule.impressionLimit = 0;
                     freqRule.adsEnabled = NO;
-                    freqRule.creativeType = HZCreativeTypeUnknown;
+                    freqRule.creativeType = HZCreativeTypeUnknown; // all creativeTypes
                     [frequencyRules addObject:freqRule];
                 }
+            } else {
+                HZILog(@"Segmentation received a ruleType that is unsupported by this version of the SDK: '%@'. It will be ignored.", ruleType);
             }
         }
         
@@ -128,7 +130,7 @@
     
     self.segments = [NSSet setWithArray:loadedSegments];
     
-    // send segments off to retrieve their persisted history
+    // send segments off to retrieve their persisted impression history
     [self loadSegmentsFromImpressionHistoryWithCompletion:completion];
 }
 
@@ -228,7 +230,11 @@
 }
 
 + (HZAuctionType) auctionTypeForAdapter:(nonnull HZBaseAdapter *)adapter {
-    return [adapter name] == [HZCrossPromoAdapter name] ? HZAuctionTypeCrossPromo : HZAuctionTypeMonetization;
+    if ([[adapter name] isEqualToString:[HZCrossPromoAdapter name]]) {
+        return HZAuctionTypeCrossPromo;
+    } else {
+        return HZAuctionTypeMonetization;
+    }
 }
 
 + (HZAuctionType) auctionTypeFromAuctionTypeString:(NSString *)auctionTypeString {

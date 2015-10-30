@@ -12,7 +12,7 @@
 
 @interface HZSegmentationFrequencyLimitRule ()
 
-@property (atomic, nullable) NSMutableOrderedSet<NSDate *> *impressionHistory; // ordered set of timestamps at which impressions fitting this segment's search criteria occured, most recent first. atomic since `loadWithDb:` can be called on any thread, as can the methods that access this property
+@property (atomic, nullable) NSMutableOrderedSet<NSDate *> *impressionHistory; // ordered set of timestamps at which impressions fitting this frequency limit's search criteria occured, most recent first. atomic since `loadWithDb:` can be called on any thread, as can the methods that access this property
 
 @end
 
@@ -22,9 +22,9 @@
     self = [super init];
     if (self) {
         _timeInterval = [NSDate timeIntervalSinceReferenceDate]; //default to a huge interval
-        _adsEnabled = YES;
-        _auctionType = HZAuctionTypeMixed;
-        _creativeType = HZCreativeTypeUnknown;
+        _adsEnabled = YES; // enabled by default
+        _auctionType = HZAuctionTypeMixed; // all
+        _creativeType = HZCreativeTypeUnknown; // all
         _impressionLimit = NSUIntegerMax; // no limit by default
     }
     
@@ -32,7 +32,13 @@
 }
 
 - (void) loadWithDb:(nonnull sqlite3 *)db {
-    _impressionHistory = [[HZImpressionHistory sharedInstance] impressionsSince:self.startTime withCreativeType:self.creativeType tags:[self adTags] auctionType:self.auctionType databaseConnection:db mostRecentFirst:YES];
+    // don't bother hitting the db if the limit is 0 or ads are disabled, since in these cases the history is irrelevant.
+    if (!self.adsEnabled || self.impressionLimit == 0) {
+        _impressionHistory = [NSMutableOrderedSet orderedSet];
+    } else {
+        _impressionHistory = [[HZImpressionHistory sharedInstance] impressionsSince:self.startTime withCreativeType:self.creativeType tags:[self adTags] auctionType:self.auctionType databaseConnection:db mostRecentFirst:YES];
+    }
+    
 }
 
 - (BOOL) recordImpressionWithCreativeType:(HZCreativeType)creativeType adapter:(nonnull HZBaseAdapter *)adapter date:(nonnull NSDate *)date {
@@ -139,16 +145,15 @@
 }
 
 - (BOOL) appliesToRequestWithAdapter:(HZBaseAdapter *)adapter {
-    if (self.auctionType != HZAuctionTypeMixed && [HZSegmentationController auctionTypeForAdapter:adapter] != self.auctionType) {
-        // auctionType mismatch
-        return NO;
+    if (self.auctionType == HZAuctionTypeMixed) {
+        return YES;
     }
     
-    return YES;
+    return [HZSegmentationController auctionTypeForAdapter:adapter] == self.auctionType;
 }
 
 - (NSString *) description {
-    return [NSString stringWithFormat:@"{[Frequency Rule] time interval: %i seconds, creativeType: %@, auctionType: %@, adTags: [%@], ads enabled: %@, impression count/limit: %lu/%lu segment name: \"%@\" %@}", (int)self.timeInterval, (self.creativeType == HZCreativeTypeUnknown ? @"ALL" : NSStringFromCreativeType(self.creativeType)), NSStringFromHZAuctionType(self.auctionType), [[self adTags] componentsJoinedByString:@", "], (self.adsEnabled ? @"yes" : @"no"), (unsigned long)self.impressionCount, (unsigned long)self.impressionLimit, self.parentSegment.name, (self.isLoaded ? @"" : @" -- Not yet loaded from db --")];
+    return [NSString stringWithFormat:@"{[Frequency Rule] time interval: %i seconds, creativeType: %@, auctionType: %@, adTags: [%@], ads enabled: %@, impression count/limit: %lu/%lu segment name: \"%@\" %@}", (int)self.timeInterval, (self.creativeType == HZCreativeTypeUnknown ? @"ALL" : NSStringFromCreativeType(self.creativeType)), (self.auctionType == HZAuctionTypeMixed ? @"ALL" :NSStringFromHZAuctionType(self.auctionType)), [[self adTags] componentsJoinedByString:@", "], (self.adsEnabled ? @"yes" : @"no"), (unsigned long)self.impressionCount, (unsigned long)self.impressionLimit, self.parentSegment.name, (self.isLoaded ? @"" : @" -- Not yet loaded from db --")];
 }
 
 @end

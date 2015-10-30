@@ -342,6 +342,7 @@ typedef enum {
 - (void) segmentationSwitchToggled:(UISwitch *)sender {
     [self.view endEditing:YES];
     [[HeyzapMediation sharedInstance] enableSegmentation:sender.isOn];
+    [self changeColorOfShowButton];
 }
 
 - (void) infoButtonPressed {

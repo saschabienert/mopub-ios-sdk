@@ -9,7 +9,7 @@
 // This is a bitmasked parameter, but with the exception of the `supportedAdFormats` method, almost everything else should treat it as just an enum.
 // These values match server values and should not be modified without a change on the server and other SDKs
 typedef NS_OPTIONS(NSUInteger, HZCreativeType) {
-    HZCreativeTypeUnknown       = 0,      // 0
+    HZCreativeTypeUnknown       = 0,      // 0 (in some contexts, HZCreativeTypeUnknown represents an error condition. In others, it means "all creative types")
     HZCreativeTypeStatic        = 1 << 0, // 1
     HZCreativeTypeVideo         = 1 << 1, // 2
     HZCreativeTypeIncentivized  = 1 << 2, // 4
