@@ -16,7 +16,6 @@
 #import "HZIMInterstitialDelegate.h"
 #import "HZInMobiBannerAdapter.h"
 #import "HZIMRequestStatus.h"
-#import <objc/runtime.h>
 
 @interface HZInMobiAdapter() <HZIMInterstitialDelegate>
 
@@ -30,9 +29,6 @@
 @end
 
 @implementation HZInMobiAdapter
-
-/** Pointer to this char is used as a unique key for state stored on HZIMInterstitial*/
-static char hzAlreadyCalledLoadKey;
 
 + (instancetype)sharedAdapter
 {
@@ -70,8 +66,8 @@ static char hzAlreadyCalledLoadKey;
     
     NSMutableDictionary *const creativeTypeToAdUnitID = [NSMutableDictionary dictionary];
     
-    [creativeTypeToKey enumerateKeysAndObjectsUsingBlock:^(NSNumber *  _Nonnull creativeType, NSString *  _Nonnull key, BOOL * _Nonnull stop) {
-        NSString *const credential = [HZDictionaryUtils objectForKey:key
+    [creativeTypeToKey enumerateKeysAndObjectsUsingBlock:^(NSNumber *  _Nonnull creativeType, NSString *  _Nonnull credentialKey, BOOL * _Nonnull stop) {
+        NSString *const credential = [HZDictionaryUtils objectForKey:credentialKey
                                                              ofClass:[NSString class]
                                                                 dict:self.credentials];
         if (credential) {
@@ -86,7 +82,7 @@ static char hzAlreadyCalledLoadKey;
     RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs an Account ID set up on your dashboard.", [self humanizedName]]));
     
     [HZIMSdk initWithAccountID:self.accountID];
-    [HZIMSdk setLogLevel:kHZIMSDKLogLevelDebug];
+    [HZIMSdk setLogLevel:kHZIMSDKLogLevelError];
     
     return nil;
 }
@@ -127,29 +123,17 @@ static char hzAlreadyCalledLoadKey;
 {
     const long long placementID = [self.creativeTypeToAdUnitID[@(creativeType)] longLongValue];
     
-    HZIMInterstitial *const ad = ({
-        HZIMInterstitial *ad = self.adDictionary[@(creativeType)];
-        if (!ad) {
-            const long long placementID = [self.creativeTypeToAdUnitID[@(creativeType)] longLongValue];
-            ad = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
-            self.adDictionary[@(creativeType)] = ad;
-        }
-        ad;
-    });
-    
-    // If you call `load` a second time InMobi refreshes the ad
-    // We just want one load per instance in case e.g. a dev fetches 2 ads at once and we call this method twice.
-    if (objc_getAssociatedObject(ad, &hzAlreadyCalledLoadKey)) {
-        HZILog(@"Already requested that InMobi load the ad: %@ of creativeType: %@; skipping this request.",ad, NSStringFromCreativeType(creativeType));
-        return;
+    HZIMInterstitial *ad = self.adDictionary[@(creativeType)];
+    if (!ad) {
+        ad = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
+        [ad load];
+        self.adDictionary[@(creativeType)] = ad;
     }
     
     if (creativeType == HZCreativeTypeIncentivized && self.backupRewardedVideo == nil) {
         self.backupRewardedVideo = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
+        [self.backupRewardedVideo load];
     }
-    
-    [ad load];
-    objc_setAssociatedObject(ad, &hzAlreadyCalledLoadKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
@@ -164,7 +148,7 @@ static char hzAlreadyCalledLoadKey;
     if (ad) {
         [ad showFromViewController:options.viewController];
     } else {
-        NSString *const description = [NSString stringWithFormat:@"The adapter didn't have an ad for the creative type %@ in its dictionary.",NSStringFromCreativeType(creativeType)];
+        NSString *const description = [NSString stringWithFormat:@"The adapter didn't have an ad for the creative type %@ prefetched.",NSStringFromCreativeType(creativeType)];
         NSError *const error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: description}];
         [self.delegate adapterDidFailToShowAd:self error:error];
     }
@@ -183,10 +167,6 @@ static char hzAlreadyCalledLoadKey;
 }
 
 #pragma mark - Logging
-
-- (void) loggingChanged:(NSNotification *) notification {
-    [self toggleLogging];
-}
 
 - (void) toggleLogging {
     [HZIMSdk setLogLevel:[self isLoggingEnabled] ? kHZIMSDKLogLevelDebug : kHZIMSDKLogLevelNone];
@@ -214,7 +194,7 @@ static char hzAlreadyCalledLoadKey;
  * Notifies the delegate that the interstitial has finished loading
  */
 - (void)interstitialDidFinishLoading:(HZIMInterstitial*)interstitial {
-    HZILog(@"InMobi loaded ad")
+    HZDLog(@"InMobi loaded ad")
     [[HeyzapMediation sharedInstance] sendNetworkCallback:HZNetworkCallbackAvailable
                                                forNetwork:[self name]];
 }

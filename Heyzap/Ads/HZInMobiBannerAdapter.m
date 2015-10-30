@@ -14,6 +14,7 @@
 
 @property (nonatomic) HZIMBanner *banner;
 @property (nonatomic) BOOL bannerWasLoaded;
+@property (nonatomic) BOOL waitingToBeAddedToScreen;
 
 @end
 
@@ -56,7 +57,10 @@
 }
 
 - (void)bannerWasAddedToView {
-    // Override in subclass.
+    if (self.waitingToBeAddedToScreen) {
+        [self.bannerReportingDelegate bannerAdapter:self
+              hadInitialImpressionWithEventReporter:self.eventReporter];
+    }
 }
 
 /**
@@ -65,6 +69,14 @@
 - (void)bannerDidFinishLoading:(HZIMBanner *)banner {
     self.bannerWasLoaded = YES;
     [self.bannerInteractionDelegate didReceiveAd];
+    
+    UIView *view = (UIView *)banner;
+    if (view.superview) {
+        [self.bannerReportingDelegate bannerAdapter:self
+             hadReloadedImpressionWithEventReporter:self.eventReporter];
+    } else {
+        self.waitingToBeAddedToScreen = YES;
+    }
 }
 /**
  * Notifies the delegate that the banner has failed to load with some error.
@@ -81,6 +93,8 @@
     // I've only seem the `params` dictionary be `nil` in testing. InMobi hasn't responded to my email asking for details about this.
     HZDLog(@"InMobi banner didInteractWithParams dictionary: %@",params);
     [self.bannerInteractionDelegate userDidClick];
+    [self.bannerReportingDelegate bannerAdapter:self
+                    wasClickedWithEventReporter:self.eventReporter];
 }
 /**
  * Notifies the delegate that the user would be taken out of the application context.

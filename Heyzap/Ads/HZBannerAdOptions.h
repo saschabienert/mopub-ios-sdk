@@ -8,11 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface HZBannerAdOptions : NSObject <NSCopying>
-
-/// @name Facebook Banner Sizes
-#pragma mark - Facebook Banner Sizes
-
 /**
  * The size to use for Facebook banners
  */
@@ -31,14 +26,6 @@ typedef NS_ENUM(NSUInteger, HZFacebookBannerSize) {
      */
     HZFacebookBannerSizeFlexibleWidthHeight90,
 };
-
-/**
- *  The size to use for Facebook Audience Network banners. Defaults to HZFacebookBannerSizeFlexibleWidthHeight50.
- */
-@property (nonatomic) HZFacebookBannerSize facebookBannerSize;
-
-/// @name AdMob Banner Sizes
-#pragma mark - AdMob Banner Sizes
 
 /**
  *  The size to use for AdMob banners. NB: Some of AdMob's banner heights vary by iPad/iPhone.
@@ -75,14 +62,6 @@ typedef NS_ENUM(NSUInteger, HZAdMobBannerSize){
     HZAdMobBannerSizeFullBanner,
 };
 
-/**
- *  The size to use for Admob banners.
- */
-@property (nonatomic) HZAdMobBannerSize admobBannerSize;
-
-/// @name InMobi Banner Sizes
-#pragma mark - InMobi Banner Sizes
-
 /** The constant for a banner 320 points wide and 50 points high. */
 extern const CGSize HZInMobiBannerSize320x50;
 /** The constant for a banner 468 points wide and 60 points high. */
@@ -91,6 +70,18 @@ extern const CGSize HZInMobiBannerSize468x60;
 extern const CGSize HZInMobiBannerSize480x75;
 /** The constant for a banner 728 points wide and 90 points high. */
 extern const CGSize HZInMobiBannerSize728x90;
+
+@interface HZBannerAdOptions : NSObject <NSCopying>
+
+/**
+ *  The size to use for Facebook Audience Network banners. Defaults to HZFacebookBannerSizeFlexibleWidthHeight50.
+ */
+@property (nonatomic) HZFacebookBannerSize facebookBannerSize;
+
+/**
+ *  The size to use for Admob banners.
+ */
+@property (nonatomic) HZAdMobBannerSize admobBannerSize;
 
 /**
  *  InMobi allows setting an arbitrary size to use for banners, but only some intrinsic banner sizes are supported. 

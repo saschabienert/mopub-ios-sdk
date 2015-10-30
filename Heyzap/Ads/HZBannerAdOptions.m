@@ -23,6 +23,13 @@
 #import "HZAdModel.h"
 #import "HZDevice.h"
 
+// Note: These are taken from https://support.inmobi.com/monetize/integration/monetization-server-to-server-api-integration-guides/api-2.0-integration-guidelines
+// (There aren't any constants in the InMobi SDK we can get these values from)
+const CGSize HZInMobiBannerSize320x50 = {320, 50};
+const CGSize HZInMobiBannerSize468x60 = {468, 60};
+const CGSize HZInMobiBannerSize480x75 = {480, 75};
+const CGSize HZInMobiBannerSize728x90 = {728, 90};
+
 @interface HZBannerAdOptions()
 
 NSValue *hzAdMobBannerSizeValue(HZAdMobBannerSize size);
@@ -41,13 +48,6 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @implementation HZBannerAdOptions
 @synthesize tag = _tag;
-
-// Note: These are taken from https://support.inmobi.com/monetize/integration/monetization-server-to-server-api-integration-guides/api-2.0-integration-guidelines
-// (There aren't any constants in the InMobi SDK we can get these values from)
-const CGSize HZInMobiBannerSize320x50 = {320, 50};
-const CGSize HZInMobiBannerSize468x60 = {468, 60};
-const CGSize HZInMobiBannerSize480x75 = {480, 75};
-const CGSize HZInMobiBannerSize728x90 = {728, 90};
 
 - (NSString *)tag {
     if (_tag == nil) {
