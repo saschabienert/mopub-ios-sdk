@@ -46,6 +46,7 @@
 
 #import "HZFacebookAdapter.h"
 #import "HZAdMobAdapter.h"
+#import "HZInMobiAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 
 @interface HZNetworkTestActivityNetworkViewController() <UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, HZBannerAdDelegate, HZIncentivizedAdDelegate>
@@ -839,7 +840,9 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     } else if ([self.network.name isEqualToString: [HZAdMobAdapter name]]) {
         HZAdMobBannerSize size = hzAdMobBannerSizeFromValue(value);
         return hzAdMobBannerSizeDescription(size);
-    } else {
+    } else if ([self.network.name isEqualToString:[HZInMobiAdapter name]]) {
+        return hzInMobiBannerSizeDescription([value CGSizeValue]);
+    }else {
         return @"n/a";
     }
 }
@@ -850,6 +853,8 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
         return [HZBannerAdOptions facebookBannerSizes];
     } else if ([name isEqualToString:[HZAdMobAdapter name]]) {
         return [HZBannerAdOptions admobBannerSizes];
+    } else if ([name isEqualToString:[HZInMobiAdapter name]]) {
+        return [HZBannerAdOptions inmobiBannerSizes];
     } else {
         return @[];
     }
@@ -870,6 +875,8 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
         opts.facebookBannerSize = hzFacebookBannerSizeFromValue(self.chosenBannerSize);
     } else if ([self.network.name isEqualToString: [HZAdMobAdapter name]]) {
         opts.admobBannerSize = hzAdMobBannerSizeFromValue(self.chosenBannerSize);
+    } else if ([self.network.name isEqualToString:[HZInMobiAdapter name]]) {
+        opts.inMobiBannerSize = [self.chosenBannerSize CGSizeValue];
     }
     
     return opts;

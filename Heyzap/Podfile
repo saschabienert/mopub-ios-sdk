@@ -20,6 +20,7 @@ target :MediationTestApp, :exclusive => true do
   pod 'HyprMX' #Vendored by Heyzap
   pod 'Masonry'
   pod 'Leadbolt' # Vendored by Heyzap
+  pod 'HZInMobi' # Vendored by Heyzap
 end
 
 target :"Ads Tests", :exclusive => true do # Unit Tests
