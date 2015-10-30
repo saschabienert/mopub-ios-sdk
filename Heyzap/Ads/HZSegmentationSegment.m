@@ -46,18 +46,6 @@
     return self;
 }
 
-- (nullable instancetype) init {
-    self = [super init];
-    if (self) {
-        _placementIDOverrides = @{};
-        _adTags = @[];
-        _disabledNetworks = @[];
-        _frequencyLimitRules = @[];
-    }
-    
-    return self;
-}
-
 - (void) loadWithDb:(nonnull sqlite3 *)db{
     for (HZSegmentationFrequencyLimitRule *rule in self.frequencyLimitRules) {
         [rule loadWithDb:db];
@@ -96,7 +84,7 @@
     // check freq limits
     BOOL frequencyRuleLimitsImpression = NO;
     for (HZSegmentationFrequencyLimitRule *rule in self.frequencyLimitRules) {
-        if ([rule limitsImpressionWithCreativeType:creativeType adapter:adapter tag:tag]) {
+        if ([rule limitsImpressionWithCreativeType:creativeType adapter:adapter]) {
             frequencyRuleLimitsImpression = YES;
             HZDLog(@"HZSegmentationSegment: first frequency rule limiting impression: %@", rule);
             break;
@@ -113,14 +101,15 @@
     return YES;
 }
 
+
+#pragma mark - Utilities
+
 - (BOOL) isLoaded {
     for (HZSegmentationFrequencyLimitRule *rule in self.frequencyLimitRules) {
         if (![rule isLoaded])return NO;
     }
     return YES;
 }
-
-#pragma mark - Utilities
 
 - (BOOL) isFilteringForTags {
     return [self.adTags count] > 0;

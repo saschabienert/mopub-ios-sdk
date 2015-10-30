@@ -22,8 +22,6 @@
 
 @property (nonatomic, readonly, nonnull) NSDictionary <NSString *, NSString *>* placementIDOverrides;
 
-@property (nonatomic, readonly) BOOL isLoaded; // whether or not the segment's frequency limits have loaded it's history from HZImpressionHistory yet
-
 /**
  *  Returns YES if this segment currently restricts an impression of the given types and tag, NO if the impression is allowed.
  */
@@ -45,7 +43,6 @@
     @param tags If empty, the segment applies to all ad tags, otherwise, it only applies to the ad tags in this array
  */
 - (nullable instancetype) initWithTags:(nonnull NSArray *)tags disabledNetworks:(nonnull NSArray *)disabledNetworks placementIDOverrides:(nonnull NSDictionary <NSString *, NSString *>*)placementIDOverrides frequencyLimitRules:(nonnull NSArray <HZSegmentationFrequencyLimitRule *> *)frequencyLimitRules name:(nullable NSString *)name;
-- (nullable instancetype) init;
 
 - (void) loadWithDb:(nonnull sqlite3 *)db;
 

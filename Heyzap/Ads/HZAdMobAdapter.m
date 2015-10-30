@@ -150,7 +150,7 @@
         HZDLog(@"Initializing AdMob Ad with videoAdUnitID: %@", adUnitID);
     }
     
-    __block HZGADInterstitial *newAd;
+    HZGADInterstitial *newAd;
     
     if ([HZGADInterstitial respondsToSelector:@selector(initWithAdUnitID:)]) {
         newAd = [[HZGADInterstitial alloc] initWithAdUnitID:adUnitID];

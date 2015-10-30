@@ -17,6 +17,7 @@
 #import "IntegrationTestConfig.h"
 #import "TestJSON.h"
 #import "OHHTTPStubs+Heyzap.h"
+#import "OHHTTPStubsResponse+JSON.h"
 #import "HZUtils.h"
 
 #define MOCKITO_SHORTHAND

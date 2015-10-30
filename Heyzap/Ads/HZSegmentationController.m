@@ -228,7 +228,7 @@
 }
 
 + (HZAuctionType) auctionTypeForAdapter:(nonnull HZBaseAdapter *)adapter {
-    return [adapter class] == [HZCrossPromoAdapter class] ? HZAuctionTypeCrossPromo : HZAuctionTypeMonetization;
+    return [adapter name] == [HZCrossPromoAdapter name] ? HZAuctionTypeCrossPromo : HZAuctionTypeMonetization;
 }
 
 + (HZAuctionType) auctionTypeFromAuctionTypeString:(NSString *)auctionTypeString {

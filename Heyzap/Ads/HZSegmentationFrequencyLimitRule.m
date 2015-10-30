@@ -55,13 +55,13 @@
         return NO;
     }
     
-    // type and tag match, record impression
+    // types match, record impression
     [self.impressionHistory insertObject:date atIndex:0];
     return YES;
 }
 
 
-- (BOOL) limitsImpressionWithCreativeType:(HZCreativeType)creativeType adapter:(nonnull HZBaseAdapter *)adapter tag:(nonnull NSString *)tag {
+- (BOOL) limitsImpressionWithCreativeType:(HZCreativeType)creativeType adapter:(nonnull HZBaseAdapter *)adapter {
     
     if (![self appliesToRequestWithAdapter:adapter]) {
         return NO;
