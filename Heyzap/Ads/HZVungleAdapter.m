@@ -106,7 +106,7 @@
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride
 {
     BOOL adPlayable = NO;
     

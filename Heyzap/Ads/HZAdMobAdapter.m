@@ -16,10 +16,11 @@
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
 #import "HZBaseAdapter_Internal.h"
+#import "HZShowOptions_Private.h"
 
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, HZGADInterstitial *> *adDictionary;
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSMutableDictionary <NSString *, HZGADInterstitial *> *> *adDictionary; // outer key: creativeType, inner key: placement ID
 
 @property (nonatomic, strong) NSString *interstitialAdUnitID;
 @property (nonatomic, strong) NSString *videoAdUnitID;
@@ -82,17 +83,10 @@
     return [HZGADRequest sdkVersion];
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride
 {
-    switch (creativeType) {
-        case HZCreativeTypeStatic:
-        case HZCreativeTypeVideo: {
-            HZGADInterstitial *currentAd = self.adDictionary[@(creativeType)];
-            return currentAd && currentAd.isReady;
-        }
-        default:
-            return NO;
-    }
+    HZGADInterstitial *ad = [self adForCreativeType:creativeType placementIDOverride:placementIDOverride];
+    return ad && ad.isReady;
 }
 
 - (HZCreativeType) supportedCreativeTypes
@@ -118,13 +112,18 @@
 
 - (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
 {
+    NSString *adUnitID;
+    
     switch (creativeType) {
         case HZCreativeTypeStatic: {
-            HZAssert(self.interstitialAdUnitID || options.placementIDOverride, @"Need an interstitial ad unit ID by this point");
+            adUnitID = options.placementIDOverride ?: self.interstitialAdUnitID;
+            HZAssert(adUnitID, @"Need an interstitial ad unit ID by this point");
+            
             break;
         }
         case HZCreativeTypeVideo: {
-            HZAssert(self.videoAdUnitID || options.placementIDOverride, @"Need a video ad unit ID by this point");
+            adUnitID = options.placementIDOverride ?: self.videoAdUnitID;
+            HZAssert(adUnitID, @"Need a video ad unit ID by this point");
             break;
         }
         default: {
@@ -132,23 +131,14 @@
         }
     }
     
-    HZGADInterstitial *currentAd = self.adDictionary[@(creativeType)];
+    HZGADInterstitial *currentAd = [self adForCreativeType:creativeType placementIDOverride:adUnitID];
     if (currentAd
         && !currentAd.hasBeenUsed) {
         // If we have an ad already out fetching, don't start up a re-fetch.
         return;
     }
     
-    NSString *adUnitID;
-    
-    if (creativeType == HZCreativeTypeStatic) {
-        adUnitID = options.placementIDOverride ?: self.interstitialAdUnitID;
-        HZDLog(@"Initializing AdMob Ad with interstitialAdUnitID: %@", adUnitID);
-        
-    } else {
-        adUnitID = options.placementIDOverride ?: self.videoAdUnitID;
-        HZDLog(@"Initializing AdMob Ad with videoAdUnitID: %@", adUnitID);
-    }
+    HZDLog(@"Initializing AdMob Ad with %@AdUnitID: %@", (creativeType == HZCreativeTypeStatic ? @"interstitial" : @"video") ,adUnitID);
     
     HZGADInterstitial *newAd;
     
@@ -160,8 +150,7 @@
     }
     
     newAd.delegate = self.forwardingDelegate;
-    self.adDictionary[@(creativeType)] = newAd;
-
+    [self setAd:newAd forCreativeType:creativeType placementID:adUnitID];
     
     HZGADRequest *request = [HZGADRequest request];
     request.testDevices = @[ GAD_SIMULATOR_ID ];
@@ -170,7 +159,7 @@
 
 - (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    HZGADInterstitial *ad = self.adDictionary[@(creativeType)];
+    HZGADInterstitial *ad = [self adForCreativeType:creativeType placementIDOverride:options.placementIDOverride];
     [ad presentFromRootViewController:options.viewController];
 }
 
@@ -188,7 +177,7 @@
 - (void)interstitial:(HZGADInterstitial *)ad didFailToReceiveAdWithError:(HZGADRequestError *)error
 {
     const HZCreativeType creativeType = [self creativeTypeForAd:ad];
-    [self.adDictionary removeObjectForKey:@(creativeType)];
+    [self setAd:nil forCreativeType:creativeType placementID:ad.adUnitID];
     
     NSError *wrappedError = [NSError errorWithDomain:kHZMediationDomain
                                                 code:1
@@ -210,7 +199,7 @@
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
     
-    [self.adDictionary removeObjectForKey:@([self creativeTypeForAd:ad])];
+    [self setAd:nil forCreativeType:[self creativeTypeForAd:ad] placementID:ad.adUnitID];
 }
 
 // As far as I can tell, this means a click.
@@ -230,10 +219,46 @@
 }
 
 - (HZCreativeType)creativeTypeForAd:(HZGADInterstitial *)ad {
-    if ([ad.adUnitID isEqualToString:self.interstitialAdUnitID]) {
-        return HZCreativeTypeStatic;
+    NSArray *supportedCreativeTypes = @[@(HZCreativeTypeStatic), @(HZCreativeTypeVideo)];
+    
+    for (NSNumber *creativeTypeNumber in supportedCreativeTypes) {
+        if (self.adDictionary[creativeTypeNumber] && [[self.adDictionary[creativeTypeNumber] allValues] containsObject:ad]) {
+            return hzCreativeTypeFromNSNumber(creativeTypeNumber);
+        }
+    }
+    
+    HZELog(@"AdMob adapter in an unexpected state... it was looking for the creativeType for an ad in it's inventory, but no ad was present. Please report this to support@heyzap.com . Ad: %@", ad);
+    return HZCreativeTypeUnknown;
+}
+
+#pragma mark - Utilities
+
+- (HZGADInterstitial *) adForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride {
+    NSString *placementIDToUse = placementIDOverride ?: (creativeType == HZCreativeTypeStatic ? self.interstitialAdUnitID : self.videoAdUnitID);
+    
+    if (!placementIDToUse) {
+        return nil;
+    }
+    
+    NSMutableDictionary *adsForCreativeType = self.adDictionary[@(creativeType)];
+    
+    if (!adsForCreativeType) {
+        return nil;
     } else {
-        return HZCreativeTypeVideo;
+        return adsForCreativeType[placementIDToUse];
+    }
+}
+
+- (void) setAd:(HZGADInterstitial *)ad forCreativeType:(HZCreativeType)creativeType placementID:(NSString *)placementID {
+    NSMutableDictionary * adsForCreativeType = self.adDictionary[@(creativeType)];
+    if (!adsForCreativeType) {
+        adsForCreativeType = [[NSMutableDictionary alloc] init];
+        self.adDictionary[@(creativeType)] = adsForCreativeType;
+    }
+    if (ad) {
+        adsForCreativeType[placementID] = ad;
+    } else {
+        [adsForCreativeType removeObjectForKey:placementID];
     }
 }
 

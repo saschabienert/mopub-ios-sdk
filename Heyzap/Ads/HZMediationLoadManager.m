@@ -216,12 +216,12 @@
             if (setupSuccessful) {
                 
                 HZBaseAdapter *const adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
+                HZFetchOptions *newFetchOptions = [fetchOptions copy];
+                newFetchOptions.placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:adapter tag:newFetchOptions.tag creativeType:creativeType];
                 
                 if (![networksAlreadyFetched containsObject:datum.adapterClass]) {
                     [networksAlreadyFetched addObject:datum.adapterClass];
                     dispatch_sync([self.delegate pausableMainQueue], ^{
-                        HZFetchOptions *newFetchOptions = [fetchOptions copy];
-                        newFetchOptions.placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:adapter tag:newFetchOptions.tag creativeType:creativeType];
                         [adapter prefetchForCreativeType:creativeType options:newFetchOptions];
                     });
                 }
@@ -239,7 +239,7 @@
                     //  -- OR --
                     //  - the current adapter has an error for the creativeType
                     const BOOL skipWaitTime = ([networksToKeepLoadingPast containsObject:datum.adapterClass]
-                                               && [[datum.adapterClass sharedAdapter] hasAdForCreativeType:creativeType]);
+                                               && [[datum.adapterClass sharedAdapter] hasAdForCreativeType:creativeType placementIDOverride:newFetchOptions.placementIDOverride]);
                     if (skipWaitTime) {
                         return true; // stop waiting
                     }

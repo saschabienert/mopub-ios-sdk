@@ -83,6 +83,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
+// does not currently check for placement ID overrides... not sure it should - it'd add extra complexity and we don't allow people to skip entering default placement IDs 
 - (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
     return YES;
 }
@@ -96,7 +97,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride
 {
     ABSTRACT_METHOD_ERROR();
 }
@@ -152,7 +153,11 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return error;
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL) hasAdForCreativeType:(HZCreativeType)creativeType {
+    return [self hasAdForCreativeType:creativeType placementIDOverride:nil];
+}
+
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride
 {
     if (creativeType == HZCreativeTypeBanner) {
         HZELog(@"hasAdForCreativeType should not be sent to adapters asking about banner ads.");
@@ -163,7 +168,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     
     __block BOOL hasAd;
     hzEnsureMainQueue(^{
-        hasAd = [self internalHasAdForCreativeType:creativeType];
+        hasAd = [self internalHasAdForCreativeType:creativeType placementIDOverride:placementIDOverride];
     });
     return hasAd;
 }
@@ -175,7 +180,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     }
     
     hzEnsureMainQueue(^{
-        if ([self hasAdForCreativeType:creativeType]) return;
+        if ([self hasAdForCreativeType:creativeType placementIDOverride:fetchOptions.placementIDOverride]) return;
         
         [self clearLastFetchErrorForCreativeType:creativeType];
         [self internalPrefetchForCreativeType:creativeType options:fetchOptions];

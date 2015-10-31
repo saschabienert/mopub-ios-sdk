@@ -508,6 +508,7 @@
     
     // Show ad
     HZDLog(@"HeyzapMediation: %@ adapter will now show an ad of creativeType: %@. Requested adType: %@ tag: %@", [[chosenAdapterWithScore adapter] name], NSStringFromCreativeType([chosenAdapterWithScore creativeType]), NSStringFromAdType(adType), options.tag);
+    options.placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:[chosenAdapterWithScore adapter] tag:options.tag creativeType:[chosenAdapterWithScore creativeType]];
     [[chosenAdapterWithScore adapter] showAdForCreativeType:[chosenAdapterWithScore creativeType] options:options];
 }
 

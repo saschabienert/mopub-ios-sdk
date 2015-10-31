@@ -42,6 +42,7 @@
     [options setViewController:[self viewController]];
     options.completion = self.completion;
     options.requestingAdType = self.requestingAdType;
+    options.placementIDOverride = self.placementIDOverride;
     return options;
 }
 

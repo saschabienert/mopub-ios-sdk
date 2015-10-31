@@ -64,7 +64,7 @@
     }
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride
 {
     const HZAuctionType auctionType = [self auctionType];
     if (creativeType & HZCreativeTypeVideo) {

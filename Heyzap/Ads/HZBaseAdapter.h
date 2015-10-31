@@ -63,6 +63,8 @@
 
 - (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType;
 
+- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(nullable NSString *)placementIDOverride;
+
 - (nonnull NSNumber *) latestMediationScoreForCreativeType:(HZCreativeType)creativeType;
 - (void) setLatestMediationScore:(nullable NSNumber *)score forCreativeType:(HZCreativeType)creativeType;
 

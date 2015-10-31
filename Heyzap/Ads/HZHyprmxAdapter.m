@@ -98,7 +98,7 @@
     return HZCreativeTypeIncentivized;
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType {
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride {
     if (!self.isCheckingAvailability) {
         self.isCheckingAvailability = YES;
         // the block we pass to get the result is called asynchronously, so we save the last result

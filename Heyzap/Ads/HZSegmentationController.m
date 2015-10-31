@@ -165,7 +165,7 @@
 #pragma mark - Query
 
 - (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter forCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag {
-    return [adapter hasAdForCreativeType:creativeType] && [self allowAdapter:adapter toShowAdForCreativeType:creativeType tag:adTag];
+    return [adapter hasAdForCreativeType:creativeType placementIDOverride:[self placementIDOverrideForAdapter:adapter tag:adTag creativeType:creativeType]] && [self allowAdapter:adapter toShowAdForCreativeType:creativeType tag:adTag];
 }
 
 - (BOOL) allowAdapter:(nonnull HZBaseAdapter *)adapter toShowAdForCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag {

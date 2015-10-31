@@ -12,5 +12,6 @@
 @interface HZShowOptions()
 
 @property (nonatomic) HZAdType requestingAdType;
+@property (nonatomic, nullable) NSString *placementIDOverride;
 
 @end
