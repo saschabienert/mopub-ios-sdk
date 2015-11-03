@@ -194,8 +194,8 @@
     [self.delegate adapterDidShowAd:self];
 }
 
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    return [[HZFBBannerAdapter alloc] initWithAdUnitId:self.bannerPlacementID options:options reportingDelegate:reportingDelegate parentAdapter:self];
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return [[HZFBBannerAdapter alloc] initWithAdUnitId:(placementIDOverride ?: self.bannerPlacementID) options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 
 @end

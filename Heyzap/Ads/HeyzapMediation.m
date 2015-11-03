@@ -807,7 +807,10 @@ const unsigned long long adStalenessTimeout = 15;
             
             // Remove adapters that segmentation will not allow to show an ad right now so we don't bother initializing them
             currentList = hzFilterOrderedSet(currentList, ^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {
-                if ([self.segmentationController allowAdapter:[adapterWithScore adapter] toShowAdWithMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeBanner tag:options.tag]]) {
+                NSString *placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:[adapterWithScore adapter] tag:options.tag creativeType:HZCreativeTypeBanner];
+                HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeBanner placementIDOverride:placementIDOverride tag:options.tag];
+                
+                if ([self.segmentationController allowAdapter:[adapterWithScore adapter] toShowAdWithMetadata:metadata]) {
                     return YES;
                 } else {
                     HZDLog(@"Ad network %@ not allowed to show a banner ad under current segmentation rules.", [[adapterWithScore adapter] name]);
@@ -892,7 +895,8 @@ const NSTimeInterval bannerPollInterval = 1; // how long to wait between isAvail
             dispatch_sync(dispatch_get_main_queue(), ^{
                 for (HZMediationAdapterWithCreativeTypeScore *adapterWithScore in adaptersWithScores) {
                     HZDLog(@"Fetching a banner from %@", [[adapterWithScore adapter] name]);
-                    adapterWithScore.bannerAdapter = [[adapterWithScore adapter] fetchBannerWithOptions:options reportingDelegate:self];
+                    NSString *placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:[adapterWithScore adapter] tag:options.tag creativeType:HZCreativeTypeBanner];
+                    adapterWithScore.bannerAdapter = [[adapterWithScore adapter] fetchBannerWithOptions:options placementIDOverride:placementIDOverride reportingDelegate:self];
                 }
             });
             

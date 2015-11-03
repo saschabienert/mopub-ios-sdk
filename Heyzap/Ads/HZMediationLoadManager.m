@@ -299,7 +299,7 @@
 #pragma mark - Utilities
 
 - (HZMediationAdAvailabilityDataProvider *) mediationAdAvailabilityDataProviderForAdapter:(HZBaseAdapter *)adapter tag:(NSString *)tag creativeType:(HZCreativeType)creativeType {
-    return [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType placementIDOverride:[self.segmentationController placementIDOverrideForAdapter:adapter tag:tag creativeType:creativeType]];
+    return [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType placementIDOverride:[self.segmentationController placementIDOverrideForAdapter:adapter tag:tag creativeType:creativeType] tag:tag];
 }
 
 

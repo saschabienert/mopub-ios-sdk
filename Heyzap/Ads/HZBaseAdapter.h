@@ -97,7 +97,7 @@
 
 #pragma mark - Banners
 
-- (nullable HZBannerAdapter *)fetchBannerWithOptions:(nonnull HZBannerAdOptions *)options reportingDelegate:(nullable id<HZBannerReportingDelegate>)reportingDelegate;
+- (nullable HZBannerAdapter *)fetchBannerWithOptions:(nonnull HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(nullable id<HZBannerReportingDelegate>)reportingDelegate;
 
 #pragma mark - Inferred methods
 

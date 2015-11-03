@@ -47,12 +47,12 @@ describe(@"HZSegmentationSegment", ^{
     beforeEach(^{
         mockAdapter = [KWMock mockForClass:[HZBaseAdapter class]];
         [mockAdapter stub:@selector(name) andReturn:@"test_adapter"];
-        segment = [[HZSegmentationSegment alloc] initWithTags:@[] disabledNetworks:@[disabledNetworkName] placementIDOverrides:@{} frequencyLimitRules:@[] name:@"test segment"];
+        
         ruleMock1 = [KWMock nullMockForClass:[HZSegmentationFrequencyLimitRule class]];
         ruleMock2 = [KWMock nullMockForClass:[HZSegmentationFrequencyLimitRule class]];
         [ruleMock1 stub:@selector(parentAdapter) andReturn:segment];
         [ruleMock2 stub:@selector(parentAdapter) andReturn:segment];
-        segment.frequencyLimitRules = @[ruleMock1, ruleMock2];
+        segment = [[HZSegmentationSegment alloc] initWithTags:@[] disabledNetworks:@[disabledNetworkName] placementIDOverrides:@{} frequencyLimitRules:@[ruleMock1, ruleMock2] name:@"test segment"];
     });
     
     it(@"Loads its frequency rules correctly", ^{
@@ -65,6 +65,32 @@ describe(@"HZSegmentationSegment", ^{
         [segment loadWithDb:(sqlite3 *)&ptr];
     });
     
+    it(@"Sets the frequency rules' parent pointer to itself on init", ^{
+        ruleMock1 = [KWMock nullMockForClass:[HZSegmentationFrequencyLimitRule class]];
+        ruleMock2 = [KWMock nullMockForClass:[HZSegmentationFrequencyLimitRule class]];
+        NSArray *const rules = @[ruleMock1, ruleMock2];
+        
+        __block HZSegmentationSegment *rule1Parent, *rule2Parent;
+        
+        for(HZSegmentationFrequencyLimitRule *ruleMock in rules) {
+            [[ruleMock should] receive:@selector(setParentSegment:)];
+        }
+        HZSegmentationSegment *testSegment;
+        
+        [ruleMock1 stub:@selector(setParentSegment:) withBlock:^id(NSArray *params){
+            rule1Parent = params[0];
+            return nil;
+        }];
+        [ruleMock2 stub:@selector(setParentSegment:) withBlock:^id(NSArray *params){
+            rule2Parent = params[0];
+            return nil;
+        }];
+        
+        testSegment = [[HZSegmentationSegment alloc] initWithTags:@[] disabledNetworks:@[disabledNetworkName] placementIDOverrides:@{} frequencyLimitRules:rules name:@"testing segment setting the parent pointer"];
+        
+        [[rule1Parent should] equal:testSegment];
+        [[rule2Parent should] equal:testSegment];
+    });
     
     it(@"Applies to requests with matching tag", ^{
         segment.adTags = @[tag, other_tag];

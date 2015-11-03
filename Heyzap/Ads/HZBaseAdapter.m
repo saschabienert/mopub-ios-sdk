@@ -107,7 +107,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return nil;
 }
 
@@ -198,7 +198,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 - (BOOL)hasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     if (dataProvider.creativeType == HZCreativeTypeBanner) {
-        HZELog(@"hasApplicableAd should not be sent to adapters asking about banner ads.");
+        HZELog(@"hasAdWithMetadata should not be sent to adapters asking about banner ads.");
         return NO;
     }
     
@@ -225,10 +225,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     });
 }
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     __block HZBannerAdapter *bannerAdapter;
     hzEnsureMainQueue(^{
-        bannerAdapter = [self internalFetchBannerWithOptions:options reportingDelegate:reportingDelegate];
+        bannerAdapter = [self internalFetchBannerWithOptions:options placementIDOverride:placementIDOverride reportingDelegate:reportingDelegate];
     });
     return bannerAdapter;
 }

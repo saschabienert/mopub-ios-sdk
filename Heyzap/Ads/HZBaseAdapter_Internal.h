@@ -51,7 +51,7 @@
  */
 - (void)internalPrefetchAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
-- (nullable HZBannerAdapter *)internalFetchBannerWithOptions:(nonnull HZBannerAdOptions *)options reportingDelegate:(nonnull id<HZBannerReportingDelegate>)reportingDelegate;
+- (nullable HZBannerAdapter *)internalFetchBannerWithOptions:(nonnull HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(nonnull id<HZBannerReportingDelegate>)reportingDelegate;
 
 - (BOOL)internalHasAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 

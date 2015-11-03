@@ -179,9 +179,7 @@
 
 - (void)interstitial:(HZGADInterstitial *)ad didFailToReceiveAdWithError:(HZGADRequestError *)error
 {
-    const HZCreativeType creativeType = [self creativeTypeForAd:ad];
-    HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType placementIDOverride:ad.adUnitID];
-    
+    HZMediationAdAvailabilityDataProvider *metadata = [self metadataForAd:ad];
     [self setAd:nil forMetadata:metadata];
     
     NSError *wrappedError = [NSError errorWithDomain:kHZMediationDomain
@@ -203,8 +201,7 @@
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
     
-    HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:[self creativeTypeForAd:ad] placementIDOverride:ad.adUnitID];
-    [self setAd:nil forMetadata:metadata];
+    [self setAd:nil forMetadata:[self metadataForAd:ad]];
 }
 
 // As far as I can tell, this means a click.
@@ -215,25 +212,12 @@
 
 - (void)interstitialDidReceiveAd:(HZGADInterstitial *)ad
 {
-    [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:[self creativeTypeForAd:ad] placementIDOverride:ad.adUnitID]];
+    [self clearLastFetchErrorForAdsWithMatchingMetadata:[self metadataForAd:ad]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:self.bannerAdUnitID options:options reportingDelegate:reportingDelegate parentAdapter:self];
-}
-
-- (HZCreativeType)creativeTypeForAd:(HZGADInterstitial *)ad {
-    NSArray *supportedCreativeTypes = @[@(HZCreativeTypeStatic), @(HZCreativeTypeVideo)];
-    
-    for (NSNumber *creativeTypeNumber in supportedCreativeTypes) {
-        if (self.adDictionary[creativeTypeNumber] && [[self.adDictionary[creativeTypeNumber] allValues] containsObject:ad]) {
-            return hzCreativeTypeFromNSNumber(creativeTypeNumber);
-        }
-    }
-    
-    HZELog(@"AdMob adapter in an unexpected state... it was looking for the creativeType for an ad in it's inventory, but no ad was present. Please report this to support@heyzap.com . Ad: %@", ad);
-    return HZCreativeTypeUnknown;
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:(placementIDOverride ?: self.bannerAdUnitID) options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 
 - (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
@@ -269,16 +253,9 @@
 
 #pragma mark - Utilities
 
-//- (HZGADInterstitial *) adForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride {
-//    return [self adWithMetadata:];
-//}
 - (HZGADInterstitial *) adWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     NSString *defaultPlacementID = (dataProvider.creativeType == HZCreativeTypeStatic ? self.interstitialAdUnitID : self.videoAdUnitID);
     NSString *placementIDToUse = dataProvider.placementIDOverride ?: defaultPlacementID;
-    
-    if (!placementIDToUse) {
-        return nil; // shouldn't happen
-    }
     
     NSDictionary *adsForCreativeType = self.adDictionary[@(dataProvider.creativeType)];
     
@@ -300,6 +277,24 @@
     } else {
         [adsForCreativeType removeObjectForKey:dataProvider.placementIDOverride];
     }
+}
+
+- (HZCreativeType)creativeTypeForAd:(HZGADInterstitial *)ad {
+    NSArray *supportedCreativeTypes = @[@(HZCreativeTypeStatic), @(HZCreativeTypeVideo)];
+    
+    for (NSNumber *creativeTypeNumber in supportedCreativeTypes) {
+        if (self.adDictionary[creativeTypeNumber] && [[self.adDictionary[creativeTypeNumber] allValues] containsObject:ad]) {
+            return hzCreativeTypeFromNSNumber(creativeTypeNumber);
+        }
+    }
+    
+    HZELog(@"AdMob adapter in an unexpected state... it was looking for the creative type for an ad in it's inventory, but no ad was present. Please report this to support@heyzap.com . Ad: %@", ad);
+    return HZCreativeTypeUnknown;
+}
+
+- (HZMediationAdAvailabilityDataProvider *) metadataForAd:(HZGADInterstitial *)ad {
+    const HZCreativeType creativeType = [self creativeTypeForAd:ad];
+    return [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType placementIDOverride:ad.adUnitID];
 }
 
 @end
