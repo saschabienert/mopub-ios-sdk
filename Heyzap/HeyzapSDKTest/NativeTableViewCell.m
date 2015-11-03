@@ -9,6 +9,7 @@
 #import "NativeTableViewCell.h"
 #import "HZNativeAd.h"
 #import "UIImageView+AFNetworking.h"
+#import "HZNativeAdImage.h"
 
 @interface NativeTableViewCell()
 
@@ -27,7 +28,7 @@
 
 - (void)configureWithAd:(HZNativeAd *)nativeAd {
     self.appNameLabel.text = nativeAd.appName;
-    [self.iconImageView setImageWithURL:nativeAd.iconURL];
+    [self.iconImageView setImageWithURL:nativeAd.iconImage.url];
 }
 
 @end

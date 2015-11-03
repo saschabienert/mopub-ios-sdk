@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
 
+extern NSString * const HZFallbackVunglePlayAdOptionKeyPlacement;
+extern NSString * const HZFallbackVunglePlayAdOptionKeyIncentivized;
+
 @interface HZVungleAdapter : HZBaseAdapter
 
 @end

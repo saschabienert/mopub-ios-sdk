@@ -77,7 +77,10 @@
 
 + (NSString *)sdkVersion {
     return nil; // AdColony doesn't provide the SDK version
+}
 
+- (NSString *)testActivityInstructions {
+    return @"If you have trouble receiving AdColony ads, try setting \"Show test ads only\" to \"Yes\" for each zone on your AdColony dashboard.";
 }
 
 - (void) toggleLogging { HZDLog(@"Logs for %@ can only be enabled/disabled before initialization.", [[self class] humanizedName]); }

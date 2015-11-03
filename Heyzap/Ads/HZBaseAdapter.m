@@ -22,6 +22,7 @@
 #import "HZHyprmxAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 #import "HZLeadboltAdapter.h"
+#import "HZInMobiAdapter.h"
 #import "HZLog.h"
 #import "HZDispatch.h"
 
@@ -352,6 +353,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
             [HZHyprmxAdapter class],
             [HZHeyzapExchangeAdapter class],
             [HZLeadboltAdapter class],
+            [HZInMobiAdapter class],
             nil];
 }
 

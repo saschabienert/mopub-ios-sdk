@@ -44,8 +44,9 @@ const int kCrossPromoVideoCreativeID = 6109031;
         }
     }];
     
+    NSString *const filename = shouldSkip ? @"ten_second_cross_promo_video" : @"three_second_cross_promo_video";
     [OHHTTPStubs stubRequestContainingString:@"930153bd01e935dd75a7f803f7b33f33-h264_android_ld"
-                               withVideoFile:@"three_second_cross_promo_video"];
+                               withVideoFile:filename];
     
     // Mocking
     id<HZIncentivizedAdDelegate> mockDelegate = mockProtocol(@protocol(HZIncentivizedAdDelegate));
