@@ -82,7 +82,9 @@ describe(@"HZSegmentationSegment", ^{
         segmentationController.enabled = NO;
         
         [[segmentMock shouldNot] receive:@selector(limitsImpressionWithCreativeType:adapter:tag:)];
-        BOOL allowed = [segmentationController allowAdapter:adapterMock toShowAdForCreativeType:expectedCreativeType tag:@"tag"];
+        
+        HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:expectedCreativeType tag:@"tag"];
+        BOOL allowed = [segmentationController allowAdapter:adapterMock toShowAdWithMetadata:metadata];
         [[theValue(allowed) should] equal:theValue(YES)];
         
         [[segmentMock shouldNot] receive:@selector(recordImpressionWithCreativeType:adapter:tag:date:)];
@@ -115,7 +117,9 @@ describe(@"HZSegmentationSegment", ^{
         
         [[segmentMock should] receive:@selector(limitsImpressionWithCreativeType:adapter:tag:) andReturn:theValue(NO) withCountAtMost:1 arguments:theValue(expectedCreativeType), adapterMock, tag]; // since segments is a set (unordered), this mock may not be queried since the segmentation controller can stop asking segments after one does limit the impression
         [[segmentMock2 should] receive:@selector(limitsImpressionWithCreativeType:adapter:tag:) andReturn:theValue(YES) withCount:1 arguments:theValue(expectedCreativeType), adapterMock, tag];
-        BOOL allowed = [segmentationController allowAdapter:adapterMock toShowAdForCreativeType:expectedCreativeType tag:tag];
+        
+        HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:expectedCreativeType tag:tag];
+        BOOL allowed = [segmentationController allowAdapter:adapterMock toShowAdWithMetadata:metadata];
         [[theValue(allowed) should] equal:theValue(NO)];
     });
     
@@ -127,7 +131,9 @@ describe(@"HZSegmentationSegment", ^{
         
         [[segmentMock should] receive:@selector(limitsImpressionWithCreativeType:adapter:tag:) andReturn:theValue(NO) withCount:1 arguments:theValue(expectedCreativeType), adapterMock, tag];
         [[segmentMock2 should] receive:@selector(limitsImpressionWithCreativeType:adapter:tag:) andReturn:theValue(NO) withCount:1 arguments:theValue(expectedCreativeType), adapterMock, tag];
-        BOOL allowed = [segmentationController allowAdapter:adapterMock toShowAdForCreativeType:expectedCreativeType tag:tag];
+        
+        HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:expectedCreativeType tag:tag];
+        BOOL allowed = [segmentationController allowAdapter:adapterMock toShowAdWithMetadata:metadata];
         [[theValue(allowed) should] equal:theValue(YES)];
     });
     

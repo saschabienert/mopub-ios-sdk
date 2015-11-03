@@ -107,13 +107,13 @@
     return HZCreativeTypeVideo | HZCreativeTypeIncentivized;
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     if (![[[UIApplication sharedApplication] keyWindow] rootViewController]) {
         HZAlwaysLog(@"AdColony reqires a root view controller on the keyWindow to show ads. Make sure [[[UIApplication sharedApplication] keyWindow] rootViewController] does not return `nil`.");
         return NO;
     }
-    switch (creativeType) {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeIncentivized: {
             return [HZAdColony isVirtualCurrencyRewardAvailableForZone:self.incentivizedZoneID];
             break;
@@ -141,20 +141,20 @@
     }
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     // AdColony auto-prefetches
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
-    if (creativeType == HZCreativeTypeIncentivized) {
+    if (options.creativeType == HZCreativeTypeIncentivized) {
         [self.delegate adapterWillPlayAudio:self];
         [HZAdColony playVideoAdForZone:self.incentivizedZoneID
                           withDelegate:self
                       withV4VCPrePopup:NO
                       andV4VCPostPopup:NO];
-    } else if(creativeType == HZCreativeTypeVideo){
+    } else if(options.creativeType == HZCreativeTypeVideo){
         [self.delegate adapterWillPlayAudio:self];
         [HZAdColony playVideoAdForZone:self.interstitialZoneID withDelegate:self];
     }
@@ -180,9 +180,9 @@
     }
 }
 
-- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
+- (NSError *)lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    NSString *const zone = [self zoneIDForCreativeType:creativeType];
+    NSString *const zone = [self zoneIDForCreativeType:dataProvider.creativeType];
     if (zone) {
         const HZ_ADCOLONY_ZONE_STATUS status = [HZAdColony zoneStatusForZone:zone];
         NSString *const errorDescription = [self errorDescriptionForZoneStatus:status];
@@ -199,6 +199,10 @@
         return nil;
     }
 }
+
+// unimplemented, we retrieve errors directly from the AdColony SDK. overridden here just to note this as intentional
+- (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {}
+- (void) clearLastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {}
 
 #pragma mark - Util
 

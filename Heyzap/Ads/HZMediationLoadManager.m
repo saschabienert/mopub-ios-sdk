@@ -159,7 +159,9 @@
     });
     
     NSArray *const matching = hzFilter(serverSupportedCreativeType, ^BOOL(HZMediationLoadData *datum) {
-        if ([self.segmentationController allowAdapter:[datum.adapterClass sharedAdapter] toShowAdForCreativeType:creativeType tag:fetchOptions.tag]) {
+        HZMediationAdAvailabilityDataProvider *const metadata = [self mediationAdAvailabilityDataProviderForAdapter:[datum.adapterClass sharedAdapter] tag:fetchOptions.tag creativeType:creativeType];
+        
+        if ([self.segmentationController allowAdapter:[datum.adapterClass sharedAdapter] toShowAdWithMetadata:metadata]) {
             return YES;
         } else if(logFilters) {
             HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because segmentation says it won't allow an ad of creativeType=%@ right now for tag=%@.", [datum.adapterClass name], NSStringFromCreativeType(creativeType), fetchOptions.tag);
@@ -202,9 +204,7 @@
                 [networksAlreadyFetched addObject:alwaysFetchDatum.adapterClass];
                 HZBaseAdapter *adapter = (HZBaseAdapter *)[alwaysFetchDatum.adapterClass sharedAdapter];
                 dispatch_sync([self.delegate pausableMainQueue], ^{
-                    HZFetchOptions *newFetchOptions = [fetchOptions copy];
-                    newFetchOptions.placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:adapter tag:newFetchOptions.tag creativeType:creativeType];
-                    [adapter prefetchForCreativeType:creativeType options:newFetchOptions];
+                    [adapter prefetchAdWithMetadata:[self mediationAdAvailabilityDataProviderForAdapter:adapter tag:fetchOptions.tag creativeType:creativeType]];
                 });
             }
         }];
@@ -216,13 +216,12 @@
             if (setupSuccessful) {
                 
                 HZBaseAdapter *const adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
-                HZFetchOptions *newFetchOptions = [fetchOptions copy];
-                newFetchOptions.placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:adapter tag:newFetchOptions.tag creativeType:creativeType];
-                
+                HZMediationAdAvailabilityDataProvider *const fetchMetadata = [self mediationAdAvailabilityDataProviderForAdapter:adapter tag:fetchOptions.tag creativeType:creativeType];
+
                 if (![networksAlreadyFetched containsObject:datum.adapterClass]) {
                     [networksAlreadyFetched addObject:datum.adapterClass];
                     dispatch_sync([self.delegate pausableMainQueue], ^{
-                        [adapter prefetchForCreativeType:creativeType options:newFetchOptions];
+                        [adapter prefetchAdWithMetadata:fetchMetadata];
                     });
                 }
                 
@@ -239,12 +238,12 @@
                     //  -- OR --
                     //  - the current adapter has an error for the creativeType
                     const BOOL skipWaitTime = ([networksToKeepLoadingPast containsObject:datum.adapterClass]
-                                               && [[datum.adapterClass sharedAdapter] hasAdForCreativeType:creativeType placementIDOverride:newFetchOptions.placementIDOverride]);
+                                               && [[datum.adapterClass sharedAdapter] hasAdWithMetadata:fetchMetadata]);
                     if (skipWaitTime) {
                         return true; // stop waiting
                     }
                     
-                    const NSError *adapterError = [[datum.adapterClass sharedAdapter] lastFetchErrorForCreativeType:creativeType];
+                    const NSError *adapterError = [[datum.adapterClass sharedAdapter] lastFetchErrorForAdsWithMatchingMetadata:fetchMetadata];
                     if (adapterError){
                         HZELog(@"Not waiting for %@ to fetch because it errored during a fetch for creativeType:%@. Error: %@", [datum.adapterClass humanizedName], NSStringFromCreativeType(creativeType), adapterError);
                         return true; // stop waiting
@@ -289,11 +288,18 @@
         
         if (!excludeThisAdapter
             && [self.delegate isNetworkClassInitialized:[adapter class]]
-            && [self.segmentationController adapterHasAllowedAd:adapter forCreativeType:creativeType tag:tag]) {
+            && [self.segmentationController adapterHasAllowedAd:adapter withMetadata:[self mediationAdAvailabilityDataProviderForAdapter:adapter tag:tag creativeType:creativeType]]) {
             return adapter;
         }
     }
     return nil;
+}
+
+
+#pragma mark - Utilities
+
+- (HZMediationAdAvailabilityDataProvider *) mediationAdAvailabilityDataProviderForAdapter:(HZBaseAdapter *)adapter tag:(NSString *)tag creativeType:(HZCreativeType)creativeType {
+    return [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType placementIDOverride:[self.segmentationController placementIDOverrideForAdapter:adapter tag:tag creativeType:creativeType]];
 }
 
 

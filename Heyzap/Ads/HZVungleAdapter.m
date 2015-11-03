@@ -101,12 +101,12 @@
     return HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     BOOL adPlayable = NO;
     
@@ -121,21 +121,21 @@
     return adPlayable;
 }
 
-- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
+- (NSError *)lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     return self.lastError;
 }
 
-- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
+- (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     self.lastError = error;
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
     // setup options
     NSMutableDictionary *vungleOptions = [[NSMutableDictionary alloc] init];
     
-    if (creativeType == HZCreativeTypeIncentivized) {
+    if (options.creativeType == HZCreativeTypeIncentivized) {
         self.isShowingIncentivized = YES;
         
         NSString *const incentivizedKey = [[self class] vunglePlayAdOptionKeyIncentivized];

@@ -41,10 +41,10 @@
     return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeIncentivized;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {    
     const HZAuctionType auctionType = [self auctionType];
-    switch (creativeType) {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic: {
             [HZHeyzapInterstitialAd fetchForAuctionType:auctionType withCompletion:nil];
             break;
@@ -64,24 +64,24 @@
     }
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     const HZAuctionType auctionType = [self auctionType];
-    if (creativeType & HZCreativeTypeVideo) {
+    if (dataProvider.creativeType & HZCreativeTypeVideo) {
         return [HZHeyzapVideoAd isAvailableForTag:nil auctionType:auctionType];
-    } else if (creativeType & HZCreativeTypeStatic) {
+    } else if (dataProvider.creativeType & HZCreativeTypeStatic) {
         return [HZHeyzapInterstitialAd isAvailableForTag:nil auctionType:auctionType];
-    } else if (creativeType & HZCreativeTypeIncentivized) {
+    } else if (dataProvider.creativeType & HZCreativeTypeIncentivized) {
         return [HZHeyzapIncentivizedAd isAvailableForTag:nil auctionType:auctionType];
     } else {
         return NO;
     }
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
     const HZAuctionType auctionType = [self auctionType];
-    switch (creativeType) {
+    switch (options.creativeType) {
         case HZCreativeTypeStatic: {
             [HZHeyzapInterstitialAd showForAuctionType:auctionType options:options];
             break;
@@ -101,8 +101,8 @@
     }
 }
 
-- (NSError *) lastFetchErrorForCreativeType:(HZCreativeType)creativeType {
-    switch (creativeType) {
+- (NSError *) lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic:
             return self.lastStaticFetchError;
             break;
@@ -113,8 +113,8 @@
             return nil;
     }
 }
-- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
-    switch (creativeType) {
+- (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic:
             self.lastStaticFetchError = error;
             break;
@@ -185,10 +185,10 @@
         
         switch (fetchableCreativeType) {
             case HZFetchableCreativeTypeStatic: {
-                [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
+                [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic]];
             }
             case HZFetchableCreativeTypeVideo: {
-                [self clearLastFetchErrorForCreativeType:HZCreativeTypeVideo];
+                [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeVideo]];
             }
             case HZFetchableCreativeTypeNative: {
                 // ignored
@@ -207,10 +207,10 @@
         
         switch (fetchableCreativeType) {
             case HZFetchableCreativeTypeStatic: {
-                [self setLastFetchError:error forCreativeType:HZCreativeTypeStatic];
+                [self setLastFetchError:error forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic]];
             }
             case HZFetchableCreativeTypeVideo: {
-                [self setLastFetchError:error forCreativeType:HZCreativeTypeVideo];
+                [self setLastFetchError:error forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeVideo]];
             }
             case HZFetchableCreativeTypeNative: {
                 // ignored

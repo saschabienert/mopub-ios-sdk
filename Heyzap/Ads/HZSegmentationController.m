@@ -164,19 +164,20 @@
 
 #pragma mark - Query
 
-- (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter forCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag {
-    return [adapter hasAdForCreativeType:creativeType placementIDOverride:[self placementIDOverrideForAdapter:adapter tag:adTag creativeType:creativeType]] && [self allowAdapter:adapter toShowAdForCreativeType:creativeType tag:adTag];
+- (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter withMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    
+    return [adapter hasAdWithMetadata:dataProvider] && [self allowAdapter:adapter toShowAdWithMetadata:dataProvider];
 }
 
-- (BOOL) allowAdapter:(nonnull HZBaseAdapter *)adapter toShowAdForCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag {
+- (BOOL) allowAdapter:(nonnull HZBaseAdapter *)adapter toShowAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     if (!self.enabled) {
         return YES;
     }
     
     __block BOOL didGetLimited = NO;
     [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
-        if([segment limitsImpressionWithCreativeType:creativeType adapter:adapter tag:adTag]) {
-            //HZDLog(@"HZSegmentation: ad not allowed for type: %@, adapter: %@, tag: %@. First segment limiting impression: %@", NSStringFromCreativeType(creativeType), adapter, adTag, segment);
+        if([segment limitsImpressionWithCreativeType:dataProvider.creativeType adapter:adapter tag:dataProvider.tag]) {
+            //HZDLog(@"HZSegmentation: ad not allowed for type: %@, adapter: %@, tag: %@. First segment limiting impression: %@", NSStringFromCreativeType(dataProvider.creativeType), adapter, dataProvider.tag, segment);
             didGetLimited = YES;
             *stop = YES;
         }

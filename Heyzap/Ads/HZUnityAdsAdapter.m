@@ -115,7 +115,7 @@ NSString * const kHZNetworkName = @"mobile";
     return HZCreativeTypeVideo | HZCreativeTypeIncentivized;
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     if (![[[UIApplication sharedApplication] keyWindow] rootViewController]) {
         HZAlwaysLog(@"UnityAds reqires a root view controller on the keyWindow to show ads. Make sure [[[UIApplication sharedApplication] keyWindow] rootViewController] does not return `nil`.");
@@ -146,15 +146,15 @@ NSString * const kHZNetworkName = @"mobile";
     }
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     // UnityAds auto-prefetches
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
     [[HZUnityAds sharedInstance] setViewController:options.viewController];
-    if (creativeType == HZCreativeTypeIncentivized) {
+    if (options.creativeType == HZCreativeTypeIncentivized) {
         self.isShowingIncentivized = YES;
         [[HZUnityAds sharedInstance] setZone:self.incentivizedZoneID];
     } else {

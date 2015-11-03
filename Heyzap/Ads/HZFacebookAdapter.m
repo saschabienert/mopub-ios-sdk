@@ -24,6 +24,7 @@
 @property (nonatomic, strong) NSString *placementID;
 @property (nonatomic, strong) NSString *bannerPlacementID;
 @property (nonatomic, strong) NSMutableDictionary <NSString *, HZFBInterstitialAd *> *interstitialAds; // key: placement ID
+@property (nonatomic, strong) NSMutableDictionary <NSString *, NSError *> *interstitialAdErrors; // key: placement ID
 @end
 
 @implementation HZFacebookAdapter
@@ -45,6 +46,7 @@
     self = [super init];
     if (self) {
         _interstitialAds = [[NSMutableDictionary alloc] init];
+        _interstitialAdErrors = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -111,17 +113,17 @@
     }
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride {
-    HZFBInterstitialAd *ad = self.interstitialAds[placementIDOverride ?: self.placementID];
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    HZFBInterstitialAd *ad = self.interstitialAds[dataProvider.placementIDOverride ?: self.placementID];
     return ad && ad.isAdValid;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)options {
-    NSString *const placement = (options.placementIDOverride ?: self.placementID);
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    NSString *const placement = (dataProvider.placementIDOverride ?: self.placementID);
     HZAssert(placement, @"Need a Placement ID by this point");
     
     if (self.interstitialAds[placement]) {
-        // If we have an interstitial already out fetching, don't start up a re-fetch. This differs from the `hasAdForCreativeType:` check because we don't check `isAdValid`.
+        // If we have an interstitial already out fetching, don't start up a re-fetch. This differs from the `hasAdWithMetadata:` check because we don't check `isAdValid`.
         return;
     }
     
@@ -133,9 +135,22 @@
     [newAd loadAd];
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
+- (void)internalShowAdWithOptions:(HZShowOptions *)options {
     [self.interstitialAds[options.placementIDOverride ?: self.placementID] showAdFromRootViewController:options.viewController];
 }
+
+- (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    if (error) {
+        [self.interstitialAdErrors setObject:error forKey:dataProvider.placementIDOverride ?: self.placementID];
+    } else {
+        [self.interstitialAdErrors removeObjectForKey:dataProvider.placementIDOverride ?: self.placementID];
+    }
+}
+
+- (NSError *) lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    return self.interstitialAdErrors[dataProvider.placementIDOverride ?: self.placementID];
+}
+
 
 #pragma mark - Facebook Delegation
 
@@ -161,7 +176,7 @@
 }
 
 - (void)interstitialAdDidLoad:(HZFBInterstitialAd *)interstitialAd {
-    [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
+    [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic placementIDOverride:interstitialAd.placementID]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
@@ -169,7 +184,7 @@
     [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain
                                                 code:1
                                             userInfo:@{kHZMediatorNameKey: @"Facebook", NSUnderlyingErrorKey: error}]
-            forCreativeType:HZCreativeTypeStatic];
+            forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic placementIDOverride:interstitialAd.placementID]];
     [self.interstitialAds removeObjectForKey:interstitialAd.placementID];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }

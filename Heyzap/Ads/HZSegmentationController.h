@@ -27,12 +27,14 @@
 /**
  *  Returns YES if the given adapter both has an ad and is allowed to show one based on the current segmentation rules, NO otherwise.
  */
-- (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter forCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag;
+- (BOOL) adapterHasAllowedAd:(nonnull HZBaseAdapter *)adapter withMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
 /**
  *  Returns YES if the given adapter is allowed to show an ad based on the current segmentation rules, NO otherwise. This method does NOT check if the adapter has an ad for the given creativeType.
+ 
+ *  The metadata object does not need to provide a placementIDOverride, as it is not checked here.
  */
-- (BOOL) allowAdapter:(nonnull HZBaseAdapter *)adapter toShowAdForCreativeType:(HZCreativeType)creativeType tag:(nonnull NSString *)adTag;
+- (BOOL) allowAdapter:(nonnull HZBaseAdapter *)adapter toShowAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
 /**
  *  Call this method with every impression. It will update HZImpressionHistory and all of the currently loaded segments.

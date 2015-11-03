@@ -7,6 +7,7 @@
 //
 
 #import "HZBaseAdapter.h"
+#import "HZShowOptions_Private.h"
 
 /**
  *  Methods & properties that should only be used internally by HZBaseAdapter and it's subclasses are declared here.
@@ -15,34 +16,44 @@
 
 
 /**
- *  These properties exist for subclasses to use. Other callers must use `lastFetchErrorForCreativeType:` and `clearLastFetchErrorForCreativeType:`.
+ *  These properties exist for subclasses to use. Callers must use `lastFetchErrorForAdsWithMatchingMetadata:`, and the setters should only be called from the subclasses themselves via `setLastFetchError:forAdsWithMatchingMetadata:` and `clearLastFetchErrorForAdsWithMatchingMetadata:`.
  */
-@property (nonatomic, strong) NSError *lastStaticFetchError;
-@property (nonatomic, strong) NSError *lastIncentivizedFetchError;
-@property (nonatomic, strong) NSError *lastVideoFetchError;
+@property (nonatomic, strong, nullable) NSError *lastStaticFetchError;
+@property (nonatomic, strong, nullable) NSError *lastIncentivizedFetchError;
+@property (nonatomic, strong, nullable) NSError *lastVideoFetchError;
 
-- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType;
+
+/**
+ *  Subclasses should call this method when a fetch fails with an appropriate error message.
+ *  Subclasses can override this method, and should if they have overridden the `lastFetchErrorForAdsWithMatchingMetadata:` method.
+ */
+- (void) setLastFetchError:(nullable NSError *)error forAdsWithMatchingMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
+/**
+ *  Convenience method for clearing the last fetchError. Default implementation just calls `setLastFetchError:forAdsWithMatchingMetadata:` with `nil` as the error parameter. Subclasses should call this method when a fetch succeeds.
+ *  Subclasses can override this method, but most likely don't need to (override `setLastFetchError:forAdsWithMatchingMetadata:` instead).
+ */
+- (void)clearLastFetchErrorForAdsWithMatchingMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
 /**
  *  Subclasses should implement this method to read their credentials dictionary (`self.credentials`) into properties. The default implementation of this method does nothing, so can be left unimplemented for networks like iAds that don't have credentials.
  */
 - (void)loadCredentials;
 
-- (NSError *)internalInitializeSDK;
+- (nullable NSError *)internalInitializeSDK;
 
 /**
  *  Show an ad. This is called by the base adapter implementation after it verifies that the requested creativeType is supported by the subclass.
  */
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options;
+- (void)internalShowAdWithOptions:(nonnull HZShowOptions *)options;
 
 /**
  *  Fetch an ad. This is called by the base adapter implementation after it verifies that the requested creativeType is supported by the subclass & that the subclass does not already have an ad for the given creativeType.
  */
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType options:(HZFetchOptions *)fetchOptions;
+- (void)internalPrefetchAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate;
+- (nullable HZBannerAdapter *)internalFetchBannerWithOptions:(nonnull HZBannerAdOptions *)options reportingDelegate:(nonnull id<HZBannerReportingDelegate>)reportingDelegate;
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride;
+- (BOOL)internalHasAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
 /**
  *  Subclasses can implement this method if they can turn logging on in the adapted SDK. This method will only be called on subclasses if they are already initialized. The method `isLoggingEnabled` can be called in this method to see if logging is on or not. The default implementation is empty.

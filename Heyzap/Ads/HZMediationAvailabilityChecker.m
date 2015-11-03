@@ -46,10 +46,13 @@
     NSIndexSet *indexes = [adapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
         for(NSNumber *allowedCreativeTypeNumber in allowedCreativeTypes) {
             HZCreativeType allowedCreativeType = hzCreativeTypeFromNSNumber(allowedCreativeTypeNumber);
+            NSString *placementIDOverride = [segmentationController placementIDOverrideForAdapter:adapter tag:tag creativeType:allowedCreativeType];
+            HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:allowedCreativeType placementIDOverride:placementIDOverride tag:tag];
+            
             if([adapter supportsCreativeType:allowedCreativeType]
                && [adapter hasCredentialsForCreativeType:allowedCreativeType]
                && [self.persistentConfig isNetworkEnabled:[adapter name]]
-               && [segmentationController adapterHasAllowedAd:adapter forCreativeType:allowedCreativeType tag:tag]) {
+               && [segmentationController adapterHasAllowedAd:adapter withMetadata:metadata]) {
                 
                 return YES;
             }
@@ -100,7 +103,10 @@
 - (HZMediationAdapterWithCreativeTypeScore *)firstAdapterWithAdForTag:(NSString *)tag adaptersWithScores:(NSOrderedSet *)adaptersWithScores segmentationController:(HZSegmentationController *)segmentationController {
     
     const NSUInteger idx = [adaptersWithScores indexOfObjectPassingTest:^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore, NSUInteger idx, BOOL *stop) {
-        if([segmentationController adapterHasAllowedAd:[adapterWithScore adapter] forCreativeType:[adapterWithScore creativeType] tag:tag]) {
+        NSString *placementIDOverride = [segmentationController  placementIDOverrideForAdapter:[adapterWithScore adapter] tag:tag creativeType:[adapterWithScore creativeType]];
+        HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:[adapterWithScore creativeType] placementIDOverride:placementIDOverride tag:tag];
+        
+        if([segmentationController adapterHasAllowedAd:[adapterWithScore adapter] withMetadata:metadata]) {
            return YES;
         }
         return NO;

@@ -13,6 +13,7 @@
 #import "HZAdapterDelegate.h"
 #import "HZCreativeType.h"
 #import "HZAdType.h"
+#import "HZMediationAdAvailabilityDataProvider.h"
 
 #import <UIKit/UIKit.h>
 
@@ -59,22 +60,20 @@
 
 - (nullable NSString *)testActivityInstructions;
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType options:(nonnull HZFetchOptions *)fetchOptions;
+- (void)prefetchAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType;
-
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType placementIDOverride:(nullable NSString *)placementIDOverride;
+- (BOOL)hasAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
 - (nonnull NSNumber *) latestMediationScoreForCreativeType:(HZCreativeType)creativeType;
 - (void) setLatestMediationScore:(nullable NSNumber *)score forCreativeType:(HZCreativeType)creativeType;
 
 /**
- *  The adapter should show an ad for the given ad type. Don't call this method unless you've called `hasAdForCreativeType:` and it returned `YES`.
+ *  The adapter should show an ad for the given ad type. Don't call this method unless you've called `hasAdWithMetadata:` and it returned `YES`.
  *
  *  @param creativeType The type of ad (video, incentivized, static) to show
  *  @param options Options to configure showing the ad
  */
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(nonnull HZShowOptions *)options;
+- (void)showAdWithOptions:(nonnull HZShowOptions *)options;
 
 - (HZCreativeType)supportedCreativeTypes;
 
@@ -110,7 +109,7 @@
 - (BOOL)supportsCreativeType:(HZCreativeType)creativeType;
 
 
-- (nullable NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType;
+
 
 - (BOOL) hasNecessaryCredentials;
 
@@ -118,13 +117,10 @@
 // Maybe pass credentials immediately on creating the instance, and store them there?
 // I really dislike how it's no longer possible to statically tell whether a network has been initialized or not.
 
-
 /**
- *  Its possible this should be handled internally by the adapters, like when they fetch...
- *
- *  @param creativeType The type of ad to clear the error for.
+ *  Returns the last error the adapter received from the adapted SDK when fetching with the given ad metadata (creativeType, tag, placement ID override, etc.). The default implementation sorts errors only using creativeType, but subclasses can override this method to their needs.
  */
-- (void)clearLastFetchErrorForCreativeType:(HZCreativeType)creativeType;
+- (nullable NSError *)lastFetchErrorForAdsWithMatchingMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
 #pragma mark - Implemented methods
 
