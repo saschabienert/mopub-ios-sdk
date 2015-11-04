@@ -53,7 +53,10 @@
 }
 
 - (void) toggleLogging {
-    [HZFBAdSettings setLogLevel:([self isLoggingEnabled] ? HZFBAdLogLevelVerbose : HZFBAdLogLevelError)]; // leave error logs on
+    // method available after FAN version 4.1.0
+    if ([HZFBAdSettings respondsToSelector:@selector(setLogLevel:)]) {
+        [HZFBAdSettings setLogLevel:([self isLoggingEnabled] ? HZFBAdLogLevelVerbose : HZFBAdLogLevelError)]; // leave error logs on
+    }
 }
 
 #pragma mark - Adapter Protocol
