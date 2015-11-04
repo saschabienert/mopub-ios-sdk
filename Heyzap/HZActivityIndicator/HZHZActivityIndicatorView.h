@@ -36,13 +36,13 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum HZActivityIndicatorDirection
+typedef enum HZHZActivityIndicatorDirection
 {
-    HZActivityIndicatorDirectionClockwise = -1,
-    HZActivityIndicatorDirectionCounterClockwise = 1
-} HZActivityIndicatorDirection;
+    HZHZActivityIndicatorDirectionClockwise = -1,
+    HZHZActivityIndicatorDirectionCounterClockwise = 1
+} HZHZActivityIndicatorDirection;
 
-@interface HZActivityIndicatorView : UIView
+@interface HZHZActivityIndicatorView : UIView
 {
     NSUInteger      _steps;
     CGFloat         _stepDuration;
@@ -53,7 +53,7 @@ typedef enum HZActivityIndicatorDirection
     UIRectCorner                    _roundedCoreners;
     CGSize                          _cornerRadii;
     CGSize                          _finSize;
-    HZActivityIndicatorDirection    _direction;
+    HZHZActivityIndicatorDirection    _direction;
     UIActivityIndicatorViewStyle    _actualActivityIndicatorViewStyle;
 }
 
@@ -64,7 +64,7 @@ typedef enum HZActivityIndicatorDirection
 @property (nonatomic, strong) UIColor               *color;
 @property (nonatomic) UIRectCorner                  roundedCoreners;
 @property (nonatomic) CGSize                        cornerRadii;
-@property (nonatomic) HZActivityIndicatorDirection  direction;
+@property (nonatomic) HZHZActivityIndicatorDirection  direction;
 @property (nonatomic) UIActivityIndicatorViewStyle  activityIndicatorViewStyle;
 @property (nonatomic) CGFloat                       progress;
 

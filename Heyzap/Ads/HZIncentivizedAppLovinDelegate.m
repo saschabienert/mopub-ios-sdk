@@ -82,7 +82,7 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
 
 // WARNING: AppLovin will send `rewardValidationRequestForAd:didSucceedWithResponse:` and then later `rewardValidationRequestForAd:didFailWithError:`. Search their rewarded video docs (https://www.applovin.com/integration#iosRewardedVids) for `kALErrorCodeIncentivizedUserClosedVideo`.
 - (void)rewardValidationRequestForAd:(HZALAd *)ad didSucceedWithResponse:(NSDictionary *)response {
-    ensureMainQueue(^{
+    hzEnsureMainQueue(^{
         [self rewardValidationResult:YES forAd:ad];
     });
 }
@@ -94,7 +94,7 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
  * the maximum number of coins you allowed per day in the web UI.
  */
 - (void)rewardValidationRequestForAd:(HZALAd *)ad didExceedQuotaWithResponse:(NSDictionary *)response {
-    ensureMainQueue(^{
+    hzEnsureMainQueue(^{
         [self rewardValidationResult:NO forAd:ad];
     });
 }
@@ -104,7 +104,7 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
  * This would usually happen if the user fails to pass an anti-fraud check.
  */
 - (void)rewardValidationRequestForAd:(HZALAd *)ad wasRejectedWithResponse:(NSDictionary *)response {
-    ensureMainQueue(^{
+    hzEnsureMainQueue(^{
         [self rewardValidationResult:NO forAd:ad];
     });
 }
@@ -113,7 +113,7 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
  * This method will be invoked if were unable to contact AppLovin, so no ping will be heading to your server.
  */
 - (void)rewardValidationRequestForAd:(HZALAd *)ad didFailWithError:(NSInteger)responseCode {
-    ensureMainQueue(^{
+    hzEnsureMainQueue(^{
         [self rewardValidationResult:NO forAd:ad];
     });
 }
@@ -122,7 +122,7 @@ typedef NS_ENUM(NSInteger, HZAppLovinRewardedAdValidationState) {
  * This method will be invoked if the user chooses 'no' when asked if they want to view a rewarded video.
  */
 - (void)userDeclinedToViewAd:(HZALAd *)ad {
-    ensureMainQueue(^{
+    hzEnsureMainQueue(^{
         // user declined to view an ad - treat it as a validation failure but first remember
         // the video will never complete so the dict entry is removed
         HZAppLovinRewardedAdState * state = [HZIncentivizedAppLovinDelegate adStateForAd:ad];

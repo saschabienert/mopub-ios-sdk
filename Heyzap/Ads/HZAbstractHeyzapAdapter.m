@@ -13,10 +13,7 @@
 #import "HeyzapMediation.h"
 #import "HZMediationConstants.h"
 #import "HeyzapAds.h"
-
-@interface HZAbstractHeyzapAdapter()
-
-@end
+#import "HZBaseAdapter_Internal.h"
 
 @implementation HZAbstractHeyzapAdapter
 
@@ -31,7 +28,7 @@
     return YES;
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     return nil;
 }
 
@@ -44,14 +41,11 @@
     return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeIncentivized;
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
-{
-    if(![self supportsCreativeType:creativeType]) return;
-    
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+{    
     const HZAuctionType auctionType = [self auctionType];
     switch (creativeType) {
         case HZCreativeTypeStatic: {
-            // TODO: refactor heyzap network to respect creativeTypes. right now the below call will show videos and statics.
             [HZHeyzapInterstitialAd fetchForAuctionType:auctionType withCompletion:nil];
             break;
         }
@@ -70,10 +64,8 @@
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
-    if(![self supportsCreativeType:creativeType]) return NO;
-    
     const HZAuctionType auctionType = [self auctionType];
     if (creativeType & HZCreativeTypeVideo) {
         return [HZHeyzapVideoAd isAvailableForTag:nil auctionType:auctionType];
@@ -86,10 +78,8 @@
     }
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(![self supportsCreativeType:creativeType]) return;
-
     const HZAuctionType auctionType = [self auctionType];
     switch (creativeType) {
         case HZCreativeTypeStatic: {
@@ -108,6 +98,31 @@
             // Ignored; Heyzap doesn't support banners, etc.
             break;
         }
+    }
+}
+
+- (NSError *) lastFetchErrorForCreativeType:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeStatic:
+            return self.lastStaticFetchError;
+            break;
+        case HZCreativeTypeVideo:
+        case HZCreativeTypeIncentivized:
+            return self.lastVideoFetchError;
+        default:
+            return nil;
+    }
+}
+- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
+    switch (creativeType) {
+        case HZCreativeTypeStatic:
+            self.lastStaticFetchError = error;
+            break;
+        case HZCreativeTypeVideo:
+        case HZCreativeTypeIncentivized:
+            self.lastVideoFetchError = error;
+        default:
+            break;
     }
 }
 
@@ -166,24 +181,17 @@
 - (void)didReceiveAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         HZAdInfo *info = notification.object;
-        HZAdType type = hzAdTypeFromString(info.adUnit);
+        HZFetchableCreativeType fetchableCreativeType = info.fetchableCreativeType;
         
-        switch (type) {
-            case HZAdTypeInterstitial: {
-                self.lastStaticError = nil;
-                break;
+        switch (fetchableCreativeType) {
+            case HZFetchableCreativeTypeStatic: {
+                [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
             }
-            case HZAdTypeIncentivized: {
-                self.lastIncentivizedError = nil;
-                break;
+            case HZFetchableCreativeTypeVideo: {
+                [self clearLastFetchErrorForCreativeType:HZCreativeTypeVideo];
             }
-            case HZAdTypeVideo: {
-                self.lastVideoError = nil;
-                break;
-            }
-            case HZAdTypeBanner: {
-                // Ignored
-                break;
+            case HZFetchableCreativeTypeNative: {
+                // ignored
             }
         }
         
@@ -193,27 +201,23 @@
 - (void)didFailToReceiveAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         HZAdInfo *info = notification.object;
-        HZAdType type = hzAdTypeFromString(info.adUnit);
+        HZFetchableCreativeType fetchableCreativeType = info.fetchableCreativeType;
         
-        switch (type) {
-            case HZAdTypeInterstitial: {
-                self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
-                break;
+        NSError *error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:[notification userInfo]];
+        
+        switch (fetchableCreativeType) {
+            case HZFetchableCreativeTypeStatic: {
+                [self setLastFetchError:error forCreativeType:HZCreativeTypeStatic];
             }
-            case HZAdTypeIncentivized: {
-                self.lastIncentivizedError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
-                break;
+            case HZFetchableCreativeTypeVideo: {
+                [self setLastFetchError:error forCreativeType:HZCreativeTypeVideo];
             }
-            case HZAdTypeVideo: {
-                self.lastVideoError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:nil];
-                break;
-            }
-            case HZAdTypeBanner: {
-                // Ignored
-                break;
+            case HZFetchableCreativeTypeNative: {
+                // ignored
             }
         }
         
+        HZELog(@"The %@ network failed to fetch an ad. Error: %@", [self humanizedName], error);
         [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
     }
 }

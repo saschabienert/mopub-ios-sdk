@@ -26,9 +26,6 @@
     __weak HZVASTVideoCache *weakSelf = self;
     self.downloadOperation = [HZDownloadHelper downloadURL: self.sourceURL
                                                 toFilePath: [self filePathForCachedVideo]
-                                                    forTag:nil
-                                                    adUnit:nil
-                                            andAuctionType:0
                                             withCompletion:^(BOOL result) {
                                                 dispatch_async(dispatch_get_main_queue(), ^{
                                                     __strong __typeof(&*weakSelf)strongSelf = weakSelf;

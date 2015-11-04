@@ -267,7 +267,8 @@ NSString *const kNoInternet = @"no_internet";
 NSArray *hzMap(NSArray *array, id (^block)(id object)) {
     NSMutableArray *newArray = [[NSMutableArray alloc] initWithCapacity:array.count];
     for (id obj in array) {
-        [newArray addObject:block(obj)];
+        id retVal = block(obj);
+        if (retVal) [newArray addObject:retVal];
     }
     return newArray;
 }
@@ -277,12 +278,22 @@ NSArray *hzFilter(NSArray *array, BOOL(^block)(id object)) {
     }];
     return [array objectsAtIndexes:idxSet];
 }
-
+id hzFirstObjectPassingTest(NSArray *array, BOOL(^test)(id object, NSUInteger index)) {
+    __block id passingObj = nil;
+    [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if (test(obj, idx)) {
+            *stop = YES;
+            passingObj = obj;
+        }
+    }];
+    return passingObj;
+}
 
 NSOrderedSet *hzMapOrderedSet(NSOrderedSet *set, id (^block)(id object)) {
     NSMutableOrderedSet *newSet = [[NSMutableOrderedSet alloc] initWithCapacity:set.count];
     for (id obj in set) {
-        [newSet addObject:block(obj)];
+        id retVal = block(obj);
+        if (retVal) [newSet addObject:retVal];
     }
     return newSet;
 }
@@ -292,6 +303,16 @@ NSOrderedSet *hzFilterOrderedSet(NSOrderedSet *set, BOOL(^block)(id object)) {
     }];
     
     return [NSOrderedSet orderedSetWithArray:[set objectsAtIndexes:idxSet]];
+}
+id hzFirstObjectPassingTestOrderedSet(NSOrderedSet *set, BOOL(^test)(id object, NSUInteger index)) {
+    __block id passingObj = nil;
+    [set enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if (test(obj, idx)) {
+            *stop = YES;
+            passingObj = obj;
+        }
+    }];
+    return passingObj;
 }
 
 NSString *hzLookupStringConstant(NSString *constantName) {

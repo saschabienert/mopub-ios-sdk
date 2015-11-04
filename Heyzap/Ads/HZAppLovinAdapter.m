@@ -13,6 +13,7 @@
 #import "HZAppLovinDelegate.h"
 
 #import "HZALSdk.h"
+#import "HZALSdkSettings.h"
 #import "HZALInterstitialAd.h"
 #import "HZALAdService.h"
 #import "HZALAd.h"
@@ -22,6 +23,7 @@
 
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
+#import "HZBaseAdapter_Internal.h"
 
 /**
  *  AppLovin's SDK is split between using (singletons+class methods) vs instances. Inexplicably, the former group is only available when you store the SDK Key in your info.plist file, so we need to use the instance methods.
@@ -90,11 +92,15 @@
     return [HZALSdk version];
 }
 
-- (NSError *)initializeSDK {
+- (void) toggleLogging { HZDLog(@"Logs for %@ can only be enabled/disabled before initialization.", [[self class] humanizedName]); }
+
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.sdkKey, @"sdk_key");
     
     HZDLog(@"Initializing AppLovin with SDK Key: %@",self.sdkKey);
-    self.sdk = [HZALSdk sharedWithKey:self.sdkKey];
+    HZALSdkSettings *settings = [HZALSdkSettings alloc];
+    settings.isVerboseLogging = [self isLoggingEnabled];
+    self.sdk = [HZALSdk sharedWithKey:self.sdkKey settings:settings];
     [self.sdk initializeSdk];
     
     return nil;
@@ -108,7 +114,7 @@
 }
 
 // To support incentivized, I will need to have separate objects for the incentivized/interstial delegates because they received the same selectors
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeStatic: {
@@ -134,7 +140,7 @@
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
 {
     switch (creativeType) {
         case HZCreativeTypeStatic: {
@@ -152,10 +158,8 @@
     }
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
 {
-    if(![self supportsCreativeType:creativeType]) return;
-    
     if (creativeType == HZCreativeTypeIncentivized) {
         
         if (self.currentIncentivizedAd && [self.currentIncentivizedAd isReadyForDisplay]) {

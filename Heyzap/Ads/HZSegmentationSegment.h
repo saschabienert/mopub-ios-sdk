@@ -14,7 +14,7 @@
 
 @property (nonatomic, readonly, nullable) NSString *name;
 @property (nonatomic, readonly) NSTimeInterval timeInterval; // number of seconds back the segment should look for impressions that fit the  parameters defined below
-@property (nonatomic, readonly, nullable) NSArray * adTags; // nil == applies to any tag
+@property (nonatomic, readonly, nullable) NSArray<NSString *> *adTags; // nil == applies to any tag
 @property (nonatomic, readonly) NSUInteger impressionLimit;
 @property (nonatomic, readonly) HZAuctionType auctionType;
 @property (nonatomic, readonly) BOOL adsEnabled; // will ignore the limit & interval if this is YES - it's an on/off switch for ads with the specified type/tag/auctionType

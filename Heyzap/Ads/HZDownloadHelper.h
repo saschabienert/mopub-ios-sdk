@@ -11,7 +11,7 @@
 @class HZAFHTTPRequestOperation;
 
 @interface HZDownloadHelper : NSObject
-+ (HZAFHTTPRequestOperation *) downloadURL: (NSURL *) url toFilePath: (NSString *) filePath forTag:(NSString *) tag adUnit:(NSString *)type andAuctionType:(HZAuctionType)auctionType withCompletion:(void (^)(BOOL result))completion;
++ (HZAFHTTPRequestOperation *) downloadURL: (NSURL *) url toFilePath: (NSString *) filePath withCompletion:(void (^)(BOOL result))completion;
 
 + (void)clearCache;
 

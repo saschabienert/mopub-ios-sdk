@@ -10,7 +10,7 @@
 
 @protocol HZAdInfoProvider <NSObject>
 
-- (NSString *)adUnit;
+- (HZFetchableCreativeType)fetchableCreativeType;
 - (HZAuctionType)auctionType;
 
 @end
@@ -20,7 +20,7 @@
  */
 @interface HZAdInfo : NSObject <NSCopying>
 
-@property (nonatomic, readonly) NSString *adUnit;
+@property (nonatomic, readonly) HZFetchableCreativeType fetchableCreativeType;
 @property (nonatomic, readonly) HZAuctionType auctionType;
 
 /**
@@ -31,7 +31,7 @@
  *
  *  @return The key.
  */
-- (instancetype)initWithAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType;
+- (instancetype)initWithFetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType;
 
 - (instancetype)initWithProvider:(id<HZAdInfoProvider>)provider;
 

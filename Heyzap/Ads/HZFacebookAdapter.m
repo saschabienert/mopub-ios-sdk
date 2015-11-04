@@ -17,6 +17,8 @@
 #import "HZBannerAdOptions_Private.h"
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
+#import "HZBaseAdapter_Internal.h"
+#import "HZFBAdSettings.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
@@ -50,6 +52,13 @@
                               dict:self.credentials];
 }
 
+- (void) toggleLogging {
+    // method available after FAN version 4.1.0
+    if ([HZFBAdSettings respondsToSelector:@selector(setLogLevel:)]) {
+        [HZFBAdSettings setLogLevel:([self isLoggingEnabled] ? HZFBAdLogLevelVerbose : HZFBAdLogLevelError)]; // leave error logs on
+    }
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable {
@@ -69,8 +78,13 @@
     return nil;
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
+    [self toggleLogging];
     return nil;
+}
+
+- (NSString *)testActivityInstructions {
+    return @"Facebook Audience Network will only show ads if you have Facebook installed and are logged in, or are using a simulator. You can use [FBAdSettings addTestDevice:<device hash>] to work around this. FAN will print your device hash to the Xcode console.";
 }
 
 - (HZCreativeType) supportedCreativeTypes {
@@ -92,21 +106,15 @@
     }
 }
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType {
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType {
     return creativeType == HZCreativeTypeStatic && self.interstitialAd && self.interstitialAd.isAdValid;
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
     HZAssert(self.placementID, @"Need a Placement ID by this point");
     
-    if (creativeType != HZCreativeTypeStatic) {
-        // only prefetch if they want an interstitial
-        return;
-    }
-    
-    if (self.interstitialAd
-        && !self.lastStaticError) {
-        // If we have an interstitial already out fetching, don't start up a re-fetch.
+    if (self.interstitialAd) {
+        // If we have an interstitial already out fetching, don't start up a re-fetch. This differs from the `hasAdForCreativeType:` check because we don't check `isAdValid`.
         return;
     }
     
@@ -116,12 +124,7 @@
     [self.interstitialAd loadAd];
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
-    if (creativeType != HZCreativeTypeStatic) {
-        //can only show interstitials
-        return;
-    }
-    
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
     [self.interstitialAd showAdFromRootViewController:options.viewController];
 }
 
@@ -149,15 +152,15 @@
 }
 
 - (void)interstitialAdDidLoad:(HZFBInterstitialAd *)interstitialAd {
-    self.lastStaticError = nil;
+    [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (void)interstitialAd:(HZFBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
-    self.lastStaticError = [NSError errorWithDomain:kHZMediationDomain
-                                                     code:1
-                                                 userInfo:@{kHZMediatorNameKey: @"Facebook",
-                                                            NSUnderlyingErrorKey: error}];
+    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain
+                                                code:1
+                                            userInfo:@{kHZMediatorNameKey: @"Facebook", NSUnderlyingErrorKey: error}]
+            forCreativeType:HZCreativeTypeStatic];
     self.interstitialAd = nil;
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
@@ -167,7 +170,7 @@
     [self.delegate adapterDidShowAd:self];
 }
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZFBBannerAdapter alloc] initWithAdUnitId:self.bannerPlacementID options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 

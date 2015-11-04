@@ -15,6 +15,7 @@
 #import "HZAdsManager.h"
 #import "HZInitMacros.h"
 #import <AdSupport/AdSupport.h>
+#import "HZBaseAdapter_Internal.h"
 
 @interface HZHyprmxAdapter()
 @property (nonatomic, strong) NSString *distributorID;
@@ -63,7 +64,7 @@
     return [[HZHYPRManager sharedManager] versionString];
 }
 
-- (NSError *)initializeSDK {
+- (NSError *)internalInitializeSDK {
     RETURN_ERROR_IF_NIL(self.distributorID, @"distributorID");
     
     NSString *adID = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
@@ -81,9 +82,7 @@
 }
 
 static BOOL wasReady = NO;
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType {
-    if (!([self supportedCreativeTypes] & creativeType)) return NO;
-    
+- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType {
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
         wasReady = isOfferReady;
     }];
@@ -91,9 +90,7 @@ static BOOL wasReady = NO;
     return wasReady;
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
-    if(![self supportsCreativeType:creativeType]) return;
-    
+- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
     
@@ -102,9 +99,7 @@ static BOOL wasReady = NO;
     });
 }
 
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options{
-    if(![self supportsCreativeType:creativeType]) return;
-    
+- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options{
     HZHyprmxAdapter *bSelf = self;
     
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {

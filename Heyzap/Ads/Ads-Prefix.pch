@@ -25,5 +25,17 @@ __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
 
 #define HZParameterAssert(condition) HZAssert((condition), @"Invalid parameter not satisfying: %s", #condition)
 
+// Use `HZFail` instead of HZ(Parameter)Assert if you always want to trigger the assertion.
+// Using `HZFail` is preferable over something like HZAssert(NO,@"msg") because code flow analysis won't think that the method will potentially finish without returning a value.
+
+#define HZFail(desc, ...)	\
+do {				\
+__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
+NSLog(@"Callstack = %@",[NSThread callStackSymbols]); \
+NSString *const assertionMessage = [NSString stringWithFormat:(@"Assertion failure in method: %@ file: %s line: %i reason: " desc) ,NSStringFromSelector(_cmd), __FILE__, __LINE__, ##__VA_ARGS__]; \
+@throw [NSException exceptionWithName:NSInternalInconsistencyException reason:assertionMessage userInfo:nil]; \
+__PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
+} while(0)
+
 #endif
 

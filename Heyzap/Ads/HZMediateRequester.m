@@ -61,16 +61,16 @@ const NSTimeInterval maxMediateDelay     = 300;
 - (void)loadMediateFromNetwork {
     // Should be all ad types? none?
     // HZAdFetchRequest requires the main queue; it's getting the status bar orientation and screen size and such.
-    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithCreativeTypes:[HZMediationConstants legacyCreativeTypesForAdType:HZAdTypeInterstitial] // TODO ?
-                                                                         adUnit:@"all" // TODO ?
-                                                                            tag:nil
-                                                                    auctionType:HZAuctionTypeMixed
-                                                            andAdditionalParams:@{}];
+    // TODO: It seems bad to create an arbitrary HZAdFetchRequest just to get the parameters.
+    // Potentially that code can be factored out into something both HZAdFetchRequest and this use?
+    HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithFetchableCreativeType:HZFetchableCreativeTypeStatic
+                                                                                    tag:nil
+                                                                            auctionType:HZAuctionTypeMixed
+                                                                    andAdditionalParams:@{}];
     
     // TODO: cleanup the process of getting mediateParams.
     NSMutableDictionary *const mediateParams = [request.createParams mutableCopy];
     [mediateParams removeObjectForKey:@"creative_type"];
-    [mediateParams removeObjectForKey:@"ad_unit"];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[HZMediationAPIClient sharedClient] GET:@"mediate"

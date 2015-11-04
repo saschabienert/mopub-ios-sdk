@@ -41,6 +41,7 @@
 
 #import "HZTestActivityViewController.h"
 #import "HZDevice.h"
+#import "NSDictionary+HZDummyCategory.h"
 
 // Warning: Read first please.
 // Do NOT change these values. They are shared
@@ -112,12 +113,12 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
 + (void) startWithPublisherID:(NSString *)publisherID andOptions:(HZAdOptions)options andFramework:(NSString *)framework {
     HZVersionCheck()
     
+    if (![NSDictionary instancesRespondToSelector:@selector(hzDummyMethod)]) {
+        HZELog(@"\n**WARNING** Heyzap detected that an Objective-C category wasn't loaded. This probably indicates you need to add -ObjC to \"Other Linker Flags\" in your Build Settings. Without this flag, code from 3rd party SDKs may not be compiled into your app, making them unavailable to Heyzap.\n\n\n");
+    }
+    
     // Hack to start `HZDevice` on the main queue. This works around an issue where it deadlocked for Jon Grall when creating the `CTTelephonyNetworkInfo` object on a background queue.
     [HZDevice currentDevice];
-
-    if (options & HZAdOptionsDisableMedation) {
-        [HeyzapMediation forceOnlyHeyzapSDK];
-    }
     
     [[HZAdsManager sharedManager] setPublisherID: publisherID];
     [[HZAdsManager sharedManager] setOptions: options];
@@ -125,7 +126,17 @@ NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNoti
     if (framework && ![framework isEqualToString:@""]) {
         [[HZAdsManager sharedManager] setFramework:framework];
     }
+    
+    if (options & HZAdOptionsInstallTrackingOnly) {
+        // install tracking is done in the HZAdsManager, once the singleton `sharedManager` is created. (the line below is included just in case the code above moves later)
+        [HZAdsManager sharedManager];
+        return;
+    }
 
+    if (options & HZAdOptionsDisableMedation) {
+        [HeyzapMediation forceOnlyHeyzapSDK];
+    }
+    
     [[HZAdsManager sharedManager] onStart];
     
     [[HeyzapMediation sharedInstance] start];

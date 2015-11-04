@@ -96,13 +96,12 @@
 - (void) hide {
     [self.ad onCompleteWithViewDuration: self.videoView.playbackTime andTotalDuration: self.videoView.videoDuration andFinished: self.didFinishVideo];
     
-    if (self.ad.adUnit != nil && [self.ad.adUnit isEqualToString: @"incentivized"]) {
+    if (self.ad.showableCreativeType == HZCreativeTypeIncentivized) {
         if (self.didFinishVideo) {
             [HZAdsManager postNotificationName:kHeyzapDidCompleteIncentivizedAd infoProvider:self.ad];
         } else {
             [HZAdsManager postNotificationName:kHeyzapDidFailToCompleteIncentivizedAd infoProvider:self.ad];
         }
-        
     }
     
     [super hide];
@@ -253,19 +252,12 @@
 
 - (void) onActionClick: (UIView *) sender withURL: (NSURL *) url {
     if ([sender tag] == kHZVideoViewTag) {
-        if ([self.ad.displayOptions allowInstallButton]) {
-            [self.videoView pause];
-            [self didClickWithURL: url];
-        }
+        [self.videoView pause];
+        [self didClickWithURL:url];
     }
     
     if ([sender tag] == kHZWebViewTag) {
-        self.webView.isLoading = YES;
-        __weak HZAdVideoViewController *weakSelf = self;
-        
-        [self didClickWithURL:url completion:^(BOOL result, NSError *error) {
-            [[weakSelf webView] setIsLoading:NO];
-        }];
+        [self didClickWithURL:url];
     }
 }
 

@@ -11,17 +11,15 @@
 @implementation HZAdInfo
 
 - (instancetype)initWithProvider:(id<HZAdInfoProvider>)provider {
-    return [self initWithAdUnit:[provider adUnit] auctionType:[provider auctionType]];
+    return [self initWithFetchableCreativeType:[provider fetchableCreativeType] auctionType:[provider auctionType]];
 }
 
 // Designated Initializer
-- (instancetype)initWithAdUnit:(NSString *)adUnit auctionType:(HZAuctionType)auctionType
+- (instancetype)initWithFetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType
 {
-    HZParameterAssert(adUnit);
-    
     self = [super init];
     if (self) {
-        _adUnit = adUnit;
+        _fetchableCreativeType = fetchableCreativeType;
         _auctionType = auctionType;
     }
     return self;
@@ -38,13 +36,13 @@
         return NO;
     }
     HZAdInfo *other = object;
-    return [other.adUnit isEqualToString:self.adUnit]
+    return other.fetchableCreativeType == self.fetchableCreativeType
     && other.auctionType == self.auctionType;
 }
 
 - (NSUInteger)hash
 {
-    return self.adUnit.hash ^ self.auctionType;
+    return self.fetchableCreativeType ^ self.auctionType;
 }
 
 - (instancetype)copyWithZone:(NSZone *)zone
@@ -56,8 +54,8 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"HZAdInfo - adUnit = %@ auctionType = %@",
-            self.adUnit, NSStringFromHZAuctionType(self.auctionType)];
+    return [NSString stringWithFormat:@"HZAdInfo - fetchableCreativeType = %@ auctionType = %@",
+            NSStringFromHZFetchableCreativeType(self.fetchableCreativeType), NSStringFromHZAuctionType(self.auctionType)];
 }
 
 

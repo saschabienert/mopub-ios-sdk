@@ -12,7 +12,7 @@
 
 @interface HZSegmentationController (Testing)
 
-@property (nonnull, nonatomic) NSSet *segments;
+@property (nonnull, nonatomic) NSSet<HZSegmentationSegment *> *segments;
 
 - (NSUInteger) impressionCount;
 
@@ -55,7 +55,7 @@ describe(@"HZSegmentationSegment", ^{
         
         [segmentationController setupFromMediationStart:startDictionary completion:completionBlock];
         [[theValue([[segmentationController segments] count]) should] equal:theValue(numberOfSegmentsInStartDictionary)];
-        [[expectFutureValue(theValue(blockSuccess)) shouldEventually] equal:theValue(YES)];
+        [[expectFutureValue(theValue(blockSuccess)) hzShouldEventuallyAfterDelay] equal:theValue(YES)];
     });
     
     it(@"Should call failure callback if db connection fails & is null", ^{
@@ -70,7 +70,7 @@ describe(@"HZSegmentationSegment", ^{
         [[impressionHistoryMock should] receive:@selector(safeImpressionTableDatabaseConnection) andReturn:theValue((sqlite3 *)0)]; // simulate db failure
         
         [segmentationController setupFromMediationStart:startDictionary completion:completionBlock];
-        [[expectFutureValue(theValue(blockSuccess)) shouldEventually] equal:theValue(NO)];
+        [[expectFutureValue(theValue(blockSuccess)) hzShouldEventuallyAfterDelay] equal:theValue(NO)];
     });
     
     it(@"Shouldn't interact with segments or limit impressions when disabled", ^{

@@ -93,16 +93,16 @@ BOOL hzCreativeTypeStringSetContainsAdType(NSSet *const creativeTypes, const HZA
     }
 }
 
-NSSet * hzCreativeTypesPossibleForAdType(HZAdType adType) {
+NSMutableSet * hzCreativeTypesPossibleForAdType(HZAdType adType) {
     switch(adType){
         case HZAdTypeInterstitial:
-            return [NSSet setWithArray:@[@(HZCreativeTypeVideo), @(HZCreativeTypeStatic)]];
+            return [NSMutableSet setWithArray:@[@(HZCreativeTypeVideo), @(HZCreativeTypeStatic)]];
         case HZAdTypeIncentivized:
-            return [NSSet setWithArray:@[@(HZCreativeTypeIncentivized)]];
+            return [NSMutableSet setWithArray:@[@(HZCreativeTypeIncentivized)]];
         case HZAdTypeBanner:
-            return [NSSet setWithArray:@[@(HZCreativeTypeBanner)]];
+            return [NSMutableSet setWithArray:@[@(HZCreativeTypeBanner)]];
         case HZAdTypeVideo:
-            return [NSSet setWithArray:@[@(HZCreativeTypeVideo)]];
+            return [NSMutableSet setWithArray:@[@(HZCreativeTypeVideo)]];
     }
 }
 

@@ -12,11 +12,9 @@
 
 @interface HZAdFetchRequest : NSObject <HZAdInfoProvider>
 
-@property (nonatomic, readonly) NSUUID *requestID;
 @property (nonatomic, readonly) int retriesRemaining;
 
-@property (nonatomic, readonly) NSArray *creativeTypes;
-@property (nonatomic, readonly) NSString *adUnit;
+@property (nonatomic, readonly) HZFetchableCreativeType fetchableCreativeType;
 @property (nonatomic, readonly) HZAuctionType auctionType;
 
 @property (nonatomic) NSString *rejectedImpressionID;
@@ -31,11 +29,10 @@
 @property (nonatomic, readonly, getter = shouldSkipCache) BOOL skipCache;
 @property (nonatomic, readonly, getter = shouldIgnoreAlreadyInstalledGame) BOOL ignoreAlreadyInstalledGame;
 
-- (id) initWithCreativeTypes:(NSArray *)creativeTypes
-                      adUnit:(NSString *)adUnit
-                         tag:(NSString *)tag
-                 auctionType:(HZAuctionType)auctionType
-         andAdditionalParams:(NSDictionary *)additionalParams;
+- (id) initWithFetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType
+                                 tag:(NSString *)tag
+                         auctionType:(HZAuctionType)auctionType
+                 andAdditionalParams:(NSDictionary *)additionalParams;
 
 - (BOOL) canRetry;
 - (void) decrementTries;
