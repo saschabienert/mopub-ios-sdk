@@ -632,13 +632,12 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void) fetchAd: (id) sender {
-    NSString *adTagText = [self adTagText];
-    if (adTagText) {
-        [self logToConsole:[NSString stringWithFormat:@"Fetching for tag: %@", adTagText]];
-    } else {
-        [self logToConsole:@"Fetching for default tag"];
-        adTagText = nil;
-    }
+    // use HZShowOptions to format the tag for the log output
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = [self adTagText];
+    NSString * adTagText = options.tag;
+    
+    [self logToConsole:[NSString stringWithFormat:@"Fetching for tag: '%@'", adTagText]];
     
     void (^completion)(BOOL, NSError *) = ^void (BOOL result, NSError *error){
         if (!result || error) {
@@ -665,19 +664,14 @@ const CGFloat kLeftMargin = 10;
 
 - (void) showAd: (id) sender {
     [self.view endEditing:YES];
-    NSString *adTag = [self adTagText];
-    if (adTag) {
-        [self logToConsole:[NSString stringWithFormat:@"Showing for tag: %@", adTag]];
-    } else {
-        [self logToConsole:@"Showing for default tag"];
-        adTag = nil;
-    }
-    
+
     HZShowOptions *opts = [[HZShowOptions alloc] init];
-    opts.tag = adTag;
+    opts.tag = [self adTagText];
     opts.completion = ^(BOOL success, NSError *err) {
         [self logToConsole:[NSString stringWithFormat:@"Show completion block. Success=%x, err=%@", success, err]];
     };
+    
+    [self logToConsole:[NSString stringWithFormat:@"Showing for tag: '%@'", opts.tag]];
     
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
@@ -699,7 +693,11 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void)checkAvailability {
-    NSString * adTag = [self adTagText];
+    // use HZShowOptions to format the tag for the log output
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = [self adTagText];
+    NSString * adTag = options.tag;
+    
     NSString *adType;
     BOOL available;
     
@@ -722,7 +720,7 @@ const CGFloat kLeftMargin = 10;
     
     if (adType) {
         [self setShowButtonOn:available];
-        [self logToConsole:[NSString stringWithFormat:@"%@ ad %@ available for tag: `%@`.", adType, (available ? @"is" : @"is not"), adTag]];
+        [self logToConsole:[NSString stringWithFormat:@"%@ ad %@ available for tag: '%@'.", adType, (available ? @"is" : @"is not"), adTag]];
     } else {
         [self logToConsole:@"Is Available Error: Unable to determine ad type."];
     }

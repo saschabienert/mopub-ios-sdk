@@ -286,8 +286,9 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     
     // use HZShowOptions to format the tag for the log output
     HZShowOptions *options = [HZShowOptions new];
+    
     options.tag = [self.adTagField text];
-    [self appendStringToDebugLog:[NSString stringWithFormat:@"%@ ad %@ available for tag '%@'.", self.currentAdFormat,([self checkAvailabilityAndChangeColorOfShowButton] ? @"is" : @"is not"), options.tag]];
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"A%@ %@ ad %@ available for tag '%@'.", ([@"aeiou" containsString:[self.currentAdFormat substringWithRange:NSMakeRange(0, 1)]] ? @"n" : @""), self.currentAdFormat,([self checkAvailabilityAndChangeColorOfShowButton] ? @"is" : @"is not"), options.tag]];
 }
 
 - (void) fetchAd {
@@ -738,8 +739,12 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void) appendStringToDebugLog:(NSString *)string {
     self.debugLog.text = [NSString stringWithFormat:@"%@\n%@", self.debugLog.text, string];
-    NSRange bottom = NSMakeRange(self.debugLog.text.length, 0);
-    [self.debugLog scrollRangeToVisible:bottom];
+    
+    // get around weird bug in iOS 9 - text view scrolling has issues when done directly after updating the text
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        CGRect rect = CGRectMake(0, self.debugLog.contentSize.height -1, self.debugLog.frame.size.width, self.debugLog.contentSize.height);
+        [self.debugLog scrollRectToVisible:rect animated:NO];
+    });
 }
 
 #pragma mark - UIPickerViewDelegate (Banners)

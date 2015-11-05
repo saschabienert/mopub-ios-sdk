@@ -296,7 +296,11 @@ typedef enum {
 
 - (void)logToConsole:(NSString *)consoleString {
     self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[[[self class] sharedDateFormatter] stringFromDate:[NSDate date]],consoleString];
-    [self bottomButton];
+    
+    // get around weird bug in iOS 9 - text view scrolling has issues when done directly after updating the text
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self bottomButton];
+    });
 }
 
 - (void)adTagEditingChanged:(UITextField *)sender {
@@ -449,11 +453,12 @@ typedef enum {
 }
 
 - (void) topButton{
-    [self.consoleTextView scrollRangeToVisible:NSMakeRange(0, 0)];
+    [self.consoleTextView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
 }
 
 - (void) bottomButton{
-    [self.consoleTextView scrollRangeToVisible:NSMakeRange(self.consoleTextView.text.length, 0)];
+    CGRect rect = CGRectMake(0, self.consoleTextView.contentSize.height -1, self.consoleTextView.frame.size.width, self.consoleTextView.contentSize.height);
+    [self.consoleTextView scrollRectToVisible:rect animated:NO];
 }
 
 - (void) emailConsoleButton{
