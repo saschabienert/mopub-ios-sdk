@@ -49,6 +49,10 @@
     return self.appID != nil && self.appSignature != nil;
 }
 
+- (NSString *)testActivityInstructions {
+    return @"If you have trouble receiving Chartboost ads:\n\n1. Check that you've set up a Publisher Campaign on the Chartboost dashboard.\n2. From the Chartoost dashboard, enable Test Mode by selecting your app in the sidebar > App Settings > Basic Settings > set \"Test Mode\" to \"Enabled\".";
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable

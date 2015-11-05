@@ -91,6 +91,10 @@
     return [HZUnityAds getSDKVersion];
 }
 
+- (NSString *)testActivityInstructions {
+    return @"If you have trouble receiving UnityAds, enable Ad Test Mode from the Unity Ads Dashboard (Games > Select Game > Monetization Settings > set \"Ad Test Mode\" to \"Force all\"), or do `[[UnityAds sharedInstance] setTestMode:YES]`.";
+}
+
 NSString * const kHZNetworkName = @"mobile";
 
 - (NSError *)internalInitializeSDK {

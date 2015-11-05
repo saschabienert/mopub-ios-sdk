@@ -96,6 +96,10 @@
     return [HZALSdk version];
 }
 
+- (NSString *)testActivityInstructions {
+    return @"If you have trouble receiving AppLovin ads, enable Test Mode by going to the AppLovin dashboard > Manage > Applications > Choose your app > set \"Test Mode\" on.";
+}
+
 - (void) toggleLogging { HZDLog(@"Logs for %@ can only be enabled/disabled before initialization.", [[self class] humanizedName]); }
 
 - (NSError *)internalInitializeSDK {
