@@ -56,7 +56,7 @@
 @property (nonatomic, readonly) BOOL isInitialized;
 
 
-+ (nullable instancetype)sharedAdapter;
++ (nonnull instancetype)sharedAdapter;
 
 - (nullable NSString *)testActivityInstructions;
 

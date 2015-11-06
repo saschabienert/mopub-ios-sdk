@@ -221,10 +221,9 @@
 }
 
 - (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    NSString *defaultPlacementID = (dataProvider.creativeType == HZCreativeTypeStatic ? self.interstitialAdUnitID : self.videoAdUnitID);
-    NSString *placementIDToUse = dataProvider.placementIDOverride ?: defaultPlacementID;
-    
+    NSString *placementIDToUse = [self defaultOrOverridenPlacementIDForAdWithMetadata:dataProvider];
     NSMutableDictionary * errorsForCreativeType = self.adErrorsDictionary[@(dataProvider.creativeType)];
+    
     if (!errorsForCreativeType) {
         errorsForCreativeType = [[NSMutableDictionary alloc] init];
         self.adErrorsDictionary[@(dataProvider.creativeType)] = errorsForCreativeType;
@@ -238,9 +237,7 @@
 }
 
 - (NSError *) lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    NSString *defaultPlacementID = (dataProvider.creativeType == HZCreativeTypeStatic ? self.interstitialAdUnitID : self.videoAdUnitID);
-    NSString *placementIDToUse = dataProvider.placementIDOverride ?: defaultPlacementID;
-    
+    NSString *placementIDToUse = [self defaultOrOverridenPlacementIDForAdWithMetadata:dataProvider];
     NSDictionary *errorsForCreativeType = self.adErrorsDictionary[@(dataProvider.creativeType)];
     
     if (!errorsForCreativeType) {
@@ -254,9 +251,7 @@
 #pragma mark - Utilities
 
 - (HZGADInterstitial *) adWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    NSString *defaultPlacementID = (dataProvider.creativeType == HZCreativeTypeStatic ? self.interstitialAdUnitID : self.videoAdUnitID);
-    NSString *placementIDToUse = dataProvider.placementIDOverride ?: defaultPlacementID;
-    
+    NSString *placementIDToUse = [self defaultOrOverridenPlacementIDForAdWithMetadata:dataProvider];
     NSDictionary *adsForCreativeType = self.adDictionary[@(dataProvider.creativeType)];
     
     if (!adsForCreativeType) {
@@ -288,13 +283,18 @@
         }
     }
     
-    HZELog(@"AdMob adapter in an unexpected state... it was looking for the creative type for an ad in it's inventory, but no ad was present. Please report this to support@heyzap.com . Ad: %@", ad);
+    HZELog(@"AdMob adapter in an unexpected state... it was looking for the creative type for an ad in its inventory, but no ad was present. Please report this to support@heyzap.com . Ad: %@", ad);
     return HZCreativeTypeUnknown;
 }
 
 - (HZMediationAdAvailabilityDataProvider *) metadataForAd:(HZGADInterstitial *)ad {
     const HZCreativeType creativeType = [self creativeTypeForAd:ad];
     return [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType placementIDOverride:ad.adUnitID];
+}
+
+- (NSString *) defaultOrOverridenPlacementIDForAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    NSString *defaultPlacementID = (dataProvider.creativeType == HZCreativeTypeStatic ? self.interstitialAdUnitID : self.videoAdUnitID);
+    return dataProvider.placementIDOverride ?: defaultPlacementID;
 }
 
 @end

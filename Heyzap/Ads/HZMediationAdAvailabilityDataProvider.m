@@ -11,7 +11,7 @@
 
 @implementation HZMediationAdAvailabilityDataProvider
 
-- (nullable instancetype) initWithCreativeType:(HZCreativeType)creativeType placementIDOverride:(nullable NSString *)placementIDOverride tag:(nonnull NSString *)tag {
+- (nonnull instancetype) initWithCreativeType:(HZCreativeType)creativeType placementIDOverride:(nullable NSString *)placementIDOverride tag:(nonnull NSString *)tag {
     self = [super init];
     if (self) {
         _tag = tag;
@@ -22,15 +22,15 @@
     return self;
 }
 
-- (nullable instancetype) initWithCreativeType:(HZCreativeType)creativeType {
+- (nonnull instancetype) initWithCreativeType:(HZCreativeType)creativeType {
     return [self initWithCreativeType:creativeType placementIDOverride:nil tag:[HeyzapAds defaultTagName]];
 }
 
-- (nullable instancetype) initWithCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride {
+- (nonnull instancetype) initWithCreativeType:(HZCreativeType)creativeType placementIDOverride:(NSString *)placementIDOverride {
     return [self initWithCreativeType:creativeType placementIDOverride:placementIDOverride tag:[HeyzapAds defaultTagName]];
 }
 
-- (nullable instancetype) initWithCreativeType:(HZCreativeType)creativeType tag:(NSString *)tag {
+- (nonnull instancetype) initWithCreativeType:(HZCreativeType)creativeType tag:(NSString *)tag {
     return [self initWithCreativeType:creativeType placementIDOverride:nil tag:tag];
 }
 
