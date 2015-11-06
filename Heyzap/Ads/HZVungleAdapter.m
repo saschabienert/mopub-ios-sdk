@@ -99,6 +99,10 @@ NSString * const HZFallbackVunglePlayAdOptionKeyPlacement = @"placement";
     return hzLookupStringConstant(@"VungleSDKVersion");
 }
 
+- (NSString *)testActivityInstructions {
+    return @"If you have trouble receiving Vungle ads, try enabling Test Mode from the Vungle Dashboard by finding your app, clicking the settings icon on the far right, and setting the \"Status\" to \"Test Mode\".";
+}
+
 - (HZCreativeType) supportedCreativeTypes
 {
     return HZCreativeTypeIncentivized | HZCreativeTypeVideo;
