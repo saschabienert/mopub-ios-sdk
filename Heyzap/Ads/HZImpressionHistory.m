@@ -105,14 +105,15 @@
 #pragma mark - Query
 
 - (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withCreativeType:(HZCreativeType)creativeType tag:(nullable NSString *)tag auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
-    return [self impressionsSince:timestamp withCreativeType:creativeType tags:(tag ? @[tag] : nil) auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
+    return [self impressionsSince:timestamp withCreativeType:creativeType tags:(tag ? [NSSet setWithObject:tag] : nil) auctionType:auctionType databaseConnection:db mostRecentFirst:mostRecentFirst];
 }
 
-- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withCreativeType:(HZCreativeType)creativeType tags:(nullable NSArray *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
+- (NSMutableOrderedSet *) impressionsSince:(nonnull NSDate *)timestamp withCreativeType:(HZCreativeType)creativeType tags:(nullable NSSet *)tags auctionType:(HZAuctionType)auctionType databaseConnection:(sqlite3 *)db mostRecentFirst:(BOOL)mostRecentFirst {
     if (!db) {
         HZELog(@"HZImpressionHistory: Can't count impressions without database connection.");
         return [[NSMutableOrderedSet alloc] init];
     }
+    NSArray *const tagsArray = tags.allObjects;
     
     //NSDate *methodStart = [NSDate date];
     
@@ -130,7 +131,7 @@
     if (tags && [tags count] > 0) {
         // for instance, insert `?,?,?` into the WHERE clause if there are 3 tags
         // the sqlite3_bind_text statement later will replace these `?`s with the tags (takes care of escaping for us)
-        NSArray *questionMarks = hzMap(tags, ^NSString *(NSString *tag){
+        NSArray *questionMarks = hzMap(tagsArray, ^NSString *(NSString *tag){
             return @"?";
         });
         
@@ -157,7 +158,7 @@
     
     // bind tags into statement, replacing `?`s from above
     for(uint i = 0; i < [tags count]; i++) {
-        sqlite3_bind_text(statement, i + 1, [tags[i] UTF8String], -1, SQLITE_TRANSIENT); // replaces `?` in query string with the ad tag (deals with escaping characters for us). (SQLITE_TRANSIENT tells the db to copy the string for memory management reasons). The second param (`1`) is the 1-based index of the question mark in the query string
+        sqlite3_bind_text(statement, i + 1, [tagsArray[i] UTF8String], -1, SQLITE_TRANSIENT); // replaces `?` in query string with the ad tag (deals with escaping characters for us). (SQLITE_TRANSIENT tells the db to copy the string for memory management reasons). The second param (`1`) is the 1-based index of the question mark in the query string
     }
     
     NSMutableOrderedSet *impressions = [[NSMutableOrderedSet alloc] init];

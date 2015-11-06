@@ -52,7 +52,8 @@ describe(@"HZSegmentationSegment", ^{
         ruleMock2 = [KWMock nullMockForClass:[HZSegmentationFrequencyLimitRule class]];
         [ruleMock1 stub:@selector(parentAdapter) andReturn:segment];
         [ruleMock2 stub:@selector(parentAdapter) andReturn:segment];
-        segment = [[HZSegmentationSegment alloc] initWithTags:@[] disabledNetworks:@[disabledNetworkName] placementIDOverrides:@{} frequencyLimitRules:@[ruleMock1, ruleMock2] name:@"test segment"];
+        
+        segment = [[HZSegmentationSegment alloc] initWithTags:[NSSet set] disabledNetworks:[NSSet setWithObject:disabledNetworkName] placementIDOverrides:@{} frequencyLimitRules:@[ruleMock1, ruleMock2] name:@"test segment"];
     });
     
     it(@"Loads its frequency rules correctly", ^{
@@ -86,7 +87,7 @@ describe(@"HZSegmentationSegment", ^{
             return nil;
         }];
         
-        testSegment = [[HZSegmentationSegment alloc] initWithTags:@[] disabledNetworks:@[disabledNetworkName] placementIDOverrides:@{} frequencyLimitRules:rules name:@"testing segment setting the parent pointer"];
+        testSegment = [[HZSegmentationSegment alloc] initWithTags:[NSSet set] disabledNetworks:[NSSet setWithObject:disabledNetworkName] placementIDOverrides:@{} frequencyLimitRules:rules name:@"testing segment setting the parent pointer"];
         
         [[rule1Parent should] equal:testSegment];
         [[rule2Parent should] equal:testSegment];

@@ -15,8 +15,8 @@
 
 @property (nonatomic, readonly, nullable) NSString *name;
 
-@property (nonatomic, readonly, nonnull) NSArray<NSString *> *adTags; // empty == applies to any tag
-@property (nonatomic, readonly, nonnull) NSArray<NSString *> *disabledNetworks;
+@property (nonatomic, readonly, nonnull) NSSet<NSString *> *adTags; // empty == applies to any tag
+@property (nonatomic, readonly, nonnull) NSSet<NSString *> *disabledNetworks;
 
 @property (nonatomic, readonly, nonnull) NSArray<HZSegmentationFrequencyLimitRule *> *frequencyLimitRules;
 
@@ -42,7 +42,7 @@
  * Cretes a segment with the given list of tags this segment applies to, disabled networks, placement ID overrides, and name.
     @param tags If empty, the segment applies to all ad tags, otherwise, it only applies to the ad tags in this array
  */
-- (nullable instancetype) initWithTags:(nonnull NSArray *)tags disabledNetworks:(nonnull NSArray *)disabledNetworks placementIDOverrides:(nonnull NSDictionary <NSString *, NSString *>*)placementIDOverrides frequencyLimitRules:(nonnull NSArray <HZSegmentationFrequencyLimitRule *> *)frequencyLimitRules name:(nullable NSString *)name;
+- (nullable instancetype) initWithTags:(nonnull NSSet *)tags disabledNetworks:(nonnull NSSet *)disabledNetworks placementIDOverrides:(nonnull NSDictionary <NSString *, NSString *>*)placementIDOverrides frequencyLimitRules:(nonnull NSArray <HZSegmentationFrequencyLimitRule *> *)frequencyLimitRules name:(nullable NSString *)name;
 
 - (void) loadWithDb:(nonnull sqlite3 *)db;
 
