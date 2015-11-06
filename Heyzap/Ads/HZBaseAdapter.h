@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "HZShowOptions.h"
+#import "HZFetchOptions.h"
 #import "HZBannerAdapter.h"
 #import "HZAdapterDelegate.h"
 #import "HZCreativeType.h"
 #import "HZAdType.h"
+#import "HZMediationAdAvailabilityDataProvider.h"
 
 #import <UIKit/UIKit.h>
 
@@ -23,17 +25,17 @@
 
 @protocol HZMediationAdapterDelegate <NSObject>
 
-- (void)adapterDidShowAd:(HZBaseAdapter *)adapter;
-- (void)adapterWasClicked:(HZBaseAdapter *)adapter;
-- (void)adapterDidDismissAd:(HZBaseAdapter *)adapter;
+- (void)adapterDidShowAd:(nonnull HZBaseAdapter *)adapter;
+- (void)adapterWasClicked:(nonnull HZBaseAdapter *)adapter;
+- (void)adapterDidDismissAd:(nonnull HZBaseAdapter *)adapter;
 
-- (void)adapterDidCompleteIncentivizedAd:(HZBaseAdapter *)adapter;
-- (void)adapterDidFailToCompleteIncentivizedAd:(HZBaseAdapter *)adapter;
+- (void)adapterDidCompleteIncentivizedAd:(nonnull HZBaseAdapter *)adapter;
+- (void)adapterDidFailToCompleteIncentivizedAd:(nonnull HZBaseAdapter *)adapter;
 
-- (void)adapterWillPlayAudio:(HZBaseAdapter *)adapter;
-- (void)adapterDidFinishPlayingAudio:(HZBaseAdapter *)adapter;
+- (void)adapterWillPlayAudio:(nonnull HZBaseAdapter *)adapter;
+- (void)adapterDidFinishPlayingAudio:(nonnull HZBaseAdapter *)adapter;
 
-- (void)adapterDidFailToShowAd:(HZBaseAdapter *)adapter error:(NSError *)underlyingError;
+- (void)adapterDidFailToShowAd:(nonnull HZBaseAdapter *)adapter error:(nullable NSError *)underlyingError;
 
 @end
 
@@ -47,67 +49,67 @@
 /**
  *  The credentials should be set on adapters immediately after calling sharedAdapter. Subclasses should ignore attempts to call this property's setter method if their credentials have already been set.
  */
-@property (nonatomic, strong) NSDictionary *credentials;
+@property (nonatomic, strong, nullable) NSDictionary *credentials;
 
-@property (nonatomic, strong) HZAdapterDelegate *forwardingDelegate;
+@property (nonatomic, strong, nullable) HZAdapterDelegate *forwardingDelegate;
 
 @property (nonatomic, readonly) BOOL isInitialized;
 
 
-+ (instancetype)sharedAdapter;
++ (nonnull instancetype)sharedAdapter;
 
-- (NSString *)testActivityInstructions;
+- (nullable NSString *)testActivityInstructions;
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType;
+- (void)prefetchAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType;
+- (BOOL)hasAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
-- (NSNumber *) latestMediationScoreForCreativeType:(HZCreativeType)creativeType;
-- (void) setLatestMediationScore:(NSNumber *)score forCreativeType:(HZCreativeType)creativeType;
+- (nonnull NSNumber *) latestMediationScoreForCreativeType:(HZCreativeType)creativeType;
+- (void) setLatestMediationScore:(nullable NSNumber *)score forCreativeType:(HZCreativeType)creativeType;
 
 /**
- *  The adapter should show an ad for the given ad type. Don't call this method unless you've called `hasAdForCreativeType:` and it returned `YES`.
+ *  The adapter should show an ad for the given ad type. Don't call this method unless you've called `hasAdWithMetadata:` and it returned `YES`.
  *
  *  @param creativeType The type of ad (video, incentivized, static) to show
  *  @param options Options to configure showing the ad
  */
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options;
+- (void)showAdWithOptions:(nonnull HZShowOptions *)options;
 
 - (HZCreativeType)supportedCreativeTypes;
 
-+ (NSString *)name;
++ (nonnull NSString *)name;
 
-+ (NSString *)humanizedName;
++ (nonnull NSString *)humanizedName;
 
 /**
  *  The version of the SDK, if available.
  *
  *  @return The version string, or `nil` if it isn't available.
  */
-+ (NSString *)sdkVersion;
++ (nullable NSString *)sdkVersion;
 
 + (BOOL)isSDKAvailable;
 
 /**
  *  Initialize the 3rd party SDK using the credentials it already has. This method should return an error if the SDK couldn't be initialized because it was missing a critical credential.
  */
-- (NSError *)initializeSDK;
+- (nullable NSError *)initializeSDK;
 
 #pragma mark - Banners
 
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate;
+- (nullable HZBannerAdapter *)fetchBannerWithOptions:(nonnull HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(nullable id<HZBannerReportingDelegate>)reportingDelegate;
 
 #pragma mark - Inferred methods
 
-- (NSString *)sdkVersion;
+- (nullable NSString *)sdkVersion;
 
-- (NSString *)name;
-- (NSString *)humanizedName;
+- (nonnull NSString *)name;
+- (nonnull NSString *)humanizedName;
 
 - (BOOL)supportsCreativeType:(HZCreativeType)creativeType;
 
 
-- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType;
+
 
 - (BOOL) hasNecessaryCredentials;
 
@@ -115,20 +117,17 @@
 // Maybe pass credentials immediately on creating the instance, and store them there?
 // I really dislike how it's no longer possible to statically tell whether a network has been initialized or not.
 
-
 /**
- *  Its possible this should be handled internally by the adapters, like when they fetch...
- *
- *  @param creativeType The type of ad to clear the error for.
+ *  Returns the last error the adapter received from the adapted SDK when fetching with the given ad metadata (creativeType, tag, placement ID override, etc.). The default implementation sorts errors only using creativeType, but subclasses can override this method to their needs.
  */
-- (void)clearLastFetchErrorForCreativeType:(HZCreativeType)creativeType;
+- (nullable NSError *)lastFetchErrorForAdsWithMatchingMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
 #pragma mark - Implemented methods
 
-+ (Class)adapterClassForName:(NSString *)adapterName;
++ (nullable Class)adapterClassForName:(nonnull NSString *)adapterName;
 
-+ (NSSet *)allAdapterClasses;
-+ (NSArray *)testActivityAdapters;
++ (nonnull NSSet *)allAdapterClasses;
++ (nonnull NSArray *)testActivityAdapters;
 
 + (BOOL)isHeyzapAdapter;
 

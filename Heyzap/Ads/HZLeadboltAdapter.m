@@ -103,30 +103,30 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     return HZCreativeTypeStatic | HZCreativeTypeIncentivized;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    switch (creativeType) {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic: {
-            HZDLog(@"Prefetching Leadbolt ad of type: %@",NSStringFromCreativeType(creativeType));
+            HZDLog(@"Prefetching Leadbolt ad of type: %@",NSStringFromCreativeType(dataProvider.creativeType));
             [HZAppTracker loadModuleToCache:kHZLeadboltInterstitialModule];
             break;
         }
         case HZCreativeTypeIncentivized: {
-            HZDLog(@"Prefetching Leadbolt ad of type: %@",NSStringFromCreativeType(creativeType));
+            HZDLog(@"Prefetching Leadbolt ad of type: %@",NSStringFromCreativeType(dataProvider.creativeType));
             [HZAppTracker loadModuleToCache:kHZLeadboltIncentivizedModule];
             break;
         }
         default: {
             // Unsupported
-            HZDLog(@"Can't prefetch Leadbolt ad of unsupported type: %@",NSStringFromCreativeType(creativeType));
+            HZDLog(@"Can't prefetch Leadbolt ad of unsupported type: %@",NSStringFromCreativeType(dataProvider.creativeType));
             break;
         }
     }
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    switch (creativeType) {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic: {
             return self.staticCached;
         }
@@ -153,10 +153,10 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     }
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
-    HZDLog(@"Requesting that Leadbolt show an ad of type: %@",NSStringFromCreativeType(creativeType));
-    switch (creativeType) {
+    HZDLog(@"Requesting that Leadbolt show an ad of type: %@", NSStringFromCreativeType(options.creativeType));
+    switch (options.creativeType) {
         case HZCreativeTypeStatic: {
             self.staticCached = NO;
             [HZAppTracker loadModule:kHZLeadboltInterstitialModule viewController:options.viewController];
@@ -189,7 +189,8 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     
     if (wasFailureToCache) {
         HZELog(@"Mediation: Leadbolt ad failed to cache; notification = %@", notification);
-        [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Leadbolt ad failed to cache."}] forCreativeType:[self creativeTypeFromNSNotification:notification]];
+        
+        [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Leadbolt ad failed to cache."}] forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:[self creativeTypeFromNSNotification:notification]]];
     } else { // Otherwise, it failed to show
         HZELog(@"Mediation: Leadbolt ad failed to display; notification = %@", notification);
         [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Leadbolt ad failed to display."}]];
@@ -202,16 +203,16 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     HZCreativeType creativeType = [self creativeTypeFromNSNotification:notification];
     
     if (creativeType == HZCreativeTypeStatic) {
-        [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
+        [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType]];
         self.staticCached = YES;
     } else if (creativeType == HZCreativeTypeIncentivized) {
-        [self clearLastFetchErrorForCreativeType:HZCreativeTypeIncentivized];
+        [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType]];
         self.incentivizedCached = YES;
     } else {
         HZELog(@"Unknown module type cached by Leadbolt. This shouldn't break anything, but it's unexpected. notification = %@",notification);
         // clear all the errors to be safe in this case.
-        [self clearLastFetchErrorForCreativeType:HZCreativeTypeIncentivized];
-        [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
+        [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic]];
+        [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeIncentivized]];
     }
 }
 

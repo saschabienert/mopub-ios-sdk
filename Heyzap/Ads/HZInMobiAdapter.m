@@ -119,42 +119,43 @@
     return self.accountID != nil;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    const long long placementID = [self.creativeTypeToAdUnitID[@(creativeType)] longLongValue];
+    NSNumber *placementIDNumber = self.creativeTypeToAdUnitID[@(dataProvider.creativeType)];
+    const long long placementID = [placementIDNumber longLongValue];
     
-    HZIMInterstitial *ad = self.adDictionary[@(creativeType)];
+    HZIMInterstitial *ad = self.adDictionary[@(dataProvider.creativeType)];
     if (!ad) {
         ad = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
         [ad load];
-        self.adDictionary[@(creativeType)] = ad;
+        self.adDictionary[@(dataProvider.creativeType)] = ad;
     }
     
-    if (creativeType == HZCreativeTypeIncentivized && self.backupRewardedVideo == nil) {
+    if (dataProvider.creativeType == HZCreativeTypeIncentivized && self.backupRewardedVideo == nil) {
         self.backupRewardedVideo = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
         [self.backupRewardedVideo load];
     }
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    HZIMInterstitial *const ad = self.adDictionary[@(creativeType)];
+    HZIMInterstitial *const ad = self.adDictionary[@(dataProvider.creativeType)];
     return [ad isReady];
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
-    HZIMInterstitial *const ad = self.adDictionary[@(creativeType)];
+    HZIMInterstitial *const ad = self.adDictionary[@(options.creativeType)];
     if (ad) {
         [ad showFromViewController:options.viewController];
     } else {
-        NSString *const description = [NSString stringWithFormat:@"The adapter didn't have an ad for the creative type %@ prefetched.",NSStringFromCreativeType(creativeType)];
+        NSString *const description = [NSString stringWithFormat:@"The InMobi adapter didn't have an ad for creative type %@ prefetched, but was asked to show an ad.",NSStringFromCreativeType(options.creativeType)];
         NSError *const error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: description}];
         [self.delegate adapterDidFailToShowAd:self error:error];
     }
 }
 
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     NSNumber *bannerID =  self.creativeTypeToAdUnitID[@(HZCreativeTypeBanner)];
     if (bannerID) {
         return [[HZInMobiBannerAdapter alloc] initWithAdPlacementID:[bannerID longLongValue]
@@ -218,7 +219,7 @@
     if (castedError.code != kIMStatusCodeEarlyRefreshRequest && castedError.code != kIMStatusCodeAdActive) {
         [[HeyzapMediation sharedInstance] sendNetworkCallback:HZNetworkCallbackFetchFailed
                                                    forNetwork:[self name]];
-        [self setLastFetchError:castedError forCreativeType:creativeType];
+        [self setLastFetchError:castedError forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType]];
         
         [self clearAdForCreativeType:creativeType];
     }
@@ -230,7 +231,7 @@
     HZILog(@"InMobi will present interstitial: %@",interstitial);
     const HZCreativeType creativeType = [self creativeTypeForInterstitial:interstitial];
     if (creativeType == HZCreativeTypeUnknown) {
-        HZELog(@"Unknown creative type in %@",NSStringFromSelector(_cmd));
+        HZELog(@"InMobi adapter found unknown creative type in %@",NSStringFromSelector(_cmd));
     } else if (creativeType != HZCreativeTypeStatic) {
         [self.delegate adapterWillPlayAudio:self];
     }

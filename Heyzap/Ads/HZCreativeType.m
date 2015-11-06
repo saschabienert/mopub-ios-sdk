@@ -8,9 +8,6 @@
 
 #import "HZCreativeType.h"
 
-
-
-
 NSString * const hzCreativeTypeUnknownString = @"UNKNOWN";
 NSString * const hzCreativeTypeStaticString = @"STATIC";
 NSString * const hzCreativeTypeVideoString = @"VIDEO";

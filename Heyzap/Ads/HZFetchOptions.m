@@ -39,4 +39,17 @@
     _tag = [HZAdModel normalizeTag:tag];
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    HZFetchOptions *copy = [[HZFetchOptions alloc] init];
+    copy.tag = self.tag;
+    copy.requestingAdType = self.requestingAdType;
+    copy.additionalParameters = self.additionalParameters;
+    copy.completion = self.completion;
+    copy.placementIDOverride = self.placementIDOverride;
+    copy.alreadyNotifiedDelegateOfSuccess = self.alreadyNotifiedDelegateOfSuccess;
+    copy.creativeTypesToFetch = self.creativeTypesToFetch;
+    copy.creativeTypesFetchesFinished = self.creativeTypesFetchesFinished;
+    return copy;
+}
+
 @end

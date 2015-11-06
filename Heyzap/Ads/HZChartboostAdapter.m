@@ -113,9 +113,9 @@
 
 NSString * const kHZCBLocationDefault = @"Default";
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    switch (creativeType) {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic:
             [HZChartboost cacheInterstitial:kHZCBLocationDefault];
             break;
@@ -131,9 +131,9 @@ NSString * const kHZCBLocationDefault = @"Default";
     }
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    switch (creativeType) {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeIncentivized:
             return [HZChartboost hasRewardedVideo:kHZCBLocationDefault];
         case HZCreativeTypeStatic:
@@ -143,9 +143,9 @@ NSString * const kHZCBLocationDefault = @"Default";
     }
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
-    switch (creativeType) {
+    switch (options.creativeType) {
         case HZCreativeTypeStatic:
             [HZChartboost showInterstitial:kHZCBLocationDefault];
             break;
@@ -190,19 +190,19 @@ NSString * const kHZCBLocationDefault = @"Default";
 
 - (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
     [[self class] logError:error];
-    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Chartboost"}] forCreativeType:HZCreativeTypeStatic];
+    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Chartboost"}] forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)didFailToLoadRewardedVideo:(CBLocation)location
                          withError:(CBLoadError)error {
     [[self class] logError:error];
-    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey:@"Chartboost"}] forCreativeType:HZCreativeTypeIncentivized];
+    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey:@"Chartboost"}] forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeIncentivized]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)didCacheRewardedVideo:(CBLocation)location {
-    [self clearLastFetchErrorForCreativeType:HZCreativeTypeIncentivized];
+    [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeIncentivized]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
@@ -259,7 +259,7 @@ NSString * const kHZCBLocationDefault = @"Default";
  */
 
 - (void)didCacheInterstitial:(CBLocation)location {
-    [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
+    [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 

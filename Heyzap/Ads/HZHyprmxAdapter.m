@@ -98,7 +98,7 @@
     return HZCreativeTypeIncentivized;
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType {
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     if (!self.isCheckingAvailability) {
         self.isCheckingAvailability = YES;
         // the block we pass to get the result is called asynchronously, so we save the last result
@@ -112,14 +112,14 @@
     return self.isAdReady;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
 
     [[HZHYPRManager sharedManager] preloadContent];
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options{
+- (void)internalShowAdWithOptions:(HZShowOptions *)options{
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
         self.isAdReady = isOfferReady;
         if (isOfferReady) {
@@ -128,7 +128,7 @@
             
             [[HZHYPRManager sharedManager] displayOffer:^(BOOL completed, id offer) {
                 self.isAdReady = NO;
-                if (creativeType == HZCreativeTypeIncentivized) {
+                if (options.creativeType == HZCreativeTypeIncentivized) {
                     if (completed) {
                         [self.delegate adapterDidCompleteIncentivizedAd: self];
                     } else {

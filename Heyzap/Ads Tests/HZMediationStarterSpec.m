@@ -11,6 +11,7 @@
 #import "HZDevice.h"
 #import "HZUtils.h"
 #import "HZCachingService.h"
+#import "OHHTTPStubsResponse+JSON.h"
 
 @interface HZMediationStarter (Testing)
 

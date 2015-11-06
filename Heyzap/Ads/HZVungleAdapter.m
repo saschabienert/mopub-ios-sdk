@@ -108,12 +108,12 @@ NSString * const HZFallbackVunglePlayAdOptionKeyPlacement = @"placement";
     return HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     BOOL adPlayable = NO;
     
@@ -128,16 +128,16 @@ NSString * const HZFallbackVunglePlayAdOptionKeyPlacement = @"placement";
     return adPlayable;
 }
 
-- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
+- (NSError *)lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     return self.lastError;
 }
 
-- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
+- (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     self.lastError = error;
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
     // setup options
     NSMutableDictionary *vungleOptions = [NSMutableDictionary dictionary];
@@ -146,7 +146,7 @@ NSString * const HZFallbackVunglePlayAdOptionKeyPlacement = @"placement";
     vungleOptions[[[self class] vunglePlayAdOptionKeyPlacement]] = sanitizedPlacement;
     
     
-    if (creativeType == HZCreativeTypeIncentivized) {
+    if (options.creativeType == HZCreativeTypeIncentivized) {
         self.isShowingIncentivized = YES;
         
         NSString *const incentivizedKey = [[self class] vunglePlayAdOptionKeyIncentivized];

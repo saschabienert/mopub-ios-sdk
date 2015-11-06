@@ -10,6 +10,7 @@
 #import "HZFetchOptions.h"
 #import "HeyzapMediation.h"
 #import "HZVideoControlView.h"
+#import "OHHTTPStubsResponse+JSON.h"
 
 @implementation TestHeyzapVideo
 

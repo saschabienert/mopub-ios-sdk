@@ -82,24 +82,24 @@
     return HZCreativeTypeStatic | HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
+    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:dataProvider.creativeType]];
     if(client && client.state == HZHeyzapExchangeClientStateFetching){
         //already fetching
-        HZDLog(@"Already fetching creativeType=%@", NSStringFromCreativeType(creativeType));
+        HZDLog(@"Already fetching creativeType=%@", NSStringFromCreativeType(dataProvider.creativeType));
         return;
     }
     
     HZHeyzapExchangeClient *newClient = [[HZHeyzapExchangeClient alloc] init];
+    [self.exchangeClientsPerCreativeType setObject:newClient forKey:[self creativeTypeAsDictKey:dataProvider.creativeType]];
     [newClient setDelegate:self];
-    [newClient fetchForCreativeType:creativeType];
-    [self.exchangeClientsPerCreativeType setObject:newClient forKey:[self creativeTypeAsDictKey:creativeType]];
+    [newClient fetchForCreativeType:dataProvider.creativeType];
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
+    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:dataProvider.creativeType]];
     if(client && client.state == HZHeyzapExchangeClientStateReady){
         return YES;
     }
@@ -107,12 +107,12 @@
     return NO;
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
-    HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
+    HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:options.creativeType]];
     if(!exchangeClient || exchangeClient.state != HZHeyzapExchangeClientStateReady){
-        HZELog(@"HeyzapExchangeAdapter: No ad available for creativeType=%@", NSStringFromCreativeType(creativeType));
-        [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an ad of creativeType: %@, but it doesn't have one.", [[self class] humanizedName], NSStringFromCreativeType(creativeType)]}]];
+        HZELog(@"HeyzapExchangeAdapter: No ad available for creativeType=%@", NSStringFromCreativeType(options.creativeType));
+        [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an ad of creativeType: %@, but it doesn't have one.", [[self class] humanizedName], NSStringFromCreativeType(options.creativeType)]}]];
         return;
     }
     
@@ -120,7 +120,7 @@
 }
 
 - (NSNumber *) adScoreForCreativeType:(HZCreativeType)creativeType {
-    if(![self hasAdForCreativeType:creativeType]){
+    if(![self hasAdWithMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType]]){
         return nil;
     }
     
@@ -142,13 +142,13 @@
 #pragma mark - HZHeyzapExchangeClientDelegate
 
 - (void) client:(HZHeyzapExchangeClient *)client didFetchAdWithCreativeType:(HZCreativeType)creativeType {
-    [self clearLastFetchErrorForCreativeType:creativeType];
+    [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType]];
     [self.exchangeClientsPerCreativeType setObject:client forKey:[self creativeTypeAsDictKey:creativeType]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (void) client:(HZHeyzapExchangeClient *)client didFailToFetchAdWithCreativeType:(HZCreativeType)creativeType error:(NSString *)error {
-    [self setLastFetchError:[NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}] forCreativeType:creativeType];
+    [self setLastFetchError:[NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}] forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
     [self.exchangeClientsPerCreativeType removeObjectForKey:[self creativeTypeAsDictKey:creativeType]];
 }
