@@ -13,6 +13,7 @@
 #import "HZAvailability.h"
 #import "HZHeyzapExchangeClient.h"
 #import <AdSupport/AdSupport.h>
+#import "HZWebViewPool.h"
 
 @implementation HZHeyzapExchangeRequestSerializer
 
@@ -34,6 +35,7 @@
 #pragma mark - Default Parameters
 
 + (NSMutableDictionary *)defaultParams {
+    HZParameterAssert([NSThread isMainThread]);
     // Profiling revealed this to be mildly expensive. The values never change so dispatch_once is a good optimization.
     static NSDictionary *defaultParams = nil;
     static CGFloat screenScale;
@@ -49,8 +51,10 @@
         
         screenScale = [[UIScreen mainScreen] scale]; //used to convert width and height from points to pixels
         
-        UIWebView* webView = [[UIWebView alloc] initWithFrame:CGRectZero];
-        NSString* userAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"] ?: @"";
+        UIWebView *webView = [[HZWebViewPool sharedPool] checkoutPool];
+        NSString *userAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"] ?: @"";
+        [[HZWebViewPool sharedPool] returnWebView:webView];
+        
         
         NSString *versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
         versionString = versionString ?: @"";
