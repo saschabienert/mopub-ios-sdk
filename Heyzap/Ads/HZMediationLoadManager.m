@@ -212,12 +212,21 @@
         
         hzFirstObjectPassingTest(loadData, ^BOOL(HZMediationLoadData *datum, NSUInteger idx) {
          
+            HZBaseAdapter *const adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
+            HZMediationAdAvailabilityDataProvider *const fetchMetadata = [self mediationAdAvailabilityDataProviderForAdapter:adapter tag:fetchOptions.tag creativeType:creativeType];
+            
+            // fix for https://app.asana.com/0/35280979113491/62069672523709
+            // basically, if we're fetching multiple creativeTypes simultaneously, one might succeed and show before the other creativeType(s) finish fetching.
+            // in that scenario, if there's a rate limit of 1 ad per minute, for instance, we don't want to fetch anymore if segmentation is going to say the
+            //   fetch is no good in `firstAdapterThatHasAdFromLoadData:...`.
+            // otherwise we'll fetch and load all networks.
+            if (![self.segmentationController allowAdapter:adapter toShowAdWithMetadata:fetchMetadata]) {
+                HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because segmentation says it won't allow an ad of creativeType=%@ any more for tag=%@.", [datum.adapterClass name], NSStringFromCreativeType(creativeType), fetchOptions.tag);
+                return NO;
+            }
+            
             const BOOL setupSuccessful = [self.delegate setupAdapterNamed:datum.networkName];
             if (setupSuccessful) {
-                
-                HZBaseAdapter *const adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
-                HZMediationAdAvailabilityDataProvider *const fetchMetadata = [self mediationAdAvailabilityDataProviderForAdapter:adapter tag:fetchOptions.tag creativeType:creativeType];
-
                 if (![networksAlreadyFetched containsObject:datum.adapterClass]) {
                     [networksAlreadyFetched addObject:datum.adapterClass];
                     dispatch_sync([self.delegate pausableMainQueue], ^{
