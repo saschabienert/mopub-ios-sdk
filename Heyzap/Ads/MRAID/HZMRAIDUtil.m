@@ -10,6 +10,41 @@
 
 @implementation HZMRAIDUtil
 
+// Initializing regular expressions takes around 6ms; dispatch_once avoids a repeated cost.
+
++ (NSRegularExpression *)scriptTagRegexp {
+    static NSRegularExpression *regexp;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        regexp = [NSRegularExpression regularExpressionWithPattern:@"<script\\s+[^>]*\\bsrc\\s*=\\s*([\\\"\\\'])mraid\\.js\\1[^>]*>\\s*</script>\\n*"
+                                                           options:NSRegularExpressionCaseInsensitive
+                                                             error:NULL];
+    });
+    return regexp;
+}
+
++ (NSRegularExpression *)htmlTagRegexp {
+    static NSRegularExpression *regexp;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        regexp = [NSRegularExpression regularExpressionWithPattern:@"<html[^>]*>"
+                                                           options:NSRegularExpressionCaseInsensitive
+                                                             error:NULL];
+    });
+    return regexp;
+}
+
++ (NSRegularExpression *)headTagRegexp {
+    static NSRegularExpression *regexp;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        regexp = [NSRegularExpression regularExpressionWithPattern:@"<head[^>]*>"
+                                                           options:NSRegularExpressionCaseInsensitive
+                                                             error:NULL];
+    });
+    return regexp;
+}
+
 + (NSString *)processRawHtml:(NSString *)rawHtml
 {
     NSString *processedHtml = rawHtml;
@@ -21,13 +56,7 @@
     // But we should also be to handle additional attributes and whitespace like this:
     // <script  type = 'text/javascript'  src = 'mraid.js' > </script>
     
-    NSString *pattern = @"<script\\s+[^>]*\\bsrc\\s*=\\s*([\\\"\\\'])mraid\\.js\\1[^>]*>\\s*</script>\\n*";
-    NSError *error = NULL;
-    
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern
-                                                                           options:NSRegularExpressionCaseInsensitive
-                                                                             error:&error];
-    processedHtml = [regex stringByReplacingMatchesInString:processedHtml
+    processedHtml = [[self scriptTagRegexp] stringByReplacingMatchesInString:processedHtml
                                                     options:0
                                                       range:NSMakeRange(0, [processedHtml length])
                                                withTemplate:@""];
@@ -61,12 +90,7 @@
                          ];
     } else if (!hasHeadTag) {
         // html tag exists, head tag doesn't, so add it
-        pattern = @"<html[^>]*>";
-        error = NULL;
-        regex = [NSRegularExpression regularExpressionWithPattern:pattern
-                                                          options:NSRegularExpressionCaseInsensitive
-                                                            error:&error];
-        processedHtml = [regex stringByReplacingMatchesInString:processedHtml
+        processedHtml = [[self htmlTagRegexp] stringByReplacingMatchesInString:processedHtml
                                                         options:0
                                                           range:NSMakeRange(0, [processedHtml length])
                                                    withTemplate:@"$0\n<head>\n</head>"];
@@ -82,12 +106,7 @@
     "*:not(input) { -webkit-touch-callout:none; -webkit-user-select:none; -webkit-text-size-adjust:none; }\n"
     "</style>";
     
-    pattern = @"<head[^>]*>";
-    error = NULL;
-    regex = [NSRegularExpression regularExpressionWithPattern:pattern
-                                                      options:NSRegularExpressionCaseInsensitive
-                                                        error:&error];
-    processedHtml = [regex stringByReplacingMatchesInString:processedHtml
+    processedHtml = [[self headTagRegexp] stringByReplacingMatchesInString:processedHtml
                                                     options:0
                                                       range:NSMakeRange(0, [processedHtml length])
                                                withTemplate:[NSString stringWithFormat:@"$0\n%@\n%@", metaTag, styleTag]];
