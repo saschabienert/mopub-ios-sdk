@@ -16,9 +16,8 @@
 #import "HZLabeledActivityIndicator.h"
 #import "HZEnums.h"
 
-@interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
+@interface HZAdViewController()<SKStoreProductViewControllerDelegate>
 
-@property (nonatomic) UIWebView *clickTrackingWebView;
 @property (nonatomic) HZLabeledActivityIndicator *activityIndicator;
 
 @property (nonatomic) BOOL statusBarHidden;
@@ -46,17 +45,6 @@
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
-}
-
-- (void) dealloc {
-    if (self.clickTrackingWebView != nil) {
-        [self.clickTrackingWebView loadHTMLString: @"" baseURL: nil];
-        [self.clickTrackingWebView stopLoading];
-        self.clickTrackingWebView.delegate = nil;
-        [self.clickTrackingWebView removeFromSuperview];
-    }
-    
-    self.clickTrackingWebView = nil;
 }
 
 - (void) show {
@@ -145,26 +133,6 @@
 
 - (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController {
     [self dismissViewControllerAnimated:YES completion:nil];
-    
-    [self applicationDidEnterForeground: nil];
-}
-
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    NSURL *url = request.URL;
-    if(url.host && [url.host rangeOfString:@"itunes.apple"].location != NSNotFound){
-        //We've loaded a click URL in the webview, don't redirect to itunes since we are launching
-        //the store kit product view
-        
-        [HZLog debug: @"(POSTBACK COMPLETE)"];
-        
-        return NO;
-    }
-    
-    return YES;
-}
-
--  (void)webViewDidFinishLoad:(UIWebView *)webView {
-    
 }
 
 #pragma mark - Utility
@@ -176,10 +144,6 @@
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: keyWindow] & UIInterfaceOrientationMaskLandscape;
     }
-}
-
-- (void) applicationDidEnterForeground: (id) notification {
-    
 }
 
 

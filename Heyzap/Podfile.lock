@@ -14,19 +14,19 @@ PODS:
   - OCHamcrest (4.3.0)
   - OCMockito (2.0.1):
     - OCHamcrest (~> 4.0)
-  - OHHTTPStubs (HEAD based on 4.3.0):
-    - OHHTTPStubs/Default (= HEAD based on 4.3.0)
-  - OHHTTPStubs/Core (HEAD based on 4.3.0)
-  - OHHTTPStubs/Default (HEAD based on 4.3.0):
+  - OHHTTPStubs (HEAD based on 4.6.0):
+    - OHHTTPStubs/Default (= HEAD based on 4.6.0)
+  - OHHTTPStubs/Core (HEAD based on 4.6.0)
+  - OHHTTPStubs/Default (HEAD based on 4.6.0):
     - OHHTTPStubs/Core
     - OHHTTPStubs/JSON
     - OHHTTPStubs/NSURLSession
     - OHHTTPStubs/OHPathHelpers
-  - OHHTTPStubs/JSON (HEAD based on 4.3.0):
+  - OHHTTPStubs/JSON (HEAD based on 4.6.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/NSURLSession (HEAD based on 4.3.0):
+  - OHHTTPStubs/NSURLSession (HEAD based on 4.6.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/OHPathHelpers (HEAD based on 4.3.0)
+  - OHHTTPStubs/OHPathHelpers (HEAD based on 4.6.0)
   - UnityAds (1.5.2)
   - VungleAdvertiserSDK (3.2.0)
 
@@ -59,7 +59,7 @@ SPEC CHECKSUMS:
   Masonry: ff105a956abcd19a618b2028b121cb638d7a8e2f
   OCHamcrest: cd63d27f48a266d4412c0b295b01b8f0940efa81
   OCMockito: f92ad4c6fac2841a88558879cfe517c40aebf91e
-  OHHTTPStubs: 0aec5755528693a165bd616cb79f69387de306a8
+  OHHTTPStubs: cb1aefbbeb4de4e741644455d4b945538e5248a2
   UnityAds: 76f1a98bf40597f1c0aab01f65c700b7734dcbd9
   VungleAdvertiserSDK: c3ece1bf66a7f34688cfed832e2b12e321bbed03
 
