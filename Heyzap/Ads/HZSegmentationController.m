@@ -69,7 +69,6 @@
         
         NSMutableArray<HZSegmentationFrequencyLimitRule *> *frequencyRules = [NSMutableArray array];
         
-        
         for (NSDictionary * rule in rules) {
             NSString *ruleType = [HZDictionaryUtils objectForKey:RULEKEY_TYPE ofClass:[NSString class] default:@"" dict:rule];
 
@@ -187,6 +186,10 @@
 }
 
 - (nullable NSString *) placementIDOverrideForAdapter:(nonnull HZBaseAdapter *)adapter tag:(nonnull NSString *)tag creativeType:(HZCreativeType)creativeType {
+    if (!self.enabled) {
+        return nil;
+    }
+    
     __block NSString *retVal = nil;
     [self.segments enumerateObjectsUsingBlock:^(HZSegmentationSegment *segment, BOOL *stop) {
         if ([segment appliesToRequestWithTag:tag]) {
