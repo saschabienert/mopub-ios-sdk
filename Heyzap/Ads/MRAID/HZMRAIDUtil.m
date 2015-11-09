@@ -12,6 +12,12 @@
 
 // Initializing regular expressions takes around 6ms; dispatch_once avoids a repeated cost.
 
++ (void)preloadRegexps {
+    [self scriptTagRegexp];
+    [self htmlTagRegexp];
+    [self headTagRegexp];
+}
+
 + (NSRegularExpression *)scriptTagRegexp {
     static NSRegularExpression *regexp;
     static dispatch_once_t onceToken;
