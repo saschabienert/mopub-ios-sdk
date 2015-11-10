@@ -803,29 +803,27 @@ const unsigned long long adStalenessTimeout = 15;
                 }];
             }
             
-            NSOrderedSet *currentList = [self.availabilityChecker parseMediateIntoAdaptersForShow:latestMediate validAdapterClasses:validAdapterClasses adType:HZAdTypeBanner];
+            __block NSOrderedSet *currentList = [self.availabilityChecker parseMediateIntoAdaptersForShow:latestMediate validAdapterClasses:validAdapterClasses adType:HZAdTypeBanner];
             
-            // Remove adapters that segmentation will not allow to show an ad right now so we don't bother initializing them
-            currentList = hzFilterOrderedSet(currentList, ^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {
-                NSString *placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:[adapterWithScore adapter] tag:options.tag creativeType:HZCreativeTypeBanner];
-                HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeBanner placementIDOverride:placementIDOverride tag:options.tag];
+            hzEnsureMainQueue(^{
+                // Remove adapters that segmentation will not allow to show an ad right now so we don't bother initializing them
+                currentList = hzFilterOrderedSet(currentList, ^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {
+                    NSString *placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:[adapterWithScore adapter] tag:options.tag creativeType:HZCreativeTypeBanner];
+                    HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeBanner placementIDOverride:placementIDOverride tag:options.tag];
+                    
+                    if ([self.segmentationController allowAdapter:[adapterWithScore adapter] toShowAdWithMetadata:metadata]) {
+                        return YES;
+                    } else {
+                        HZDLog(@"Ad network %@ not allowed to show a banner ad under current segmentation rules.", [[adapterWithScore adapter] name]);
+                        return NO;
+                    }
+                });
                 
-                if ([self.segmentationController allowAdapter:[adapterWithScore adapter] toShowAdWithMetadata:metadata]) {
-                    return YES;
-                } else {
-                    HZDLog(@"Ad network %@ not allowed to show a banner ad under current segmentation rules.", [[adapterWithScore adapter] name]);
-                    return NO;
-                }
             });
             
-            // setup all banner adapters that pass segmentation
-            for(HZMediationAdapterWithCreativeTypeScore *adapterWithScore in currentList) {
-                [self setupAdapterNamed:[[adapterWithScore adapter] name]];
-            }
-            
-            // filter out adapter classes that didn't get set up properly above, since we passed all present adapter classes to `parseMediateIntoAdaptersForShow`
+            // setup all banner adapters that pass segmentation and filter out adapter classes that don't get set up properly
             currentList = hzFilterOrderedSet(currentList, ^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore) {
-                return [self.setupMediatorClasses containsObject:[[adapterWithScore adapter] class]];
+                return [self setupAdapterNamed:[[adapterWithScore adapter] name]];
             });
             
             currentList;
