@@ -130,10 +130,10 @@
     self.segments = [NSSet setWithArray:loadedSegments];
     
     // send segments off to retrieve their persisted impression history
-    [self loadSegmentsFromImpressionHistoryWithCompletion:completion];
+    [self loadSegments:self.segments fromImpressionHistoryWithCompletion:completion];
 }
 
-- (void) loadSegmentsFromImpressionHistoryWithCompletion:(nullable void (^)(BOOL successful))completion {
+- (void) loadSegments:(nonnull NSSet *const)segments fromImpressionHistoryWithCompletion:(nullable void (^)(BOOL successful))completion {
     dispatch_async(self.impressionDbReadQueue, ^{
         sqlite3 *db = [[HZImpressionHistory sharedInstance] safeImpressionTableDatabaseConnection];
         if(!db) {
@@ -146,7 +146,7 @@
             return;
         }
         
-        for(HZSegmentationSegment *segment in self.segments) {
+        for(HZSegmentationSegment *segment in segments) {
             [segment loadWithDb:db];
         }
         
@@ -230,7 +230,7 @@
         return;
     }
     
-    [self loadSegmentsFromImpressionHistoryWithCompletion:completion];
+    [self loadSegments:self.segments fromImpressionHistoryWithCompletion:completion];
 }
 
 + (HZAuctionType) auctionTypeForAdapter:(nonnull HZBaseAdapter *)adapter {
