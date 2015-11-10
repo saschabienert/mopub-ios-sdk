@@ -211,7 +211,7 @@ NSString * const kHZNetworkName = @"mobile";
 }
 
 - (void)unityAdsWillLeaveApplication {
-    [self.delegate adapterWasClicked:self];
+    // Unused. This used to be a used as a proxy for click callbacks, but since UnityAds started using SKStoreProductViewController this is no longer reliable.
 }
 
 - (void)unityAdsVideoStarted {
