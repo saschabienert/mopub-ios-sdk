@@ -67,7 +67,7 @@ describe(@"HZSegmentationFrequencyLimitRule", ^{
         frequencyLimitRule = [[HZSegmentationFrequencyLimitRule alloc] init];
         [[theValue(frequencyLimitRule.creativeType) should] equal:theValue(allCreativeTypes)];
         [[[frequencyLimitRule parentSegment] should] beNil];
-        [[[frequencyLimitRule adTags] should] equal:@[]];//parent unset, empty should be default
+        [[[frequencyLimitRule adTags] should] equal:[NSSet set]];//parent unset, empty should be default
         [[theValue(frequencyLimitRule.impressionLimit) should] equal:theValue(NSUIntegerMax)];
         [[theValue(frequencyLimitRule.auctionType) should] equal:theValue(allAuctionTypes)];
         [[theValue(frequencyLimitRule.adsEnabled) should] equal:theValue(YES)];

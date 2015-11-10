@@ -14,8 +14,8 @@
 
 @interface HZSegmentationSegment()
 
-@property (nonatomic, nonnull) NSArray<NSString *> *adTags; // empty == applies to any tag
-@property (nonatomic, nonnull) NSArray<NSString *> *disabledNetworks; // empty == no disabled networks
+@property (nonatomic, nonnull) NSSet<NSString *> *adTags; // empty == applies to any tag
+@property (nonatomic, nonnull) NSSet<NSString *> *disabledNetworks; // empty == no disabled networks
 
 @property (nonatomic, nonnull) NSArray<HZSegmentationFrequencyLimitRule *> *frequencyLimitRules;
 
@@ -29,7 +29,7 @@
 
 #pragma mark - Init
 
-- (nullable instancetype) initWithTags:(nonnull NSArray *)tags disabledNetworks:(nonnull NSArray *)disabledNetworks placementIDOverrides:(nonnull NSDictionary <NSString *, NSString *>*)placementIDOverrides frequencyLimitRules:(nonnull NSArray <HZSegmentationFrequencyLimitRule *> *)frequencyLimitRules name:(nullable NSString *)name {
+- (nullable instancetype) initWithTags:(nonnull NSSet *)tags disabledNetworks:(nonnull NSSet *)disabledNetworks placementIDOverrides:(nonnull NSDictionary <NSString *, NSString *>*)placementIDOverrides frequencyLimitRules:(nonnull NSArray <HZSegmentationFrequencyLimitRule *> *)frequencyLimitRules name:(nullable NSString *)name {
     self = [super init];
     if (self) {
         _adTags = tags;
@@ -121,7 +121,7 @@
 
 
 - (NSString *) description {
-    return [NSString stringWithFormat:@"{[Segment] name: \"%@\"  tags: [%@], disabled networks: [%@], placement ID overrides: %@ %@ Frequency Limits: %@}", self.name, [self.adTags componentsJoinedByString:@", "], [self.disabledNetworks componentsJoinedByString:@", "], self.placementIDOverrides,  (self.isLoaded ? @"" : @" -- Not yet loaded from db --"), self.frequencyLimitRules];
+    return [NSString stringWithFormat:@"{[Segment] name: \"%@\"  tags: [%@], disabled networks: [%@], placement ID overrides: %@ %@ Frequency Limits: %@}", self.name, [self.adTags.allObjects componentsJoinedByString:@", "], [self.disabledNetworks.allObjects componentsJoinedByString:@", "], self.placementIDOverrides,  (self.isLoaded ? @"" : @" -- Not yet loaded from db --"), self.frequencyLimitRules];
 }
 
 @end

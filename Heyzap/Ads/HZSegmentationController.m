@@ -59,9 +59,9 @@
     
     NSArray * segmentsResponse = [HZDictionaryUtils objectForKey:@"segments" ofClass:[NSArray class] default:@[] dict:startDictionary];
     for (NSDictionary *segmentDict in segmentsResponse) {
-        NSArray *tags = @[];
+        NSSet *tags = [NSSet set];
         NSDictionary <NSString *, NSString *>* placementIDOverrides = @{};
-        NSArray *disabledNetworks = @[];
+        NSSet *disabledNetworks = [NSSet set];
         NSString *name = [HZDictionaryUtils objectForKey:SEGMENTKEY_NAME ofClass:[NSString class] default:nil dict:segmentDict];
         
         NSMutableArray *rules = [HZDictionaryUtils objectForKey:SEGMENTKEY_RULES ofClass:[NSArray class] default:@[] dict:segmentDict];
@@ -74,7 +74,7 @@
 
             if ([ruleType isEqualToString:RULETYPE_TAG_FILTER]) {
                 NSDictionary *options = [HZDictionaryUtils objectForKey:RULEKEY_OPTIONS ofClass:[NSDictionary class] default:@{} dict:rule];
-                tags = [HZDictionaryUtils objectForKey:OPTIONKEY_TAGS ofClass:[NSArray class] default:nil dict:options];
+                tags = [NSSet setWithArray:[HZDictionaryUtils objectForKey:OPTIONKEY_TAGS ofClass:[NSArray class] default:@[] dict:options]];
                 
             } else if ([ruleType isEqualToString:RULETYPE_PLACEMENT_ID_OVERRIDES]) {
                 // options dict ~= {"network" => {"creativeType" => "new_placement_id"}}
@@ -82,7 +82,7 @@
                 
             } else if ([ruleType isEqualToString:RULETYPE_NETWORK_DISABLES]) {
                 NSDictionary *options = [HZDictionaryUtils objectForKey:RULEKEY_OPTIONS ofClass:[NSDictionary class] default:@{} dict:rule];
-                disabledNetworks = [HZDictionaryUtils objectForKey:OPTIONKEY_NETWORKS ofClass:[NSArray class] default:nil dict:options];
+                disabledNetworks = [NSSet setWithArray:[HZDictionaryUtils objectForKey:OPTIONKEY_NETWORKS ofClass:[NSArray class] default:@[] dict:options]];
                 
             } else if ([ruleType isEqualToString:RULETYPE_MONETIZING_ADS_FREQUENCY]
                        || [ruleType isEqualToString:RULETYPE_CROSSPROMO_ADS_FREQUENCY]) {

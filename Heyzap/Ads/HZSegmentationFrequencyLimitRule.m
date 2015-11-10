@@ -127,12 +127,12 @@
     return self.impressionHistory != nil;
 }
 
-- (nonnull NSArray<NSString *> *) adTags {
+- (nonnull NSSet<NSString *> *) adTags {
     if (self.parentSegment) {
         return [self.parentSegment adTags];
     }
     
-    return @[];
+    return [NSSet set];
 }
 
 
@@ -153,7 +153,7 @@
 }
 
 - (NSString *) description {
-    return [NSString stringWithFormat:@"{[Frequency Rule] time interval: %i seconds, creativeType: %@, auctionType: %@, adTags: [%@], ads enabled: %@, impression count/limit: %lu/%lu segment name: \"%@\" %@}", (int)self.timeInterval, (self.creativeType == HZCreativeTypeUnknown ? @"ALL" : NSStringFromCreativeType(self.creativeType)), (self.auctionType == HZAuctionTypeMixed ? @"ALL" :NSStringFromHZAuctionType(self.auctionType)), [[self adTags] componentsJoinedByString:@", "], (self.adsEnabled ? @"yes" : @"no"), (unsigned long)self.impressionCount, (unsigned long)self.impressionLimit, self.parentSegment.name, (self.isLoaded ? @"" : @" -- Not yet loaded from db --")];
+    return [NSString stringWithFormat:@"{[Frequency Rule] time interval: %i seconds, creativeType: %@, auctionType: %@, adTags: [%@], ads enabled: %@, impression count/limit: %lu/%lu segment name: \"%@\" %@}", (int)self.timeInterval, (self.creativeType == HZCreativeTypeUnknown ? @"ALL" : NSStringFromCreativeType(self.creativeType)), (self.auctionType == HZAuctionTypeMixed ? @"ALL" :NSStringFromHZAuctionType(self.auctionType)), [[self adTags].allObjects componentsJoinedByString:@", "], (self.adsEnabled ? @"yes" : @"no"), (unsigned long)self.impressionCount, (unsigned long)self.impressionLimit, self.parentSegment.name, (self.isLoaded ? @"" : @" -- Not yet loaded from db --")];
 }
 
 @end
