@@ -195,7 +195,7 @@
  * Notifies the delegate that the interstitial has finished loading
  */
 - (void)interstitialDidFinishLoading:(HZIMInterstitial*)interstitial {
-    HZDLog(@"InMobi loaded ad")
+    HZDLog(@"InMobi loaded ad");
     [[HeyzapMediation sharedInstance] sendNetworkCallback:HZNetworkCallbackAvailable
                                                forNetwork:[self name]];
 }
