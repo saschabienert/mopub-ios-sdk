@@ -26,6 +26,15 @@
 
 - (void) loadWithDb:(nonnull sqlite3 *)db;
 
+/**
+ *  Tells the frequency limit rule that an impression occurred.
+ *
+ *  @param creativeType The creativeType of the impression
+ *  @param adapter      The adapter that showed the ad
+ *  @param date         The time the ad was shown
+ *
+ *  @return Whether or not the frequency limit rule applies to that impression. This value is only used for testing purposes.
+ */
 - (BOOL) recordImpressionWithCreativeType:(HZCreativeType)creativeType adapter:(nonnull HZBaseAdapter *)adapter date:(nonnull NSDate *)date;
 - (BOOL) limitsImpressionWithCreativeType:(HZCreativeType)creativeType adapter:(nonnull HZBaseAdapter *)adapter;
 
