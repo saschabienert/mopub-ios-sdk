@@ -18,5 +18,6 @@
 @interface HZMRAIDUtil : NSObject
 
 + (NSString *)processRawHtml:(NSString *)rawHtml;
++ (void)preloadRegexps;
 
 @end
