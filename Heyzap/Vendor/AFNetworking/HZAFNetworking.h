@@ -1,6 +1,6 @@
-// AFNetworking.h
+// HZAFNetworking.h
 //
-// Copyright (c) 2013 AFNetworking (http://afnetworking.com/)
+// Copyright (c) 2013 HZAFNetworking (http://afnetworking.com/)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,16 +29,18 @@
     #import "HZAFURLRequestSerialization.h"
     #import "HZAFURLResponseSerialization.h"
     #import "HZAFSecurityPolicy.h"
+#if !TARGET_OS_WATCH
     #import "HZAFNetworkReachabilityManager.h"
-
     #import "HZAFURLConnectionOperation.h"
     #import "HZAFHTTPRequestOperation.h"
     #import "HZAFHTTPRequestOperationManager.h"
+#endif
 
-//#if ( ( defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 1090) || \
-//      ( defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000 ) )
-//    #import "AFURLSessionManager.h"
-//    #import "AFHTTPSessionManager.h"
-//#endif
+#if ( ( defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 1090) || \
+      ( defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000 ) || \
+       TARGET_OS_WATCH )
+    #import "HZAFURLSessionManager.h"
+    #import "HZAFHTTPSessionManager.h"
+#endif
 
 #endif /* _HZAFNETWORKING_ */

@@ -1,6 +1,5 @@
-// AFNetworkReachabilityManager.h
-//
-// Copyright (c) 2013-2015 AFNetworking (http://afnetworking.com)
+// HZAFNetworkReachabilityManager.h
+// Copyright (c) 2011–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +20,8 @@
 // THE SOFTWARE.
 
 #import <Foundation/Foundation.h>
+
+#if !TARGET_OS_WATCH
 #import <SystemConfiguration/SystemConfiguration.h>
 
 #ifndef NS_DESIGNATED_INITIALIZER
@@ -38,14 +39,16 @@ typedef NS_ENUM(NSInteger, HZAFNetworkReachabilityStatus) {
     HZAFNetworkReachabilityStatusReachableViaWiFi = 2,
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
- `AFNetworkReachabilityManager` monitors the reachability of domains, and addresses for both WWAN and WiFi network interfaces.
+ `HZAFNetworkReachabilityManager` monitors the reachability of domains, and addresses for both WWAN and WiFi network interfaces.
 
  Reachability can be used to determine background information about why a network operation failed, or to trigger a network operation retrying when a connection is established. It should not be used to prevent a user from initiating a network request, as it's possible that an initial request may be required to establish reachability.
 
  See Apple's Reachability Sample Code (https://developer.apple.com/library/ios/samplecode/reachability/)
 
- @warning Instances of `AFNetworkReachabilityManager` must be started with `-startMonitoring` before reachability status can be determined.
+ @warning Instances of `HZAFNetworkReachabilityManager` must be started with `-startMonitoring` before reachability status can be determined.
  */
 @interface HZAFNetworkReachabilityManager : NSObject
 
@@ -137,7 +140,7 @@ typedef NS_ENUM(NSInteger, HZAFNetworkReachabilityStatus) {
 
  @param block A block object to be executed when the network availability of the `baseURL` host changes.. This block has no return value and takes a single argument which represents the various reachability states from the device to the `baseURL`.
  */
-- (void)setReachabilityStatusChangeBlock:(void (^)(HZAFNetworkReachabilityStatus status))block;
+- (void)setReachabilityStatusChangeBlock:(nullable void (^)(HZAFNetworkReachabilityStatus status))block;
 
 @end
 
@@ -148,7 +151,7 @@ typedef NS_ENUM(NSInteger, HZAFNetworkReachabilityStatus) {
 /**
  ## Network Reachability
 
- The following constants are provided by `AFNetworkReachabilityManager` as possible network reachability statuses.
+ The following constants are provided by `HZAFNetworkReachabilityManager` as possible network reachability statuses.
 
  enum {
  HZAFNetworkReachabilityStatusUnknown,
@@ -173,9 +176,9 @@ typedef NS_ENUM(NSInteger, HZAFNetworkReachabilityStatus) {
 
  Strings that are used as keys in a `userInfo` dictionary in a network reachability status change notification.
 
- `AFNetworkingReachabilityNotificationStatusItem`
- A key in the userInfo dictionary in a `AFNetworkingReachabilityDidChangeNotification` notification.
- The corresponding value is an `NSNumber` object representing the `AFNetworkReachabilityStatus` value for the current reachability status.
+ `HZAFNetworkingReachabilityNotificationStatusItem`
+ A key in the userInfo dictionary in a `HZAFNetworkingReachabilityDidChangeNotification` notification.
+ The corresponding value is an `NSNumber` object representing the `HZAFNetworkReachabilityStatus` value for the current reachability status.
  */
 
 ///--------------------
@@ -184,18 +187,21 @@ typedef NS_ENUM(NSInteger, HZAFNetworkReachabilityStatus) {
 
 /**
  Posted when network reachability changes.
- This notification assigns no notification object. The `userInfo` dictionary contains an `NSNumber` object under the `AFNetworkingReachabilityNotificationStatusItem` key, representing the `AFNetworkReachabilityStatus` value for the current network reachability.
+ This notification assigns no notification object. The `userInfo` dictionary contains an `NSNumber` object under the `HZAFNetworkingReachabilityNotificationStatusItem` key, representing the `HZAFNetworkReachabilityStatus` value for the current network reachability.
 
  @warning In order for network reachability to be monitored, include the `SystemConfiguration` framework in the active target's "Link Binary With Library" build phase, and add `#import <SystemConfiguration/SystemConfiguration.h>` to the header prefix of the project (`Prefix.pch`).
  */
-extern NSString * const HZAFNetworkingReachabilityDidChangeNotification;
-extern NSString * const HZAFNetworkingReachabilityNotificationStatusItem;
+FOUNDATION_EXPORT NSString * const HZAFNetworkingReachabilityDidChangeNotification;
+FOUNDATION_EXPORT NSString * const HZAFNetworkingReachabilityNotificationStatusItem;
 
 ///--------------------
 /// @name Functions
 ///--------------------
 
 /**
- Returns a localized string representation of an `AFNetworkReachabilityStatus` value.
+ Returns a localized string representation of an `HZAFNetworkReachabilityStatus` value.
  */
-extern NSString * HZAFStringFromNetworkReachabilityStatus(HZAFNetworkReachabilityStatus status);
+FOUNDATION_EXPORT NSString * HZAFStringFromNetworkReachabilityStatus(HZAFNetworkReachabilityStatus status);
+
+NS_ASSUME_NONNULL_END
+#endif

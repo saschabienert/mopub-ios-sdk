@@ -1,6 +1,5 @@
-// AFHTTPRequestOperationManager.h
-//
-// Copyright (c) 2013-2015 AFNetworking (http://afnetworking.com)
+// HZAFHTTPRequestOperationManager.h
+// Copyright (c) 2011–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,24 +43,26 @@
 #endif
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
- `AFHTTPRequestOperationManager` encapsulates the common patterns of communicating with a web application over HTTP, including request creation, response serialization, network reachability monitoring, and security, as well as request operation management.
+ `HZAFHTTPRequestOperationManager` encapsulates the common patterns of communicating with a web application over HTTP, including request creation, response serialization, network reachability monitoring, and security, as well as request operation management.
 
  ## Subclassing Notes
 
- Developers targeting iOS 7 or Mac OS X 10.9 or later that deal extensively with a web service are encouraged to subclass `AFHTTPSessionManager`, providing a class method that returns a shared singleton object on which authentication and other configuration can be shared across the application.
+ Developers targeting iOS 7 or Mac OS X 10.9 or later that deal extensively with a web service are encouraged to subclass `HZAFHTTPSessionManager`, providing a class method that returns a shared singleton object on which authentication and other configuration can be shared across the application.
 
- For developers targeting iOS 6 or Mac OS X 10.8 or earlier, `AFHTTPRequestOperationManager` may be used to similar effect.
+ For developers targeting iOS 6 or Mac OS X 10.8 or earlier, `HZAFHTTPRequestOperationManager` may be used to similar effect.
 
  ## Methods to Override
 
- To change the behavior of all request operation construction for an `AFHTTPRequestOperationManager` subclass, override `HTTPRequestOperationWithRequest:success:failure`.
+ To change the behavior of all request operation construction for an `HZAFHTTPRequestOperationManager` subclass, override `HTTPRequestOperationWithRequest:success:failure`.
 
  ## Serialization
 
- Requests created by an HTTP client will contain default headers and encode parameters according to the `requestSerializer` property, which is an object conforming to `<AFURLRequestSerialization>`.
+ Requests created by an HTTP client will contain default headers and encode parameters according to the `requestSerializer` property, which is an object conforming to `<HZAFURLRequestSerialization>`.
 
- Responses received from the server are automatically validated and serialized by the `responseSerializers` property, which is an object conforming to `<AFURLResponseSerialization>`
+ Responses received from the server are automatically validated and serialized by the `responseSerializers` property, which is an object conforming to `<HZAFURLResponseSerialization>`
 
  ## URL Construction Using Relative Paths
 
@@ -81,11 +82,11 @@
 
  ## Network Reachability Monitoring
 
- Network reachability status and change monitoring is available through the `reachabilityManager` property. Applications may choose to monitor network reachability conditions in order to prevent or suspend any outbound requests. See `AFNetworkReachabilityManager` for more details.
+ Network reachability status and change monitoring is available through the `reachabilityManager` property. Applications may choose to monitor network reachability conditions in order to prevent or suspend any outbound requests. See `HZAFNetworkReachabilityManager` for more details.
 
  ## NSSecureCoding & NSCopying Caveats
 
- `AFHTTPRequestOperationManager` conforms to the `NSSecureCoding` and `NSCopying` protocols, allowing operations to be archived to disk, and copied in memory, respectively. There are a few minor caveats to keep in mind, however:
+ `HZAFHTTPRequestOperationManager` conforms to the `NSSecureCoding` and `NSCopying` protocols, allowing operations to be archived to disk, and copied in memory, respectively. There are a few minor caveats to keep in mind, however:
 
  - Archives and copies of HTTP clients will be initialized with an empty operation queue.
  - NSSecureCoding cannot serialize / deserialize block properties, so an archive of an HTTP client will not include any reachability callback block that may be set.
@@ -95,10 +96,10 @@
 /**
  The URL used to monitor reachability, and construct requests from relative paths in methods like `requestWithMethod:URLString:parameters:`, and the `GET` / `POST` / et al. convenience methods.
  */
-@property (nonatomic, strong) NSURL *baseURL; // Changed to readwrite for switching to staging servers.
+@property (nonatomic, strong, nullable) NSURL *baseURL;
 
 /**
- Requests created with `requestWithMethod:URLString:parameters:` & `multipartFormRequestWithMethod:URLString:parameters:constructingBodyWithBlock:` are constructed with a set of default headers using a parameter serialization specified by this property. By default, this is set to an instance of `AFHTTPRequestSerializer`, which serializes query string parameters for `GET`, `HEAD`, and `DELETE` requests, or otherwise URL-form-encodes HTTP message bodies.
+ Requests created with `requestWithMethod:URLString:parameters:` & `multipartFormRequestWithMethod:URLString:parameters:constructingBodyWithBlock:` are constructed with a set of default headers using a parameter serialization specified by this property. By default, this is set to an instance of `HZAFHTTPRequestSerializer`, which serializes query string parameters for `GET`, `HEAD`, and `DELETE` requests, or otherwise URL-form-encodes HTTP message bodies.
 
  @warning `requestSerializer` must not be `nil`.
  */
@@ -123,23 +124,23 @@
 /**
  Whether request operations should consult the credential storage for authenticating the connection. `YES` by default.
 
- @see AFURLConnectionOperation -shouldUseCredentialStorage
+ @see HZAFURLConnectionOperation -shouldUseCredentialStorage
  */
 @property (nonatomic, assign) BOOL shouldUseCredentialStorage;
 
 /**
  The credential used by request operations for authentication challenges.
 
- @see AFURLConnectionOperation -credential
+ @see HZAFURLConnectionOperation -credential
  */
-@property (nonatomic, strong) NSURLCredential *credential;
+@property (nonatomic, strong, nullable) NSURLCredential *credential;
 
 ///-------------------------------
 /// @name Managing Security Policy
 ///-------------------------------
 
 /**
- The security policy used by created request operations to evaluate server trust for secure connections. `AFHTTPRequestOperationManager` uses the `defaultPolicy` unless otherwise specified.
+ The security policy used by created request operations to evaluate server trust for secure connections. `HZAFHTTPRequestOperationManager` uses the `defaultPolicy` unless otherwise specified.
  */
 @property (nonatomic, strong) HZAFSecurityPolicy *securityPolicy;
 
@@ -148,7 +149,7 @@
 ///------------------------------------
 
 /**
- The network reachability manager. `AFHTTPRequestOperationManager` uses the `sharedManager` by default.
+ The network reachability manager. `HZAFHTTPRequestOperationManager` uses the `sharedManager` by default.
  */
 @property (readwrite, nonatomic, strong) HZAFNetworkReachabilityManager *reachabilityManager;
 
@@ -159,19 +160,19 @@
 /**
  The dispatch queue for the `completionBlock` of request operations. If `NULL` (default), the main queue is used.
  */
-#if OS_OBJECT_HAVE_OBJC_SUPPORT
-@property (nonatomic, strong) dispatch_queue_t completionQueue;
+#if OS_OBJECT_USE_OBJC
+@property (nonatomic, strong, nullable) dispatch_queue_t completionQueue;
 #else
-@property (nonatomic, assign) dispatch_queue_t completionQueue;
+@property (nonatomic, assign, nullable) dispatch_queue_t completionQueue;
 #endif
 
 /**
  The dispatch group for the `completionBlock` of request operations. If `NULL` (default), a private dispatch group is used.
  */
-#if OS_OBJECT_HAVE_OBJC_SUPPORT
-@property (nonatomic, strong) dispatch_group_t completionGroup;
+#if OS_OBJECT_USE_OBJC
+@property (nonatomic, strong, nullable) dispatch_group_t completionGroup;
 #else
-@property (nonatomic, assign) dispatch_group_t completionGroup;
+@property (nonatomic, assign, nullable) dispatch_group_t completionGroup;
 #endif
 
 ///---------------------------------------------
@@ -179,12 +180,12 @@
 ///---------------------------------------------
 
 /**
- Creates and returns an `AFHTTPRequestOperationManager` object.
+ Creates and returns an `HZAFHTTPRequestOperationManager` object.
  */
 + (instancetype)manager;
 
 /**
- Initializes an `AFHTTPRequestOperationManager` object with the specified base URL.
+ Initializes an `HZAFHTTPRequestOperationManager` object with the specified base URL.
 
  This is the designated initializer.
 
@@ -192,29 +193,29 @@
 
  @return The newly-initialized HTTP client
  */
-- (instancetype)initWithBaseURL:(NSURL *)url NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithBaseURL:(nullable NSURL *)url NS_DESIGNATED_INITIALIZER;
 
 ///---------------------------------------
 /// @name Managing HTTP Request Operations
 ///---------------------------------------
 
 /**
- Creates an `AFHTTPRequestOperation`, and sets the response serializers to that of the HTTP client.
+ Creates an `HZAFHTTPRequestOperation`, and sets the response serializers to that of the HTTP client.
 
  @param request The request object to be loaded asynchronously during execution of the operation.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes two arguments: the created request operation and the object created from the response data of request.
  @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes two arguments:, the created request operation and the `NSError` object describing the network or parsing error that occurred.
  */
 - (HZAFHTTPRequestOperation *)HTTPRequestOperationWithRequest:(NSURLRequest *)request
-                                                    success:(void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
-                                                    failure:(void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure;
+                                                    success:(nullable void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
+                                                    failure:(nullable void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure;
 
 ///---------------------------
 /// @name Making HTTP Requests
 ///---------------------------
 
 /**
- Creates and runs an `AFHTTPRequestOperation` with a `GET` request.
+ Creates and runs an `HZAFHTTPRequestOperation` with a `GET` request.
 
  @param URLString The URL string used to create the request URL.
  @param parameters The parameters to be encoded according to the client request serializer.
@@ -223,13 +224,13 @@
 
  @see -HTTPRequestOperationWithRequest:success:failure:
  */
-- (HZAFHTTPRequestOperation *)GET:(NSString *)URLString
-                     parameters:(id)parameters
-                        success:(void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
-                        failure:(void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure;
+- (nullable HZAFHTTPRequestOperation *)GET:(NSString *)URLString
+                     parameters:(nullable id)parameters
+                        success:(nullable void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
+                        failure:(nullable void (^)(HZAFHTTPRequestOperation * __nullable operation, NSError *error))failure;
 
 /**
- Creates and runs an `AFHTTPRequestOperation` with a `HEAD` request.
+ Creates and runs an `HZAFHTTPRequestOperation` with a `HEAD` request.
 
  @param URLString The URL string used to create the request URL.
  @param parameters The parameters to be encoded according to the client request serializer.
@@ -238,13 +239,13 @@
 
  @see -HTTPRequestOperationWithRequest:success:failure:
  */
-- (HZAFHTTPRequestOperation *)HEAD:(NSString *)URLString
-                      parameters:(id)parameters
-                         success:(void (^)(HZAFHTTPRequestOperation *operation))success
-                         failure:(void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure;
+- (nullable HZAFHTTPRequestOperation *)HEAD:(NSString *)URLString
+                      parameters:(nullable id)parameters
+                         success:(nullable void (^)(HZAFHTTPRequestOperation *operation))success
+                         failure:(nullable void (^)(HZAFHTTPRequestOperation * __nullable operation, NSError *error))failure;
 
 /**
- Creates and runs an `AFHTTPRequestOperation` with a `POST` request.
+ Creates and runs an `HZAFHTTPRequestOperation` with a `POST` request.
 
  @param URLString The URL string used to create the request URL.
  @param parameters The parameters to be encoded according to the client request serializer.
@@ -253,45 +254,30 @@
 
  @see -HTTPRequestOperationWithRequest:success:failure:
  */
-- (HZAFHTTPRequestOperation *)POST:(NSString *)URLString
-                      parameters:(id)parameters
-                         success:(void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
-                         failure:(void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure;
+- (nullable HZAFHTTPRequestOperation *)POST:(NSString *)URLString
+                      parameters:(nullable id)parameters
+                         success:(nullable void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
+                         failure:(nullable void (^)(HZAFHTTPRequestOperation * __nullable operation, NSError *error))failure;
 
 /**
- Creates and runs an `AFHTTPRequestOperation` with a multipart `POST` request.
+ Creates and runs an `HZAFHTTPRequestOperation` with a multipart `POST` request.
 
  @param URLString The URL string used to create the request URL.
  @param parameters The parameters to be encoded according to the client request serializer.
- @param block A block that takes a single argument and appends data to the HTTP body. The block argument is an object adopting the `AFMultipartFormData` protocol.
+ @param block A block that takes a single argument and appends data to the HTTP body. The block argument is an object adopting the `HZAFMultipartFormData` protocol.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes two arguments: the request operation, and the response object created by the client response serializer.
  @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a two arguments: the request operation and the error describing the network or parsing error that occurred.
 
  @see -HTTPRequestOperationWithRequest:success:failure:
  */
-- (HZAFHTTPRequestOperation *)POST:(NSString *)URLString
-                      parameters:(id)parameters
-       constructingBodyWithBlock:(void (^)(id <HZAFMultipartFormData> formData))block
-                         success:(void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
-                         failure:(void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure;
+- (nullable HZAFHTTPRequestOperation *)POST:(NSString *)URLString
+                      parameters:(nullable id)parameters
+       constructingBodyWithBlock:(nullable void (^)(id <HZAFMultipartFormData> formData))block
+                         success:(nullable void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
+                         failure:(nullable void (^)(HZAFHTTPRequestOperation * __nullable operation, NSError *error))failure;
 
 /**
- Creates and runs an `AFHTTPRequestOperation` with a `PUT` request.
-
- @param URLString The URL string used to create the request URL.
- @param parameters The parameters to be encoded according to the client request serializer.
- @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes two arguments: the request operation, and the response object created by the client response serializer.
- @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a two arguments: the request operation and the error describing the network or parsing error that occurred.
-
- @see -HTTPRequestOperationWithRequest:success:failure:
- */
-- (HZAFHTTPRequestOperation *)PUT:(NSString *)URLString
-                     parameters:(id)parameters
-                        success:(void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
-                        failure:(void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure;
-
-/**
- Creates and runs an `AFHTTPRequestOperation` with a `PATCH` request.
+ Creates and runs an `HZAFHTTPRequestOperation` with a `PUT` request.
 
  @param URLString The URL string used to create the request URL.
  @param parameters The parameters to be encoded according to the client request serializer.
@@ -300,13 +286,13 @@
 
  @see -HTTPRequestOperationWithRequest:success:failure:
  */
-- (HZAFHTTPRequestOperation *)PATCH:(NSString *)URLString
-                       parameters:(id)parameters
-                          success:(void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
-                          failure:(void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure;
+- (nullable HZAFHTTPRequestOperation *)PUT:(NSString *)URLString
+                     parameters:(nullable id)parameters
+                        success:(nullable void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
+                        failure:(nullable void (^)(HZAFHTTPRequestOperation * __nullable operation, NSError *error))failure;
 
 /**
- Creates and runs an `AFHTTPRequestOperation` with a `DELETE` request.
+ Creates and runs an `HZAFHTTPRequestOperation` with a `PATCH` request.
 
  @param URLString The URL string used to create the request URL.
  @param parameters The parameters to be encoded according to the client request serializer.
@@ -315,10 +301,26 @@
 
  @see -HTTPRequestOperationWithRequest:success:failure:
  */
-- (HZAFHTTPRequestOperation *)DELETE:(NSString *)URLString
-                        parameters:(id)parameters
-                           success:(void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
-                           failure:(void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure;
+- (nullable HZAFHTTPRequestOperation *)PATCH:(NSString *)URLString
+                       parameters:(nullable id)parameters
+                          success:(nullable void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
+                          failure:(nullable void (^)(HZAFHTTPRequestOperation * __nullable operation, NSError *error))failure;
+
+/**
+ Creates and runs an `HZAFHTTPRequestOperation` with a `DELETE` request.
+
+ @param URLString The URL string used to create the request URL.
+ @param parameters The parameters to be encoded according to the client request serializer.
+ @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes two arguments: the request operation, and the response object created by the client response serializer.
+ @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a two arguments: the request operation and the error describing the network or parsing error that occurred.
+
+ @see -HTTPRequestOperationWithRequest:success:failure:
+ */
+- (nullable HZAFHTTPRequestOperation *)DELETE:(NSString *)URLString
+                        parameters:(nullable id)parameters
+                           success:(nullable void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
+                           failure:(nullable void (^)(HZAFHTTPRequestOperation * __nullable operation, NSError *error))failure;
 
 @end
 
+NS_ASSUME_NONNULL_END

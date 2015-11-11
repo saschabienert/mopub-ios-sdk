@@ -1,6 +1,5 @@
-// AFHTTPRequestOperation.m
-//
-// Copyright (c) 2013-2015 AFNetworking (http://afnetworking.com)
+// HZAFHTTPRequestOperation.m
+// Copyright (c) 2011–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +21,24 @@
 
 #import "HZAFHTTPRequestOperation.h"
 
-static dispatch_queue_t hzhttp_request_operation_processing_queue() {
-    static dispatch_queue_t af_http_request_operation_processing_queue;
+static dispatch_queue_t hz_http_request_operation_processing_queue() {
+    static dispatch_queue_t hz_af_hz_http_request_operation_processing_queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        af_http_request_operation_processing_queue = dispatch_queue_create("com.heyzap.alamofire.networking.http-request.processing", DISPATCH_QUEUE_CONCURRENT);
+        hz_af_hz_http_request_operation_processing_queue = dispatch_queue_create("com.heyzap.alamofire.networking.http-request.processing", DISPATCH_QUEUE_CONCURRENT);
     });
 
-    return af_http_request_operation_processing_queue;
+    return hz_af_hz_http_request_operation_processing_queue;
 }
 
-static dispatch_group_t hzhttp_request_operation_completion_group() {
-    static dispatch_group_t af_http_request_operation_completion_group;
+static dispatch_group_t hz_http_request_operation_completion_group() {
+    static dispatch_group_t hz_af_hz_http_request_operation_completion_group;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        af_http_request_operation_completion_group = dispatch_group_create();
+        hz_af_hz_http_request_operation_completion_group = dispatch_group_create();
     });
 
-    return af_http_request_operation_completion_group;
+    return hz_af_hz_http_request_operation_completion_group;
 }
 
 #pragma mark -
@@ -103,12 +102,12 @@ static dispatch_group_t hzhttp_request_operation_completion_group() {
     }
 }
 
-#pragma mark - AFHTTPRequestOperation
+#pragma mark - HZAFHTTPRequestOperation
 
 - (void)setCompletionBlockWithSuccess:(void (^)(HZAFHTTPRequestOperation *operation, id responseObject))success
                               failure:(void (^)(HZAFHTTPRequestOperation *operation, NSError *error))failure
 {
-    // completionBlock is manually nilled out in AFURLConnectionOperation to break the retain cycle.
+    // completionBlock is manually nilled out in HZAFURLConnectionOperation to break the retain cycle.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-retain-cycles"
 #pragma clang diagnostic ignored "-Wgnu"
@@ -117,10 +116,10 @@ static dispatch_group_t hzhttp_request_operation_completion_group() {
             dispatch_group_enter(self.completionGroup);
         }
 
-        dispatch_async(hzhttp_request_operation_processing_queue(), ^{
+        dispatch_async(hz_http_request_operation_processing_queue(), ^{
             if (self.error) {
                 if (failure) {
-                    dispatch_group_async(self.completionGroup ?: hzhttp_request_operation_completion_group(), self.completionQueue ?: dispatch_get_main_queue(), ^{
+                    dispatch_group_async(self.completionGroup ?: hz_http_request_operation_completion_group(), self.completionQueue ?: dispatch_get_main_queue(), ^{
                         failure(self, self.error);
                     });
                 }
@@ -128,13 +127,13 @@ static dispatch_group_t hzhttp_request_operation_completion_group() {
                 id responseObject = self.responseObject;
                 if (self.error) {
                     if (failure) {
-                        dispatch_group_async(self.completionGroup ?: hzhttp_request_operation_completion_group(), self.completionQueue ?: dispatch_get_main_queue(), ^{
+                        dispatch_group_async(self.completionGroup ?: hz_http_request_operation_completion_group(), self.completionQueue ?: dispatch_get_main_queue(), ^{
                             failure(self, self.error);
                         });
                     }
                 } else {
                     if (success) {
-                        dispatch_group_async(self.completionGroup ?: hzhttp_request_operation_completion_group(), self.completionQueue ?: dispatch_get_main_queue(), ^{
+                        dispatch_group_async(self.completionGroup ?: hz_http_request_operation_completion_group(), self.completionQueue ?: dispatch_get_main_queue(), ^{
                             success(self, responseObject);
                         });
                     }
@@ -149,7 +148,7 @@ static dispatch_group_t hzhttp_request_operation_completion_group() {
 #pragma clang diagnostic pop
 }
 
-#pragma mark - AFURLRequestOperation
+#pragma mark - HZAFURLRequestOperation
 
 - (void)pause {
     [super pause];

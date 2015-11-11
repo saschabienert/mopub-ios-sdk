@@ -1,6 +1,5 @@
-// AFURLConnectionOperation.m
-//
-// Copyright (c) 2013-2015 AFNetworking (http://afnetworking.com)
+// HZAFURLConnectionOperation.m
+// Copyright (c) 2011–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +26,8 @@
 #endif
 
 #if !__has_feature(objc_arc)
-#error AFNetworking must be built with ARC.
-// You can turn on ARC for only AFNetworking files by adding -fobjc-arc to the build phase for each of its files.
+#error HZAFNetworking must be built with ARC.
+// You can turn on ARC for only HZAFNetworking files by adding -fobjc-arc to the build phase for each of its files.
 #endif
 
 typedef NS_ENUM(NSInteger, HZAFOperationState) {
@@ -38,30 +37,24 @@ typedef NS_ENUM(NSInteger, HZAFOperationState) {
     HZAFOperationFinishedState    = 3,
 };
 
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && !defined(AF_APP_EXTENSIONS)
-typedef UIBackgroundTaskIdentifier HZAFBackgroundTaskIdentifier;
-#else
-typedef id HZAFBackgroundTaskIdentifier;
-#endif
-
-static dispatch_group_t hzurl_request_operation_completion_group() {
-    static dispatch_group_t af_url_request_operation_completion_group;
+static dispatch_group_t hz_url_request_operation_completion_group() {
+    static dispatch_group_t hz_af_hz_url_request_operation_completion_group;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        af_url_request_operation_completion_group = dispatch_group_create();
+        hz_af_hz_url_request_operation_completion_group = dispatch_group_create();
     });
 
-    return af_url_request_operation_completion_group;
+    return hz_af_hz_url_request_operation_completion_group;
 }
 
-static dispatch_queue_t hzurl_request_operation_completion_queue() {
-    static dispatch_queue_t af_url_request_operation_completion_queue;
+static dispatch_queue_t hz_url_request_operation_completion_queue() {
+    static dispatch_queue_t hz_af_hz_url_request_operation_completion_queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        af_url_request_operation_completion_queue = dispatch_queue_create("com.heyzap.alamofire.networking.operation.queue", DISPATCH_QUEUE_CONCURRENT );
+        hz_af_hz_url_request_operation_completion_queue = dispatch_queue_create("com.heyzap.alamofire.networking.operation.queue", DISPATCH_QUEUE_CONCURRENT );
     });
 
-    return af_url_request_operation_completion_queue;
+    return hz_af_hz_url_request_operation_completion_queue;
 }
 
 static NSString * const kHZAFNetworkingLockName = @"com.heyzap.alamofire.networking.operation.lock";
@@ -73,6 +66,7 @@ typedef void (^HZAFURLConnectionOperationProgressBlock)(NSUInteger bytes, long l
 typedef void (^HZAFURLConnectionOperationAuthenticationChallengeBlock)(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge);
 typedef NSCachedURLResponse * (^HZAFURLConnectionOperationCacheResponseBlock)(NSURLConnection *connection, NSCachedURLResponse *cachedResponse);
 typedef NSURLRequest * (^HZAFURLConnectionOperationRedirectResponseBlock)(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse);
+typedef void (^HZAFURLConnectionOperationBackgroundTaskCleanupBlock)();
 
 static inline NSString * HZAFKeyPathFromOperationState(HZAFOperationState state) {
     switch (state) {
@@ -145,7 +139,7 @@ static inline BOOL HZAFStateTransitionIsValid(HZAFOperationState fromState, HZAF
 @property (readwrite, nonatomic, copy) NSString *responseString;
 @property (readwrite, nonatomic, assign) NSStringEncoding responseStringEncoding;
 @property (readwrite, nonatomic, assign) long long totalBytesRead;
-@property (readwrite, nonatomic, assign) HZAFBackgroundTaskIdentifier backgroundTaskIdentifier;
+@property (readwrite, nonatomic, copy) HZAFURLConnectionOperationBackgroundTaskCleanupBlock backgroundTaskCleanup;
 @property (readwrite, nonatomic, copy) HZAFURLConnectionOperationProgressBlock uploadProgress;
 @property (readwrite, nonatomic, copy) HZAFURLConnectionOperationProgressBlock downloadProgress;
 @property (readwrite, nonatomic, copy) HZAFURLConnectionOperationAuthenticationChallengeBlock authenticationChallenge;
@@ -162,7 +156,7 @@ static inline BOOL HZAFStateTransitionIsValid(HZAFOperationState fromState, HZAF
 
 + (void)networkRequestThreadEntryPoint:(id)__unused object {
     @autoreleasepool {
-        [[NSThread currentThread] setName:@"AFNetworking"];
+        [[NSThread currentThread] setName:@"HZAFNetworking"];
 
         NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
         [runLoop addPort:[NSMachPort port] forMode:NSDefaultRunLoopMode];
@@ -205,7 +199,8 @@ static inline BOOL HZAFStateTransitionIsValid(HZAFOperationState fromState, HZAF
     return self;
 }
 
-- (instancetype)init NS_UNAVAILABLE {
+- (instancetype)init NS_UNAVAILABLE
+{
     return nil;
 }
 
@@ -214,13 +209,10 @@ static inline BOOL HZAFStateTransitionIsValid(HZAFOperationState fromState, HZAF
         [_outputStream close];
         _outputStream = nil;
     }
-
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && !defined(AF_APP_EXTENSIONS)
-    if (_backgroundTaskIdentifier) {
-        [[UIApplication sharedApplication] endBackgroundTask:_backgroundTaskIdentifier];
-        _backgroundTaskIdentifier = UIBackgroundTaskInvalid;
+    
+    if (_backgroundTaskCleanup) {
+        _backgroundTaskCleanup();
     }
-#endif
 }
 
 #pragma mark -
@@ -293,13 +285,22 @@ static inline BOOL HZAFStateTransitionIsValid(HZAFOperationState fromState, HZAF
     [self.lock unlock];
 }
 
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && !defined(AF_APP_EXTENSIONS)
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
 - (void)setShouldExecuteAsBackgroundTaskWithExpirationHandler:(void (^)(void))handler {
     [self.lock lock];
-    if (!self.backgroundTaskIdentifier) {
+    if (!self.backgroundTaskCleanup) {
         UIApplication *application = [UIApplication sharedApplication];
+        UIBackgroundTaskIdentifier __block backgroundTaskIdentifier = UIBackgroundTaskInvalid;
         __weak __typeof(self)weakSelf = self;
-        self.backgroundTaskIdentifier = [application beginBackgroundTaskWithExpirationHandler:^{
+        
+        self.backgroundTaskCleanup = ^(){
+            if (backgroundTaskIdentifier != UIBackgroundTaskInvalid) {
+                [[UIApplication sharedApplication] endBackgroundTask:backgroundTaskIdentifier];
+                backgroundTaskIdentifier = UIBackgroundTaskInvalid;
+            }
+        };
+        
+        backgroundTaskIdentifier = [application beginBackgroundTaskWithExpirationHandler:^{
             __strong __typeof(weakSelf)strongSelf = weakSelf;
 
             if (handler) {
@@ -308,9 +309,7 @@ static inline BOOL HZAFStateTransitionIsValid(HZAFOperationState fromState, HZAF
 
             if (strongSelf) {
                 [strongSelf cancel];
-
-                [application endBackgroundTask:strongSelf.backgroundTaskIdentifier];
-                strongSelf.backgroundTaskIdentifier = UIBackgroundTaskInvalid;
+                strongSelf.backgroundTaskCleanup();
             }
         }];
     }
@@ -413,7 +412,7 @@ static inline BOOL HZAFStateTransitionIsValid(HZAFOperationState fromState, HZAF
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu"
-            dispatch_group_t group = strongSelf.completionGroup ?: hzurl_request_operation_completion_group();
+            dispatch_group_t group = strongSelf.completionGroup ?: hz_url_request_operation_completion_group();
             dispatch_queue_t queue = strongSelf.completionQueue ?: dispatch_get_main_queue();
 #pragma clang diagnostic pop
 
@@ -421,7 +420,7 @@ static inline BOOL HZAFStateTransitionIsValid(HZAFOperationState fromState, HZAF
                 block();
             });
 
-            dispatch_group_notify(group, hzurl_request_operation_completion_queue(), ^{
+            dispatch_group_notify(group, hz_url_request_operation_completion_queue(), ^{
                 [strongSelf setCompletionBlock:nil];
             });
         }];
@@ -503,7 +502,7 @@ static inline BOOL HZAFStateTransitionIsValid(HZAFOperationState fromState, HZAF
 - (void)cancelConnection {
     NSDictionary *userInfo = nil;
     if ([self.request URL]) {
-        userInfo = [NSDictionary dictionaryWithObject:[self.request URL] forKey:NSURLErrorFailingURLErrorKey];
+        userInfo = @{NSURLErrorFailingURLErrorKey : [self.request URL]};
     }
     NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:userInfo];
 
@@ -512,7 +511,7 @@ static inline BOOL HZAFStateTransitionIsValid(HZAFOperationState fromState, HZAF
             [self.connection cancel];
             [self performSelector:@selector(connection:didFailWithError:) withObject:self.connection withObject:error];
         } else {
-            // Accomodate race condition where `self.connection` has not yet been set before cancellation
+            // Accommodate race condition where `self.connection` has not yet been set before cancellation
             self.error = error;
             [self finish];
         }
@@ -670,11 +669,11 @@ didReceiveResponse:(NSURLResponse *)response
             }
 
             break;
-        }
-
-        if (self.outputStream.streamError) {
+        } else {
             [self.connection cancel];
-            [self performSelector:@selector(connection:didFailWithError:) withObject:self.connection withObject:self.outputStream.streamError];
+            if (self.outputStream.streamError) {
+                [self performSelector:@selector(connection:didFailWithError:) withObject:self.connection withObject:self.outputStream.streamError];
+            }
             return;
         }
     }
@@ -744,7 +743,7 @@ didReceiveResponse:(NSURLResponse *)response
         return nil;
     }
 
-    self.state = [[decoder decodeObjectOfClass:[NSNumber class] forKey:NSStringFromSelector(@selector(state))] integerValue];
+    self.state = (HZAFOperationState)[[decoder decodeObjectOfClass:[NSNumber class] forKey:NSStringFromSelector(@selector(state))] integerValue];
     self.response = [decoder decodeObjectOfClass:[NSHTTPURLResponse class] forKey:NSStringFromSelector(@selector(response))];
     self.error = [decoder decodeObjectOfClass:[NSError class] forKey:NSStringFromSelector(@selector(error))];
     self.responseData = [decoder decodeObjectOfClass:[NSData class] forKey:NSStringFromSelector(@selector(responseData))];
