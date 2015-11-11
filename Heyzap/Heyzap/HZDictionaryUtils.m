@@ -49,13 +49,18 @@ static NSString *hzUrlEncode(id object) {
 }
 
 NSString * const kHZMissingPropertyKey = @"missingProperty";
-
+NSString * const kHZNilDictionaryKey = @"nilDictionary";
 + (id)objectForKey:(id)key ofClass:(Class)class dict:(NSDictionary *)dict error:(NSError **)error
 {
     HZParameterAssert(key);
     HZParameterAssert(class);
-    HZParameterAssert(dict);
     HZParameterAssert(error != NULL);
+    
+    if (!dict) {
+        *error = [NSError errorWithDomain:@"heyzap" code:1 userInfo:@{kHZNilDictionaryKey: key}];
+        return nil;
+    }
+    
     id value = [self objectForKey:key ofClass:class dict:dict];
     if (value) {
         return value;
