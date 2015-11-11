@@ -575,7 +575,10 @@
     }
     
     [[self delegateForAdType:options.requestingAdType] didFailToShowAdWithTag:options.tag andError:error];
-    [[NSNotificationCenter defaultCenter] postNotificationName:HZMediationDidFailToShowAdNotification object:[self classForAdType:options.requestingAdType] userInfo:@{NSUnderlyingErrorKey: error, HZAdTagUserInfoKey: options.tag, HZNetworkNameUserInfoKey: (adapter.name ?: [NSNull null])}];
+    
+    NSMutableDictionary * notifUserInfo = [NSMutableDictionary dictionaryWithDictionary:@{NSUnderlyingErrorKey: error, HZAdTagUserInfoKey: options.tag}];
+    if ([adapter name]) notifUserInfo[HZNetworkNameUserInfoKey] = [adapter name];
+    [[NSNotificationCenter defaultCenter] postNotificationName:HZMediationDidFailToShowAdNotification object:[self classForAdType:options.requestingAdType] userInfo:notifUserInfo];
 }
 
 
@@ -1194,6 +1197,7 @@ static BOOL forceOnlyHeyzapSDK = NO;
     if (_networkCallbackBlock != nil) {
         _networkCallbackBlock(network, callback);
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:HZMediationNetworkCallbackNotification object:network userInfo:@{HZNetworkNameUserInfoKey:network, HZNetworkCallbackNameUserInfoKey:callback}];
 }
 
 

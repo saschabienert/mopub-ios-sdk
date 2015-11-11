@@ -147,7 +147,8 @@ extern NSString * const HZNetworkCallbackFacebookLoggingImpression;
 
 // NSNotifications
 extern NSString * const HZRemoteDataRefreshedNotification;
-// Ad Callback NSNotifications
+extern NSString * const HZMediationNetworkCallbackNotification;
+// HZAdsDelegate Callback NSNotifications
 extern NSString * const HZMediationDidShowAdNotification;
 extern NSString * const HZMediationDidFailToShowAdNotification;
 extern NSString * const HZMediationDidReceiveAdNotification;
@@ -156,11 +157,17 @@ extern NSString * const HZMediationDidClickAdNotification;
 extern NSString * const HZMediationDidHideAdNotification;
 extern NSString * const HZMediationWillStartAdAudioNotification;
 extern NSString * const HZMediationDidFinishAdAudioNotification;
-// Incentivized specific NSNotifications
+// HZIncentivizedAdDelegate Callback NSNotifications
 extern NSString * const HZMediationDidCompleteIncentivizedAdNotification;
 extern NSString * const HZMediationDidFailToCompleteIncentivizedAdNotification;
 
-// User Info Keys for NSNotifications
+// User Info Keys for the HZMediationNetworkCallbackNotification
+/**
+ *  The corresponding value is the name of the network callback being sent (see above constants for the possible values).
+ */
+extern NSString * const HZNetworkCallbackNameUserInfoKey;
+
+// User Info Keys for HZAdsDelegate and HZIncentivizedAdDelegate NSNotifications
 /**
  *  The corresponding value is the ad tag of the ad a NSNotification is being sent about.
  */

@@ -9,6 +9,8 @@
 #import "HZMediationTestActivityViewController.h"
 #import <MessageUI/MessageUI.h>
 #import "HeyzapMediation.h"
+#import "HeyzapAds.h"
+#import "HZBannerAd.h"
 #import "HZUINavigationController.h"
 #import "HZNetworkTestActivityViewController.h"
 
@@ -20,7 +22,7 @@ typedef enum {
 } kAdUnitSegment;
 
 
-@interface HZMediationTestActivityViewController ()<HZAdsDelegate,UITextFieldDelegate, HZIncentivizedAdDelegate, HZBannerAdDelegate, HZMediationTestSuitePage>
+@interface HZMediationTestActivityViewController ()<UITextFieldDelegate, HZMediationTestSuitePage>
 
 @property (nonatomic, strong) UISegmentedControl *adUnitSegmentedControl;
 @property (nonatomic, strong) UITextView *consoleTextView;
@@ -36,9 +38,6 @@ typedef enum {
 @property (nonatomic) NSArray *bannerControls;
 @property (nonatomic) NSArray *nonBannerControls;
 
-@property (nonatomic) BOOL viewJustLoaded;
-@property (nonatomic) BOOL backButtonPressed;
-
 @end
 
 #define ButtonWidth 70
@@ -46,17 +45,7 @@ typedef enum {
 #define ButtonXSpacing 15
 #define ButtonYSpacing 10
 
-#define LOG_METHOD_NAME_TO_CONSOLE [self logToConsole:NSStringFromSelector(_cmd)]
-#define LOG_METHOD_NAME_TO_CONSOLE_WITH_QUOTED_STRING(str) [self logToConsole:[NSString stringWithFormat:@"%@ '%@'", NSStringFromSelector(_cmd), str]]
-
-
-@interface HZMediationTestActivityViewController ()
-@property (nonatomic, weak) id<HZAdsDelegate> previousInterstitialDelegate;
-@property (nonatomic, weak) id<HZAdsDelegate> previousVideoDelegate;
-@property (nonatomic, weak) id<HZAdsDelegate> previousIncentivizedDelegate;
-@property (nonatomic, copy) void (^previousNetworkCallbackBlock)(NSString *network, NSString *callback);
-
-@end
+#define LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification) [self logToConsole:[NSString stringWithFormat:@"%@ %@ tag:'%@' network:%@", NSStringFromClass([[notification object] class]) ?: @"", [NSStringFromSelector(_cmd) stringByReplacingOccurrencesOfString:@"Notification:" withString:@""] , [notification userInfo][HZAdTagUserInfoKey], [notification userInfo][HZNetworkNameUserInfoKey] ?: @"(n/a)"]]
 
 @implementation HZMediationTestActivityViewController
 
@@ -81,6 +70,28 @@ typedef enum {
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
+    // notifications for mediation callbacks
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didShowAdNotification:) name:HZMediationDidShowAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFailToShowAdNotification:) name:HZMediationDidFailToShowAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didClickAdNotification:) name:HZMediationDidClickAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didHideAdNotification:) name:HZMediationDidHideAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveAdNotification:) name:HZMediationDidReceiveAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFailToReceiveAdNotification:) name:HZMediationDidFailToReceiveAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willStartAudioNotification:) name:HZMediationWillStartAdAudioNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFinishAudioNotification:) name:HZMediationDidFinishAdAudioNotification object:nil];
+    // incentivized
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didCompleteAdNotification:) name:HZMediationDidCompleteIncentivizedAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFailToCompleteAdNotification:) name:HZMediationDidFailToCompleteIncentivizedAdNotification object:nil];
+    // banners
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerDidReceiveAdNotification:) name:kHZBannerAdDidReceiveAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerDidFailToReceiveAdNotification:) name:kHZBannerAdDidFailToReceiveAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerWasClickedNotification:) name:kHZBannerAdWasClickedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerWillPresentModalViewNotification:) name:kHZBannerAdWillPresentModalViewNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerDidDismissModalViewNotification:) name:kHZBannerAdDidDismissModalViewNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerWillLeaveApplicationNotification:) name:kHZBannerAdWillLeaveApplicationNotification object:nil];
+    // network callbacks
+    // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkCallbackNotification:) name:HZMediationNetworkCallbackNotification object:nil];
     
     // Dismisses first responder (keyboard)
     [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)]];
@@ -217,48 +228,10 @@ typedef enum {
         subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
     }
     self.scrollView.contentSize = (CGSize) { subviewContainingRect.size.width, subviewContainingRect.size.height + 80 };
-    
-    self.viewJustLoaded = YES;
 }
 
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver: self];
-}
-
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-    
-    // self.isMovingFromParentViewController is not true when the back button is pressed for the nav controller
-    if (self.isMovingFromParentViewController || self.backButtonPressed) {
-        [[HeyzapMediation sharedInstance] setDelegate:self.previousInterstitialDelegate forAdType:HZAdTypeInterstitial];
-        [[HeyzapMediation sharedInstance] setDelegate:self.previousVideoDelegate        forAdType:HZAdTypeVideo];
-        [[HeyzapMediation sharedInstance] setDelegate:self.previousIncentivizedDelegate forAdType:HZAdTypeIncentivized];
-        
-        [HeyzapAds networkCallbackWithBlock:self.previousNetworkCallbackBlock];
-    }
-}
-
-- (void) viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    // self.isMovingToParentViewController is not true when the view is first loaded as the first view in the nav controller
-    if (self.isMovingToParentViewController || self.viewJustLoaded) {
-        self.viewJustLoaded = NO;
-        
-        _previousInterstitialDelegate = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeInterstitial];
-        _previousVideoDelegate        = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeVideo];
-        _previousIncentivizedDelegate = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeIncentivized];
-        
-        [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeInterstitial];
-        [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeVideo];
-        [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeIncentivized];
-        
-        // hijack network callbacks
-        self.previousNetworkCallbackBlock = [[HeyzapMediation sharedInstance] networkCallbackBlock];
-        [HeyzapAds networkCallbackWithBlock:^(NSString *network, NSString *callback) {
-            [self logToConsole:[NSString stringWithFormat:@"Network: %@ callback: %@", network, callback]];
-        }];
-    }
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{
@@ -430,7 +403,6 @@ typedef enum {
                          position:HZBannerPositionBottom
                           options:opts
                           success:^(HZBannerAd *banner) {
-                              banner.delegate = self;
                               self.hideBannerButton.enabled = YES;
                               self.currentBannerAd = banner;
                               [self logToConsole:[NSString stringWithFormat:@"Banner shown for tag: '%@'", opts.tag]];
@@ -520,47 +492,67 @@ typedef enum {
 }
 
 #pragma mark - Callbacks
-
-- (void)didReceiveAdWithTag:(NSString *)tag {
-    LOG_METHOD_NAME_TO_CONSOLE_WITH_QUOTED_STRING(tag);
-    
+//standard
+- (void)didReceiveAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
     [self changeColorOfShowButton];
 }
-- (void)didShowAdWithTag:(NSString *)tag {
-    LOG_METHOD_NAME_TO_CONSOLE_WITH_QUOTED_STRING(tag);
-    
+- (void)didShowAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
     [self changeColorOfShowButton];
 }
-- (void)didClickAdWithTag:(NSString *)tag {
-    LOG_METHOD_NAME_TO_CONSOLE_WITH_QUOTED_STRING(tag);
+- (void)didClickAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
 }
-- (void)didHideAdWithTag:(NSString *)tag {
-    LOG_METHOD_NAME_TO_CONSOLE_WITH_QUOTED_STRING(tag);
+- (void)didHideAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
     [self changeColorOfShowButton];
 }
-- (void)didFailToReceiveAdWithTag:(NSString *)tag {
-    LOG_METHOD_NAME_TO_CONSOLE_WITH_QUOTED_STRING(tag);
+- (void)didFailToReceiveAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+    [self logToConsole:[NSString stringWithFormat:@"Error: %@", [notification userInfo][NSUnderlyingErrorKey]]];
     [self changeColorOfShowButton];
 }
-
-- (void)didFailToShowAdWithTag:(NSString *)tag andError:(NSError *)error {
-    [self logToConsole:[NSString stringWithFormat:@"%@ tag: %@ error: %@",NSStringFromSelector(_cmd),tag, error]];
+- (void)didFailToShowAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
     [self changeColorOfShowButton];
 }
-
-- (void)willStartAudio {
-    LOG_METHOD_NAME_TO_CONSOLE;
+- (void)willStartAudioNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
 }
-- (void)didFinishAudio {
-    LOG_METHOD_NAME_TO_CONSOLE;
+- (void)didFinishAudioNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
 }
-
-- (void)didCompleteAdWithTag:(NSString *)tag {
-    LOG_METHOD_NAME_TO_CONSOLE_WITH_QUOTED_STRING(tag);
+// incentivized
+- (void)didCompleteAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
 }
-
-- (void) didFailToCompleteAdWithTag:(NSString *)tag {
-    LOG_METHOD_NAME_TO_CONSOLE_WITH_QUOTED_STRING(tag);
+- (void) didFailToCompleteAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+// banners
+- (void) bannerDidReceiveAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+- (void) bannerDidFailToReceiveAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+    [self logToConsole:[NSString stringWithFormat:@"Banner error: %@", [notification userInfo][NSUnderlyingErrorKey]]];
+}
+- (void) bannerWasClickedNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+- (void) bannerWillPresentModalViewNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+- (void) bannerDidDismissModalViewNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+- (void) bannerWillLeaveApplicationNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+// network callbacks
+- (void) networkCallbackNotification:(NSNotification *)notification {
+    [self logToConsole:[NSString stringWithFormat:@"Network callback: [%@: %@]", [notification userInfo][HZNetworkNameUserInfoKey], [notification userInfo][HZNetworkCallbackNameUserInfoKey]]];
 }
 
 
@@ -616,12 +608,6 @@ typedef enum {
 #endif
 {
     return UIInterfaceOrientationMaskAll;
-}
-
-#pragma mark - UI action methods
-
-- (void) hide {
-    self.backButtonPressed = YES;
 }
 
 @end
