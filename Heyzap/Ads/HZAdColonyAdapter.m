@@ -22,6 +22,8 @@
 @property (nonatomic, strong) NSString *interstitialZoneID;
 @property (nonatomic, strong) NSString *incentivizedZoneID;
 
+@property (nonatomic, strong) NSDate *initializedAt;
+
 @end
 
 @implementation HZAdColonyAdapter
@@ -102,6 +104,7 @@
                            zoneIDs:zoneIDs
                           delegate:self.forwardingDelegate
                            logging:[self isLoggingEnabled]];
+    self.initializedAt = [NSDate date];
     return nil;
 }
 
@@ -174,7 +177,7 @@
             return @"AdColony has not been configured with this zone ID.";
         }
         case HZ_ADCOLONY_ZONE_STATUS_UNKNOWN: {
-            return @"AdColony has not yet received this zone's configuration from the server. This can occur before an ad has finished loading, or if there is no fill available. If you enable third party logging ([HZLog setThirdPartyLoggingEnabled:YES];) AdColony will log that \"There is currently no fill for zone <zoneID>\". Try setting \"Show test ads only\" to \"Yes\" for this zone on the AdColony dashboard.";
+            return @"AdColony has not yet received this zone's configuration from the server. This can occur just after their SDK is initialized, before an ad has finished loading, or if there is no fill available. If you enable third party logging ([HZLog setThirdPartyLoggingEnabled:YES];) before starting the Heyzap SDK, AdColony will log that \"There is currently no fill for zone <zoneID>\" if there is no fill. For testing purposes, you can try setting \"Show test ads only\" to \"Yes\" for this zone on the AdColony dashboard if this is the case.";
         }
         case HZ_ADCOLONY_ZONE_STATUS_LOADING:
         case HZ_ADCOLONY_ZONE_STATUS_ACTIVE: {
@@ -183,11 +186,27 @@
     }
 }
 
+const NSTimeInterval kHZAdColonyInitializationToFetchInterval = 7.0;
 - (NSError *)lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
+    static BOOL didLogInitializationIntervalMessage = NO;
+    
     NSString *const zone = [self zoneIDForCreativeType:dataProvider.creativeType];
     if (zone) {
-        const HZ_ADCOLONY_ZONE_STATUS status = [HZAdColony zoneStatusForZone:zone];
+        HZ_ADCOLONY_ZONE_STATUS status = [HZAdColony zoneStatusForZone:zone];
+        
+        // AdColony's zones are HZ_ADCOLONY_ZONE_STATUS_UNKNOWN when fetching just after initializing the SDK as it waits for its initial network requests.
+        // On strong wifi they needed up to 6 seconds between init and fetch to succeed when I tested this.
+        // Don't report the HZ_ADCOLONY_ZONE_STATUS_UNKNOWN error during a short window after initialization to give it a chance to fetch.
+        if (status == HZ_ADCOLONY_ZONE_STATUS_UNKNOWN && [[NSDate date] timeIntervalSinceDate:self.initializedAt] < kHZAdColonyInitializationToFetchInterval) {
+            if (!didLogInitializationIntervalMessage) {
+                HZDLog(@"AdColony was initialized within the last %i seconds, and is being given time to initialize and fetch before erroring out.", (int)kHZAdColonyInitializationToFetchInterval);
+                didLogInitializationIntervalMessage = YES;
+            }
+            
+            return nil;
+        }
+        
         NSString *const errorDescription = [self errorDescriptionForZoneStatus:status];
         if (errorDescription) {
             return [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:
