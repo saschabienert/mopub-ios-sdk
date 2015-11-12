@@ -19,6 +19,7 @@
 #import "HeyzapAds.h"
 #import "HZBaseAdapter_Internal.h"
 #import "HZFBAdSettings.h"
+#import "HZDevice.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
@@ -73,7 +74,8 @@
 
 + (BOOL)isSDKAvailable {
     return [HZFBInterstitialAd hzProxiedClassIsAvailable]
-    && [HZFBAdView hzProxiedClassIsAvailable];
+    && [HZFBAdView hzProxiedClassIsAvailable]
+    && hziOS7Plus();
 }
 
 + (NSString *)name {
