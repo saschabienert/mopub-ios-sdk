@@ -16,12 +16,13 @@
 #import "HZLabeledActivityIndicator.h"
 #import "HZEnums.h"
 
-@interface HZAdViewController()<SKStoreProductViewControllerDelegate>
+@interface HZAdViewController() <SKStoreProductViewControllerDelegate>
 
 @property (nonatomic) HZLabeledActivityIndicator *activityIndicator;
 
 @property (nonatomic) BOOL statusBarHidden;
 
+@property (nonatomic) BOOL wasJustClicked;
 @end
 
 @implementation HZAdViewController
@@ -34,9 +35,15 @@
         _activityIndicator = [[HZLabeledActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
         _activityIndicator.labelText = @"Loading App Store";
         _activityIndicator.fadeBackground = YES;
+        
+        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidBecomeActive:) name: UIApplicationDidBecomeActiveNotification object: nil];
     }
     
     return self;
+}
+
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
@@ -94,6 +101,7 @@
 }
 
 - (void)didClickWithURL:(NSURL *)url {
+    self.wasJustClicked = YES;
     
     [self.ad onClick];
     [HZAdsManager postNotificationName:kHeyzapDidClickAdNotification infoProvider:self.ad];
@@ -133,7 +141,21 @@
 
 - (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController {
     [self dismissViewControllerAnimated:YES completion:nil];
+    [self returnToAdFromClick];
+    self.wasJustClicked = NO;
 }
+
+// for non-modal app store
+- (void) applicationDidBecomeActive: (id) notification {
+    if (self.wasJustClicked) {
+        [self returnToAdFromClick];
+        self.wasJustClicked = NO;
+    }
+}
+
+
+// for subclasses to override
+- (void) returnToAdFromClick { }
 
 #pragma mark - Utility
 
