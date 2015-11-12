@@ -66,10 +66,6 @@
         
         [_webView setHTML: self.ad.HTMLContent];
         
-        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterForeground:) name: UIApplicationDidBecomeActiveNotification object: nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidEnterBackground:) name: UIApplicationDidEnterBackgroundNotification object: nil];
-        
         _didStartVideo = NO;
         
     }
@@ -77,9 +73,6 @@
 }
 
 - (void) dealloc {
-    
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
-    
     self.videoView = nil;
     self.webView = nil;
     self.ad = nil;
@@ -298,14 +291,13 @@
     [self didClickHeyzapInstall];
 }
 
-- (void) applicationDidEnterForeground: (id) notification {
+
+#pragma mark - Overridden from HZAdViewController
+
+- (void) returnToAdFromClick {
     if ([self.view.subviews lastObject] == self.videoView) {
         [self.videoView play];
     }
-}
-
-- (void) applicationDidEnterBackground: (id) notification {
-    [self.videoView pause];
 }
 
 @end
