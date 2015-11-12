@@ -430,6 +430,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     self.adTagField.textAlignment = NSTextAlignmentLeft;
     self.adTagField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleRightMargin;
     self.adTagField.accessibilityLabel = @"ad tag";
+    self.adTagField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     [self.adTagField addTarget:self
                         action:@selector(adTagEditingChanged:)
               forControlEvents:UIControlEventEditingChanged];

@@ -358,6 +358,7 @@ const CGFloat kLeftMargin = 10;
     self.adTagField.placeholder = @"Ad Tag";
     self.adTagField.textAlignment = NSTextAlignmentLeft;
     self.adTagField.accessibilityLabel = kAdTagTextFieldAccessibilityLabel;
+    self.adTagField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     [self.adTagField addTarget:self
                         action:@selector(adTagEditingChanged:)
               forControlEvents:UIControlEventEditingChanged];

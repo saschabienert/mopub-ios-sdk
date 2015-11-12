@@ -127,6 +127,7 @@ typedef enum {
     self.adTagField.placeholder = @"Ad Tag";
     self.adTagField.textAlignment = NSTextAlignmentLeft;
     self.adTagField.accessibilityLabel = @"ad tag";
+    self.adTagField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     [self.adTagField addTarget:self
                         action:@selector(adTagEditingChanged:)
               forControlEvents:UIControlEventEditingChanged];
