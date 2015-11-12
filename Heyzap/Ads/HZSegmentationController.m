@@ -23,13 +23,18 @@
 #define RULETYPE_CROSSPROMO_ADS_FREQUENCY @"CrossPromoFrequency"
 #define RULETYPE_TAG_FILTER @"Tag"
 #define RULETYPE_PLACEMENT_ID_OVERRIDES @"PlacementId"
-#define RULETYPE_NETWORK_DISABLES @"Network"
+#define RULETYPE_NETWORK_DISABLES @"DisabledNetworks"
 
 #define RULEKEY_TYPE @"type"
 #define RULEKEY_OPTIONS @"options"
 
 #define OPTIONKEY_TAGS @"tags"
-#define OPTIONKEY_NETWORKS @"networks"
+#define OPTIONKEY_DISABLED_NETWORKS @"disabled_networks"
+#define OPTIONKEY_PLACEMENT_IDS @"placement_ids"
+
+#define PLACEMENTIDKEY_NETWORK @"network"
+#define PLACEMENTIDKEY_CREATIVE_TYPE @"creative_type"
+#define PLACEMENTIDKEY_PLACEMENT_ID @"placement_id"
 
 #define SEGMENTKEY_NAME @"name"
 #define SEGMENTKEY_RULES @"rules"
@@ -60,7 +65,7 @@
     NSArray * segmentsResponse = [HZDictionaryUtils objectForKey:@"segments" ofClass:[NSArray class] default:@[] dict:startDictionary];
     for (NSDictionary *segmentDict in segmentsResponse) {
         NSSet *tags = [NSSet set];
-        NSDictionary <NSString *, NSString *>* placementIDOverrides = @{};
+        NSDictionary <NSString *, NSDictionary<NSString *, NSString *> *>* placementIDOverrides = @{};
         NSSet *disabledNetworks = [NSSet set];
         NSString *name = [HZDictionaryUtils objectForKey:SEGMENTKEY_NAME ofClass:[NSString class] default:nil dict:segmentDict];
         
@@ -77,12 +82,47 @@
                 tags = [NSSet setWithArray:[HZDictionaryUtils objectForKey:OPTIONKEY_TAGS ofClass:[NSArray class] default:@[] dict:options]];
                 
             } else if ([ruleType isEqualToString:RULETYPE_PLACEMENT_ID_OVERRIDES]) {
-                // options dict ~= {"network" => {"creativeType" => "new_placement_id"}}
-                placementIDOverrides = [HZDictionaryUtils objectForKey:RULEKEY_OPTIONS ofClass:[NSDictionary class] default:@{} dict:rule];
+                /* options dict comes as ~=
+                 {
+                    "placement_ids": [{
+                        "network": "facebook",
+                        "creative_type": 1,
+                        "placement_id": "static_override"
+                    }, {
+                        "network": "facebook",
+                        "creative_type": 8,
+                        "placement_id": "banner_override"
+                    }]
+                 }
+                 */
+                // transform to ~= {"facebook" => {"STATIC" => "static_override", "BANNER" => "banner_override"}}
+                
+                NSArray *placementIDsFromServer = [HZDictionaryUtils objectForKey:OPTIONKEY_PLACEMENT_IDS ofClass:[NSArray class] default:@[] dict:[HZDictionaryUtils objectForKey:RULEKEY_OPTIONS ofClass:[NSDictionary class] default:@{} dict:rule]];
+                NSMutableDictionary <NSString *, NSMutableDictionary<NSString *, NSString *> *> *networkToOverridesMapping = [NSMutableDictionary dictionary];
+                
+                for(NSDictionary *placementIDOverrideDict in placementIDsFromServer) {
+                    NSString *network = [HZDictionaryUtils objectForKey:PLACEMENTIDKEY_NETWORK ofClass:[NSString class] default:nil dict:placementIDOverrideDict];
+                    HZCreativeType creativeType = hzCreativeTypeFromNSNumber([HZDictionaryUtils objectForKey:PLACEMENTIDKEY_CREATIVE_TYPE ofClass:[NSNumber class] default:@(HZCreativeTypeUnknown) dict:placementIDOverrideDict]);
+                    NSString *placementID = [HZDictionaryUtils objectForKey:PLACEMENTIDKEY_PLACEMENT_ID ofClass:[NSString class] default:nil dict:placementIDOverrideDict];
+                    
+                    if (network && placementID && creativeType != HZCreativeTypeUnknown) {
+                        // valid override (HZCreativeTypeUnknown is not a valid creativeType for placement ID overrides)
+                        NSMutableDictionary <NSString *, NSString *> *perNetworkCreativeTypeToOverrideMapping = networkToOverridesMapping[network];
+                        if (!perNetworkCreativeTypeToOverrideMapping) {
+                            perNetworkCreativeTypeToOverrideMapping = [NSMutableDictionary dictionary];
+                        }
+                        
+                        // expected: will overwrite any overlapping overrides
+                        perNetworkCreativeTypeToOverrideMapping[NSStringFromCreativeType(creativeType)] = placementID;
+                        networkToOverridesMapping[network] = perNetworkCreativeTypeToOverrideMapping;
+                    }
+                }
+                
+                placementIDOverrides = networkToOverridesMapping;
                 
             } else if ([ruleType isEqualToString:RULETYPE_NETWORK_DISABLES]) {
                 NSDictionary *options = [HZDictionaryUtils objectForKey:RULEKEY_OPTIONS ofClass:[NSDictionary class] default:@{} dict:rule];
-                disabledNetworks = [NSSet setWithArray:[HZDictionaryUtils objectForKey:OPTIONKEY_NETWORKS ofClass:[NSArray class] default:@[] dict:options]];
+                disabledNetworks = [NSSet setWithArray:[HZDictionaryUtils objectForKey:OPTIONKEY_DISABLED_NETWORKS ofClass:[NSArray class] default:@[] dict:options]];
                 
             } else if ([ruleType isEqualToString:RULETYPE_MONETIZING_ADS_FREQUENCY]
                        || [ruleType isEqualToString:RULETYPE_CROSSPROMO_ADS_FREQUENCY]) {

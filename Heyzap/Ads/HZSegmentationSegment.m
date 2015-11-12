@@ -19,7 +19,7 @@
 
 @property (nonatomic, nonnull) NSArray<HZSegmentationFrequencyLimitRule *> *frequencyLimitRules;
 
-@property (nonatomic, nonnull) NSDictionary <NSString *, NSString *>* placementIDOverrides;
+@property (nonatomic, nonnull) NSDictionary <NSString *, NSDictionary<NSString *, NSString *> *>* placementIDOverrides;
 
 
 @end
@@ -29,7 +29,7 @@
 
 #pragma mark - Init
 
-- (nullable instancetype) initWithTags:(nonnull NSSet *)tags disabledNetworks:(nonnull NSSet *)disabledNetworks placementIDOverrides:(nonnull NSDictionary <NSString *, NSString *>*)placementIDOverrides frequencyLimitRules:(nonnull NSArray <HZSegmentationFrequencyLimitRule *> *)frequencyLimitRules name:(nullable NSString *)name {
+- (nullable instancetype) initWithTags:(nonnull NSSet *)tags disabledNetworks:(nonnull NSSet *)disabledNetworks placementIDOverrides:(nonnull NSDictionary <NSString *, NSDictionary<NSString *, NSString *> *>*)placementIDOverrides frequencyLimitRules:(nonnull NSArray <HZSegmentationFrequencyLimitRule *> *)frequencyLimitRules name:(nullable NSString *)name {
     self = [super init];
     if (self) {
         _adTags = tags;
