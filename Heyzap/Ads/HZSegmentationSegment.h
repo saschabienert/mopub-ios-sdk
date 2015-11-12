@@ -42,7 +42,7 @@
  * Cretes a segment with the given list of tags this segment applies to, disabled networks, placement ID overrides, and name.
     @param tags If empty, the segment applies to all ad tags, otherwise, it only applies to the ad tags in this array
  */
-- (nullable instancetype) initWithTags:(nonnull NSSet *)tags disabledNetworks:(nonnull NSSet *)disabledNetworks placementIDOverrides:(nonnull NSDictionary <NSString *, NSDictionary<NSString *, NSString *> *>*)placementIDOverrides frequencyLimitRules:(nonnull NSArray <HZSegmentationFrequencyLimitRule *> *)frequencyLimitRules name:(nullable NSString *)name;
+- (nullable instancetype) initWithTags:(nonnull NSSet <NSString *> *)tags disabledNetworks:(nonnull NSSet <NSString *> *)disabledNetworks placementIDOverrides:(nonnull NSDictionary <NSString *, NSDictionary<NSString *, NSString *> *>*)placementIDOverrides frequencyLimitRules:(nonnull NSArray <HZSegmentationFrequencyLimitRule *> *)frequencyLimitRules name:(nullable NSString *)name;
 
 - (void) loadWithDb:(nonnull sqlite3 *)db;
 
