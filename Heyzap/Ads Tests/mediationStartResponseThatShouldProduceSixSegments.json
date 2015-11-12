@@ -108,26 +108,28 @@
                            }
                            }]
                  }, {
-                 "name": "admob placement id for tag \u0027admob\u0027",
+                 "name": "different admob video placement id for tag \"admob\"",
                  "rules": [{
-                           "type": "PlacementId",
-                           "options": {
-                           "admob": {
-                           "VIDEO": "new_placement_id"
-                           }
-                           }
-                           }, {
                            "type": "Tag",
                            "options": {
                            "tags": ["admob"]
                            }
+                           }, {
+                           "type": "PlacementId",
+                           "options": {
+                           "placement_ids": [{
+                                             "network": "admob",
+                                             "creative_type": 2,
+                                             "placement_id": "new_placement_id"
+                                             }]
+                           }
                            }]
                  }, {
-                 "name": "disable heyzap network with tag \"heyzapoff\"",
+                 "name": "disable heyzap networks with tag \"heyzapoff\"",
                  "rules": [{
-                           "type": "Network",
+                           "type": "DisabledNetworks",
                            "options": {
-                           "networks": ["heyzap"]
+                           "disabled_networks": ["heyzap", "heyzap_exchange"]
                            }
                            }, {
                            "type": "Frequency",
@@ -137,7 +139,7 @@
                            }, {
                            "type": "CrossPromoFrequency",
                            "options": {
-                           "ads_enabled": true
+                           "ads_enabled": false
                            }
                            }, {
                            "type": "Tag",
