@@ -37,6 +37,6 @@
 - (void) didImpression;
 - (void) didClickHeyzapInstall;
 
-- (BOOL) applicationSupportsLandscape;
+
 
 @end

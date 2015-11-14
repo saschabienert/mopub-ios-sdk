@@ -135,7 +135,7 @@ UIViewAutoresizing const kHZActivityIndicatorDefaultAutoResizingMask = UIViewAut
     [super layoutSubviews];
     
     self.frame = CGRectMake(0, 0, CGRectGetWidth(self.superview.bounds), CGRectGetHeight(self.superview.bounds));
-    self.center = self.superview.center;
+    //self.center = self.superview.center; // this uses the frame center, not the bounds center. shouldn't be needed anyway since the center should be set when the frame is set...
     
     if (self.labelText.length) {
         [self.labelView sizeToFit];

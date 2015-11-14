@@ -67,6 +67,8 @@
     self.apiClient = [HZHeyzapExchangeAPIClient sharedClient];
     _creativeType = creativeType;
     
+    UIInterfaceOrientation fetchedOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
     [self.apiClient fetchAdWithExtraParams:[self apiRequestParams]
                 success:^(HZAFHTTPRequestOperation *operation, id responseObject)
                 {
@@ -129,7 +131,7 @@
                     NSData *adMarkupData = [self.adMarkup dataUsingEncoding:NSUTF8StringEncoding];
                     
                     if(self.format == HZHeyzapExchangeFormatVAST_2_0){
-                        self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate:self forCreativeType:creativeType];
+                        self.vastVC = [[HZSKVASTViewController alloc] initWithDelegate:self forCreativeType:creativeType fetchedOrientation:fetchedOrientation];
                         [self.vastVC loadVideoWithData:adMarkupData];
                         self.isWithAudio = YES;
                     }else if(self.format == HZHeyzapExchangeFormatMRAID_2){

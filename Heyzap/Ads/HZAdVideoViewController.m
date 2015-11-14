@@ -13,6 +13,7 @@
 #import "HZAdsManager.h"
 #import "HZUtils.h"
 #import "HZEnums.h"
+#import "HZDevice.h"
 
 #define kHZVideoViewTag 1
 #define kHZWebViewTag 2
@@ -118,8 +119,8 @@
     [super viewDidLoad];
     
     BOOL forceRotation = NO;
-    CGAffineTransform ninetyDegreeTransform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI_2);
-    if (![self applicationSupportsLandscape]) {
+    CGAffineTransform ninetyDegreeTransform = CGAffineTransformMakeRotation(M_PI_2);
+    if (![[HZDevice currentDevice] applicationSupportsLandscape]) {
         forceRotation = YES;
     }
     
@@ -127,9 +128,9 @@
         self.view.transform = ninetyDegreeTransform;
     }
     
-    self.view.frame = CGRectMake(0.0, 0.0, self.view.bounds.size.width, self.view.bounds.size.height);
+    self.view.frame = CGRectMake(0.0, 0.0, self.view.bounds.size.width, self.view.bounds.size.height); // for some reason we reset the frame after the transform here, but the bounds stay rotated
     self.view.backgroundColor = [UIColor clearColor];
-    
+
     self.webView.frame = self.view.bounds;
     self.webView.hidden = YES;
     self.webView.layer.opacity = 0.0f;
@@ -138,6 +139,8 @@
     self.videoView.hidden = YES;
     self.videoView.layer.opacity = 0.0f;
     
+    // this is for iOS 6 or 7 only. ion iOS 8 and above, the transform done on `self.view` above changes its bounds,
+    // which is then applied to `self.webView` and `self.videoView` above, so they always rotate to landscape if forceRotation is YES.
     if (forceRotation && self.ad.enable90DegreeTransform) {
         self.videoView.transform = ninetyDegreeTransform;
         self.webView.transform = ninetyDegreeTransform;
@@ -185,7 +188,7 @@
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 #endif
 {
-    if ([self applicationSupportsLandscape]) {
+    if ([[HZDevice currentDevice] applicationSupportsLandscape]) {
         return UIInterfaceOrientationMaskLandscape;
     } else {
         return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow:[UIApplication sharedApplication].keyWindow];

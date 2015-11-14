@@ -90,8 +90,9 @@
     NSMutableDictionary *returnDict = [defaultParams mutableCopy];
     
     // these need to be determined on every request as they can change over time
-    NSNumber *deviceWidth =  @([[[UIApplication sharedApplication] keyWindow] bounds].size.width * screenScale);
-    NSNumber *deviceHeight =  @([[[UIApplication sharedApplication] keyWindow] bounds].size.height * screenScale);
+    CGRect currentBounds = [[[UIApplication sharedApplication] keyWindow] bounds];
+    NSNumber *deviceWidth =  @(currentBounds.size.width * screenScale);
+    NSNumber *deviceHeight =  @(currentBounds.size.height * screenScale);
     [returnDict addEntriesFromDictionary:@{
                                           @"device_w": deviceWidth,
                                           @"device_h": deviceHeight,
