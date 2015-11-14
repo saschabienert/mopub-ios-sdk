@@ -5,7 +5,7 @@ PODS:
   - Google-Mobile-Ads-SDK (7.5.2)
   - HyprMX (68)
   - HZChartboost (6.0.1)
-  - HZInMobi (5.0.1)
+  - HZInMobi (5.0.2)
   - KIF (3.3.0):
     - KIF/Core (= 3.3.0)
   - KIF/Core (3.3.0)
@@ -55,7 +55,7 @@ SPEC CHECKSUMS:
   Google-Mobile-Ads-SDK: 24a8ddfc0bcfec281960c5d88f75327df0d86b00
   HyprMX: 626dcce6c83a9856abeeef644542bc2cd058770e
   HZChartboost: bb01521c0cebf9dbbe979f642b9934923e18512e
-  HZInMobi: 6e17c9af583e497def6b4c09a908714232e74dd6
+  HZInMobi: 595afc6c2784f66e3788c85aadf803aa870532e6
   KIF: 0a82046d06f3648799cac522d2d0f7934214caac
   Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
   Leadbolt: 2599cdd53890689158e94bd93268ae118b43ed1e
