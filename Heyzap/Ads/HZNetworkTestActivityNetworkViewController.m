@@ -292,7 +292,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     HZShowOptions *options = [HZShowOptions new];
     
     options.tag = [self.adTagField text];
-    [self appendStringToDebugLog:[NSString stringWithFormat:@"A%@ %@ ad %@ available for tag '%@'.", ([@"aeiou" containsString:[self.currentAdFormat substringWithRange:NSMakeRange(0, 1)]] ? @"n" : @""), self.currentAdFormat,([self checkAvailabilityAndChangeColorOfShowButton] ? @"is" : @"is not"), options.tag]];
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"A%@ %@ ad %@ available for tag '%@'.", ([@"aeiou" rangeOfString:[self.currentAdFormat substringWithRange:NSMakeRange(0, 1)]].location != NSNotFound) ? @"n" : @"", self.currentAdFormat,([self checkAvailabilityAndChangeColorOfShowButton] ? @"is" : @"is not"), options.tag]];
 }
 
 - (void) fetchAd {
