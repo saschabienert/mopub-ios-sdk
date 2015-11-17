@@ -12,6 +12,8 @@
 
 @interface HZALSdkSettings : HZClassProxy
 
+- (instancetype)init;
+
 @property (assign, atomic) BOOL isVerboseLogging;
 
 @end
