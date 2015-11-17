@@ -18,4 +18,6 @@
 +(void) loadModuleToCache:(NSString*) placement;
 +(void) loadModule:(NSString*) placement viewController:(UIViewController*)viewController;
 
++(void) setFramework:(NSString *)f;
+
 @end
