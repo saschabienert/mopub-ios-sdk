@@ -394,7 +394,8 @@ typedef enum {
     HZBannerAdOptions *opts = [[HZBannerAdOptions alloc] init];
     opts.presentingViewController = self;
     opts.tag = [self adTagText];
-    [self logToConsole:[NSString stringWithFormat:@"Attempting to show a banner for tag: '%@'", opts.tag]];
+    opts.fetchTimeout = 30;
+    [self logToConsole:[NSString stringWithFormat:@"Attempting to show a banner for tag: '%@' with a %d-second timeout", opts.tag, (int)opts.fetchTimeout]];
     
     if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
         opts.admobBannerSize = HZAdMobBannerSizeFlexibleWidthLandscape;

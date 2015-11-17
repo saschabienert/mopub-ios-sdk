@@ -802,8 +802,9 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     HZBannerAdOptions *opts = [[HZBannerAdOptions alloc] init];
     
     opts.networkName = self.network.name;
-    
+    opts.fetchTimeout = 30;
     opts.presentingViewController = self;
+    opts.tag = [self.adTagField text];
     
     if ([self.network.name isEqualToString: [HZFacebookAdapter name]]) {
         opts.facebookBannerSize = hzFacebookBannerSizeFromValue(self.chosenBannerSize);
@@ -819,12 +820,13 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 - (void)showBanner:(UIButton *)sender {
     [self.view endEditing:YES];
     sender.enabled = NO;
+    HZBannerAdOptions * options = [self bannerOptions];
     
-    [self appendStringToDebugLog:@"Requesting Banner..."];
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Requesting Banner for tag: '%@' with a %d-second timeout", options.tag, (int)options.fetchTimeout]];
     
     [HZBannerAd placeBannerInView:self.view
                                 position:self.chosenBannerPosition
-                                 options:[self bannerOptions]
+                                 options:options
      success:^(HZBannerAd *banner) {
          [self appendStringToDebugLog:@"Showing banner"];
          self.hideBannerButton.enabled = YES;
