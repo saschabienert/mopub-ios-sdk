@@ -106,7 +106,7 @@
     RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs an SDK Key set up on your dashboard.", [self humanizedName]]));
     
     HZDLog(@"Initializing AppLovin with SDK Key: %@",self.sdkKey);
-    HZALSdkSettings *settings = [HZALSdkSettings alloc];
+    HZALSdkSettings *settings = [[HZALSdkSettings alloc] init];
     settings.isVerboseLogging = [self isLoggingEnabled];
     self.sdk = [HZALSdk sharedWithKey:self.sdkKey settings:settings];
     [self.sdk initializeSdk];
