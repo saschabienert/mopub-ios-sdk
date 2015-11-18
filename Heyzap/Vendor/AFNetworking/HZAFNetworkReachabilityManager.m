@@ -1,6 +1,5 @@
-// AFNetworkReachabilityManager.m
-//
-// Copyright (c) 2013-2015 AFNetworking (http://afnetworking.com)
+// HZAFNetworkReachabilityManager.m
+// Copyright (c) 2011–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +20,7 @@
 // THE SOFTWARE.
 
 #import "HZAFNetworkReachabilityManager.h"
+#if !TARGET_OS_WATCH
 
 #import <netinet/in.h>
 #import <netinet6/in6.h>
@@ -33,23 +33,17 @@ NSString * const HZAFNetworkingReachabilityNotificationStatusItem = @"HZAFNetwor
 
 typedef void (^HZAFNetworkReachabilityStatusBlock)(HZAFNetworkReachabilityStatus status);
 
-typedef NS_ENUM(NSUInteger, HZAFNetworkReachabilityAssociation) {
-    HZAFNetworkReachabilityForAddress = 1,
-    HZAFNetworkReachabilityForAddressPair = 2,
-    HZAFNetworkReachabilityForName = 3,
-};
-
 NSString * HZAFStringFromNetworkReachabilityStatus(HZAFNetworkReachabilityStatus status) {
     switch (status) {
         case HZAFNetworkReachabilityStatusNotReachable:
-            return NSLocalizedStringFromTable(@"Not Reachable", @"AFNetworking", nil);
+            return NSLocalizedStringFromTable(@"Not Reachable", @"HZAFNetworking", nil);
         case HZAFNetworkReachabilityStatusReachableViaWWAN:
-            return NSLocalizedStringFromTable(@"Reachable via WWAN", @"AFNetworking", nil);
+            return NSLocalizedStringFromTable(@"Reachable via WWAN", @"HZAFNetworking", nil);
         case HZAFNetworkReachabilityStatusReachableViaWiFi:
-            return NSLocalizedStringFromTable(@"Reachable via WiFi", @"AFNetworking", nil);
+            return NSLocalizedStringFromTable(@"Reachable via WiFi", @"HZAFNetworking", nil);
         case HZAFNetworkReachabilityStatusUnknown:
         default:
-            return NSLocalizedStringFromTable(@"Unknown", @"AFNetworking", nil);
+            return NSLocalizedStringFromTable(@"Unknown", @"HZAFNetworking", nil);
     }
 }
 
@@ -76,20 +70,28 @@ static HZAFNetworkReachabilityStatus HZAFNetworkReachabilityStatusForFlags(SCNet
     return status;
 }
 
-static void HZAFNetworkReachabilityCallback(SCNetworkReachabilityRef __unused target, SCNetworkReachabilityFlags flags, void *info) {
+/**
+ * Queue a status change notification for the main thread.
+ *
+ * This is done to ensure that the notifications are received in the same order
+ * as they are sent. If notifications are sent directly, it is possible that
+ * a queued notification (for an earlier status condition) is processed after
+ * the later update, resulting in the listener being left in the wrong state.
+ */
+static void HZAFPostReachabilityStatusChange(SCNetworkReachabilityFlags flags, HZAFNetworkReachabilityStatusBlock block) {
     HZAFNetworkReachabilityStatus status = HZAFNetworkReachabilityStatusForFlags(flags);
-    HZAFNetworkReachabilityStatusBlock block = (__bridge HZAFNetworkReachabilityStatusBlock)info;
-    if (block) {
-        block(status);
-    }
-
-
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (block) {
+            block(status);
+        }
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
         NSDictionary *userInfo = @{ HZAFNetworkingReachabilityNotificationStatusItem: @(status) };
         [notificationCenter postNotificationName:HZAFNetworkingReachabilityDidChangeNotification object:nil userInfo:userInfo];
     });
+}
 
+static void HZAFNetworkReachabilityCallback(SCNetworkReachabilityRef __unused target, SCNetworkReachabilityFlags flags, void *info) {
+    HZAFPostReachabilityStatusChange(flags, (__bridge HZAFNetworkReachabilityStatusBlock)info);
 }
 
 static const void * HZAFNetworkReachabilityRetainCallback(const void *info) {
@@ -103,8 +105,7 @@ static void HZAFNetworkReachabilityReleaseCallback(const void *info) {
 }
 
 @interface HZAFNetworkReachabilityManager ()
-@property (readwrite, nonatomic, assign) SCNetworkReachabilityRef networkReachability;
-@property (readwrite, nonatomic, assign) HZAFNetworkReachabilityAssociation networkReachabilityAssociation;
+@property (readwrite, nonatomic, strong) id networkReachability;
 @property (readwrite, nonatomic, assign) HZAFNetworkReachabilityStatus networkReachabilityStatus;
 @property (readwrite, nonatomic, copy) HZAFNetworkReachabilityStatusBlock networkReachabilityStatusBlock;
 @end
@@ -126,27 +127,24 @@ static void HZAFNetworkReachabilityReleaseCallback(const void *info) {
     return _sharedManager;
 }
 
-- (instancetype)init NS_UNAVAILABLE {
-    return nil;
-}
-
+#ifndef __clang_analyzer__
 + (instancetype)managerForDomain:(NSString *)domain {
     SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, [domain UTF8String]);
 
     HZAFNetworkReachabilityManager *manager = [[self alloc] initWithReachability:reachability];
-    manager.networkReachabilityAssociation = HZAFNetworkReachabilityForName;
 
     return manager;
 }
+#endif
 
+#ifndef __clang_analyzer__
 + (instancetype)managerForAddress:(const void *)address {
     SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr *)address);
-
     HZAFNetworkReachabilityManager *manager = [[self alloc] initWithReachability:reachability];
-    manager.networkReachabilityAssociation = HZAFNetworkReachabilityForAddress;
 
     return manager;
 }
+#endif
 
 - (instancetype)initWithReachability:(SCNetworkReachabilityRef)reachability {
     self = [super init];
@@ -154,19 +152,19 @@ static void HZAFNetworkReachabilityReleaseCallback(const void *info) {
         return nil;
     }
 
-    self.networkReachability = reachability;
+    self.networkReachability = CFBridgingRelease(reachability);
     self.networkReachabilityStatus = HZAFNetworkReachabilityStatusUnknown;
 
     return self;
 }
 
+- (instancetype)init NS_UNAVAILABLE
+{
+    return nil;
+}
+
 - (void)dealloc {
     [self stopMonitoring];
-
-    if (_networkReachability) {
-        CFRelease(_networkReachability);
-        _networkReachability = NULL;
-    }
 }
 
 #pragma mark -
@@ -203,32 +201,17 @@ static void HZAFNetworkReachabilityReleaseCallback(const void *info) {
 
     };
 
+    id networkReachability = self.networkReachability;
     SCNetworkReachabilityContext context = {0, (__bridge void *)callback, HZAFNetworkReachabilityRetainCallback, HZAFNetworkReachabilityReleaseCallback, NULL};
-    SCNetworkReachabilitySetCallback(self.networkReachability, HZAFNetworkReachabilityCallback, &context);
-    SCNetworkReachabilityScheduleWithRunLoop(self.networkReachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
+    SCNetworkReachabilitySetCallback((__bridge SCNetworkReachabilityRef)networkReachability, HZAFNetworkReachabilityCallback, &context);
+    SCNetworkReachabilityScheduleWithRunLoop((__bridge SCNetworkReachabilityRef)networkReachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
 
-    switch (self.networkReachabilityAssociation) {
-        case HZAFNetworkReachabilityForName:
-            break;
-        case HZAFNetworkReachabilityForAddress:
-        case HZAFNetworkReachabilityForAddressPair:
-        default: {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),^{
-                SCNetworkReachabilityFlags flags;
-                SCNetworkReachabilityGetFlags(self.networkReachability, &flags);
-                HZAFNetworkReachabilityStatus status = HZAFNetworkReachabilityStatusForFlags(flags);
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    callback(status);
-
-                    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-                    [notificationCenter postNotificationName:HZAFNetworkingReachabilityDidChangeNotification object:nil userInfo:@{ HZAFNetworkingReachabilityNotificationStatusItem: @(status) }];
-
-
-                });
-            });
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),^{
+        SCNetworkReachabilityFlags flags;
+        if (SCNetworkReachabilityGetFlags((__bridge SCNetworkReachabilityRef)networkReachability, &flags)) {
+            HZAFPostReachabilityStatusChange(flags, callback);
         }
-            break;
-    }
+    });
 }
 
 - (void)stopMonitoring {
@@ -236,7 +219,7 @@ static void HZAFNetworkReachabilityReleaseCallback(const void *info) {
         return;
     }
 
-    SCNetworkReachabilityUnscheduleFromRunLoop(self.networkReachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
+    SCNetworkReachabilityUnscheduleFromRunLoop((__bridge SCNetworkReachabilityRef)self.networkReachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
 }
 
 #pragma mark -
@@ -262,3 +245,4 @@ static void HZAFNetworkReachabilityReleaseCallback(const void *info) {
 }
 
 @end
+#endif

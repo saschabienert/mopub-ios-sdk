@@ -1,6 +1,5 @@
-// AFURLResponseSerialization.m
-//
-// Copyright (c) 2013-2015 AFNetworking (http://afnetworking.com)
+// HZAFURLResponseSerialization.m
+// Copyright (c) 2011–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +21,10 @@
 
 #import "HZAFURLResponseSerialization.h"
 
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
+#if TARGET_OS_IOS
 #import <UIKit/UIKit.h>
+#elif TARGET_OS_WATCH
+#import <WatchKit/WatchKit.h>
 #elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 #import <Cocoa/Cocoa.h>
 #endif
@@ -68,11 +69,11 @@ static id HZAFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadin
     } else if ([JSONObject isKindOfClass:[NSDictionary class]]) {
         NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionaryWithDictionary:JSONObject];
         for (id <NSCopying> key in [(NSDictionary *)JSONObject allKeys]) {
-            id value = [(NSDictionary *)JSONObject objectForKey:key];
+            id value = (NSDictionary *)JSONObject[key];
             if (!value || [value isEqual:[NSNull null]]) {
                 [mutableDictionary removeObjectForKey:key];
             } else if ([value isKindOfClass:[NSArray class]] || [value isKindOfClass:[NSDictionary class]]) {
-                [mutableDictionary setObject:HZAFJSONObjectByRemovingKeysWithNullValues(value, readingOptions) forKey:key];
+                mutableDictionary[key] = HZAFJSONObjectByRemovingKeysWithNullValues(value, readingOptions);
             }
         }
 
@@ -115,7 +116,7 @@ static id HZAFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadin
         if (self.acceptableContentTypes && ![self.acceptableContentTypes containsObject:[response MIMEType]]) {
             if ([data length] > 0 && [response URL]) {
                 NSMutableDictionary *mutableUserInfo = [@{
-                                                          NSLocalizedDescriptionKey: [NSString stringWithFormat:NSLocalizedStringFromTable(@"Request failed: unacceptable content-type: %@", @"AFNetworking", nil), [response MIMEType]],
+                                                          NSLocalizedDescriptionKey: [NSString stringWithFormat:NSLocalizedStringFromTable(@"Request failed: unacceptable content-type: %@", @"HZAFNetworking", nil), [response MIMEType]],
                                                           NSURLErrorFailingURLErrorKey:[response URL],
                                                           HZAFNetworkingOperationFailingURLResponseErrorKey: response,
                                                         } mutableCopy];
@@ -131,7 +132,7 @@ static id HZAFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadin
 
         if (self.acceptableStatusCodes && ![self.acceptableStatusCodes containsIndex:(NSUInteger)response.statusCode] && [response URL]) {
             NSMutableDictionary *mutableUserInfo = [@{
-                                               NSLocalizedDescriptionKey: [NSString stringWithFormat:NSLocalizedStringFromTable(@"Request failed: %@ (%ld)", @"AFNetworking", nil), [NSHTTPURLResponse localizedStringForStatusCode:response.statusCode], (long)response.statusCode],
+                                               NSLocalizedDescriptionKey: [NSString stringWithFormat:NSLocalizedStringFromTable(@"Request failed: %@ (%ld)", @"HZAFNetworking", nil), [NSHTTPURLResponse localizedStringForStatusCode:response.statusCode], (long)response.statusCode],
                                                NSURLErrorFailingURLErrorKey:[response URL],
                                                HZAFNetworkingOperationFailingURLResponseErrorKey: response,
                                        } mutableCopy];
@@ -153,7 +154,7 @@ static id HZAFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadin
     return responseIsValid;
 }
 
-#pragma mark - AFURLResponseSerialization
+#pragma mark - HZAFURLResponseSerialization
 
 - (id)responseObjectForResponse:(NSURLResponse *)response
                            data:(NSData *)data
@@ -225,7 +226,7 @@ static id HZAFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadin
     return self;
 }
 
-#pragma mark - AFURLResponseSerialization
+#pragma mark - HZAFURLResponseSerialization
 
 - (id)responseObjectForResponse:(NSURLResponse *)response
                            data:(NSData *)data
@@ -264,8 +265,8 @@ static id HZAFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadin
                 }
             } else {
                 NSDictionary *userInfo = @{
-                                           NSLocalizedDescriptionKey: NSLocalizedStringFromTable(@"Data failed decoding as a UTF-8 string", @"AFNetworking", nil),
-                                           NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:NSLocalizedStringFromTable(@"Could not decode string: %@", @"AFNetworking", nil), responseString]
+                                           NSLocalizedDescriptionKey: NSLocalizedStringFromTable(@"Data failed decoding as a UTF-8 string", @"HZAFNetworking", nil),
+                                           NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:NSLocalizedStringFromTable(@"Could not decode string: %@", @"HZAFNetworking", nil), responseString]
                                            };
 
                 serializationError = [NSError errorWithDomain:HZAFURLResponseSerializationErrorDomain code:NSURLErrorCannotDecodeContentData userInfo:userInfo];
@@ -338,7 +339,7 @@ static id HZAFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadin
     return self;
 }
 
-#pragma mark - AFURLResponseSerialization
+#pragma mark - HZAFURLResponseSerialization
 
 - (id)responseObjectForResponse:(NSHTTPURLResponse *)response
                            data:(NSData *)data
@@ -383,7 +384,7 @@ static id HZAFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadin
     return self;
 }
 
-#pragma mark - AFURLResponseSerialization
+#pragma mark - HZAFURLResponseSerialization
 
 - (id)responseObjectForResponse:(NSURLResponse *)response
                            data:(NSData *)data
@@ -466,7 +467,7 @@ static id HZAFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadin
     return self;
 }
 
-#pragma mark - AFURLResponseSerialization
+#pragma mark - HZAFURLResponseSerialization
 
 - (id)responseObjectForResponse:(NSURLResponse *)response
                            data:(NSData *)data
@@ -500,7 +501,7 @@ static id HZAFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadin
         return nil;
     }
 
-    self.format = [[decoder decodeObjectOfClass:[NSNumber class] forKey:NSStringFromSelector(@selector(format))] unsignedIntegerValue];
+    self.format = (NSPropertyListFormat)[[decoder decodeObjectOfClass:[NSNumber class] forKey:NSStringFromSelector(@selector(format))] unsignedIntegerValue];
     self.readOptions = [[decoder decodeObjectOfClass:[NSNumber class] forKey:NSStringFromSelector(@selector(readOptions))] unsignedIntegerValue];
 
     return self;
@@ -530,8 +531,31 @@ static id HZAFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadin
 #if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
 #import <CoreGraphics/CoreGraphics.h>
 
+@interface UIImage (HZAFNetworkingSafeImageLoading)
++ (UIImage *)hz_af_safeImageWithData:(NSData *)data;
+@end
+
+static NSLock* imageLock = nil;
+
+@implementation UIImage (HZAFNetworkingSafeImageLoading)
+
++ (UIImage *)hz_af_safeImageWithData:(NSData *)data {
+    UIImage* image = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        imageLock = [[NSLock alloc] init];
+    });
+    
+    [imageLock lock];
+    image = [UIImage imageWithData:data];
+    [imageLock unlock];
+    return image;
+}
+
+@end
+
 static UIImage * HZAFImageWithDataAtScale(NSData *data, CGFloat scale) {
-    UIImage *image = [[UIImage alloc] initWithData:data];
+    UIImage *image = [UIImage hz_af_safeImageWithData:data];
     if (image.images) {
         return image;
     }
@@ -643,15 +667,18 @@ static UIImage * HZAFInflatedImageFromResponseWithDataAtScale(NSHTTPURLResponse 
 
     self.acceptableContentTypes = [[NSSet alloc] initWithObjects:@"image/tiff", @"image/jpeg", @"image/gif", @"image/png", @"image/ico", @"image/x-icon", @"image/bmp", @"image/x-bmp", @"image/x-xbitmap", @"image/x-win-bitmap", nil];
 
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
+#if TARGET_OS_IOS
     self.imageScale = [[UIScreen mainScreen] scale];
+    self.automaticallyInflatesResponseImage = YES;
+#elif  TARGET_OS_WATCH
+    self.imageScale = [[WKInterfaceDevice currentDevice] screenScale];
     self.automaticallyInflatesResponseImage = YES;
 #endif
 
     return self;
 }
 
-#pragma mark - AFURLResponseSerializer
+#pragma mark - HZAFURLResponseSerializer
 
 - (id)responseObjectForResponse:(NSURLResponse *)response
                            data:(NSData *)data
@@ -742,7 +769,7 @@ static UIImage * HZAFInflatedImageFromResponseWithDataAtScale(NSHTTPURLResponse 
     return serializer;
 }
 
-#pragma mark - AFURLResponseSerialization
+#pragma mark - HZAFURLResponseSerialization
 
 - (id)responseObjectForResponse:(NSURLResponse *)response
                            data:(NSData *)data
