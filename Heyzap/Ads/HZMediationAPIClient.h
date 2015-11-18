@@ -12,6 +12,6 @@ extern NSString * const kHZMediationAPIBaseURLString;
 
 @interface HZMediationAPIClient : HZAPIClient
 
-+ (HZMediationAPIClient *)sharedClient;
++ (instancetype)sharedClient;
 
 @end

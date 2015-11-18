@@ -92,6 +92,7 @@
                      
                      
                      if(jsonError || !responseDict){
+                         HZTrackError(jsonError);
                          HZELog(@"JSON parse failed for exchange response. Error: %@", jsonError);
                          [self handleFailure];
                          return;
@@ -100,6 +101,7 @@
                      NSDictionary *adDict = [HZDictionaryUtils objectForKey:@"ad" ofClass:[NSDictionary class] default:nil dict:responseDict];
                      
                      if(!adDict){
+                         [[HeyzapMediation sharedInstance].errorReporter trackMetric:@[kHZMetricGroupExchange,@"no_ad_from_json"]];
                          HZELog(@"JSON format unexpected for exchange response.");
                          [self handleFailure];
                          return;
@@ -113,6 +115,7 @@
                      
                      self.format = [[HZDictionaryUtils objectForKey:@"format" ofClass:[NSNumber class] default:@0 dict:adDict] intValue];
                      if(![self isSupportedFormat]) {
+                         [[HeyzapMediation sharedInstance].errorReporter trackMetric:@[kHZMetricGroupExchange,@"unsupported_format"]];
                          HZELog(@"Format of Exchange response unsupported (%lu).", (unsigned long)self.format);
                          [self handleFailure];
                          return;

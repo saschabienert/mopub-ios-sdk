@@ -20,6 +20,8 @@
 @interface HZHyprmxAdapter()
 @property (nonatomic, strong) NSString *distributorID;
 @property (nonatomic, strong) NSString *propertyID;
+@property (nonatomic) BOOL isAdReady;
+@property (nonatomic) BOOL isCheckingAvailability;
 @end
 
 @implementation HZHyprmxAdapter
@@ -46,6 +48,10 @@
                                                  dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.distributorID != nil && self.propertyID != nil;
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable {
@@ -65,7 +71,18 @@
 }
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.distributorID, @"distributorID");
+    if (![self hasNecessaryCredentials]) {
+        NSMutableArray *erroredCredentials = [NSMutableArray array];
+        if (!self.distributorID){
+            [erroredCredentials addObject:@"Distributor ID"];
+        }
+        
+        if (!self.propertyID) {
+            [erroredCredentials addObject:@"Property ID"];
+        }
+        
+        RETURN_ERROR_UNLESS(NO, ([NSString stringWithFormat:@"%@ needs a Distributor ID and a Property ID set up on your dashboard, you're missing these: [%@]", [self humanizedName], [erroredCredentials componentsJoinedByString:@", "]]));
+    }
     
     NSString *adID = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
     
@@ -81,46 +98,48 @@
     return HZCreativeTypeIncentivized;
 }
 
-static BOOL wasReady = NO;
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType {
-    [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
-        wasReady = isOfferReady;
-    }];
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    if (!self.isCheckingAvailability) {
+        self.isCheckingAvailability = YES;
+        // the block we pass to get the result is called asynchronously, so we save the last result
+        // we've received and return that from this method, and at the same time request an update.
+        [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
+            self.isAdReady = isOfferReady;
+            self.isCheckingAvailability = NO;
+        }];
+    }
     
-    return wasReady;
+    return self.isAdReady;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[HZHYPRManager sharedManager] preloadContent];
-    });
+
+    [[HZHYPRManager sharedManager] preloadContent];
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options{
-    HZHyprmxAdapter *bSelf = self;
-    
+- (void)internalShowAdWithOptions:(HZShowOptions *)options{
     [[HZHYPRManager sharedManager] checkInventory:^(BOOL isOfferReady) {
-        wasReady = isOfferReady;
+        self.isAdReady = isOfferReady;
         if (isOfferReady) {
-            
             [self.delegate adapterDidShowAd:self];
             [self.delegate adapterWillPlayAudio:self];
             
             [[HZHYPRManager sharedManager] displayOffer:^(BOOL completed, id offer) {
-                wasReady = NO;
-                if (creativeType == HZCreativeTypeIncentivized) {
+                self.isAdReady = NO;
+                if (options.creativeType == HZCreativeTypeIncentivized) {
                     if (completed) {
-                        [bSelf.delegate adapterDidCompleteIncentivizedAd: bSelf];
+                        [self.delegate adapterDidCompleteIncentivizedAd: self];
                     } else {
-                        [bSelf.delegate adapterDidFailToCompleteIncentivizedAd: bSelf];
+                        [self.delegate adapterDidFailToCompleteIncentivizedAd: self];
                     }
                 }
                 [self.delegate adapterDidFinishPlayingAudio:self];
                 [self.delegate adapterDidDismissAd:self];
             }];
+        } else {
+            [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"HYPRMx said it did not have an ad to show right now."}]];
         }
     }];
 }

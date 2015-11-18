@@ -45,6 +45,14 @@
     self.appSignature = [HZDictionaryUtils objectForKey:@"app_signature" ofClass:[NSString class] dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.appID != nil && self.appSignature != nil;
+}
+
+- (NSString *)testActivityInstructions {
+    return @"If you have trouble receiving Chartboost ads:\n\n1. Check that you've set up a Publisher Campaign on the Chartboost dashboard.\n2. From the Chartoost dashboard, enable Test Mode by selecting your app in the sidebar > App Settings > Basic Settings > set \"Test Mode\" to \"Enabled\".";
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -53,8 +61,18 @@
 }
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.appID, @"appID");
-    RETURN_ERROR_IF_NIL(self.appSignature, @"appSignature");
+    if (![self hasNecessaryCredentials]) {
+        NSMutableArray *erroredCredentials = [NSMutableArray array];
+        if (!self.appID){
+            [erroredCredentials addObject:@"App ID"];
+        }
+        
+        if (!self.appSignature) {
+            [erroredCredentials addObject:@"App Signature"];
+        }
+        
+        RETURN_ERROR_UNLESS(NO, ([NSString stringWithFormat:@"%@ needs an App ID and an App Signature set up on your dashboard, you're missing these: [%@]", [self humanizedName], [erroredCredentials componentsJoinedByString:@", "]]));
+    }
     
     if ([HZChartboost respondsToSelector:@selector(setMediation:withVersion:)]) {
         NSMethodSignature *signature = [HZChartboost methodSignatureForSelector:@selector(setMediation:withVersion:)];
@@ -95,9 +113,9 @@
 
 NSString * const kHZCBLocationDefault = @"Default";
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    switch (creativeType) {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic:
             [HZChartboost cacheInterstitial:kHZCBLocationDefault];
             break;
@@ -113,9 +131,9 @@ NSString * const kHZCBLocationDefault = @"Default";
     }
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    switch (creativeType) {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeIncentivized:
             return [HZChartboost hasRewardedVideo:kHZCBLocationDefault];
         case HZCreativeTypeStatic:
@@ -125,9 +143,9 @@ NSString * const kHZCBLocationDefault = @"Default";
     }
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
-    switch (creativeType) {
+    switch (options.creativeType) {
         case HZCreativeTypeStatic:
             [HZChartboost showInterstitial:kHZCBLocationDefault];
             break;
@@ -172,19 +190,19 @@ NSString * const kHZCBLocationDefault = @"Default";
 
 - (void)didFailToLoadInterstitial:(NSString *)location withError:(CBLoadError)error {
     [[self class] logError:error];
-    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Chartboost"}] forCreativeType:HZCreativeTypeStatic];
+    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey: @"Chartboost"}] forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)didFailToLoadRewardedVideo:(CBLocation)location
                          withError:(CBLoadError)error {
     [[self class] logError:error];
-    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey:@"Chartboost"}] forCreativeType:HZCreativeTypeIncentivized];
+    [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{kHZMediatorNameKey:@"Chartboost"}] forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeIncentivized]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
 - (void)didCacheRewardedVideo:(CBLocation)location {
-    [self clearLastFetchErrorForCreativeType:HZCreativeTypeIncentivized];
+    [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeIncentivized]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
@@ -241,7 +259,7 @@ NSString * const kHZCBLocationDefault = @"Default";
  */
 
 - (void)didCacheInterstitial:(CBLocation)location {
-    [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
+    [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 

@@ -16,13 +16,13 @@
 #import "HZLabeledActivityIndicator.h"
 #import "HZEnums.h"
 
-@interface HZAdViewController()<SKStoreProductViewControllerDelegate, UIWebViewDelegate>
+@interface HZAdViewController() <SKStoreProductViewControllerDelegate>
 
-@property (nonatomic) UIWebView *clickTrackingWebView;
 @property (nonatomic) HZLabeledActivityIndicator *activityIndicator;
 
 @property (nonatomic) BOOL statusBarHidden;
 
+@property (nonatomic) BOOL wasJustClicked;
 @end
 
 @implementation HZAdViewController
@@ -35,9 +35,15 @@
         _activityIndicator = [[HZLabeledActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
         _activityIndicator.labelText = @"Loading App Store";
         _activityIndicator.fadeBackground = YES;
+        
+        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(applicationDidBecomeActive:) name: UIApplicationDidBecomeActiveNotification object: nil];
     }
     
     return self;
+}
+
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
@@ -46,17 +52,6 @@
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
-}
-
-- (void) dealloc {
-    if (self.clickTrackingWebView != nil) {
-        [self.clickTrackingWebView loadHTMLString: @"" baseURL: nil];
-        [self.clickTrackingWebView stopLoading];
-        self.clickTrackingWebView.delegate = nil;
-        [self.clickTrackingWebView removeFromSuperview];
-    }
-    
-    self.clickTrackingWebView = nil;
 }
 
 - (void) show {
@@ -72,7 +67,7 @@
     }
 
     if (!options.viewController) {
-        NSLog(@"Heyzap requires a root view controller to display an ad. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
+        HZAlwaysLog(@"Heyzap requires a root view controller to display an ad. Set the `rootViewController` property of [UIApplication sharedApplication].keyWindow to fix this error. If you have any trouble doing this, contact support@heyzap.com");
         
         NSError *const error = [NSError errorWithDomain:@"Heyzap" code:10 userInfo:@{NSLocalizedFailureReasonErrorKey:@"There was no root view controller to display the ad."}];
         [HZAdsManager postNotificationName:kHeyzapDidFailToShowAdNotification infoProvider:self.ad userInfo:@{NSUnderlyingErrorKey: error}];
@@ -106,6 +101,7 @@
 }
 
 - (void)didClickWithURL:(NSURL *)url {
+    self.wasJustClicked = YES;
     
     [self.ad onClick];
     [HZAdsManager postNotificationName:kHeyzapDidClickAdNotification infoProvider:self.ad];
@@ -145,27 +141,21 @@
 
 - (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController {
     [self dismissViewControllerAnimated:YES completion:nil];
-    
-    [self applicationDidEnterForeground: nil];
+    [self returnToAdFromClick];
+    self.wasJustClicked = NO;
 }
 
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    NSURL *url = request.URL;
-    if(url.host && [url.host rangeOfString:@"itunes.apple"].location != NSNotFound){
-        //We've loaded a click URL in the webview, don't redirect to itunes since we are launching
-        //the store kit product view
-        
-        [HZLog debug: @"(POSTBACK COMPLETE)"];
-        
-        return NO;
+// for non-modal app store
+- (void) applicationDidBecomeActive: (id) notification {
+    if (self.wasJustClicked) {
+        [self returnToAdFromClick];
+        self.wasJustClicked = NO;
     }
-    
-    return YES;
 }
 
--  (void)webViewDidFinishLoad:(UIWebView *)webView {
-    
-}
+
+// for subclasses to override
+- (void) returnToAdFromClick { }
 
 #pragma mark - Utility
 
@@ -176,10 +166,6 @@
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: keyWindow] & UIInterfaceOrientationMaskLandscape;
     }
-}
-
-- (void) applicationDidEnterForeground: (id) notification {
-    
 }
 
 

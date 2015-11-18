@@ -67,6 +67,10 @@
     self.sdkKey = [HZDictionaryUtils objectForKey:@"sdk_key" ofClass:[NSString class] dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.sdkKey != nil;
+}
+
 #pragma mark - Adapter Protocol
 
 + (BOOL)isSDKAvailable
@@ -92,13 +96,17 @@
     return [HZALSdk version];
 }
 
+- (NSString *)testActivityInstructions {
+    return @"If you have trouble receiving AppLovin ads, enable Test Mode by going to the AppLovin dashboard > Manage > Applications > Choose your app > set \"Test Mode\" on.";
+}
+
 - (void) toggleLogging { HZDLog(@"Logs for %@ can only be enabled/disabled before initialization.", [[self class] humanizedName]); }
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.sdkKey, @"sdk_key");
+    RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs an SDK Key set up on your dashboard.", [self humanizedName]]));
     
     HZDLog(@"Initializing AppLovin with SDK Key: %@",self.sdkKey);
-    HZALSdkSettings *settings = [HZALSdkSettings alloc];
+    HZALSdkSettings *settings = [[HZALSdkSettings alloc] init];
     settings.isVerboseLogging = [self isLoggingEnabled];
     self.sdk = [HZALSdk sharedWithKey:self.sdkKey settings:settings];
     [self.sdk initializeSdk];
@@ -114,9 +122,9 @@
 }
 
 // To support incentivized, I will need to have separate objects for the incentivized/interstial delegates because they received the same selectors
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    switch (creativeType) {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic: {
             [[self.sdk adService] preloadAdOfSize:[HZALAdSize sizeInterstitial]];
             break;
@@ -126,7 +134,7 @@
                 return;
             }
             self.currentIncentivizedAd = [[HZALIncentivizedInterstitialAd alloc] initIncentivizedInterstitialWithSdk:self.sdk];
-            self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithCreativeType:creativeType delegate:self.forwardingDelegate];
+            self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithCreativeType:dataProvider.creativeType delegate:self.forwardingDelegate];
             [self.currentIncentivizedAd preloadAndNotify:self.incentivizedDelegate];
             self.currentIncentivizedAd.adVideoPlaybackDelegate = self.incentivizedDelegate;
             
@@ -140,9 +148,9 @@
     }
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    switch (creativeType) {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic: {
             return [[self.sdk adService] hasPreloadedAdOfSize:[HZALAdSize sizeInterstitial]];
             break;
@@ -158,9 +166,9 @@
     }
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
-    if (creativeType == HZCreativeTypeIncentivized) {
+    if (options.creativeType == HZCreativeTypeIncentivized) {
         
         if (self.currentIncentivizedAd && [self.currentIncentivizedAd isReadyForDisplay]) {
             self.currentIncentivizedAd.adDisplayDelegate = self.incentivizedDelegate;
@@ -169,7 +177,7 @@
         } else {
             [self appLovinFailedToShowWithUnderlyingError:self.incentivizedError];
         }
-    } else if(creativeType == HZCreativeTypeStatic) {
+    } else if(options.creativeType == HZCreativeTypeStatic) {
         // We just need to keep a strong reference to the last HZALInterstitialAd to prevent it from being deallocated (this started being required in AppLovin 3.0.2)
         self.currentInterstitialAd = [[HZALInterstitialAd alloc] initInterstitialAdWithSdk:self.sdk];
         self.currentInterstitialAd.adDisplayDelegate = self.interstitialDelegate;

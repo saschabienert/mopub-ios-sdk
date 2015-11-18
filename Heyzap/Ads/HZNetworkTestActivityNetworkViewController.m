@@ -30,7 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "HZTestActivityNetworkViewController.h"
+#import "HZNetworkTestActivityNetworkViewController.h"
 #import "HeyzapAds.h"
 #import "HeyzapMediation.h"
 #import "HZMediationAPIClient.h"
@@ -46,23 +46,28 @@
 
 #import "HZFacebookAdapter.h"
 #import "HZAdMobAdapter.h"
+#import "HZInMobiAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 
-@interface HZTestActivityNetworkViewController() <UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, HZBannerAdDelegate, HZIncentivizedAdDelegate>
+#define LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification) [self appendStringToDebugLog:[NSString stringWithFormat:@"%@ %@ tag:'%@'",  NSStringFromClass([[notification object] class]) ?: @"", [NSStringFromSelector(_cmd) stringByReplacingOccurrencesOfString:@"Notification:" withString:@""] , [notification userInfo][HZAdTagUserInfoKey]]]
+
+@interface HZNetworkTestActivityNetworkViewController() <UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate>
 
 @property (nonatomic) HZBaseAdapter *network;
 @property (nonatomic) UIViewController *rootVC;
 @property (nonatomic) BOOL available;
-@property (nonatomic) BOOL initialized;
+@property (nonatomic) BOOL hasCredentials;
 @property (nonatomic) BOOL enabled;
 @property (nonatomic) UIView *adControls;
 @property (nonatomic) NSString *currentAdFormat;
 @property (nonatomic) HZAdType currentAdType;
 @property (nonatomic) UIButton *showButton;
 @property (nonatomic) UILabel *availableStatus;
-@property (nonatomic) UILabel *initializationStatus;
+@property (nonatomic) UILabel *hasCredentialsStatus;
 @property (nonatomic) UILabel *enabledStatus;
 @property (nonatomic) UITextView *debugLog;
+
+@property (nonatomic) UITextField *adTagField;
 
 @property (nonatomic) UIButton *showBannerButton;
 @property (nonatomic) UIButton *hideBannerButton;
@@ -87,35 +92,21 @@ NSValue *hzBannerPositionValue(HZBannerPosition position);
 HZBannerPosition hzBannerPositionFromNSValue(NSValue *value);
 NSString *hzBannerPositionName(HZBannerPosition position);
 
-@property (nonatomic, weak) id<HZAdsDelegate> previousInterstitialDelegate;
-@property (nonatomic, weak) id<HZAdsDelegate> previousVideoDelegate;
-@property (nonatomic, weak) id<HZAdsDelegate> previousIncentivizedDelegate;
-
 @end
 
-@implementation HZTestActivityNetworkViewController
+@implementation HZNetworkTestActivityNetworkViewController
 
 #pragma mark - Initialization
 
-- (instancetype) initWithNetwork:(HZBaseAdapter *)network rootVC:(UIViewController *)rootVC available:(BOOL)available initialized:(BOOL)initialized enabled:(BOOL)enabled {
+- (instancetype) initWithNetwork:(HZBaseAdapter *)network rootVC:(UIViewController *)rootVC available:(BOOL)available hasCredentials:(BOOL)hasCredentials enabled:(BOOL)enabled {
     self = [super init];
     
     if (self) {
         self.network = network;
         self.rootVC = rootVC;
         self.available = available;
-        self.initialized = initialized;
+        self.hasCredentials = hasCredentials;
         self.enabled = enabled;
-        
-        // set this adapter's delegate to us so we can get callbacks
-        
-        _previousInterstitialDelegate = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeInterstitial];
-        _previousVideoDelegate        = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeVideo];
-        _previousIncentivizedDelegate = [[HeyzapMediation sharedInstance] underlyingDelegateForAdType:HZAdTypeIncentivized];
-        
-        [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeInterstitial];
-        [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeVideo];
-        [[HeyzapMediation sharedInstance] setDelegate:self forAdType:HZAdTypeIncentivized];
         
         // UnityAds starts with a view controller that is not us, need to set it since AppLovin apparently jacks it
         if ([[network name] isEqualToString:@"unityads"]) {
@@ -150,18 +141,41 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     [self showOrHideBannerControls];
     
     if ([self.network testActivityInstructions]) {
-        [self appendStringToDebugLog:[self.network testActivityInstructions]];
+        [self appendStringToDebugLog:[NSString stringWithFormat:@"%@\n", [self.network testActivityInstructions]]];
     }
+    
+    // Dismisses first responder (keyboard)
+    [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)]];
+    
+    // notifications for mediation callbacks
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didShowAdNotification:) name:HZMediationDidShowAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFailToShowAdNotification:) name:HZMediationDidFailToShowAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didClickAdNotification:) name:HZMediationDidClickAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didHideAdNotification:) name:HZMediationDidHideAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveAdNotification:) name:HZMediationDidReceiveAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFailToReceiveAdNotification:) name:HZMediationDidFailToReceiveAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willStartAudioNotification:) name:HZMediationWillStartAdAudioNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFinishAudioNotification:) name:HZMediationDidFinishAdAudioNotification object:nil];
+    // incentivized
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didCompleteAdNotification:) name:HZMediationDidCompleteIncentivizedAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFailToCompleteAdNotification:) name:HZMediationDidFailToCompleteIncentivizedAdNotification object:nil];
+    // banners
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerDidReceiveAdNotification:) name:kHZBannerAdDidReceiveAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerDidFailToReceiveAdNotification:) name:kHZBannerAdDidFailToReceiveAdNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerWasClickedNotification:) name:kHZBannerAdWasClickedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerWillPresentModalViewNotification:) name:kHZBannerAdWillPresentModalViewNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerDidDismissModalViewNotification:) name:kHZBannerAdDidDismissModalViewNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerWillLeaveApplicationNotification:) name:kHZBannerAdWillLeaveApplicationNotification object:nil];
+    // network callbacks
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkCallbackNotification:) name:HZMediationNetworkCallbackNotification object:[self.network name]];
 }
 
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-    
-    if (self.isMovingFromParentViewController) {
-        [[HeyzapMediation sharedInstance] setDelegate:self.previousInterstitialDelegate forAdType:HZAdTypeInterstitial];
-        [[HeyzapMediation sharedInstance] setDelegate:self.previousVideoDelegate        forAdType:HZAdTypeVideo];
-        [[HeyzapMediation sharedInstance] setDelegate:self.previousIncentivizedDelegate forAdType:HZAdTypeIncentivized];
-    }
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+}
+
+- (void)viewTapped:(UITapGestureRecognizer *)sender{
+    [sender.view endEditing:YES];
 }
 
 - (void)setChosenBannerPosition:(HZBannerPosition)chosenBannerPosition {
@@ -209,11 +223,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             self.enabled = [network[@"enabled"] boolValue];
 
             // check original initialization succeeded
-            if ([[HeyzapMediation sharedInstance] isAdapterInitialized:self.network]) {
-                self.initialized = YES;
-            } else {
-                self.initialized = NO;
-            }
+            self.hasCredentials = [self.network hasNecessaryCredentials];
 
             // if credentials have changed, pop an alert
             if (![self.network.credentials isEqualToDictionary:network[@"data"]] && self.enabled) {
@@ -222,16 +232,16 @@ NSString *hzBannerPositionName(HZBannerPosition position);
             }
 
             HZDLog(@"Available: %d", self.available);
-            HZDLog(@"Initialized: %d", self.initialized);
+            HZDLog(@"Has credentials: %d", self.hasCredentials);
             HZDLog(@"Enabled: %d", self.enabled);
             
             // update the checks and crosses
             [self setStatusForLabel:self.availableStatus withBool:self.available];
-            [self setStatusForLabel:self.initializationStatus withBool:self.initialized];
+            [self setStatusForLabel:self.hasCredentialsStatus withBool:self.hasCredentials];
             [self setStatusForLabel:self.enabledStatus withBool:self.enabled];
             
             // display or remove the ad controls
-            if (self.available && self.initialized) {
+            if (self.available && self.hasCredentials) {
                 
                 [self hideBanner];
                 
@@ -259,7 +269,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     [self showOrHideBannerControls];
     
     if (self.currentAdType != HZAdTypeBanner) {
-        [self changeShowButtonColor];
+        [self checkAvailabilityAndChangeColorOfShowButton];
         [self hideBanner];
     }
 }
@@ -271,13 +281,23 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     if ([[self bannerSizes] count] == 0) {
         self.bannerSizeTextField.hidden = YES;
     }
+
+    [self.view endEditing:YES]; // Dismisses picker views and keyboard
+}
+
+- (void) isAvailableButtonPressed {
+    [self.view endEditing:YES];// Dismisses picker views and keyboard
     
-    if (self.currentAdType != HZAdTypeBanner) {
-        [self.view endEditing:YES]; // Dismisses picker views when you change to a non-banner format.
-    }
+    // use HZShowOptions to format the tag for the log output
+    HZShowOptions *options = [HZShowOptions new];
+    
+    options.tag = [self.adTagField text];
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"A%@ %@ ad %@ available for tag '%@'.", ([@"aeiou" rangeOfString:[self.currentAdFormat substringWithRange:NSMakeRange(0, 1)]].location != NSNotFound) ? @"n" : @"", self.currentAdFormat,([self checkAvailabilityAndChangeColorOfShowButton] ? @"is" : @"is not"), options.tag]];
 }
 
 - (void) fetchAd {
+    [self.view endEditing:YES];// Dismisses picker views and keyboard
+    
     // check if at least one of the supported creativeTypes for this adType has credentials, warn if not
     NSSet *creativeTypesToCheck = hzCreativeTypesPossibleForAdType(self.currentAdType);
     BOOL foundCredentials = NO;
@@ -292,98 +312,24 @@ NSString *hzBannerPositionName(HZBannerPosition position);
         return;
     }
     
-    [self appendStringToDebugLog:@"Fetching ad (may take up to 10 seconds)"];
-    
     HZFetchOptions *fetchOptions = [HZFetchOptions new];
     fetchOptions.requestingAdType = self.currentAdType;
-    fetchOptions.tag = nil;
+    fetchOptions.tag = [self.adTagField text];
     fetchOptions.additionalParameters = @{ @"network": [[self.network class] name] };
-    fetchOptions.completion = ^(BOOL result, NSError *error) {
-        if (error) {
-            [self appendStringToDebugLog:@"Fetch failed"];
-        } else {
-            [self appendStringToDebugLog:@"Fetch succeeded"];
-        }
-        
-        [self changeShowButtonColor];
-    };
-    
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Fetching ad with tag: '%@' (may take up to 10 seconds)", fetchOptions.tag]];
     [[HeyzapMediation sharedInstance] fetchWithOptions:fetchOptions];
 }
 
 - (void) showAd {
-    [self appendStringToDebugLog:@"Showing ad"];
+    [self.view endEditing:YES];// Dismisses picker views and keyboard
+    
     NSDictionary *additionalParams = @{ @"network": [[self.network class] name] };
 
     HZShowOptions *options = [HZShowOptions new];
+    options.tag = [self.adTagField text];
     options.viewController = self;
-    options.completion = ^(BOOL result, NSError *error) {
-        if (error) {
-            NSString *const errorMessage = ({
-                NSString *msg = @"Show failed";
-                if (error.localizedDescription) {
-                    msg = [msg stringByAppendingFormat:@": %@",error.localizedDescription];
-                }
-                msg;
-            });
-            
-            [self appendStringToDebugLog:errorMessage];
-        } else {
-            [self appendStringToDebugLog:@"Show succeeded"];
-        }
-
-        [self changeShowButtonColor];
-    };
-
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Showing ad with tag: '%@'", options.tag]];
     [[HeyzapMediation sharedInstance] showForAdType:self.currentAdType additionalParams:additionalParams options:options];
-}
-
-#pragma mark - HZAdDelegate methods
-
-- (void)didShowAdWithTag: (NSString *) tag {
-    [self logCallback:_cmd];
-}
-
-- (void)didFailToShowAdWithTag: (NSString *) tag andError: (NSError *)error {
-    [self changeShowButtonColor];
-    [self logCallback:_cmd];
-}
-
-- (void)didReceiveAdWithTag: (NSString *) tag {
-    [self logCallback:_cmd];
-}
-
-- (void)didFailToReceiveAdWithTag: (NSString *) tag {
-    [self logCallback:_cmd];
-}
-
-- (void)didClickAdWithTag: (NSString *) tag {
-    [self logCallback:_cmd];
-}
-
-- (void)didHideAdWithTag: (NSString *) tag {
-    [self changeShowButtonColor];
-    [self logCallback:_cmd];
-}
-
-- (void)willStartAudio {
-    [self logCallback:_cmd];
-}
-
-- (void) didFinishAudio {
-    [self logCallback:_cmd];
-}
-
-- (void)didCompleteAdWithTag: (NSString *) tag {
-    [self logCallback:_cmd];
-}
-
-- (void)didFailToCompleteAdWithTag: (NSString *) tag {
-    [self logCallback:_cmd];
-}
-
-- (void)logCallback:(SEL)selector {
-    [self appendStringToDebugLog:[NSString stringWithFormat:@"Ad Callback: %@",NSStringFromSelector(selector)]];
 }
 
 
@@ -391,19 +337,19 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (void) makeView {
     // sdk available label
-    UIView *availableView = [self makeStatusLabel:@"available" withStatus:self.available text:@"SDK Available" y:30];
+    UIView *availableView = [self makeStatusLabel:@"available" withStatus:self.available text:@"SDK Available" y:15];
     [self.scrollView addSubview:availableView];
     
     // sdk initialization succeeded label
-    UIView *initializationView = [self makeStatusLabel:@"initialization" withStatus:self.initialized text:@"SDK initialized with credentials" y:(CGRectGetMaxY(availableView.frame) + 5)];
-    [self.scrollView addSubview:initializationView];
+    UIView *hasCredentialsView = [self makeStatusLabel:@"credentials" withStatus:self.hasCredentials text:@"SDK has necessary credentials" y:(CGRectGetMaxY(availableView.frame) + 5)];
+    [self.scrollView addSubview:hasCredentialsView];
 
     // network is enabled label
-    UIView *enabledView = [self makeStatusLabel:@"enabled" withStatus:self.enabled text:@"Network enabled on dashboard" y:(CGRectGetMaxY(initializationView.frame) + 5)];
+    UIView *enabledView = [self makeStatusLabel:@"enabled" withStatus:self.enabled text:@"Network enabled on dashboard" y:(CGRectGetMaxY(hasCredentialsView.frame) + 5)];
     [self.scrollView addSubview:enabledView];
     
     // only show ad fetching/showing controls and debug log if the network was initialized correctly
-    if(self.available && self.initialized){
+    if(self.available && self.hasCredentials){
         self.adControls = [self makeAdControls];
         [self.scrollView addSubview:self.adControls];
 
@@ -439,7 +385,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
 - (UIView *) makeAdControls {
     UIView *adControls = ({
-        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 140, self.view.frame.size.width - 20, 160)];
+        UIView *controls = [[UIView alloc] initWithFrame:CGRectMake(10, 100, self.view.frame.size.width - 20, 200)];
         controls.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         controls;
     });
@@ -474,8 +420,34 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     [adFormatControl addTarget:self action:@selector(switchAdFormat:) forControlEvents:UIControlEventValueChanged];
     [adControls addSubview:adFormatControl];
     
+    
     const CGFloat buttonWidth = adFormatControl.frame.size.width / 2.0 - 5;
-    const CGRect leftButtonFrame = CGRectMake(adFormatControl.frame.origin.x, adFormatControl.frame.origin.y + adFormatControl.frame.size.height + 10, buttonWidth, 40);
+    self.adTagField = [[UITextField alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(adFormatControl.frame) + 10, buttonWidth, 40)];
+    self.adTagField.delegate = self;
+    self.adTagField.borderStyle = UITextBorderStyleRoundedRect;
+    self.adTagField.keyboardType = UIKeyboardTypeDefault;
+    self.adTagField.placeholder = @"Ad Tag";
+    self.adTagField.textAlignment = NSTextAlignmentLeft;
+    self.adTagField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleRightMargin;
+    self.adTagField.accessibilityLabel = @"ad tag";
+    self.adTagField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    [self.adTagField addTarget:self
+                        action:@selector(adTagEditingChanged:)
+              forControlEvents:UIControlEventEditingChanged];
+    [adControls addSubview:self.adTagField];
+    
+    UIButton *availableButton = ({
+        UIButton *button = [[self class] buttonWithBackgroundColor:[UIColor darkGrayColor]];
+        button.frame = CGRectMake(CGRectGetMaxX(self.adTagField.frame) + 10, CGRectGetMinY(self.adTagField.frame), CGRectGetWidth(self.adTagField.frame), CGRectGetHeight(self.adTagField.frame));
+        button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin;
+        [button setTitle:@"Ad Available?" forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(isAvailableButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        button;
+    });
+    [adControls addSubview:availableButton];
+    
+    
+    const CGRect leftButtonFrame = CGRectMake(self.adTagField.frame.origin.x, self.adTagField.frame.origin.y + self.adTagField.frame.size.height + 10, buttonWidth, 40);
     const CGRect rightButtonFrame = CGRectMake(CGRectGetMaxX(leftButtonFrame) + 10, leftButtonFrame.origin.y, buttonWidth, 40);
     
     // buttons for fetch and show
@@ -499,7 +471,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     });
     [adControls addSubview:self.showButton];
     
-    self.nonBannerControls = @[fetchButton, self.showButton];
+    self.nonBannerControls = @[fetchButton, self.showButton, availableButton];
     
     if ([self showBanners]) {
         
@@ -646,8 +618,8 @@ NSString *hzBannerPositionName(HZBannerPosition position);
 
     if ([type isEqualToString:@"available"]) {
         self.availableStatus = statusLabel;
-    } else if ([type isEqualToString:@"initialization"]) {
-        self.initializationStatus = statusLabel;
+    } else if ([type isEqualToString:@"credentials"]) {
+        self.hasCredentialsStatus = statusLabel;
     } else if ([type isEqualToString:@"enabled"]) {
         self.enabledStatus = statusLabel;
     }
@@ -683,19 +655,25 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     return adType;
 }
 
-- (void) changeShowButtonColor {
-    const BOOL available = [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:self.currentAdType tag:[HeyzapAds defaultTagName] network:self.network];
+- (BOOL) checkAvailabilityAndChangeColorOfShowButton {
+    const BOOL available = [[HeyzapMediation sharedInstance] isAvailableForAdUnitType:self.currentAdType tag:[self.adTagField text] network:self.network];
     if (available) {
         self.showButton.backgroundColor = [UIColor greenColor];
     } else {
         self.showButton.backgroundColor = [UIColor redColor];
     }
+    
+    return available;
 }
 
 - (void) appendStringToDebugLog:(NSString *)string {
     self.debugLog.text = [NSString stringWithFormat:@"%@\n%@", self.debugLog.text, string];
-    NSRange bottom = NSMakeRange(self.debugLog.text.length, 0);
-    [self.debugLog scrollRangeToVisible:bottom];
+    
+    // get around weird bug in iOS 9 - text view scrolling has issues when done directly after updating the text
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        CGRect rect = CGRectMake(0, self.debugLog.contentSize.height -1, self.debugLog.frame.size.width, self.debugLog.contentSize.height);
+        [self.debugLog scrollRectToVisible:rect animated:NO];
+    });
 }
 
 #pragma mark - UIPickerViewDelegate (Banners)
@@ -796,7 +774,9 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     } else if ([self.network.name isEqualToString: [HZAdMobAdapter name]]) {
         HZAdMobBannerSize size = hzAdMobBannerSizeFromValue(value);
         return hzAdMobBannerSizeDescription(size);
-    } else {
+    } else if ([self.network.name isEqualToString:[HZInMobiAdapter name]]) {
+        return hzInMobiBannerSizeDescription([value CGSizeValue]);
+    }else {
         return @"n/a";
     }
 }
@@ -807,6 +787,8 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
         return [HZBannerAdOptions facebookBannerSizes];
     } else if ([name isEqualToString:[HZAdMobAdapter name]]) {
         return [HZBannerAdOptions admobBannerSizes];
+    } else if ([name isEqualToString:[HZInMobiAdapter name]]) {
+        return [HZBannerAdOptions inmobiBannerSizes];
     } else {
         return @[];
     }
@@ -820,13 +802,16 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     HZBannerAdOptions *opts = [[HZBannerAdOptions alloc] init];
     
     opts.networkName = self.network.name;
-    
+    opts.fetchTimeout = 30;
     opts.presentingViewController = self;
+    opts.tag = [self.adTagField text];
     
     if ([self.network.name isEqualToString: [HZFacebookAdapter name]]) {
         opts.facebookBannerSize = hzFacebookBannerSizeFromValue(self.chosenBannerSize);
     } else if ([self.network.name isEqualToString: [HZAdMobAdapter name]]) {
         opts.admobBannerSize = hzAdMobBannerSizeFromValue(self.chosenBannerSize);
+    } else if ([self.network.name isEqualToString:[HZInMobiAdapter name]]) {
+        opts.inMobiBannerSize = [self.chosenBannerSize CGSizeValue];
     }
     
     return opts;
@@ -835,17 +820,17 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 - (void)showBanner:(UIButton *)sender {
     [self.view endEditing:YES];
     sender.enabled = NO;
+    HZBannerAdOptions * options = [self bannerOptions];
     
-    [self appendStringToDebugLog:@"Requesting Banner..."];
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Requesting Banner for tag: '%@' with a %d-second timeout", options.tag, (int)options.fetchTimeout]];
     
     [HZBannerAd placeBannerInView:self.view
                                 position:self.chosenBannerPosition
-                                 options:[self bannerOptions]
+                                 options:options
      success:^(HZBannerAd *banner) {
          [self appendStringToDebugLog:@"Showing banner"];
          self.hideBannerButton.enabled = YES;
          self.bannerWrapper = banner;
-         self.bannerWrapper.delegate = self;
      } failure:^(NSError *error) {
          sender.enabled = YES;
          [self appendStringToDebugLog:@"Error getting banner!"];
@@ -866,29 +851,82 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
     self.showBannerButton.enabled = YES;
 }
 
-#pragma mark - Banner Ad Delegate
 
-- (void)bannerDidReceiveAd:(HZBannerAd *)banner {
-    [self logBannerCallback:_cmd];
+#pragma mark - Callbacks
+// standard
+- (void)didReceiveAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+    [self checkAvailabilityAndChangeColorOfShowButton];
 }
-- (void)bannerDidFailToReceiveAd:(HZBannerAd *)banner error:(NSError *)error {
-    [self logBannerCallback:_cmd];
+- (void)didShowAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+    [self checkAvailabilityAndChangeColorOfShowButton];
 }
-- (void)bannerWasClicked:(HZBannerAd *)banner {
-    [self logBannerCallback:_cmd];
+- (void)didClickAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
 }
-- (void)bannerWillPresentModalView:(HZBannerAd *)banner {
-    [self logBannerCallback:_cmd];
+- (void)didHideAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+    [self checkAvailabilityAndChangeColorOfShowButton];
 }
-- (void)bannerDidDismissModalView:(HZBannerAd *)banner {
-    [self logBannerCallback:_cmd];
+- (void)didFailToReceiveAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Error: %@", [notification userInfo][NSUnderlyingErrorKey]]];
+    [self checkAvailabilityAndChangeColorOfShowButton];
 }
-- (void)bannerWillLeaveApplication:(HZBannerAd *)banner {
-    [self logBannerCallback:_cmd];
+- (void)didFailToShowAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+    [self checkAvailabilityAndChangeColorOfShowButton];
+}
+- (void)willStartAudioNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+- (void)didFinishAudioNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+// incentivized
+- (void)didCompleteAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+- (void) didFailToCompleteAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+// banners
+- (void) bannerDidReceiveAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+- (void) bannerDidFailToReceiveAdNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Banner error: %@", [notification userInfo][NSUnderlyingErrorKey]]];
+}
+- (void) bannerWasClickedNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+- (void) bannerWillPresentModalViewNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+- (void) bannerDidDismissModalViewNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+- (void) bannerWillLeaveApplicationNotification:(NSNotification *)notification {
+    LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification);
+}
+// network callbacks
+- (void) networkCallbackNotification:(NSNotification *)notification {
+    [self appendStringToDebugLog:[NSString stringWithFormat:@"Network callback: [%@]", [notification userInfo][HZNetworkCallbackNameUserInfoKey]]];
 }
 
-- (void)logBannerCallback:(SEL)selector {
-    [self appendStringToDebugLog:[NSString stringWithFormat:@"Banner Callback: %@",NSStringFromSelector(selector)]];
+
+#pragma mark - UITextField delegate
+
+- (BOOL) textFieldShouldReturn:(UITextField *)textField{
+    [textField resignFirstResponder];
+    
+    return YES;
+}
+
+- (void)adTagEditingChanged:(UITextField *)sender {
+    [self checkAvailabilityAndChangeColorOfShowButton];
 }
 
 - (void)updateScrollViewContentSize

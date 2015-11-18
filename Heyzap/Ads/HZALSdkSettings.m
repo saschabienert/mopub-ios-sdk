@@ -8,6 +8,7 @@
 
 #import "HZALSdkSettings.h"
 
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation HZALSdkSettings
 
 + (NSString *)hzProxiedClassName

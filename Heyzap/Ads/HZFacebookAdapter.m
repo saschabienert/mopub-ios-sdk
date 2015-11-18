@@ -13,17 +13,19 @@
 #import "HZBannerAd.h"
 #import "HZFBAdView.h"
 #import "HZFBBannerAdapter.h"
-#import "HZBannerAdOptions.h"
 #import "HZBannerAdOptions_Private.h"
+#import "HZShowOptions_Private.h"
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
 #import "HZBaseAdapter_Internal.h"
 #import "HZFBAdSettings.h"
+#import "HZDevice.h"
 
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
 @property (nonatomic, strong) NSString *placementID;
 @property (nonatomic, strong) NSString *bannerPlacementID;
-@property (nonatomic, strong) HZFBInterstitialAd *interstitialAd;
+@property (nonatomic, strong) NSMutableDictionary <NSString *, HZFBInterstitialAd *> *interstitialAds; // key: placement ID
+@property (nonatomic, strong) NSMutableDictionary <NSString *, NSError *> *interstitialAdErrors; // key: placement ID
 @end
 
 @implementation HZFacebookAdapter
@@ -39,6 +41,15 @@
         proxy.forwardingDelegate.adapter = proxy;
     });
     return proxy;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _interstitialAds = [[NSMutableDictionary alloc] init];
+        _interstitialAdErrors = [[NSMutableDictionary alloc] init];
+    }
+    return self;
 }
 
 - (void)loadCredentials {
@@ -63,7 +74,8 @@
 
 + (BOOL)isSDKAvailable {
     return [HZFBInterstitialAd hzProxiedClassIsAvailable]
-    && [HZFBAdView hzProxiedClassIsAvailable];
+    && [HZFBAdView hzProxiedClassIsAvailable]
+    && hziOS7Plus();
 }
 
 + (NSString *)name {
@@ -106,27 +118,44 @@
     }
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType {
-    return creativeType == HZCreativeTypeStatic && self.interstitialAd && self.interstitialAd.isAdValid;
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    HZFBInterstitialAd *ad = self.interstitialAds[dataProvider.placementIDOverride ?: self.placementID];
+    return ad && ad.isAdValid;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType {
-    HZAssert(self.placementID, @"Need a Placement ID by this point");
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    NSString *const placement = (dataProvider.placementIDOverride ?: self.placementID);
+    HZAssert(placement, @"Need a Placement ID by this point");
     
-    if (self.interstitialAd) {
-        // If we have an interstitial already out fetching, don't start up a re-fetch. This differs from the `hasAdForCreativeType:` check because we don't check `isAdValid`.
+    if (self.interstitialAds[placement]) {
+        // If we have an interstitial already out fetching, don't start up a re-fetch. This differs from the `hasAdWithMetadata:` check because we don't check `isAdValid`.
         return;
     }
     
-    HZDLog(@"Initializing Facebook Audience Network interstitial ad with placement ID: %@",self.placementID);
-    self.interstitialAd = [[HZFBInterstitialAd alloc] initWithPlacementID:self.placementID];
-    self.interstitialAd.delegate = self.forwardingDelegate;
-    [self.interstitialAd loadAd];
+    HZDLog(@"Initializing Facebook Audience Network interstitial ad with placement ID: %@", placement);
+    HZFBInterstitialAd *newAd = [[HZFBInterstitialAd alloc] initWithPlacementID: placement];
+    self.interstitialAds[placement] = newAd;
+    newAd.delegate = self.forwardingDelegate;
+    
+    [newAd loadAd];
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options {
-    [self.interstitialAd showAdFromRootViewController:options.viewController];
+- (void)internalShowAdWithOptions:(HZShowOptions *)options {
+    [self.interstitialAds[options.placementIDOverride ?: self.placementID] showAdFromRootViewController:options.viewController];
 }
+
+- (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    if (error) {
+        [self.interstitialAdErrors setObject:error forKey:dataProvider.placementIDOverride ?: self.placementID];
+    } else {
+        [self.interstitialAdErrors removeObjectForKey:dataProvider.placementIDOverride ?: self.placementID];
+    }
+}
+
+- (NSError *) lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    return self.interstitialAdErrors[dataProvider.placementIDOverride ?: self.placementID];
+}
+
 
 #pragma mark - Facebook Delegation
 
@@ -144,7 +173,7 @@
 
 - (void)interstitialAdDidClose:(HZFBInterstitialAd *)interstitialAd {
     [self.delegate adapterDidDismissAd:self];
-    self.interstitialAd = nil;
+    [self.interstitialAds removeObjectForKey:interstitialAd.placementID];
 }
 
 - (void)interstitialAdWillClose:(HZFBInterstitialAd *)interstitialAd {
@@ -152,7 +181,7 @@
 }
 
 - (void)interstitialAdDidLoad:(HZFBInterstitialAd *)interstitialAd {
-    [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
+    [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic placementIDOverride:interstitialAd.placementID]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
@@ -160,8 +189,8 @@
     [self setLastFetchError:[NSError errorWithDomain:kHZMediationDomain
                                                 code:1
                                             userInfo:@{kHZMediatorNameKey: @"Facebook", NSUnderlyingErrorKey: error}]
-            forCreativeType:HZCreativeTypeStatic];
-    self.interstitialAd = nil;
+            forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic placementIDOverride:interstitialAd.placementID]];
+    [self.interstitialAds removeObjectForKey:interstitialAd.placementID];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
 }
 
@@ -170,8 +199,8 @@
     [self.delegate adapterDidShowAd:self];
 }
 
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    return [[HZFBBannerAdapter alloc] initWithAdUnitId:self.bannerPlacementID options:options reportingDelegate:reportingDelegate parentAdapter:self];
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return [[HZFBBannerAdapter alloc] initWithAdUnitId:(placementIDOverride ?: self.bannerPlacementID) options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 
 @end

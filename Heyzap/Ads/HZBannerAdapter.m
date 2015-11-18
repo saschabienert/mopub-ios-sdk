@@ -22,10 +22,6 @@
     ABSTRACT_METHOD_ERROR();
 }
 
-- (NSString *)networkName {
-    ABSTRACT_METHOD_ERROR();
-}
-
 - (BOOL)isAvailable {
     ABSTRACT_METHOD_ERROR();
 }

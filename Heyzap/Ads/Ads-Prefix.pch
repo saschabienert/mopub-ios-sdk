@@ -7,6 +7,8 @@
     #import "HZEnums.h"
     #import "HZNotifications.h"
     #import "HZAdInfo.h"
+    #import "HeyzapMediation.h"
+    #import "HZErrorReporter.h"
 
 // When NSAssert prints its callstack to the console, its not symbolicated. I'm not sure why. It would be good to know, and ideally have a solution that doesn't involve developers changing anything.
 // This version is copied exactly from NSAssert, but additionally prints the callstack.
@@ -34,7 +36,19 @@ __PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
 NSLog(@"Callstack = %@",[NSThread callStackSymbols]); \
 NSString *const assertionMessage = [NSString stringWithFormat:(@"Assertion failure in method: %@ file: %s line: %i reason: " desc) ,NSStringFromSelector(_cmd), __FILE__, __LINE__, ##__VA_ARGS__]; \
 @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:assertionMessage userInfo:nil]; \
+} while(0) \
 __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
+
+#define HZTrackError(error) \
+do { \
+NSString *const filename = [[[NSString stringWithUTF8String:__FILE__] componentsSeparatedByString:@"/"] lastObject]; \
+[[[HeyzapMediation sharedInstance] errorReporter] trackError:error method:NSStringFromSelector(_cmd) lineNumber:__LINE__ file:filename stackTrace:[NSThread callStackSymbols]]; \
+} while(0)
+
+#define HZTrackErrorNamed(__name, __details, __fullText) \
+do { \
+NSString *const filename = [[[NSString stringWithUTF8String:__FILE__] componentsSeparatedByString:@"/"] lastObject]; \
+[[[HeyzapMediation sharedInstance] errorReporter] trackErrorWithName:__name details:__details fullText:__fullText method:NSStringFromSelector(_cmd) lineNumber:__LINE__ file:filename stackTrace:[NSThread callStackSymbols]]; \
 } while(0)
 
 #endif

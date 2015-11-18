@@ -22,17 +22,18 @@
 @protocol HZBannerReportingDelegate;
 @class HZBannerAdOptions;
 @class HZMediationPersistentConfig;
-
-extern NSString * const HZMediationDidReceiveAdNotification;
+@class HZErrorReporter;
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
+@property (nonatomic, readonly) void (^networkCallbackBlock)(NSString *network, NSString *callback);
 
 @property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 @property (nonatomic, readonly) NSString *mediationId;
 @property (nonatomic, readonly) HZMediationSettings *settings;
 @property (nonatomic, readonly) HZSegmentationController *segmentationController;
 @property (nonatomic, readonly) HZMediationPersistentConfig *persistentConfig;
+@property (nonatomic, readonly) HZErrorReporter *errorReporter;
 
 + (instancetype)sharedInstance;
 
@@ -89,6 +90,7 @@ extern NSString * const HZMediationDidReceiveAdNotification;
 /**
  *  Used to disable Segmentation for the mediation test activity
  */
-- (void)enableSegmentation:(BOOL)enabled;
+- (void) enableSegmentation:(BOOL)enabled;
+- (BOOL) isSegmentationEnabled;
 
 @end

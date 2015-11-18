@@ -39,7 +39,7 @@
 #import "HZMediationSettings.h"
 #import "HZPaymentTransactionObserver.h"
 
-#import "HZTestActivityViewController.h"
+#import "HZNetworkTestActivityViewController.h"
 #import "HZDevice.h"
 #import "NSDictionary+HZDummyCategory.h"
 
@@ -96,6 +96,25 @@ NSString * const HZNetworkCallbackFacebookLoggingImpression = @"logging_impressi
 
 // NSNotifications
 NSString * const HZRemoteDataRefreshedNotification = @"HZRemoteDataRefreshedNotification";
+NSString * const HZMediationNetworkCallbackNotification = @"HZMediationNetworkCallbackNotification";
+
+// HZAdsDelegate Callback NSNotificaions
+NSString * const HZMediationDidShowAdNotification = @"HZMediationDidShowAdNotification";
+NSString * const HZMediationDidFailToShowAdNotification = @"HZMediationDidFailToShowAdNotification";
+NSString * const HZMediationDidReceiveAdNotification = @"HZMediationDidReceiveAdNotification";
+NSString * const HZMediationDidFailToReceiveAdNotification = @"HZMediationDidFailToReceiveAdNotification";
+NSString * const HZMediationDidClickAdNotification = @"HZMediationDidClickAdNotification";
+NSString * const HZMediationDidHideAdNotification = @"HZMediationDidHideAdNotification";
+NSString * const HZMediationWillStartAdAudioNotification = @"HZMediationWillStartAdAudioNotification";
+NSString * const HZMediationDidFinishAdAudioNotification = @"HZMediationDidFinishAdAudioNotification";
+// HZIncentivizedAdDelegate Callback NSNotifications
+NSString * const HZMediationDidCompleteIncentivizedAdNotification = @"HZMediationDidCompleteIncentivizedAdNotification";
+NSString * const HZMediationDidFailToCompleteIncentivizedAdNotification = @"HZMediationDidFailToCompleteIncentivizedAdNotification";
+
+// User Info Keys for NSNotifications
+NSString * const HZNetworkCallbackNameUserInfoKey = @"HZNetworkCallbackNameUserInfoKey";
+NSString * const HZAdTagUserInfoKey = @"HZAdTagUserInfoKey";
+NSString * const HZNetworkNameUserInfoKey = @"HZNetworkNameUserInfoKey";
 
 @implementation HeyzapAds
 

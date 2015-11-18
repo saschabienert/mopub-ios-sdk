@@ -20,6 +20,7 @@
 + (NSString *) HZadvertisingIdentifier;
 + (NSString *) HZvendorDeviceIdentity;
 + (NSString *) HZCarrierName;
++ (NSString *)appName;
 
 - (HZOpenRTBConnectionType) getHZOpenRTBConnectionType;
 

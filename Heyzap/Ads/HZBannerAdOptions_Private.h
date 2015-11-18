@@ -18,6 +18,7 @@
 
 + (NSArray *)admobBannerSizes;
 + (NSArray *)facebookBannerSizes;
++ (NSArray *)inmobiBannerSizes;
 
 NSValue *hzAdMobBannerSizeValue(HZAdMobBannerSize size);
 NSValue *hzFacebookBannerSizeValue(HZFacebookBannerSize size);
@@ -27,6 +28,8 @@ HZFacebookBannerSize hzFacebookBannerSizeFromValue(NSValue *value);
 
 NSString *hzFacebookBannerSizeDescription(HZFacebookBannerSize size);
 NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
+
+NSString *hzInMobiBannerSizeDescription(CGSize size);
 
 /**
  *  Used by the test activity to override the ad network selection to 1 network.

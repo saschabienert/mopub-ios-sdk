@@ -39,6 +39,17 @@
     return sharedStore;
 }
 
++(NSDateFormatter *)sharedDateFormatter {
+    static NSDateFormatter *sharedDateFormatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedDateFormatter = [[NSDateFormatter alloc]init];
+        [sharedDateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mmZZZZ"];
+    });
+    
+    return sharedDateFormatter;
+}
+
 - (NSArray *) supportedFeatures {
     // test if calls can be made from this device. this does not test for a SIM card or reception,
     // only if there is an app that can handle this url. Note: iOS 8 returns YES even for iPads because of new features.
@@ -141,9 +152,7 @@
         return [NSDate date];
     }
     
-    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mmZZZZ"];
-    NSDate *date = [dateFormatter dateFromString:dateString];
+    NSDate *date = [[[self class] sharedDateFormatter] dateFromString:dateString];
     if(!date) {
         return [NSDate date];
     }

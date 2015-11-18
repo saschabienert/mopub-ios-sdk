@@ -13,6 +13,7 @@
 #import "HZAvailability.h"
 #import "HZHeyzapExchangeClient.h"
 #import <AdSupport/AdSupport.h>
+#import "HZWebViewPool.h"
 
 @implementation HZHeyzapExchangeRequestSerializer
 
@@ -34,6 +35,7 @@
 #pragma mark - Default Parameters
 
 + (NSMutableDictionary *)defaultParams {
+    HZParameterAssert([NSThread isMainThread]);
     // Profiling revealed this to be mildly expensive. The values never change so dispatch_once is a good optimization.
     static NSDictionary *defaultParams = nil;
     static CGFloat screenScale;
@@ -49,8 +51,10 @@
         
         screenScale = [[UIScreen mainScreen] scale]; //used to convert width and height from points to pixels
         
-        UIWebView* webView = [[UIWebView alloc] initWithFrame:CGRectZero];
-        NSString* userAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"] ?: @"";
+        UIWebView *webView = [[HZWebViewPool sharedPool] checkoutPool];
+        NSString *userAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"] ?: @"";
+        [[HZWebViewPool sharedPool] returnWebView:webView];
+        
         
         NSString *versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
         versionString = versionString ?: @"";
@@ -77,6 +81,7 @@
                                          @"video_delivery": @"2",//comma separated list of delivery methods STREAMING(1),PROGRESSIVE(2)
                                          @"video_playbackmethod": @"1",//comma separated list of playback methods: AUTO_PLAY_SOUND_ON_VALUE(1), AUTO_PLAY_SOUND_OFF_VALUE(2), CLICK_TO_PLAY_VALUE(3), MOUSE_OVER_VALUE(4)
                                          @"video_mime": @"video/mp4, video/quicktime", // supported video MIME types for iOS
+                                         @"app_name": [HZDevice appName],
                                          } mutableCopy];
         
         defaultParams = params;

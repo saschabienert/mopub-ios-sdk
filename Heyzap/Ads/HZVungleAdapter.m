@@ -16,6 +16,9 @@
 #import "HZBaseAdapter_Internal.h"
 #import "HZDevice.h"
 
+NSString * const HZFallbackVunglePlayAdOptionKeyIncentivized = @"incentivized";
+NSString * const HZFallbackVunglePlayAdOptionKeyPlacement = @"placement";
+
 @interface HZVungleAdapter() <HZVungleSDKDelegate>
 
 /**
@@ -55,6 +58,10 @@
     self.appID = [HZDictionaryUtils objectForKey:@"app_id" ofClass:[NSString class] dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.appID != nil;
+}
+
 - (void) toggleLogging {
     [[HZVungleSDK sharedSDK] setLoggingEnabled:[self isLoggingEnabled]];
 }
@@ -62,7 +69,7 @@
 #pragma mark - Adapter Protocol
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.appID, @"app_id");
+    RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs an App ID set up on your dashboard.", [self humanizedName]]));
     
     [self toggleLogging];
     
@@ -92,17 +99,21 @@
     return hzLookupStringConstant(@"VungleSDKVersion");
 }
 
+- (NSString *)testActivityInstructions {
+    return @"If you have trouble receiving Vungle ads, try enabling Test Mode from the Vungle Dashboard by finding your app, clicking the settings icon on the far right, and setting the \"Status\" to \"Test Mode\".";
+}
+
 - (HZCreativeType) supportedCreativeTypes
 {
     return HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     BOOL adPlayable = NO;
     
@@ -117,21 +128,25 @@
     return adPlayable;
 }
 
-- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
+- (NSError *)lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     return self.lastError;
 }
 
-- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
+- (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     self.lastError = error;
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
     // setup options
-    NSMutableDictionary *vungleOptions = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *vungleOptions = [NSMutableDictionary dictionary];
     
-    if (creativeType == HZCreativeTypeIncentivized) {
+    NSString *const sanitizedPlacement = [[self class] sanitizeAdTagForVunglePlacement:options.tag];
+    vungleOptions[[[self class] vunglePlayAdOptionKeyPlacement]] = sanitizedPlacement;
+    
+    
+    if (options.creativeType == HZCreativeTypeIncentivized) {
         self.isShowingIncentivized = YES;
         
         NSString *const incentivizedKey = [[self class] vunglePlayAdOptionKeyIncentivized];
@@ -145,6 +160,28 @@
         [self.delegate adapterDidFailToShowAd:self error:error];
     }
 }
+
++ (NSString *)vungleValidPlacementCharacters {
+    return @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
+}
+
++ (NSCharacterSet *)vunglePlacementDisallowedCharacterSet {
+    static NSCharacterSet *disallowedCharacterSet = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        disallowedCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:[self vungleValidPlacementCharacters]] invertedSet];
+    });
+    return disallowedCharacterSet;
+}
+
++ (NSString *)sanitizeAdTagForVunglePlacement:(NSString *)tag {
+    return [[tag componentsSeparatedByCharactersInSet:[self vunglePlacementDisallowedCharacterSet]] componentsJoinedByString:@""];
+}
+
+
+
+
+
 
 #pragma mark - Vungle Delegate
 
@@ -193,7 +230,11 @@
 }
 
 + (NSString *)vunglePlayAdOptionKeyIncentivized {
-    return @"incentivized";
+    return hzLookupStringConstant(@"VunglePlayAdOptionKeyIncentivized") ?: HZFallbackVunglePlayAdOptionKeyIncentivized;
+}
+
++ (NSString *)vunglePlayAdOptionKeyPlacement {
+    return hzLookupStringConstant(@"VunglePlayAdOptionKeyPlacement") ?: HZFallbackVunglePlayAdOptionKeyPlacement;
 }
 
 @end

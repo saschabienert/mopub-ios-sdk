@@ -22,6 +22,7 @@
 #import "HZHyprmxAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 #import "HZLeadboltAdapter.h"
+#import "HZInMobiAdapter.h"
 #import "HZLog.h"
 #import "HZDispatch.h"
 
@@ -37,15 +38,12 @@
 
 NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 
-#pragma mark - Initialization
+// When making a new subclass, copy methods in this section into the subclass and implement them, if necessary.
+#pragma mark - BEGIN METHODS TO PASTE INTO NEW SUBCLASS
 
 + (instancetype)sharedAdapter
 {
     ABSTRACT_METHOD_ERROR();
-}
-
-- (void) dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - Adapter Protocol
@@ -54,17 +52,6 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     
 }
 
-- (NSError *)initializeSDK {
-    __block NSError *error;
-    hzEnsureMainQueue(^{
-        error = [self internalInitializeSDK];
-        if (!error && !self.isInitialized) {
-            self.isInitialized = YES;
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
-        }
-    });
-    return error;
-}
 - (NSError *)internalInitializeSDK {
     ABSTRACT_METHOD_ERROR();
 }
@@ -88,121 +75,49 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     ABSTRACT_METHOD_ERROR();
 }
 
+- (NSString *)testActivityInstructions {
+    return nil;
+}
+
 - (HZCreativeType)supportedCreativeTypes
 {
     ABSTRACT_METHOD_ERROR();
 }
 
-- (void)prefetchForCreativeType:(HZCreativeType)creativeType {
-    if(![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner){
-        HZELog(@"HZBaseAdapter: prefetchForCreativeType:%@ called for %@ adapter (%@)", NSStringFromCreativeType(creativeType), [self name], creativeType == HZCreativeTypeBanner ? @"banners can't be fetched via the normal adapter": @"unsupported creativeType");
-        return;
-    }
-    
-    hzEnsureMainQueue(^{
-        if ([self hasAdForCreativeType:creativeType]) return;
-        
-        [self clearLastFetchErrorForCreativeType:creativeType];
-        [self internalPrefetchForCreativeType:creativeType];
-    });
-}
-
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
-{
-    ABSTRACT_METHOD_ERROR();
-}
-
-- (BOOL)hasAdForCreativeType:(HZCreativeType)creativeType
-{
-    if (creativeType == HZCreativeTypeBanner) {
-        HZELog(@"hasAdForCreativeType should not be sent to adapters asking about banner ads.");
-        return NO;
-    }
-    
-    if (![self supportsCreativeType:creativeType]) return NO;
-    
-    __block BOOL hasAd;
-    hzEnsureMainQueue(^{
-        hasAd = [self internalHasAdForCreativeType:creativeType];
-    });
-    return hasAd;
-}
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
-{
-    ABSTRACT_METHOD_ERROR();
-}
-
-- (void)showAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
-{
-    if (![self supportsCreativeType:creativeType] || creativeType == HZCreativeTypeBanner) {
-        NSError *const error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an unsupported creativeType: %@", [[self class] humanizedName], NSStringFromCreativeType(creativeType)]}];
-        [self.delegate adapterDidFailToShowAd:self error:error];
-        return;
-    }
-    
-    hzEnsureMainQueue(^{
-        [self internalShowAdForCreativeType:creativeType options:options];
-    });
-}
-
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
-{
-    ABSTRACT_METHOD_ERROR();
-}
-
-- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    __block HZBannerAdapter *bannerAdapter;
-    hzEnsureMainQueue(^{
-        bannerAdapter = [self internalFetchBannerWithOptions:options reportingDelegate:reportingDelegate];
-    });
-    return bannerAdapter;
-}
-
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    return nil;
-}
-
-#pragma mark - Logging
-
-- (void) loggingChanged:(NSNotification *) notification {
-    [self toggleLogging];
-}
-
-- (BOOL) isLoggingEnabled {
-    return ([HZLog isThirdPartyLoggingEnabled] ? YES : NO);
-}
-
-- (void) toggleLogging { }
-
-#pragma mark - Inferred methods
-
-- (NSString *)sdkVersion
-{
-    return [[self class] sdkVersion];
-}
-
-- (NSString *)name
-{
-    return [[self class] name];
-}
-
-- (NSString *)humanizedName
-{
-    return [[self class] humanizedName];
-}
-
-- (BOOL)supportsCreativeType:(HZCreativeType)creativeType
-{
-    return [self supportedCreativeTypes] & creativeType;
-}
-
+// does not currently check for placement ID overrides... not sure it should - it'd add extra complexity and we don't allow people to skip entering default placement IDs on their dashboards
 - (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
     return YES;
 }
 
-- (NSError *)lastFetchErrorForCreativeType:(HZCreativeType)creativeType
+- (BOOL) hasNecessaryCredentials {
+    return YES;
+}
+
+- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    switch (creativeType) {
+    ABSTRACT_METHOD_ERROR();
+}
+
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+{
+    ABSTRACT_METHOD_ERROR();
+}
+
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
+{
+    ABSTRACT_METHOD_ERROR();
+}
+
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return nil;
+}
+
+#pragma mark - Fetch error storage/reporting
+
+// default implementation only sorts errors based on creativeType. for subclasses that have errors that need to be sorted in a more simple/complex manner (i.e.: via creativeType and placementID for adapters that utilize placementID overrides, or via just one object for adapters that don't support multiple creativeTypes), provide your own implementation
+- (NSError *)lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+{
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic: {
             return self.lastStaticFetchError;
             break;
@@ -222,15 +137,12 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
             return nil;
         }
     }
+    return nil;
 }
 
-- (void)clearLastFetchErrorForCreativeType:(HZCreativeType)creativeType
-{
-    [self setLastFetchError:nil forCreativeType:creativeType];
-}
-
-- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
-    switch(creativeType) {
+// default implementation only sorts errors based on creativeType. for subclasses that have errors that need to be sorted in a more simple/complex manner (i.e.: via creativeType and placementID for adapters that utilize placementID overrides, or via just one object for adapters that don't support multiple creativeTypes), provide your own implementation
+- (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    switch(dataProvider.creativeType) {
         case HZCreativeTypeStatic:
             self.lastStaticFetchError = error;
             break;
@@ -245,7 +157,170 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     }
 }
 
-#pragma mark - Implemented Methods
+#pragma mark - Logging
+
+
+- (void) toggleLogging { }
+
+
+#pragma mark - END METHODS TO PASTE INTO NEW SUBCLASS
+
+#pragma mark - Instance methods that call class methods
+
+- (NSString *)sdkVersion
+{
+    return [[self class] sdkVersion];
+}
+
+- (NSString *)name
+{
+    return [[self class] name];
+}
+
+- (NSString *)humanizedName
+{
+    return [[self class] humanizedName];
+}
+
+#pragma mark - Public methods that call internal methods
+
+- (NSError *)initializeSDK {
+    __block NSError *error;
+    hzEnsureMainQueue(^{
+        error = [self internalInitializeSDK];
+        if (!error && !self.isInitialized) {
+            self.isInitialized = YES;
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
+        }
+    });
+    return error;
+}
+
+- (BOOL)hasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+{
+    if (dataProvider.creativeType == HZCreativeTypeBanner) {
+        HZELog(@"hasAdWithMetadata should not be sent to adapters asking about banner ads.");
+        return NO;
+    }
+    
+    if (![self supportsCreativeType:dataProvider.creativeType]) return NO;
+    
+    __block BOOL hasAd;
+    hzEnsureMainQueue(^{
+        hasAd = [self internalHasAdWithMetadata:dataProvider];
+    });
+    return hasAd;
+}
+
+- (void)prefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    if(![self supportsCreativeType:dataProvider.creativeType] || dataProvider.creativeType == HZCreativeTypeBanner){
+        HZELog(@"HZBaseAdapter: prefetchForCreativeType:%@ called for %@ adapter (%@)", NSStringFromCreativeType(dataProvider.creativeType), [self name], dataProvider.creativeType == HZCreativeTypeBanner ? @"banners can't be fetched via the normal adapter": @"unsupported creativeType");
+        return;
+    }
+    
+    hzEnsureMainQueue(^{
+        if ([self hasAdWithMetadata:dataProvider]) return;
+        
+        [self clearLastFetchErrorForAdsWithMatchingMetadata:dataProvider];
+        [self internalPrefetchAdWithMetadata:dataProvider];
+    });
+}
+
+- (HZBannerAdapter *)fetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    __block HZBannerAdapter *bannerAdapter;
+    hzEnsureMainQueue(^{
+        bannerAdapter = [self internalFetchBannerWithOptions:options placementIDOverride:placementIDOverride reportingDelegate:reportingDelegate];
+    });
+    return bannerAdapter;
+}
+
+- (void)showAdWithOptions:(HZShowOptions *)options
+{
+    if (![self supportsCreativeType:options.creativeType] || options.creativeType == HZCreativeTypeBanner) {
+        NSError *const error = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an unsupported creativeType: %@", [[self class] humanizedName], NSStringFromCreativeType(options.creativeType)]}];
+        [self.delegate adapterDidFailToShowAd:self error:error];
+        return;
+    }
+    
+    hzEnsureMainQueue(^{
+        [self internalShowAdWithOptions:options];
+    });
+}
+
+#pragma mark - Common, shared logic
+
+- (BOOL)supportsCreativeType:(HZCreativeType)creativeType
+{
+    return [self supportedCreativeTypes] & creativeType;
+}
+
+- (NSNumber *) latestMediationScoreForCreativeType:(HZCreativeType)creativeType {
+    if(!self.latestMediationScores){
+        self.latestMediationScores = [[NSMutableDictionary alloc] init];
+    }
+    
+    return self.latestMediationScores[@(creativeType)] ?: @0;
+}
+
+- (void) setLatestMediationScore:(NSNumber *)score forCreativeType:(HZCreativeType)creativeType {
+    if(!self.latestMediationScores){
+        self.latestMediationScores = [[NSMutableDictionary alloc]init];
+    }
+    
+    self.latestMediationScores[@(creativeType)] = (score ?: @0);
+}
+
+- (void)setCredentials:(NSDictionary *const)credentials {
+    if (!_credentials) {
+        _credentials = credentials;
+        [self loadCredentials];
+    }
+}
+
+- (HZAdType) possibleSupportedAdTypes {
+    HZAdType returnVal = 0;
+    HZCreativeType supportedCreativeTypes = [self supportedCreativeTypes];
+    if (supportedCreativeTypes & HZCreativeTypeStatic) {
+        returnVal |= HZAdTypeInterstitial;
+    }
+    
+    if (supportedCreativeTypes & HZCreativeTypeVideo) {
+        returnVal |= (HZAdTypeInterstitial | HZAdTypeVideo); // blended interstitials
+    }
+    
+    if(supportedCreativeTypes & HZCreativeTypeIncentivized) {
+        returnVal |= HZAdTypeIncentivized;
+    }
+    
+    if(supportedCreativeTypes & HZCreativeTypeBanner) {
+        returnVal |= HZAdTypeBanner;
+    }
+    
+    return returnVal;
+}
+
+- (void)clearLastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+{
+    [self setLastFetchError:nil forAdsWithMatchingMetadata:dataProvider];
+}
+
+- (BOOL) isLoggingEnabled {
+    return ([HZLog isThirdPartyLoggingEnabled] ? YES : NO);
+}
+
+- (void) loggingChanged:(NSNotification *) notification {
+    [self toggleLogging];
+}
+
++ (NSTimeInterval)isAvailablePollInterval {
+    return kHZIsAvailablePollIntervalSecondsDefault;
+}
+
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+#pragma mark - Adapter management
 
 + (Class)adapterClassForName:(NSString *)adapterName
 {
@@ -278,6 +353,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
             [HZHyprmxAdapter class],
             [HZHeyzapExchangeAdapter class],
             [HZLeadboltAdapter class],
+            [HZInMobiAdapter class],
             nil];
 }
 
@@ -293,57 +369,6 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return NO;
 }
 
-- (NSNumber *) latestMediationScoreForCreativeType:(HZCreativeType)creativeType {
-    if(!self.latestMediationScores){
-        self.latestMediationScores = [[NSMutableDictionary alloc] init];
-    }
-    
-    return self.latestMediationScores[@(creativeType)] ?: @0;
-}
 
-- (void) setLatestMediationScore:(NSNumber *)score forCreativeType:(HZCreativeType)creativeType {
-    if(!self.latestMediationScores){
-        self.latestMediationScores = [[NSMutableDictionary alloc]init];
-    }
-    
-    self.latestMediationScores[@(creativeType)] = (score ?: @0);
-}
-
-- (void)setCredentials:(NSDictionary *const)credentials {
-    if (!_credentials) {
-        _credentials = credentials;
-        [self loadCredentials];
-    }
-}
-
-+ (NSTimeInterval)isAvailablePollInterval {
-    return kHZIsAvailablePollIntervalSecondsDefault;
-}
-
-- (HZAdType) possibleSupportedAdTypes {
-    HZAdType returnVal = 0;
-    HZCreativeType supportedCreativeTypes = [self supportedCreativeTypes];
-    if (supportedCreativeTypes & HZCreativeTypeStatic) {
-        returnVal |= HZAdTypeInterstitial;
-    }
-    
-    if (supportedCreativeTypes & HZCreativeTypeVideo) {
-        returnVal |= (HZAdTypeInterstitial | HZAdTypeVideo); // blended interstitials
-    }
-    
-    if(supportedCreativeTypes & HZCreativeTypeIncentivized) {
-        returnVal |= HZAdTypeIncentivized;
-    }
-    
-    if(supportedCreativeTypes & HZCreativeTypeBanner) {
-        returnVal |= HZAdTypeBanner;
-    }
-    
-    return returnVal;
-}
-
-- (NSString *)testActivityInstructions {
-    return nil;
-}
 
 @end

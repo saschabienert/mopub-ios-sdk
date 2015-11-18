@@ -58,6 +58,7 @@
                 if (adModel) {
                     [ads addObject:adModel];
                 } else {
+                    HZTrackError(error);
                     [errors addObject:error];
                     HZELog(@"Error creating native ad = %@",error);
                 }

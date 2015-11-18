@@ -35,8 +35,6 @@ NSString * const kHZBannerAdWillPresentModalViewNotification = @"kHZBannerAdWill
 NSString * const kHZBannerAdDidDismissModalViewNotification = @"kHZBannerAdDidDismissModalViewNotification";
 NSString * const kHZBannerAdWillLeaveApplicationNotification = @"kHZBannerAdWillLeaveApplicationNotification";
 
-NSString * const kHZBannerAdNotificationTagKey = @"kHZBannerAdNotificationTagKey";
-NSString * const kHZBannerAdNetworkNameKey = @"kHZBannerAdNetworkNameKey";
 NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErrorKey";
 
 #pragma mark - Initialization
@@ -112,7 +110,16 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
     [[HeyzapMediation sharedInstance] requestBannerWithOptions:options completion:^(NSError *error, HZBannerAdapter *adapter) {
         if (error) {
             if (failure) failure(error);
-            [[NSNotificationCenter defaultCenter] postNotificationName:kHZBannerAdDidFailToReceiveAdNotification object:self userInfo:@{kHZBannerAdNotificationErrorKey: error}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kHZBannerAdDidFailToReceiveAdNotification object:nil
+                                                              userInfo:@{
+                                                                         NSLocalizedDescriptionKey: @"HZBannerAd failed to fetch a banner ad.",
+                                                                         HZAdTagUserInfoKey: options.tag,
+                                                                         NSUnderlyingErrorKey: error,
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+                                                                         kHZBannerAdNotificationErrorKey: error // deprecated at 9.3.0 in favor of NSUnderlyingErrorKey, still sending for now
+#pragma clang diagnostic pop
+                                                                         }];
             
         } else if (adapter) {
             HZBannerAd *wrapper = [[HZBannerAd alloc] initWithBanner:adapter options:options];
@@ -130,7 +137,7 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
         view = [[[[UIApplication sharedApplication] keyWindow] rootViewController] view];
         if (!view) {
             NSString *const errorMessage = [NSString stringWithFormat:@"No view provided to %@, and couldn't find a rootViewController. Please specify the view to place the banner in.",NSStringFromSelector(_cmd)];
-            NSLog(@"%@",errorMessage);
+            HZAlwaysLog(@"%@",errorMessage);
             @throw [NSException exceptionWithName:@"NoViewForBanner" reason:errorMessage userInfo:nil];
         }
     }
@@ -150,6 +157,13 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
                 }
                 
                 wrapper.frame = tmpFrame;
+                
+                if (![wrapper isFlexibleWidth]) {
+                    CGPoint center = wrapper.center;
+                    center.x = CGRectGetMidX(view.bounds);
+                    wrapper.center = center;
+                }
+                
                 [view addSubview:wrapper];
                 break;
             }
@@ -158,7 +172,7 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
                 const CGFloat bannerHeight = wrapper.frame.size.height;
                 
                 if (viewHeight < bannerHeight) {
-                    NSLog(@"WARNING: %@ is placing a banner in a view whose height (%f) is less than that of the banner (%f). Is your view configured correctly?",NSStringFromSelector(_cmd), viewHeight, bannerHeight);
+                    HZAlwaysLog(@"WARNING: %@ is placing a banner in a view whose height (%f) is less than that of the banner (%f). Is your view configured correctly?",NSStringFromSelector(_cmd), viewHeight, bannerHeight);
                 }
                 
                 CGRect tmpFrame = wrapper.frame;
@@ -169,6 +183,13 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
                 }
                 
                 wrapper.frame = tmpFrame;
+                
+                if (![wrapper isFlexibleWidth]) {
+                    CGPoint center = wrapper.center;
+                    center.x = CGRectGetMidX(view.bounds);
+                    wrapper.center = center;
+                }
+                
                 [view addSubview:wrapper];
                 break;
             }
@@ -217,8 +238,8 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
 
 - (void)postNotification:(NSString *)notification userInfo:(NSDictionary *)userInfo {
     NSMutableDictionary *mutableInfo = [NSMutableDictionary dictionaryWithDictionary:userInfo];
-    mutableInfo[kHZBannerAdNotificationTagKey] = self.options.tag;
-    mutableInfo[kHZBannerAdNetworkNameKey] = self.mediatedNetwork;
+    mutableInfo[HZAdTagUserInfoKey] = self.options.tag;
+    mutableInfo[HZNetworkNameUserInfoKey] = self.mediatedNetwork;
     [[NSNotificationCenter defaultCenter] postNotificationName:notification object:self userInfo:mutableInfo];
 }
 
@@ -230,15 +251,24 @@ NSString * const kHZBannerAdNotificationErrorKey = @"kHZBannerAdNotificationErro
 }
 
 - (void)didFailToReceiveAd:(NSError *)networkError {
-    NSDictionary *const userInfo = networkError ? @{NSUnderlyingErrorKey: networkError} : nil;
+    NSMutableDictionary *const userInfo = [NSMutableDictionary dictionaryWithDictionary:@{NSLocalizedDescriptionKey: @"HZBannerAd instance failed to refresh the ad."}];
+    if (networkError) userInfo[NSUnderlyingErrorKey] = networkError;
+    
     NSError *const error = [[NSError alloc] initWithDomain:kHZMediationDomain code:1 userInfo:userInfo];
     
     if ([self.delegate respondsToSelector:@selector(bannerDidFailToReceiveAd:error:)]) {
         [self.delegate bannerDidFailToReceiveAd:self error:error];
     }
-    
+
     [self postNotification:kHZBannerAdDidFailToReceiveAdNotification
-                  userInfo:@{kHZBannerAdNotificationErrorKey: error}];
+                  userInfo:@{
+                             NSUnderlyingErrorKey: error,
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+                             kHZBannerAdNotificationErrorKey: error // deprecated at 9.3.0 in favor of NSUnderlyingErrorKey, still sending for now
+#pragma clang diagnostic pop
+                             }];
+
 }
 
 - (void)userDidClick {

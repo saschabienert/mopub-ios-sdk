@@ -41,14 +41,15 @@ extern NSString * const kHZAdapterFacebookHumanized;
 extern NSString * const kHZAdapteriAdHumanized;
 extern NSString * const kHZAdapterHeyzapExchangeHumanized;
 extern NSString * const kHZAdapterLeadboltHumanized;
+extern NSString * const kHZAdapterInMobiHumanized;
 
 + (NSError *)errorWithAdapter:(NSString *)adapter
                        domain:(NSString *)domain
                      userInfo:(NSDictionary *)userInfo;
 
-#define RETURN_ERROR_IF_NIL(value,name) do { \
-if (value == nil) { \
-return [NSError errorWithDomain:kHZMediationDomain code:3 userInfo:@{NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat: @"Missing value: %@",name]}]; \
+#define RETURN_ERROR_UNLESS(value,error_msg) do { \
+if (value == NO) { \
+return [NSError errorWithDomain:kHZMediationDomain code:3 userInfo:@{NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat: @"%@",error_msg]}]; \
 } \
 } while (0)
 

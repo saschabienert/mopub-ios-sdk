@@ -14,6 +14,7 @@
 #import "HZSegmentationController.h"
 #import "HZMediationInterstitialVideoManager.h"
 #import "HZMediationPersistentConfig.h"
+#import "HZDispatch.h"
 
 @interface HZMediationAvailabilityChecker()
 
@@ -43,20 +44,26 @@
 - (NSOrderedSet *)availableAndAllowedAdaptersForAdType:(HZAdType)adType tag:(NSString *)tag adapters:(NSOrderedSet *)adapters segmentationController:(HZSegmentationController *)segmentationController {
     NSSet *allowedCreativeTypes = [self.interstitialVideoManager creativeTypesAllowedToShowForAdType:adType];
     
-    NSIndexSet *indexes = [adapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
-        for(NSNumber *allowedCreativeTypeNumber in allowedCreativeTypes) {
-            HZCreativeType allowedCreativeType = hzCreativeTypeFromNSNumber(allowedCreativeTypeNumber);
-            if([adapter supportsCreativeType:allowedCreativeType]
-               && [adapter hasCredentialsForCreativeType:allowedCreativeType]
-               && [self.persistentConfig isNetworkEnabled:[adapter name]]
-               && [segmentationController adapterHasAllowedAd:adapter forCreativeType:allowedCreativeType tag:tag]) {
+    __block NSIndexSet *indexes;
+    hzEnsureMainQueue(^{
+        indexes = [adapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
+            for(NSNumber *allowedCreativeTypeNumber in allowedCreativeTypes) {
+                HZCreativeType allowedCreativeType = hzCreativeTypeFromNSNumber(allowedCreativeTypeNumber);
+                NSString *placementIDOverride = [segmentationController placementIDOverrideForAdapter:adapter tag:tag creativeType:allowedCreativeType];
+                HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:allowedCreativeType placementIDOverride:placementIDOverride tag:tag];
                 
-                return YES;
+                if([adapter supportsCreativeType:allowedCreativeType]
+                   && [adapter hasCredentialsForCreativeType:allowedCreativeType]
+                   && [self.persistentConfig isNetworkEnabled:[adapter name]]
+                   && [segmentationController adapterHasAllowedAd:adapter withMetadata:metadata]) {
+                    
+                    return YES;
+                }
             }
-        }
-        
-        return NO;
-    }];
+            
+            return NO;
+        }];
+    });
     
     return [NSOrderedSet orderedSetWithArray:[adapters objectsAtIndexes:indexes]];
 }
@@ -99,12 +106,17 @@
 
 - (HZMediationAdapterWithCreativeTypeScore *)firstAdapterWithAdForTag:(NSString *)tag adaptersWithScores:(NSOrderedSet *)adaptersWithScores segmentationController:(HZSegmentationController *)segmentationController {
     
-    const NSUInteger idx = [adaptersWithScores indexOfObjectPassingTest:^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore, NSUInteger idx, BOOL *stop) {
-        if([segmentationController adapterHasAllowedAd:[adapterWithScore adapter] forCreativeType:[adapterWithScore creativeType] tag:tag]) {
-           return YES;
-        }
-        return NO;
-    }];
+    __block NSUInteger idx = NSNotFound;
+    hzEnsureMainQueue(^{
+        idx = [adaptersWithScores indexOfObjectPassingTest:^BOOL(HZMediationAdapterWithCreativeTypeScore *adapterWithScore, NSUInteger idx, BOOL *stop) {
+            NSString *placementIDOverride = [segmentationController  placementIDOverrideForAdapter:[adapterWithScore adapter] tag:tag creativeType:[adapterWithScore creativeType]];
+            HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:[adapterWithScore creativeType] placementIDOverride:placementIDOverride tag:tag];
+            if([segmentationController adapterHasAllowedAd:[adapterWithScore adapter] withMetadata:metadata]) {
+               return YES;
+            }
+            return NO;
+        }];
+    });
         
     if (idx != NSNotFound) {
         return adaptersWithScores[idx];

@@ -9,8 +9,10 @@
 #import "HZShowOptions.h"
 #import "HZAdType.h"
 
-@interface HZShowOptions()
+@interface HZShowOptions()<HZMediationAdAvailabilityDataProviderProtocol>
 
 @property (nonatomic) HZAdType requestingAdType;
+@property (nonatomic) HZCreativeType creativeType;
+@property (nonatomic, nullable) NSString *placementIDOverride;
 
 @end

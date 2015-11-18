@@ -11,8 +11,17 @@
 #import "HZDevice.h"
 #import "HZMediationAPIClient.h"
 #import "HZUtils.h"
+#import "HZDefaultParameters.h"
 
 @implementation HZMediationRequestSerializer
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [self setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    }
+    return self;
+}
 
 - (NSMutableURLRequest *)requestWithMethod:(NSString *)method URLString:(NSString *)URLString parameters:(id)parameters error:(NSError *__autoreleasing *)error {
     if ([parameters isKindOfClass:[NSDictionary class]] || parameters == nil) {
@@ -37,25 +46,8 @@
     return [super requestWithMethod:method URLString:URLString parameters:parameters error:error];
 }
 
-+ (NSMutableDictionary *)defaultParams {
-    NSMutableDictionary *defaults = [super defaultParams];
-    
-    static NSDictionary *mediationDefaults;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        mediationDefaults = @{
-                              @"external_package":[HZDevice bundleIdentifier],
-                              @"networks":[HeyzapMediation commaSeparatedAdapterList],
-                              };
-    });
-    
-    [defaults addEntriesFromDictionary:mediationDefaults];
-    
-    return defaults;
-}
-
 + (NSMutableDictionary *) defaultParamsWithDictionary: (NSDictionary *) dictionary {
-    NSMutableDictionary *params = [self defaultParams];
+    NSMutableDictionary *params = [HZDefaultParameters mediationDefaultParams];
     if (dictionary) {
         [params addEntriesFromDictionary: dictionary];
     }

@@ -11,6 +11,7 @@
 #import "HZAdsAPIClient.h"
 #import "HZUtils.h"
 #import <StoreKit/StoreKit.h>
+#import "HZLog.h"
 
 @interface HZStorePresenter() <UIWebViewDelegate>
 
@@ -56,7 +57,10 @@
         BOOL doesNotSupportPortraitOrientation = !((supportedOrientations & UIInterfaceOrientationPortrait) || (supportedOrientations & UIInterfaceOrientationPortraitUpsideDown));
         
         // iOS 7 Bug
-        if (![HZDevice hzSystemVersionIsLessThan: @"7.0"] && doesNotSupportPortraitOrientation) {
+        if (hziOS7Plus() && !hziOS8Plus() && doesNotSupportPortraitOrientation) {
+            NSError *error = [self errorWithDescription:@"Can't present the modal app store because of a bug in iOS 7 (app must support a portrait orientation to avoid a potential crash). Attempting to open the clickURL instead."];
+            HZELog(@"HZStorePresenter: %@", error);
+            completion ? completion(NO, error) : nil;
             [[UIApplication sharedApplication] openURL: clickURL];
             return nil;
         }
@@ -86,15 +90,15 @@
             if (!result || error) {
                 
                 // You can check how often we run into this w/ this Kibana query @message="Error showing SKStoreProductViewController(modal app store)"
-                NSString *errorMessage = [NSString stringWithFormat:@"This means someone clicked on the ad but we couldn't show them the modal app store. We fallback to the regular app store if this is the case. If this link https://itunes.apple.com/app/id%@ fails, then we're probably showing an ad for a country the app isn't available in.",appStoreID];
-                
+                NSString *errorMessage = [NSString stringWithFormat:@"Someone clicked on the ad but we couldn't show them the modal app store. We fallback to the regular app store if this is the case. If this link https://itunes.apple.com/app/id%@ fails, then we're probably showing an ad for a country the app isn't available in.",appStoreID];
+                HZELog(@"HZStorePresenter: Error: %@", errorMessage);
                 [[HZAdsAPIClient sharedClient] logMessageToHeyzap:@"Error showing SKStoreProductViewController(modal app store)"
                                                             error:error
                                                          userInfo:@{@"Explanation": errorMessage,
                                                                     @"App Store ID":appStoreID,
                                                                     @"Impression ID":impressionID}];
                 
-                completion ? completion(result, error) : nil;
+                completion ? completion(NO, error) : nil;
                 [[UIApplication sharedApplication] openURL: clickURL];
                 
             } else {
@@ -102,10 +106,7 @@
                     [weakViewController presentViewController:storeController animated:YES completion:nil];
                     completion ? completion(YES, nil) : nil;
                 } else {
-                    NSError *error = [[NSError alloc] initWithDomain:@"HZStorePresenter"
-                                                                code:1
-                                                            userInfo:@{
-                                                                       NSLocalizedDescriptionKey: @"SKStoreProductViewController didn't get a chance to display in time - root view controller no longer exists"}];
+                    NSError *error = [self errorWithDescription:@"SKStoreProductViewController didn't get a chance to display in time - the passed view controller we were going to present the view on no longer exists."];
                     completion ? completion(NO, error) : nil;
                 }
 
@@ -113,15 +114,13 @@
         }];
         return storeController;
     } else {
-        
-        NSError *error = nil;
+        NSError *error;
         if (!appStoreID && useModalAppStore) {
-            error = [NSError errorWithDomain:@"heyzap"
-                                        code:1
-                                    userInfo:@{NSLocalizedDescriptionKey: @"Can't open app store for blank appStoreID"}];
+            error = [self errorWithDescription:@"Can't open the modal app store for a blank appStoreID. Attempting to open the clickURL instead."];
+            HZELog(@"HZStorePresenter: %@", error);
         }
         
-        completion ? completion((error == nil), error) : nil;
+        completion ? completion(NO, error) : nil;
         [[UIApplication sharedApplication] openURL: clickURL];
         return nil;
     }
@@ -138,6 +137,16 @@
     }
     
     return YES;
+}
+
+
+
+#pragma mark - Utilities
+
+- (NSError *) errorWithDescription:(NSString *)description {
+    return [NSError errorWithDomain:@"HZStorePresenter"
+                               code:1
+                           userInfo:@{NSLocalizedDescriptionKey: description}];
 }
 
 @end

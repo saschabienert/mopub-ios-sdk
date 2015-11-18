@@ -7,6 +7,8 @@
 //  Copyright 2011 Heyzap. All rights reserved.
 //
 
+@import AVFoundation;
+
 #import "SDKTestAppViewController.h"
 
 #import <AdSupport/ASIdentifierManager.h>
@@ -65,6 +67,7 @@ typedef enum {
 @property (nonatomic, strong) UISwitch * logCallbacksSwitch;
 @property (nonatomic, strong) UISwitch * pauseExpensiveWorkSwitch;
 @property (nonatomic, strong) UISwitch * scrollSwitch;
+@property (nonatomic, strong) UISwitch * musicSwitch;
 
 @property (nonatomic, strong) UIButton *showButton;
 
@@ -81,6 +84,11 @@ typedef enum {
 
 @property (nonatomic) UITextField *creativeTypeTextField;
 @property (nonatomic) UITextField *adTagField;
+
+@property (strong, nonatomic) AVAudioSession *audioSession;
+@property (strong, nonatomic) AVAudioPlayer *backgroundMusicPlayer;
+@property (nonatomic) BOOL backgroundMusicPlaying;
+@property (nonatomic) BOOL backgroundMusicShouldPlay;
 
 @end
 
@@ -224,10 +232,13 @@ const CGFloat kLeftMargin = 10;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(responseNotification:) name:kHZAPIClientDidReceiveResponseNotification object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(downloadNotification:) name: kHZDownloadHelperSuccessNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadNotification:) name:kHZDownloadHelperSuccessNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(remoteDataRefreshed:) name:HZRemoteDataRefreshedNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(paymentTransactionErrorNotification:) name: kHZPaymentTransactionErrorNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(paymentTransactionErrorNotification:) name:kHZPaymentTransactionErrorNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(adAudioStarted) name:HZMediationWillStartAdAudioNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(adAudioEnded) name:HZMediationDidFinishAdAudioNotification object:nil];
 
     
     self.showButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
@@ -347,6 +358,7 @@ const CGFloat kLeftMargin = 10;
     self.adTagField.placeholder = @"Ad Tag";
     self.adTagField.textAlignment = NSTextAlignmentLeft;
     self.adTagField.accessibilityLabel = kAdTagTextFieldAccessibilityLabel;
+    self.adTagField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     [self.adTagField addTarget:self
                         action:@selector(adTagEditingChanged:)
               forControlEvents:UIControlEventEditingChanged];
@@ -483,10 +495,20 @@ const CGFloat kLeftMargin = 10;
     self.logCallbacksSwitch.on = self.scrollSwitch.on = YES;
     self.pauseExpensiveWorkSwitch.on = NO;
     
+    UILabel *musicLabel = [self switchLabelWithFrameX:CGRectGetMinX(self.pauseExpensiveWorkSwitch.frame) + 5 Y:CGRectGetMaxY(self.pauseExpensiveWorkSwitch.frame) + 5 text:@"BG Music"];
+    pauseExpensiveWork.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
+    [self.scrollView addSubview: musicLabel];
+    
+    self.musicSwitch = [[UISwitch alloc] init];
+    self.musicSwitch.frame = CGRectMake(CGRectGetMinX(self.pauseExpensiveWorkSwitch.frame), CGRectGetMaxY(musicLabel.frame), 40.0, 40.0);
+    self.musicSwitch.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
+    [self.musicSwitch addTarget:self action:@selector(musicSwitchFlipped:) forControlEvents:UIControlEventValueChanged];
+    [self.scrollView addSubview: self.musicSwitch];
+    
     UIButton *openLastFetchButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
     [openLastFetchButton setTitle: @"Open Last Fetch in Safari" forState: UIControlStateNormal];
     [openLastFetchButton addTarget: self action: @selector(openLastFetch) forControlEvents: UIControlEventTouchUpInside];
-    openLastFetchButton.frame =  CGRectMake(kLeftMargin, CGRectGetMaxY(debugSwitch.frame) + 5.0, 200.0, 50.0);
+    openLastFetchButton.frame =  CGRectMake(kLeftMargin, CGRectGetMaxY(self.musicSwitch.frame) + 5.0, 200.0, 50.0);
     [self.scrollView addSubview: openLastFetchButton];
     
     // IAP
@@ -527,6 +549,11 @@ const CGFloat kLeftMargin = 10;
         subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
     }
     self.scrollView.contentSize = (CGSize) { subviewContainingRect.size.width, subviewContainingRect.size.height + 80 };
+    
+    
+    // Audio
+    [self configureAudioSession];
+    [self configureAudioPlayer];
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{
@@ -606,13 +633,12 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void) fetchAd: (id) sender {
-    NSString *adTagText = [self adTagText];
-    if (adTagText) {
-        [self logToConsole:[NSString stringWithFormat:@"Fetching for tag: %@", adTagText]];
-    } else {
-        [self logToConsole:@"Fetching for default tag"];
-        adTagText = nil;
-    }
+    // use HZShowOptions to format the tag for the log output
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = [self adTagText];
+    NSString * adTagText = options.tag;
+    
+    [self logToConsole:[NSString stringWithFormat:@"Fetching for tag: '%@'", adTagText]];
     
     void (^completion)(BOOL, NSError *) = ^void (BOOL result, NSError *error){
         if (!result || error) {
@@ -639,19 +665,14 @@ const CGFloat kLeftMargin = 10;
 
 - (void) showAd: (id) sender {
     [self.view endEditing:YES];
-    NSString *adTag = [self adTagText];
-    if (adTag) {
-        [self logToConsole:[NSString stringWithFormat:@"Showing for tag: %@", adTag]];
-    } else {
-        [self logToConsole:@"Showing for default tag"];
-        adTag = nil;
-    }
-    
+
     HZShowOptions *opts = [[HZShowOptions alloc] init];
-    opts.tag = adTag;
+    opts.tag = [self adTagText];
     opts.completion = ^(BOOL success, NSError *err) {
         [self logToConsole:[NSString stringWithFormat:@"Show completion block. Success=%x, err=%@", success, err]];
     };
+    
+    [self logToConsole:[NSString stringWithFormat:@"Showing for tag: '%@'", opts.tag]];
     
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
@@ -673,7 +694,11 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void)checkAvailability {
-    NSString * adTag = [self adTagText];
+    // use HZShowOptions to format the tag for the log output
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = [self adTagText];
+    NSString * adTag = options.tag;
+    
     NSString *adType;
     BOOL available;
     
@@ -696,7 +721,7 @@ const CGFloat kLeftMargin = 10;
     
     if (adType) {
         [self setShowButtonOn:available];
-        [self logToConsole:[NSString stringWithFormat:@"%@ ad %@ available for tag: `%@`.", adType, (available ? @"is" : @"is not"), adTag]];
+        [self logToConsole:[NSString stringWithFormat:@"%@ ad %@ available for tag: '%@'.", adType, (available ? @"is" : @"is not"), adTag]];
     } else {
         [self logToConsole:@"Is Available Error: Unable to determine ad type."];
     }
@@ -896,14 +921,23 @@ const CGFloat kLeftMargin = 10;
 
 #pragma mark - Console
 
++(NSDateFormatter *)sharedDateFormatter {
+    static NSDateFormatter *sharedDateFormatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedDateFormatter = [[NSDateFormatter alloc]init];
+        [sharedDateFormatter setDateFormat:@"[h:mm:ss a]"];
+    });
+    
+    return sharedDateFormatter;
+}
+
 - (void)logToConsole:(NSString *)consoleString {
     if (!self.logCallbacksSwitch.isOn) {
         return;
     }
     
-    NSDateFormatter * format = [[NSDateFormatter alloc]init];
-    [format setDateFormat:@"[h:mm:ss a]"];
-    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[format stringFromDate:[NSDate date]],consoleString];
+    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[[[self class] sharedDateFormatter] stringFromDate:[NSDate date]],consoleString];
     if (self.scrollSwitch.isOn) {
         // get around weird bug in iOS 9 - text view scrolling has issues when done directly after updating the text
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -980,6 +1014,68 @@ const CGFloat kLeftMargin = 10;
     self.creativeTypeTextField.font = [UIFont italicSystemFontOfSize:18];
     self.creativeTypeTextField.textColor = [UIColor lightGrayColor];
     self.creativeTypeTextField.text = @"Creative type";
+}
+
+
+#pragma mark - Audio
+
+- (void) configureAudioSession {
+    self.audioSession = [AVAudioSession sharedInstance];
+    
+    NSError *setCategoryError = nil;
+    [self.audioSession setCategory:AVAudioSessionCategoryAmbient error:&setCategoryError];
+    if (setCategoryError) {
+        NSLog(@"Error setting audio session category! code:%ld error: %@", (long)[setCategoryError code], setCategoryError);
+    }
+}
+
+- (void)configureAudioPlayer {
+    NSString *backgroundMusicPath = [[NSBundle mainBundle] pathForResource:@"elevator_music" ofType:@"mp3"];
+    NSURL *backgroundMusicURL = [NSURL fileURLWithPath:backgroundMusicPath];
+    self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backgroundMusicURL error:nil];
+    self.backgroundMusicPlayer.numberOfLoops = -1;	// loop forever
+    [self.backgroundMusicPlayer prepareToPlay];
+}
+
+- (void)tryPlayMusic {
+    if (self.backgroundMusicPlaying) {
+        return;
+    }
+    [self.backgroundMusicPlayer prepareToPlay];
+    [self.backgroundMusicPlayer play];
+    self.backgroundMusicPlaying = YES;
+}
+
+- (void) tryPauseMusic {
+    if (self.backgroundMusicPlaying) {
+        [self.backgroundMusicPlayer pause];
+        self.backgroundMusicPlaying = NO;
+    }
+}
+
+- (void) musicSwitchFlipped:(UISwitch *)sender {
+    self.backgroundMusicShouldPlay = sender.isOn;
+    if (sender.isOn) {
+        [self tryPlayMusic];
+    } else {
+        [self tryPauseMusic];
+    }
+}
+
+- (void) adAudioStarted {
+    [self otherAudioIsPlaying:YES];
+}
+- (void) adAudioEnded {
+    [self otherAudioIsPlaying:NO];
+}
+- (void) otherAudioIsPlaying:(BOOL)isPlaying {
+    if (self.backgroundMusicShouldPlay) {
+        if (isPlaying) {
+            [self tryPauseMusic];
+        } else {
+            [self tryPlayMusic];
+        }
+    }
 }
 
 @end
