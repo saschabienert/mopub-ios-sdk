@@ -21,11 +21,13 @@
 #import "HZFBAdSettings.h"
 #import "HZDevice.h"
 
+typedef NSString FacebookPlacementID;
+
 @interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
-@property (nonatomic, strong) NSString *placementID;
-@property (nonatomic, strong) NSString *bannerPlacementID;
-@property (nonatomic, strong) NSMutableDictionary <NSString *, HZFBInterstitialAd *> *interstitialAds; // key: placement ID
-@property (nonatomic, strong) NSMutableDictionary <NSString *, NSError *> *interstitialAdErrors; // key: placement ID
+@property (nonatomic, strong) FacebookPlacementID *placementID;
+@property (nonatomic, strong) FacebookPlacementID *bannerPlacementID;
+@property (nonatomic, strong) NSMutableDictionary <FacebookPlacementID *, HZFBInterstitialAd *> *interstitialAds;
+@property (nonatomic, strong) NSMutableDictionary <FacebookPlacementID *, NSError *> *interstitialAdErrors;
 @end
 
 @implementation HZFacebookAdapter
@@ -124,7 +126,7 @@
 }
 
 - (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    NSString *const placement = (dataProvider.placementIDOverride ?: self.placementID);
+    FacebookPlacementID *const placement = (dataProvider.placementIDOverride ?: self.placementID);
     HZAssert(placement, @"Need a Placement ID by this point");
     
     if (self.interstitialAds[placement]) {
@@ -199,7 +201,7 @@
     [self.delegate adapterDidShowAd:self];
 }
 
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable FacebookPlacementID *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZFBBannerAdapter alloc] initWithAdUnitId:(placementIDOverride ?: self.bannerPlacementID) options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 

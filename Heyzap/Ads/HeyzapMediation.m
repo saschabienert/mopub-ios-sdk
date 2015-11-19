@@ -329,8 +329,8 @@
     }
     fetchOptions.creativeTypesToFetch = creativeTypesToFetch;
     
-    for (NSNumber * creativeTypeToFetch in fetchOptions.creativeTypesToFetch) {
-        HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeToFetch);
+    for (HZCreativeTypeObject * creativeTypeToFetch in fetchOptions.creativeTypesToFetch) {
+        HZCreativeType creativeType = hzCreativeTypeFromObject(creativeTypeToFetch);
         [self.loadManager fetchCreativeType:creativeType fetchOptions:fetchOptions optionalForcedNetwork:optionalForcedNetwork notifyDelegate:YES];
     }
 }

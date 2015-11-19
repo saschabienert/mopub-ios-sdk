@@ -24,8 +24,7 @@
 
 @interface HZHeyzapExchangeAdapter()<HZHeyzapExchangeClientDelegate>
 
-/* Maps creativeType to a client for that type.*/
-@property (nonatomic) NSMutableDictionary<NSNumber *, HZHeyzapExchangeClient *> *exchangeClientsPerCreativeType;
+@property (nonatomic) NSMutableDictionary<HZCreativeTypeObject *, HZHeyzapExchangeClient *> *exchangeClientsPerCreativeType;
 
 @property (nonatomic) HZHeyzapExchangeClient *currentlyPlayingClient;
 @end
@@ -84,7 +83,7 @@
 
 - (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:dataProvider.creativeType]];
+    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:@(dataProvider.creativeType)];
     if(client && client.state == HZHeyzapExchangeClientStateFetching){
         //already fetching
         HZDLog(@"Already fetching creativeType=%@", NSStringFromCreativeType(dataProvider.creativeType));
@@ -92,14 +91,14 @@
     }
     
     HZHeyzapExchangeClient *newClient = [[HZHeyzapExchangeClient alloc] init];
-    [self.exchangeClientsPerCreativeType setObject:newClient forKey:[self creativeTypeAsDictKey:dataProvider.creativeType]];
+    [self.exchangeClientsPerCreativeType setObject:newClient forKey:@(dataProvider.creativeType)];
     [newClient setDelegate:self];
     [newClient fetchForCreativeType:dataProvider.creativeType];
 }
 
 - (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:dataProvider.creativeType]];
+    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:@(dataProvider.creativeType)];
     if(client && client.state == HZHeyzapExchangeClientStateReady){
         return YES;
     }
@@ -109,7 +108,7 @@
 
 - (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
-    HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:options.creativeType]];
+    HZHeyzapExchangeClient * exchangeClient = [self.exchangeClientsPerCreativeType objectForKey:@(options.creativeType)];
     if(!exchangeClient || exchangeClient.state != HZHeyzapExchangeClientStateReady){
         HZELog(@"HeyzapExchangeAdapter: No ad available for creativeType=%@", NSStringFromCreativeType(options.creativeType));
         [self.delegate adapterDidFailToShowAd:self error:[NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ adapter was asked to show an ad of creativeType: %@, but it doesn't have one.", [[self class] humanizedName], NSStringFromCreativeType(options.creativeType)]}]];
@@ -124,13 +123,13 @@
         return nil;
     }
     
-    HZHeyzapExchangeClient *client = [self.exchangeClientsPerCreativeType objectForKey:[self creativeTypeAsDictKey:creativeType]];
+    HZHeyzapExchangeClient *client = [self.exchangeClientsPerCreativeType objectForKey:@(creativeType)];
     return client.adScore;
 }
 
 - (void) setAllMediationScoresForReadyAds {
-    for(NSNumber * creativeTypeKey in self.exchangeClientsPerCreativeType){
-        HZCreativeType creativeType = [creativeTypeKey intValue];
+    for(HZCreativeTypeObject *creativeTypeKey in self.exchangeClientsPerCreativeType){
+        HZCreativeType creativeType = hzCreativeTypeFromObject(creativeTypeKey);
         NSNumber *adScore = [self adScoreForCreativeType:creativeType];
         if(adScore){
             [self setLatestMediationScore:adScore forCreativeType:creativeType];
@@ -143,19 +142,19 @@
 
 - (void) client:(HZHeyzapExchangeClient *)client didFetchAdWithCreativeType:(HZCreativeType)creativeType {
     [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType]];
-    [self.exchangeClientsPerCreativeType setObject:client forKey:[self creativeTypeAsDictKey:creativeType]];
+    [self.exchangeClientsPerCreativeType setObject:client forKey:@(creativeType)];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
 - (void) client:(HZHeyzapExchangeClient *)client didFailToFetchAdWithCreativeType:(HZCreativeType)creativeType error:(NSString *)error {
     [self setLastFetchError:[NSError errorWithDomain: @"com.heyzap.sdk.ads.exchange.error" code: 10 userInfo: @{NSLocalizedDescriptionKey: error}] forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType]];
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackFetchFailed forNetwork: [self name]];
-    [self.exchangeClientsPerCreativeType removeObjectForKey:[self creativeTypeAsDictKey:creativeType]];
+    [self.exchangeClientsPerCreativeType removeObjectForKey:@(creativeType)];
 }
 
 - (void) client:(HZHeyzapExchangeClient *)client didHaveError:(NSString *)error {
     HZELog(@"Exchange client had error: %@", error);
-    [self.exchangeClientsPerCreativeType removeObjectForKey:[self creativeTypeAsDictKey:[client creativeType]]];
+    [self.exchangeClientsPerCreativeType removeObjectForKey:@([client creativeType])];
     self.currentlyPlayingClient = nil;
 }
 
@@ -171,7 +170,7 @@
 
 - (void) didEndAdWithClient:(HZHeyzapExchangeClient *)client successfullyFinished:(BOOL)successfullyFinished{
     self.currentlyPlayingClient = nil;
-    [self.exchangeClientsPerCreativeType removeObjectForKey:[self creativeTypeAsDictKey:[client creativeType]]];
+    [self.exchangeClientsPerCreativeType removeObjectForKey:@([client creativeType])];
     
     if(client.isWithAudio){
         [self.delegate adapterDidFinishPlayingAudio:self];
@@ -190,13 +189,6 @@
 
 - (void) adClickedWithClient:(HZHeyzapExchangeClient *)client {
     [self.delegate adapterWasClicked:self];
-}
-
-
-#pragma mark - Utilities
-
-- (NSNumber *) creativeTypeAsDictKey:(HZCreativeType)creativeType {
-    return [NSNumber numberWithInt:creativeType];
 }
 
 

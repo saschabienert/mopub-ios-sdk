@@ -19,7 +19,11 @@ BOOL hzCreativeTypeStringSetContainsCreativeType(NSSet *const creativeTypes, con
     return [creativeTypes containsObject:NSStringFromCreativeType(creativeType)];
 }
 
-HZCreativeType hzCreativeTypeFromNSNumber(NSNumber * number) {
+HZCreativeType hzCreativeTypeFromObject(HZCreativeTypeObject *object) {
+    return hzCreativeTypeFromNSNumber(object);
+}
+
+HZCreativeType hzCreativeTypeFromNSNumber(HZCreativeTypeObject * number) {
     NSUInteger num = [number unsignedIntegerValue];
     switch (num) {
         case ((NSUInteger)HZCreativeTypeStatic):
