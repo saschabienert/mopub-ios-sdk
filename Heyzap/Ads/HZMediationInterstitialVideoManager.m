@@ -45,7 +45,7 @@ NSString * const kHZInterstitialVideoEnabledKey  = @"interstitial_video_enabled"
     return self.interstitialVideoEnabled && [self hasEnoughTimePassedSinceLastInterstitialVideo];
 }
 
-- (NSSet <NSNumber *> *) creativeTypesAllowedToShowForAdType:(HZAdType)adType {
+- (NSSet <HZCreativeTypeObject *> *) creativeTypesAllowedToShowForAdType:(HZAdType)adType {
     switch(adType){
         case HZAdTypeInterstitial:
             if([self shouldAllowInterstitialVideo])

@@ -302,8 +302,8 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     NSSet *creativeTypesToCheck = hzCreativeTypesPossibleForAdType(self.currentAdType);
     BOOL foundCredentials = NO;
     
-    for(NSNumber *creativeTypeNum in creativeTypesToCheck) {
-        if ([self.network hasCredentialsForCreativeType:hzCreativeTypeFromNSNumber(creativeTypeNum)]) {
+    for(HZCreativeTypeObject *creativeTypeObject in creativeTypesToCheck) {
+        if ([self.network hasCredentialsForCreativeType:hzCreativeTypeFromObject(creativeTypeObject)]) {
             foundCredentials = YES;
         }
     }

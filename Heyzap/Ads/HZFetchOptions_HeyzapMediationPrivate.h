@@ -13,8 +13,8 @@
  */
 @interface HZFetchOptions()
 
-@property (nonatomic, nonnull) NSSet * creativeTypesToFetch; // all creativeTypes to be fetched
-@property (nonatomic, nonnull) NSSet *creativeTypesFetchesFinished; // creativeType fetches that have succeeded or failed
+@property (nonatomic, nonnull) NSSet<HZCreativeTypeObject *> * creativeTypesToFetch; // all creativeTypes to be fetched
+@property (nonatomic, nonnull) NSSet<HZCreativeTypeObject *> *creativeTypesFetchesFinished; // creativeType fetches that have succeeded or failed
 @property (nonatomic) BOOL alreadyNotifiedDelegateOfSuccess; // helps mediation only send one success callback
 
 @end

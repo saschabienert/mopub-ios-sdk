@@ -94,7 +94,7 @@ BOOL hzCreativeTypeStringSetContainsAdType(NSSet *const creativeTypes, const HZA
     }
 }
 
-NSMutableSet * hzCreativeTypesPossibleForAdType(HZAdType adType) {
+NSMutableSet<HZCreativeTypeObject *> * hzCreativeTypesPossibleForAdType(HZAdType adType) {
     switch(adType){
         case HZAdTypeInterstitial:
             return [NSMutableSet setWithArray:@[@(HZCreativeTypeVideo), @(HZCreativeTypeStatic)]];

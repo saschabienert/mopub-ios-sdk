@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Heyzap. All rights reserved.
 //
 
+typedef NSNumber HZCreativeTypeObject;
+
 // This is a bitmasked parameter, but with the exception of the `supportedAdFormats` method, almost everything else should treat it as just an enum.
 // These values match server values and should not be modified without a change on the server and other SDKs
 typedef NS_OPTIONS(NSUInteger, HZCreativeType) {
@@ -27,6 +29,14 @@ extern NSString * const hzCreativeTypeBannerString;
 extern NSString * const hzCreativeTypeNativeString;
 
 BOOL hzCreativeTypeStringSetContainsCreativeType(NSSet *const creativeTypes, const HZCreativeType creativeType);
+/**
+ *  Synonym for `hzCreativeTypeFromNSNumber`
+ *
+ *  @param object The wrapped creative type
+ *
+ *  @return The unwrapped `HZCreativeType`
+ */
+HZCreativeType hzCreativeTypeFromObject(HZCreativeTypeObject *object);
 HZCreativeType hzCreativeTypeFromNSNumber(NSNumber * number);
 HZCreativeType hzCreativeTypeFromString(NSString *creativeTypeString);
 NSString * NSStringFromCreativeType(HZCreativeType creativeType);

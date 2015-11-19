@@ -17,13 +17,15 @@
 #import "HZInMobiBannerAdapter.h"
 #import "HZIMRequestStatus.h"
 
+typedef NSNumber InMobiAdUnitID;
+
 @interface HZInMobiAdapter() <HZIMInterstitialDelegate>
 
 @property (nonatomic, strong) NSString *accountID;
 
-@property (nonatomic, strong) NSDictionary<NSNumber *, NSNumber *> *creativeTypeToAdUnitID;
+@property (nonatomic, strong) NSDictionary<HZCreativeTypeObject *, InMobiAdUnitID *> *creativeTypeToAdUnitID;
 
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, HZIMInterstitial *> *adDictionary;
+@property (nonatomic, strong) NSMutableDictionary<HZCreativeTypeObject *, HZIMInterstitial *> *adDictionary;
 @property (nonatomic) HZIMInterstitial *backupRewardedVideo;
 
 @end
@@ -66,7 +68,7 @@
     
     NSMutableDictionary *const creativeTypeToAdUnitID = [NSMutableDictionary dictionary];
     
-    [creativeTypeToKey enumerateKeysAndObjectsUsingBlock:^(NSNumber *  _Nonnull creativeType, NSString *  _Nonnull credentialKey, BOOL * _Nonnull stop) {
+    [creativeTypeToKey enumerateKeysAndObjectsUsingBlock:^(HZCreativeTypeObject *  _Nonnull creativeType, NSString *  _Nonnull credentialKey, BOOL * _Nonnull stop) {
         NSString *const credential = [HZDictionaryUtils objectForKey:credentialKey
                                                              ofClass:[NSString class]
                                                                 dict:self.credentials];
@@ -121,7 +123,7 @@
 
 - (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    NSNumber *placementIDNumber = self.creativeTypeToAdUnitID[@(dataProvider.creativeType)];
+    InMobiAdUnitID *placementIDNumber = self.creativeTypeToAdUnitID[@(dataProvider.creativeType)];
     const long long placementID = [placementIDNumber longLongValue];
     
     HZIMInterstitial *ad = self.adDictionary[@(dataProvider.creativeType)];
@@ -156,7 +158,7 @@
 }
 
 - (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    NSNumber *bannerID =  self.creativeTypeToAdUnitID[@(HZCreativeTypeBanner)];
+    InMobiAdUnitID *bannerID =  self.creativeTypeToAdUnitID[@(HZCreativeTypeBanner)];
     if (bannerID) {
         return [[HZInMobiBannerAdapter alloc] initWithAdPlacementID:[bannerID longLongValue]
                                                             options:options
@@ -304,7 +306,7 @@
 
 - (HZCreativeType)creativeTypeForInterstitial:(HZIMInterstitial *)interstitial {
     __block HZCreativeType creativeType = HZCreativeTypeUnknown;
-    [self.adDictionary enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull creativeTypeKey, HZIMInterstitial * _Nonnull interstitialValue, BOOL * _Nonnull stop) {
+    [self.adDictionary enumerateKeysAndObjectsUsingBlock:^(HZCreativeTypeObject * _Nonnull creativeTypeKey, HZIMInterstitial * _Nonnull interstitialValue, BOOL * _Nonnull stop) {
         if (interstitial == interstitialValue) {
             creativeType = [creativeTypeKey unsignedIntegerValue];
             *stop = YES;
