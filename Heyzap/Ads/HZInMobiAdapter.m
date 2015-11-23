@@ -121,19 +121,19 @@ typedef NSNumber InMobiAdUnitID;
     return self.accountID != nil;
 }
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options
 {
-    InMobiAdUnitID *placementIDNumber = self.creativeTypeToAdUnitID[@(dataProvider.creativeType)];
+    InMobiAdUnitID *placementIDNumber = self.creativeTypeToAdUnitID[@(options.creativeType)];
     const long long placementID = [placementIDNumber longLongValue];
     
-    HZIMInterstitial *ad = self.adDictionary[@(dataProvider.creativeType)];
+    HZIMInterstitial *ad = self.adDictionary[@(options.creativeType)];
     if (!ad) {
         ad = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
         [ad load];
-        self.adDictionary[@(dataProvider.creativeType)] = ad;
+        self.adDictionary[@(options.creativeType)] = ad;
     }
     
-    if (dataProvider.creativeType == HZCreativeTypeIncentivized && self.backupRewardedVideo == nil) {
+    if (options.creativeType == HZCreativeTypeIncentivized && self.backupRewardedVideo == nil) {
         self.backupRewardedVideo = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
         [self.backupRewardedVideo load];
     }

@@ -22,6 +22,12 @@
  *  The name of the game being advertised, e.g. "Clash of Clans". This property is guaranteed to be non-nil.
  */
 @property (nonatomic, readonly) NSString *appName;
+
+/**
+ *  A very short phrase prompting the user to act, e.g. "Install Now". This property is guaranteed to be non-nil.
+ */
+@property (nonatomic, readonly) NSString *callToAction;
+
 /**
  *  The URL of the game's icon. Images are 256x256 px PNGs. These images do not necessarily already have rounded corners, so you'll need to apply a mask or corner radius yourself. Guaranteed to be non-nil.
  */

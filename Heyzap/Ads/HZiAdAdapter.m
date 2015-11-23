@@ -64,7 +64,7 @@
     return [NSString stringWithFormat: @"%@", [UIDevice currentDevice].systemVersion];
 }
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options {
     if (self.interstitialAd == nil) {
         self.interstitialAd = [[ADInterstitialAd alloc] init];
         self.interstitialAd.delegate = self.forwardingDelegate;

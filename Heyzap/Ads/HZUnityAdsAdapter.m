@@ -150,7 +150,7 @@ NSString * const kHZNetworkName = @"mobile";
     }
 }
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options
 {
     // UnityAds auto-prefetches
 }

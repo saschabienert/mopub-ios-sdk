@@ -64,6 +64,10 @@ const NSTimeInterval maxMediateDelay     = 300;
 }
 
 - (void)loadMediateFromNetwork {
+    if (self.isRefreshingMediate) {
+        return;
+    }
+    
     // Should be all ad types? none?
     // HZAdFetchRequest requires the main queue; it's getting the status bar orientation and screen size and such.
     // TODO: It seems bad to create an arbitrary HZAdFetchRequest just to get the parameters.

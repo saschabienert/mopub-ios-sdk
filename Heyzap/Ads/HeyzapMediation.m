@@ -57,7 +57,15 @@
 #import "HZErrorReportingConfig.h"
 #import "HZErrorReporter.h"
 
-@interface HeyzapMediation()
+#import "HZFacebookAdapter.h"
+#import "HZMediatedNativeAd_Private.h"
+#import "HZAdMobAdapter.h"
+
+#import "HZHeyzapAdapter.h"
+#import "HZNativeAdAdapter.h"
+#import "HZCrossPromoAdapter.h"
+
+@interface HeyzapMediation() <HZNativeAdReportingDelegate>
 
 @property (nonatomic, strong) NSSet<HZBaseAdapter *> *setupMediators;
 @property (nonatomic, strong) NSSet<Class> *setupMediatorClasses;
@@ -1064,8 +1072,9 @@ static BOOL forceOnlyHeyzapSDK = NO;
             self.videoDelegateProxy.forwardingTarget = delegate;
             break;
         }
+        case HZAdTypeNative:
         case HZAdTypeBanner: {
-            // Ignored; banners have a different delegate system.
+            // Ignored; banners and native ads have a different delegate system.
         }
     }
 }
@@ -1088,6 +1097,9 @@ static BOOL forceOnlyHeyzapSDK = NO;
         case HZAdTypeBanner: {
             return [HZBannerAd class];
         }
+        case HZAdTypeNative: {
+            return [HZMediatedNativeAd class];
+        }
     }
 }
 
@@ -1106,8 +1118,9 @@ static BOOL forceOnlyHeyzapSDK = NO;
             return self.videoDelegateProxy;
             break;
         }
+        case HZAdTypeNative:
         case HZAdTypeBanner: {
-            // Banners use a different delegate system.
+            // Banners and native use a different delegate system.
             return nil;
         }
     }
@@ -1127,8 +1140,9 @@ static BOOL forceOnlyHeyzapSDK = NO;
             return self.videoDelegateProxy.forwardingTarget;
             break;
         }
+        case HZAdTypeNative:
         case HZAdTypeBanner: {
-            // Banners use a different delegate system.
+            // Banners and native use a different delegate system.
             return nil;
         }
     }
@@ -1350,5 +1364,108 @@ static BOOL forceOnlyHeyzapSDK = NO;
     return [HZBaseAdapter adapterClassForName:forcedNetworkName];
 }
 
+- (HZMediatedNativeAd *)getNextNativeAd:(NSString *)tag additionalParams:(NSDictionary *)additionalParams error:(NSError **)error
+{
+    const HZAdType adType = HZAdTypeNative;
+    const HZCreativeType creativeType = HZCreativeTypeNative;
+    
+    NSError *preShowError = [self checkForPreShowError:tag adType:adType];
+    if (preShowError) {
+        HZELog(@"Error getting native ad: %@",preShowError);
+        *error = preShowError;
+        return nil;
+    }
+    
+    NSDictionary *const latestMediate = [self.mediateRequester latestMediate];
+    NSDictionary *const latestMediateParams = [self.mediateRequester latestMediateParams];
+    if (!latestMediate || !latestMediateParams) {
+        NSError *missingMediateError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Didn't get the waterfall from Heyzap's servers before a request to show an ad was made."}];
+        [self trackMissingMediateForAdType:adType];
+        *error = missingMediateError;
+        return nil;
+    }
+    
+    // filter for the forced network, if applicable
+    NSSet *adapterClassesToConsider = self.setupMediatorClasses;
+    Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
+    if (optionalForcedNetwork) {
+        HZILog(@"Mediation only showing for one adapter: %@", [optionalForcedNetwork humanizedName]);
+        adapterClassesToConsider = [adapterClassesToConsider objectsPassingTest:^BOOL(Class klass, BOOL *stop) {
+            return klass == optionalForcedNetwork;
+        }];
+    }
+    
+    NSMutableOrderedSet <HZMediationAdapterWithCreativeTypeScore *> *adaptersWithScores = [[self.availabilityChecker parseMediateIntoAdaptersForShow:latestMediate validAdapterClasses:adapterClassesToConsider adType:adType] mutableCopy];
+    
+    // Sort the adapters, largest score first. The objects in the set obtained above contain their creative type and score.
+    [self sortAdaptersByScore:adaptersWithScores ifLatestMediateRequires:latestMediate];
+    
+    HZMediationAdapterWithCreativeTypeScore *chosenAdapterWithScore = [self.availabilityChecker firstAdapterWithAdForTag:tag
+                                                                                                      adaptersWithScores:adaptersWithScores
+                                                                                                  segmentationController:self.segmentationController];
+    
+    // Start event reporting
+    NSError *eventReporterError;
+    NSOrderedSet * plainAdapters = hzMapOrderedSet(adaptersWithScores, ^HZBaseAdapter *(HZMediationAdapterWithCreativeTypeScore * adapterWithScore) { return [adapterWithScore adapter]; });
+    
+    HZMediationEventReporter *eventReporter = [[HZMediationEventReporter alloc] initWithJSON:latestMediate
+                                                                               mediateParams:latestMediateParams
+                                                                           potentialAdapters:plainAdapters
+                                                                                      adType:adType
+                                                                                creativeType:[chosenAdapterWithScore creativeType]
+                                                                                         tag:tag
+                                                                                       error:&eventReporterError];
+    
+    if (eventReporterError) {
+        NSError *wrappedEventReporterError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{
+                                                                                       NSLocalizedDescriptionKey: @"Failed to parse /mediate response",
+                                                                                       NSUnderlyingErrorKey:eventReporterError,
+                                                                                       }];
+        HZTrackError(eventReporterError);
+        *error = wrappedEventReporterError;
+        return nil;
+    }
+    
+    [eventReporter reportFetchWithSuccessfulAdapter:[chosenAdapterWithScore adapter]];
+    if (!chosenAdapterWithScore) {
+        NSString *const errorMessage = [NSString stringWithFormat:@"An ad cannot be shown at this time. Either no available networks had an ad or segmentation settings prevented the show. Ad networks we checked: [%@]", [hzMap([plainAdapters array], ^NSString *(HZBaseAdapter *adapter){return [[adapter class] humanizedName];}) componentsJoinedByString:@", "]];
+        NSError *noAdError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: errorMessage}];
+        *error = noAdError;
+        return nil;
+    }
+    
+    [self.mediateRequester refreshMediate];
+    
+    // Show ad
+    HZDLog(@"HeyzapMediation: %@ adapter will now show an ad of creativeType: %@. Requested adType: %@ tag: %@", [[chosenAdapterWithScore adapter] name], NSStringFromCreativeType(creativeType), NSStringFromAdType(adType), tag);
+    NSString *placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:[chosenAdapterWithScore adapter]
+                                                                                                         tag:tag
+                                                                                                creativeType:creativeType];
+    
+    HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType
+                                                                                                      placementIDOverride:placementIDOverride
+                                                                                                                      tag:tag];
+    
+    NSError *nativeError;
+    HZNativeAdAdapter *adapter = [[chosenAdapterWithScore adapter] getNativeOrError:&nativeError metadata:metadata];
+    // Presuming `hasAd` is accurate, this should never happen.
+    if (!adapter) {
+        *error = [NSError errorWithDomain:kHZMediationDomain
+                                     code:1
+                                 userInfo:@{NSLocalizedDescriptionKey: @"The network did not have a native ad available"}];
+        return nil;
+    }
+    
+    adapter.reportingDelegate = self;
+    adapter.eventReporter = eventReporter;
+    return [[HZMediatedNativeAd alloc] initWithAdapter:adapter tag:metadata.tag];
+}
+
+- (void)adapter:(HZNativeAdAdapter *)adapter hadImpressionWithEventReporter:(HZMediationEventReporter *)eventReporter {
+    [eventReporter reportImpressionForAdapter:adapter.parentAdapter];
+}
+- (void)adapter:(HZNativeAdAdapter *)adapter wasClickedWithEventReporter:(HZMediationEventReporter *)eventReporter {
+    [eventReporter reportClickForAdapter:adapter.parentAdapter];
+}
 
 @end

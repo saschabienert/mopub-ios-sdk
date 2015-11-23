@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "HZShowOptions.h"
-#import "HZFetchOptions.h"
+#import "HZFetchOptions_Private.h"
 #import "HZBannerAdapter.h"
 #import "HZAdapterDelegate.h"
 #import "HZCreativeType.h"
@@ -21,6 +21,9 @@
 @class HZBannerAdapter;
 @class HZBannerAdOptions;
 @class HZAdapterDelegate;
+@class HZNativeAdAdapter;
+@class HZAdapterFetchOptions;
+
 @protocol HZBannerReportingDelegate;
 
 @protocol HZMediationAdapterDelegate <NSObject>
@@ -60,7 +63,7 @@
 
 - (nullable NSString *)testActivityInstructions;
 
-- (void)prefetchAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
+- (void)prefetchAdWithOptions:(nonnull HZAdapterFetchOptions *)options;
 
 - (BOOL)hasAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
@@ -141,5 +144,7 @@
  *  Returns a bitmask of all supported HZAdTypes (keeping blended interstitials in mind) derived from the adapters `supportedCreativeTypes` method.
  */
 - (HZAdType) possibleSupportedAdTypes;
+
+- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
 @end

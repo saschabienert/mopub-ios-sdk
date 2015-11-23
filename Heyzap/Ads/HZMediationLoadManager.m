@@ -19,6 +19,7 @@
 
 #import "HZHeyzapExchangeAdapter.h"
 #import "HZCrossPromoAdapter.h"
+#import "HZAdapterFetchOptions.h"
 
 @interface HZMediationLoadManager()
 
@@ -204,7 +205,13 @@
                 [networksAlreadyFetched addObject:alwaysFetchDatum.adapterClass];
                 HZBaseAdapter *adapter = (HZBaseAdapter *)[alwaysFetchDatum.adapterClass sharedAdapter];
                 dispatch_sync([self.delegate pausableMainQueue], ^{
-                    [adapter prefetchAdWithMetadata:[self mediationAdAvailabilityDataProviderForAdapter:adapter tag:fetchOptions.tag creativeType:creativeType]];
+                    
+                    id<HZMediationAdAvailabilityDataProviderProtocol>metadata = [self mediationAdAvailabilityDataProviderForAdapter:adapter tag:fetchOptions.tag creativeType:creativeType];
+                    
+                    HZAdapterFetchOptions *adapterFetchOptions = [[HZAdapterFetchOptions alloc] initWithCreativeType:creativeType
+                                                                                                 placementIDOverride:[metadata placementIDOverride]
+                                                                                                        fetchOptions:fetchOptions];
+                    [adapter prefetchAdWithOptions:adapterFetchOptions];
                 });
             }
         }];
@@ -235,7 +242,10 @@
                 if (![networksAlreadyFetched containsObject:datum.adapterClass]) {
                     [networksAlreadyFetched addObject:datum.adapterClass];
                     dispatch_sync([self.delegate pausableMainQueue], ^{
-                        [adapter prefetchAdWithMetadata:fetchMetadata];
+                        HZAdapterFetchOptions *adapterFetchOptions = [[HZAdapterFetchOptions alloc] initWithCreativeType:creativeType
+                                                                                                     placementIDOverride:[fetchMetadata placementIDOverride]
+                                                                                                            fetchOptions:fetchOptions];
+                        [adapter prefetchAdWithOptions:adapterFetchOptions];
                     });
                 }
                 

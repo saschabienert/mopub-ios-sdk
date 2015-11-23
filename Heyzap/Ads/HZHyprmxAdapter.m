@@ -112,7 +112,7 @@
     return self.isAdReady;
 }
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options {
     HZAssert(self.distributorID, @"Need a Distributor ID by this point");
     HZAssert(self.propertyID, @"Need a Property ID by this point");
 

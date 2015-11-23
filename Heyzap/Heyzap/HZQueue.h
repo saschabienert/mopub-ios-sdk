@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(nullable ObjectType) peekHead;
 -(nullable ObjectType) peekTail;
 -(BOOL) empty;
+- (NSUInteger)count;
 
 @end
 

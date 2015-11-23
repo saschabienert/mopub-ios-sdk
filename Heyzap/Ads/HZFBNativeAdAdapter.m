@@ -32,7 +32,7 @@
     self = [super initWithParentAdapter:parentAdapter];
     if (self) {
         _nativeAd = nativeAd;
-        nativeAd.delegate = self;
+        _nativeAd.delegate = self;
         _registeredViews = [NSMutableArray array];
     }
     return self;
@@ -59,6 +59,15 @@
         _iconImage = [[HZNativeAdImage alloc] initWithURL:icon.url width:icon.width height:icon.height];
     }
     return _iconImage;
+}
+
+- (HZNativeAdImage *)coverImageWithPreferredOrientation:(__unused HZPreferredImageOrientation)preferredOrientation {
+    HZFBAdImage *coverImage = self.nativeAd.coverImage;
+    if (coverImage) {
+        return [[HZNativeAdImage alloc] initWithURL:coverImage.url width:coverImage.width height:coverImage.height];
+    } else {
+        return nil;
+    }
 }
 
 - (HZMediatedNativeAdType)adType {
@@ -115,7 +124,7 @@
         [self.registeredViews addObject:view];
     }
 }
-- (void)registerImageView:(UIView *)view tappable:(BOOL)tappable {
+- (void)registerCoverImageView:(UIView *)view tappable:(BOOL)tappable {
     if (tappable) {
         [self.registeredViews addObject:view];
     }
@@ -144,7 +153,7 @@
 }
 
 - (void)nativeAdWillLogImpression:(nonnull HZFBNativeAd *)nativeAd {
-    [self.reportingDelegate adapter:self hadImpressionWithEventReporter:self.eventReporter];
+    [self reportImpressionIfNecessary];
 }
 
 - (void)nativeAd:(nonnull HZFBNativeAd *)nativeAd didFailWithError:(nonnull NSError *)error {
@@ -152,7 +161,7 @@
 }
 
 - (void)nativeAdDidClick:(nonnull HZFBNativeAd *)nativeAd {
-    [self.reportingDelegate adapter:self wasClickedWithEventReporter:self.eventReporter];
+    [self reportClickIfNecessary];
 }
 
 /*!

@@ -35,6 +35,8 @@
 
 #import "HZUtils.h"
 
+#import "MediatedNativeAdTableViewController.h"
+
 #define kTagCreativeIDField 4393
 
 typedef enum {
@@ -380,18 +382,32 @@ const CGFloat kLeftMargin = 10;
 
     
     UIButton *nativeAdsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    nativeAdsButton.frame = CGRectMake(10.0, CGRectGetMaxY(self.creativeTypeTextField.frame) + 10, 120.0, 25.0);
+    nativeAdsButton.frame = CGRectMake(10.0, CGRectGetMaxY(self.creativeTypeTextField.frame) + 10, 100.0, 25.0);
     nativeAdsButton.layer.cornerRadius = 4.0;
     nativeAdsButton.backgroundColor = [UIColor lightTextColor];
-    [nativeAdsButton setTitle:@"Show Native Ad" forState:UIControlStateNormal];
+    [nativeAdsButton setTitle:@"HZ Native" forState:UIControlStateNormal];
     [nativeAdsButton addTarget:self action:@selector(showNativeAds) forControlEvents:UIControlEventTouchUpInside];
     [self.scrollView addSubview:nativeAdsButton];
     
+    UIButton *mediatedNativeAdsButton = ({
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        button.frame = CGRectMake(CGRectGetMaxX(nativeAdsButton.frame) + 10, CGRectGetMaxY(self.creativeTypeTextField.frame) + 10, 100.0, 25.0);
+        button.layer.cornerRadius = 4.0;
+        button.backgroundColor = [UIColor lightTextColor];
+        [button setTitle:@"Med Native" forState:UIControlStateNormal];
+        [button addTarget:self
+                   action:@selector(showMediatedNativeAds)
+         forControlEvents:UIControlEventTouchUpInside];
+        button;
+    });
+    [self.scrollView addSubview:mediatedNativeAdsButton];
+    
+    
     UIButton *testActivityButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    testActivityButton.frame = CGRectMake(CGRectGetMaxX(nativeAdsButton.frame) + 10, CGRectGetMinY(nativeAdsButton.frame), 167.0, 25.0);
+    testActivityButton.frame = CGRectMake(CGRectGetMaxX(mediatedNativeAdsButton.frame) + 10, CGRectGetMinY(nativeAdsButton.frame), 137.0, 25.0);
     testActivityButton.layer.cornerRadius = 4.0;
     testActivityButton.backgroundColor = [UIColor lightTextColor];
-    [testActivityButton setTitle:@"Start Test Suite" forState:UIControlStateNormal];
+    [testActivityButton setTitle:@"Test Suite" forState:UIControlStateNormal];
     [testActivityButton addTarget:self action:@selector(showTestActivity) forControlEvents:UIControlEventTouchUpInside];
     [self.scrollView addSubview:testActivityButton];
 
@@ -793,6 +809,12 @@ const CGFloat kLeftMargin = 10;
             [self presentViewController:navController animated:YES completion:nil];
         }
     }];
+}
+
+- (void)showMediatedNativeAds {
+    MediatedNativeAdTableViewController *tvc = [[MediatedNativeAdTableViewController alloc] init];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:tvc];
+    [self presentViewController:navController animated:YES completion:nil];
 }
 
 - (void) showTestActivity {

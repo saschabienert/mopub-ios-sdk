@@ -58,6 +58,8 @@ NSString * const kHZInterstitialVideoEnabledKey  = @"interstitial_video_enabled"
             return [NSSet setWithArray:@[@(HZCreativeTypeBanner)]];
         case HZAdTypeVideo:
             return [NSSet setWithArray:@[@(HZCreativeTypeVideo)]];
+        case HZAdTypeNative:
+            return [NSSet setWithArray:@[@(HZCreativeTypeNative)]];
     }
 }
 

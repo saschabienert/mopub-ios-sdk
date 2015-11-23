@@ -81,19 +81,19 @@
     return HZCreativeTypeStatic | HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options
 {
-    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:@(dataProvider.creativeType)];
+    HZHeyzapExchangeClient * client = [self.exchangeClientsPerCreativeType objectForKey:@(options.creativeType)];
     if(client && client.state == HZHeyzapExchangeClientStateFetching){
         //already fetching
-        HZDLog(@"Already fetching creativeType=%@", NSStringFromCreativeType(dataProvider.creativeType));
+        HZDLog(@"Already fetching creativeType=%@", NSStringFromCreativeType(options.creativeType));
         return;
     }
     
     HZHeyzapExchangeClient *newClient = [[HZHeyzapExchangeClient alloc] init];
-    [self.exchangeClientsPerCreativeType setObject:newClient forKey:@(dataProvider.creativeType)];
+    [self.exchangeClientsPerCreativeType setObject:newClient forKey:@(options.creativeType)];
     [newClient setDelegate:self];
-    [newClient fetchForCreativeType:dataProvider.creativeType];
+    [newClient fetchForCreativeType:options.creativeType];
 }
 
 - (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider

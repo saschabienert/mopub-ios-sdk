@@ -14,6 +14,17 @@
 #import "HZMediationConstants.h"
 #import "HeyzapAds.h"
 #import "HZBaseAdapter_Internal.h"
+#import "HZHeyzapNativeAdAdapter.h"
+#import "HZNativeAdController_Private.h"
+
+@interface HZAbstractHeyzapAdapter()
+
+@property (nonatomic) NSMutableArray<HZNativeAd *> *nativeAds;
+@property (nonatomic) NSError *nativeError;
+@property (nonatomic, getter=isNativeFetchInProgress) BOOL nativeFetchInProgress;
+
+
+@end
 
 @implementation HZAbstractHeyzapAdapter
 
@@ -38,13 +49,13 @@
 
 - (HZCreativeType) supportedCreativeTypes
 {
-    return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeIncentivized;
+    return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeIncentivized | HZCreativeTypeNative;
 }
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options
 {    
     const HZAuctionType auctionType = [self auctionType];
-    switch (dataProvider.creativeType) {
+    switch (options.creativeType) {
         case HZCreativeTypeStatic: {
             [HZHeyzapInterstitialAd fetchForAuctionType:auctionType withCompletion:nil];
             break;
@@ -55,6 +66,10 @@
         }
         case HZCreativeTypeVideo: {
             [HZHeyzapVideoAd fetchForAuctionType:auctionType withCompletion:nil];
+            break;
+        }
+        case HZCreativeTypeNative: {
+            [self fetchNativeWithOptions:options];
             break;
         }
         default: {
@@ -73,6 +88,8 @@
         return [HZHeyzapInterstitialAd isAvailableForTag:nil auctionType:auctionType];
     } else if (dataProvider.creativeType & HZCreativeTypeIncentivized) {
         return [HZHeyzapIncentivizedAd isAvailableForTag:nil auctionType:auctionType];
+    } else if (dataProvider.creativeType & HZCreativeTypeNative) {
+        return [self.nativeAds count] > 0;
     } else {
         return NO;
     }
@@ -131,6 +148,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        _nativeAds = [[NSMutableArray alloc] init];
         [[NSNotificationCenter  defaultCenter] addObserver:self selector:@selector(didShowAd:) name:kHeyzapDidShowAdNotitification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFailToShowAd:) name:kHeyzapDidFailToShowAdNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveAd:) name:kHeyzapDidReceiveAdNotification object:nil];
@@ -254,6 +272,40 @@
 - (void)didFailToCompleteIncentivizedAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+    }
+}
+
+#pragma mark - Native
+
+- (void)fetchNativeWithOptions:(HZAdapterFetchOptions *)options {
+    if (!self.isNativeFetchInProgress && self.nativeAds.count < 5) {
+        self.nativeFetchInProgress = YES;
+        
+        [HZNativeAdController fetchAds:[options.uniqueNativeAdsToFetch unsignedIntegerValue]
+                                   tag:options.tag
+                           auctionType:self.auctionType
+                            completion:^(NSError *error, HZNativeAdCollection *collection) {
+                                self.nativeFetchInProgress = NO;
+                                if (error) {
+                                    HZELog(@"Error fetching Heyzap native ads: %@",error);
+                                    self.nativeError = error;
+                                } else {
+                                    [self.nativeAds addObjectsFromArray:collection.ads];
+                                }
+                            }];
+    }
+}
+
+- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    HZNativeAd *baseNativeAd = self.nativeAds.firstObject;
+    if (baseNativeAd) {
+        [self.nativeAds removeObjectAtIndex:0];
+        return [[HZHeyzapNativeAdAdapter alloc] initWithNativeAd:baseNativeAd parentAdapter:self];
+    } else if (self.nativeError) {
+        *error = self.nativeError;
+        return nil;
+    } else {
+        return nil;
     }
 }
 

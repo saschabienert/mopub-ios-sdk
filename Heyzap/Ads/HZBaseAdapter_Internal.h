@@ -8,6 +8,7 @@
 
 #import "HZBaseAdapter.h"
 #import "HZShowOptions_Private.h"
+#import "HZAdapterFetchOptions.h"
 
 /**
  *  Methods & properties that should only be used internally by HZBaseAdapter and it's subclasses are declared here.
@@ -49,7 +50,7 @@
 /**
  *  Fetch an ad. This is called by the base adapter implementation after it verifies that the requested creativeType is supported by the subclass & that the subclass does not already have an ad for the given creativeType.
  */
-- (void)internalPrefetchAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
+- (void)internalPrefetchAdWithOptions:(nonnull HZAdapterFetchOptions *)options;
 
 - (nullable HZBannerAdapter *)internalFetchBannerWithOptions:(nonnull HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(nonnull id<HZBannerReportingDelegate>)reportingDelegate;
 

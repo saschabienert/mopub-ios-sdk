@@ -70,6 +70,8 @@ NSString *const kHZNativeAdRatingKey = @"rating";
         // Non-nil properties
         _appName = [HZDictionaryUtils objectForKey:kHZNativeAdAppNameKey ofClass:[NSString class] dict:publicDictionary];
         CHECK_NOT_NIL(_appName, @"advertised app name");
+        
+        _callToAction = [HZDictionaryUtils objectForKey:@"call_to_action" ofClass:[NSString class] default:@"Install Now" dict:publicDictionary];
 
         _iconURL = [NSURL URLWithString:[HZDictionaryUtils objectForKey:kHZNativeAdIconURLKey ofClass:[NSString class] dict:publicDictionary]];
         CHECK_NOT_NIL(_iconURL, @"icon URL");

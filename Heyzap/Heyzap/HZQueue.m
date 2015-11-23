@@ -66,4 +66,8 @@
     return ([self.queue lastObject] == nil);
 }
 
+- (NSUInteger)count {
+    return self.queue.count;
+}
+
 @end
