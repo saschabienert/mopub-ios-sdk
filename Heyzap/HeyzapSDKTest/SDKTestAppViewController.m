@@ -1030,11 +1030,13 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void)configureAudioPlayer {
-    NSString *backgroundMusicPath = [[NSBundle mainBundle] pathForResource:@"elevator_music" ofType:@"mp3"];
-    NSURL *backgroundMusicURL = [NSURL fileURLWithPath:backgroundMusicPath];
-    self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backgroundMusicURL error:nil];
-    self.backgroundMusicPlayer.numberOfLoops = -1;	// loop forever
-    [self.backgroundMusicPlayer prepareToPlay];
+    NSURL *backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"elevator_music" withExtension:@"mp3"];
+    // On Max's machine the URL is non-deterministically nil, causing a crash. Since this is not crucial functionality we just don't play music in that case.
+    if (backgroundMusicURL) {
+        self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backgroundMusicURL error:nil];
+        self.backgroundMusicPlayer.numberOfLoops = -1;	// loop forever
+        [self.backgroundMusicPlayer prepareToPlay];
+    }
 }
 
 - (void)tryPlayMusic {
