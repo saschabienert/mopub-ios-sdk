@@ -27,7 +27,7 @@ if (![real isEqualToString:hardcoded]) { \
     COMPARE_CONSTANTS(VunglePlayAdOptionKeyPlacement, HZFallbackVunglePlayAdOptionKeyPlacement);
     COMPARE_CONSTANTS(VunglePlayAdOptionKeyIncentivized, HZFallbackVunglePlayAdOptionKeyIncentivized);
     COMPARE_CONSTANTS(kGADAdLoaderAdTypeNativeAppInstall, kHZGADAdLoaderAdTypeNativeAppInstall);
-    COMPARE_CONSTANTS(kGADAdLoaderAdTypeNativeContent, kHZGADAdLoaderAdTypeNativeAppInstall);
+    COMPARE_CONSTANTS(kGADAdLoaderAdTypeNativeContent, kHZGADAdLoaderAdTypeNativeContent);
 }
 
 @end
