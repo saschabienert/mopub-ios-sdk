@@ -10,8 +10,12 @@
 
 @class HZGADNativeAppInstallAd;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HZAdMobNativeAppInstallAdAdapter : HZAbstractAdMobNativeAdAdapter
 
 - (instancetype)initWithAppInstallAd:(HZGADNativeAppInstallAd *)appInstallAd parentAdapter:(HZBaseAdapter *)parentAdapter;
 
 @end
+
+NS_ASSUME_NONNULL_END

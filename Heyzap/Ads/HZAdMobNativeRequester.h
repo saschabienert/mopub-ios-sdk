@@ -11,6 +11,8 @@
 @class HZNativeAdAdapter;
 @class HZMediatedNativeAdRequestOptions;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HZAdMobNativeRequester : NSObject
 
 @property (nonatomic, readonly) NSUInteger adCount;
@@ -21,3 +23,5 @@
 - (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
 @end
+
+NS_ASSUME_NONNULL_END

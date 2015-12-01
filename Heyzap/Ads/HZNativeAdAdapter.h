@@ -12,6 +12,8 @@
 
 @class HZMediatedNativeAd;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol HZNativeAdReportingDelegate <NSObject>
 
 - (void)adapter:(HZNativeAdAdapter *)adapter hadImpressionWithEventReporter:(HZMediationEventReporter *)eventReporter;
@@ -24,10 +26,10 @@
 - (instancetype)initWithParentAdapter:(HZBaseAdapter *)parentAdapter NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (nonatomic, weak) HZBaseAdapter *parentAdapter;
-@property (nonatomic, weak) id<HZNativeAdReportingDelegate>otherDelegate;
-@property (nonatomic, weak) id<HZNativeAdReportingDelegate>reportingDelegate;
-@property (nonatomic) HZMediationEventReporter *eventReporter;
+@property (nonatomic, weak, nullable) HZBaseAdapter *parentAdapter;
+@property (nonatomic, weak, nullable) id<HZNativeAdReportingDelegate>otherDelegate;
+@property (nonatomic, weak, nullable) id<HZNativeAdReportingDelegate>reportingDelegate;
+@property (nonatomic, nullable) HZMediationEventReporter *eventReporter;
 
 @property (nonatomic, readonly, getter=hasReportedImpression) BOOL reportedImpression;
 @property (nonatomic, readonly, getter=hasReportedClick) BOOL reportedClick;
@@ -35,24 +37,24 @@
 - (void)reportClickIfNecessary;
 
 
-- (NSString *)mediatedNetwork;
-- (id)underlyingNativeAd;
-- (NSString *)title;
-- (NSString *)body;
-- (NSString *)callToAction;
-- (HZNativeAdImage *)iconImage;
+- (NSString * _Nonnull)mediatedNetwork;
+- (id _Nonnull)underlyingNativeAd;
+- (NSString * _Nullable)title;
+- (NSString * _Nullable)body;
+- (NSString * _Nullable)callToAction;
+- (HZNativeAdImage * _Nullable)iconImage;
 
-- (HZNativeAdImage *)coverImageWithPreferredOrientation:(HZPreferredImageOrientation)preferredOrientation;
+- (HZNativeAdImage * _Nullable)coverImageWithPreferredOrientation:(HZPreferredImageOrientation)preferredOrientation;
 
 - (HZMediatedNativeAdType)adType;
 
-- (void)wrapperView:(UIView *)wrapperView didMoveToWindow:(UIWindow *)window;
+- (void)wrapperView:(UIView * _Nonnull)wrapperView didMoveToWindow:(UIWindow * _Nullable)window;
 
 - (void)beginRegisteringViews;
 - (void)finishRegisteringViews;
-- (UIView *)wrapperView;
+- (UIView * _Nonnull)wrapperView;
 
-@property (nonatomic, weak) UIViewController *presentingViewController;
+@property (nonatomic, weak, nullable) UIViewController *presentingViewController;
 
 #pragma mark - Facebook Configuration
 
@@ -72,3 +74,5 @@
 @property (nonatomic) UIRectCorner facebookAdChoicesViewCorner;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -74,6 +74,30 @@
     [self.loaders addObject:loader];
 }
 
+- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    id ad = [self.ads dequeue];
+    
+    if (ad) {
+        NSString *const className = NSStringFromClass([ad class]);
+        if ([className isEqualToString:@"GADNativeAppInstallAd"]) {
+            return [[HZAdMobNativeAppInstallAdAdapter alloc] initWithAppInstallAd:ad parentAdapter:self.parentAdapter];
+        } else if ([className isEqualToString:@"GADNativeContentAd"]) {
+            return [[HZAdMobNativeContentAdAdapter alloc] initWithContentAd:ad parentAdapter:self.parentAdapter];
+        } else {
+            HZELog(@"Unknown AdMob native class: %@",className);
+            return nil;
+        }
+        
+    } else if (self.lastNativeError) {
+        *error = self.lastNativeError;
+        return nil;
+    } else {
+        return nil;
+    }
+}
+
+#pragma mark - GADAdLoader Delegate
+
 - (void)adLoader:(HZGADAdLoader *)adLoader didFailToReceiveAdWithError:(HZGADRequestError *)error {
     HZELog(@"GADAdLoader: %@ failed to receive native ad with error: %@",adLoader, error);
     NSError *castedError = (NSError *)error;
@@ -96,33 +120,18 @@
 
 - (void)adLoader:(HZGADAdLoader *)adLoader didReceiveNativeContentAd:(HZGADNativeContentAd *)nativeContentAd {
     HZDLog(@"Received native content ad from AdMob");
-    [self.ads enqueue:nativeContentAd];
-    [self.loaders removeObjectIdenticalTo:adLoader];
+    
+    [self addNativeAd:nativeContentAd loader:adLoader];
 }
 
 - (void)adLoader:(HZGADAdLoader *)adLoader didReceiveNativeAppInstallAd:(HZGADNativeAppInstallAd *)nativeAppInstallAd {
     HZDLog(@"Received native app install ad from AdMob");
-    [self.ads enqueue:nativeAppInstallAd];
-    [self.loaders removeObjectIdenticalTo:adLoader];
+    [self addNativeAd:nativeAppInstallAd loader:adLoader];
 }
 
-- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    id ad = [self.ads dequeue];
-    
-    if (ad) {
-        NSString *const className = NSStringFromClass([ad class]);
-        if ([className isEqualToString:@"GADNativeAppInstallAd"]) {
-            return [[HZAdMobNativeAppInstallAdAdapter alloc] initWithAppInstallAd:ad parentAdapter:self.parentAdapter];
-        } else if ([className isEqualToString:@"GADNativeContentAd"]) {
-            return [[HZAdMobNativeContentAdAdapter alloc] initWithContentAd:ad parentAdapter:self.parentAdapter];
-        }
-        return nil;
-    } else if (self.lastNativeError) {
-        *error = self.lastNativeError;
-        return nil;
-    } else {
-        return nil;
-    }
+- (void)addNativeAd:(id)nativeAd loader:(HZGADAdLoader *)loader {
+    [self.ads enqueue:nativeAd];
+    [self.loaders removeObjectIdenticalTo:loader];
 }
 
 @end

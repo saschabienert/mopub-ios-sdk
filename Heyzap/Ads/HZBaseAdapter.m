@@ -250,6 +250,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     });
 }
 
+- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    return nil;
+}
+
 #pragma mark - Common, shared logic
 
 - (BOOL)supportsCreativeType:(HZCreativeType)creativeType
@@ -371,11 +375,5 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 + (BOOL)isHeyzapAdapter {
     return NO;
 }
-
-- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    return nil;
-}
-
-
 
 @end

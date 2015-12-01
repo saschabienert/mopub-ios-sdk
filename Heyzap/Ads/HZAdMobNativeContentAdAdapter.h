@@ -10,8 +10,12 @@
 
 @class HZGADNativeContentAd;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HZAdMobNativeContentAdAdapter : HZAbstractAdMobNativeAdAdapter
 
 - (instancetype)initWithContentAd:(HZGADNativeContentAd *)contentAd parentAdapter:(HZBaseAdapter *)parentAdapter;
 
 @end
+
+NS_ASSUME_NONNULL_END

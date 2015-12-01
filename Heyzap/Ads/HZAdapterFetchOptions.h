@@ -15,7 +15,7 @@
 @property (nonatomic, nullable) NSString *placementIDOverride;
 @property (nonatomic, nullable) UIViewController *presentingViewController;
 @property (nonatomic, nonnull) NSNumber *uniqueNativeAdsToFetch;
-@property (nonatomic, nonnull) NSArray *admobNativeAdTypes;
+@property (nonatomic, nonnull) NSArray<NSString *> *admobNativeAdTypes;
 @property (nonatomic) HZAdMobNativeAdImageOrientation admobPreferredImageOrientation;
 
 - (nonnull instancetype)initWithCreativeType:(HZCreativeType)creativeType
