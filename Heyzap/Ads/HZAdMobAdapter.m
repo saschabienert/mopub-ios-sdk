@@ -18,14 +18,24 @@
 #import "HZBaseAdapter_Internal.h"
 #import "HZShowOptions_Private.h"
 
+#import "HZGADAdLoader.h"
+#import "HZGADNativeAppInstallAdLoaderDelegate.h"
+#import "HZAdMobNativeRequester.h"
+
+typedef NSString AdMobPlacementID;
+
 @interface HZAdMobAdapter() <HZGADInterstitialDelegate>
 
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSMutableDictionary <NSString *, HZGADInterstitial *> *> *adDictionary; // outer key: creativeType, inner key: placement ID
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSMutableDictionary <NSString *, NSError *> *> *adErrorsDictionary; // outer key: creativeType, inner key: placement ID
+@property (nonatomic, strong) NSMutableDictionary<HZCreativeTypeObject *, NSMutableDictionary <AdMobPlacementID *, HZGADInterstitial *> *> *adDictionary; // outer key: creativeType, inner key: placement ID
+@property (nonatomic, strong) NSMutableDictionary<HZCreativeTypeObject *, NSMutableDictionary <AdMobPlacementID *, NSError *> *> *adErrorsDictionary; // outer key: creativeType, inner key: placement ID
 
-@property (nonatomic, strong) NSString *interstitialAdUnitID;
-@property (nonatomic, strong) NSString *videoAdUnitID;
-@property (nonatomic, strong) NSString *bannerAdUnitID;
+// TODO: Move these to a dictionary keyed off creativeType
+@property (nonatomic, strong) AdMobPlacementID *interstitialAdUnitID;
+@property (nonatomic, strong) AdMobPlacementID *videoAdUnitID;
+@property (nonatomic, strong) AdMobPlacementID *bannerAdUnitID;
+@property (nonatomic, strong) AdMobPlacementID *nativeAdUnitID;
+
+@property (nonatomic, strong) NSMutableDictionary<AdMobPlacementID *, HZAdMobNativeRequester *> *nativePlacementToRequester;
 
 @end
 
@@ -50,6 +60,7 @@
     if (self) {
         _adDictionary = [[NSMutableDictionary alloc] init];
         _adErrorsDictionary = [[NSMutableDictionary alloc] init];
+        _nativePlacementToRequester = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -58,6 +69,7 @@
     self.interstitialAdUnitID = [HZDictionaryUtils objectForKey:@"ad_unit_id" ofClass:[NSString class] dict:self.credentials];
     self.videoAdUnitID = [HZDictionaryUtils objectForKey:@"video_ad_unit_id" ofClass:[NSString class] dict:self.credentials];
     self.bannerAdUnitID = [HZDictionaryUtils objectForKey:@"banner_ad_unit_id" ofClass:[NSString class] dict:self.credentials];
+    self.nativeAdUnitID = [HZDictionaryUtils objectForKey:@"native_ad_unit_id" ofClass:[NSString class] dict:self.credentials];
 }
 
 #pragma mark - Adapter Protocol
@@ -87,13 +99,19 @@
 
 - (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
-    HZGADInterstitial *ad = [self adWithMetadata:dataProvider];
-    return ad && ad.isReady;
+    if ([dataProvider creativeType] == HZCreativeTypeNative) {
+        AdMobPlacementID *const placementID = [dataProvider placementIDOverride] ?: self.nativeAdUnitID;
+        HZAdMobNativeRequester *requester = self.nativePlacementToRequester[placementID];
+        return requester.adCount > 0;
+    } else {
+        HZGADInterstitial *ad = [self adWithMetadata:dataProvider];
+        return ad && ad.isReady;
+    }
 }
 
 - (HZCreativeType) supportedCreativeTypes
 {
-    return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeBanner;
+    return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeBanner | HZCreativeTypeNative;
 }
 
 - (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
@@ -107,53 +125,67 @@
         case HZCreativeTypeBanner: {
             return self.bannerAdUnitID != nil;
         }
-        default:
+        case HZCreativeTypeNative: {
+            return self.nativeAdUnitID != nil;
+        }
+        case HZCreativeTypeIncentivized:
+        case HZCreativeTypeUnknown: {
             return NO;
+        }
     }
 }
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options
 {
-    NSString *adUnitID;
-    
-    switch (dataProvider.creativeType) {
+    switch (options.creativeType) {
+        case HZCreativeTypeNative: {
+            [self fetchNativeWithOptions:options];
+            return;
+        }
         case HZCreativeTypeStatic: {
-            adUnitID = dataProvider.placementIDOverride ?: self.interstitialAdUnitID;
+            AdMobPlacementID *adUnitID = options.placementIDOverride ?: self.interstitialAdUnitID;
             HZAssert(adUnitID, @"Need an interstitial ad unit ID by this point");
             
+            HZMediationAdAvailabilityDataProvider *updatedDataProvider = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:options.creativeType placementIDOverride:adUnitID];
+            [self fetchNonNativeWithMetadata:updatedDataProvider];
             break;
         }
         case HZCreativeTypeVideo: {
-            adUnitID = dataProvider.placementIDOverride ?: self.videoAdUnitID;
+            AdMobPlacementID *adUnitID = options.placementIDOverride ?: self.videoAdUnitID;
             HZAssert(adUnitID, @"Need a video ad unit ID by this point");
+            
+            HZMediationAdAvailabilityDataProvider *updatedDataProvider = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:options.creativeType placementIDOverride:adUnitID];
+            [self fetchNonNativeWithMetadata:updatedDataProvider];
             break;
         }
         default: {
             return;
         }
     }
-    HZMediationAdAvailabilityDataProvider *updatedDataProvider = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:dataProvider.creativeType placementIDOverride:adUnitID];
-    
-    HZGADInterstitial *currentAd = [self adWithMetadata:updatedDataProvider];
+}
+
+- (void)fetchNonNativeWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)metadata {
+    HZGADInterstitial *currentAd = [self adWithMetadata:metadata];
+    NSString *const placementID = [metadata placementIDOverride];
     if (currentAd
         && !currentAd.hasBeenUsed) {
         // If we have an ad already out fetching, don't start up a re-fetch.
         return;
     }
     
-    HZDLog(@"Initializing AdMob Ad with %@AdUnitID: %@", (updatedDataProvider.creativeType == HZCreativeTypeStatic ? @"interstitial" : @"video"), adUnitID);
+    HZDLog(@"Initializing AdMob Ad with %@AdUnitID: %@", (metadata.creativeType == HZCreativeTypeStatic ? @"interstitial" : @"video"), placementID);
     
     HZGADInterstitial *newAd;
     
     if ([HZGADInterstitial respondsToSelector:@selector(initWithAdUnitID:)]) {
-        newAd = [[HZGADInterstitial alloc] initWithAdUnitID:adUnitID];
+        newAd = [[HZGADInterstitial alloc] initWithAdUnitID:placementID];
     } else {
         newAd = [[HZGADInterstitial alloc] init];
-        [newAd setAdUnitID:adUnitID];
+        [newAd setAdUnitID:placementID];
     }
     
     newAd.delegate = self.forwardingDelegate;
-    [self setAd:newAd forMetadata:updatedDataProvider];
+    [self setAd:newAd forMetadata:metadata];
     
     HZGADRequest *request = [HZGADRequest request];
     request.testDevices = @[ GAD_SIMULATOR_ID ];
@@ -216,12 +248,12 @@
     [[HeyzapMediation sharedInstance] sendNetworkCallback: HZNetworkCallbackAvailable forNetwork: [self name]];
 }
 
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable AdMobPlacementID *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
     return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:(placementIDOverride ?: self.bannerAdUnitID) options:options reportingDelegate:reportingDelegate parentAdapter:self];
 }
 
 - (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    NSString *placementIDToUse = [self defaultOrOverridenPlacementIDForAdWithMetadata:dataProvider];
+    AdMobPlacementID *placementIDToUse = [self defaultOrOverridenPlacementIDForAdWithMetadata:dataProvider];
     NSMutableDictionary * errorsForCreativeType = self.adErrorsDictionary[@(dataProvider.creativeType)];
     
     if (!errorsForCreativeType) {
@@ -237,7 +269,7 @@
 }
 
 - (NSError *) lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    NSString *placementIDToUse = [self defaultOrOverridenPlacementIDForAdWithMetadata:dataProvider];
+    AdMobPlacementID *placementIDToUse = [self defaultOrOverridenPlacementIDForAdWithMetadata:dataProvider];
     NSDictionary *errorsForCreativeType = self.adErrorsDictionary[@(dataProvider.creativeType)];
     
     if (!errorsForCreativeType) {
@@ -247,11 +279,10 @@
     }
 }
 
-
 #pragma mark - Utilities
 
 - (HZGADInterstitial *) adWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    NSString *placementIDToUse = [self defaultOrOverridenPlacementIDForAdWithMetadata:dataProvider];
+    AdMobPlacementID *placementIDToUse = [self defaultOrOverridenPlacementIDForAdWithMetadata:dataProvider];
     NSDictionary *adsForCreativeType = self.adDictionary[@(dataProvider.creativeType)];
     
     if (!adsForCreativeType) {
@@ -277,9 +308,9 @@
 - (HZCreativeType)creativeTypeForAd:(HZGADInterstitial *)ad {
     NSArray *supportedCreativeTypes = @[@(HZCreativeTypeStatic), @(HZCreativeTypeVideo)];
     
-    for (NSNumber *creativeTypeNumber in supportedCreativeTypes) {
-        if (self.adDictionary[creativeTypeNumber] && [[self.adDictionary[creativeTypeNumber] allValues] containsObject:ad]) {
-            return hzCreativeTypeFromNSNumber(creativeTypeNumber);
+    for (HZCreativeTypeObject *creativeTypeObject in supportedCreativeTypes) {
+        if (self.adDictionary[creativeTypeObject] && [[self.adDictionary[creativeTypeObject] allValues] containsObject:ad]) {
+            return hzCreativeTypeFromObject(creativeTypeObject);
         }
     }
     
@@ -292,9 +323,36 @@
     return [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType placementIDOverride:ad.adUnitID];
 }
 
-- (NSString *) defaultOrOverridenPlacementIDForAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    NSString *defaultPlacementID = (dataProvider.creativeType == HZCreativeTypeStatic ? self.interstitialAdUnitID : self.videoAdUnitID);
+- (AdMobPlacementID *) defaultOrOverridenPlacementIDForAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    AdMobPlacementID *defaultPlacementID = (dataProvider.creativeType == HZCreativeTypeStatic ? self.interstitialAdUnitID : self.videoAdUnitID);
     return dataProvider.placementIDOverride ?: defaultPlacementID;
 }
 
+- (void)fetchNativeWithOptions:(HZAdapterFetchOptions *)options {
+    AdMobPlacementID *const placementID = options.placementIDOverride ?: self.nativeAdUnitID;
+    NSAssert(placementID, @"Need a native placement ID by this point");
+    HZAdMobNativeRequester *requester = self.nativePlacementToRequester[placementID];
+    if (!requester) {
+        requester = [[HZAdMobNativeRequester alloc] initWithNativeAdUnitID:placementID parentAdapter:self];
+        self.nativePlacementToRequester[placementID] = requester;
+        [requester fetchNative:options];
+    }
+}
+
+- (nullable HZNativeAdAdapter *)getNativeAdForMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    AdMobPlacementID *const placementID = [dataProvider placementIDOverride] ?: self.nativeAdUnitID;
+    HZAdMobNativeRequester *requester = self.nativePlacementToRequester[placementID];
+    
+    if (!requester) {
+        HZELog(@"The AdMob ad unit ID %@ has never been fetched",placementID);
+        return nil;
+    }
+    
+    HZNativeAdAdapter *adapter = [requester getNativeAdForMetadata:dataProvider];
+    if (adapter) {
+        return adapter;
+    } else {
+        return nil;
+    }
+}
 @end

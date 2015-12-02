@@ -122,9 +122,9 @@
 }
 
 // To support incentivized, I will need to have separate objects for the incentivized/interstial delegates because they received the same selectors
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options
 {
-    switch (dataProvider.creativeType) {
+    switch (options.creativeType) {
         case HZCreativeTypeStatic: {
             [[self.sdk adService] preloadAdOfSize:[HZALAdSize sizeInterstitial]];
             break;
@@ -134,7 +134,7 @@
                 return;
             }
             self.currentIncentivizedAd = [[HZALIncentivizedInterstitialAd alloc] initIncentivizedInterstitialWithSdk:self.sdk];
-            self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithCreativeType:dataProvider.creativeType delegate:self.forwardingDelegate];
+            self.incentivizedDelegate = [[HZIncentivizedAppLovinDelegate alloc] initWithCreativeType:options.creativeType delegate:self.forwardingDelegate];
             [self.currentIncentivizedAd preloadAndNotify:self.incentivizedDelegate];
             self.currentIncentivizedAd.adVideoPlaybackDelegate = self.incentivizedDelegate;
             

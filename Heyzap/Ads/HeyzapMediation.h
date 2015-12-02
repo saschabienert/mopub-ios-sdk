@@ -15,7 +15,7 @@
 #import "HZMediateRequester.h"
 #import "HZMediationSettings.h"
 #import "HZSegmentationController.h"
-#import "HZFetchOptions.h"
+#import "HZFetchOptions_Private.h"
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
@@ -23,6 +23,8 @@
 @class HZBannerAdOptions;
 @class HZMediationPersistentConfig;
 @class HZErrorReporter;
+@class HZMediatedNativeAd;
+@class HZMediatedNativeAdRequestOptions;
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
@@ -92,5 +94,7 @@
  */
 - (void) enableSegmentation:(BOOL)enabled;
 - (BOOL) isSegmentationEnabled;
+
+- (HZMediatedNativeAd *)getNextNativeAd:(NSString *)tag additionalParams:(NSDictionary *)additionalParams error:(NSError **)error;
 
 @end

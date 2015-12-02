@@ -120,9 +120,11 @@ const NSTimeInterval maxMediateDelay     = 300;
 }
 
 - (void)refreshMediate {
-    self.isRefreshingMediate = YES;
     HZDLog(@"HZMediateRequester: refreshing /mediate.");
-    [self loadMediateFromNetwork];
+    if (self.isRefreshingMediate == NO) {
+        self.isRefreshingMediate = YES;
+        [self loadMediateFromNetwork];
+    }
 }
 
 - (void)restoreFromCache {

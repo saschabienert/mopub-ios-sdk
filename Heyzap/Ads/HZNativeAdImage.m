@@ -19,19 +19,25 @@ NSString * const kHZImageHeightKey = @"height";
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary error:(NSError **)error {
     HZParameterAssert(error != NULL);
+    
+    NSURL *url = [NSURL URLWithString:[HZDictionaryUtils objectForKey:kHZImageURLKey ofClass:[NSString class] dict:dictionary]];
+    CHECK_NOT_NIL(url,@"URL");
+    
+    NSNumber *width = [HZDictionaryUtils objectForKey:kHZImageWidthKey ofClass:[NSNumber class] dict:dictionary];
+    CHECK_NOT_NIL(width,@"Width");
+    
+    NSNumber *height = [HZDictionaryUtils objectForKey:kHZImageHeightKey ofClass:[NSNumber class] dict:dictionary];
+    CHECK_NOT_NIL(height,@"Height");
+    
+    return [self initWithURL:url width:[width integerValue] height:[height integerValue]];
+}
+
+- (instancetype)initWithURL:(NSURL *)url width:(CGFloat)width height:(CGFloat)height {
     self = [super init];
     if (self) {
-        _url = [NSURL URLWithString:[HZDictionaryUtils objectForKey:kHZImageURLKey ofClass:[NSString class] dict:dictionary]];
-        CHECK_NOT_NIL(_url,@"URL");
-        
-        NSNumber *width = [HZDictionaryUtils objectForKey:kHZImageWidthKey ofClass:[NSNumber class] dict:dictionary];
-        CHECK_NOT_NIL(width,@"Width");
-        _width = [width integerValue];
-        
-        NSNumber *height = [HZDictionaryUtils objectForKey:kHZImageHeightKey ofClass:[NSNumber class] dict:dictionary];
-        CHECK_NOT_NIL(height,@"Height");
-        _width = [width integerValue];
-        
+        _url = url;
+        _width = width;
+        _height = height;
     }
     return self;
 }

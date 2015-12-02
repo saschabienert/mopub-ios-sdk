@@ -8,13 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
-@interface HZQueue : NSObject
+NS_ASSUME_NONNULL_BEGIN
 
--(id) dequeue;
--(void) enqueue:(id)obj;
--(id) peek:(NSUInteger)index;
--(id) peekHead;
--(id) peekTail;
+@interface HZQueue<ObjectType> : NSObject
+
+-(ObjectType) dequeue;
+-(void) enqueue:(ObjectType)obj;
+-(void)enqueueObjects:(NSArray<ObjectType> *)objects;
+-(nullable ObjectType) peek:(NSUInteger)index;
+-(nullable ObjectType) peekHead;
+-(nullable ObjectType) peekTail;
 -(BOOL) empty;
+- (NSUInteger)count;
 
 @end
+
+NS_ASSUME_NONNULL_END

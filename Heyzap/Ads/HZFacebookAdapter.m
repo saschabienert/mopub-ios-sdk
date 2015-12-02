@@ -20,12 +20,22 @@
 #import "HZBaseAdapter_Internal.h"
 #import "HZFBAdSettings.h"
 #import "HZDevice.h"
+#import "HZFBNativeAdAdapter.h"
+#import "HZFBNativeAdsManager.h"
+#import "HZFBNativeAdsManagerDelegate.h"
 
-@interface HZFacebookAdapter() <HZFBInterstitialAdDelegate>
-@property (nonatomic, strong) NSString *placementID;
-@property (nonatomic, strong) NSString *bannerPlacementID;
-@property (nonatomic, strong) NSMutableDictionary <NSString *, HZFBInterstitialAd *> *interstitialAds; // key: placement ID
-@property (nonatomic, strong) NSMutableDictionary <NSString *, NSError *> *interstitialAdErrors; // key: placement ID
+typedef NSString FacebookPlacementID;
+
+@interface HZFacebookAdapter() <HZFBInterstitialAdDelegate, HZFBNativeAdsManagerDelegate>
+
+@property (nonatomic, strong) FacebookPlacementID *placementID;
+@property (nonatomic, strong) FacebookPlacementID *bannerPlacementID;
+@property (nonatomic, strong) FacebookPlacementID *nativePlacementID;
+@property (nonatomic, strong) NSMutableDictionary <FacebookPlacementID *, HZFBInterstitialAd *> *interstitialAds;
+@property (nonatomic, strong) NSMutableDictionary <FacebookPlacementID *, NSError *> *interstitialAdErrors;
+
+@property (nonatomic, strong) NSMutableDictionary <FacebookPlacementID *, HZFBNativeAdsManager *> *nativeAdsManagers;
+
 @end
 
 @implementation HZFacebookAdapter
@@ -48,6 +58,7 @@
     if (self) {
         _interstitialAds = [[NSMutableDictionary alloc] init];
         _interstitialAdErrors = [[NSMutableDictionary alloc] init];
+        _nativeAdsManagers = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -59,6 +70,10 @@
                         dict:self.credentials];
     self.bannerPlacementID = [HZDictionaryUtils
                               objectForKey:@"banner_placement_id"
+                              ofClass:[NSString class]
+                              dict:self.credentials];
+    self.nativePlacementID = [HZDictionaryUtils
+                              objectForKey:@"native_placement_id"
                               ofClass:[NSString class]
                               dict:self.credentials];
 }
@@ -100,7 +115,7 @@
 }
 
 - (HZCreativeType) supportedCreativeTypes {
-    return HZCreativeTypeStatic | HZCreativeTypeBanner;
+    return HZCreativeTypeStatic | HZCreativeTypeBanner | HZCreativeTypeNative;
 }
 
 - (BOOL)hasCredentialsForCreativeType:(HZCreativeType)creativeType {
@@ -111,6 +126,9 @@
         case HZCreativeTypeBanner: {
             return self.bannerPlacementID != nil;
         }
+        case HZCreativeTypeNative: {
+            return self.nativePlacementID != nil;
+        }
             
         default: {
             return NO;
@@ -119,12 +137,23 @@
 }
 
 - (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    HZFBInterstitialAd *ad = self.interstitialAds[dataProvider.placementIDOverride ?: self.placementID];
-    return ad && ad.isAdValid;
+    if ([dataProvider creativeType] == HZCreativeTypeNative) {
+        FacebookPlacementID *const placement = (dataProvider.placementIDOverride ?: self.nativePlacementID);
+        HZFBNativeAdsManager *const manager = self.nativeAdsManagers[placement];
+        return manager.isValid && manager.uniqueNativeAdCount > 0;
+    } else {
+        HZFBInterstitialAd *ad = self.interstitialAds[dataProvider.placementIDOverride ?: self.placementID];
+        return ad && ad.isAdValid;
+    }
 }
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    NSString *const placement = (dataProvider.placementIDOverride ?: self.placementID);
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options {
+    if (options.creativeType == HZCreativeTypeNative) {
+        [self fetchNativeWithOptions:options];
+        return;
+    }
+    
+    FacebookPlacementID *const placement = (options.placementIDOverride ?: self.placementID);
     HZAssert(placement, @"Need a Placement ID by this point");
     
     if (self.interstitialAds[placement]) {
@@ -154,6 +183,44 @@
 
 - (NSError *) lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     return self.interstitialAdErrors[dataProvider.placementIDOverride ?: self.placementID];
+}
+
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable FacebookPlacementID *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return [[HZFBBannerAdapter alloc] initWithAdUnitId:(placementIDOverride ?: self.bannerPlacementID) options:options reportingDelegate:reportingDelegate parentAdapter:self];
+}
+
+#pragma mark - Native
+
+- (void)fetchNativeWithOptions:(HZAdapterFetchOptions *)options {
+    FacebookPlacementID *const placement = (options.placementIDOverride ?: self.nativePlacementID);
+    HZAssert(placement, @"Need a Placement ID by this point");
+    HZFBNativeAdsManager *manager = self.nativeAdsManagers[placement];
+    
+    if (!manager) {
+        manager = [[HZFBNativeAdsManager alloc] initWithPlacementID:placement forNumAdsRequested:[options.uniqueNativeAdsToFetch unsignedIntegerValue]];
+        manager.mediaCachePolicy = HZFBNativeAdsCachePolicyNone;
+        manager.delegate = self;
+        // (FAN will autorefresh the native ads, so there's no need to call `loadAds` more than once)
+        [manager loadAds];
+        self.nativeAdsManagers[placement] = manager;
+    }
+}
+
+- (nullable HZNativeAdAdapter *)getNativeAdForMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    FacebookPlacementID *const placement = (dataProvider.placementIDOverride ?: self.nativePlacementID);
+    HZFBNativeAdsManager *manager = self.nativeAdsManagers[placement];
+    
+    if (!manager) {
+        HZELog(@"The Facebook Placement ID: %@ has never been fetched.",placement);
+        return nil;
+    }
+    
+    HZFBNativeAd *nativeAd = [manager nextNativeAd];
+    if (nativeAd) {
+        return [[HZFBNativeAdAdapter alloc] initWithNativeAd:nativeAd parentAdapter:self];
+    } else {
+        return nil;
+    }
 }
 
 
@@ -199,8 +266,14 @@
     [self.delegate adapterDidShowAd:self];
 }
 
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable NSString *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    return [[HZFBBannerAdapter alloc] initWithAdUnitId:(placementIDOverride ?: self.bannerPlacementID) options:options reportingDelegate:reportingDelegate parentAdapter:self];
+#pragma mark - Native Delegation
+
+- (void)nativeAdsLoaded {
+    HZDLog(@"FAN native ads loaded");
+}
+
+- (void)nativeAdsFailedToLoadWithError:(nonnull NSError *)error {
+    HZELog(@"Error loading Facebook native ads: %@",error);
 }
 
 @end

@@ -104,22 +104,22 @@ NSString * const kHZLeadboltIncentivizedModule = @"video";
     return HZCreativeTypeStatic | HZCreativeTypeIncentivized;
 }
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options
 {
-    switch (dataProvider.creativeType) {
+    switch (options.creativeType) {
         case HZCreativeTypeStatic: {
-            HZDLog(@"Prefetching Leadbolt ad of type: %@",NSStringFromCreativeType(dataProvider.creativeType));
+            HZDLog(@"Prefetching Leadbolt ad of type: %@",NSStringFromCreativeType(options.creativeType));
             [HZAppTracker loadModuleToCache:kHZLeadboltInterstitialModule];
             break;
         }
         case HZCreativeTypeIncentivized: {
-            HZDLog(@"Prefetching Leadbolt ad of type: %@",NSStringFromCreativeType(dataProvider.creativeType));
+            HZDLog(@"Prefetching Leadbolt ad of type: %@",NSStringFromCreativeType(options.creativeType));
             [HZAppTracker loadModuleToCache:kHZLeadboltIncentivizedModule];
             break;
         }
         default: {
             // Unsupported
-            HZDLog(@"Can't prefetch Leadbolt ad of unsupported type: %@",NSStringFromCreativeType(dataProvider.creativeType));
+            HZDLog(@"Can't prefetch Leadbolt ad of unsupported type: %@",NSStringFromCreativeType(options.creativeType));
             break;
         }
     }

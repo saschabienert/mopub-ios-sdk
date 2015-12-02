@@ -48,7 +48,7 @@
     hzEnsureMainQueue(^{
         indexes = [adapters indexesOfObjectsPassingTest:^BOOL(HZBaseAdapter *adapter, NSUInteger idx, BOOL *stop) {
             for(NSNumber *allowedCreativeTypeNumber in allowedCreativeTypes) {
-                HZCreativeType allowedCreativeType = hzCreativeTypeFromNSNumber(allowedCreativeTypeNumber);
+                HZCreativeType allowedCreativeType = hzCreativeTypeFromObject(allowedCreativeTypeNumber);
                 NSString *placementIDOverride = [segmentationController placementIDOverrideForAdapter:adapter tag:tag creativeType:allowedCreativeType];
                 HZMediationAdAvailabilityDataProvider *metadata = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:allowedCreativeType placementIDOverride:placementIDOverride tag:tag];
                 
@@ -78,7 +78,7 @@
     NSMutableOrderedSet *chosenNetworks = [NSMutableOrderedSet orderedSet];
     
     // check what creative types the requested ad type can show right now
-    NSSet *creativeTypesAllowed = [self.interstitialVideoManager creativeTypesAllowedToShowForAdType:adType];
+    NSSet<HZCreativeTypeObject *> *creativeTypesAllowed = [self.interstitialVideoManager creativeTypesAllowedToShowForAdType:adType];
     
     for (NSDictionary *network in networks) {
         NSString *networkName = network[@"network"];
@@ -88,8 +88,8 @@
         
         if ([validAdapterClasses containsObject:adapter]) {
             // add each network/creativeType tuple to the return value for each creativeType in the network's response set that matches a currently-allowed creativeType, if the network is set up & it supports the creativeType
-            for (NSNumber * creativeTypeNumber in creativeTypesAllowed) {
-                HZCreativeType creativeType = hzCreativeTypeFromNSNumber(creativeTypeNumber);
+            for (HZCreativeTypeObject * creativeTypeObject in creativeTypesAllowed) {
+                HZCreativeType creativeType = hzCreativeTypeFromObject(creativeTypeObject);
                 
                 if (hzCreativeTypeStringSetContainsCreativeType(creativeTypeStringsForNetwork, creativeType)
                     && [adapterInstance supportsCreativeType:creativeType]

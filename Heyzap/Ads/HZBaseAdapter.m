@@ -25,10 +25,11 @@
 #import "HZInMobiAdapter.h"
 #import "HZLog.h"
 #import "HZDispatch.h"
+#import "HZNativeAdAdapter.h"
+#import "HZAdapterFetchOptions.h"
 
 @interface HZBaseAdapter()
-//key: HZCreativeType value: NSNumber *
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSNumber *> *latestMediationScores;
+@property (nonatomic, strong) NSMutableDictionary<HZCreativeTypeObject *, NSNumber *> *latestMediationScores;
 @property (nonatomic) BOOL isInitialized;
 @end
 
@@ -93,7 +94,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return YES;
 }
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+- (void)internalPrefetchAdWithOptions:(nonnull HZAdapterFetchOptions *)options
 {
     ABSTRACT_METHOD_ERROR();
 }
@@ -212,17 +213,19 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return hasAd;
 }
 
-- (void)prefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    if(![self supportsCreativeType:dataProvider.creativeType] || dataProvider.creativeType == HZCreativeTypeBanner){
-        HZELog(@"HZBaseAdapter: prefetchForCreativeType:%@ called for %@ adapter (%@)", NSStringFromCreativeType(dataProvider.creativeType), [self name], dataProvider.creativeType == HZCreativeTypeBanner ? @"banners can't be fetched via the normal adapter": @"unsupported creativeType");
+- (void)prefetchAdWithOptions:(nonnull HZAdapterFetchOptions *)options {
+    if(![self supportsCreativeType:options.creativeType] || options.creativeType == HZCreativeTypeBanner){
+        HZELog(@"HZBaseAdapter: prefetchForCreativeType:%@ called for %@ adapter (%@)", NSStringFromCreativeType(options.creativeType), [self name], options.creativeType == HZCreativeTypeBanner ? @"banners can't be fetched via the normal adapter": @"unsupported creativeType");
         return;
     }
     
     hzEnsureMainQueue(^{
-        if ([self hasAdWithMetadata:dataProvider]) return;
+        if (options.creativeType != HZCreativeTypeNative && [self hasAdWithMetadata:options]) {
+            return;
+        }
         
-        [self clearLastFetchErrorForAdsWithMatchingMetadata:dataProvider];
-        [self internalPrefetchAdWithMetadata:dataProvider];
+        [self clearLastFetchErrorForAdsWithMatchingMetadata:options];
+        [self internalPrefetchAdWithOptions:options];
     });
 }
 
@@ -245,6 +248,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     hzEnsureMainQueue(^{
         [self internalShowAdWithOptions:options];
     });
+}
+
+- (nullable HZNativeAdAdapter *)getNativeAdForMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    return nil;
 }
 
 #pragma mark - Common, shared logic
@@ -368,7 +375,5 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
 + (BOOL)isHeyzapAdapter {
     return NO;
 }
-
-
 
 @end

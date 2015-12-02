@@ -108,7 +108,7 @@ NSString * const HZFallbackVunglePlayAdOptionKeyPlacement = @"placement";
     return HZCreativeTypeIncentivized | HZCreativeTypeVideo;
 }
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options
 {
     // Vungle autoprefetches, and incentivized == regular video on their platform.
 }

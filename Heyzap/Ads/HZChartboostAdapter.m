@@ -113,9 +113,9 @@
 
 NSString * const kHZCBLocationDefault = @"Default";
 
-- (void)internalPrefetchAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options
 {
-    switch (dataProvider.creativeType) {
+    switch (options.creativeType) {
         case HZCreativeTypeStatic:
             [HZChartboost cacheInterstitial:kHZCBLocationDefault];
             break;
