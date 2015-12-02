@@ -22,7 +22,9 @@ typedef NS_ENUM(NSInteger, HZAdMobNativeAdImageOrientation) {
 
 #pragma mark - Native Ad Options
 
-
+/**
+ *  The view controller to fetch native ads for. Currently only AdMob uses this property. This property is required for AdMob.
+ */
 @property (nonatomic, weak) UIViewController *presentingViewController;
 
 /**

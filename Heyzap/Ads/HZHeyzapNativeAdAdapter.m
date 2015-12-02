@@ -17,8 +17,6 @@
 
 @property (nonatomic) HZNativeAd *nativeAd;
 
-@property (nonatomic) SKStoreProductViewController *storeController;
-
 @property (nonatomic) HZMediatedNativeAdWrapperView *wrapperView;
 
 @property (nonatomic) NSTimer *impressionCheckingTimer;
@@ -29,6 +27,8 @@
 
 @implementation HZHeyzapNativeAdAdapter
 
+#pragma mark - Initialization
+
 - (instancetype)initWithNativeAd:(HZNativeAd *)nativeAd parentAdapter:(HZBaseAdapter *)parentAdapter {
     self = [super initWithParentAdapter:parentAdapter];
     if (self) {
@@ -37,6 +37,8 @@
     }
     return self;
 }
+
+#pragma mark - Native Ad Properties
 
 - (NSString *)mediatedNetwork {
     return self.parentAdapter.name;
@@ -72,6 +74,8 @@
         return HZMediatedNativeAdTypeHeyzap;
     }
 }
+
+#pragma mark - Wrapper View
 
 - (UIView *)wrapperView {
     if (!_wrapperView) {
@@ -114,7 +118,9 @@
             [self.nativeAd presentAppStoreFromViewController:self.presentingViewController
                                                storeDelegate:self
                                                   completion:^(BOOL result, NSError *error) {
-                                                      NSLog(@"Completion error = %@",error);
+                                                      if (error) {
+                                                          HZELog(@"Error presenting SKStoreProductViewController for native ad: %@",error);
+                                                      }
                                                   }];
             break;
         }
@@ -122,11 +128,15 @@
     }
 }
 
+#pragma mark - SKStoreProductViewControllerDelegate
+
 - (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController {
     [viewController dismissViewControllerAnimated:YES completion:^{
         
     }];
 }
+
+#pragma mark - View Registration
 
 - (void)beginRegisteringViews {
     [self.tappableViews removeAllObjects];

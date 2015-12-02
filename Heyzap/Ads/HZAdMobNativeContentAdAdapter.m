@@ -29,6 +29,8 @@
 
 @implementation HZAdMobNativeContentAdAdapter
 
+#pragma mark - Initialization
+
 - (instancetype)initWithContentAd:(HZGADNativeContentAd *)contentAd parentAdapter:(HZBaseAdapter *)parentAdapter {
     self = [super initWithParentAdapter:parentAdapter];
     if (self) {
@@ -38,6 +40,8 @@
     }
     return self;
 }
+
+#pragma mark - Native Ad Properties
 
 - (NSString *)mediatedNetwork {
     return [HZAdMobAdapter name];
@@ -73,6 +77,8 @@
     return HZMediatedNativeAdTypeAdMobContent;
 }
 
+#pragma mark - Wrapper View
+
 - (UIView *)wrapperView {
     if (!_wrapperView) {
         _wrapperView = [[[[self class] wrapperSubclass] alloc] init];
@@ -87,6 +93,8 @@
 - (void)wrapperView:(UIView *)wrapperView didMoveToWindow:(UIWindow *)window {
     
 }
+
+#pragma mark - View Registration
 
 - (void)beginRegisteringViews {
     self.wrapperView.headlineView = nil;
@@ -129,6 +137,8 @@
     
 }
 
+#pragma mark - GADNativeAdDelegate
+
 - (BOOL)conformsToProtocol:(Protocol *)aProtocol {
     if ([NSStringFromProtocol(aProtocol) isEqualToString:@"GADNativeAdDelegate"]) {
         return YES;
@@ -144,6 +154,8 @@
 - (void)nativeAdWillLeaveApplication:(HZGADNativeAd *)nativeAd {
     [self reportClickIfNecessary];
 }
+
+#pragma mark - Util
 
 + (Class)wrapperSubclass {
     static Class subclass;

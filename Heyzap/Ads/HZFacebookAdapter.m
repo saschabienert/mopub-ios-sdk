@@ -186,6 +186,51 @@ typedef NSString FacebookPlacementID;
     return self.interstitialAdErrors[dataProvider.placementIDOverride ?: self.placementID];
 }
 
+- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable FacebookPlacementID *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
+    return [[HZFBBannerAdapter alloc] initWithAdUnitId:(placementIDOverride ?: self.bannerPlacementID) options:options reportingDelegate:reportingDelegate parentAdapter:self];
+}
+
+#pragma mark - Native
+
+- (void)fetchNativeWithOptions:(HZAdapterFetchOptions *)options {
+    FacebookPlacementID *const placement = (options.placementIDOverride ?: self.nativePlacementID);
+    HZAssert(placement, @"Need a Placement ID by this point");
+    HZFBNativeAdsManager *manager = self.nativeAdsManagers[placement];
+    
+    if (!manager) {
+        manager = [[HZFBNativeAdsManager alloc] initWithPlacementID:placement forNumAdsRequested:[options.uniqueNativeAdsToFetch unsignedIntegerValue]];
+        manager.mediaCachePolicy = HZFBNativeAdsCachePolicyNone;
+        manager.delegate = self;
+        // (FAN will autorefresh the native ads, so there's no need to call `loadAds` more than once)
+        [manager loadAds];
+        self.nativeAdsManagers[placement] = manager;
+    }
+}
+
+- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    FacebookPlacementID *const placement = (dataProvider.placementIDOverride ?: self.nativePlacementID);
+    HZFBNativeAdsManager *manager = self.nativeAdsManagers[placement];
+    
+    if (!manager) {
+        *error = [NSError errorWithDomain:kHZMediationDomain
+                                     code:1
+                                 userInfo:@{NSLocalizedDescriptionKey: @"This Facebook placement ID has never been fetched", @"placement":placement}];
+        return nil;
+    }
+    
+    HZFBNativeAd *nativeAd = [manager nextNativeAd];
+    if (nativeAd) {
+        return [[HZFBNativeAdAdapter alloc] initWithNativeAd:nativeAd parentAdapter:self];
+    } else if (self.nativeError) {
+        *error = [NSError errorWithDomain:kHZMediationDomain
+                                     code:1
+                                 userInfo:@{NSUnderlyingErrorKey: self.nativeError}];
+        return nil;
+    } else {
+        return nil;
+    }
+}
+
 
 #pragma mark - Facebook Delegation
 
@@ -229,48 +274,7 @@ typedef NSString FacebookPlacementID;
     [self.delegate adapterDidShowAd:self];
 }
 
-- (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable FacebookPlacementID *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    return [[HZFBBannerAdapter alloc] initWithAdUnitId:(placementIDOverride ?: self.bannerPlacementID) options:options reportingDelegate:reportingDelegate parentAdapter:self];
-}
-
-- (void)fetchNativeWithOptions:(HZAdapterFetchOptions *)options {
-    FacebookPlacementID *const placement = (options.placementIDOverride ?: self.nativePlacementID);
-    HZAssert(placement, @"Need a Placement ID by this point");
-    HZFBNativeAdsManager *manager = self.nativeAdsManagers[placement];
-    
-    if (!manager) {
-        manager = [[HZFBNativeAdsManager alloc] initWithPlacementID:placement forNumAdsRequested:20];
-        manager.mediaCachePolicy = HZFBNativeAdsCachePolicyNone;
-        manager.delegate = self;
-        // (FAN will autorefresh the native ads, so there's no need to call `loadAds` more than once)
-        [manager loadAds];
-        self.nativeAdsManagers[placement] = manager;
-    }
-}
-
-- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    FacebookPlacementID *const placement = (dataProvider.placementIDOverride ?: self.nativePlacementID);
-    HZFBNativeAdsManager *manager = self.nativeAdsManagers[placement];
-    
-    if (!manager) {
-        *error = [NSError errorWithDomain:kHZMediationDomain
-                                     code:1
-                                 userInfo:@{NSLocalizedDescriptionKey: @"This Facebook placement ID has never been fetched", @"placement":placement}];
-        return nil;
-    }
-    
-    HZFBNativeAd *nativeAd = [manager nextNativeAd];
-    if (nativeAd) {
-        return [[HZFBNativeAdAdapter alloc] initWithNativeAd:nativeAd parentAdapter:self];
-    } else if (self.nativeError) {
-        *error = [NSError errorWithDomain:kHZMediationDomain
-                                     code:1
-                                 userInfo:@{NSUnderlyingErrorKey: self.nativeError}];
-        return nil;
-    } else {
-        return nil;
-    }
-}
+#pragma mark - Native Delegation
 
 - (void)nativeAdsLoaded {
     HZDLog(@"FAN native ads loaded");

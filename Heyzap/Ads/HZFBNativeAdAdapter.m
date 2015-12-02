@@ -28,6 +28,8 @@
 
 @implementation HZFBNativeAdAdapter
 
+#pragma mark - Initialization
+
 - (instancetype)initWithNativeAd:(HZFBNativeAd *)nativeAd parentAdapter:(HZBaseAdapter *)parentAdapter {
     self = [super initWithParentAdapter:parentAdapter];
     if (self) {
@@ -37,6 +39,8 @@
     }
     return self;
 }
+
+#pragma mark - Native Ad Properties
 
 - (NSString *)mediatedNetwork {
     return [HZFacebookAdapter name];
@@ -74,6 +78,8 @@
     return HZMediatedNativeAdTypeFacebook;
 }
 
+#pragma mark - Wrapper View Delegate
+
 - (BOOL)shouldShowAdChoicesView {
     return self.shouldShowFacebookAdChoicesView;
 }
@@ -99,6 +105,8 @@
 - (void)wrapperView:(UIView *)wrapperView wasTapped:(UIGestureRecognizer *)gestureRecognizer {
     
 }
+
+#pragma mark - View Registration
 
 - (void)beginRegisteringViews {
     [self.registeredViews removeAllObjects];
@@ -147,6 +155,8 @@
         [self.registeredViews addObjectsFromArray:views];
     }
 }
+
+#pragma mark - HZFBNativeAdDelegate
 
 - (void)nativeAdDidLoad:(nonnull HZFBNativeAd *)nativeAd {
     

@@ -278,7 +278,7 @@
 #pragma mark - Native
 
 - (void)fetchNativeWithOptions:(HZAdapterFetchOptions *)options {
-    if (!self.isNativeFetchInProgress && self.nativeAds.count < 5) {
+    if (!self.isNativeFetchInProgress) {
         self.nativeFetchInProgress = YES;
         
         [HZNativeAdController fetchAds:[options.uniqueNativeAdsToFetch unsignedIntegerValue]

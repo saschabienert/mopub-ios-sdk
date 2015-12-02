@@ -10,9 +10,13 @@
 
 @class HZMediatedNativeAdIndividualAdOptions;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HZHeyzapNativeAdAdapter : HZNativeAdAdapter
 
 - (instancetype)initWithNativeAd:(HZNativeAd *)nativeAd
                    parentAdapter:(HZBaseAdapter *)parentAdapter;
 
 @end
+
+NS_ASSUME_NONNULL_END

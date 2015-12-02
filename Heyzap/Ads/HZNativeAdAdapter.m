@@ -117,6 +117,9 @@
 }
 
 - (void)reportClickIfNecessary {
+    // In case impression reporting failed somehow
+    [self reportImpressionIfNecessary];
+    
     if (!self.hasReportedClick) {
         self.reportedClick = YES;
         [self.reportingDelegate adapter:self wasClickedWithEventReporter:self.eventReporter];

@@ -24,6 +24,8 @@
 
 @implementation HZAdMobNativeAppInstallAdAdapter
 
+#pragma mark - Initialization
+
 - (instancetype)initWithAppInstallAd:(HZGADNativeAppInstallAd *)appInstallAd parentAdapter:(HZBaseAdapter *)parentAdapter {
     self = [super initWithParentAdapter:parentAdapter];
     if (self) {
@@ -31,6 +33,8 @@
     }
     return self;
 }
+
+#pragma mark - Native Ad Properties
 
 - (NSString *)mediatedNetwork {
     return [HZAdMobAdapter name];
@@ -67,6 +71,8 @@
     return HZMediatedNativeAdTypeAdMobAppInstall;
 }
 
+#pragma mark - Wrapper View
+
 - (UIView *)wrapperView {
     if (!_wrapperView) {
         _wrapperView = [[[[self class] wrapperSubclass] alloc] init];
@@ -81,6 +87,8 @@
 - (void)wrapperView:(UIView *)wrapperView didMoveToWindow:(UIWindow *)window {
     
 }
+
+#pragma mark - View Registration
 
 - (void)beginRegisteringViews {
     self.wrapperView.headlineView = nil;
@@ -125,6 +133,8 @@
 - (void)registerOtherViews:(NSArray<UIView *> *)views tappable:(BOOL)tappable {
     
 }
+
+#pragma mark - Util
 
 + (Class)wrapperSubclass {
     static Class subclass;
