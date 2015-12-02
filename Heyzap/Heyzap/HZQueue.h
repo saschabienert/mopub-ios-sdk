@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(ObjectType) dequeue;
 -(void) enqueue:(ObjectType)obj;
+-(void)enqueueObjects:(NSArray<ObjectType> *)objects;
 -(nullable ObjectType) peek:(NSUInteger)index;
 -(nullable ObjectType) peekHead;
 -(nullable ObjectType) peekTail;

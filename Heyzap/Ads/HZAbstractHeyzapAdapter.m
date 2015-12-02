@@ -16,10 +16,11 @@
 #import "HZBaseAdapter_Internal.h"
 #import "HZHeyzapNativeAdAdapter.h"
 #import "HZNativeAdController_Private.h"
+#import "HZQueue.h"
 
 @interface HZAbstractHeyzapAdapter()
 
-@property (nonatomic) NSMutableArray<HZNativeAd *> *nativeAds;
+@property (nonatomic) HZQueue<HZNativeAd *> *nativeAds;
 @property (nonatomic) NSError *nativeError;
 @property (nonatomic, getter=isNativeFetchInProgress) BOOL nativeFetchInProgress;
 
@@ -148,7 +149,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _nativeAds = [[NSMutableArray alloc] init];
+        _nativeAds = [[HZQueue alloc] init];
         [[NSNotificationCenter  defaultCenter] addObserver:self selector:@selector(didShowAd:) name:kHeyzapDidShowAdNotitification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFailToShowAd:) name:kHeyzapDidFailToShowAdNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveAd:) name:kHeyzapDidReceiveAdNotification object:nil];
@@ -290,16 +291,15 @@
                                     HZELog(@"Error fetching Heyzap native ads: %@",error);
                                     self.nativeError = error;
                                 } else {
-                                    [self.nativeAds addObjectsFromArray:collection.ads];
+                                    [self.nativeAds enqueueObjects:collection.ads];
                                 }
                             }];
     }
 }
 
 - (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
-    HZNativeAd *baseNativeAd = self.nativeAds.firstObject;
+    HZNativeAd *baseNativeAd = [self.nativeAds dequeue];
     if (baseNativeAd) {
-        [self.nativeAds removeObjectAtIndex:0];
         return [[HZHeyzapNativeAdAdapter alloc] initWithNativeAd:baseNativeAd parentAdapter:self];
     } else if (self.nativeError) {
         *error = self.nativeError;
