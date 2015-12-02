@@ -100,6 +100,8 @@ extern NSString * const HZMediatedNativeAdClickNotification;
 /**
  *  Each view you use as part of your native ad must be a subview of this view.
  *
+ *  Implementation Details:
+ *
  *  For AdMob, a `GADNativeContentAdView` or `GADNativeAppInstallAdView` is returned.
  *  For Facebook, the wrapper view is passed to `registerViewForInteraction:...`
  *  For Heyzap, the wrapper view automatically handles impression and click reporting.

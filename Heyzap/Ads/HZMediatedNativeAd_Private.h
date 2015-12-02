@@ -10,8 +10,12 @@
 
 @class HZNativeAdAdapter;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface HZMediatedNativeAd ()
 
 - (instancetype)initWithAdapter:(HZNativeAdAdapter *)adapter tag:(NSString *)tag;
 
 @end
+
+NS_ASSUME_NONNULL_END

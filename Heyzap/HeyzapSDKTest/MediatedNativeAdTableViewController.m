@@ -52,7 +52,7 @@
 }
 
 - (void)insertBatchOfAds {
-    NSArray *networks = @[@"heyzap", @"heyzap_cross_promo", @"facebook", @"admob"];
+    NSArray *networks = @[HZNetworkHeyzap, HZNetworkCrossPromo, HZNetworkFacebook, HZNetworkAdMob];
     
     [networks enumerateObjectsUsingBlock:^(NSString * _Nonnull network, NSUInteger idx, __unused BOOL * _Nonnull stop) {
         HZFetchOptions *options = [[HZFetchOptions alloc] init];
@@ -62,7 +62,7 @@
         options.additionalParameters = additionalParameters;
         options.completion = ^(BOOL success, NSError *error) {
             NSError *nativeError;
-            HZMediatedNativeAd *ad = [HZMediatedNativeAdManager getNextNativeAdForTag:@"default"
+            HZMediatedNativeAd *ad = [HZMediatedNativeAdManager getNextNativeAdForTag:nil
                                                                      additionalParams:additionalParameters
                                                                                 error:&nativeError];
             if (ad) {

@@ -29,6 +29,10 @@
     [self.queue addObject: anObject];
 }
 
+- (void)enqueueObjects:(NSArray *)objects {
+    [self.queue addObjectsFromArray:objects];
+}
+
 // Grab the next item in the queue, if there is one
 -(id) dequeue {
     if ([self.queue firstObject]) {

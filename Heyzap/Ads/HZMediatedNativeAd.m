@@ -11,7 +11,7 @@
 #import "HZNativeAdAdapter.h"
 #import "HZMediatedNativeAdWrapperView.h"
 #import "HZMediatedNativeAd_Private.h"
-
+#import "HZMediationConstants.h"
 #import "HZFacebookAdapter.h"
 
 NSString * const HZMediatedNativeAdImpressionNotification = @"HZMediatedNativeAdImpressionNotification";
@@ -137,19 +137,19 @@ NSString * const HZMediatedNativeAdClickNotification = @"HZMediatedNativeAdClick
 NSString * NSStringFromHZMediatedNativeAdType(HZMediatedNativeAdType adType) {
     switch (adType) {
         case HZMediatedNativeAdTypeAdMobAppInstall: {
-            return @"AdMob App Install";
+            return [kHZAdapterAdMobHumanized stringByAppendingString:@" App Install"];
         }
         case HZMediatedNativeAdTypeAdMobContent: {
-            return @"AdMob Content";
+            return [kHZAdapterAdMobHumanized stringByAppendingString:@" Content"];
         }
         case HZMediatedNativeAdTypeFacebook: {
-            return @"Facebook Audience Network";
+            return kHZAdapterFacebookHumanized;
         }
         case HZMediatedNativeAdTypeHeyzap: {
-            return @"Heyzap";
+            return kHZAdapterHeyzapHumanized;
         }
         case HZMediatedNativeAdTypeHeyzapCrossPromo: {
-            return @"Heyzap Cross-Promo";
+            return kHZAdapterCrossPromoHumanized;
         }
     }
 }

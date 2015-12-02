@@ -12,6 +12,9 @@
 @implementation HZMediatedNativeAdManager
 
 + (void)fetchNativeAdWithOptions:(HZFetchOptions *)fetchOptions {
+    if (!fetchOptions) {
+        fetchOptions = [[HZFetchOptions alloc] init];
+    }
     fetchOptions.requestingAdType = HZAdTypeNative;
     [[HeyzapMediation sharedInstance] fetchWithOptions:fetchOptions];
 }

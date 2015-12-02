@@ -1364,6 +1364,8 @@ static BOOL forceOnlyHeyzapSDK = NO;
     return [HZBaseAdapter adapterClassForName:forcedNetworkName];
 }
 
+#pragma mark - Native Ads
+
 - (HZMediatedNativeAd *)getNextNativeAd:(NSString *)tag additionalParams:(NSDictionary *)additionalParams error:(NSError **)error
 {
     const HZAdType adType = HZAdTypeNative;
@@ -1389,7 +1391,6 @@ static BOOL forceOnlyHeyzapSDK = NO;
     NSSet *adapterClassesToConsider = self.setupMediatorClasses;
     Class optionalForcedNetwork = [[self class] optionalForcedNetwork:additionalParams];
     if (optionalForcedNetwork) {
-        HZILog(@"Mediation only showing for one adapter: %@", [optionalForcedNetwork humanizedName]);
         adapterClassesToConsider = [adapterClassesToConsider objectsPassingTest:^BOOL(Class klass, BOOL *stop) {
             return klass == optionalForcedNetwork;
         }];
@@ -1428,7 +1429,7 @@ static BOOL forceOnlyHeyzapSDK = NO;
     
     [eventReporter reportFetchWithSuccessfulAdapter:[chosenAdapterWithScore adapter]];
     if (!chosenAdapterWithScore) {
-        NSString *const errorMessage = [NSString stringWithFormat:@"An ad cannot be shown at this time. Either no available networks had an ad or segmentation settings prevented the show. Ad networks we checked: [%@]", [hzMap([plainAdapters array], ^NSString *(HZBaseAdapter *adapter){return [[adapter class] humanizedName];}) componentsJoinedByString:@", "]];
+        NSString *const errorMessage = [NSString stringWithFormat:@"An ad cannot be returned at this time. Either no available networks had an ad or segmentation settings prevented returning an ad. Ad networks we checked: [%@]", [hzMap([plainAdapters array], ^NSString *(HZBaseAdapter *adapter){return [[adapter class] humanizedName];}) componentsJoinedByString:@", "]];
         NSError *noAdError = [NSError errorWithDomain:kHZMediationDomain code:1 userInfo:@{NSLocalizedDescriptionKey: errorMessage}];
         *error = noAdError;
         return nil;
@@ -1447,19 +1448,21 @@ static BOOL forceOnlyHeyzapSDK = NO;
                                                                                                                       tag:tag];
     
     NSError *nativeError;
-    HZNativeAdAdapter *adapter = [[chosenAdapterWithScore adapter] getNativeOrError:&nativeError metadata:metadata];
+    HZNativeAdAdapter *nativeAdapter = [[chosenAdapterWithScore adapter] getNativeOrError:&nativeError metadata:metadata];
     // Presuming `hasAd` is accurate, this should never happen.
-    if (!adapter) {
+    if (!nativeAdapter) {
         *error = [NSError errorWithDomain:kHZMediationDomain
                                      code:1
                                  userInfo:@{NSLocalizedDescriptionKey: @"The network did not have a native ad available"}];
         return nil;
     }
     
-    adapter.reportingDelegate = self;
-    adapter.eventReporter = eventReporter;
-    return [[HZMediatedNativeAd alloc] initWithAdapter:adapter tag:metadata.tag];
+    nativeAdapter.reportingDelegate = self;
+    nativeAdapter.eventReporter = eventReporter;
+    return [[HZMediatedNativeAd alloc] initWithAdapter:nativeAdapter tag:metadata.tag];
 }
+
+#pragma mark - Native Delegation
 
 - (void)adapter:(HZNativeAdAdapter *)adapter hadImpressionWithEventReporter:(HZMediationEventReporter *)eventReporter {
     [eventReporter reportImpressionForAdapter:adapter.parentAdapter];
