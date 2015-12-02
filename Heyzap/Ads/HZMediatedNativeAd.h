@@ -84,7 +84,7 @@ extern NSString * const HZMediatedNativeAdClickNotification;
 #pragma mark - Displaying the Native Ad
 
 /**
- *  The view controller to present your native ads from. This property *must* be set to handle clicks properly. Set this property immediately after receiving your native ad.
+ *  The view controller to present the web browser/app store from when the native ad is clicked. This property *must* be set to handle clicks properly. Set this property immediately after receiving your native ad.
  */
 @property (nonatomic, weak, nullable) UIViewController *presentingViewController;
 

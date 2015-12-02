@@ -101,6 +101,18 @@ NSString * const HZMediatedNativeAdClickNotification = @"HZMediatedNativeAdClick
 }
 
 - (void)setFacebookAdChoicesViewCorner:(UIRectCorner)facebookAdChoicesViewCorner {
+    switch (facebookAdChoicesViewCorner) {
+        case UIRectCornerTopLeft:
+        case UIRectCornerTopRight:
+        case UIRectCornerBottomLeft:
+        case UIRectCornerBottomRight: {
+            break;
+        }
+        default: {
+            NSString *reason = [NSString stringWithFormat:@"Invalid UIRectCorner passed to %@. You may only pass non bit-masked values to this method", NSStringFromSelector(_cmd)];
+            @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+        }
+    }
     self.adapter.facebookAdChoicesViewCorner = facebookAdChoicesViewCorner;
 }
 
