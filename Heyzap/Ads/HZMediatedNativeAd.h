@@ -27,6 +27,8 @@ typedef NS_ENUM(NSUInteger, HZPreferredImageOrientation) {
     HZPreferredImageOrientationPortrait,
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 extern NSString * const HZMediatedNativeAdImpressionNotification;
 extern NSString * const HZMediatedNativeAdClickNotification;
 
@@ -49,51 +51,51 @@ extern NSString * const HZMediatedNativeAdClickNotification;
 /**
  *  A title conveying the main content of the ad. A title for a business's ad might be "ProShred® Paper Shredding", while an app's title might be the name of the app.
  */
-@property (nonatomic, readonly) NSString *title;
+@property (nonatomic, readonly, nullable) NSString *title;
 
 /**
  *  A longer portion of the ad's content. A body for a paper shredding business might be "On-Site Document Destruction. Secure, Convenient, ISO Certified.", whereas a body for a game's ad might be the game's description.
  */
-@property (nonatomic, readonly) NSString *body;
+@property (nonatomic, readonly, nullable) NSString *body;
 
 /**
  *  A very short phrase prompting the user to act. A call-to-action for a website might be "Visit Site", while an ad for a game might be "Install Now".
  */
-@property (nonatomic, readonly) NSString *callToAction;
+@property (nonatomic, readonly, nullable) NSString *callToAction;
 
 /**
  *  An icon (for apps) or logo (for content ads) associated with the ad.
  *
  *  @warning AdMob does not provide the height and width of the image, so these values will be 0 when using AdMob; you must use a hard-coded height and width if using AdMob, or check its size after loading the image from the network.
  */
-@property (nonatomic, readonly) HZNativeAdImage *iconImage;
+@property (nonatomic, readonly, nullable) HZNativeAdImage *iconImage;
 
 /**
- *  Returns an large image to use in your native ad.
+ *  Returns a large image to use in your native ad.
  *
  *  @param preferredOrientation Whether you'd prefer a landscape or portrait image. The default is landscape. This parameter is only used for Heyzap; Facebook only offers one cover image, and AdMob requires that you specify the image orientation when requesting the ad (see `admobPreferredImageOrientation` in `HZFetchOptions`).
  *
  *  @return The image, or `nil` if none was available.
  *
- *  @warning AdMob does not provide the height and width of the image, so these values will be 0 when using AdMob;
+ *  @warning AdMob does not provide the height and width of the image, so these values will be 0 when using AdMob; use a view that properly handles arbitrarily sized images (e.g. `UIImageView` with `contentMode` set to ``UIViewContentModeScaleAspectFit`), or check the image's size after loading it from the network.
  */
-- (HZNativeAdImage *)coverImageWithPreferredOrientation:(HZPreferredImageOrientation)preferredOrientation;
+- (HZNativeAdImage * _Nullable)coverImageWithPreferredOrientation:(HZPreferredImageOrientation)preferredOrientation;
 
 #pragma mark - Displaying the Native Ad
 
 /**
  *  The view controller to present your native ads from. This property *must* be set to handle clicks properly. Set this property immediately after receiving your native ad.
  */
-@property (nonatomic, weak) UIViewController *presentingViewController;
+@property (nonatomic, weak, nullable) UIViewController *presentingViewController;
 
 /**
  *  Tells the SDK which views are being used for your native ad.
  *
- *  @see HZMediatedNativeAdViewRegisterer
+ *  @param block The block gives an object conforming to the `HZMediatedNativeAdViewRegisterer` protocol, which you can use to tell the SDK which views you use to display which native ad properties.
  *
- *  @param block The block gives a `HZMediatedNativeAdViewRegisterer` object which
+ *  @see HZMediatedNativeAdViewRegisterer
  */
-- (void)registerViews:(void(^)(id<HZMediatedNativeAdViewRegisterer>))block;
+- (void)registerViews:(void(^)(id<HZMediatedNativeAdViewRegisterer> _Nonnull))block;
 
 /**
  *  Each view you use as part of your native ad must be a subview of this view.
@@ -104,14 +106,14 @@ extern NSString * const HZMediatedNativeAdClickNotification;
  *
  *  @return The `UIView` to place your views in.
  */
-- (UIView *)wrapperView;
+- (UIView * _Nonnull)wrapperView;
 
 #pragma mark - Native Ad Metadata
 
 /**
  *  The name of the network we're mediating. This value will be one of the `HZNetwork` constants in HeyzapAds.h.
  */
-@property (nonatomic, readonly) NSString *mediatedNetwork;
+@property (nonatomic, readonly, nonnull) NSString *mediatedNetwork;
 
 /**
  *  The type of ad returned.
@@ -123,12 +125,12 @@ extern NSString * const HZMediatedNativeAdClickNotification;
 /**
  *  The native ad we're mediating. Accessing this directly can be an effective way to get network-specific native ad properties.
  */
-@property (nonatomic, readonly) id underlyingNativeAd;
+@property (nonatomic, readonly, nonnull) id underlyingNativeAd;
 
 @property (nonatomic, readonly) BOOL hasHadImpression;
 @property (nonatomic, readonly) BOOL hasBeenClicked;
 
-@property (nonatomic, readonly) NSString *tag;
+@property (nonatomic, readonly, nonnull) NSString *tag;
 
 
 #pragma mark - Facebook Configuration
@@ -152,6 +154,8 @@ extern NSString * const HZMediatedNativeAdClickNotification;
 
 #pragma mark - Utility
 
-NSString * NSStringFromHZMediatedNativeAdType(HZMediatedNativeAdType adType);
+NSString * _Nonnull NSStringFromHZMediatedNativeAdType(HZMediatedNativeAdType adType);
 
 @end
+
+NS_ASSUME_NONNULL_END
