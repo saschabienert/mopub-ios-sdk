@@ -105,6 +105,7 @@
 		502244B41BCF315200279639 /* IntegrationTestConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 502244B31BCF315200279639 /* IntegrationTestConfig.m */; };
 		502244B51BCF327C00279639 /* TestJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BEB18C96CE2003A7CB9 /* TestJSON.m */; };
 		502244BB1BD0351D00279639 /* HZKIFTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 502244BA1BD0351D00279639 /* HZKIFTestCase.m */; };
+		50251CB91C0F855900DD5922 /* HZMediatedNativeAdManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CB81C0F855900DD5922 /* HZMediatedNativeAdManager.m */; };
 		50286DA81B9925D20005C44F /* HZErrorReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50286DA61B9925D20005C44F /* HZErrorReporter.h */; };
 		50286DA91B9925D20005C44F /* HZErrorReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50286DA71B9925D20005C44F /* HZErrorReporter.m */; };
 		502E03791BD0391C00872BA2 /* NSString+Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624818CBF58A0018A0B6 /* NSString+Tests.m */; };
@@ -729,6 +730,7 @@
 		502244B31BCF315200279639 /* IntegrationTestConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntegrationTestConfig.m; sourceTree = "<group>"; };
 		502244B91BD0351D00279639 /* HZKIFTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZKIFTestCase.h; sourceTree = "<group>"; };
 		502244BA1BD0351D00279639 /* HZKIFTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZKIFTestCase.m; sourceTree = "<group>"; };
+		50251CB81C0F855900DD5922 /* HZMediatedNativeAdManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediatedNativeAdManager.m; sourceTree = "<group>"; };
 		50269FF219B65D9500CD7C88 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		50286DA61B9925D20005C44F /* HZErrorReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZErrorReporter.h; sourceTree = "<group>"; };
 		50286DA71B9925D20005C44F /* HZErrorReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZErrorReporter.m; sourceTree = "<group>"; };
@@ -2271,6 +2273,7 @@
 				50F76C091BDAF5CF00B17287 /* HZMediatedNativeAd.m */,
 				50CF95BC1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.h */,
 				50CF95C01BFFFDA000C3DBF6 /* HZMediatedNativeAdManager_Private.h */,
+				50251CB81C0F855900DD5922 /* HZMediatedNativeAdManager.m */,
 				50CF95BD1BFFFA7200C3DBF6 /* HZMediatedNativeAdViewRegisterer.h */,
 			);
 			name = "Native Mediation";
@@ -3792,6 +3795,7 @@
 				508EB5001BE2D6C0004B3BD7 /* HZGADNativeAppInstallAdView.m in Sources */,
 				500F88E518E203A500E5D6F8 /* HZClassProxy.m in Sources */,
 				5000EE8A1BF3FC3A00B4812A /* HZAFHTTPRequestOperation.m in Sources */,
+				50251CB91C0F855900DD5922 /* HZMediatedNativeAdManager.m in Sources */,
 				5000EE8C1BF3FC3A00B4812A /* HZAFHTTPRequestOperationManager.m in Sources */,
 				9930D7201B30F614003C3F3C /* HZVideoAdDisplayOptions.m in Sources */,
 				50666DA41B68381800995FE9 /* HZCachingService.m in Sources */,

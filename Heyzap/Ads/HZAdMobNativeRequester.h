@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nonnull instancetype)initWithNativeAdUnitID:(nonnull NSString *)nativeAdUnitID parentAdapter:(nonnull HZBaseAdapter *)parentAdapter NS_DESIGNATED_INITIALIZER;
 
 - (void)fetchNative:(HZAdapterFetchOptions  * _Nonnull)options;
-- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
+- (nullable HZNativeAdAdapter *)getNativeAdForMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
 @end
 

@@ -250,7 +250,7 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     });
 }
 
-- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+- (nullable HZNativeAdAdapter *)getNativeAdForMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     return nil;
 }
 

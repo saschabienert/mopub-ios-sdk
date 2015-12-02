@@ -35,7 +35,6 @@ typedef NSString FacebookPlacementID;
 @property (nonatomic, strong) NSMutableDictionary <FacebookPlacementID *, NSError *> *interstitialAdErrors;
 
 @property (nonatomic, strong) NSMutableDictionary <FacebookPlacementID *, HZFBNativeAdsManager *> *nativeAdsManagers;
-@property (nonatomic, strong) NSError *nativeError;
 
 @end
 
@@ -207,25 +206,18 @@ typedef NSString FacebookPlacementID;
     }
 }
 
-- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+- (nullable HZNativeAdAdapter *)getNativeAdForMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     FacebookPlacementID *const placement = (dataProvider.placementIDOverride ?: self.nativePlacementID);
     HZFBNativeAdsManager *manager = self.nativeAdsManagers[placement];
     
     if (!manager) {
-        *error = [NSError errorWithDomain:kHZMediationDomain
-                                     code:1
-                                 userInfo:@{NSLocalizedDescriptionKey: @"This Facebook placement ID has never been fetched", @"placement":placement}];
+        HZELog(@"The Facebook Placement ID: %@ has never been fetched.",placement);
         return nil;
     }
     
     HZFBNativeAd *nativeAd = [manager nextNativeAd];
     if (nativeAd) {
         return [[HZFBNativeAdAdapter alloc] initWithNativeAd:nativeAd parentAdapter:self];
-    } else if (self.nativeError) {
-        *error = [NSError errorWithDomain:kHZMediationDomain
-                                     code:1
-                                 userInfo:@{NSUnderlyingErrorKey: self.nativeError}];
-        return nil;
     } else {
         return nil;
     }
@@ -282,7 +274,6 @@ typedef NSString FacebookPlacementID;
 
 - (void)nativeAdsFailedToLoadWithError:(nonnull NSError *)error {
     HZELog(@"Error loading Facebook native ads: %@",error);
-    self.nativeError = error;
 }
 
 @end

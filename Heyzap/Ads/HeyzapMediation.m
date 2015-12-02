@@ -1447,8 +1447,8 @@ static BOOL forceOnlyHeyzapSDK = NO;
                                                                                                       placementIDOverride:placementIDOverride
                                                                                                                       tag:tag];
     
-    NSError *nativeError;
-    HZNativeAdAdapter *nativeAdapter = [[chosenAdapterWithScore adapter] getNativeOrError:&nativeError metadata:metadata];
+    
+    HZNativeAdAdapter *nativeAdapter = [[chosenAdapterWithScore adapter] getNativeAdForMetadata:metadata];
     // Presuming `hasAd` is accurate, this should never happen.
     if (!nativeAdapter) {
         *error = [NSError errorWithDomain:kHZMediationDomain

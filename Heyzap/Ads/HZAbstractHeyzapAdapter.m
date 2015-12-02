@@ -21,7 +21,6 @@
 @interface HZAbstractHeyzapAdapter()
 
 @property (nonatomic) HZQueue<HZNativeAd *> *nativeAds;
-@property (nonatomic) NSError *nativeError;
 @property (nonatomic, getter=isNativeFetchInProgress) BOOL nativeFetchInProgress;
 
 
@@ -289,7 +288,6 @@
                                 self.nativeFetchInProgress = NO;
                                 if (error) {
                                     HZELog(@"Error fetching Heyzap native ads: %@",error);
-                                    self.nativeError = error;
                                 } else {
                                     [self.nativeAds enqueueObjects:collection.ads];
                                 }
@@ -297,13 +295,10 @@
     }
 }
 
-- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+- (nullable HZNativeAdAdapter *)getNativeAdForMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     HZNativeAd *baseNativeAd = [self.nativeAds dequeue];
     if (baseNativeAd) {
         return [[HZHeyzapNativeAdAdapter alloc] initWithNativeAd:baseNativeAd parentAdapter:self];
-    } else if (self.nativeError) {
-        *error = self.nativeError;
-        return nil;
     } else {
         return nil;
     }

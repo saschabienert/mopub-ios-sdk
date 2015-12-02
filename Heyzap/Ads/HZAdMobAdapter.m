@@ -339,18 +339,16 @@ typedef NSString AdMobPlacementID;
     }
 }
 
-- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+- (nullable HZNativeAdAdapter *)getNativeAdForMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     AdMobPlacementID *const placementID = [dataProvider placementIDOverride] ?: self.nativeAdUnitID;
     HZAdMobNativeRequester *requester = self.nativePlacementToRequester[placementID];
     
     if (!requester) {
-        *error = [NSError errorWithDomain:kHZMediationDomain
-                                     code:1
-                                 userInfo:@{NSLocalizedDescriptionKey: @"This AdMob ad unit ID has never been fetched", @"adUnit":placementID}];
+        HZELog(@"The AdMob ad unit ID %@ has never been fetched",placementID);
         return nil;
     }
     
-    HZNativeAdAdapter *adapter = [requester getNativeOrError:error metadata:dataProvider];
+    HZNativeAdAdapter *adapter = [requester getNativeAdForMetadata:dataProvider];
     if (adapter) {
         return adapter;
     } else {

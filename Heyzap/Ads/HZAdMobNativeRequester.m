@@ -30,8 +30,6 @@
 @property (nonatomic, readonly) HZBaseAdapter *parentAdapter;
 
 @property (nonatomic) HZQueue *ads;
-
-@property (nonatomic) NSError *lastNativeError;
 @property (nonatomic) NSMutableArray *loaders;
 
 @end
@@ -74,7 +72,7 @@
     [self.loaders addObject:loader];
 }
 
-- (nullable HZNativeAdAdapter *)getNativeOrError:(NSError *  _Nonnull * _Nullable)error metadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+- (nullable HZNativeAdAdapter *)getNativeAdForMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
     id ad = [self.ads dequeue];
     
     if (ad) {
@@ -88,9 +86,6 @@
             return nil;
         }
         
-    } else if (self.lastNativeError) {
-        *error = self.lastNativeError;
-        return nil;
     } else {
         return nil;
     }
@@ -100,8 +95,6 @@
 
 - (void)adLoader:(HZGADAdLoader *)adLoader didFailToReceiveAdWithError:(HZGADRequestError *)error {
     HZELog(@"GADAdLoader: %@ failed to receive native ad with error: %@",adLoader, error);
-    NSError *castedError = (NSError *)error;
-    self.lastNativeError = castedError;
     [self.loaders removeObjectIdenticalTo:adLoader];
 }
 
