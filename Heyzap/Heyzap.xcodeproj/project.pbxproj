@@ -330,7 +330,7 @@
 		50CF95BA1BFFED6F00C3DBF6 /* HZFacebookMediatedNativeAdWrapperView.h in Headers */ = {isa = PBXBuildFile; fileRef = 50CF95B81BFFED6F00C3DBF6 /* HZFacebookMediatedNativeAdWrapperView.h */; };
 		50CF95BB1BFFED6F00C3DBF6 /* HZFacebookMediatedNativeAdWrapperView.m in Sources */ = {isa = PBXBuildFile; fileRef = 50CF95B91BFFED6F00C3DBF6 /* HZFacebookMediatedNativeAdWrapperView.m */; };
 		50CF95BE1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 50CF95BC1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		50CF95BF1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 50CF95BD1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.m */; };
+		50CF95BF1BFFFA7200C3DBF6 /* HZMediatedNativeAdViewRegisterer.h in Sources */ = {isa = PBXBuildFile; fileRef = 50CF95BD1BFFFA7200C3DBF6 /* HZMediatedNativeAdViewRegisterer.h */; };
 		50D1598F18F34B0900734ABB /* HZHeyzapVideoAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1598D18F34B0900734ABB /* HZHeyzapVideoAd.h */; };
 		50D1599018F34B0900734ABB /* HZHeyzapVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */; };
 		50D1599318F35CC600734ABB /* HZHeyzapInterstitialAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D1599118F35CC600734ABB /* HZHeyzapInterstitialAd.h */; };
@@ -373,7 +373,6 @@
 		50F76C2D1BE0233B00B17287 /* HZMediatedNativeAdWrapperView.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F76C2B1BE0233B00B17287 /* HZMediatedNativeAdWrapperView.h */; };
 		50F76C2E1BE0233B00B17287 /* HZMediatedNativeAdWrapperView.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F76C2C1BE0233B00B17287 /* HZMediatedNativeAdWrapperView.m */; };
 		50F76C321BE04C7E00B17287 /* MediatedNativeTableViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F76C301BE04C7E00B17287 /* MediatedNativeTableViewCell.h */; };
-		50F76C351BE05BA700B17287 /* HZMediatedNativeAdViewRegisterer.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F76C341BE05BA700B17287 /* HZMediatedNativeAdViewRegisterer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		810A8325BAC3078F15E074E5 /* libPods-IntegrationTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE8C3BDC0C3A72F0F2BA561B /* libPods-IntegrationTests.a */; };
 		860FD47A187BB144008A35FD /* HZAdsFetchManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 860FD478187BB144008A35FD /* HZAdsFetchManager.h */; };
 		860FD47B187BB144008A35FD /* HZAdsFetchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 860FD479187BB144008A35FD /* HZAdsFetchManager.m */; };
@@ -957,7 +956,7 @@
 		50CF95B81BFFED6F00C3DBF6 /* HZFacebookMediatedNativeAdWrapperView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZFacebookMediatedNativeAdWrapperView.h; sourceTree = "<group>"; };
 		50CF95B91BFFED6F00C3DBF6 /* HZFacebookMediatedNativeAdWrapperView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZFacebookMediatedNativeAdWrapperView.m; sourceTree = "<group>"; };
 		50CF95BC1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediatedNativeAdManager.h; sourceTree = "<group>"; };
-		50CF95BD1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediatedNativeAdManager.m; sourceTree = "<group>"; };
+		50CF95BD1BFFFA7200C3DBF6 /* HZMediatedNativeAdViewRegisterer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediatedNativeAdViewRegisterer.h; sourceTree = "<group>"; };
 		50CF95C01BFFFDA000C3DBF6 /* HZMediatedNativeAdManager_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZMediatedNativeAdManager_Private.h; sourceTree = "<group>"; };
 		50D1598D18F34B0900734ABB /* HZHeyzapVideoAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapVideoAd.h; sourceTree = "<group>"; };
 		50D1598E18F34B0900734ABB /* HZHeyzapVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZHeyzapVideoAd.m; sourceTree = "<group>"; };
@@ -1005,7 +1004,6 @@
 		50F76C2C1BE0233B00B17287 /* HZMediatedNativeAdWrapperView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediatedNativeAdWrapperView.m; sourceTree = "<group>"; };
 		50F76C301BE04C7E00B17287 /* MediatedNativeTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediatedNativeTableViewCell.h; sourceTree = "<group>"; };
 		50F76C311BE04C7E00B17287 /* MediatedNativeTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediatedNativeTableViewCell.m; sourceTree = "<group>"; };
-		50F76C341BE05BA700B17287 /* HZMediatedNativeAdViewRegisterer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HZMediatedNativeAdViewRegisterer.h; path = ../HeyzapSDKTest/HZMediatedNativeAdViewRegisterer.h; sourceTree = "<group>"; };
 		58C6B54C3EE10808E4BA228E /* Pods-HeyzapSDKTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeyzapSDKTest.release.xcconfig"; path = "Pods/Target Support Files/Pods-HeyzapSDKTest/Pods-HeyzapSDKTest.release.xcconfig"; sourceTree = "<group>"; };
 		5B32B52129AEF7895DFB6A17 /* Pods-Ads Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ads Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Ads Tests/Pods-Ads Tests.release.xcconfig"; sourceTree = "<group>"; };
 		604FF60355743B39E9AD975E /* Pods-Integration Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Integration Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Integration Tests/Pods-Integration Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -2271,10 +2269,9 @@
 				50F76C081BDAF5CF00B17287 /* HZMediatedNativeAd.h */,
 				508676741BE16F7F0043F8F5 /* HZMediatedNativeAd_Private.h */,
 				50F76C091BDAF5CF00B17287 /* HZMediatedNativeAd.m */,
-				50F76C341BE05BA700B17287 /* HZMediatedNativeAdViewRegisterer.h */,
 				50CF95BC1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.h */,
 				50CF95C01BFFFDA000C3DBF6 /* HZMediatedNativeAdManager_Private.h */,
-				50CF95BD1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.m */,
+				50CF95BD1BFFFA7200C3DBF6 /* HZMediatedNativeAdViewRegisterer.h */,
 			);
 			name = "Native Mediation";
 			sourceTree = "<group>";
@@ -2952,7 +2949,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				50F76C0A1BDAF5CF00B17287 /* HZMediatedNativeAd.h in Headers */,
-				50F76C351BE05BA700B17287 /* HZMediatedNativeAdViewRegisterer.h in Headers */,
 				50CF95BE1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.h in Headers */,
 				50F76C1F1BDFF00500B17287 /* HZFBNativeAdDelegate.h in Headers */,
 				995DF55C1B445F54000935BB /* HZHeyzapExchangeRequestSerializer.h in Headers */,
@@ -3755,7 +3751,7 @@
 				E621820E19BE669B0099BE8C /* HZUnityAds.m in Sources */,
 				E6DBD6061A44AAEA00D9999D /* HZFBInterstitialAd.m in Sources */,
 				5000EE971BF3FC3A00B4812A /* HZAFURLRequestSerialization.m in Sources */,
-				50CF95BF1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.m in Sources */,
+				50CF95BF1BFFFA7200C3DBF6 /* HZMediatedNativeAdViewRegisterer.h in Sources */,
 				86BDB4A9175853E100D85F29 /* HZLog.m in Sources */,
 				5000EE8E1BF3FC3A00B4812A /* HZAFHTTPSessionManager.m in Sources */,
 				99DC6D341B879AA600BF7756 /* HZCreativeType.m in Sources */,
