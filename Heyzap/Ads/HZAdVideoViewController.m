@@ -86,6 +86,29 @@
     [super showWithOptions:options];
 }
 
+- (void) closeAdView:(UIView *)adView {
+    switch (adView.tag) {
+        case kHZVideoViewTag:
+            if (self.didStartVideo) {
+                [HZAdsManager postNotificationName:kHeyzapDidFinishAudio infoProvider:self.ad];
+            }
+            
+            self.didStartVideo = NO;
+            
+            if (self.ad.displayOptions.postRollInterstitial) {
+                [self.videoView pause];
+                [self switchToViewWithTag: kHZWebViewTag];
+            } else {
+                [self hide];
+            }
+            break;
+        case kHZWebViewTag:
+        default:
+            [self hide];
+            break;
+    }
+}
+
 - (void) hide {
     [self.ad onCompleteWithViewDuration: self.videoView.playbackTime andTotalDuration: self.videoView.videoDuration andFinished: self.didFinishVideo];
     
@@ -207,26 +230,7 @@
 #pragma mark - Callbacks
 
 - (void) onActionHide: (UIView *) sender {
-    switch (sender.tag) {
-        case kHZVideoViewTag:
-            if (self.didStartVideo) {
-                [HZAdsManager postNotificationName:kHeyzapDidFinishAudio infoProvider:self.ad];
-            }
-            
-            self.didStartVideo = NO;
-            
-            if (self.ad.displayOptions.postRollInterstitial) {
-                [self.videoView pause];
-                [self switchToViewWithTag: kHZWebViewTag];
-            } else {
-                [self hide];
-            }
-            break;
-        case kHZWebViewTag:
-        default:
-            [self hide];
-            break;
-    }
+    [self closeAdView:sender];
 }
 
 - (void) onActionShow: (UIView *) sender {
@@ -256,13 +260,8 @@
 
 - (void) onActionCompleted: (UIView *) sender {
     if (sender.tag == kHZVideoViewTag) {
-        if (self.didStartVideo) {
-            [HZAdsManager postNotificationName:kHeyzapDidFinishAudio infoProvider:self.ad];
-        }
-    
-        self.didStartVideo = NO;
         self.didFinishVideo = YES;
-        [self switchToViewWithTag: kHZWebViewTag];
+        [self closeAdView:sender];
     }
 }
 
