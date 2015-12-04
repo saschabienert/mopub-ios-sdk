@@ -128,15 +128,23 @@ typedef NSNumber InMobiAdUnitID;
     
     HZIMInterstitial *ad = self.adDictionary[@(options.creativeType)];
     if (!ad) {
-        ad = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
-        [ad load];
-        self.adDictionary[@(options.creativeType)] = ad;
+        self.adDictionary[@(options.creativeType)] = [self instantiateAdWithPlacementID:placementID];
     }
     
     if (options.creativeType == HZCreativeTypeIncentivized && self.backupRewardedVideo == nil) {
-        self.backupRewardedVideo = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
-        [self.backupRewardedVideo load];
+        self.backupRewardedVideo = [self instantiateAdWithPlacementID:placementID];
     }
+}
+
+- (HZIMInterstitial *)instantiateAdWithPlacementID:(const long long)placementID {
+    HZIMInterstitial *ad = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
+    ad.extras = [[self class] extrasDictionary];
+    [ad load];
+    return ad;
+}
+
++ (NSDictionary *)extrasDictionary {
+    return @{@"tp": @"c_heyzap", @"tp-ver": SDK_VERSION};;
 }
 
 - (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider

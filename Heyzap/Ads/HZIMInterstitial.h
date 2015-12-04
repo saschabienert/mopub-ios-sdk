@@ -12,6 +12,8 @@
 
 @interface HZIMInterstitial : HZClassProxy
 
+@property (nonatomic, strong) NSDictionary *extras;
+
 /**
  * Initialize an Interstitial with the given PlacementId
  * @param placementId The placementId for loading the interstitial
