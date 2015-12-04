@@ -64,10 +64,12 @@ typedef enum {
 @property(nonatomic, strong) HZSKVASTEventProcessor *eventProcessor;
 
 @property (nonatomic) BOOL didFinishSuccessfully;
-@property(nonatomic, strong) HZVideoView *videoView;
-@property(nonatomic, strong) HZVASTVideoSettings *videoSettings;
-@property(nonatomic, strong) HZVASTVideoCache *videoCache;
-@property(nonatomic) BOOL didClick;
+@property (nonatomic, strong) HZVideoView *videoView;
+@property (nonatomic, strong) HZVASTVideoSettings *videoSettings;
+@property (nonatomic, strong) HZVASTVideoCache *videoCache;
+@property (nonatomic) BOOL didClick;
+
+@property (nonatomic) UIInterfaceOrientation fetchedOrientation;
 
 @end
 
@@ -76,7 +78,7 @@ typedef enum {
 #pragma mark - Init & dealloc
 
 // designated initializer
-- (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forCreativeType:(HZCreativeType)creativeType
+- (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forCreativeType:(HZCreativeType)creativeType fetchedOrientation:(UIInterfaceOrientation)orientation
 {
     self = [super init];
     if (self) {
@@ -93,6 +95,9 @@ typedef enum {
         _activityIndicator = [[HZLabeledActivityIndicator alloc] initWithFrame:CGRectZero withBackgroundBox:YES];
         _activityIndicator.labelText = @"Please Wait...";
         _activityIndicator.fadeBackground = YES;
+        
+        _fetchedOrientation = orientation; // TODO it would be nice if we actually ascertained the orientation from the VAST XML or our server's response since we're not guaranteed to get a video in the orientation requested...
+        
         [self.view addSubview:_activityIndicator];
         
     }
@@ -198,6 +203,40 @@ typedef enum {
 
 #pragma mark - View lifecycle
 
+- (void) viewDidLoad {
+    [super viewDidLoad];
+    
+    BOOL forceRotation = NO;
+    CGAffineTransform transformToApply = CGAffineTransformIdentity;
+    if ([self needToTransformOrientation]) {
+        forceRotation = YES;
+        // app does not support the required orientation of the ad, so transform the view.
+        
+        UIInterfaceOrientation currentInterfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+        
+        if (UIInterfaceOrientationIsLandscape(currentInterfaceOrientation)) {
+            // landscape device, portrait ad
+            // transform should go to portrait (and not portrait upside down, since that's kinda weird)
+            double rotation = currentInterfaceOrientation == UIInterfaceOrientationLandscapeLeft ? M_PI_2 : -M_PI_2;
+            transformToApply = CGAffineTransformMakeRotation(rotation);
+        } else {
+            // portrait device, landscape ad
+            transformToApply = CGAffineTransformMakeRotation(M_PI_2);
+        }
+    }
+    
+    self.view.frame = CGRectMake(0.0, 0.0, self.view.bounds.size.width, self.view.bounds.size.height);
+    self.view.transform = transformToApply;
+    
+    self.videoView.frame = self.view.bounds;
+    
+    // this is for iOS 6 and iOS 7 only. on iOS 8 and above, the transform done on `self.view` above changes its bounds,
+    // which is then applied to `self.videoView` above, so it always rotates to landscape if forceRotation is YES.
+    if (forceRotation && !hziOS8Plus()) {
+        self.videoView.transform = transformToApply;
+    }
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -257,15 +296,16 @@ typedef enum {
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 #endif
 {
-    if ([self applicationSupportsLandscape]) {
-        return UIInterfaceOrientationMaskLandscape;
+    if ([[HZDevice currentDevice] applicationSupportsUIInterfaceOrientation:self.fetchedOrientation]) {
+        return UIInterfaceOrientationIsLandscape(self.fetchedOrientation) ? UIInterfaceOrientationMaskLandscape : (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown);
     } else {
         return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow:[UIApplication sharedApplication].keyWindow];
     }
 }
 
 - (BOOL)shouldAutorotate {
-    return YES;
+    // don't autorotate if we transform the view from landscape->portrait or vice-versa, since the view is already presented against the device's orientation
+    return ![self needToTransformOrientation];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
@@ -274,6 +314,11 @@ typedef enum {
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
+}
+
+- (BOOL) needToTransformOrientation {
+    UIInterfaceOrientationMask supportedInterfaceOrientations = [self supportedInterfaceOrientations];
+    return !(supportedInterfaceOrientations & [[HZDevice currentDevice] orientationMaskForOrientation:self.fetchedOrientation]);
 }
 
 #pragma mark - Timers
@@ -550,17 +595,6 @@ typedef enum {
 - (void) onActionRestart: (id) sender { }
 
 - (void) onActionInstallHeyzap: (id) sender { }
-
-#pragma mark - Utility
-
-- (BOOL) applicationSupportsLandscape {
-    if ([HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
-        return YES;
-    } else {
-        UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-        return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: keyWindow] & UIInterfaceOrientationMaskLandscape;
-    }
-}
 
 @end
 

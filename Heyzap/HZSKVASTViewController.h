@@ -54,7 +54,7 @@
 
 @property (nonatomic) HZLabeledActivityIndicator *activityIndicator;
 
-- (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forCreativeType:(HZCreativeType)creativeType; // designated initializer for VASTViewController
+- (instancetype)initWithDelegate:(id<HZSKVASTViewControllerDelegate>)delegate forCreativeType:(HZCreativeType)creativeType fetchedOrientation:(UIInterfaceOrientation)orientation; // designated initializer for VASTViewController
 
 - (void)loadVideoWithURL:(NSURL *)url;            // load and prepare to play a VAST video from a URL
 - (void)loadVideoWithData:(NSData *)xmlContent;   // load and prepare to play a VAST video from existing XML data

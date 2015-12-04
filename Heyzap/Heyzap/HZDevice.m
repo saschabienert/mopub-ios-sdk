@@ -376,4 +376,44 @@ BOOL hziOS8Plus(void) {
     return self;
 }
 
+
+# pragma mark Application
+
+- (BOOL) applicationSupportsLandscape {
+    return [self applicationSupportsUIInterfaceOrientationMask:UIInterfaceOrientationMaskLandscape];
+}
+
+- (BOOL) applicationSupportsPortrait {
+    return [self applicationSupportsUIInterfaceOrientationMask:(UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown)];
+}
+
+- (BOOL) applicationSupportsUIInterfaceOrientationMask:(UIInterfaceOrientationMask)orientationMask {
+    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+    return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: keyWindow] & orientationMask;
+}
+
+- (BOOL) applicationSupportsUIInterfaceOrientation:(UIInterfaceOrientation)orientation {
+    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+    return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: keyWindow] & [self orientationMaskForOrientation:orientation];
+}
+
+- (UIInterfaceOrientationMask) orientationMaskForOrientation:(UIInterfaceOrientation)orientation {
+    switch (orientation) {
+        case UIInterfaceOrientationLandscapeLeft:
+            return UIInterfaceOrientationMaskLandscapeLeft;
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            return UIInterfaceOrientationMaskLandscapeRight;
+            break;
+        case UIInterfaceOrientationPortrait:
+            return UIInterfaceOrientationMaskPortrait;
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            return UIInterfaceOrientationMaskPortraitUpsideDown;
+            break;
+        default:
+            return 0;
+            break;
+    }
+}
 @end

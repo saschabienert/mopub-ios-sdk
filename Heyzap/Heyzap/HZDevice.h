@@ -30,6 +30,11 @@
 + (BOOL)isIpad;
 + (BOOL)isPhone;
 
+- (BOOL) applicationSupportsLandscape;
+- (BOOL) applicationSupportsPortrait;
+- (BOOL) applicationSupportsUIInterfaceOrientationMask:(UIInterfaceOrientationMask)orientationMask;
+- (BOOL) applicationSupportsUIInterfaceOrientation:(UIInterfaceOrientation)orientation;
+- (UIInterfaceOrientationMask) orientationMaskForOrientation:(UIInterfaceOrientation)orientation;
 
 BOOL hziOS7Plus(void);
 BOOL hziOS8Plus(void);

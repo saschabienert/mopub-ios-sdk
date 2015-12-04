@@ -157,16 +157,4 @@
 // for subclasses to override
 - (void) returnToAdFromClick { }
 
-#pragma mark - Utility
-
-- (BOOL) applicationSupportsLandscape {
-    if ([HZDevice hzSystemVersionIsLessThan: @"6.0"]) {
-        return YES;
-    } else {
-        UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-        return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow: keyWindow] & UIInterfaceOrientationMaskLandscape;
-    }
-}
-
-
 @end
