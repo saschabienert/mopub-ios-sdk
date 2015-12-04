@@ -16,6 +16,7 @@
 #import "HZIMInterstitialDelegate.h"
 #import "HZInMobiBannerAdapter.h"
 #import "HZIMRequestStatus.h"
+#import "HZDemographics_Private.h"
 
 typedef NSNumber InMobiAdUnitID;
 
@@ -85,6 +86,9 @@ typedef NSNumber InMobiAdUnitID;
     
     [HZIMSdk initWithAccountID:self.accountID];
     [HZIMSdk setLogLevel:kHZIMSDKLogLevelError];
+    
+    // Demographic Information
+    [self updatedLocation];
     
     return nil;
 }
@@ -167,6 +171,12 @@ typedef NSNumber InMobiAdUnitID;
     } else {
         return nil;
     }
+}
+
+#pragma mark - Demographics
+
+- (void)updatedLocation {
+    [HZIMSdk setLocation:self.delegate.demographics.location];
 }
 
 #pragma mark - Logging

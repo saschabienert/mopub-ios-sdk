@@ -261,6 +261,11 @@ NSString * const HZNetworkNameUserInfoKey = @"HZNetworkNameUserInfoKey";
     return remoteData;
 }
 
++ (HZDemographics *)demographicInformation {
+    HZVersionCheckNil();
+    return [[HeyzapMediation sharedInstance] demographics];
+}
+
 #pragma mark - Record IAP Transaction
 
 +(void)onIAPPurchaseComplete:(NSString *)productId productName:(NSString *)productName price:(NSDecimalNumber *)price {

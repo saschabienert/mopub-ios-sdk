@@ -46,6 +46,7 @@
 #import "HZShowOptions.h"
 #import "HZBannerAd.h"
 #import "HZBannerAdOptions.h"
+#import "HZDemographics.h"
 
 #ifndef NS_ENUM
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
@@ -67,6 +68,7 @@
 @import EventKit;
 @import EventKitUI;
 @import MessageUI;
+@import CoreLocation;
 #endif
 
 typedef NS_ENUM(NSUInteger, HZAdOptions) {
@@ -329,6 +331,8 @@ extern NSString * const HZNetworkNameUserInfoKey;
  * Returns a string representation of the remote data dictionary. @see remoteData
  */
 + (NSString *) getRemoteDataJsonString;
+
++ (HZDemographics *)demographicInformation;
 
 /**
  * Presents a view controller that displays integration information and allows fetch/show testing

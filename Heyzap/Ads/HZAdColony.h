@@ -62,4 +62,6 @@ typedef enum {
           withV4VCPrePopup:(BOOL)showPrePopup
           andV4VCPostPopup:(BOOL)showPostPopup;
 
++ (void)setUserMetadata:(NSString *)metadataType withValue:(NSString *)value;
+
 @end

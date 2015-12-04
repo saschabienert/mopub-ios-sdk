@@ -8,6 +8,7 @@
 //
 
 @import AVFoundation;
+@import CoreLocation;
 
 #import "SDKTestAppViewController.h"
 
@@ -46,7 +47,7 @@ typedef enum {
     kAdUnitSegmentBanner,
 } kAdUnitSegment;
 
-@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, CLLocationManagerDelegate>
 
 
 @property (nonatomic) SDKTestAppViewControllerHZAdsDelegate *interstitialDelegate;
@@ -92,6 +93,8 @@ typedef enum {
 @property (nonatomic) BOOL backgroundMusicPlaying;
 @property (nonatomic) BOOL backgroundMusicShouldPlay;
 
+@property (nonatomic, readonly) CLLocationManager *manager;
+
 @end
 
 #define METHOD_NAME NSStringFromSelector(_cmd)
@@ -110,6 +113,7 @@ typedef enum {
 #else
         self.title = @"Ads";
 #endif
+        _manager = [[CLLocationManager alloc] init];
     }
     return self;
 }
@@ -207,6 +211,9 @@ const CGFloat kLeftMargin = 10;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self setupLocationManager];
+    
     self.interstitialDelegate = [[SDKTestAppViewControllerHZAdsDelegate alloc] initWthSDKTestAppViewController:self];
     self.interstitialDelegate.name = @"--HZInterstitialAd--";
     self.videoDelegate = [[SDKTestAppViewControllerHZAdsDelegate alloc] initWthSDKTestAppViewController:self];
@@ -1100,6 +1107,34 @@ const CGFloat kLeftMargin = 10;
             [self tryPlayMusic];
         }
     }
+}
+
+#pragma mark - Location
+
+- (void)setupLocationManager {
+    self.manager.delegate = self;
+    self.manager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+    self.manager.distanceFilter = 500; // meters
+    
+    if ([self.manager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        [self.manager requestWhenInUseAuthorization];
+    } else {
+        [self.manager startUpdatingLocation];
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    if (status == kCLAuthorizationStatusAuthorizedWhenInUse || status == kCLAuthorizationStatusAuthorizedAlways) {
+        [self.manager startUpdatingLocation];
+    } else {
+        [self.manager stopUpdatingLocation];
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
+    CLLocation *latestLocation = locations.lastObject;
+    HZDemographics *demographics = [HeyzapAds demographicInformation];
+    demographics.location = latestLocation;
 }
 
 @end

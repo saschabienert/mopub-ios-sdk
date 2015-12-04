@@ -14,6 +14,7 @@
 #import "HeyzapAds.h"
 #import "HeyzapMediation.h"
 #import "HZAdMobAdapter.h"
+#import "HZGADRequest.h"
 
 @interface HZAdMobBannerAdapter() <HZGADBannerViewDelegate>
 
@@ -25,7 +26,7 @@
 
 @implementation HZAdMobBannerAdapter
 
-- (instancetype)initWithAdUnitID:(NSString *)adUnitID options:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter {
+- (instancetype)initWithAdUnitID:(NSString *)adUnitID options:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter request:(HZGADRequest *)request {
     self = [super init];
     if (self) {
         self.parentAdapter = parentAdapter;

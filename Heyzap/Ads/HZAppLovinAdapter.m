@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
+#import <CoreLocation/CoreLocation.h>
+
 #import "HZAppLovinAdapter.h"
 #import "HZMediationConstants.h"
 
@@ -24,6 +26,7 @@
 #import "HeyzapMediation.h"
 #import "HeyzapAds.h"
 #import "HZBaseAdapter_Internal.h"
+#import "HZALTargetingData.h"
 
 /**
  *  AppLovin's SDK is split between using (singletons+class methods) vs instances. Inexplicably, the former group is only available when you store the SDK Key in your info.plist file, so we need to use the instance methods.
@@ -109,9 +112,23 @@
     HZALSdkSettings *settings = [[HZALSdkSettings alloc] init];
     settings.isVerboseLogging = [self isLoggingEnabled];
     self.sdk = [HZALSdk sharedWithKey:self.sdkKey settings:settings];
+    
+    // Set demographics information
+    [self updatedLocation];
+    
     [self.sdk initializeSdk];
     
     return nil;
+}
+
+#pragma mark - Demographic Information
+
+- (void)updatedLocation {
+    CLLocation *location = self.delegate.demographics.location;
+    if (location) {
+        [self.sdk.targetingData setLocationWithLatitude:location.coordinate.latitude
+                                              longitude:location.coordinate.longitude];
+    }
 }
 
 - (HZCreativeType) supportedCreativeTypes

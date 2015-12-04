@@ -23,6 +23,7 @@
 @class HZAdapterDelegate;
 @class HZNativeAdAdapter;
 @class HZAdapterFetchOptions;
+@class HZDemographics;
 
 @protocol HZBannerReportingDelegate;
 
@@ -39,6 +40,8 @@
 - (void)adapterDidFinishPlayingAudio:(nonnull HZBaseAdapter *)adapter;
 
 - (void)adapterDidFailToShowAd:(nonnull HZBaseAdapter *)adapter error:(nullable NSError *)underlyingError;
+
+@property (nonatomic, readonly, nonnull) HZDemographics *demographics;
 
 @end
 
