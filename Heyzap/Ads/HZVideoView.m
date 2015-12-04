@@ -24,7 +24,7 @@
 @property (nonatomic) BOOL didSendOnActionShowAlready;
 @property (nonatomic) BOOL didSendOnActionReadyAlready; // MPMovieLoadState documentation is a bit unclear whether both MPMovieLoadStatePlayable and MPMovieLoadStatePlaythroughOK can be sent, but we probably only want to send onActionReady once no matter what
 
-#define kHZVideoViewAutoFadeOutControlsTimeSeconds 5 // number of seconds to leave controls on the screen before fading them out
+#define kHZVideoViewAutoFadeOutControlsTimeSeconds 2 // number of seconds to leave controls on the screen before fading them out
 #define kHZVideoViewMinumumSkippableSeconds 9 // minimum number of seconds a skip button should save a user in order for the button to be shown
 #define kHZVideoViewOverrideSpammySkipTimeSeconds 5 // how many seconds to try and set the skip button to if the original time is determined to be spammy
 

@@ -26,6 +26,10 @@ const int kCrossPromoVideoCreativeID = 6109031;
 
 - (void)runIncentivizedAndSkip:(BOOL)shouldSkip
 {
+    [OHHTTPStubs onStubActivation:^(NSURLRequest * _Nonnull request, id<OHHTTPStubsDescriptor>  _Nonnull stub) {
+        NSLog(@"Stubbing request: %@",request.URL.path);
+    }];
+    
     [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:[TestJSON jsonForResource:@"start"]];
     [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:[TestJSON jsonForResource:@"mediate"]];
     
@@ -42,6 +46,24 @@ const int kCrossPromoVideoCreativeID = 6109031;
                                                     statusCode:400
                                                        headers:nil];
         }
+    }];
+    
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest * _Nonnull request) {
+        return [request.URL.path containsString:@"fastclick"];
+//        return [request.URL.path isEqualToString:@"assets/ads/fastclick-62c1d38f8e964c75f8de61457fd6dd2d.js"];
+    } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
+        NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:@"fastclick" withExtension:@"js"];
+        NSParameterAssert(url);
+        return [[OHHTTPStubsResponse alloc] initWithFileURL:url statusCode:200 headers:@{@"content-type":@"application/javascript"}];
+    }];
+    
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest * _Nonnull request) {
+        return [request.URL.path containsString:@"flat_ios"];
+//        return [request.URL.path isEqualToString:@"assets/ads/flat_ios-e54b2fe012a7581343586c20d28138b9.css"];
+    } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
+        NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:@"flat_ios" withExtension:@"css"];
+        NSParameterAssert(url);
+        return [[OHHTTPStubsResponse alloc] initWithFileURL:url statusCode:200 headers:@{@"content-type":@"text/css"}];
     }];
     
     NSString *const filename = shouldSkip ? @"ten_second_cross_promo_video" : @"three_second_cross_promo_video";
@@ -74,6 +96,11 @@ const int kCrossPromoVideoCreativeID = 6109031;
     
     // Skip
     if (shouldSkip) {
+        [tester waitForTimeInterval:3];
+//        [tester waitForAbsenceOfViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
+        
+        [tester tapScreenAtPoint:CGPointMake(100, 100)];
+        [tester waitForViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
         [tester tapViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
     }
     

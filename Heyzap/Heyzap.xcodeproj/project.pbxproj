@@ -111,6 +111,8 @@
 		50251CC61C11246400DD5922 /* HZALTargetingData.h in Headers */ = {isa = PBXBuildFile; fileRef = 50251CC41C11246400DD5922 /* HZALTargetingData.h */; };
 		50251CC71C11246400DD5922 /* HZALTargetingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CC51C11246400DD5922 /* HZALTargetingData.m */; };
 		50251D271C1645C000DD5922 /* HZMediatedNativeAdViewRegisterer.h in Headers */ = {isa = PBXBuildFile; fileRef = 50CF95BD1BFFFA7200C3DBF6 /* HZMediatedNativeAdViewRegisterer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		50251CCB1C12234300DD5922 /* fastclick.js in Resources */ = {isa = PBXBuildFile; fileRef = 50251CCA1C12234300DD5922 /* fastclick.js */; };
+		50251CCE1C12237200DD5922 /* flat_ios.css in Resources */ = {isa = PBXBuildFile; fileRef = 50251CCD1C12237200DD5922 /* flat_ios.css */; };
 		50286DA81B9925D20005C44F /* HZErrorReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50286DA61B9925D20005C44F /* HZErrorReporter.h */; };
 		50286DA91B9925D20005C44F /* HZErrorReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50286DA71B9925D20005C44F /* HZErrorReporter.m */; };
 		502E03791BD0391C00872BA2 /* NSString+Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624818CBF58A0018A0B6 /* NSString+Tests.m */; };
@@ -742,6 +744,8 @@
 		50251CC31C111C0200DD5922 /* HZDemographics_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZDemographics_Private.h; sourceTree = "<group>"; };
 		50251CC41C11246400DD5922 /* HZALTargetingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZALTargetingData.h; sourceTree = "<group>"; };
 		50251CC51C11246400DD5922 /* HZALTargetingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZALTargetingData.m; sourceTree = "<group>"; };
+		50251CCA1C12234300DD5922 /* fastclick.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = fastclick.js; sourceTree = "<group>"; };
+		50251CCD1C12237200DD5922 /* flat_ios.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = flat_ios.css; sourceTree = "<group>"; };
 		50269FF219B65D9500CD7C88 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		50286DA61B9925D20005C44F /* HZErrorReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZErrorReporter.h; sourceTree = "<group>"; };
 		50286DA71B9925D20005C44F /* HZErrorReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZErrorReporter.m; sourceTree = "<group>"; };
@@ -1553,6 +1557,31 @@
 			name = Common;
 			sourceTree = "<group>";
 		};
+		50251CC81C12231800DD5922 /* Webview Assets */ = {
+			isa = PBXGroup;
+			children = (
+				50251CCC1C12234F00DD5922 /* JS */,
+				50251CC91C12232800DD5922 /* CSS */,
+			);
+			name = "Webview Assets";
+			sourceTree = "<group>";
+		};
+		50251CC91C12232800DD5922 /* CSS */ = {
+			isa = PBXGroup;
+			children = (
+				50251CCD1C12237200DD5922 /* flat_ios.css */,
+			);
+			name = CSS;
+			sourceTree = "<group>";
+		};
+		50251CCC1C12234F00DD5922 /* JS */ = {
+			isa = PBXGroup;
+			children = (
+				50251CCA1C12234300DD5922 /* fastclick.js */,
+			);
+			name = JS;
+			sourceTree = "<group>";
+		};
 		50286DA51B9925C30005C44F /* Error Tracking */ = {
 			isa = PBXGroup;
 			children = (
@@ -1902,6 +1931,7 @@
 		508277B11BC8938200B4340B /* IntegrationTests */ = {
 			isa = PBXGroup;
 			children = (
+				50251CC81C12231800DD5922 /* Webview Assets */,
 				502E03881BD06BBE00872BA2 /* Videos */,
 				502244B11BCF314300279639 /* Common */,
 				502244AA1BCF2DCF00279639 /* JSON responses */,
@@ -3380,6 +3410,8 @@
 				502244AD1BCF2E1300279639 /* start.json in Resources */,
 				502E03821BD05EFE00872BA2 /* cross_promo_static.json in Resources */,
 				502E03871BD06B4A00872BA2 /* cross_promo_video.json in Resources */,
+				50251CCE1C12237200DD5922 /* flat_ios.css in Resources */,
+				50251CCB1C12234300DD5922 /* fastclick.js in Resources */,
 				502244B01BCF2E2300279639 /* mediate.json in Resources */,
 				502E038C1BD0980700872BA2 /* three_second_cross_promo_video.mp4 in Resources */,
 			);
