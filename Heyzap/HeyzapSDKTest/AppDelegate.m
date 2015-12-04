@@ -26,7 +26,6 @@
 #import "HZInterstitialAd.h"
 #import "PersistentTestAppConfiguration.h"
 #import "HZHardcodedConstantChecker.h"
-#import <AdColony/AdColony.h>
 
 @implementation AppDelegate
 

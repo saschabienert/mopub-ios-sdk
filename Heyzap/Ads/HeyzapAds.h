@@ -332,6 +332,11 @@ extern NSString * const HZNetworkNameUserInfoKey;
  */
 + (NSString *) getRemoteDataJsonString;
 
+/**
+ *  Returns an `HZDemographics` object that you can use to pass demographic information to third party SDKs.
+ *
+ *  @return An `HZDemographics` object. Guaranteed to be non-nil after starting the SDK.
+ */
 + (HZDemographics *)demographicInformation;
 
 /**
