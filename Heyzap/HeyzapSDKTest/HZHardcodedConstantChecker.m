@@ -11,6 +11,8 @@
 #import <VungleSDK/VungleSDK.h>
 #import "HZVungleAdapter.h"
 @import GoogleMobileAds;
+#import <AdColony/AdColony.h>
+#import "HZAdColonyAdapter.h"
 
 #define COMPARE_CONSTANTS(real, hardcoded) \
 do { \
@@ -28,6 +30,8 @@ if (![real isEqualToString:hardcoded]) { \
     COMPARE_CONSTANTS(VunglePlayAdOptionKeyIncentivized, HZFallbackVunglePlayAdOptionKeyIncentivized);
     COMPARE_CONSTANTS(kGADAdLoaderAdTypeNativeAppInstall, kHZGADAdLoaderAdTypeNativeAppInstall);
     COMPARE_CONSTANTS(kGADAdLoaderAdTypeNativeContent, kHZGADAdLoaderAdTypeNativeContent);
+    COMPARE_CONSTANTS(ADC_SET_USER_LATITUDE, HZFallbackAdcLatitude);
+    COMPARE_CONSTANTS(ADC_SET_USER_LONGITUDE, HZFallbackAdcLongitude);
 }
 
 @end

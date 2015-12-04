@@ -64,6 +64,7 @@
 #import "HZHeyzapAdapter.h"
 #import "HZNativeAdAdapter.h"
 #import "HZCrossPromoAdapter.h"
+#import "HZDemographics_Private.h"
 
 @interface HeyzapMediation() <HZNativeAdReportingDelegate>
 
@@ -91,6 +92,7 @@
 @property (nonatomic, strong) HZMediationSettings *settings;
 @property (nonatomic, strong) HZSegmentationController *segmentationController;
 @property (nonatomic, strong) HZMediationInterstitialVideoManager *interstitialVideoManager;
+@property (nonatomic, strong) HZDemographics *demographics;
 
 @property (nonatomic) HZMediationStartStatus startStatus;
 
@@ -149,6 +151,7 @@
         _starter = [[HZMediationStarter alloc] initWithStartingDelegate:self cachingService:_cachingService];
         _mediateRequester = [[HZMediateRequester alloc] initWithDelegate:self cachingService:_cachingService];
         _persistentConfig = [[HZMediationPersistentConfig alloc] initWithCachingService:_cachingService];
+        _demographics = [[HZDemographics alloc] init];
     }
     return self;
 }
@@ -212,6 +215,7 @@
         
         if (network && credentials) {
             HZBaseAdapter *const adapter = [[HZBaseAdapter adapterClassForName:network] sharedAdapter];
+            adapter.delegate = self;
             adapter.credentials = credentials; // The adapter will prevent overriding existing credentials, to prevent them changing between the cached and non-cached /start response.
         } else {
             HZELog(@"Invalid network in /start response");
@@ -1247,14 +1251,13 @@ static BOOL forceOnlyHeyzapSDK = NO;
         } else if (forceOnlyHeyzapSDK && ![adapterClass isHeyzapAdapter]) {
             success = NO;
         } else {
-            NSError *credentialError = [[adapterClass sharedAdapter] initializeSDK];
+            HZBaseAdapter *adapter = [adapterClass sharedAdapter];
+            NSError *credentialError = [adapter initializeSDK];
             if (credentialError){
                 HZELog(@"Failed to initialize network %@, had error: %@",[adapterClass humanizedName], credentialError);
                 self.erroredMediatiorClasses = [self.erroredMediatiorClasses setByAddingObject:adapterClass];
             } else {
                 HZILog(@"Setup adapter: %@",[adapterClass humanizedName]);
-                HZBaseAdapter *adapter = [adapterClass sharedAdapter];
-                adapter.delegate = self;
                 self.setupMediators = [self.setupMediators setByAddingObject:adapter];
                 self.setupMediatorClasses = [self.setupMediatorClasses setByAddingObject:adapterClass];
                 

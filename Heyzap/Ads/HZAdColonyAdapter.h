@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "HZBaseAdapter.h"
 
+extern NSString * const HZFallbackAdcLatitude;
+extern NSString * const HZFallbackAdcLongitude;
+
 @interface HZAdColonyAdapter : HZBaseAdapter
 
 @end

@@ -18,4 +18,8 @@
 
 + (NSString *)sdkVersion;
 
+- (void)setLocationWithLatitude:(CGFloat)latitude
+                      longitude:(CGFloat)longitude
+                       accuracy:(CGFloat)accuracyInMeters;
+
 @end

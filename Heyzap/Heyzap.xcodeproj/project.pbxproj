@@ -106,6 +106,10 @@
 		502244B51BCF327C00279639 /* TestJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BEB18C96CE2003A7CB9 /* TestJSON.m */; };
 		502244BB1BD0351D00279639 /* HZKIFTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 502244BA1BD0351D00279639 /* HZKIFTestCase.m */; };
 		50251CB91C0F855900DD5922 /* HZMediatedNativeAdManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CB81C0F855900DD5922 /* HZMediatedNativeAdManager.m */; };
+		50251CC11C0FBD5F00DD5922 /* HZDemographics.h in Headers */ = {isa = PBXBuildFile; fileRef = 50251CBF1C0FBD5F00DD5922 /* HZDemographics.h */; };
+		50251CC21C0FBD5F00DD5922 /* HZDemographics.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CC01C0FBD5F00DD5922 /* HZDemographics.m */; };
+		50251CC61C11246400DD5922 /* HZALTargetingData.h in Headers */ = {isa = PBXBuildFile; fileRef = 50251CC41C11246400DD5922 /* HZALTargetingData.h */; };
+		50251CC71C11246400DD5922 /* HZALTargetingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CC51C11246400DD5922 /* HZALTargetingData.m */; };
 		50286DA81B9925D20005C44F /* HZErrorReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50286DA61B9925D20005C44F /* HZErrorReporter.h */; };
 		50286DA91B9925D20005C44F /* HZErrorReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50286DA71B9925D20005C44F /* HZErrorReporter.m */; };
 		502E03791BD0391C00872BA2 /* NSString+Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624818CBF58A0018A0B6 /* NSString+Tests.m */; };
@@ -731,6 +735,11 @@
 		502244B91BD0351D00279639 /* HZKIFTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZKIFTestCase.h; sourceTree = "<group>"; };
 		502244BA1BD0351D00279639 /* HZKIFTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZKIFTestCase.m; sourceTree = "<group>"; };
 		50251CB81C0F855900DD5922 /* HZMediatedNativeAdManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediatedNativeAdManager.m; sourceTree = "<group>"; };
+		50251CBF1C0FBD5F00DD5922 /* HZDemographics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZDemographics.h; sourceTree = "<group>"; };
+		50251CC01C0FBD5F00DD5922 /* HZDemographics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZDemographics.m; sourceTree = "<group>"; };
+		50251CC31C111C0200DD5922 /* HZDemographics_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZDemographics_Private.h; sourceTree = "<group>"; };
+		50251CC41C11246400DD5922 /* HZALTargetingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZALTargetingData.h; sourceTree = "<group>"; };
+		50251CC51C11246400DD5922 /* HZALTargetingData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZALTargetingData.m; sourceTree = "<group>"; };
 		50269FF219B65D9500CD7C88 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		50286DA61B9925D20005C44F /* HZErrorReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZErrorReporter.h; sourceTree = "<group>"; };
 		50286DA71B9925D20005C44F /* HZErrorReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZErrorReporter.m; sourceTree = "<group>"; };
@@ -2123,6 +2132,8 @@
 				50B46B2618F8B241005155B8 /* HZALIncentivizedInterstitialAd.m */,
 				50AC611C18FDD3E70046EBC6 /* HZALAdSize.h */,
 				50AC611D18FDD3E70046EBC6 /* HZALAdSize.m */,
+				50251CC41C11246400DD5922 /* HZALTargetingData.h */,
+				50251CC51C11246400DD5922 /* HZALTargetingData.m */,
 			);
 			name = Proxies;
 			sourceTree = "<group>";
@@ -2415,6 +2426,9 @@
 				50CF95AE1BFFA41900C3DBF6 /* HZFetchOptions_Private.h */,
 				99AF08561B8E701A00532AB7 /* HZFetchOptions.m */,
 				507A454A19BE317000C7AEEA /* Native Ads */,
+				50251CBF1C0FBD5F00DD5922 /* HZDemographics.h */,
+				50251CC31C111C0200DD5922 /* HZDemographics_Private.h */,
+				50251CC01C0FBD5F00DD5922 /* HZDemographics.m */,
 			);
 			name = "Public Interface";
 			sourceTree = "<group>";
@@ -2989,6 +3003,7 @@
 				50608AD01AF9650D00CFB9F6 /* HZMediationStarter.h in Headers */,
 				50AB1A3F1BD6F17600F14421 /* HZInMobiBannerAdapter.h in Headers */,
 				504D82441AAA26B3004695C8 /* HZBannerAd.h in Headers */,
+				50251CC11C0FBD5F00DD5922 /* HZDemographics.h in Headers */,
 				86C4916F1B2819C000A84B2C /* HZMRAIDOrientationProperties.h in Headers */,
 				509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */,
 				50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */,
@@ -3015,6 +3030,7 @@
 				508EB4EF1BE2B025004B3BD7 /* HZAdMobNativeAppInstallAdAdapter.h in Headers */,
 				8AA693151B1D13290074366D /* HZPaymentTransactionObserver.h in Headers */,
 				8680AC9F193ED2E60078B5CF /* HZTestDelegate.h in Headers */,
+				50251CC61C11246400DD5922 /* HZALTargetingData.h in Headers */,
 				866E39F31850089C00B6E431 /* HZIncentivizedAd.h in Headers */,
 				5053E7EE1AEAB94D0090889B /* HZWebViewPool.h in Headers */,
 				86C491751B2819C000A84B2C /* HZMRAIDServiceDelegate.h in Headers */,
@@ -3663,6 +3679,7 @@
 				509E8D3619B79F8200ABF2D2 /* HZEnums.m in Sources */,
 				508676941BE2AA3C0043F8F5 /* HZAdMobNativeRequester.m in Sources */,
 				506606BB1B867D0C00738B7D /* HZMediationPersistentConfig.m in Sources */,
+				50251CC21C0FBD5F00DD5922 /* HZDemographics.m in Sources */,
 				50F76C2E1BE0233B00B17287 /* HZMediatedNativeAdWrapperView.m in Sources */,
 				86CD0ECC17C3F7B00005BD3D /* HZAdsAPIClient.m in Sources */,
 				50CF95B21BFFE42900C3DBF6 /* HZGADNativeAdImageAdLoaderOptions.m in Sources */,
@@ -3800,6 +3817,7 @@
 				9930D7201B30F614003C3F3C /* HZVideoAdDisplayOptions.m in Sources */,
 				50666DA41B68381800995FE9 /* HZCachingService.m in Sources */,
 				506481A21BA38397008AF9B0 /* HZDefaultParameters.m in Sources */,
+				50251CC71C11246400DD5922 /* HZALTargetingData.m in Sources */,
 				508676901BE1AFCC0043F8F5 /* HZGADNativeContentAd.m in Sources */,
 				99D4C4401B389097004D24DE /* HZSKVASTUrlWithId.m in Sources */,
 				8AA693161B1D13290074366D /* HZPaymentTransactionObserver.m in Sources */,

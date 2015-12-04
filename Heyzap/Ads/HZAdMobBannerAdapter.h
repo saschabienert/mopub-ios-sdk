@@ -8,9 +8,10 @@
 
 #import "HZBannerAdapter.h"
 @class HZGADBannerView;
+@class HZGADRequest;
 
 @interface HZAdMobBannerAdapter : HZBannerAdapter
 
-- (instancetype)initWithAdUnitID:(NSString *)adUnitID options:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter;
+- (instancetype)initWithAdUnitID:(NSString *)adUnitID options:(HZBannerAdOptions *)options reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate parentAdapter:(HZBaseAdapter *)parentAdapter request:(HZGADRequest *)request;
 
 @end

@@ -13,8 +13,13 @@
 #import "HeyzapAds.h"
 #import "HeyzapMediation.h"
 #import "HZBaseAdapter_Internal.h"
+#import "HZUtils.h"
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
+
+NSString * const HZFallbackAdcLatitude = @"adc_latitude";
+NSString * const HZFallbackAdcLongitude = @"adc_longitude";
 
 @interface HZAdColonyAdapter() <HZAdColonyDelegate, HZAdColonyAdDelegate>
 
@@ -166,6 +171,18 @@
     }
 }
 
+#pragma mark - Demographic Information
+
+- (void)updatedLocation {
+    CLLocation *location = self.delegate.demographics.location;
+    if (location) {
+        [HZAdColony setUserMetadata:[[self class] adcolonyLatitudeKey]
+                          withValue:[NSString stringWithFormat:@"%g",location.coordinate.latitude]];
+        [HZAdColony setUserMetadata:[[self class] adcolonyLongitudeKey]
+                          withValue:[NSString stringWithFormat:@"%g",location.coordinate.longitude]];
+    }
+}
+
 #pragma mark - Errors
 
 - (NSString *)errorDescriptionForZoneStatus:(HZ_ADCOLONY_ZONE_STATUS)zoneStatus {
@@ -277,6 +294,14 @@ const NSTimeInterval kHZAdColonyInitializationToFetchInterval = 7.0;
     // unfortunately, adcolony doesn't tell us whether the ad was clicked or dismissed
     [self.delegate adapterDidFinishPlayingAudio:self];
     [self.delegate adapterDidDismissAd:self];
+}
+
++ (NSString *)adcolonyLatitudeKey {
+    return hzLookupStringConstant(@"ADC_SET_USER_LATITUDE") ?: HZFallbackAdcLatitude;
+}
+
++ (NSString *)adcolonyLongitudeKey {
+    return hzLookupStringConstant(@"ADC_SET_USER_LONGITUDE") ?: HZFallbackAdcLongitude;
 }
 
 @end
