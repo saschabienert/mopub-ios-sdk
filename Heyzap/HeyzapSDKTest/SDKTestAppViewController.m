@@ -812,7 +812,7 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void)showMediatedNativeAds {
-    MediatedNativeAdTableViewController *tvc = [[MediatedNativeAdTableViewController alloc] init];
+    MediatedNativeAdTableViewController *tvc = [[MediatedNativeAdTableViewController alloc] initWithTag:[self adTagText]];
     HZUINavigationController *navController = [[HZUINavigationController alloc] initWithRootViewController:tvc orientations:UIInterfaceOrientationMaskAll];
     [self presentViewController:navController animated:YES completion:nil];
 }

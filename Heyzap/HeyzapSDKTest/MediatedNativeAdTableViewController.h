@@ -10,4 +10,9 @@
 
 @interface MediatedNativeAdTableViewController : UITableViewController
 
+- (instancetype)initWithTag:(NSString *)tag;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+- (instancetype)initWithStyle:(UITableViewStyle)style NS_UNAVAILABLE;
+
 @end
