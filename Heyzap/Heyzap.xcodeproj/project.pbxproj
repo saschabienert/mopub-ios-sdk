@@ -110,6 +110,7 @@
 		50251CC21C0FBD5F00DD5922 /* HZDemographics.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CC01C0FBD5F00DD5922 /* HZDemographics.m */; };
 		50251CC61C11246400DD5922 /* HZALTargetingData.h in Headers */ = {isa = PBXBuildFile; fileRef = 50251CC41C11246400DD5922 /* HZALTargetingData.h */; };
 		50251CC71C11246400DD5922 /* HZALTargetingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CC51C11246400DD5922 /* HZALTargetingData.m */; };
+		50251D271C1645C000DD5922 /* HZMediatedNativeAdViewRegisterer.h in Headers */ = {isa = PBXBuildFile; fileRef = 50CF95BD1BFFFA7200C3DBF6 /* HZMediatedNativeAdViewRegisterer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50286DA81B9925D20005C44F /* HZErrorReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50286DA61B9925D20005C44F /* HZErrorReporter.h */; };
 		50286DA91B9925D20005C44F /* HZErrorReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50286DA71B9925D20005C44F /* HZErrorReporter.m */; };
 		502E03791BD0391C00872BA2 /* NSString+Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624818CBF58A0018A0B6 /* NSString+Tests.m */; };
@@ -2965,6 +2966,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50251D271C1645C000DD5922 /* HZMediatedNativeAdViewRegisterer.h in Headers */,
 				50251CC11C0FBD5F00DD5922 /* HZDemographics.h in Headers */,
 				50F76C0A1BDAF5CF00B17287 /* HZMediatedNativeAd.h in Headers */,
 				50CF95BE1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.h in Headers */,
