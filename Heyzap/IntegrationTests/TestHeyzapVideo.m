@@ -96,7 +96,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
     
     // Skip
     if (shouldSkip) {
-//        [tester waitForTimeInterval:3];
+//        [tester waitForTimeInterval:5];
 //        [tester waitForAbsenceOfViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
         
 //        [tester tapScreenAtPoint:CGPointMake(100, 100)];

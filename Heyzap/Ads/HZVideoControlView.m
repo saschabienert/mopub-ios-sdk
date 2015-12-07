@@ -67,6 +67,7 @@ NSString *const kHZSkipAccessibilityLabel = @"skip";
         _hideButton = [UIButton buttonWithType: UIButtonTypeCustom];
         _hideButton.accessibilityLabel = kHZSkipAccessibilityLabel;
         _hideButton.frame = CGRectMake(0.0, 0.0, 40.0, 40.0);
+        _hideButton.tag = 2001;
         [_hideButton setTitle: @"✕" forState: UIControlStateNormal];
         [_hideButton setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
         _hideButton.backgroundColor = [UIColor clearColor];

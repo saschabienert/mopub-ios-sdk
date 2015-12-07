@@ -54,7 +54,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   KIF:
-    :commit: 7b37e46df67f665599bc1828877716b10370bd9a
+    :commit: 2b3bcc8c2f16e6c793c95371b354f50044d17f49
     :git: https://github.com/MaxGabriel/KIF.git
 
 SPEC CHECKSUMS:
