@@ -14,8 +14,8 @@
 
 @implementation TestHeyzapVideo
 
-- (void)testCompletingIncentivizedVideo {
-    [self runIncentivizedAndSkip:NO];
+- (void)zztestCompletingIncentivizedVideo {
+//    [self runIncentivizedAndSkip:NO];
 }
 
 - (void)testSkippingIncentivizedVideo {
@@ -101,6 +101,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
         
 //        [tester tapScreenAtPoint:CGPointMake(100, 100)];
 //        [tester waitForTappableViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
+        NSLog(@"About to tap skip accessibility label");
         [tester tapViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
     }
     

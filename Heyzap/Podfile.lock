@@ -39,7 +39,7 @@ DEPENDENCIES:
   - HyprMX
   - HZChartboost
   - HZInMobi
-  - KIF
+  - KIF (from `https://github.com/MaxGabriel/KIF.git`)
   - Kiwi
   - Leadbolt
   - Masonry
@@ -47,6 +47,15 @@ DEPENDENCIES:
   - OHHTTPStubs
   - UnityAds
   - VungleSDK-iOS
+
+EXTERNAL SOURCES:
+  KIF:
+    :git: https://github.com/MaxGabriel/KIF.git
+
+CHECKOUT OPTIONS:
+  KIF:
+    :commit: d0ea83a8293dda99a1ac59cf104e11539b48067f
+    :git: https://github.com/MaxGabriel/KIF.git
 
 SPEC CHECKSUMS:
   AdColony: ab47c3e22be7843e08f90989381a222884be4a62
