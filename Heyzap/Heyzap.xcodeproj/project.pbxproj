@@ -106,7 +106,7 @@
 		502244B51BCF327C00279639 /* TestJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BEB18C96CE2003A7CB9 /* TestJSON.m */; };
 		502244BB1BD0351D00279639 /* HZKIFTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 502244BA1BD0351D00279639 /* HZKIFTestCase.m */; };
 		50251CB91C0F855900DD5922 /* HZMediatedNativeAdManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CB81C0F855900DD5922 /* HZMediatedNativeAdManager.m */; };
-		50251CC11C0FBD5F00DD5922 /* HZDemographics.h in Headers */ = {isa = PBXBuildFile; fileRef = 50251CBF1C0FBD5F00DD5922 /* HZDemographics.h */; };
+		50251CC11C0FBD5F00DD5922 /* HZDemographics.h in Headers */ = {isa = PBXBuildFile; fileRef = 50251CBF1C0FBD5F00DD5922 /* HZDemographics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50251CC21C0FBD5F00DD5922 /* HZDemographics.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CC01C0FBD5F00DD5922 /* HZDemographics.m */; };
 		50251CC61C11246400DD5922 /* HZALTargetingData.h in Headers */ = {isa = PBXBuildFile; fileRef = 50251CC41C11246400DD5922 /* HZALTargetingData.h */; };
 		50251CC71C11246400DD5922 /* HZALTargetingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CC51C11246400DD5922 /* HZALTargetingData.m */; };
@@ -2965,6 +2965,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50251CC11C0FBD5F00DD5922 /* HZDemographics.h in Headers */,
 				50F76C0A1BDAF5CF00B17287 /* HZMediatedNativeAd.h in Headers */,
 				50CF95BE1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.h in Headers */,
 				50F76C1F1BDFF00500B17287 /* HZFBNativeAdDelegate.h in Headers */,
@@ -3003,7 +3004,6 @@
 				50608AD01AF9650D00CFB9F6 /* HZMediationStarter.h in Headers */,
 				50AB1A3F1BD6F17600F14421 /* HZInMobiBannerAdapter.h in Headers */,
 				504D82441AAA26B3004695C8 /* HZBannerAd.h in Headers */,
-				50251CC11C0FBD5F00DD5922 /* HZDemographics.h in Headers */,
 				86C4916F1B2819C000A84B2C /* HZMRAIDOrientationProperties.h in Headers */,
 				509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */,
 				50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */,
