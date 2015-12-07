@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Heyzap. All rights reserved.
 //
 
+#import <CoreLocation/CoreLocation.h>
 #import "HZAdMobAdapter.h"
 #import "HZGADInterstitial.h"
 #import "HZGADRequest.h"
@@ -187,15 +188,26 @@ typedef NSString AdMobPlacementID;
     newAd.delegate = self.forwardingDelegate;
     [self setAd:newAd forMetadata:metadata];
     
-    HZGADRequest *request = [HZGADRequest request];
-    request.testDevices = @[ GAD_SIMULATOR_ID ];
-    [newAd loadRequest:request];
+    [newAd loadRequest:[self defaultRequest]];
 }
 
 - (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
     HZGADInterstitial *ad = [self adWithMetadata:options];
     [ad presentFromRootViewController:options.viewController];
+}
+
+- (HZGADRequest *)defaultRequest {
+    HZGADRequest *request = [HZGADRequest request];
+    request.testDevices = @[ GAD_SIMULATOR_ID ];
+    
+    CLLocation *const location = self.delegate.demographics.location;
+    if (location) {
+        [request setLocationWithLatitude:location.coordinate.latitude
+                               longitude:location.coordinate.longitude
+                                accuracy:location.horizontalAccuracy];
+    }
+    return request;
 }
 
 #pragma mark - Delegate callbacks
@@ -249,7 +261,7 @@ typedef NSString AdMobPlacementID;
 }
 
 - (HZBannerAdapter *)internalFetchBannerWithOptions:(HZBannerAdOptions *)options placementIDOverride:(nullable AdMobPlacementID *)placementIDOverride reportingDelegate:(id<HZBannerReportingDelegate>)reportingDelegate {
-    return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:(placementIDOverride ?: self.bannerAdUnitID) options:options reportingDelegate:reportingDelegate parentAdapter:self];
+    return [[HZAdMobBannerAdapter alloc] initWithAdUnitID:(placementIDOverride ?: self.bannerAdUnitID) options:options reportingDelegate:reportingDelegate parentAdapter:self request:[self defaultRequest]];
 }
 
 - (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {

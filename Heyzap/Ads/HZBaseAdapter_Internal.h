@@ -56,6 +56,15 @@
 
 - (BOOL)internalHasAdWithMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider;
 
+#pragma mark - Demographic Information Updates
+
+/**
+ *  Subclasses should override this to receive updates about notifications.
+ */
+- (void)updatedLocation;
+
+#pragma mark - Logging
+
 /**
  *  Subclasses can implement this method if they can turn logging on in the adapted SDK. This method will only be called on subclasses if they are already initialized. The method `isLoggingEnabled` can be called in this method to see if logging is on or not. The default implementation is empty.
  */

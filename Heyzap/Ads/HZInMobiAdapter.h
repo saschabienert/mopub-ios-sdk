@@ -10,4 +10,6 @@
 
 @interface HZInMobiAdapter : HZBaseAdapter
 
++ (NSDictionary *)extrasDictionary;
+
 @end

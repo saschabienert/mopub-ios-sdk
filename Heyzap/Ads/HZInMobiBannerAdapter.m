@@ -9,6 +9,7 @@
 #import "HZInMobiBannerAdapter.h"
 #import "HZIMBanner.h"
 #import "HZIMBannerDelegate.h"
+#import "HZInMobiAdapter.h"
 
 @interface HZInMobiBannerAdapter() <HZIMBannerDelegate>
 
@@ -32,6 +33,7 @@
         _banner = [[HZIMBanner alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)
                                         placementId:placementID
                                            delegate:self];
+        _banner.extras = [HZInMobiAdapter extrasDictionary];
         [_banner load];
     }
     return self;

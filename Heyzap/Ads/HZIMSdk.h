@@ -15,6 +15,8 @@ typedef NS_ENUM(NSInteger, HZIMSDKLogLevel) {
     kHZIMSDKLogLevelDebug
 };
 
+@class CLLocation;
+
 @interface HZIMSdk : HZClassProxy
 
 /**
@@ -34,5 +36,7 @@ typedef NS_ENUM(NSInteger, HZIMSDKLogLevel) {
  * @param desiredLogLevel The desired level of logs.
  */
 +(void)setLogLevel:(HZIMSDKLogLevel)desiredLogLevel;
+
++(void)setLocation:(CLLocation*)location;
 
 @end

@@ -16,10 +16,19 @@
 @interface MediatedNativeAdTableViewController()
 
 @property (nonatomic) NSMutableArray <HZMediatedNativeAd *> *ads;
+@property (nonatomic) NSString *tag;
 
 @end
 
 @implementation MediatedNativeAdTableViewController
+
+- (instancetype)initWithTag:(NSString *)tag {
+    self = [super initWithStyle:UITableViewStylePlain];
+    if (self) {
+        _tag = tag;
+    }
+    return self;
+}
 
 #pragma mark - Properties
 
@@ -56,13 +65,14 @@
     
     [networks enumerateObjectsUsingBlock:^(NSString * _Nonnull network, NSUInteger idx, __unused BOOL * _Nonnull stop) {
         HZFetchOptions *options = [[HZFetchOptions alloc] init];
+        options.tag = self.tag;
         options.presentingViewController = self;
         options.requestingAdType = HZAdTypeNative;
         NSDictionary *const additionalParameters = @{@"network": network};
         options.additionalParameters = additionalParameters;
         options.completion = ^(BOOL success, NSError *error) {
             NSError *nativeError;
-            HZMediatedNativeAd *ad = [HZMediatedNativeAdManager getNextNativeAdForTag:nil
+            HZMediatedNativeAd *ad = [HZMediatedNativeAdManager getNextNativeAdForTag:self.tag
                                                                      additionalParams:additionalParameters
                                                                                 error:&nativeError];
             if (ad) {

@@ -16,6 +16,7 @@
 #import "HZIMInterstitialDelegate.h"
 #import "HZInMobiBannerAdapter.h"
 #import "HZIMRequestStatus.h"
+#import "HZDemographics_Private.h"
 
 typedef NSNumber InMobiAdUnitID;
 
@@ -86,6 +87,9 @@ typedef NSNumber InMobiAdUnitID;
     [HZIMSdk initWithAccountID:self.accountID];
     [HZIMSdk setLogLevel:kHZIMSDKLogLevelError];
     
+    // Demographic Information
+    [self updatedLocation];
+    
     return nil;
 }
 
@@ -128,15 +132,23 @@ typedef NSNumber InMobiAdUnitID;
     
     HZIMInterstitial *ad = self.adDictionary[@(options.creativeType)];
     if (!ad) {
-        ad = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
-        [ad load];
-        self.adDictionary[@(options.creativeType)] = ad;
+        self.adDictionary[@(options.creativeType)] = [self instantiateAdWithPlacementID:placementID];
     }
     
     if (options.creativeType == HZCreativeTypeIncentivized && self.backupRewardedVideo == nil) {
-        self.backupRewardedVideo = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
-        [self.backupRewardedVideo load];
+        self.backupRewardedVideo = [self instantiateAdWithPlacementID:placementID];
     }
+}
+
+- (HZIMInterstitial *)instantiateAdWithPlacementID:(const long long)placementID {
+    HZIMInterstitial *ad = [[HZIMInterstitial alloc] initWithPlacementId:placementID delegate:self];
+    ad.extras = [[self class] extrasDictionary];
+    [ad load];
+    return ad;
+}
+
++ (NSDictionary *)extrasDictionary {
+    return @{@"tp": @"c_heyzap", @"tp-ver": SDK_VERSION};;
 }
 
 - (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
@@ -167,6 +179,12 @@ typedef NSNumber InMobiAdUnitID;
     } else {
         return nil;
     }
+}
+
+#pragma mark - Demographics
+
+- (void)updatedLocation {
+    [HZIMSdk setLocation:self.delegate.demographics.location];
 }
 
 #pragma mark - Logging

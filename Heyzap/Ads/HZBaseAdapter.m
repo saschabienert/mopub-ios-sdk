@@ -27,6 +27,7 @@
 #import "HZDispatch.h"
 #import "HZNativeAdAdapter.h"
 #import "HZAdapterFetchOptions.h"
+#import "HZDemographics_Private.h"
 
 @interface HZBaseAdapter()
 @property (nonatomic, strong) NSMutableDictionary<HZCreativeTypeObject *, NSNumber *> *latestMediationScores;
@@ -113,6 +114,12 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
     return nil;
 }
 
+#pragma mark - Demographic Information Updates
+
+- (void)updatedLocation {
+    // Subclasses should override if they want to pass demographic information to 3rd party networks.
+}
+
 #pragma mark - Fetch error storage/reporting
 
 // default implementation only sorts errors based on creativeType. for subclasses that have errors that need to be sorted in a more simple/complex manner (i.e.: via creativeType and placementID for adapters that utilize placementID overrides, or via just one object for adapters that don't support multiple creativeTypes), provide your own implementation
@@ -192,6 +199,10 @@ NSTimeInterval const kHZIsAvailablePollIntervalSecondsDefault = 1;
         if (!error && !self.isInitialized) {
             self.isInitialized = YES;
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loggingChanged:) name:kHZLogThirdPartyLoggingEnabledChangedNotification object:[HZLog class]];
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(updatedLocation)
+                                                         name:HZDemographicsUpdatedLocation
+                                                       object:self.delegate.demographics];
         }
     });
     return error;

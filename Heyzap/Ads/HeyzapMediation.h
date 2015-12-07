@@ -36,6 +36,7 @@
 @property (nonatomic, readonly) HZSegmentationController *segmentationController;
 @property (nonatomic, readonly) HZMediationPersistentConfig *persistentConfig;
 @property (nonatomic, readonly) HZErrorReporter *errorReporter;
+@property (nonatomic, readonly) HZDemographics *demographics;
 
 + (instancetype)sharedInstance;
 
