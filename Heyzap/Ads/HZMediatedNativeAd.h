@@ -29,7 +29,17 @@ typedef NS_ENUM(NSUInteger, HZPreferredImageOrientation) {
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ *  A notification sent when the user sees the mediated native ad. The `object` associated with the notification is the `HZMediatedNativeAd` instance.
+ *
+ *  @see hasHadImpression
+ */
 extern NSString * const HZMediatedNativeAdImpressionNotification;
+/**
+ *  A notification sent when the mediated native ad is clicked. The `object` associated with the notification is the `HZMediatedNativeAd` instance.
+ *
+ *  @see hasBeenClicked
+ */
 extern NSString * const HZMediatedNativeAdClickNotification;
 
 @protocol HZMediatedNativeAdViewRegisterer;
@@ -129,7 +139,16 @@ extern NSString * const HZMediatedNativeAdClickNotification;
  */
 @property (nonatomic, readonly, nonnull) id underlyingNativeAd;
 
+/**
+ *  Whether the user has seen the ad.
+ */
 @property (nonatomic, readonly) BOOL hasHadImpression;
+
+/**
+ *  Whether the ad has been clicked yet.
+ *
+ *  @warning Because AdMob does not provide enough information to distinguish a click on the ad choices view and a click on the native ad content, all clicks are assumed to be on the native ad content.
+ */
 @property (nonatomic, readonly) BOOL hasBeenClicked;
 
 @property (nonatomic, readonly, nonnull) NSString *tag;
