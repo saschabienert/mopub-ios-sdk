@@ -72,7 +72,7 @@ NSString *const kHZSkipAccessibilityLabel = @"skip";
         [_hideButton setTitle: @"✕" forState: UIControlStateNormal];
         [_hideButton setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
         _hideButton.backgroundColor = [UIColor clearColor];
-        _hideButton.titleLabel.font = [UIFont boldSystemFontOfSize: 20.0];
+        _hideButton.titleLabel.font = [UIFont boldSystemFontOfSize: (hzUseLargeHideButton ? 40 : 20)];
         _hideButton.layer.opacity = 0.8f;
         _hideButton.layer.shadowColor = [[UIColor blackColor] CGColor];
         _hideButton.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
