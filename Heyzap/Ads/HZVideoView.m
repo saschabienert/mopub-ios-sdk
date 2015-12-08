@@ -170,7 +170,7 @@
         [self.controlView.installButton setAlpha:alpha];
     }completion:^(BOOL finished){
         // if we're showing the controls, set a timer to hide them automatically later
-        if(animateIn) {
+        if(animateIn && hzFadeOutSkipLabel) {
             self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: kHZVideoViewAutoFadeOutControlsTimeSeconds target: self selector: @selector(animationTimerDidFire:) userInfo: nil repeats: NO];
         }
     }];
@@ -417,6 +417,12 @@
     }
     
     return NO;
+}
+
+static BOOL hzFadeOutSkipLabel = YES;
+
++ (void)setFadeOutSkipLabel:(BOOL)fadeOutSkipLabel {
+    hzFadeOutSkipLabel = fadeOutSkipLabel;
 }
 
 @end

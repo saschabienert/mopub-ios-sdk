@@ -10,6 +10,7 @@
 #import "HZFetchOptions.h"
 #import "HeyzapMediation.h"
 #import "HZVideoControlView.h"
+#import "HZVideoView.h"
 #import "OHHTTPStubsResponse+JSON.h"
 
 @implementation TestHeyzapVideo
@@ -27,6 +28,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
 - (void)runIncentivizedAndSkip:(BOOL)shouldSkip
 {
     if (shouldSkip) {
+        [HZVideoView setFadeOutSkipLabel:NO];
         [HZVideoControlView setUseLargeHideButton:YES];
     }
     
@@ -92,6 +94,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
     
     // Skip
     if (shouldSkip) {
+        [tester waitForTimeInterval:3];
         [tester tapViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
     }
     
@@ -106,6 +109,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
     } else {
         [MKTVerify(mockDelegate) didCompleteAdWithTag:tag];
     }
+    [HZVideoView setFadeOutSkipLabel:YES];
     [HZVideoControlView setUseLargeHideButton:NO];
 }
 
