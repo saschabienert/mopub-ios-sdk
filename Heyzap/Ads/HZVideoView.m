@@ -171,7 +171,7 @@
     }completion:^(BOOL finished){
         // if we're showing the controls, set a timer to hide them automatically later
         if(animateIn) {
-//            self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: kHZVideoViewAutoFadeOutControlsTimeSeconds target: self selector: @selector(animationTimerDidFire:) userInfo: nil repeats: NO];
+            self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: kHZVideoViewAutoFadeOutControlsTimeSeconds target: self selector: @selector(animationTimerDidFire:) userInfo: nil repeats: NO];
         }
     }];
     

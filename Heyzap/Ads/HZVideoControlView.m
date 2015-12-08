@@ -65,14 +65,10 @@ NSString *const kHZSkipAccessibilityLabel = @"skip";
         [self addSubview: _skipButton];
         
         const CGFloat hideButtonSide = hzUseLargeHideButton ? 40.0 : 80.0;
-        if (hzUseLargeHideButton) {
-            NSLog(@"Using large hide button for tests");
-        }
         
         _hideButton = [UIButton buttonWithType: UIButtonTypeCustom];
         _hideButton.accessibilityLabel = kHZSkipAccessibilityLabel;
         _hideButton.frame = CGRectMake(0.0, 0.0, hideButtonSide, hideButtonSide);
-        _hideButton.tag = 2001;
         [_hideButton setTitle: @"✕" forState: UIControlStateNormal];
         [_hideButton setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
         _hideButton.backgroundColor = [UIColor clearColor];
