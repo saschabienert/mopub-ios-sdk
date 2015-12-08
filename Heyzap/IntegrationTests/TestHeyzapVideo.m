@@ -26,6 +26,9 @@ const int kCrossPromoVideoCreativeID = 6109031;
 
 - (void)runIncentivizedAndSkip:(BOOL)shouldSkip
 {
+    if (shouldSkip) {
+        [HZVideoControlView setUseLargeHideButton:YES];
+    }
     [OHHTTPStubs onStubActivation:^(NSURLRequest * _Nonnull request, id<OHHTTPStubsDescriptor>  _Nonnull stub) {
         NSLog(@"Stubbing request: %@",request.URL.path);
     }];
@@ -116,6 +119,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
     } else {
         [MKTVerify(mockDelegate) didCompleteAdWithTag:tag];
     }
+    [HZVideoControlView setUseLargeHideButton:NO];
 }
 
 @end
