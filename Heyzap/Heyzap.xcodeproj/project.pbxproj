@@ -106,10 +106,11 @@
 		502244B51BCF327C00279639 /* TestJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 509B5BEB18C96CE2003A7CB9 /* TestJSON.m */; };
 		502244BB1BD0351D00279639 /* HZKIFTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 502244BA1BD0351D00279639 /* HZKIFTestCase.m */; };
 		50251CB91C0F855900DD5922 /* HZMediatedNativeAdManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CB81C0F855900DD5922 /* HZMediatedNativeAdManager.m */; };
-		50251CC11C0FBD5F00DD5922 /* HZDemographics.h in Headers */ = {isa = PBXBuildFile; fileRef = 50251CBF1C0FBD5F00DD5922 /* HZDemographics.h */; };
+		50251CC11C0FBD5F00DD5922 /* HZDemographics.h in Headers */ = {isa = PBXBuildFile; fileRef = 50251CBF1C0FBD5F00DD5922 /* HZDemographics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50251CC21C0FBD5F00DD5922 /* HZDemographics.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CC01C0FBD5F00DD5922 /* HZDemographics.m */; };
 		50251CC61C11246400DD5922 /* HZALTargetingData.h in Headers */ = {isa = PBXBuildFile; fileRef = 50251CC41C11246400DD5922 /* HZALTargetingData.h */; };
 		50251CC71C11246400DD5922 /* HZALTargetingData.m in Sources */ = {isa = PBXBuildFile; fileRef = 50251CC51C11246400DD5922 /* HZALTargetingData.m */; };
+		50251D271C1645C000DD5922 /* HZMediatedNativeAdViewRegisterer.h in Headers */ = {isa = PBXBuildFile; fileRef = 50CF95BD1BFFFA7200C3DBF6 /* HZMediatedNativeAdViewRegisterer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50286DA81B9925D20005C44F /* HZErrorReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50286DA61B9925D20005C44F /* HZErrorReporter.h */; };
 		50286DA91B9925D20005C44F /* HZErrorReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 50286DA71B9925D20005C44F /* HZErrorReporter.m */; };
 		502E03791BD0391C00872BA2 /* NSString+Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50AA624818CBF58A0018A0B6 /* NSString+Tests.m */; };
@@ -475,6 +476,7 @@
 		8AA693161B1D13290074366D /* HZPaymentTransactionObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA693141B1D13290074366D /* HZPaymentTransactionObserver.m */; };
 		990300B41BA3939B008D9AEF /* HZBaseAdapter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 990300B31BA39399008D9AEF /* HZBaseAdapter_Internal.h */; };
 		990392011BD18C2A0034CCF8 /* elevator_music.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 990392001BD18C2A0034CCF8 /* elevator_music.mp3 */; };
+		9927BA141C1661B000E8D1D3 /* HZFetchOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 99AF08551B8E700B00532AB7 /* HZFetchOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9930D7201B30F614003C3F3C /* HZVideoAdDisplayOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9930D71F1B30F614003C3F3C /* HZVideoAdDisplayOptions.m */; };
 		9930D7221B30F626003C3F3C /* HZVideoAdDisplayOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9930D7211B30F626003C3F3C /* HZVideoAdDisplayOptions.h */; };
 		9934559C1BC83F760089C55C /* HZMediationTestActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9934559A1BC83F760089C55C /* HZMediationTestActivityViewController.h */; };
@@ -2965,6 +2967,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50251D271C1645C000DD5922 /* HZMediatedNativeAdViewRegisterer.h in Headers */,
+				50251CC11C0FBD5F00DD5922 /* HZDemographics.h in Headers */,
 				50F76C0A1BDAF5CF00B17287 /* HZMediatedNativeAd.h in Headers */,
 				50CF95BE1BFFFA7200C3DBF6 /* HZMediatedNativeAdManager.h in Headers */,
 				50F76C1F1BDFF00500B17287 /* HZFBNativeAdDelegate.h in Headers */,
@@ -3003,7 +3007,6 @@
 				50608AD01AF9650D00CFB9F6 /* HZMediationStarter.h in Headers */,
 				50AB1A3F1BD6F17600F14421 /* HZInMobiBannerAdapter.h in Headers */,
 				504D82441AAA26B3004695C8 /* HZBannerAd.h in Headers */,
-				50251CC11C0FBD5F00DD5922 /* HZDemographics.h in Headers */,
 				86C4916F1B2819C000A84B2C /* HZMRAIDOrientationProperties.h in Headers */,
 				509B04371A44AA0300EC3ACF /* HZNativeAdImage.h in Headers */,
 				50ECA1C518DB618E006284AB /* HeyzapMediation.h in Headers */,
@@ -3166,6 +3169,7 @@
 				506481A51BA38583008AF9B0 /* HZMediationJSONAPIClient.h in Headers */,
 				8680AC9B193ED2DC0078B5CF /* HZDelegateProxy.h in Headers */,
 				86C491711B2819C000A84B2C /* HZMRAIDCommand.h in Headers */,
+				9927BA141C1661B000E8D1D3 /* HZFetchOptions.h in Headers */,
 				50AB1A2F1BD5C01700F14421 /* HZIMInterstitial.h in Headers */,
 				998B1C191B84F9AD003C1437 /* HZCreativeType.h in Headers */,
 				86FF907D185842D900BC48BF /* HZQueue.h in Headers */,
