@@ -476,6 +476,7 @@
 		8AA693161B1D13290074366D /* HZPaymentTransactionObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA693141B1D13290074366D /* HZPaymentTransactionObserver.m */; };
 		990300B41BA3939B008D9AEF /* HZBaseAdapter_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 990300B31BA39399008D9AEF /* HZBaseAdapter_Internal.h */; };
 		990392011BD18C2A0034CCF8 /* elevator_music.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 990392001BD18C2A0034CCF8 /* elevator_music.mp3 */; };
+		9927BA141C1661B000E8D1D3 /* HZFetchOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 99AF08551B8E700B00532AB7 /* HZFetchOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9930D7201B30F614003C3F3C /* HZVideoAdDisplayOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9930D71F1B30F614003C3F3C /* HZVideoAdDisplayOptions.m */; };
 		9930D7221B30F626003C3F3C /* HZVideoAdDisplayOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9930D7211B30F626003C3F3C /* HZVideoAdDisplayOptions.h */; };
 		9934559C1BC83F760089C55C /* HZMediationTestActivityViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9934559A1BC83F760089C55C /* HZMediationTestActivityViewController.h */; };
@@ -3168,6 +3169,7 @@
 				506481A51BA38583008AF9B0 /* HZMediationJSONAPIClient.h in Headers */,
 				8680AC9B193ED2DC0078B5CF /* HZDelegateProxy.h in Headers */,
 				86C491711B2819C000A84B2C /* HZMRAIDCommand.h in Headers */,
+				9927BA141C1661B000E8D1D3 /* HZFetchOptions.h in Headers */,
 				50AB1A2F1BD5C01700F14421 /* HZIMInterstitial.h in Headers */,
 				998B1C191B84F9AD003C1437 /* HZCreativeType.h in Headers */,
 				86FF907D185842D900BC48BF /* HZQueue.h in Headers */,
