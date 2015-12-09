@@ -21,6 +21,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [HZLog setDebugLevel:HZDebugLevelVerbose];
     [HeyzapAds startWithPublisherID:@"1234" andOptions:HZAdOptionsDisableAutoPrefetching];
     
     // TODO: Use a separate bundle ID for the IntegrationTestHost so that files on disk aren't shared between the test app and the integration tests.
