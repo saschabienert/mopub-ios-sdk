@@ -88,13 +88,13 @@ const int kCrossPromoVideoCreativeID = 6109031;
     [MKTVerify(mockDelegate) didReceiveAdWithTag:tag];
     
     // Show
-    [HZIncentivizedAd showForTag:tag];
-    [tester waitForViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
+    [system waitForNotificationName:HZMediationDidShowAdNotification object:nil whileExecutingBlock:^{
+        [HZIncentivizedAd showForTag:tag];
+    }];
     [MKTVerify(mockDelegate) didShowAdWithTag:tag];
     
     // Skip
     if (shouldSkip) {
-        [tester waitForTimeInterval:3];
         [tester tapViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
     }
     
