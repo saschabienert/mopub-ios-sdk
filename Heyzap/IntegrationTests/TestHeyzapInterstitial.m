@@ -28,7 +28,7 @@
 const int kCrossPromoPortraitFullscreenCreativeID = 6136623;
 
 
-- (void)testShowingAndClosingHeyzapInterstitial
+- (void)zztestShowingAndClosingHeyzapInterstitial
 {
     [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:[TestJSON jsonForResource:@"start"]];
     [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:[TestJSON jsonForResource:@"mediate"]];

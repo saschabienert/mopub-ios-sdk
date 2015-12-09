@@ -28,7 +28,7 @@ target :"Ads Tests", :exclusive => true do # Unit Tests
 end
 
 target 'IntegrationTests', :exclusive => true do
-  pod 'KIF', :configurations => ['Debug']
+  pod 'KIF', :configurations => ['Debug'], :git => "https://github.com/MaxGabriel/KIF.git"
   pod 'OCMockito'
   pod 'OHHTTPStubs'
 end
