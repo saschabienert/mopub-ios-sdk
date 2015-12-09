@@ -2,7 +2,7 @@ PODS:
   - AdColony (2.6.0)
   - AppLovin (3.1.6)
   - FacebookAudienceNetwork (4.8.0)
-  - Google-Mobile-Ads-SDK (7.5.2)
+  - Google-Mobile-Ads-SDK (7.6.0)
   - HyprMX (68)
   - HZChartboost (6.0.1)
   - HZInMobi (5.0.2)
@@ -29,7 +29,7 @@ PODS:
     - OHHTTPStubs/Core
   - OHHTTPStubs/OHPathHelpers (4.6.0)
   - UnityAds (1.5.3)
-  - VungleAdvertiserSDK (3.2.0)
+  - VungleSDK-iOS (3.2.0.1)
 
 DEPENDENCIES:
   - AdColony
@@ -46,13 +46,13 @@ DEPENDENCIES:
   - OCMockito
   - OHHTTPStubs
   - UnityAds
-  - VungleAdvertiserSDK
+  - VungleSDK-iOS
 
 SPEC CHECKSUMS:
   AdColony: ab47c3e22be7843e08f90989381a222884be4a62
   AppLovin: 2b0f74bb4aff2594a618428e8000013ad232efe6
   FacebookAudienceNetwork: bd18ab1e4a2968cd10f7e6ba7d2e3ba4454e9b77
-  Google-Mobile-Ads-SDK: 24a8ddfc0bcfec281960c5d88f75327df0d86b00
+  Google-Mobile-Ads-SDK: 0290020329c61183c4685304264b73382bc49fb4
   HyprMX: 626dcce6c83a9856abeeef644542bc2cd058770e
   HZChartboost: bb01521c0cebf9dbbe979f642b9934923e18512e
   HZInMobi: 595afc6c2784f66e3788c85aadf803aa870532e6
@@ -64,6 +64,6 @@ SPEC CHECKSUMS:
   OCMockito: f92ad4c6fac2841a88558879cfe517c40aebf91e
   OHHTTPStubs: cb1aefbbeb4de4e741644455d4b945538e5248a2
   UnityAds: 21da73c678c2db60f9495b28bdfd24fca78703d6
-  VungleAdvertiserSDK: c3ece1bf66a7f34688cfed832e2b12e321bbed03
+  VungleSDK-iOS: e18cf2f47cf0abe096d4b162f583bd197de1ea28
 
 COCOAPODS: 0.39.0
