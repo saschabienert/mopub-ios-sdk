@@ -124,6 +124,8 @@ const int kCrossPromoVideoCreativeID = 6109031;
     [tester tapViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
     [tester waitForAbsenceOfViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
     
+    [tester waitForTimeInterval:1]; // Give time for notifications to come.
+    
     [MKTVerify(mockDelegate) didHideAdWithTag:tag];
     if (shouldSkip) {
         [MKTVerify(mockDelegate) didFailToCompleteAdWithTag:tag];
