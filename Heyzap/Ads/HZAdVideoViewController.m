@@ -87,6 +87,10 @@
     [super showWithOptions:options];
 }
 
+- (void)skipVideo {
+    [self closeAdView:self.videoView];
+}
+
 - (void) closeAdView:(UIView *)adView {
     switch (adView.tag) {
         case kHZVideoViewTag:

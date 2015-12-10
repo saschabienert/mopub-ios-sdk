@@ -17,4 +17,6 @@
 - (void) showWithOptions:(HZShowOptions *)options;
 - (void) hide;
 
+- (void)skipVideo;
+
 @end

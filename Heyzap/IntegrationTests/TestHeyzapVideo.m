@@ -12,6 +12,7 @@
 #import "HZVideoControlView.h"
 #import "HZVideoView.h"
 #import "OHHTTPStubsResponse+JSON.h"
+#import "HZAdVideoViewController.h"
 
 @implementation TestHeyzapVideo
 
@@ -64,6 +65,12 @@ const int kCrossPromoVideoCreativeID = 6109031;
         return [[OHHTTPStubsResponse alloc] initWithFileURL:url statusCode:200 headers:@{@"content-type":@"text/css"}];
     }];
     
+    // Events
+    [OHHTTPStubs stubRequestContainingString:@"/in_game_api/ads/register_impression"
+                                    withJSON:@{@"status":@200}];
+    [OHHTTPStubs stubRequestContainingString:@"/in_game_api/ads/register_click"
+                                    withJSON:@{@"status":@200}];
+    
     NSString *const filename = shouldSkip ? @"ten_second_cross_promo_video" : @"three_second_cross_promo_video";
     [OHHTTPStubs stubRequestContainingString:@"930153bd01e935dd75a7f803f7b33f33-h264_android_ld"
                                withVideoFile:filename];
@@ -93,11 +100,24 @@ const int kCrossPromoVideoCreativeID = 6109031;
     }];
     [MKTVerify(mockDelegate) didShowAdWithTag:tag];
     
-    // Skip
     if (shouldSkip) {
-        NSLog(@"About to tap skip label");
-        [tester tapViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
+        [system runBlock:^KIFTestStepResult(NSError *__autoreleasing *error) {
+            HZAdVideoViewController *videoController = [self findVideoViewController];
+            if (videoController) {
+                [videoController skipVideo];
+                return KIFTestStepResultSuccess;
+            } else {
+                NSParameterAssert(error);
+                *error = [NSError errorWithDomain:@"Didn't find HZAdVideoViewController" code:1 userInfo:nil];
+                return KIFTestStepResultFailure;
+            }
+        }];
     }
+    // Skip
+//    if (shouldSkip) {
+//        NSLog(@"About to tap skip label");
+//        [tester tapViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
+//    }
     
     // Close
     [tester waitForViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
@@ -112,6 +132,16 @@ const int kCrossPromoVideoCreativeID = 6109031;
     }
     [HZVideoView setFadeOutSkipLabel:YES];
     [HZVideoControlView setUseLargeHideButton:NO];
+}
+
+- (HZAdVideoViewController *)findVideoViewController {
+    UIViewController *root = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+    id presented = root.presentedViewController;
+    if ([presented isKindOfClass:[HZAdVideoViewController class]]) {
+        return presented;
+    } else {
+        return nil;
+    }
 }
 
 @end
