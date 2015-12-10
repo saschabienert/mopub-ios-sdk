@@ -135,14 +135,10 @@
     switch(tag) {
         case kHZWebViewTag:
             [self.view bringSubviewToFront: self.webView];
-            self.webView.hidden = NO;
-            self.videoView.hidden = YES;
             break;
         case kHZVideoViewTag:
         default:
             [self.view bringSubviewToFront: self.videoView];
-            self.videoView.hidden = NO;
-            self.webView.hidden = YES;
             break;
     }
 }
@@ -167,6 +163,7 @@
 
     self.webView.frame = self.view.bounds;
     self.webView.hidden = YES;
+    self.webView.layer.opacity = 0.0f;
     
     self.videoView.frame = self.view.bounds;
     self.videoView.hidden = YES;
@@ -185,6 +182,8 @@
     }
 
     [UIView animateWithDuration: 0.3 delay: 0.0 options: UIViewAnimationOptionCurveEaseIn animations:^{
+        self.webView.hidden = NO;
+        self.webView.layer.opacity = 1.0f;
         self.videoView.hidden = NO;
         self.videoView.layer.opacity = 1.0f;
     } completion:^(BOOL finished) {

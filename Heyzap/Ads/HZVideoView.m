@@ -335,6 +335,7 @@
         }
     } else {
         if (self.actionDelegate != nil) {
+            NSLog(@"Video finished, calling on action completed");
             [self.actionDelegate performSelector: @selector(onActionCompleted:) withObject: self];
         }
     }
