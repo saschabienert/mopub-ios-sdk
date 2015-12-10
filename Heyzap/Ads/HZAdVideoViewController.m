@@ -88,6 +88,7 @@
 }
 
 - (void)skipVideo {
+    NSLog(@"Manually skipping video, current position is: %g",self.videoView.player.duration);
     [self closeAdView:self.videoView];
 }
 

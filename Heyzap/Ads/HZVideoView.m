@@ -324,6 +324,21 @@
 - (void) mediaPlayerPlaybackDidFinish: (NSNotification *) notification {
     [self.player setFullscreen: NO animated: NO];
     
+    switch ((MPMovieFinishReason)[notification.userInfo objectForKey: MPMoviePlayerPlaybackDidFinishReasonUserInfoKey]) {
+        case MPMovieFinishReasonPlaybackEnded: {
+            NSLog(@"Movie playback ended");
+            break;
+        }
+        case MPMovieFinishReasonPlaybackError: {
+            NSLog(@"Movie playback error");
+            break;
+        }
+        case MPMovieFinishReasonUserExited: {
+            NSLog(@"Movie playback user exit");
+            break;
+        }
+    }
+    
     if ((MPMovieFinishReason)[notification.userInfo objectForKey: MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] == MPMovieFinishReasonPlaybackError) {
         
         [HZLog debug: [NSString stringWithFormat: @"Reason: %@", notification.userInfo]];
