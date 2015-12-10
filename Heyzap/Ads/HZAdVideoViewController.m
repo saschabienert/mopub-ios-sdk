@@ -101,6 +101,7 @@
             self.didStartVideo = NO;
             
             if (self.ad.displayOptions.postRollInterstitial) {
+                NSLog(@"There was a post roll");
                 [self.videoView pause];
                 [self switchToViewWithTag: kHZWebViewTag];
             } else {

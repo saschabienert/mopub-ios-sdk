@@ -70,6 +70,9 @@ const int kCrossPromoVideoCreativeID = 6109031;
                                     withJSON:@{@"status":@200}];
     [OHHTTPStubs stubRequestContainingString:@"/in_game_api/ads/register_click"
                                     withJSON:@{@"status":@200}];
+    [OHHTTPStubs stubRequestContainingString:@"/in_game_api/ads/event/video_impression_complete"
+                                    withJSON:@{@"status":@200}];
+    
     
     NSString *const filename = shouldSkip ? @"ten_second_cross_promo_video" : @"three_second_cross_promo_video";
     [OHHTTPStubs stubRequestContainingString:@"930153bd01e935dd75a7f803f7b33f33-h264_android_ld"
@@ -105,6 +108,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
             HZAdVideoViewController *videoController = [self findVideoViewController];
             if (videoController) {
                 [videoController skipVideo];
+                NSLog(@"Skipped video");
                 return KIFTestStepResultSuccess;
             } else {
                 NSParameterAssert(error);
@@ -124,7 +128,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
     [tester tapViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
     [tester waitForAbsenceOfViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
     
-    [tester waitForTimeInterval:1]; // Give time for notifications to come.
+    // [tester waitForTimeInterval:1]; // Give time for notifications to come.
     
     [MKTVerify(mockDelegate) didHideAdWithTag:tag];
     if (shouldSkip) {
