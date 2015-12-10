@@ -64,15 +64,13 @@ NSString *const kHZSkipAccessibilityLabel = @"skip";
         _skipButton.layer.shadowOpacity = 1.0f;
         [self addSubview: _skipButton];
         
-        const CGFloat hideButtonSide = hzUseLargeHideButton ? 40.0 : 80.0;
-        
         _hideButton = [UIButton buttonWithType: UIButtonTypeCustom];
         _hideButton.accessibilityLabel = kHZSkipAccessibilityLabel;
-        _hideButton.frame = CGRectMake(0.0, 0.0, hideButtonSide, hideButtonSide);
+        _hideButton.frame = CGRectMake(0.0, 0.0, 40.0, 40.0);
         [_hideButton setTitle: @"✕" forState: UIControlStateNormal];
         [_hideButton setTitleColor: [UIColor whiteColor] forState: UIControlStateNormal];
         _hideButton.backgroundColor = [UIColor clearColor];
-        _hideButton.titleLabel.font = [UIFont boldSystemFontOfSize: (hzUseLargeHideButton ? 40 : 20)];
+        _hideButton.titleLabel.font = [UIFont boldSystemFontOfSize: 20.0];
         _hideButton.layer.opacity = 0.8f;
         _hideButton.layer.shadowColor = [[UIColor blackColor] CGColor];
         _hideButton.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
@@ -186,12 +184,6 @@ NSString *const kHZSkipAccessibilityLabel = @"skip";
 - (void) setInstallButtonText:(NSString *)installButtonText {
     _installButtonText = installButtonText;
     [self.installButton setTitle: _installButtonText forState: UIControlStateNormal];
-}
-
-static BOOL hzUseLargeHideButton = NO;
-
-+ (void)setUseLargeHideButton:(BOOL)useLargeHideButton {
-    hzUseLargeHideButton = useLargeHideButton;
 }
 
 @end

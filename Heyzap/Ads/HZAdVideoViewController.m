@@ -88,7 +88,7 @@
 }
 
 - (void)skipVideo {
-    NSLog(@"Manually skipping video, current position is: %g",self.videoView.player.currentPlaybackTime);
+    NSLog(@"Manually skipping video for integration tests");
     [self closeAdView:self.videoView];
 }
 
@@ -102,7 +102,6 @@
             self.didStartVideo = NO;
             
             if (self.ad.displayOptions.postRollInterstitial) {
-                NSLog(@"There was a post roll");
                 [self.videoView pause];
                 [self switchToViewWithTag: kHZWebViewTag];
             } else {
@@ -120,12 +119,9 @@
     [self.ad onCompleteWithViewDuration: self.videoView.playbackTime andTotalDuration: self.videoView.videoDuration andFinished: self.didFinishVideo];
     
     if (self.ad.showableCreativeType == HZCreativeTypeIncentivized) {
-        NSLog(@"Was creative type incentivized");
         if (self.didFinishVideo) {
-            NSLog(@"Did finish video");
             [HZAdsManager postNotificationName:kHeyzapDidCompleteIncentivizedAd infoProvider:self.ad];
         } else {
-            NSLog(@"Failed to complete incent ad");
             [HZAdsManager postNotificationName:kHeyzapDidFailToCompleteIncentivizedAd infoProvider:self.ad];
         }
     }

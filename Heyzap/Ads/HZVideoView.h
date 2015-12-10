@@ -40,8 +40,4 @@
  */
 - (void) shouldUseClickableVideoConfiguration;
 
-// TODO: implement this for tests.
-// TODO: also try closing webview with javascript to fix the DOM exception thing.
-+ (void)setFadeOutSkipLabel:(BOOL)fadeOutSkipLabel;
-
 @end

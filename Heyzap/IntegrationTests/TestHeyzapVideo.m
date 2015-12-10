@@ -16,7 +16,7 @@
 
 @implementation TestHeyzapVideo
 
-- (void)zztestCompletingIncentivizedVideo {
+- (void)testCompletingIncentivizedVideo {
     [self runIncentivizedAndSkip:NO];
 }
 
@@ -28,11 +28,6 @@ const int kCrossPromoVideoCreativeID = 6109031;
 
 - (void)runIncentivizedAndSkip:(BOOL)shouldSkip
 {
-    if (shouldSkip) {
-        [HZVideoView setFadeOutSkipLabel:NO];
-        [HZVideoControlView setUseLargeHideButton:YES];
-    }
-    
     [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:[TestJSON jsonForResource:@"start"]];
     [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:[TestJSON jsonForResource:@"mediate"]];
     
@@ -103,6 +98,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
     }];
     [MKTVerify(mockDelegate) didShowAdWithTag:tag];
     
+    // Skip
     if (shouldSkip) {
         [system runBlock:^KIFTestStepResult(NSError *__autoreleasing *error) {
             HZAdVideoViewController *videoController = [self findVideoViewController];
@@ -117,18 +113,11 @@ const int kCrossPromoVideoCreativeID = 6109031;
             }
         }];
     }
-    // Skip
-//    if (shouldSkip) {
-//        NSLog(@"About to tap skip label");
-//        [tester tapViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
-//    }
     
     // Close
     [tester waitForViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
     [tester tapViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
     [tester waitForAbsenceOfViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
-    
-    // [tester waitForTimeInterval:1]; // Give time for notifications to come.
     
     [MKTVerify(mockDelegate) didHideAdWithTag:tag];
     if (shouldSkip) {
@@ -136,8 +125,6 @@ const int kCrossPromoVideoCreativeID = 6109031;
     } else {
         [MKTVerify(mockDelegate) didCompleteAdWithTag:tag];
     }
-    [HZVideoView setFadeOutSkipLabel:YES];
-    [HZVideoControlView setUseLargeHideButton:NO];
 }
 
 - (HZAdVideoViewController *)findVideoViewController {

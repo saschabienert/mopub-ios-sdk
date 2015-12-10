@@ -29,6 +29,4 @@ extern NSString *const kHZSkipAccessibilityLabel;
 - (void) updateTimeRemaining: (int) timeRemaining;
 - (void) updateSkipRemaining: (int) skipRemaining;
 
-+ (void)setUseLargeHideButton:(BOOL)useLargeHideButton;
-
 @end

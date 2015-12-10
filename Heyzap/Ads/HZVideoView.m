@@ -170,7 +170,7 @@
         [self.controlView.installButton setAlpha:alpha];
     }completion:^(BOOL finished){
         // if we're showing the controls, set a timer to hide them automatically later
-        if(animateIn && hzFadeOutSkipLabel) {
+        if(animateIn) {
             self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: kHZVideoViewAutoFadeOutControlsTimeSeconds target: self selector: @selector(animationTimerDidFire:) userInfo: nil repeats: NO];
         }
     }];
@@ -326,21 +326,6 @@
     
     const MPMovieFinishReason movieFinishReason = [[notification.userInfo objectForKey: MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] integerValue];
     
-    switch (movieFinishReason) {
-        case MPMovieFinishReasonPlaybackEnded: {
-            NSLog(@"Movie playback ended");
-            break;
-        }
-        case MPMovieFinishReasonPlaybackError: {
-            NSLog(@"Movie playback error");
-            break;
-        }
-        case MPMovieFinishReasonUserExited: {
-            NSLog(@"Movie playback user exit");
-            break;
-        }
-    }
-    
     if (movieFinishReason == MPMovieFinishReasonPlaybackError) {
         
         [HZLog debug: [NSString stringWithFormat: @"Reason: %@", notification.userInfo]];
@@ -352,7 +337,6 @@
         }
     } else {
         if (self.actionDelegate != nil) {
-            NSLog(@"Video finished, calling on action completed");
             [self.actionDelegate performSelector: @selector(onActionCompleted:) withObject: self];
         }
     }
@@ -435,12 +419,6 @@
     }
     
     return NO;
-}
-
-static BOOL hzFadeOutSkipLabel = YES;
-
-+ (void)setFadeOutSkipLabel:(BOOL)fadeOutSkipLabel {
-    hzFadeOutSkipLabel = fadeOutSkipLabel;
 }
 
 @end
