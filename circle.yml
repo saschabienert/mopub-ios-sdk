@@ -3,15 +3,17 @@ machine:
     version: "7.0" # We should try to use the latest Xcode available
 
 dependencies:
-  override:
-    - bundle install
-    - "cd Heyzap && bundle exec pod install"
+  cache_directories:
+    - "vendor/bundle"
+    - "Heyzap/Pods"
+  pre:
+    - "pod --version"
 
 test:
   override:
     - xcodebuild -showsdks
     - xcrun simctl list
-    - ./runTests.sh 9.0 Ads $CIRCLE_ARTIFACTS/iOS9UnitTests
-    - ./runTests.sh 8.4 Ads $CIRCLE_ARTIFACTS/iOS8UnitTests
+    # - ./runTests.sh 9.0 Ads $CIRCLE_ARTIFACTS/iOS9UnitTests
+    # - ./runTests.sh 8.4 Ads $CIRCLE_ARTIFACTS/iOS8UnitTests
     - ./runTests.sh 9.0 IntegrationTestHost $CIRCLE_ARTIFACTS/iOS9IntegrationTests
-    - ./runTests.sh 8.4 IntegrationTestHost $CIRCLE_ARTIFACTS/iOS8IntegrationTests
+    # - ./runTests.sh 8.4 IntegrationTestHost $CIRCLE_ARTIFACTS/iOS8IntegrationTests

@@ -48,6 +48,7 @@
         _player.controlStyle = MPMovieControlStyleNone;
         _player.view.frame = self.bounds;
         _player.scalingMode = MPMovieScalingModeAspectFit;
+        _player.movieSourceType = MPMovieSourceTypeFile;
         
         _player.repeatMode = MPMovieRepeatModeNone;
         _player.shouldAutoplay = YES;
