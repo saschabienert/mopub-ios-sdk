@@ -17,10 +17,11 @@
 @implementation TestHeyzapVideo
 
 - (void)testCompletingIncentivizedVideo {
+    NSLog(@"Running complete incent test");
     [self runIncentivizedAndSkip:NO];
 }
 
-- (void)testSkippingIncentivizedVideo {
+- (void)zztestSkippingIncentivizedVideo {
     [self runIncentivizedAndSkip:YES];
 }
 
@@ -76,6 +77,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
     [system waitForNotificationName:HZMediationDidShowAdNotification object:nil whileExecutingBlock:^{
         [HZIncentivizedAd showForTag:tag];
     }];
+    NSLog(@"Showing video");
     [MKTVerify(mockDelegate) didShowAdWithTag:tag];
     
     // Skip

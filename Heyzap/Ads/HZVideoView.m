@@ -326,6 +326,21 @@
     
     const MPMovieFinishReason movieFinishReason = [notification.userInfo[MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] integerValue];
     
+    switch (movieFinishReason) {
+        case MPMovieFinishReasonPlaybackEnded: {
+            NSLog(@"Movie finish reason: playback ended");
+            break;
+        }
+        case MPMovieFinishReasonUserExited: {
+            NSLog(@"Movie finish reason: user exited");
+            break;
+        }
+        case MPMovieFinishReasonPlaybackError: {
+            NSLog(@"Movie finish reason: error with video");
+            break;
+        }
+    }
+    
     if (movieFinishReason == MPMovieFinishReasonPlaybackError) {
         
         [HZLog debug: [NSString stringWithFormat: @"Reason: %@", notification.userInfo]];
