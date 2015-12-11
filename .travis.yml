@@ -3,5 +3,5 @@ language: objective-c
 
 podfile: Heyzap/Podfile
 
-
+before_install: gem install cocoapods
 script: ./runTests.sh 9.0 IntegrationTestHost $CIRCLE_ARTIFACTS/iOS9IntegrationTests
