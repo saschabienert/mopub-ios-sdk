@@ -4,4 +4,8 @@ language: objective-c
 podfile: Heyzap/Podfile
 
 before_install: gem install cocoapods
-script: ./runTests.sh 9.0 IntegrationTestHost $CIRCLE_ARTIFACTS/iOS9IntegrationTests
+script: bundle exec runTests.sh 9.0 IntegrationTestHost `pwd`/iOS9IntegrationTests
+
+addons:
+  artifacts: true
+  debug: true
