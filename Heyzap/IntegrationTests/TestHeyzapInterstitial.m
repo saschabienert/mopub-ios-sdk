@@ -28,7 +28,7 @@
 const int kCrossPromoPortraitFullscreenCreativeID = 6136623;
 
 
-- (void)zztestShowingAndClosingHeyzapInterstitial
+- (void)testShowingAndClosingHeyzapInterstitial
 {
     [self stubStartAndMediate];
     

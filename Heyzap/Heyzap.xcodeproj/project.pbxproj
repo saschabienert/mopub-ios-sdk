@@ -333,6 +333,7 @@
 		50BDD00118B8183200265212 /* HZDictionaryUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B942491758086300B8EACE /* HZDictionaryUtils.h */; };
 		50C69C091C1A49B50042D526 /* AbstractHeyzapTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 50C69C081C1A49B50042D526 /* AbstractHeyzapTest.m */; };
 		50C69C151C1B726C0042D526 /* three_second_no_audio.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 50C69C141C1B726C0042D526 /* three_second_no_audio.mp4 */; };
+		50C69C171C1B76DC0042D526 /* ten_second_cross_promo_video_no_audio.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 50C69C161C1B76DC0042D526 /* ten_second_cross_promo_video_no_audio.mp4 */; };
 		50CF95851BFE989000C3DBF6 /* HZAdapterFetchOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 50CF95831BFE989000C3DBF6 /* HZAdapterFetchOptions.h */; };
 		50CF95861BFE989000C3DBF6 /* HZAdapterFetchOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 50CF95841BFE989000C3DBF6 /* HZAdapterFetchOptions.m */; };
 		50CF95B11BFFE42900C3DBF6 /* HZGADNativeAdImageAdLoaderOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 50CF95AF1BFFE42900C3DBF6 /* HZGADNativeAdImageAdLoaderOptions.h */; };
@@ -969,6 +970,7 @@
 		50C69C071C1A49B50042D526 /* AbstractHeyzapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractHeyzapTest.h; sourceTree = "<group>"; };
 		50C69C081C1A49B50042D526 /* AbstractHeyzapTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbstractHeyzapTest.m; sourceTree = "<group>"; };
 		50C69C141C1B726C0042D526 /* three_second_no_audio.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = three_second_no_audio.mp4; sourceTree = "<group>"; };
+		50C69C161C1B76DC0042D526 /* ten_second_cross_promo_video_no_audio.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ten_second_cross_promo_video_no_audio.mp4; sourceTree = "<group>"; };
 		50CE4B391AB39DD8007B6949 /* HZBannerAdOptions_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZBannerAdOptions_Private.h; sourceTree = "<group>"; };
 		50CF95831BFE989000C3DBF6 /* HZAdapterFetchOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdapterFetchOptions.h; sourceTree = "<group>"; };
 		50CF95841BFE989000C3DBF6 /* HZAdapterFetchOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdapterFetchOptions.m; sourceTree = "<group>"; };
@@ -1643,6 +1645,7 @@
 		502E03881BD06BBE00872BA2 /* Videos */ = {
 			isa = PBXGroup;
 			children = (
+				50C69C161C1B76DC0042D526 /* ten_second_cross_promo_video_no_audio.mp4 */,
 				50C69C141C1B726C0042D526 /* three_second_no_audio.mp4 */,
 				502E038B1BD0980700872BA2 /* three_second_cross_promo_video.mp4 */,
 				508EB50C1BE41C8B004B3BD7 /* ten_second_cross_promo_video.mp4 */,
@@ -3420,6 +3423,7 @@
 				502E03871BD06B4A00872BA2 /* cross_promo_video.json in Resources */,
 				50251CCE1C12237200DD5922 /* flat_ios.css in Resources */,
 				50C69C151C1B726C0042D526 /* three_second_no_audio.mp4 in Resources */,
+				50C69C171C1B76DC0042D526 /* ten_second_cross_promo_video_no_audio.mp4 in Resources */,
 				50251CCB1C12234300DD5922 /* fastclick.js in Resources */,
 				502244B01BCF2E2300279639 /* mediate.json in Resources */,
 				502E038C1BD0980700872BA2 /* three_second_cross_promo_video.mp4 in Resources */,

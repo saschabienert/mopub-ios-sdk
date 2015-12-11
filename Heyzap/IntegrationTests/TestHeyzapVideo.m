@@ -21,7 +21,7 @@
     [self runIncentivizedAndSkip:NO];
 }
 
-- (void)zztestSkippingIncentivizedVideo {
+- (void)testSkippingIncentivizedVideo {
     [self runIncentivizedAndSkip:YES];
 }
 
@@ -50,7 +50,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
     [self stubHeyzapEventEndpoints];
     
     
-    NSString *const filename = @"three_second_no_audio"; // shouldSkip ? @"ten_second_cross_promo_video" : @"three_second_cross_promo_video";
+    NSString *const filename = shouldSkip ? @"three_second_no_audio" : @"ten_second_cross_promo_video_no_audio";
     [OHHTTPStubs stubRequestContainingString:@"930153bd01e935dd75a7f803f7b33f33-h264_android_ld"
                                withVideoFile:filename];
     
