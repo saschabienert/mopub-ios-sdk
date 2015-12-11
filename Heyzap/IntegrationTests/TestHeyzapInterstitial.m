@@ -30,8 +30,7 @@ const int kCrossPromoPortraitFullscreenCreativeID = 6136623;
 
 - (void)testShowingAndClosingHeyzapInterstitial
 {
-    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:[TestJSON jsonForResource:@"start"]];
-    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:[TestJSON jsonForResource:@"mediate"]];
+    [self stubStartAndMediate];
     
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest * _Nonnull request) {
         return [request.URL.path isEqualToString:@"/in_game_api/ads/fetch_ad"];
@@ -47,6 +46,8 @@ const int kCrossPromoPortraitFullscreenCreativeID = 6136623;
                                                        headers:nil];
         }
     }];
+    
+    [self stubHeyzapEventEndpoints];
     
     // Mocking
     id<HZAdsDelegate> mockDelegate = mockProtocol(@protocol(HZAdsDelegate));

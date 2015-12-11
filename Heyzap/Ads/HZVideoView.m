@@ -324,7 +324,7 @@
 - (void) mediaPlayerPlaybackDidFinish: (NSNotification *) notification {
     [self.player setFullscreen: NO animated: NO];
     
-    const MPMovieFinishReason movieFinishReason = [[notification.userInfo objectForKey: MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] integerValue];
+    const MPMovieFinishReason movieFinishReason = [notification.userInfo[MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] integerValue];
     
     if (movieFinishReason == MPMovieFinishReasonPlaybackError) {
         

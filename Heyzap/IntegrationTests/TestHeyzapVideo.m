@@ -28,8 +28,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
 
 - (void)runIncentivizedAndSkip:(BOOL)shouldSkip
 {
-    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:[TestJSON jsonForResource:@"start"]];
-    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:[TestJSON jsonForResource:@"mediate"]];
+    [self stubStartAndMediate];
     
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest * _Nonnull request) {
         return [request.URL.path isEqualToString:@"/in_game_api/ads/fetch_ad"];
@@ -46,27 +45,8 @@ const int kCrossPromoVideoCreativeID = 6109031;
         }
     }];
     
-    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest * _Nonnull request) {
-        return [request.URL.path isEqualToString:@"/assets/ads/fastclick-62c1d38f8e964c75f8de61457fd6dd2d.js"];
-    } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
-        NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:@"fastclick" withExtension:@"js"];
-        return [[OHHTTPStubsResponse alloc] initWithFileURL:url statusCode:200 headers:@{@"content-type":@"application/javascript"}];
-    }];
-    
-    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest * _Nonnull request) {
-        return [request.URL.path containsString:@"/assets/ads/flat_ios-e54b2fe012a7581343586c20d28138b9.css"];
-    } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
-        NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:@"flat_ios" withExtension:@"css"];
-        return [[OHHTTPStubsResponse alloc] initWithFileURL:url statusCode:200 headers:@{@"content-type":@"text/css"}];
-    }];
-    
-    // Events
-    [OHHTTPStubs stubRequestContainingString:@"/in_game_api/ads/register_impression"
-                                    withJSON:@{@"status":@200}];
-    [OHHTTPStubs stubRequestContainingString:@"/in_game_api/ads/register_click"
-                                    withJSON:@{@"status":@200}];
-    [OHHTTPStubs stubRequestContainingString:@"/in_game_api/ads/event/video_impression_complete"
-                                    withJSON:@{@"status":@200}];
+    [self stubWebViewContent];
+    [self stubHeyzapEventEndpoints];
     
     
     NSString *const filename = shouldSkip ? @"ten_second_cross_promo_video" : @"three_second_cross_promo_video";
@@ -104,7 +84,6 @@ const int kCrossPromoVideoCreativeID = 6109031;
             HZAdVideoViewController *videoController = [self findVideoViewController];
             if (videoController) {
                 [videoController skipVideo];
-                NSLog(@"Skipped video");
                 return KIFTestStepResultSuccess;
             } else {
                 NSParameterAssert(error);
