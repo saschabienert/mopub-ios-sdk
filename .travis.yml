@@ -10,7 +10,7 @@ addons:
   artifacts: true
   debug: true
   paths:
-    - `pwd`/iOS9IntegrationTests
+    - "`pwd`/iOS9IntegrationTests"
 
 cache:
   - bundler
