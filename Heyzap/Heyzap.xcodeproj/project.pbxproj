@@ -332,8 +332,7 @@
 		50B46B2818F8B241005155B8 /* HZALIncentivizedInterstitialAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50B46B2618F8B241005155B8 /* HZALIncentivizedInterstitialAd.m */; };
 		50BDD00118B8183200265212 /* HZDictionaryUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B942491758086300B8EACE /* HZDictionaryUtils.h */; };
 		50C69C091C1A49B50042D526 /* AbstractHeyzapTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 50C69C081C1A49B50042D526 /* AbstractHeyzapTest.m */; };
-		50C69C0B1C1B5D930042D526 /* three_second_cross_promo_video-embedded.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 50C69C0A1C1B5D930042D526 /* three_second_cross_promo_video-embedded.mp4 */; };
-		50C69C0D1C1B614E0042D526 /* three_second_no_audio.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 50C69C0C1C1B614E0042D526 /* three_second_no_audio.mp4 */; };
+		50C69C151C1B726C0042D526 /* three_second_no_audio.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 50C69C141C1B726C0042D526 /* three_second_no_audio.mp4 */; };
 		50CF95851BFE989000C3DBF6 /* HZAdapterFetchOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 50CF95831BFE989000C3DBF6 /* HZAdapterFetchOptions.h */; };
 		50CF95861BFE989000C3DBF6 /* HZAdapterFetchOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 50CF95841BFE989000C3DBF6 /* HZAdapterFetchOptions.m */; };
 		50CF95B11BFFE42900C3DBF6 /* HZGADNativeAdImageAdLoaderOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 50CF95AF1BFFE42900C3DBF6 /* HZGADNativeAdImageAdLoaderOptions.h */; };
@@ -969,8 +968,7 @@
 		50B46B2618F8B241005155B8 /* HZALIncentivizedInterstitialAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZALIncentivizedInterstitialAd.m; sourceTree = "<group>"; };
 		50C69C071C1A49B50042D526 /* AbstractHeyzapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractHeyzapTest.h; sourceTree = "<group>"; };
 		50C69C081C1A49B50042D526 /* AbstractHeyzapTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbstractHeyzapTest.m; sourceTree = "<group>"; };
-		50C69C0A1C1B5D930042D526 /* three_second_cross_promo_video-embedded.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "three_second_cross_promo_video-embedded.mp4"; sourceTree = "<group>"; };
-		50C69C0C1C1B614E0042D526 /* three_second_no_audio.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = three_second_no_audio.mp4; sourceTree = "<group>"; };
+		50C69C141C1B726C0042D526 /* three_second_no_audio.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = three_second_no_audio.mp4; sourceTree = "<group>"; };
 		50CE4B391AB39DD8007B6949 /* HZBannerAdOptions_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HZBannerAdOptions_Private.h; sourceTree = "<group>"; };
 		50CF95831BFE989000C3DBF6 /* HZAdapterFetchOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZAdapterFetchOptions.h; sourceTree = "<group>"; };
 		50CF95841BFE989000C3DBF6 /* HZAdapterFetchOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZAdapterFetchOptions.m; sourceTree = "<group>"; };
@@ -1645,6 +1643,7 @@
 		502E03881BD06BBE00872BA2 /* Videos */ = {
 			isa = PBXGroup;
 			children = (
+				50C69C141C1B726C0042D526 /* three_second_no_audio.mp4 */,
 				502E038B1BD0980700872BA2 /* three_second_cross_promo_video.mp4 */,
 				508EB50C1BE41C8B004B3BD7 /* ten_second_cross_promo_video.mp4 */,
 			);
@@ -1914,8 +1913,6 @@
 		508277911BC8925000B4340B /* IntegrationTestHost */ = {
 			isa = PBXGroup;
 			children = (
-				50C69C0C1C1B614E0042D526 /* three_second_no_audio.mp4 */,
-				50C69C0A1C1B5D930042D526 /* three_second_cross_promo_video-embedded.mp4 */,
 				508277951BC8925000B4340B /* AppDelegate.h */,
 				508277961BC8925000B4340B /* AppDelegate.m */,
 				508277981BC8925000B4340B /* ViewController.h */,
@@ -3410,8 +3407,6 @@
 				508277A21BC8925000B4340B /* LaunchScreen.storyboard in Resources */,
 				5082779F1BC8925000B4340B /* Assets.xcassets in Resources */,
 				5082779D1BC8925000B4340B /* Main.storyboard in Resources */,
-				50C69C0B1C1B5D930042D526 /* three_second_cross_promo_video-embedded.mp4 in Resources */,
-				50C69C0D1C1B614E0042D526 /* three_second_no_audio.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3424,6 +3419,7 @@
 				502E03821BD05EFE00872BA2 /* cross_promo_static.json in Resources */,
 				502E03871BD06B4A00872BA2 /* cross_promo_video.json in Resources */,
 				50251CCE1C12237200DD5922 /* flat_ios.css in Resources */,
+				50C69C151C1B726C0042D526 /* three_second_no_audio.mp4 in Resources */,
 				50251CCB1C12234300DD5922 /* fastclick.js in Resources */,
 				502244B01BCF2E2300279639 /* mediate.json in Resources */,
 				502E038C1BD0980700872BA2 /* three_second_cross_promo_video.mp4 in Resources */,

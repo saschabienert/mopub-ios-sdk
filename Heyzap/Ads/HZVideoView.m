@@ -112,8 +112,6 @@
     if (!url) {
         return NO;
     }
-    url = [[NSBundle bundleForClass:[self class]] URLForResource:@"three_second_no_audio" withExtension:@"mp4"];
-    NSLog(@"New URL: %@",url);
     
     [self.player setContentURL: url];
     [self.player prepareToPlay];

@@ -50,7 +50,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
     [self stubHeyzapEventEndpoints];
     
     
-    NSString *const filename = @"ten_second_cross_promo_video"; // shouldSkip ? @"ten_second_cross_promo_video" : @"three_second_cross_promo_video";
+    NSString *const filename = @"three_second_no_audio"; // shouldSkip ? @"ten_second_cross_promo_video" : @"three_second_cross_promo_video";
     [OHHTTPStubs stubRequestContainingString:@"930153bd01e935dd75a7f803f7b33f33-h264_android_ld"
                                withVideoFile:filename];
     
@@ -93,9 +93,6 @@ const int kCrossPromoVideoCreativeID = 6109031;
                 return KIFTestStepResultFailure;
             }
         }];
-    } else {
-        // WAit for video to end
-        [tester waitForTimeInterval:11];
     }
     
     // Close
