@@ -4,8 +4,14 @@ language: objective-c
 podfile: Heyzap/Podfile
 
 before_install: gem install cocoapods
-script: bundle exec runTests.sh 9.0 IntegrationTestHost `pwd`/iOS9IntegrationTests
+script: runTests.sh 9.0 IntegrationTestHost `pwd`/iOS9IntegrationTests
 
 addons:
   artifacts: true
   debug: true
+  paths:
+    - `pwd`/iOS9IntegrationTests
+
+cache:
+  - bundler
+  - cocoapods
