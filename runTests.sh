@@ -10,8 +10,8 @@ echo "Using iOS $OS_VERSION"
 echo "Testing Scheme: $SCHEME"
 echo "Outputting results to directory: $OUTPUT_DIR"
 
-if hash xcpretty 2>/dev/null; then
-	TEST_COMMAND="xcpretty -c"
+if hash bundle exec xcpretty 2>/dev/null; then
+	TEST_COMMAND="bundle exec xcpretty -c"
 else
 	echo "Not using xcpretty. Run `gem install xcpretty` to get pretty printed xcodebuild output"
 	TEST_COMMAND="tee"
