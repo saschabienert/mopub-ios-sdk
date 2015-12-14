@@ -1,0 +1,21 @@
+# We're currently not using Travis CI, but we might switch to it based on Circle CI's new pricing.
+
+osx_image: xcode7.1
+language: objective-c
+
+podfile: Heyzap/Podfile
+
+before_install: gem install cocoapods
+# Note: This isn't running all the tests yet.
+script: bundle exec ./runTests.sh 9.0 IntegrationTestHost `pwd`/iOS9IntegrationTests
+
+# Note: The artifacts uploading isn't working, not sure why.
+addons:
+  artifacts: true
+  debug: true
+  paths:
+    - find iOS9IntegrationTests -type f -name "action"
+
+cache:
+  - bundler
+  - cocoapods

@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "HZCreativeType.h"
 #import "HZAdType.h"
+#import "HZAdInfo.h"
 
 @interface HZAdModel : NSObject <HZAdInfoProvider>
 

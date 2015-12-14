@@ -6,8 +6,8 @@
 //  Copyright © 2015 Heyzap. All rights reserved.
 //
 
-#import "HZKIFTestCase.h"
+#import "AbstractHeyzapTest.h"
 
-@interface TestHeyzapInterstitial : HZKIFTestCase
+@interface TestHeyzapInterstitial : AbstractHeyzapTest
 
 @end

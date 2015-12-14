@@ -10,7 +10,9 @@
 #import "HZFetchOptions.h"
 #import "HeyzapMediation.h"
 #import "HZVideoControlView.h"
+#import "HZVideoView.h"
 #import "OHHTTPStubsResponse+JSON.h"
+#import "HZAdVideoViewController.h"
 
 @implementation TestHeyzapVideo
 
@@ -26,8 +28,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
 
 - (void)runIncentivizedAndSkip:(BOOL)shouldSkip
 {
-    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:[TestJSON jsonForResource:@"start"]];
-    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:[TestJSON jsonForResource:@"mediate"]];
+    [self stubStartAndMediate];
     
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest * _Nonnull request) {
         return [request.URL.path isEqualToString:@"/in_game_api/ads/fetch_ad"];
@@ -44,7 +45,11 @@ const int kCrossPromoVideoCreativeID = 6109031;
         }
     }];
     
-    NSString *const filename = shouldSkip ? @"ten_second_cross_promo_video" : @"three_second_cross_promo_video";
+    [self stubWebViewContent];
+    [self stubHeyzapEventEndpoints];
+    
+    
+    NSString *const filename = shouldSkip ? @"ten_second_cross_promo_video_no_audio" : @"three_second_cross_promo_video_no_audio";
     [OHHTTPStubs stubRequestContainingString:@"930153bd01e935dd75a7f803f7b33f33-h264_android_ld"
                                withVideoFile:filename];
     
@@ -68,25 +73,52 @@ const int kCrossPromoVideoCreativeID = 6109031;
     [MKTVerify(mockDelegate) didReceiveAdWithTag:tag];
     
     // Show
-    [HZIncentivizedAd showForTag:tag];
-    [tester waitForViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
+    [system waitForNotificationName:HZMediationDidShowAdNotification object:nil whileExecutingBlock:^{
+        [HZIncentivizedAd showForTag:tag];
+    }];
     [MKTVerify(mockDelegate) didShowAdWithTag:tag];
     
     // Skip
     if (shouldSkip) {
-        [tester tapViewWithAccessibilityLabel:kHZSkipAccessibilityLabel];
+        [system runBlock:^KIFTestStepResult(NSError *__autoreleasing *error) {
+            HZAdVideoViewController *videoController = [self findVideoViewController];
+            if (videoController) {
+                [videoController skipVideo];
+                return KIFTestStepResultSuccess;
+            } else {
+                NSParameterAssert(error);
+                *error = [NSError errorWithDomain:@"Didn't find HZAdVideoViewController" code:1 userInfo:nil];
+                return KIFTestStepResultFailure;
+            }
+        }];
+    } else {
+        // Wait for the video to end
+        [tester waitForTimeInterval:3];
     }
     
+    // Wait a bit to allow the close button to appear.
+    [tester waitForTimeInterval:3];
+    
     // Close
-    [tester waitForViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
-    [tester tapViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
-    [tester waitForAbsenceOfViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
+    [self closeHeyzapWebView];
+    
+    [tester waitForTimeInterval:2];
     
     [MKTVerify(mockDelegate) didHideAdWithTag:tag];
     if (shouldSkip) {
         [MKTVerify(mockDelegate) didFailToCompleteAdWithTag:tag];
     } else {
         [MKTVerify(mockDelegate) didCompleteAdWithTag:tag];
+    }
+}
+
+- (HZAdVideoViewController *)findVideoViewController {
+    UIViewController *root = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+    id presented = root.presentedViewController;
+    if ([presented isKindOfClass:[HZAdVideoViewController class]]) {
+        return presented;
+    } else {
+        return nil;
     }
 }
 

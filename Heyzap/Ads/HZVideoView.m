@@ -324,11 +324,14 @@
 - (void) mediaPlayerPlaybackDidFinish: (NSNotification *) notification {
     [self.player setFullscreen: NO animated: NO];
     
-    if ((MPMovieFinishReason)[notification.userInfo objectForKey: MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] == MPMovieFinishReasonPlaybackError) {
+    const MPMovieFinishReason movieFinishReason = [notification.userInfo[MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] integerValue];
+    
+    if (movieFinishReason == MPMovieFinishReasonPlaybackError) {
         
-        [HZLog debug: [NSString stringWithFormat: @"Reason: %@", notification.userInfo]];
-        [HZLog debug: [NSString stringWithFormat: @"Error: %@", self.player.errorLog]];
-        [HZLog debug: [NSString stringWithFormat: @"Log: %@", self.player.accessLog]];
+        HZELog(@"The MPMoviePlayerController finished playing because of an error. Info: %@\n\nError Log: %@\n\nAccess Log: %@",
+               notification.userInfo,
+               self.player.errorLog,
+               self.player.accessLog);
 
         if (self.actionDelegate != nil) {
             [self.actionDelegate performSelector: @selector(onActionError:) withObject: self];

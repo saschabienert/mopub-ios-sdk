@@ -87,6 +87,11 @@
     [super showWithOptions:options];
 }
 
+- (void)skipVideo {
+    NSLog(@"Manually skipping video for integration tests");
+    [self closeAdView:self.videoView];
+}
+
 - (void) closeAdView:(UIView *)adView {
     switch (adView.tag) {
         case kHZVideoViewTag:
