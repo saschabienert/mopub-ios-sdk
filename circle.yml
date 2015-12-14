@@ -13,7 +13,7 @@ test:
   override:
     - xcodebuild -showsdks
     - xcrun simctl list
-    # - ./runTests.sh 9.0 Ads $CIRCLE_ARTIFACTS/iOS9UnitTests
-    # - ./runTests.sh 8.4 Ads $CIRCLE_ARTIFACTS/iOS8UnitTests
+    - ./runTests.sh 9.0 Ads $CIRCLE_ARTIFACTS/iOS9UnitTests
+    - ./runTests.sh 8.4 Ads $CIRCLE_ARTIFACTS/iOS8UnitTests
     - ./runTests.sh 9.0 IntegrationTestHost $CIRCLE_ARTIFACTS/iOS9IntegrationTests
-    # - ./runTests.sh 8.4 IntegrationTestHost $CIRCLE_ARTIFACTS/iOS8IntegrationTests
+    - ./runTests.sh 8.4 IntegrationTestHost $CIRCLE_ARTIFACTS/iOS8IntegrationTests
