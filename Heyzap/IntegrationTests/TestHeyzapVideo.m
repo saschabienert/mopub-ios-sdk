@@ -91,6 +91,9 @@ const int kCrossPromoVideoCreativeID = 6109031;
                 return KIFTestStepResultFailure;
             }
         }];
+    } else {
+        // Wait for the video to end
+        [tester waitForTimeInterval:3];
     }
     
     // Wait a bit to allow the close button to appear.
