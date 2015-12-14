@@ -48,8 +48,7 @@
         NSParameterAssert(error);
         UIWebView *webview = [self findWebview];
         if (webview) {
-            NSString *result = [webview stringByEvaluatingJavaScriptFromString:@"document.getElementById(\"close-button\").click()"];
-            NSLog(@"return value = %@",result);
+            [webview stringByEvaluatingJavaScriptFromString:@"document.getElementById(\"close-button\").click()"];
             return KIFTestStepResultSuccess;
         } else {
             *error = [NSError errorWithDomain:@"Couldn't find webview" code:1 userInfo:nil];
