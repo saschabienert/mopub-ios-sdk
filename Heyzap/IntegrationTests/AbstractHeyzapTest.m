@@ -43,4 +43,37 @@
     }
 }
 
+- (void)closeHeyzapWebView {
+    [system runBlock:^KIFTestStepResult(NSError *__autoreleasing *error) {
+        NSParameterAssert(error);
+        UIWebView *webview = [self findWebview];
+        if (webview) {
+            NSString *result = [webview stringByEvaluatingJavaScriptFromString:@"document.getElementById(\"close-button\").click()"];
+            NSLog(@"return value = %@",result);
+            return KIFTestStepResultSuccess;
+        } else {
+            *error = [NSError errorWithDomain:@"Couldn't find webview" code:1 userInfo:nil];
+            return KIFTestStepResultFailure;
+        }
+    }];
+}
+
+- (UIWebView *)findWebview {
+    return [self findWebviewInView:[UIApplication sharedApplication].keyWindow];
+}
+
+- (UIWebView *)findWebviewInView:(UIView *)view {
+    if ([view isKindOfClass:[UIWebView class]] || [view isKindOfClass:[UIWebView class]]) {
+        return (UIWebView *)view;
+    } else {
+        for (UIView *subview in view.subviews) {
+            id maybeWebView = [self findWebviewInView:subview];
+            if (maybeWebView) {
+                return maybeWebView;
+            }
+        }
+        return nil;
+    }
+}
+
 @end

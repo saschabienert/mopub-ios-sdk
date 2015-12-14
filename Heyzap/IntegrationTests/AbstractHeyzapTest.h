@@ -14,4 +14,7 @@
 - (void)stubWebViewContent;
 - (void)stubHeyzapEventEndpoints;
 
+- (void)closeHeyzapWebView;
+- (UIWebView *)findWebview;
+
 @end

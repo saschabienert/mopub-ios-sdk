@@ -50,7 +50,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
     [self stubHeyzapEventEndpoints];
     
     
-    NSString *const filename = shouldSkip ? @"three_second_no_audio" : @"ten_second_cross_promo_video_no_audio";
+    NSString *const filename = shouldSkip ? @"ten_second_cross_promo_video_no_audio" : @"three_second_no_audio";
     [OHHTTPStubs stubRequestContainingString:@"930153bd01e935dd75a7f803f7b33f33-h264_android_ld"
                                withVideoFile:filename];
     
@@ -95,10 +95,16 @@ const int kCrossPromoVideoCreativeID = 6109031;
         }];
     }
     
+    // Wait a bit to allow the close button to appear.
+    [tester waitForTimeInterval:3];
+    
     // Close
-    [tester waitForViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
-    [tester tapViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
-    [tester waitForAbsenceOfViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
+    [self closeHeyzapWebView];
+//    [tester waitForViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
+//    [tester tapViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
+//    [tester waitForAbsenceOfViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
+    
+    [tester waitForTimeInterval:2];
     
     [MKTVerify(mockDelegate) didHideAdWithTag:tag];
     if (shouldSkip) {
