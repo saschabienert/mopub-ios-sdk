@@ -48,7 +48,6 @@
         _player.controlStyle = MPMovieControlStyleNone;
         _player.view.frame = self.bounds;
         _player.scalingMode = MPMovieScalingModeAspectFit;
-        _player.movieSourceType = MPMovieSourceTypeFile;
         
         _player.repeatMode = MPMovieRepeatModeNone;
         _player.shouldAutoplay = YES;
@@ -326,21 +325,6 @@
     [self.player setFullscreen: NO animated: NO];
     
     const MPMovieFinishReason movieFinishReason = [notification.userInfo[MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] integerValue];
-    
-    switch (movieFinishReason) {
-        case MPMovieFinishReasonPlaybackEnded: {
-            NSLog(@"Movie finish reason: playback ended");
-            break;
-        }
-        case MPMovieFinishReasonUserExited: {
-            NSLog(@"Movie finish reason: user exited");
-            break;
-        }
-        case MPMovieFinishReasonPlaybackError: {
-            NSLog(@"Movie finish reason: error with video");
-            break;
-        }
-    }
     
     if (movieFinishReason == MPMovieFinishReasonPlaybackError) {
         

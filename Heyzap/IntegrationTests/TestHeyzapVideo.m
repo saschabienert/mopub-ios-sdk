@@ -17,7 +17,6 @@
 @implementation TestHeyzapVideo
 
 - (void)testCompletingIncentivizedVideo {
-    NSLog(@"Running complete incent test");
     [self runIncentivizedAndSkip:NO];
 }
 
@@ -50,7 +49,7 @@ const int kCrossPromoVideoCreativeID = 6109031;
     [self stubHeyzapEventEndpoints];
     
     
-    NSString *const filename = shouldSkip ? @"ten_second_cross_promo_video_no_audio" : @"three_second_no_audio";
+    NSString *const filename = shouldSkip ? @"ten_second_cross_promo_video_no_audio" : @"three_second_cross_promo_video_no_audio";
     [OHHTTPStubs stubRequestContainingString:@"930153bd01e935dd75a7f803f7b33f33-h264_android_ld"
                                withVideoFile:filename];
     
@@ -77,7 +76,6 @@ const int kCrossPromoVideoCreativeID = 6109031;
     [system waitForNotificationName:HZMediationDidShowAdNotification object:nil whileExecutingBlock:^{
         [HZIncentivizedAd showForTag:tag];
     }];
-    NSLog(@"Showing video");
     [MKTVerify(mockDelegate) didShowAdWithTag:tag];
     
     // Skip
@@ -100,9 +98,6 @@ const int kCrossPromoVideoCreativeID = 6109031;
     
     // Close
     [self closeHeyzapWebView];
-//    [tester waitForViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
-//    [tester tapViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
-//    [tester waitForAbsenceOfViewWithAccessibilityLabel:kCloseButtonAccessibilityLabel];
     
     [tester waitForTimeInterval:2];
     
