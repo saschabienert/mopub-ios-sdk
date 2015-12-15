@@ -19,4 +19,21 @@
 
 - (void)stubStartAndMediate;
 
+#pragma mark - Searching the view (controller) hierarchy
+
+/**
+ *  Calls `findViewOfClass:inView:`, passing the keyWindow as the starting view.
+ */
+- (id)findViewOfClass:(Class)class;
+
+/**
+ *  Searches for a view of a given class in the view hierarchy.
+ *
+ *  @param class The kind of class the view must be.
+ *  @param view  The view to start the search from.
+ *
+ *  @return A view, if it was found. The return type is `id` for the convenience of casting.
+ */
+- (id)findViewOfClass:(Class)class inView:(UIView *)view;
+
 @end

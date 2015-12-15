@@ -54,4 +54,24 @@
     [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:[TestJSON jsonForResource:@"mediate"]];
 }
 
+#pragma mark - Searching the view (controller) hierarchy
+
+- (id)findViewOfClass:(Class)class {
+    return [self findViewOfClass:class inView:[UIApplication sharedApplication].keyWindow];
+}
+
+- (id)findViewOfClass:(Class)class inView:(UIView *)view {
+    if ([view isKindOfClass:class]) {
+        return view;
+    } else {
+        for (UIView *subview in view.subviews) {
+            id maybeView = [self findViewOfClass:class inView:subview];
+            if (maybeView) {
+                return maybeView;
+            }
+        }
+        return nil;
+    }
+}
+
 @end

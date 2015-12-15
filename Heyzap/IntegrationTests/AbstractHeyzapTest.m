@@ -43,7 +43,7 @@ NSString * const kCloseButtonAccessibilityLabel = @"X";
 - (void)closeHeyzapWebView {
     [system runBlock:^KIFTestStepResult(NSError *__autoreleasing *error) {
         NSParameterAssert(error);
-        UIWebView *webview = [self findWebview];
+        UIWebView *webview = [self findViewOfClass:[UIWebView class]];
         if (webview) {
             [webview stringByEvaluatingJavaScriptFromString:@"document.getElementById(\"close-button\").click()"];
             return KIFTestStepResultSuccess;
@@ -52,24 +52,6 @@ NSString * const kCloseButtonAccessibilityLabel = @"X";
             return KIFTestStepResultFailure;
         }
     }];
-}
-
-- (UIWebView *)findWebview {
-    return [self findWebviewInView:[UIApplication sharedApplication].keyWindow];
-}
-
-- (UIWebView *)findWebviewInView:(UIView *)view {
-    if ([view isKindOfClass:[UIWebView class]] || [view isKindOfClass:[UIWebView class]]) {
-        return (UIWebView *)view;
-    } else {
-        for (UIView *subview in view.subviews) {
-            id maybeWebView = [self findWebviewInView:subview];
-            if (maybeWebView) {
-                return maybeWebView;
-            }
-        }
-        return nil;
-    }
 }
 
 @end
