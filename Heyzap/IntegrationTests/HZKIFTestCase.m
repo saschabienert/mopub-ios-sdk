@@ -14,8 +14,6 @@
 
 @implementation HZKIFTestCase
 
-NSString * const kCloseButtonAccessibilityLabel = @"X";
-
 + (void)setUp {
     [super setUp];
     [OHHTTPStubs onStubActivation:^(NSURLRequest * _Nonnull request, id<OHHTTPStubsDescriptor>  _Nonnull stub) {
@@ -47,6 +45,13 @@ NSString * const kCloseButtonAccessibilityLabel = @"X";
     [HZInterstitialAd setCreativeID:0];
     [HZVideoAd setCreativeID:0];
     [HZIncentivizedAd setCreativeID:0];
+}
+
+#pragma mark - Stubs
+
+- (void)stubStartAndMediate {
+    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:[TestJSON jsonForResource:@"start"]];
+    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:[TestJSON jsonForResource:@"mediate"]];
 }
 
 @end

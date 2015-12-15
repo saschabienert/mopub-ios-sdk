@@ -8,12 +8,9 @@
 
 #import "AbstractHeyzapTest.h"
 
-@implementation AbstractHeyzapTest
+NSString * const kCloseButtonAccessibilityLabel = @"X";
 
-- (void)stubStartAndMediate {
-    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:[TestJSON jsonForResource:@"start"]];
-    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:[TestJSON jsonForResource:@"mediate"]];
-}
+@implementation AbstractHeyzapTest
 
 - (void)stubWebViewContent {
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest * _Nonnull request) {

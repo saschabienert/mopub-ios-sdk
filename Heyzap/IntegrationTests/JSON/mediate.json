@@ -1,84 +1,355 @@
 {
-    "id": "M1444939563-23a18dff25",
-    "networks": [{
+    "id": "M1448492951-fce0050b4e",
+    "networks": [
+                 {
                  "network": "heyzap_cross_promo",
-                 "id": "N1444939563-127e51b771",
+                 "id": "N1448492951-e1dcd00b8e",
                  "premium": false,
-                 "creative_types": ["INCENTIVIZED"],
-                 "score": 1.0799430906810214E12
-                 }, {
+                 "creative_types": [
+                                    "NATIVE"
+                                    ],
+                 "score": 1079943090681.0214
+                 },
+                 {
                  "network": "heyzap_cross_promo",
-                 "id": "N1444939563-22a46bdf26",
+                 "id": "N1448492951-834c183ccb",
                  "premium": false,
-                 "creative_types": ["VIDEO"],
-                 "score": 1.0799430906810214E12
-                 }, {
+                 "creative_types": [
+                                    "INCENTIVIZED"
+                                    ],
+                 "score": 1079943090681.0214
+                 },
+                 {
                  "network": "heyzap_cross_promo",
-                 "id": "N1444939563-4fe8b5fccd",
+                 "id": "N1448492951-e1457caad1",
                  "premium": false,
-                 "creative_types": ["STATIC"],
-                 "score": 1.0799430906810214E12
-                 }, {
+                 "creative_types": [
+                                    "VIDEO"
+                                    ],
+                 "score": 1079943090681.0214
+                 },
+                 {
+                 "network": "heyzap_cross_promo",
+                 "id": "N1448492951-95b06d5f9a",
+                 "premium": false,
+                 "creative_types": [
+                                    "STATIC"
+                                    ],
+                 "score": 1079943090681.0214
+                 },
+                 {
+                 "network": "admob",
+                 "id": "N1448492951-3e707138e9",
+                 "premium": false,
+                 "creative_types": [
+                                    "VIDEO"
+                                    ],
+                 "score": 24479437.700235404
+                 },
+                 {
+                 "network": "applovin",
+                 "id": "N1448492951-ecf704ec39",
+                 "premium": false,
+                 "creative_types": [
+                                    "INCENTIVIZED"
+                                    ],
+                 "score": 19335112.185227413
+                 },
+                 {
+                 "network": "leadbolt",
+                 "id": "N1448492951-a0368b37cf",
+                 "premium": false,
+                 "creative_types": [
+                                    "INCENTIVIZED"
+                                    ],
+                 "score": 15046463.79792013
+                 },
+                 {
                  "network": "heyzap",
-                 "id": "N1444939563-fb80ca2393",
+                 "id": "N1448492951-fa53063ad0",
                  "premium": false,
-                 "creative_types": ["STATIC"],
-                 "score": 1.9549587136061564E7
-                 }, {
-                 "network": "heyzap_exchange",
-                 "id": "N1444939563-b2ce863bdf",
-                 "premium": false,
-                 "creative_types": ["INCENTIVIZED"],
-                 "score": 0.0
-                 }, {
+                 "creative_types": [
+                                    "STATIC"
+                                    ],
+                 "score": 12128484.197335506
+                 },
+                 {
                  "network": "heyzap",
-                 "id": "N1444939563-84cc657697",
+                 "id": "N1448492951-45324c4854",
                  "premium": false,
-                 "creative_types": ["VIDEO"],
-                 "score": 998502.068674349
-                 }, {
+                 "creative_types": [
+                                    "INCENTIVIZED"
+                                    ],
+                 "score": 10715589.885563102
+                 },
+                 {
+                 "network": "unityads",
+                 "id": "N1448492951-c248ccaa7e",
+                 "premium": false,
+                 "creative_types": [
+                                    "VIDEO"
+                                    ],
+                 "score": 9991885.221350953
+                 },
+                 {
+                 "network": "adcolony",
+                 "id": "N1448492951-3d38f9ea12",
+                 "premium": false,
+                 "creative_types": [
+                                    "INCENTIVIZED"
+                                    ],
+                 "score": 9576348.516328987
+                 },
+                 {
+                 "network": "adcolony",
+                 "id": "N1448492951-3562833f6e",
+                 "premium": false,
+                 "creative_types": [
+                                    "VIDEO"
+                                    ],
+                 "score": 9576348.516328987
+                 },
+                 {
+                 "network": "facebook",
+                 "id": "N1448492951-55dc285672",
+                 "premium": false,
+                 "creative_types": [
+                                    "STATIC"
+                                    ],
+                 "score": 8069416.827716274
+                 },
+                 {
+                 "network": "hyprmx",
+                 "id": "N1448492951-ba959d4477",
+                 "premium": false,
+                 "creative_types": [
+                                    "INCENTIVIZED"
+                                    ],
+                 "score": 6645416.850653399
+                 },
+                 {
+                 "network": "admob",
+                 "id": "N1448492951-c9a5f19045",
+                 "premium": false,
+                 "creative_types": [
+                                    "STATIC"
+                                    ],
+                 "score": 6553597.525753278
+                 },
+                 {
+                 "network": "heyzap",
+                 "id": "N1448492951-e08bda2552",
+                 "premium": false,
+                 "creative_types": [
+                                    "VIDEO"
+                                    ],
+                 "score": 5825116.695351117
+                 },
+                 {
                  "network": "iad",
-                 "id": "N1444939563-4d480c5b74",
+                 "id": "N1448492951-e47d7880f4",
                  "premium": false,
-                 "creative_types": ["STATIC"],
-                 "score": 8764412.85583125
-                 }, {
-                 "network": "heyzap_exchange",
-                 "id": "N1444939563-81fa45ce04",
+                 "creative_types": [
+                                    "STATIC"
+                                    ],
+                 "score": 4682054.063465138
+                 },
+                 {
+                 "network": "unityads",
+                 "id": "N1448492951-f2b1db920e",
                  "premium": false,
-                 "creative_types": ["BANNER"],
-                 "score": 0.0
-                 }, {
-                 "network": "heyzap_exchange",
-                 "id": "N1444939563-667e014e41",
+                 "creative_types": [
+                                    "INCENTIVIZED"
+                                    ],
+                 "score": 4317098.066405219
+                 },
+                 {
+                 "network": "chartboost",
+                 "id": "N1448492951-7d07cfadf4",
                  "premium": false,
-                 "creative_types": ["STATIC"],
-                 "score": 0.0
-                 }, {
-                 "network": "heyzap",
-                 "id": "N1444939563-aab0f9b195",
+                 "creative_types": [
+                                    "INCENTIVIZED"
+                                    ],
+                 "score": 4289112.740960953
+                 },
+                 {
+                 "network": "applovin",
+                 "id": "N1448492951-aa5a3df8d2",
                  "premium": false,
-                 "creative_types": ["INCENTIVIZED"],
-                 "score": 2288215.8203764735
-                 }, {
+                 "creative_types": [
+                                    "STATIC"
+                                    ],
+                 "score": 4127738.3519537896
+                 },
+                 {
+                 "network": "vungle",
+                 "id": "N1448492951-589f23efe1",
+                 "premium": false,
+                 "creative_types": [
+                                    "INCENTIVIZED"
+                                    ],
+                 "score": 3769312.7859193957
+                 },
+                 {
+                 "network": "vungle",
+                 "id": "N1448492951-41d5c21120",
+                 "premium": false,
+                 "creative_types": [
+                                    "VIDEO"
+                                    ],
+                 "score": 3769312.7859193957
+                 },
+                 {
+                 "network": "leadbolt",
+                 "id": "N1448492951-ca0215efb7",
+                 "premium": false,
+                 "creative_types": [
+                                    "STATIC"
+                                    ],
+                 "score": 3337455.6690427186
+                 },
+                 {
+                 "network": "chartboost",
+                 "id": "N1448492951-34ef5b1dd8",
+                 "premium": false,
+                 "creative_types": [
+                                    "STATIC"
+                                    ],
+                 "score": 3042387.1715128226
+                 },
+                 {
                  "network": "iad",
-                 "id": "N1444939563-dbdeac4a1d",
+                 "id": "N1448492951-7c89b4bf71",
                  "premium": false,
-                 "creative_types": ["BANNER"],
-                 "score": 517893.51506676
-                 }, {
+                 "creative_types": [
+                                    "BANNER"
+                                    ],
+                 "score": 1005307.7833992125
+                 },
+                 {
+                 "network": "admob",
+                 "id": "N1448492951-eb019d531f",
+                 "premium": false,
+                 "creative_types": [
+                                    "BANNER"
+                                    ],
+                 "score": 364806.92986076727
+                 },
+                 {
+                 "network": "inmobi",
+                 "id": "N1448492951-76aa944d61",
+                 "premium": false,
+                 "creative_types": [
+                                    "VIDEO"
+                                    ],
+                 "score": 6.4516366747953064
+                 },
+                 {
+                 "network": "inmobi",
+                 "id": "N1448492951-4acb78b6f8",
+                 "premium": false,
+                 "creative_types": [
+                                    "INCENTIVIZED"
+                                    ],
+                 "score": 3.0969167299573677
+                 },
+                 {
+                 "network": "admob",
+                 "id": "N1448492951-9011eb0353",
+                 "premium": false,
+                 "creative_types": [
+                                    "NATIVE"
+                                    ],
+                 "score": 1.4737254972713516
+                 },
+                 {
+                 "network": "facebook",
+                 "id": "N1448492951-13fc840d06",
+                 "premium": false,
+                 "creative_types": [
+                                    "NATIVE"
+                                    ],
+                 "score": 0.8009358634261639
+                 },
+                 {
+                 "network": "inmobi",
+                 "id": "N1448492951-36c68f9aca",
+                 "premium": false,
+                 "creative_types": [
+                                    "BANNER"
+                                    ],
+                 "score": 0.7484534964959597
+                 },
+                 {
+                 "network": "inmobi",
+                 "id": "N1448492951-ec914e5e8a",
+                 "premium": false,
+                 "creative_types": [
+                                    "STATIC"
+                                    ],
+                 "score": 0.6733951252394031
+                 },
+                 {
+                 "network": "heyzap",
+                 "id": "N1448492951-136b3a62d9",
+                 "premium": false,
+                 "creative_types": [
+                                    "NATIVE"
+                                    ],
+                 "score": 0.44481922470917
+                 },
+                 {
                  "network": "heyzap_exchange",
-                 "id": "N1444939563-5ce1d2a483",
+                 "id": "N1448492951-1c9cfb8e99",
                  "premium": false,
-                 "creative_types": ["VIDEO"],
-                 "score": 0.0
-                 }],
+                 "creative_types": [
+                                    "INCENTIVIZED"
+                                    ],
+                 "score": 0
+                 },
+                 {
+                 "network": "heyzap_exchange",
+                 "id": "N1448492951-ef063a82ca",
+                 "premium": false,
+                 "creative_types": [
+                                    "BANNER"
+                                    ],
+                 "score": 0
+                 },
+                 {
+                 "network": "heyzap_exchange",
+                 "id": "N1448492951-c5c6d8a03b",
+                 "premium": false,
+                 "creative_types": [
+                                    "STATIC"
+                                    ],
+                 "score": 0
+                 },
+                 {
+                 "network": "heyzap_exchange",
+                 "id": "N1448492951-3393cb5744",
+                 "premium": false,
+                 "creative_types": [
+                                    "VIDEO"
+                                    ],
+                 "score": 0
+                 },
+                 {
+                 "network": "facebook",
+                 "id": "N1448492951-a82b2ed7bb",
+                 "premium": false,
+                 "creative_types": [
+                                    "BANNER"
+                                    ],
+                 "score": -1147798.587624845
+                 }
+                 ],
     "status": 200,
     "sessionData": {
-        "lastVideo": 1444939563,
+        "lastVideo": 1448492951,
         "heyzapOrdinal": 0
     },
-    "sort": false,
+    "sort": true,
     "interstitial_video_interval": 0,
     "display_ttl": 5000,
     "interstitial_video_enabled": true,
