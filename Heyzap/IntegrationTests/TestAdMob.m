@@ -26,8 +26,7 @@ NSString * const kAdMobCloseAccessibilityLabel = @"Close Advertisement";
 
 - (void)runAdMobForAdType:(HZAdType)adType
 {
-    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/start" withJSON:[TestJSON jsonForResource:@"start"]];
-    [OHHTTPStubs stubRequestContainingString:@"med.heyzap.com/mediate" withJSON:[TestJSON jsonForResource:@"mediate"]];
+    [self stubStartAndMediate];
     
     // Mocking
     id<HZAdsDelegate> mockDelegate = mockProtocol(@protocol(HZAdsDelegate));

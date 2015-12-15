@@ -29,6 +29,7 @@ end
 
 target 'IntegrationTestHost', :exclusive => true do
   pod 'Google-Mobile-Ads-SDK' # Maintained by Google
+  pod 'FacebookAudienceNetwork'
 end
 
 target 'IntegrationTests', :exclusive => true do

@@ -91,6 +91,7 @@
 		50160B101BFAB96800DD3827 /* HZGADNativeAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 50160B0E1BFAB96800DD3827 /* HZGADNativeAd.h */; };
 		50160B111BFAB96800DD3827 /* HZGADNativeAd.m in Sources */ = {isa = PBXBuildFile; fileRef = 50160B0F1BFAB96800DD3827 /* HZGADNativeAd.m */; };
 		501749A01C1F91810009BA40 /* TestAdMob.m in Sources */ = {isa = PBXBuildFile; fileRef = 5017499F1C1F91810009BA40 /* TestAdMob.m */; };
+		501749A31C1F96AB0009BA40 /* TestFacebookInterstitial.m in Sources */ = {isa = PBXBuildFile; fileRef = 501749A21C1F96AB0009BA40 /* TestFacebookInterstitial.m */; };
 		5019224818EDFA6A002793A3 /* HZMediationEventReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5019224618EDFA6A002793A3 /* HZMediationEventReporter.h */; };
 		5019224918EDFA6A002793A3 /* HZMediationEventReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5019224718EDFA6A002793A3 /* HZMediationEventReporter.m */; };
 		5019224E18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5019224C18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h */; };
@@ -728,6 +729,8 @@
 		50160B0F1BFAB96800DD3827 /* HZGADNativeAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZGADNativeAd.m; sourceTree = "<group>"; };
 		5017499E1C1F91810009BA40 /* TestAdMob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAdMob.h; sourceTree = "<group>"; };
 		5017499F1C1F91810009BA40 /* TestAdMob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAdMob.m; sourceTree = "<group>"; };
+		501749A11C1F96AB0009BA40 /* TestFacebookInterstitial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFacebookInterstitial.h; sourceTree = "<group>"; };
+		501749A21C1F96AB0009BA40 /* TestFacebookInterstitial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestFacebookInterstitial.m; sourceTree = "<group>"; };
 		5019224618EDFA6A002793A3 /* HZMediationEventReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationEventReporter.h; sourceTree = "<group>"; };
 		5019224718EDFA6A002793A3 /* HZMediationEventReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HZMediationEventReporter.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5019224C18EF74CC002793A3 /* HZHeyzapIncentivizedAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZHeyzapIncentivizedAd.h; sourceTree = "<group>"; };
@@ -1487,6 +1490,8 @@
 				5017499D1C1F91640009BA40 /* Heyzap */,
 				5017499E1C1F91810009BA40 /* TestAdMob.h */,
 				5017499F1C1F91810009BA40 /* TestAdMob.m */,
+				501749A11C1F96AB0009BA40 /* TestFacebookInterstitial.h */,
+				501749A21C1F96AB0009BA40 /* TestFacebookInterstitial.m */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -3766,6 +3771,7 @@
 				502E03791BD0391C00872BA2 /* NSString+Tests.m in Sources */,
 				502244B51BCF327C00279639 /* TestJSON.m in Sources */,
 				502244B41BCF315200279639 /* IntegrationTestConfig.m in Sources */,
+				501749A31C1F96AB0009BA40 /* TestFacebookInterstitial.m in Sources */,
 				501749A01C1F91810009BA40 /* TestAdMob.m in Sources */,
 				502E03851BD064BB00872BA2 /* TestHeyzapVideo.m in Sources */,
 				50C69C091C1A49B50042D526 /* AbstractHeyzapTest.m in Sources */,
@@ -4235,7 +4241,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = IntegrationTestHost/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4280,7 +4286,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = IntegrationTestHost/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

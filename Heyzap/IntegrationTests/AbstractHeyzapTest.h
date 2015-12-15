@@ -16,6 +16,5 @@ extern NSString * const kCloseButtonAccessibilityLabel;
 - (void)stubHeyzapEventEndpoints;
 
 - (void)closeHeyzapWebView;
-- (UIWebView *)findWebview;
 
 @end
