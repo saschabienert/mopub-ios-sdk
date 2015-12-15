@@ -17,6 +17,6 @@
 
 @interface HZKIFTestCase : KIFTestCase
 
-extern NSString * const kCloseButtonAccessibilityLabel;
+- (void)stubStartAndMediate;
 
 @end

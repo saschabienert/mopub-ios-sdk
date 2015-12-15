@@ -98,4 +98,9 @@
 
 - (HZMediatedNativeAd *)getNextNativeAd:(NSString *)tag additionalParams:(NSDictionary *)additionalParams error:(NSError **)error;
 
+/**
+ *  @note Used for integration tests only.
+ */
+- (Class)classForAdType:(HZAdType)adType;
+
 @end

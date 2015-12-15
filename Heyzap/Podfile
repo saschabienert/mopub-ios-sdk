@@ -27,6 +27,10 @@ target :"Ads Tests", :exclusive => true do # Unit Tests
    pod 'OHHTTPStubs'
 end
 
+target 'IntegrationTestHost', :exclusive => true do
+  pod 'Google-Mobile-Ads-SDK' # Maintained by Google
+end
+
 target 'IntegrationTests', :exclusive => true do
   pod 'KIF', :configurations => ['Debug']
   pod 'OCMockito'

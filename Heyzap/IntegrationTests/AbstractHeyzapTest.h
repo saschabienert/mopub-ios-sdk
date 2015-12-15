@@ -8,9 +8,10 @@
 
 #import "HZKIFTestCase.h"
 
+extern NSString * const kCloseButtonAccessibilityLabel;
+
 @interface AbstractHeyzapTest : HZKIFTestCase
 
-- (void)stubStartAndMediate;
 - (void)stubWebViewContent;
 - (void)stubHeyzapEventEndpoints;
 
