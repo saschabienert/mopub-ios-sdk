@@ -12,18 +12,23 @@
 @protocol HZMediationTestSuiteManager;
 @protocol HZMediationTestSuitePage <NSObject>
 - (void) infoButtonPressed;
-- (void) setDelegate:(id<HZMediationTestSuiteManager>)delegate;
+- (void) setDelegate:(nonnull id<HZMediationTestSuiteManager>)delegate;
 @optional
 - (void) hide;
 @end
 
 @protocol HZMediationTestSuiteManager <NSObject>
-- (void) didLoad:(UIViewController <HZMediationTestSuitePage> *)vc;
+- (void) didLoad:(nonnull UIViewController <HZMediationTestSuitePage> *)vc;
 
 @end
 
 @interface HZMediationTestSuite : NSObject <HZMediationTestSuiteManager>
 
-- (void) showWithCompletion:(void (^)())completion;
++ (nullable NSString *) lastTestSuiteTag;
++ (void) setLastTestSuiteTag:(nullable NSString *)tag;
+
+- (void) showWithCompletion:(nullable void (^)())completion;
 - (void) hide;
+
+
 @end
