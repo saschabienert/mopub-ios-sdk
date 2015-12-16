@@ -30,6 +30,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "HZMediationTestSuite.h"
 #import "HZNetworkTestActivityNetworkViewController.h"
 #import "HeyzapAds.h"
 #import "HeyzapMediation.h"
@@ -43,13 +44,17 @@
 #import "HZBannerAdOptions_Private.h"
 #import "HZNoCaretTextField.h"
 #import "HZBannerAd.h"
+#import "HZMediationPersistentConfig.h"
 
 #import "HZFacebookAdapter.h"
 #import "HZAdMobAdapter.h"
 #import "HZInMobiAdapter.h"
 #import "HZHeyzapExchangeAdapter.h"
 
-#define LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification) [self appendStringToDebugLog:[NSString stringWithFormat:@"%@ %@ tag:'%@'",  NSStringFromClass([[notification object] class]) ?: @"", [NSStringFromSelector(_cmd) stringByReplacingOccurrencesOfString:@"Notification:" withString:@""] , [notification userInfo][HZAdTagUserInfoKey]]]
+#define LOG_METHOD_NAME_TO_CONSOLE_WITH_NOTIFICATION(notification) do {\
+    if ([notification userInfo][HZNetworkNameUserInfoKey] == nil || [[notification userInfo][HZNetworkNameUserInfoKey] isEqualToString:[self.network name]] ) {\
+        [self appendStringToDebugLog:[NSString stringWithFormat:@"%@ %@ tag:'%@'",  NSStringFromClass([[notification object] class]) ?: @"", [NSStringFromSelector(_cmd) stringByReplacingOccurrencesOfString:@"Notification:" withString:@""] , [notification userInfo][HZAdTagUserInfoKey]]]; \
+}} while(0)
 
 @interface HZNetworkTestActivityNetworkViewController() <UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate>
 
@@ -92,6 +97,8 @@ NSValue *hzBannerPositionValue(HZBannerPosition position);
 HZBannerPosition hzBannerPositionFromNSValue(NSValue *value);
 NSString *hzBannerPositionName(HZBannerPosition position);
 
+@property (nonatomic) BOOL wasNetworkDisabledByUserWhenViewAppeared;
+
 @end
 
 @implementation HZNetworkTestActivityNetworkViewController
@@ -107,6 +114,8 @@ NSString *hzBannerPositionName(HZBannerPosition position);
         self.available = available;
         self.hasCredentials = hasCredentials;
         self.enabled = enabled;
+        
+        self.wasNetworkDisabledByUserWhenViewAppeared = [[HeyzapMediation sharedInstance].persistentConfig isNetworkDisabled:[network name]];
         
         // UnityAds starts with a view controller that is not us, need to set it since AppLovin apparently jacks it
         if ([[network name] isEqualToString:@"unityads"]) {
@@ -144,6 +153,12 @@ NSString *hzBannerPositionName(HZBannerPosition position);
         [self appendStringToDebugLog:[NSString stringWithFormat:@"%@\n", [self.network testActivityInstructions]]];
     }
     
+    
+    if (self.wasNetworkDisabledByUserWhenViewAppeared) {
+        [[HeyzapMediation sharedInstance].persistentConfig removeDisabledNetwork:[self.network name]];
+        [self appendStringToDebugLog:[NSString stringWithFormat:@"You've disabled %@ for this device on the previous page, but it has been temporarily enabled again while you're here.\n", [self.network humanizedName]]];
+    }
+    
     // Dismisses first responder (keyboard)
     [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)]];
     
@@ -168,6 +183,16 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bannerWillLeaveApplicationNotification:) name:kHZBannerAdWillLeaveApplicationNotification object:nil];
     // network callbacks
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkCallbackNotification:) name:HZMediationNetworkCallbackNotification object:[self.network name]];
+    
+    [self checkAvailabilityAndChangeColorOfShowButton];
+}
+
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+    // parent is nil if this view controller was removed from the navigation controller
+    if (!parent && self.wasNetworkDisabledByUserWhenViewAppeared) {
+        [[HeyzapMediation sharedInstance].persistentConfig addDisabledNetwork:[self.network name]];
+    }
 }
 
 - (void) dealloc {
@@ -431,6 +456,7 @@ NSString *hzBannerPositionName(HZBannerPosition position);
     self.adTagField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleRightMargin;
     self.adTagField.accessibilityLabel = @"ad tag";
     self.adTagField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    self.adTagField.text = [HZMediationTestSuite lastTestSuiteTag];
     [self.adTagField addTarget:self
                         action:@selector(adTagEditingChanged:)
               forControlEvents:UIControlEventEditingChanged];
@@ -926,6 +952,7 @@ HZBannerPosition hzBannerPositionFromNSValue(NSValue *value) {
 }
 
 - (void)adTagEditingChanged:(UITextField *)sender {
+    [HZMediationTestSuite setLastTestSuiteTag:sender.text];
     [self checkAvailabilityAndChangeColorOfShowButton];
 }
 

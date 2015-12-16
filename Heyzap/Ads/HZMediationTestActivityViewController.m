@@ -128,6 +128,7 @@ typedef enum {
     self.adTagField.textAlignment = NSTextAlignmentLeft;
     self.adTagField.accessibilityLabel = @"ad tag";
     self.adTagField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    self.adTagField.text = [HZMediationTestSuite lastTestSuiteTag];
     [self.adTagField addTarget:self
                         action:@selector(adTagEditingChanged:)
               forControlEvents:UIControlEventEditingChanged];
@@ -278,6 +279,7 @@ typedef enum {
 }
 
 - (void)adTagEditingChanged:(UITextField *)sender {
+    [HZMediationTestSuite setLastTestSuiteTag:sender.text];
     [self changeColorOfShowButton];
 }
 

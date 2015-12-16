@@ -77,6 +77,17 @@
 }
 
 
+#pragma mark - Test Suite Tag
+
+static NSString * lastTestSuiteTag;
++ (nullable NSString *) lastTestSuiteTag {
+    return lastTestSuiteTag;
+}
++ (void) setLastTestSuiteTag:(nullable NSString *)tag {
+    lastTestSuiteTag = tag;
+}
+
+
 #pragma mark - UI action methods
 
 - (void) hide {
