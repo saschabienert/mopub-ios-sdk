@@ -25,6 +25,9 @@
 @property (nonatomic, readonly) id<HZMediateRequesterDelegate>delegate;
 @property (nonatomic, strong) HZCachingService *cachingService;
 
+@property (nonatomic) BOOL isRefreshingMediate;
+@property (nonatomic, strong) dispatch_queue_t cacheWriteQueue;
+
 @end
 
 @implementation HZMediateRequester
@@ -50,6 +53,8 @@ const NSTimeInterval maxMediateDelay     = 300;
         _mediateRequestDelay = initialMediateDelay;
         _delegate = delegate;
         _cachingService = cachingService;
+        _cacheWriteQueue = dispatch_queue_create("com.heyzap.sdk.mediation.mediaterequester.cachewrite", DISPATCH_QUEUE_SERIAL);
+        dispatch_set_target_queue(_cacheWriteQueue, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0));
     }
     return self;
 }
@@ -76,6 +81,7 @@ const NSTimeInterval maxMediateDelay     = 300;
         [[HZMediationAPIClient sharedClient] GET:@"mediate"
                                       parameters:mediateParams
                                          success:^(HZAFHTTPRequestOperation *operation, NSDictionary *json) {
+                                             self.isRefreshingMediate = NO;
                                              self.latestMediate = json;
                                              self.latestMediateParams = mediateParams;
                                              [self.delegate requesterUpdatedMediate];
@@ -83,27 +89,28 @@ const NSTimeInterval maxMediateDelay     = 300;
                                              self.mediateRequestDelay = initialMediateDelay;
                                              
                                              // Background priority b/c we shouldn't need to use the cache often.
-                                             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+                                             dispatch_async(self.cacheWriteQueue, ^{
                                                  // TODO: These should be in 1 file so the operation is atomic.
-                                                 
                                                  [self.cachingService cacheRootObject:json filename:[[self class] mediateFilename]];
                                                  [self.cachingService cacheRootObject:mediateParams filename:[[self class] mediateParamsFilename]];
-                                                 HZDLog(@"Wrote /mediate to disk");
+                                                 HZDLog(@"HZMediateRequester: Wrote /mediate to disk.");
                                              });
                                          } failure:^(HZAFHTTPRequestOperation *operation, NSError *error) {
                                              // TODO: Mediation servers should return a certain status code telling the client to fallback to cache for X minutes. This would be much better than e.g. the server-side fallback option, and allows us to reduce load on mediation if necessary.
                                              
+                                             HZELog(@"HZMediateRequester: Error updating waterfall (/mediate endpoint). Error = %@",error);
+                                             
                                              // Require a failing status code, otherwise things like internet being down will cause a cache fallback.
                                              if (operation.response.statusCode >= 500 && operation.response.statusCode < 600) {
                                                  self.consecutiveMediateFailures += 1;
-                                                 
-                                                 if (self.consecutiveMediateFailures >= 3 && self.latestMediate == nil) {
+                                                 HZELog(@"HZMediateRequester: /mediate has returned status code %d, and a 5xx error has occured %u consecutive time(s) so far.", (int)operation.response.statusCode, (unsigned int)self.consecutiveMediateFailures);
+                                                 // only uses cache at app startup after 3 failures, otherwise we already have the old one to keep using
+                                                 if (self.consecutiveMediateFailures >= 3 && self->_latestMediate == nil) {
                                                      [self restoreFromCache];
                                                  }
                                              }
                                              // TODO: Potentially immediately go to 5 minutes before /mediate based on e.g. status code / header telling us to do so?
                                              
-                                             HZELog(@"Error updating waterfall (/mediate endpoint). Error = %@",error);
                                              dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.mediateRequestDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                                                  self.mediateRequestDelay *= 2;
                                                  [self loadMediateFromNetwork];
@@ -113,10 +120,11 @@ const NSTimeInterval maxMediateDelay     = 300;
 }
 
 - (void)refreshMediate {
-    self.latestMediate = nil;
-    self.latestMediateParams = nil;
-    
-    [self loadMediateFromNetwork];
+    HZDLog(@"HZMediateRequester: refreshing /mediate.");
+    if (self.isRefreshingMediate == NO) {
+        self.isRefreshingMediate = YES;
+        [self loadMediateFromNetwork];
+    }
 }
 
 - (void)restoreFromCache {
@@ -127,12 +135,20 @@ const NSTimeInterval maxMediateDelay     = 300;
         
         if (mediatePlist && mediateParamsPlist) {
             dispatch_async(dispatch_get_main_queue(), ^{
+                HZELog(@"HZMediateRequester: /mediate refreshed from cache.");
                 self.latestMediate = mediatePlist;
                 self.latestMediateParams = mediateParamsPlist;
                 [self.delegate requesterUpdatedMediate];
             });
         }
     });
+}
+
+- (NSDictionary *) latestMediate {
+    if (self.isRefreshingMediate) {
+        HZELog(@"HZMediateRequester: The latest mediate response being accessed has already been used to show an ad.");
+    }
+    return _latestMediate;
 }
 
 @end

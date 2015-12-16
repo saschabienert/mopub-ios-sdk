@@ -19,6 +19,7 @@
 
 #import "HZHeyzapExchangeAdapter.h"
 #import "HZCrossPromoAdapter.h"
+#import "HZAdapterFetchOptions.h"
 
 @interface HZMediationLoadManager()
 
@@ -159,7 +160,9 @@
     });
     
     NSArray *const matching = hzFilter(serverSupportedCreativeType, ^BOOL(HZMediationLoadData *datum) {
-        if ([self.segmentationController allowAdapter:[datum.adapterClass sharedAdapter] toShowAdForCreativeType:creativeType tag:fetchOptions.tag]) {
+        HZMediationAdAvailabilityDataProvider *const metadata = [self mediationAdAvailabilityDataProviderForAdapter:[datum.adapterClass sharedAdapter] tag:fetchOptions.tag creativeType:creativeType];
+        
+        if ([self.segmentationController allowAdapter:[datum.adapterClass sharedAdapter] toShowAdWithMetadata:metadata]) {
             return YES;
         } else if(logFilters) {
             HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because segmentation says it won't allow an ad of creativeType=%@ right now for tag=%@.", [datum.adapterClass name], NSStringFromCreativeType(creativeType), fetchOptions.tag);
@@ -202,7 +205,15 @@
                 [networksAlreadyFetched addObject:alwaysFetchDatum.adapterClass];
                 HZBaseAdapter *adapter = (HZBaseAdapter *)[alwaysFetchDatum.adapterClass sharedAdapter];
                 dispatch_sync([self.delegate pausableMainQueue], ^{
-                    [adapter prefetchForCreativeType:creativeType];
+                    
+                    NSString *const placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:adapter
+                                                                                                 tag:fetchOptions.tag
+                                                                                        creativeType:creativeType];
+                    
+                    HZAdapterFetchOptions *adapterFetchOptions = [[HZAdapterFetchOptions alloc] initWithCreativeType:creativeType
+                                                                                                 placementIDOverride:placementIDOverride
+                                                                                                        fetchOptions:fetchOptions];
+                    [adapter prefetchAdWithOptions:adapterFetchOptions];
                 });
             }
         }];
@@ -210,15 +221,40 @@
         
         hzFirstObjectPassingTest(loadData, ^BOOL(HZMediationLoadData *datum, NSUInteger idx) {
          
+            HZBaseAdapter *const adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
+            
+            // fix for https://app.asana.com/0/35280979113491/62069672523709
+            // basically, if we're fetching multiple creativeTypes simultaneously, one might succeed and show before the other creativeType(s) finish fetching.
+            // in that scenario, if there's a rate limit of 1 ad per minute, for instance, we don't want to fetch anymore if segmentation is going to say the
+            //   fetch is no good in `firstAdapterThatHasAdFromLoadData:...`.
+            // otherwise we'll fetch and load all networks.
+            __block NSString * placementIDOverride;
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                placementIDOverride = [self.segmentationController placementIDOverrideForAdapter:adapter
+                                                                                             tag:fetchOptions.tag
+                                                                                    creativeType:creativeType];
+                
+                
+            });
+            
+            HZAdapterFetchOptions *adapterFetchOptions = [[HZAdapterFetchOptions alloc] initWithCreativeType:creativeType
+                                                                                         placementIDOverride:placementIDOverride
+                                                                                                fetchOptions:fetchOptions];
+            __block BOOL segmentationAllowsAdapter;
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                segmentationAllowsAdapter = [self.segmentationController allowAdapter:adapter toShowAdWithMetadata:adapterFetchOptions];
+            });
+            if (!segmentationAllowsAdapter) {
+                HZDLog(@"HZMediationLoadManager: not allowing fetch from %@ because segmentation says it won't allow an ad of creativeType=%@ any more for tag=%@.", [datum.adapterClass name], NSStringFromCreativeType(creativeType), fetchOptions.tag);
+                return NO;
+            }
+            
             const BOOL setupSuccessful = [self.delegate setupAdapterNamed:datum.networkName];
             if (setupSuccessful) {
-                
-                const HZBaseAdapter *adapter = (HZBaseAdapter *)[datum.adapterClass sharedAdapter];
-                
                 if (![networksAlreadyFetched containsObject:datum.adapterClass]) {
                     [networksAlreadyFetched addObject:datum.adapterClass];
                     dispatch_sync([self.delegate pausableMainQueue], ^{
-                        [adapter prefetchForCreativeType:creativeType];
+                        [adapter prefetchAdWithOptions:adapterFetchOptions];
                     });
                 }
                 
@@ -235,12 +271,12 @@
                     //  -- OR --
                     //  - the current adapter has an error for the creativeType
                     const BOOL skipWaitTime = ([networksToKeepLoadingPast containsObject:datum.adapterClass]
-                                               && [[datum.adapterClass sharedAdapter] hasAdForCreativeType:creativeType]);
+                                               && [[datum.adapterClass sharedAdapter] hasAdWithMetadata:adapterFetchOptions]);
                     if (skipWaitTime) {
                         return true; // stop waiting
                     }
                     
-                    const NSError *adapterError = [[datum.adapterClass sharedAdapter] lastFetchErrorForCreativeType:creativeType];
+                    const NSError *adapterError = [[datum.adapterClass sharedAdapter] lastFetchErrorForAdsWithMatchingMetadata:adapterFetchOptions];
                     if (adapterError){
                         HZELog(@"Not waiting for %@ to fetch because it errored during a fetch for creativeType:%@. Error: %@", [datum.adapterClass humanizedName], NSStringFromCreativeType(creativeType), adapterError);
                         return true; // stop waiting
@@ -277,19 +313,36 @@
 /**
  *  Returns the first adapter that has an allowed ad fetched of the given type, or nil if none in the given range of indices within the passed loadData array have an ad of the given type.
  */
-- (HZBaseAdapter *) firstAdapterThatHasAdFromLoadData:(NSArray *)loadData inRange:(NSRange)range ofCreativeType:(HZCreativeType)creativeType tag:(NSString *)tag excludingClasses:(const NSSet *)excludedClasses {
-    for (NSUInteger i = range.location; i < NSMaxRange(range); i++) {
-        HZMediationLoadData *datum = loadData[i];
-        HZBaseAdapter *adapter = [datum.adapterClass sharedAdapter];
-        BOOL excludeThisAdapter = (excludedClasses != nil && [excludedClasses containsObject:datum.adapterClass]);
+- (HZBaseAdapter *) firstAdapterThatHasAdFromLoadData:(NSArray *)loadData inRange:(NSRange)range ofCreativeType:(HZCreativeType)creativeType tag:(NSString *)tag excludingClasses:(NSSet *)excludedClasses {
+    
+    __block HZBaseAdapter * validAdapter = nil;
+    hzEnsureMainQueue(^{
+        for (NSUInteger i = range.location; i < NSMaxRange(range); i++) {
+            HZMediationLoadData *datum = loadData[i];
+            HZBaseAdapter *adapter = [datum.adapterClass sharedAdapter];
+            BOOL excludeThisAdapter = (excludedClasses != nil && [excludedClasses containsObject:datum.adapterClass]);
         
-        if (!excludeThisAdapter
-            && [self.delegate isNetworkClassInitialized:[adapter class]]
-            && [self.segmentationController adapterHasAllowedAd:adapter forCreativeType:creativeType tag:tag]) {
-            return adapter;
+            if (!excludeThisAdapter
+                && [self.delegate isNetworkClassInitialized:[adapter class]]
+                && [self.segmentationController adapterHasAllowedAd:adapter withMetadata:[self mediationAdAvailabilityDataProviderForAdapter:adapter tag:tag creativeType:creativeType]]) {
+                validAdapter = adapter;
+                break;
+            }
         }
-    }
-    return nil;
+    });
+    
+    return validAdapter;
+}
+
+
+#pragma mark - Utilities
+
+- (HZMediationAdAvailabilityDataProvider *) mediationAdAvailabilityDataProviderForAdapter:(HZBaseAdapter *)adapter tag:(NSString *)tag creativeType:(HZCreativeType)creativeType {
+    __block HZMediationAdAvailabilityDataProvider *dataProvider;
+    hzEnsureMainQueue(^{
+        dataProvider = [[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:creativeType placementIDOverride:[self.segmentationController placementIDOverrideForAdapter:adapter tag:tag creativeType:creativeType] tag:tag];
+    });
+    return dataProvider;
 }
 
 

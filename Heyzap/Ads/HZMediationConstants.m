@@ -28,11 +28,7 @@ NSString * const kHZAdapterFacebookHumanized = @"Facebook Audience Network";
 NSString * const kHZAdapteriAdHumanized = @"iAd";
 NSString * const kHZAdapterHeyzapExchangeHumanized = @"Heyzap Exchange";
 NSString * const kHZAdapterLeadboltHumanized = @"Leadbolt";
-
-#define HZInterstitialAdLegacyCreativeTypes @[@"interstitial", @"full_screen_interstitial", @"video", @"interstitial_video"]
-#define HZIncentivizedAdLegacyCreativeTypes @[@"video", @"interstitial_video"]
-#define HZVideoAdLegacyCreativeTypes @[@"video", @"interstitial_video"]
-#define HZBannerAdLegacyCreativeTypes @[@"banner"]
+NSString * const kHZAdapterInMobiHumanized = @"InMobi";
 
 + (NSError *)errorWithAdapter:(NSString *)adapter
                        domain:(NSString *)domain
@@ -45,55 +41,9 @@ NSString * const kHZAdapterLeadboltHumanized = @"Leadbolt";
     return [NSError errorWithDomain:domain code:1 userInfo:errorInfo];
 }
 
-
-+ (NSArray *)legacyCreativeTypesForAdType:(HZAdType)type
-{
-    switch (type) {
-        case HZAdTypeIncentivized: {
-            return HZIncentivizedAdLegacyCreativeTypes;
-            break;
-        }
-        case HZAdTypeInterstitial: {
-            return HZInterstitialAdLegacyCreativeTypes;
-            break;
-        }
-        case HZAdTypeVideo: {
-            return HZVideoAdLegacyCreativeTypes;
-            break;
-        }
-        case HZAdTypeBanner: {
-            return HZBannerAdLegacyCreativeTypes;
-        }
-    }
-}
-
-
 #pragma mark - Converting from HZAdType to HZCreativeType
 
-BOOL hzCreativeTypeStringSetContainsAdType(NSSet *const creativeTypes, const HZAdType adType) {
-    switch (adType) {
-        case HZAdTypeIncentivized: {
-            return [creativeTypes containsObject:hzCreativeTypeIncentivizedString];
-            break;
-        }
-        case HZAdTypeVideo: {
-            return [creativeTypes containsObject:hzCreativeTypeVideoString];
-            break;
-        }
-        case HZAdTypeBanner: {
-            return [creativeTypes containsObject:hzCreativeTypeBannerString];
-            break;
-        }
-            
-            // this doesn't factor in blended interstitials
-        case HZAdTypeInterstitial: {
-            return [creativeTypes containsObject:hzCreativeTypeStaticString];
-            break;
-        }
-    }
-}
-
-NSMutableSet * hzCreativeTypesPossibleForAdType(HZAdType adType) {
+NSMutableSet<HZCreativeTypeObject *> * hzCreativeTypesPossibleForAdType(HZAdType adType) {
     switch(adType){
         case HZAdTypeInterstitial:
             return [NSMutableSet setWithArray:@[@(HZCreativeTypeVideo), @(HZCreativeTypeStatic)]];
@@ -103,6 +53,8 @@ NSMutableSet * hzCreativeTypesPossibleForAdType(HZAdType adType) {
             return [NSMutableSet setWithArray:@[@(HZCreativeTypeBanner)]];
         case HZAdTypeVideo:
             return [NSMutableSet setWithArray:@[@(HZCreativeTypeVideo)]];
+        case HZAdTypeNative:
+            return [NSMutableSet setWithArray:@[@(HZCreativeTypeNative)]];
     }
 }
 

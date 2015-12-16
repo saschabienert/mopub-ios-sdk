@@ -10,4 +10,6 @@
 
 @interface HZAbstractHeyzapAdapter : HZBaseAdapter
 
+- (HZAuctionType)auctionType;
+
 @end

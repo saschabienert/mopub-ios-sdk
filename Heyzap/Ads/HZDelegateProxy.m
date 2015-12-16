@@ -27,7 +27,7 @@
 -  (id)forwardingTargetForSelector:(SEL)aSelector
 {
     if (![NSThread isMainThread]) {
-        NSLog(@"Callbacks must be sent on the main thread.");
+        HZAlwaysLog(@"Callbacks must be sent on the main thread.");
         HZAssert([NSThread isMainThread], @"Callbacks must be on the main thread");
     }
     if ([self.forwardingTarget respondsToSelector:aSelector]) {

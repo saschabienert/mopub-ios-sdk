@@ -18,18 +18,20 @@
 #import "SDKTestAppViewController.h"
 
 #import "HZDevice.h"
-#import "SDCSegmentedViewController.h"
+#import "HZSDCSegmentedViewController.h"
 #import "ServerSelectionViewController.h"
 #import "DeviceInfoViewController.h"
 #import "DemandTestViewController.h"
 
 #import "HZInterstitialAd.h"
 #import "PersistentTestAppConfiguration.h"
+#import "HZHardcodedConstantChecker.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [HZHardcodedConstantChecker checkConstants];
 
     if (![HZDevice hzSystemVersionIsLessThan: @"7.0"]) {
         [[UINavigationBar appearance] setBarTintColor: [UIColor colorWithRed: 39/255.0 green: 115/255.0 blue: 179/255.0 alpha: 0.5]];
@@ -56,7 +58,7 @@
     DeviceInfoViewController *deviceController = [[DeviceInfoViewController alloc] init];
     DemandTestViewController *mraidController = [[DemandTestViewController alloc] init];
     
-    SDCSegmentedViewController *segmentedController = [[SDCSegmentedViewController alloc] initWithViewControllers:@[mainController, serverController, mraidController, deviceController]];
+    HZSDCSegmentedViewController *segmentedController = [[HZSDCSegmentedViewController alloc] initWithViewControllers:@[mainController, serverController, mraidController, deviceController]];
 
     if ([segmentedController respondsToSelector:@selector(edgesForExtendedLayout)]) {
         segmentedController.edgesForExtendedLayout = UIRectEdgeNone;
@@ -65,7 +67,7 @@
     
     self.navController = [[HZUINavigationController alloc] initWithRootViewController: segmentedController orientations:UIInterfaceOrientationMaskAll];
     
-    segmentedController.position = SDCSegmentedViewControllerControlPositionNavigationBar;
+    segmentedController.position = HZSDCSegmentedViewControllerControlPositionNavigationBar;
     segmentedController.segmentedControl.tintColor = [UIColor whiteColor];
     
     [self.window setRootViewController: self.navController];

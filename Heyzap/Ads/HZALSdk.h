@@ -10,6 +10,7 @@
 #import "HZALSdkSettings.h"
 
 @class HZALAdService;
+@class HZALTargetingData;
 
 @interface HZALSdk : HZClassProxy
 
@@ -21,5 +22,14 @@
 - (HZALAdService *)adService;
 
 + (NSString *)version;
+
+/**
+ * Get an instance of AppLovin Targeting data. This object contains
+ * targeting values that could be provided to AppLovin for better
+ * advertisement performance.
+ *
+ * @return Current targeting data. Guaranteed not to be null.
+ */
+@property (strong, nonatomic, readonly) HZALTargetingData* targetingData;
 
 @end

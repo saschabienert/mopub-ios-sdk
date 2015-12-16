@@ -13,6 +13,7 @@ typedef NS_OPTIONS(NSUInteger, HZAdType) {
     HZAdTypeIncentivized = 1 << 2,
     // placeholder for moreapps
     HZAdTypeBanner = 1 << 4,
+    HZAdTypeNative = 1 << 5,
 };
 
 NSString * NSStringFromAdType(HZAdType type);

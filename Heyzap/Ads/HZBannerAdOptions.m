@@ -18,8 +18,17 @@
 #import "HZiAdAdapter.h"
 #import "HZAdMobAdapter.h"
 #import "HZFacebookAdapter.h"
+#import "HZInMobiAdapter.h"
 
 #import "HZAdModel.h"
+#import "HZDevice.h"
+
+// Note: These are taken from https://support.inmobi.com/monetize/integration/monetization-server-to-server-api-integration-guides/api-2.0-integration-guidelines
+// (There aren't any constants in the InMobi SDK we can get these values from)
+const CGSize HZInMobiBannerSize320x50 = {320, 50};
+const CGSize HZInMobiBannerSize468x60 = {468, 60};
+const CGSize HZInMobiBannerSize480x75 = {480, 75};
+const CGSize HZInMobiBannerSize728x90 = {728, 90};
 
 @interface HZBannerAdOptions()
 
@@ -57,10 +66,23 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
     if (self) {
         _facebookBannerSize = HZFacebookBannerSizeFlexibleWidthHeight50;
         
-        if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])) {
+        const BOOL isLandscape = UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]);
+        
+        if (isLandscape) {
             _admobBannerSize = HZAdMobBannerSizeFlexibleWidthLandscape;
         } else {
             _admobBannerSize = HZAdMobBannerSizeFlexibleWidthPortrait;
+        }
+        
+        
+        if ([HZDevice isPhone]) {
+            if (isLandscape) {
+                _inMobiBannerSize = HZInMobiBannerSize468x60;
+            } else {
+                _inMobiBannerSize = HZInMobiBannerSize320x50;
+            }
+        } else {
+            _inMobiBannerSize = HZInMobiBannerSize728x90;
         }
         
         _fetchTimeout = DBL_MAX;
@@ -178,6 +200,16 @@ NSString *hzAdMobBannerSizeDescription(HZAdMobBannerSize size);
              ];
 }
 
++ (NSArray *)inmobiBannerSizes {
+    return @[
+             [NSValue valueWithCGSize:HZInMobiBannerSize320x50],
+             [NSValue valueWithCGSize:HZInMobiBannerSize468x60],
+             [NSValue valueWithCGSize:HZInMobiBannerSize480x75],
+             [NSValue valueWithCGSize:HZInMobiBannerSize728x90],
+             ];
+    
+}
+
 NSValue *hzAdMobBannerSizeValue(HZAdMobBannerSize size) {
     return [NSValue valueWithBytes:&size objCType:@encode(HZAdMobBannerSize)];
 }
@@ -235,6 +267,10 @@ NSString *hzFacebookBannerSizeDescription(HZFacebookBannerSize size) {
     }
 }
 
+NSString *hzInMobiBannerSizeDescription(CGSize size) {
+    return [NSString stringWithFormat:@"%.f × %.f",size.width, size.height];
+}
+
 - (BOOL)isFlexibleWidthForNetwork:(NSString *const)networkConstant {
     if ([networkConstant isEqualToString: [HZiAdAdapter name]]) {
         return YES;
@@ -244,6 +280,8 @@ NSString *hzFacebookBannerSizeDescription(HZFacebookBannerSize size) {
     } else if ([networkConstant isEqualToString: [HZFacebookAdapter name]]) {
         return self.facebookBannerSize == HZFacebookBannerSizeFlexibleWidthHeight50
             || self.facebookBannerSize == HZFacebookBannerSizeFlexibleWidthHeight90;
+    } else if ([networkConstant isEqualToString:[HZInMobiAdapter name]]) {
+        return NO;
     } else {
         return YES;
     }

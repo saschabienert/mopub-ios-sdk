@@ -8,6 +8,6 @@
 
 #import "HZAdsRequestSerializer.h"
 
-@interface HZMediationRequestSerializer : HZAdsRequestSerializer
+@interface HZMediationRequestSerializer : HZAFHTTPRequestSerializer
 
 @end

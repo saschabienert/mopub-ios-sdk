@@ -61,6 +61,10 @@
                                                   dict:self.credentials];
 }
 
+- (BOOL) hasNecessaryCredentials {
+    return self.appID != nil;
+}
+
 - (void) toggleLogging {
     [[HZUnityAds sharedInstance] setDebugMode:[self isLoggingEnabled]];
 }
@@ -87,10 +91,14 @@
     return [HZUnityAds getSDKVersion];
 }
 
+- (NSString *)testActivityInstructions {
+    return @"If you have trouble receiving UnityAds, enable Ad Test Mode from the Unity Ads Dashboard (Games > Select Game > Monetization Settings > set \"Ad Test Mode\" to \"Force all\"), or do `[[UnityAds sharedInstance] setTestMode:YES]`.";
+}
+
 NSString * const kHZNetworkName = @"mobile";
 
 - (NSError *)internalInitializeSDK {
-    RETURN_ERROR_IF_NIL(self.appID, @"game_id");
+    RETURN_ERROR_UNLESS([self hasNecessaryCredentials], ([NSString stringWithFormat:@"%@ needs a Game ID set up on your dashboard.", [self humanizedName]]));
     
     [self toggleLogging];
     
@@ -111,11 +119,10 @@ NSString * const kHZNetworkName = @"mobile";
     return HZCreativeTypeVideo | HZCreativeTypeIncentivized;
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     if (![[[UIApplication sharedApplication] keyWindow] rootViewController]) {
-        // This is important so we should always NSLog this.
-        NSLog(@"UnityAds reqires a root view controller on the keyWindow to show ads. Make sure [[[UIApplication sharedApplication] keyWindow] rootViewController] does not return `nil`.");
+        HZAlwaysLog(@"UnityAds reqires a root view controller on the keyWindow to show ads. Make sure [[[UIApplication sharedApplication] keyWindow] rootViewController] does not return `nil`.");
         return NO;
     }
     
@@ -143,15 +150,15 @@ NSString * const kHZNetworkName = @"mobile";
     }
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options
 {
     // UnityAds auto-prefetches
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
     [[HZUnityAds sharedInstance] setViewController:options.viewController];
-    if (creativeType == HZCreativeTypeIncentivized) {
+    if (options.creativeType == HZCreativeTypeIncentivized) {
         self.isShowingIncentivized = YES;
         [[HZUnityAds sharedInstance] setZone:self.incentivizedZoneID];
     } else {
@@ -204,7 +211,7 @@ NSString * const kHZNetworkName = @"mobile";
 }
 
 - (void)unityAdsWillLeaveApplication {
-    [self.delegate adapterWasClicked:self];
+    // Unused. This used to be a used as a proxy for click callbacks, but since UnityAds started using SKStoreProductViewController this is no longer reliable.
 }
 
 - (void)unityAdsVideoStarted {

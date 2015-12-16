@@ -35,6 +35,10 @@ NSString *const kHZLogThirdPartyLoggingEnabledChangedNotification = @"kHZLogThir
 
 #pragma mark - Debug Methods
 
++ (void) debug:(NSString *)message {
+    [self log: message atDebugLevel: HZDebugLevelVerbose];
+}
+
 + (void) info:(NSString *)message {
     [self log: message atDebugLevel: HZDebugLevelInfo];
 }
@@ -43,8 +47,8 @@ NSString *const kHZLogThirdPartyLoggingEnabledChangedNotification = @"kHZLogThir
     [self log: message atDebugLevel: HZDebugLevelError];
 }
 
-+ (void) debug:(NSString *)message {
-    [self log: message atDebugLevel: HZDebugLevelVerbose];
++ (void) always:(NSString *)message {
+    [self log: message atDebugLevel: HZDebugLevelSilent];
 }
 
 + (void) log: (NSString *) message atDebugLevel: (HZDebugLevel) debugLevel {

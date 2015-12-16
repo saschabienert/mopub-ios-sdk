@@ -14,7 +14,7 @@ NSString * const kHZMediationAPIBaseURLString = @"https://med.heyzap.com/";
 
 @implementation HZMediationAPIClient
 
-+ (HZMediationAPIClient *)sharedClient {
++ (instancetype)sharedClient {
     static HZMediationAPIClient *_sharedClient = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

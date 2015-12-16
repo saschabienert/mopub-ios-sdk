@@ -29,6 +29,10 @@
     [self.queue addObject: anObject];
 }
 
+- (void)enqueueObjects:(NSArray *)objects {
+    [self.queue addObjectsFromArray:objects];
+}
+
 // Grab the next item in the queue, if there is one
 -(id) dequeue {
     if ([self.queue firstObject]) {
@@ -64,6 +68,10 @@
 // Checks if the queue is empty
 -(BOOL) empty {
     return ([self.queue lastObject] == nil);
+}
+
+- (NSUInteger)count {
+    return self.queue.count;
 }
 
 @end

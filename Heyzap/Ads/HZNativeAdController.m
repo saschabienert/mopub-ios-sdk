@@ -24,6 +24,13 @@
 + (void)fetchAds:(const NSUInteger)numberOfAds
              tag:(NSString *)tag
       completion:(void (^)(NSError *error, HZNativeAdCollection *collection))completion {
+    [self fetchAds:numberOfAds tag:tag auctionType:HZAuctionTypeMixed completion:completion];
+}
+
++ (void)fetchAds:(NSUInteger)numberOfAds
+             tag:(NSString *)tag
+     auctionType:(HZAuctionType)auctionType
+      completion:(void (^)(NSError *error, HZNativeAdCollection *collection))completion {
     HZVersionCheck()
 
     HZParameterAssert(numberOfAds > 0);
@@ -35,7 +42,7 @@
     
     HZAdFetchRequest *request = [[HZAdFetchRequest alloc] initWithFetchableCreativeType:HZFetchableCreativeTypeNative
                                                                                     tag:tag
-                                                                            auctionType:HZAuctionTypeMixed
+                                                                            auctionType:auctionType
                                                                     andAdditionalParams:@{@"max_count": @(numberOfAds)}];
     
     
@@ -58,6 +65,7 @@
                 if (adModel) {
                     [ads addObject:adModel];
                 } else {
+                    HZTrackError(error);
                     [errors addObject:error];
                     HZELog(@"Error creating native ad = %@",error);
                 }

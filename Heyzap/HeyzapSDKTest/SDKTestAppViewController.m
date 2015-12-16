@@ -7,6 +7,9 @@
 //  Copyright 2011 Heyzap. All rights reserved.
 //
 
+@import AVFoundation;
+@import CoreLocation;
+
 #import "SDKTestAppViewController.h"
 
 #import <AdSupport/ASIdentifierManager.h>
@@ -33,6 +36,8 @@
 
 #import "HZUtils.h"
 
+#import "MediatedNativeAdTableViewController.h"
+
 #define kTagCreativeIDField 4393
 
 typedef enum {
@@ -42,7 +47,7 @@ typedef enum {
     kAdUnitSegmentBanner,
 } kAdUnitSegment;
 
-@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+@interface SDKTestAppViewController() <MFMailComposeViewControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, CLLocationManagerDelegate>
 
 
 @property (nonatomic) SDKTestAppViewControllerHZAdsDelegate *interstitialDelegate;
@@ -65,6 +70,7 @@ typedef enum {
 @property (nonatomic, strong) UISwitch * logCallbacksSwitch;
 @property (nonatomic, strong) UISwitch * pauseExpensiveWorkSwitch;
 @property (nonatomic, strong) UISwitch * scrollSwitch;
+@property (nonatomic, strong) UISwitch * musicSwitch;
 
 @property (nonatomic, strong) UIButton *showButton;
 
@@ -81,6 +87,13 @@ typedef enum {
 
 @property (nonatomic) UITextField *creativeTypeTextField;
 @property (nonatomic) UITextField *adTagField;
+
+@property (strong, nonatomic) AVAudioSession *audioSession;
+@property (strong, nonatomic) AVAudioPlayer *backgroundMusicPlayer;
+@property (nonatomic) BOOL backgroundMusicPlaying;
+@property (nonatomic) BOOL backgroundMusicShouldPlay;
+
+@property (nonatomic, readonly) CLLocationManager *manager;
 
 @end
 
@@ -100,6 +113,7 @@ typedef enum {
 #else
         self.title = @"Ads";
 #endif
+        _manager = [[CLLocationManager alloc] init];
     }
     return self;
 }
@@ -197,6 +211,9 @@ const CGFloat kLeftMargin = 10;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self setupLocationManager];
+    
     self.interstitialDelegate = [[SDKTestAppViewControllerHZAdsDelegate alloc] initWthSDKTestAppViewController:self];
     self.interstitialDelegate.name = @"--HZInterstitialAd--";
     self.videoDelegate = [[SDKTestAppViewControllerHZAdsDelegate alloc] initWthSDKTestAppViewController:self];
@@ -224,10 +241,13 @@ const CGFloat kLeftMargin = 10;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(responseNotification:) name:kHZAPIClientDidReceiveResponseNotification object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(downloadNotification:) name: kHZDownloadHelperSuccessNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadNotification:) name:kHZDownloadHelperSuccessNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(remoteDataRefreshed:) name:HZRemoteDataRefreshedNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(paymentTransactionErrorNotification:) name: kHZPaymentTransactionErrorNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(paymentTransactionErrorNotification:) name:kHZPaymentTransactionErrorNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(adAudioStarted) name:HZMediationWillStartAdAudioNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(adAudioEnded) name:HZMediationDidFinishAdAudioNotification object:nil];
 
     
     self.showButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
@@ -347,6 +367,7 @@ const CGFloat kLeftMargin = 10;
     self.adTagField.placeholder = @"Ad Tag";
     self.adTagField.textAlignment = NSTextAlignmentLeft;
     self.adTagField.accessibilityLabel = kAdTagTextFieldAccessibilityLabel;
+    self.adTagField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     [self.adTagField addTarget:self
                         action:@selector(adTagEditingChanged:)
               forControlEvents:UIControlEventEditingChanged];
@@ -368,18 +389,32 @@ const CGFloat kLeftMargin = 10;
 
     
     UIButton *nativeAdsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    nativeAdsButton.frame = CGRectMake(10.0, CGRectGetMaxY(self.creativeTypeTextField.frame) + 10, 120.0, 25.0);
+    nativeAdsButton.frame = CGRectMake(10.0, CGRectGetMaxY(self.creativeTypeTextField.frame) + 10, 100.0, 25.0);
     nativeAdsButton.layer.cornerRadius = 4.0;
     nativeAdsButton.backgroundColor = [UIColor lightTextColor];
-    [nativeAdsButton setTitle:@"Show Native Ad" forState:UIControlStateNormal];
+    [nativeAdsButton setTitle:@"HZ Native" forState:UIControlStateNormal];
     [nativeAdsButton addTarget:self action:@selector(showNativeAds) forControlEvents:UIControlEventTouchUpInside];
     [self.scrollView addSubview:nativeAdsButton];
     
+    UIButton *mediatedNativeAdsButton = ({
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        button.frame = CGRectMake(CGRectGetMaxX(nativeAdsButton.frame) + 10, CGRectGetMaxY(self.creativeTypeTextField.frame) + 10, 100.0, 25.0);
+        button.layer.cornerRadius = 4.0;
+        button.backgroundColor = [UIColor lightTextColor];
+        [button setTitle:@"Med Native" forState:UIControlStateNormal];
+        [button addTarget:self
+                   action:@selector(showMediatedNativeAds)
+         forControlEvents:UIControlEventTouchUpInside];
+        button;
+    });
+    [self.scrollView addSubview:mediatedNativeAdsButton];
+    
+    
     UIButton *testActivityButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    testActivityButton.frame = CGRectMake(CGRectGetMaxX(nativeAdsButton.frame) + 10, CGRectGetMinY(nativeAdsButton.frame), 167.0, 25.0);
+    testActivityButton.frame = CGRectMake(CGRectGetMaxX(mediatedNativeAdsButton.frame) + 10, CGRectGetMinY(nativeAdsButton.frame), 137.0, 25.0);
     testActivityButton.layer.cornerRadius = 4.0;
     testActivityButton.backgroundColor = [UIColor lightTextColor];
-    [testActivityButton setTitle:@"Start Test Suite" forState:UIControlStateNormal];
+    [testActivityButton setTitle:@"Test Suite" forState:UIControlStateNormal];
     [testActivityButton addTarget:self action:@selector(showTestActivity) forControlEvents:UIControlEventTouchUpInside];
     [self.scrollView addSubview:testActivityButton];
 
@@ -483,10 +518,20 @@ const CGFloat kLeftMargin = 10;
     self.logCallbacksSwitch.on = self.scrollSwitch.on = YES;
     self.pauseExpensiveWorkSwitch.on = NO;
     
+    UILabel *musicLabel = [self switchLabelWithFrameX:CGRectGetMinX(self.pauseExpensiveWorkSwitch.frame) + 5 Y:CGRectGetMaxY(self.pauseExpensiveWorkSwitch.frame) + 5 text:@"BG Music"];
+    pauseExpensiveWork.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
+    [self.scrollView addSubview: musicLabel];
+    
+    self.musicSwitch = [[UISwitch alloc] init];
+    self.musicSwitch.frame = CGRectMake(CGRectGetMinX(self.pauseExpensiveWorkSwitch.frame), CGRectGetMaxY(musicLabel.frame), 40.0, 40.0);
+    self.musicSwitch.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
+    [self.musicSwitch addTarget:self action:@selector(musicSwitchFlipped:) forControlEvents:UIControlEventValueChanged];
+    [self.scrollView addSubview: self.musicSwitch];
+    
     UIButton *openLastFetchButton = [UIButton buttonWithType: UIButtonTypeRoundedRect];
     [openLastFetchButton setTitle: @"Open Last Fetch in Safari" forState: UIControlStateNormal];
     [openLastFetchButton addTarget: self action: @selector(openLastFetch) forControlEvents: UIControlEventTouchUpInside];
-    openLastFetchButton.frame =  CGRectMake(kLeftMargin, CGRectGetMaxY(debugSwitch.frame) + 5.0, 200.0, 50.0);
+    openLastFetchButton.frame =  CGRectMake(kLeftMargin, CGRectGetMaxY(self.musicSwitch.frame) + 5.0, 200.0, 50.0);
     [self.scrollView addSubview: openLastFetchButton];
     
     // IAP
@@ -527,6 +572,11 @@ const CGFloat kLeftMargin = 10;
         subviewContainingRect = CGRectUnion(subviewContainingRect, view.frame);
     }
     self.scrollView.contentSize = (CGSize) { subviewContainingRect.size.width, subviewContainingRect.size.height + 80 };
+    
+    
+    // Audio
+    [self configureAudioSession];
+    [self configureAudioPlayer];
 }
 
 - (UILabel *) switchLabelWithFrameX:(CGFloat)x Y:(CGFloat)y text:(NSString * )text{
@@ -606,13 +656,12 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void) fetchAd: (id) sender {
-    NSString *adTagText = [self adTagText];
-    if (adTagText) {
-        [self logToConsole:[NSString stringWithFormat:@"Fetching for tag: %@", adTagText]];
-    } else {
-        [self logToConsole:@"Fetching for default tag"];
-        adTagText = nil;
-    }
+    // use HZShowOptions to format the tag for the log output
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = [self adTagText];
+    NSString * adTagText = options.tag;
+    
+    [self logToConsole:[NSString stringWithFormat:@"Fetching for tag: '%@'", adTagText]];
     
     void (^completion)(BOOL, NSError *) = ^void (BOOL result, NSError *error){
         if (!result || error) {
@@ -639,19 +688,14 @@ const CGFloat kLeftMargin = 10;
 
 - (void) showAd: (id) sender {
     [self.view endEditing:YES];
-    NSString *adTag = [self adTagText];
-    if (adTag) {
-        [self logToConsole:[NSString stringWithFormat:@"Showing for tag: %@", adTag]];
-    } else {
-        [self logToConsole:@"Showing for default tag"];
-        adTag = nil;
-    }
-    
+
     HZShowOptions *opts = [[HZShowOptions alloc] init];
-    opts.tag = adTag;
+    opts.tag = [self adTagText];
     opts.completion = ^(BOOL success, NSError *err) {
         [self logToConsole:[NSString stringWithFormat:@"Show completion block. Success=%x, err=%@", success, err]];
     };
+    
+    [self logToConsole:[NSString stringWithFormat:@"Showing for tag: '%@'", opts.tag]];
     
     switch (self.adUnitSegmentedControl.selectedSegmentIndex) {
         case kAdUnitSegmentInterstitial:
@@ -673,7 +717,11 @@ const CGFloat kLeftMargin = 10;
 }
 
 - (void)checkAvailability {
-    NSString * adTag = [self adTagText];
+    // use HZShowOptions to format the tag for the log output
+    HZShowOptions *options = [HZShowOptions new];
+    options.tag = [self adTagText];
+    NSString * adTag = options.tag;
+    
     NSString *adType;
     BOOL available;
     
@@ -696,7 +744,7 @@ const CGFloat kLeftMargin = 10;
     
     if (adType) {
         [self setShowButtonOn:available];
-        [self logToConsole:[NSString stringWithFormat:@"%@ ad %@ available for tag: `%@`.", adType, (available ? @"is" : @"is not"), adTag]];
+        [self logToConsole:[NSString stringWithFormat:@"%@ ad %@ available for tag: '%@'.", adType, (available ? @"is" : @"is not"), adTag]];
     } else {
         [self logToConsole:@"Is Available Error: Unable to determine ad type."];
     }
@@ -768,6 +816,12 @@ const CGFloat kLeftMargin = 10;
             [self presentViewController:navController animated:YES completion:nil];
         }
     }];
+}
+
+- (void)showMediatedNativeAds {
+    MediatedNativeAdTableViewController *tvc = [[MediatedNativeAdTableViewController alloc] initWithTag:[self adTagText]];
+    HZUINavigationController *navController = [[HZUINavigationController alloc] initWithRootViewController:tvc orientations:UIInterfaceOrientationMaskAll];
+    [self presentViewController:navController animated:YES completion:nil];
 }
 
 - (void) showTestActivity {
@@ -896,14 +950,23 @@ const CGFloat kLeftMargin = 10;
 
 #pragma mark - Console
 
++(NSDateFormatter *)sharedDateFormatter {
+    static NSDateFormatter *sharedDateFormatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedDateFormatter = [[NSDateFormatter alloc]init];
+        [sharedDateFormatter setDateFormat:@"[h:mm:ss a]"];
+    });
+    
+    return sharedDateFormatter;
+}
+
 - (void)logToConsole:(NSString *)consoleString {
     if (!self.logCallbacksSwitch.isOn) {
         return;
     }
     
-    NSDateFormatter * format = [[NSDateFormatter alloc]init];
-    [format setDateFormat:@"[h:mm:ss a]"];
-    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[format stringFromDate:[NSDate date]],consoleString];
+    self.consoleTextView.text = [self.consoleTextView.text  stringByAppendingFormat:@"\n\n%@ %@",[[[self class] sharedDateFormatter] stringFromDate:[NSDate date]],consoleString];
     if (self.scrollSwitch.isOn) {
         // get around weird bug in iOS 9 - text view scrolling has issues when done directly after updating the text
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -980,6 +1043,98 @@ const CGFloat kLeftMargin = 10;
     self.creativeTypeTextField.font = [UIFont italicSystemFontOfSize:18];
     self.creativeTypeTextField.textColor = [UIColor lightGrayColor];
     self.creativeTypeTextField.text = @"Creative type";
+}
+
+
+#pragma mark - Audio
+
+- (void) configureAudioSession {
+    self.audioSession = [AVAudioSession sharedInstance];
+    
+    NSError *setCategoryError = nil;
+    [self.audioSession setCategory:AVAudioSessionCategoryAmbient error:&setCategoryError];
+    if (setCategoryError) {
+        NSLog(@"Error setting audio session category! code:%ld error: %@", (long)[setCategoryError code], setCategoryError);
+    }
+}
+
+- (void)configureAudioPlayer {
+    NSURL *backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"elevator_music" withExtension:@"mp3"];
+    // On Max's machine the URL is non-deterministically nil, causing a crash. Since this is not crucial functionality we just don't play music in that case.
+    if (backgroundMusicURL) {
+        self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backgroundMusicURL error:nil];
+        self.backgroundMusicPlayer.numberOfLoops = -1;	// loop forever
+        [self.backgroundMusicPlayer prepareToPlay];
+    }
+}
+
+- (void)tryPlayMusic {
+    if (self.backgroundMusicPlaying) {
+        return;
+    }
+    [self.backgroundMusicPlayer prepareToPlay];
+    [self.backgroundMusicPlayer play];
+    self.backgroundMusicPlaying = YES;
+}
+
+- (void) tryPauseMusic {
+    if (self.backgroundMusicPlaying) {
+        [self.backgroundMusicPlayer pause];
+        self.backgroundMusicPlaying = NO;
+    }
+}
+
+- (void) musicSwitchFlipped:(UISwitch *)sender {
+    self.backgroundMusicShouldPlay = sender.isOn;
+    if (sender.isOn) {
+        [self tryPlayMusic];
+    } else {
+        [self tryPauseMusic];
+    }
+}
+
+- (void) adAudioStarted {
+    [self otherAudioIsPlaying:YES];
+}
+- (void) adAudioEnded {
+    [self otherAudioIsPlaying:NO];
+}
+- (void) otherAudioIsPlaying:(BOOL)isPlaying {
+    if (self.backgroundMusicShouldPlay) {
+        if (isPlaying) {
+            [self tryPauseMusic];
+        } else {
+            [self tryPlayMusic];
+        }
+    }
+}
+
+#pragma mark - Location
+
+- (void)setupLocationManager {
+    self.manager.delegate = self;
+    self.manager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+    self.manager.distanceFilter = 500; // meters
+    
+    if ([self.manager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        [self.manager requestWhenInUseAuthorization];
+    } else {
+        [self.manager startUpdatingLocation];
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    if (status == kCLAuthorizationStatusAuthorizedWhenInUse || status == kCLAuthorizationStatusAuthorizedAlways) {
+        [self.manager startUpdatingLocation];
+    } else {
+        [self.manager stopUpdatingLocation];
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
+    CLLocation *latestLocation = locations.lastObject;
+    HZDemographics *demographics = [HeyzapAds demographicInformation];
+    demographics.location = latestLocation;
 }
 
 @end

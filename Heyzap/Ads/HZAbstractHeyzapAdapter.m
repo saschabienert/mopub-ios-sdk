@@ -14,6 +14,17 @@
 #import "HZMediationConstants.h"
 #import "HeyzapAds.h"
 #import "HZBaseAdapter_Internal.h"
+#import "HZHeyzapNativeAdAdapter.h"
+#import "HZNativeAdController_Private.h"
+#import "HZQueue.h"
+
+@interface HZAbstractHeyzapAdapter()
+
+@property (nonatomic) HZQueue<HZNativeAd *> *nativeAds;
+@property (nonatomic, getter=isNativeFetchInProgress) BOOL nativeFetchInProgress;
+
+
+@end
 
 @implementation HZAbstractHeyzapAdapter
 
@@ -38,13 +49,13 @@
 
 - (HZCreativeType) supportedCreativeTypes
 {
-    return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeIncentivized;
+    return HZCreativeTypeStatic | HZCreativeTypeVideo | HZCreativeTypeIncentivized | HZCreativeTypeNative;
 }
 
-- (void)internalPrefetchForCreativeType:(HZCreativeType)creativeType
+- (void)internalPrefetchAdWithOptions:(HZAdapterFetchOptions *)options
 {    
     const HZAuctionType auctionType = [self auctionType];
-    switch (creativeType) {
+    switch (options.creativeType) {
         case HZCreativeTypeStatic: {
             [HZHeyzapInterstitialAd fetchForAuctionType:auctionType withCompletion:nil];
             break;
@@ -57,6 +68,10 @@
             [HZHeyzapVideoAd fetchForAuctionType:auctionType withCompletion:nil];
             break;
         }
+        case HZCreativeTypeNative: {
+            [self fetchNativeWithOptions:options];
+            break;
+        }
         default: {
             // Ignored; Heyzap doesn't support banners, etc.
             break;
@@ -64,24 +79,26 @@
     }
 }
 
-- (BOOL)internalHasAdForCreativeType:(HZCreativeType)creativeType
+- (BOOL)internalHasAdWithMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider
 {
     const HZAuctionType auctionType = [self auctionType];
-    if (creativeType & HZCreativeTypeVideo) {
+    if (dataProvider.creativeType & HZCreativeTypeVideo) {
         return [HZHeyzapVideoAd isAvailableForTag:nil auctionType:auctionType];
-    } else if (creativeType & HZCreativeTypeStatic) {
+    } else if (dataProvider.creativeType & HZCreativeTypeStatic) {
         return [HZHeyzapInterstitialAd isAvailableForTag:nil auctionType:auctionType];
-    } else if (creativeType & HZCreativeTypeIncentivized) {
+    } else if (dataProvider.creativeType & HZCreativeTypeIncentivized) {
         return [HZHeyzapIncentivizedAd isAvailableForTag:nil auctionType:auctionType];
+    } else if (dataProvider.creativeType & HZCreativeTypeNative) {
+        return [self.nativeAds count] > 0;
     } else {
         return NO;
     }
 }
 
-- (void)internalShowAdForCreativeType:(HZCreativeType)creativeType options:(HZShowOptions *)options
+- (void)internalShowAdWithOptions:(HZShowOptions *)options
 {
     const HZAuctionType auctionType = [self auctionType];
-    switch (creativeType) {
+    switch (options.creativeType) {
         case HZCreativeTypeStatic: {
             [HZHeyzapInterstitialAd showForAuctionType:auctionType options:options];
             break;
@@ -101,8 +118,8 @@
     }
 }
 
-- (NSError *) lastFetchErrorForCreativeType:(HZCreativeType)creativeType {
-    switch (creativeType) {
+- (NSError *) lastFetchErrorForAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic:
             return self.lastStaticFetchError;
             break;
@@ -113,8 +130,8 @@
             return nil;
     }
 }
-- (void) setLastFetchError:(NSError *)error forCreativeType:(HZCreativeType)creativeType {
-    switch (creativeType) {
+- (void) setLastFetchError:(NSError *)error forAdsWithMatchingMetadata:(id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    switch (dataProvider.creativeType) {
         case HZCreativeTypeStatic:
             self.lastStaticFetchError = error;
             break;
@@ -131,6 +148,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        _nativeAds = [[HZQueue alloc] init];
         [[NSNotificationCenter  defaultCenter] addObserver:self selector:@selector(didShowAd:) name:kHeyzapDidShowAdNotitification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didFailToShowAd:) name:kHeyzapDidFailToShowAdNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveAd:) name:kHeyzapDidReceiveAdNotification object:nil];
@@ -185,10 +203,10 @@
         
         switch (fetchableCreativeType) {
             case HZFetchableCreativeTypeStatic: {
-                [self clearLastFetchErrorForCreativeType:HZCreativeTypeStatic];
+                [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic]];
             }
             case HZFetchableCreativeTypeVideo: {
-                [self clearLastFetchErrorForCreativeType:HZCreativeTypeVideo];
+                [self clearLastFetchErrorForAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeVideo]];
             }
             case HZFetchableCreativeTypeNative: {
                 // ignored
@@ -207,10 +225,10 @@
         
         switch (fetchableCreativeType) {
             case HZFetchableCreativeTypeStatic: {
-                [self setLastFetchError:error forCreativeType:HZCreativeTypeStatic];
+                [self setLastFetchError:error forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeStatic]];
             }
             case HZFetchableCreativeTypeVideo: {
-                [self setLastFetchError:error forCreativeType:HZCreativeTypeVideo];
+                [self setLastFetchError:error forAdsWithMatchingMetadata:[[HZMediationAdAvailabilityDataProvider alloc] initWithCreativeType:HZCreativeTypeVideo]];
             }
             case HZFetchableCreativeTypeNative: {
                 // ignored
@@ -254,6 +272,35 @@
 - (void)didFailToCompleteIncentivizedAd:(NSNotification *)notification {
     if ([self correctAuctionType:notification]) {
         [self.delegate adapterDidFailToCompleteIncentivizedAd:self];
+    }
+}
+
+#pragma mark - Native
+
+- (void)fetchNativeWithOptions:(HZAdapterFetchOptions *)options {
+    if (!self.isNativeFetchInProgress) {
+        self.nativeFetchInProgress = YES;
+        
+        [HZNativeAdController fetchAds:[options.uniqueNativeAdsToFetch unsignedIntegerValue]
+                                   tag:options.tag
+                           auctionType:self.auctionType
+                            completion:^(NSError *error, HZNativeAdCollection *collection) {
+                                self.nativeFetchInProgress = NO;
+                                if (error) {
+                                    HZELog(@"Error fetching Heyzap native ads: %@",error);
+                                } else {
+                                    [self.nativeAds enqueueObjects:collection.ads];
+                                }
+                            }];
+    }
+}
+
+- (nullable HZNativeAdAdapter *)getNativeAdForMetadata:(nonnull id<HZMediationAdAvailabilityDataProviderProtocol>)dataProvider {
+    HZNativeAd *baseNativeAd = [self.nativeAds dequeue];
+    if (baseNativeAd) {
+        return [[HZHeyzapNativeAdAdapter alloc] initWithNativeAd:baseNativeAd parentAdapter:self];
+    } else {
+        return nil;
     }
 }
 

@@ -7,6 +7,7 @@
 //
 
 #import "OHHTTPStubs.h"
+#import "OHHTTPStubsResponse+JSON.h"
 
 @interface OHHTTPStubs (Heyzap)
 

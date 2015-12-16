@@ -70,9 +70,16 @@ NSString *const kHZNativeAdRatingKey = @"rating";
         // Non-nil properties
         _appName = [HZDictionaryUtils objectForKey:kHZNativeAdAppNameKey ofClass:[NSString class] dict:publicDictionary];
         CHECK_NOT_NIL(_appName, @"advertised app name");
+        
+        _callToAction = [HZDictionaryUtils objectForKey:@"call_to_action" ofClass:[NSString class] default:@"Install Now" dict:publicDictionary];
 
         _iconURL = [NSURL URLWithString:[HZDictionaryUtils objectForKey:kHZNativeAdIconURLKey ofClass:[NSString class] dict:publicDictionary]];
         CHECK_NOT_NIL(_iconURL, @"icon URL");
+        
+        NSError *iconError;
+        NSDictionary *iconImageDict = [HZDictionaryUtils objectForKey:@"icon_image" ofClass:[NSDictionary class] dict:publicDictionary];
+        _iconImage = [[HZNativeAdImage alloc] initWithDictionary:iconImageDict error:&iconError];
+        CHECK_NOT_NIL_UNDERLYING(_iconImage, @"Icon Image",iconError);
         
         /// Nullable properties
         
@@ -145,7 +152,7 @@ NSString *const kHZNativeAdRatingKey = @"rating";
 - (NSString *)description {
     NSMutableString *const desc = [[NSMutableString alloc] initWithString:[super description]];
     [desc appendFormat:@" `appName` = %@",self.appName];
-    [desc appendFormat:@" `iconURL` = %@",self.iconURL];
+    [desc appendFormat:@" `iconImage` = %@",self.iconImage];
     [desc appendFormat:@" `rating` = %@",self.rating];
     [desc appendFormat:@" `category` = %@",self.category];
     [desc appendFormat:@" `description` = %@",self.appDescription];

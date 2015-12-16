@@ -11,5 +11,6 @@
 @interface HZNativeAdImage ()
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary error:(NSError **)error;
+- (instancetype)initWithURL:(NSURL *)url width:(CGFloat)width height:(CGFloat)height;
 
 @end

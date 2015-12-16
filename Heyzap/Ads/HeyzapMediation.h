@@ -15,24 +15,28 @@
 #import "HZMediateRequester.h"
 #import "HZMediationSettings.h"
 #import "HZSegmentationController.h"
-#import "HZFetchOptions.h"
+#import "HZFetchOptions_Private.h"
 
 @protocol HZAdsDelegate;
 @protocol HZIncentivizedAdDelegate;
 @protocol HZBannerReportingDelegate;
 @class HZBannerAdOptions;
 @class HZMediationPersistentConfig;
-
-extern NSString * const HZMediationDidReceiveAdNotification;
+@class HZErrorReporter;
+@class HZMediatedNativeAd;
+@class HZMediatedNativeAdRequestOptions;
 
 @interface HeyzapMediation : NSObject <HZMediationAdapterDelegate, HZBannerReportingDelegate, HZMediationStarting, HZMediationLoadManagerDelegate, HZMediateRequesterDelegate>
 
+@property (nonatomic, readonly) void (^networkCallbackBlock)(NSString *network, NSString *callback);
 
 @property (nonatomic, readonly) dispatch_queue_t pausableMainQueue;
 @property (nonatomic, readonly) NSString *mediationId;
 @property (nonatomic, readonly) HZMediationSettings *settings;
 @property (nonatomic, readonly) HZSegmentationController *segmentationController;
 @property (nonatomic, readonly) HZMediationPersistentConfig *persistentConfig;
+@property (nonatomic, readonly) HZErrorReporter *errorReporter;
+@property (nonatomic, readonly) HZDemographics *demographics;
 
 + (instancetype)sharedInstance;
 
@@ -89,6 +93,9 @@ extern NSString * const HZMediationDidReceiveAdNotification;
 /**
  *  Used to disable Segmentation for the mediation test activity
  */
-- (void)enableSegmentation:(BOOL)enabled;
+- (void) enableSegmentation:(BOOL)enabled;
+- (BOOL) isSegmentationEnabled;
+
+- (HZMediatedNativeAd *)getNextNativeAd:(NSString *)tag additionalParams:(NSDictionary *)additionalParams error:(NSError **)error;
 
 @end

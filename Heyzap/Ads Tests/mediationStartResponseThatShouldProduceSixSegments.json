@@ -1,0 +1,176 @@
+{
+    "segments": [{
+                 "name": "Only static interstitials for \"static\" tag",
+                 "rules": [{
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["static"]
+                           }
+                           }, {
+                           "type": "Frequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 2,
+                                                "seconds": 86400
+                                                }, {
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 4,
+                                                "seconds": 86400
+                                                }, {
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 8,
+                                                "seconds": 86400
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }, {
+                           "type": "CrossPromoFrequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 2,
+                                                "seconds": 86400
+                                                }, {
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 4,
+                                                "seconds": 86400
+                                                }, {
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "day",
+                                                "ad_format": 8,
+                                                "seconds": 86400
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }]
+                 }, {
+                 "name": "all banners off for \"banner\" tag",
+                 "rules": [{
+                           "type": "Frequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 0,
+                                                "time_quantity": 1,
+                                                "time_unit": "minute",
+                                                "ad_format": 8,
+                                                "seconds": 60
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }, {
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["banner"]
+                           }
+                           }]
+                 }, {
+                 "name": "1 ad per minute for \"on\" tag",
+                 "rules": [{
+                           "type": "Frequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 1,
+                                                "time_quantity": 1,
+                                                "time_unit": "minute",
+                                                "ad_format": 0,
+                                                "seconds": 60
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }, {
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["on"]
+                           }
+                           }, {
+                           "type": "CrossPromoFrequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 1,
+                                                "time_quantity": 1,
+                                                "time_unit": "minute",
+                                                "ad_format": 0,
+                                                "seconds": 60
+                                                }],
+                           "ads_enabled": true
+                           }
+                           }]
+                 }, {
+                 "name": "different admob video placement id for tag \"admob\"",
+                 "rules": [{
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["admob"]
+                           }
+                           }, {
+                           "type": "PlacementId",
+                           "options": {
+                           "placement_ids": [{
+                                             "network": "admob",
+                                             "creative_type": 2,
+                                             "placement_id": "new_placement_id"
+                                             }]
+                           }
+                           }]
+                 }, {
+                 "name": "disable heyzap networks with tag \"heyzapoff\"",
+                 "rules": [{
+                           "type": "DisabledNetworks",
+                           "options": {
+                           "disabled_networks": ["heyzap", "heyzap_exchange"]
+                           }
+                           }, {
+                           "type": "Frequency",
+                           "options": {
+                           "ads_enabled": true
+                           }
+                           }, {
+                           "type": "CrossPromoFrequency",
+                           "options": {
+                           "ads_enabled": false
+                           }
+                           }, {
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["heyzapoff"]
+                           }
+                           }]
+                 }, {
+                 "name": "no ads for \"offtag\" tag",
+                 "rules": [{
+                           "type": "Tag",
+                           "options": {
+                           "tags": ["offtag"]
+                           }
+                           }, {
+                           "type": "Frequency",
+                           "options": {
+                           "frequency_limits": [{
+                                                "ads_quantity": 1,
+                                                "time_quantity": 1,
+                                                "time_unit": "minute",
+                                                "ad_format": 1,
+                                                "seconds": 60
+                                                }],
+                           "ads_enabled": false
+                           }
+                           }, {
+                           "type": "CrossPromoFrequency",
+                           "options": {
+                           "ads_enabled": false
+                           }
+                           }]
+                 }]
+}

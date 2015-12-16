@@ -26,6 +26,9 @@ NSString * NSStringFromAdType(HZAdType type)
         case HZAdTypeBanner: {
             return @"banner";
         }
+        case HZAdTypeNative: {
+            return @"native";
+        }
     }
 }
 
@@ -39,9 +42,9 @@ HZAdType hzAdTypeFromString(NSString *adUnit) {
     }
 }
 
-// This will be true for native ads as well, when those are added.
 BOOL hzCanShowConcurrentlyWithOtherAds(const HZAdType adType) {
     switch (adType) {
+        case HZAdTypeNative:
         case HZAdTypeBanner: {
             return YES;
         }
