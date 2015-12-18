@@ -128,9 +128,6 @@
 {
     self = [super init];
     if (self) {
-        // Initialize the errorReporter first so we can report errors as soon as possible.
-        _errorReporter = [[HZErrorReporter alloc] initWithAPIClient:[HZMediationJSONAPIClient sharedClient] config:[[HZErrorReportingConfig alloc] initWithDictionary:@{}]];
-        
         _setupMediators = [NSSet set];
         _setupMediatorClasses = [NSSet set];
         _erroredMediatiorClasses = [NSSet set];
@@ -227,7 +224,7 @@
     HZILog(@"Mediation starting from %@", fromCache ? @"cache" : @"network");
     NSDictionary *const errorReportingParams = [HZDictionaryUtils objectForKey:@"error_reporting" ofClass:[NSDictionary class] default:@{} dict:dictionary];
     HZErrorReportingConfig *errorReporterConfig = [[HZErrorReportingConfig alloc] initWithDictionary:errorReportingParams];
-    [self.errorReporter updateConfig:errorReporterConfig];
+    [[HZErrorReporter sharedReporter] updateConfig:errorReporterConfig];
     
     [[self settings] setupWithDict:dictionary fromCache:fromCache];
     [self addCredentialsToAdapters:dictionary];
@@ -760,7 +757,7 @@ const unsigned long long adStalenessTimeout = 15;
 }
 
 - (void)trackMissingMediateForAdType:(HZAdType)adType {
-    [self.errorReporter trackMetric:@[@"mediate",@"missing_for_ad_type",NSStringFromAdType(adType)]];
+    [[HZErrorReporter sharedReporter] trackMetric:@[@"mediate",@"missing_for_ad_type",NSStringFromAdType(adType)]];
 }
 
 
