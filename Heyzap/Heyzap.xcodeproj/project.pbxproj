@@ -4541,6 +4541,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				OTHER_CFLAGS = (
+					"-fembed-bitcode",
+					"-Qunused-arguments",
+				);
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Heyzap$(TARGET_NAME)";
@@ -4576,6 +4580,10 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+				);
+				OTHER_CFLAGS = (
+					"-fembed-bitcode",
+					"-Qunused-arguments",
 				);
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-ObjC";
