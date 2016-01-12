@@ -18,6 +18,7 @@
 #import "HeyzapAds.h"
 #import "HZBaseAdapter_Internal.h"
 #import "HZShowOptions_Private.h"
+#import "HZAdsManager.h"
 
 #import "HZGADAdLoader.h"
 #import "HZGADNativeAppInstallAdLoaderDelegate.h"
@@ -200,6 +201,10 @@ typedef NSString AdMobPlacementID;
 - (HZGADRequest *)defaultRequest {
     HZGADRequest *request = [HZGADRequest request];
     request.testDevices = @[ GAD_SIMULATOR_ID ];
+    
+    if ([[HZAdsManager sharedManager] isOptionEnabled:HZAdOptionsChildDirectedAds]) {
+        [request tagForChildDirectedTreatment:YES];
+    }
     
     CLLocation *const location = self.delegate.demographics.location;
     if (location) {
