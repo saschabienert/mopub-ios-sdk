@@ -13,6 +13,19 @@
 // When NSAssert prints its callstack to the console, its not symbolicated. I'm not sure why. It would be good to know, and ideally have a solution that doesn't involve developers changing anything.
 // This version is copied exactly from NSAssert, but additionally prints the callstack.
 
+#ifdef RELEASE
+#define HZAssert(condition, desc, ...) \
+do { \
+    if (!(condition)) { \
+        NSString *__desc = [NSString stringWithFormat:desc, ##__VA_ARGS__]; \
+        NSLog(@"Failed assertion: %s (%@)", #condition, __desc); \
+        NSString *__errorMessage = [NSString stringWithFormat:@"Invalid parameter not satisfying: %s", #condition]; \
+        HZTrackErrorNamed(@"AssertionError", __errorMessage, __desc); \
+    } \
+} while(0)
+
+#else
+
 #define HZAssert(condition, desc, ...)	\
 do {				\
 __PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
@@ -25,7 +38,7 @@ lineNumber:__LINE__ description:(desc), ##__VA_ARGS__]; \
 __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
 } while(0)
 
-#define HZParameterAssert(condition) HZAssert((condition), @"Invalid parameter not satisfying: %s", #condition)
+#endif
 
 // Use `HZFail` instead of HZ(Parameter)Assert if you always want to trigger the assertion.
 // Using `HZFail` is preferable over something like HZAssert(NO,@"msg") because code flow analysis won't think that the method will potentially finish without returning a value.
@@ -42,14 +55,29 @@ __PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
 #define HZTrackError(error) \
 do { \
 NSString *const filename = [[[NSString stringWithUTF8String:__FILE__] componentsSeparatedByString:@"/"] lastObject]; \
-[[[HeyzapMediation sharedInstance] errorReporter] trackError:error method:NSStringFromSelector(_cmd) lineNumber:__LINE__ file:filename stackTrace:[NSThread callStackSymbols]]; \
+[[HZErrorReporter sharedReporter] trackError:error method:NSStringFromSelector(_cmd) lineNumber:__LINE__ file:filename stackTrace:[NSThread callStackSymbols]]; \
 } while(0)
 
 #define HZTrackErrorNamed(__name, __details, __fullText) \
 do { \
 NSString *const filename = [[[NSString stringWithUTF8String:__FILE__] componentsSeparatedByString:@"/"] lastObject]; \
-[[[HeyzapMediation sharedInstance] errorReporter] trackErrorWithName:__name details:__details fullText:__fullText method:NSStringFromSelector(_cmd) lineNumber:__LINE__ file:filename stackTrace:[NSThread callStackSymbols]]; \
+[[HZErrorReporter sharedReporter] trackErrorWithName:__name details:__details fullText:__fullText method:NSStringFromSelector(_cmd) lineNumber:__LINE__ file:filename stackTrace:[NSThread callStackSymbols]]; \
 } while(0)
+
+
+#ifdef RELEASE
+#define HZParameterAssert(condition) \
+do { \
+if (!(condition)) { \
+NSLog(@"Failed assertion: %s", #condition); \
+NSString *__errorMessage = [NSString stringWithFormat:@"Invalid parameter not satisfying: %s", #condition]; \
+HZTrackErrorNamed(@"AssertionError", __errorMessage, __errorMessage); \
+} \
+} while(0)
+#else
+#define HZParameterAssert(condition) HZAssert((condition), @"Invalid parameter not satisfying: %s", #condition)
+#endif
 
 #endif
 
+// #define HZParameterAssert(condition) HZTrackErrorNamed(@"AssertionError", [NSString stringWithFormat:@"Invalid parameter not satisfying: %s", #condition], [NSString stringWithFormat:@"Invalid parameter not satisfying: %s", #condition])

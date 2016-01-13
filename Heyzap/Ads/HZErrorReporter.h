@@ -26,6 +26,8 @@ extern NSString * const kHZMetricGroupExchange;
 
 #pragma mark - Initialization
 
++ (instancetype)sharedReporter;
+
 - (instancetype)initWithAPIClient:(HZAFHTTPRequestOperationManager *)apiClient config:(HZErrorReportingConfig *)config;
 
 #pragma mark - Tracking Errors

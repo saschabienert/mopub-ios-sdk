@@ -11,6 +11,7 @@
 #import "HZErrorReportingConfig.h"
 #import "HZLog.h"
 #import "HZDevice.h"
+#import "HZMediationJSONAPIClient.h"
 
 @interface HZErrorReporter()
 
@@ -41,9 +42,26 @@ return; \
 
 #pragma mark - Errors
 
++ (instancetype)sharedReporter {
+    static HZErrorReporter *errorReporter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        errorReporter = [[HZErrorReporter alloc] initWithAPIClient:[HZMediationJSONAPIClient sharedClient]
+                                                            config:[[HZErrorReportingConfig alloc] initWithDictionary:@{}]];
+    });
+    return errorReporter;
+}
+
 - (instancetype)initWithAPIClient:(HZAFHTTPRequestOperationManager *)apiClient config:(HZErrorReportingConfig *)config {
-    HZParameterAssert(apiClient);
-    HZParameterAssert(config);
+    // HZParameterAssert calls `sharedReporter` in Release builds, so this code must not use it to avoid an infinite loop.
+    if (!apiClient) {
+        HZELog(@"No API client passed to HZErrorReporter");
+        return nil;
+    }
+    if (!config) {
+        HZELog(@"No config passed to HZErrorReporter");
+        return nil;
+    };
     
     self = [super init];
     if (self) {
