@@ -45,7 +45,7 @@
 - (BOOL) isOptionEnabled: (HZAdOptions) adOption;
 
 - (BOOL)isAvailableForFetchableCreativeType:(HZFetchableCreativeType)fetchableCreativeType auctionType:(HZAuctionType)auctionType;
-- (void)showForCreativeType:(HZCreativeType)showableCreativeType auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options;
+- (void)showForCreativeType:(HZCreativeType)creativeTypeToShow auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options;
 - (void) hideActiveAd;
 
 + (void)postNotificationName:(NSString *const)notificationName infoProvider:(id<HZAdInfoProvider>)infoProvider;

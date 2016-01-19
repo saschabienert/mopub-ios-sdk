@@ -226,7 +226,7 @@
         
         [params setObject: [NSString stringWithFormat: @"%f", lockoutTimeSeconds] forKey: @"lockout_time_seconds"];
         
-        if (self.showableCreativeType == HZCreativeTypeIncentivized) {
+        if (self.requestingAdType == HZAdTypeIncentivized) {
             [params setObject: @"true" forKey: @"incentivized"];
         }
         
