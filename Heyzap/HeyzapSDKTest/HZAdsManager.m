@@ -180,7 +180,7 @@ static BOOL hzAdsIsEnabled = NO;
 
 #pragma mark - Show
 
-- (HZFetchableCreativeType)fetchableFromShowable:(HZCreativeType)creativeType {
+- (HZFetchableCreativeType)fetchableCreativeTypeFromShowableCreativeType:(HZCreativeType)creativeType {
     switch (creativeType) {
         case HZCreativeTypeStatic: {
             return HZFetchableCreativeTypeStatic;
@@ -197,9 +197,9 @@ static BOOL hzAdsIsEnabled = NO;
     }
 }
 
-- (void)showForCreativeType:(HZCreativeType)showableCreativeType auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options {
+- (void)showForCreativeType:(HZCreativeType)creativeTypeToShow auctionType:(HZAuctionType)auctionType options:(HZShowOptions *)options {
     
-    const HZFetchableCreativeType fetchable = [self fetchableFromShowable:showableCreativeType];
+    const HZFetchableCreativeType fetchable = [self fetchableCreativeTypeFromShowableCreativeType:creativeTypeToShow];
     
     BOOL success = NO;
     NSError *error;
@@ -217,7 +217,6 @@ static BOOL hzAdsIsEnabled = NO;
         if (ad != nil) {
             
             // Properties set on show
-            ad.showableCreativeType = showableCreativeType;
             ad.tag = options.tag;
             ad.requestingAdType = options.requestingAdType;
             

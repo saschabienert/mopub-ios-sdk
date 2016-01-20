@@ -66,7 +66,7 @@
         
         /* 
          Expected format of video dict (defaults at top level, overrides per ad unit underneath "ad_unit"):
-         See `updateDisplayOptionsWithShowableCreativeType` below for parsing the overrides.
+         See `updateDisplayOptionsWithUpdatedRequestingAdType` below for parsing the overrides.
          {
              ...
          
@@ -85,7 +85,7 @@
                      ...
                 },
                 "video" : {...},
-                ...
+                "interstitial" : {...}
              }
          }
          */
@@ -108,21 +108,15 @@
 }
 
 - (NSString *)adUnitKey {
-    if (self.showableCreativeType == HZCreativeTypeIncentivized) {
-        return @"incentivized";
-    } else if (self.showableCreativeType == HZCreativeTypeVideo) {
-        return @"video";
-    } else {
-        HZFail(@"Invalid creative type for showing videos: %%@",NSStringFromCreativeType(self.showableCreativeType));
-    }
+    return NSStringFromAdType(self.requestingAdType);
 }
 
-- (void)setShowableCreativeType:(HZCreativeType)showableCreativeType {
-    [super setShowableCreativeType:showableCreativeType];
-    [self updateDisplayOptionsWithShowableCreativeType];
+- (void)setRequestingAdType:(HZAdType)requestingAdType {
+    [super setRequestingAdType:requestingAdType];
+    [self updateDisplayOptionsWithUpdatedRequestingAdType];
 }
 
-- (void)updateDisplayOptionsWithShowableCreativeType {
+- (void)updateDisplayOptionsWithUpdatedRequestingAdType {
     // JSON structure we're parsing:
     /*
      "ad_unit" : {
@@ -132,11 +126,12 @@
             ...
         },
         "video" : {...},
+        "interstitial" : {...}
      }
      */
     NSDictionary *const settingsByAdUnitDict = [HZDictionaryUtils objectForKey: @"ad_unit" ofClass: [NSDictionary class] default:@{} dict:self.videoSettingsDictionary];
     
-    NSString *const adUnitKey = [self adUnitKey];
+    NSString *const adUnitKey = [self adUnitKey]; // parses the updated `self.requestingAdType` to a dict key string
     NSDictionary *const adUnitDict = [HZDictionaryUtils objectForKey:adUnitKey ofClass:[NSDictionary class] default:@{} dict:settingsByAdUnitDict];
     
     self.displayOptions = [[HZVideoAdDisplayOptions alloc] initWithDefaultsDictionary:self.videoSettingsDictionary adUnitDictionary:adUnitDict];
@@ -231,7 +226,7 @@
         
         [params setObject: [NSString stringWithFormat: @"%f", lockoutTimeSeconds] forKey: @"lockout_time_seconds"];
         
-        if (self.showableCreativeType == HZCreativeTypeIncentivized) {
+        if (self.requestingAdType == HZAdTypeIncentivized) {
             [params setObject: @"true" forKey: @"incentivized"];
         }
         
