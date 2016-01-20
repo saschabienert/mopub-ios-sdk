@@ -38,11 +38,6 @@
 
 #pragma mark - Validity
 
-- (HZCreativeType)showableCreativeType {
-    HZAssert(_showableCreativeType != HZCreativeTypeUnknown, @"[Heyzap internal ad network] The showableCreativeType has not been set");
-    return _showableCreativeType;
-}
-
 - (HZAdType)requestingAdType {
     HZAssert(_requestingAdType != 0, @"Requesting ad type asked for before it's been set.");
     return _requestingAdType;

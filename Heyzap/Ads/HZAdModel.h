@@ -26,7 +26,6 @@
 @property (nonatomic, readonly) int requiredAdOrientation;
 
 // Properties set on show.
-@property (nonatomic) HZCreativeType showableCreativeType;
 @property (nonatomic) HZAdType requestingAdType;
 @property (nonatomic) NSString *tag;
 

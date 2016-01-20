@@ -118,7 +118,7 @@
 - (void) hide {
     [self.ad onCompleteWithViewDuration: self.videoView.playbackTime andTotalDuration: self.videoView.videoDuration andFinished: self.didFinishVideo];
     
-    if (self.ad.showableCreativeType == HZCreativeTypeIncentivized) {
+    if (self.ad.requestingAdType == HZAdTypeIncentivized) {
         if (self.didFinishVideo) {
             [HZAdsManager postNotificationName:kHeyzapDidCompleteIncentivizedAd infoProvider:self.ad];
         } else {
