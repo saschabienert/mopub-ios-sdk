@@ -108,7 +108,11 @@
 }
 
 + (NSString *)sdkVersion {
-    return nil; // Chartboost doesn't provide the version.
+    if ([HZChartboost respondsToSelector:@selector(getSDKVersion)]) { // Requires Chartboost 6.2.0+
+        return [HZChartboost getSDKVersion];
+    } else {
+        return nil;
+    }
 }
 
 NSString * const kHZCBLocationDefault = @"Default";
