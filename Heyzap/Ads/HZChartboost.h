@@ -366,6 +366,12 @@ extern CBLocation const CBLocationDefault;
 
 /*!
  @abstract
+ Returns the version of the Chartboost SDK.
+ */
++ (NSString*)getSDKVersion;
+
+/*!
+ @abstract
  Decide if Chartboost SDK should show interstitials in the first session.
  
  @param shouldRequest YES if allowed to show interstitials in first session, NO otherwise.

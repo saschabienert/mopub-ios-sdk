@@ -1,40 +1,42 @@
 PODS:
-  - AdColony (2.6.0)
-  - AppLovin (3.1.6)
+  - AdColony (2.6.1)
+  - AppLovin (3.2.2)
   - FacebookAudienceNetwork (4.8.0)
+  - FBAudienceNetwork (4.9.1)
   - Google-Mobile-Ads-SDK (7.6.0)
   - HyprMX (68)
-  - HZChartboost (6.0.1)
-  - HZInMobi (5.0.2)
-  - KIF (3.3.0):
-    - KIF/Core (= 3.3.0)
-  - KIF/Core (3.3.0)
+  - HZChartboost (6.2.0)
+  - HZInMobi (5.2.0)
+  - KIF (3.3.2):
+    - KIF/Core (= 3.3.2)
+  - KIF/Core (3.3.2)
   - Kiwi (2.4.0)
   - Leadbolt (6.0)
-  - Masonry (0.6.3)
-  - OCHamcrest (4.3.0)
-  - OCMockito (2.0.1):
-    - OCHamcrest (~> 4.0)
-  - OHHTTPStubs (4.6.0):
-    - OHHTTPStubs/Default (= 4.6.0)
-  - OHHTTPStubs/Core (4.6.0)
-  - OHHTTPStubs/Default (4.6.0):
+  - Masonry (0.6.4)
+  - OCHamcrest (5.2.0)
+  - OCMockito (3.0.1):
+    - OCHamcrest (~> 5.1)
+  - OHHTTPStubs (4.7.0):
+    - OHHTTPStubs/Default (= 4.7.0)
+  - OHHTTPStubs/Core (4.7.0)
+  - OHHTTPStubs/Default (4.7.0):
     - OHHTTPStubs/Core
     - OHHTTPStubs/JSON
     - OHHTTPStubs/NSURLSession
     - OHHTTPStubs/OHPathHelpers
-  - OHHTTPStubs/JSON (4.6.0):
+  - OHHTTPStubs/JSON (4.7.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/NSURLSession (4.6.0):
+  - OHHTTPStubs/NSURLSession (4.7.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/OHPathHelpers (4.6.0)
-  - UnityAds (1.5.3)
+  - OHHTTPStubs/OHPathHelpers (4.7.0)
+  - UnityAds (1.5.6)
   - VungleSDK-iOS (3.2.0.1)
 
 DEPENDENCIES:
   - AdColony
   - AppLovin
   - FacebookAudienceNetwork
+  - FBAudienceNetwork
   - Google-Mobile-Ads-SDK
   - HyprMX
   - HZChartboost
@@ -49,21 +51,22 @@ DEPENDENCIES:
   - VungleSDK-iOS
 
 SPEC CHECKSUMS:
-  AdColony: ab47c3e22be7843e08f90989381a222884be4a62
-  AppLovin: 2b0f74bb4aff2594a618428e8000013ad232efe6
+  AdColony: a9859672fee49d9a81017d1fffa3133bf8538bd8
+  AppLovin: 5b0d374500cbe64a483cec6810ebd3e3ff004180
   FacebookAudienceNetwork: bd18ab1e4a2968cd10f7e6ba7d2e3ba4454e9b77
+  FBAudienceNetwork: af5491ef430a75ac5c7290ebf86481e808e626e9
   Google-Mobile-Ads-SDK: 0290020329c61183c4685304264b73382bc49fb4
   HyprMX: 626dcce6c83a9856abeeef644542bc2cd058770e
-  HZChartboost: bb01521c0cebf9dbbe979f642b9934923e18512e
-  HZInMobi: 595afc6c2784f66e3788c85aadf803aa870532e6
-  KIF: 0a82046d06f3648799cac522d2d0f7934214caac
+  HZChartboost: 285bfdfa5322c6778a845ceefb69e874e846703f
+  HZInMobi: 8322b6f01d0a4ba714fd988f1a5cdb83aefe64d8
+  KIF: 9de83fa627adaf65d28ace31e40f19d830bc255c
   Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
   Leadbolt: 2599cdd53890689158e94bd93268ae118b43ed1e
-  Masonry: ff105a956abcd19a618b2028b121cb638d7a8e2f
-  OCHamcrest: cd63d27f48a266d4412c0b295b01b8f0940efa81
-  OCMockito: f92ad4c6fac2841a88558879cfe517c40aebf91e
-  OHHTTPStubs: cb1aefbbeb4de4e741644455d4b945538e5248a2
-  UnityAds: 21da73c678c2db60f9495b28bdfd24fca78703d6
+  Masonry: 281802d04d787ea2973179ee8bcb50500579ede2
+  OCHamcrest: 218dc4022a5e928a275771da70c5dbea9f859287
+  OCMockito: 9eee3c61e42f7cb8aa015d66f8cc16849701d973
+  OHHTTPStubs: d2bf6a0f407620d67e75a1d3f12d86a2b1dd15c0
+  UnityAds: f341d0f7a911d8b6eb7c943d4e89c17bca4b4a75
   VungleSDK-iOS: e18cf2f47cf0abe096d4b162f583bd197de1ea28
 
 COCOAPODS: 0.39.0

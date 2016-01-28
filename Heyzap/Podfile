@@ -13,7 +13,7 @@ target :MediationTestApp, :exclusive => true do
   pod 'AdColony' # Maintained by AdColony
   pod 'Google-Mobile-Ads-SDK' # Maintained by Google
   pod 'VungleSDK-iOS' # Maintained by Vungle
-  pod 'FacebookAudienceNetwork' # `FBAudienceNetwork` is maintained by Facebook; temporarily using ours to get the latest version since they haven't updated.
+  pod 'FBAudienceNetwork' # Maintained by Facebook
   pod 'AppLovin' # Vendored by Heyzap
   pod 'UnityAds' # Vendored by Heyzap
   pod 'HyprMX' #Vendored by Heyzap
