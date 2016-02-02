@@ -804,7 +804,7 @@
 		504E9C9E18C9322200402BC3 /* Ads Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ads Tests-Prefix.pch"; sourceTree = "<group>"; };
 		505286DF18E61BD90060C210 /* HZMediationAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZMediationAPIClient.h; sourceTree = "<group>"; };
 		505286E018E61BD90060C210 /* HZMediationAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZMediationAPIClient.m; sourceTree = "<group>"; };
-		5053521818F76550003C531E /* MediationTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MediationTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5053521818F76550003C531E /* Heyzap Native.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Heyzap Native.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5053E7EC1AEAB94D0090889B /* HZWebViewPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HZWebViewPool.h; sourceTree = "<group>"; };
 		5053E7ED1AEAB94D0090889B /* HZWebViewPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZWebViewPool.m; sourceTree = "<group>"; };
 		5053E7F11AEABCB50090889B /* HZWebViewPoolSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HZWebViewPoolSpec.m; sourceTree = "<group>"; };
@@ -2548,7 +2548,7 @@
 			children = (
 				86B9432A1758108700B8EACE /* libHeyzapAds.a */,
 				504E9C9218C9322100402BC3 /* Ads Tests.xctest */,
-				5053521818F76550003C531E /* MediationTestApp.app */,
+				5053521818F76550003C531E /* Heyzap Native.app */,
 				508277901BC8925000B4340B /* IntegrationTestHost.app */,
 				508277B01BC8938200B4340B /* IntegrationTests.xctest */,
 			);
@@ -3289,7 +3289,7 @@
 			);
 			name = MediationTestApp;
 			productName = HeyzapSDKTest;
-			productReference = 5053521818F76550003C531E /* MediationTestApp.app */;
+			productReference = 5053521818F76550003C531E /* Heyzap Native.app */;
 			productType = "com.apple.product-type.application";
 		};
 		5082778F1BC8925000B4340B /* IntegrationTestHost */ = {
@@ -4168,7 +4168,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.EnterpriseHeyzap.HeyzapSDKTest;
-				PRODUCT_NAME = MediationTestApp;
+				PRODUCT_NAME = "Heyzap Native";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -4210,7 +4210,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.EnterpriseHeyzap.HeyzapSDKTest;
-				PRODUCT_NAME = MediationTestApp;
+				PRODUCT_NAME = "Heyzap Native";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;

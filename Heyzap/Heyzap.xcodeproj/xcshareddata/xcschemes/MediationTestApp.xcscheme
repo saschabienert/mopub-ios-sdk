@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "505351E918F76550003C531E"
-               BuildableName = "MediationTestApp.app"
+               BuildableName = "Heyzap Native.app"
                BlueprintName = "MediationTestApp"
                ReferencedContainer = "container:Heyzap.xcodeproj">
             </BuildableReference>
@@ -54,7 +54,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "505351E918F76550003C531E"
-            BuildableName = "MediationTestApp.app"
+            BuildableName = "Heyzap Native.app"
             BlueprintName = "MediationTestApp"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
@@ -77,7 +77,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "505351E918F76550003C531E"
-            BuildableName = "MediationTestApp.app"
+            BuildableName = "Heyzap Native.app"
             BlueprintName = "MediationTestApp"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
@@ -96,7 +96,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "505351E918F76550003C531E"
-            BuildableName = "MediationTestApp.app"
+            BuildableName = "Heyzap Native.app"
             BlueprintName = "MediationTestApp"
             ReferencedContainer = "container:Heyzap.xcodeproj">
          </BuildableReference>
